@@ -20,9 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.MetadataUtils;
-import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.util.Utils;
 
 /**
  * Abstract factory class for entities.
@@ -33,6 +33,12 @@ public abstract class AbstractFactory<T extends Entity, D extends Description> {
 
     protected abstract T initializeEntity(D desc);
 
+    /**
+     * Updates the internal entity representation with a given new description.
+     * @param entity The entity to update.
+     * @param desc The new description.
+     * @return If updating the entity was successful.
+     */
     protected boolean updateInternal(final T entity, final D desc) {
         return false;
     }

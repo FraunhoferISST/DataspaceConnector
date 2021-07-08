@@ -18,6 +18,8 @@ package io.dataspaceconnector.view;
 import java.util.UUID;
 
 import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers.ConfigurationController;
+import io.dataspaceconnector.controller.resource.view.SelfLinking;
+import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.configuration.Configuration;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;

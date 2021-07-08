@@ -15,16 +15,16 @@
  */
 package io.dataspaceconnector.model.resource;
 
+import java.net.URI;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
-import java.net.URI;
-import java.util.List;
 
 import io.dataspaceconnector.model.base.RemoteObject;
 import io.dataspaceconnector.model.catalog.Catalog;
-import io.dataspaceconnector.model.utils.UriConverter;
+import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

@@ -19,7 +19,7 @@ import java.net.URI;
 import java.util.ArrayList;
 
 import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
 
 /**

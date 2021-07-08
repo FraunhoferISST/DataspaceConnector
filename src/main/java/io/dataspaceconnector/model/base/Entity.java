@@ -27,7 +27,7 @@ import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.utils.UriConverter;
+import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

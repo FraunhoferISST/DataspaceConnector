@@ -15,18 +15,18 @@
  */
 package io.dataspaceconnector.controller.configurations;
 
-import io.dataspaceconnector.controller.resources.BaseResourceChildController;
-import io.dataspaceconnector.controller.resources.BaseResourceController;
-import io.dataspaceconnector.controller.resources.swagger.responses.ResponseCodes;
+import io.dataspaceconnector.controller.resource.BaseResourceChildController;
+import io.dataspaceconnector.controller.resource.BaseResourceController;
+import io.dataspaceconnector.controller.resource.view.ArtifactView;
+import io.dataspaceconnector.controller.resource.swagger.response.ResponseCodes;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteDesc;
 import io.dataspaceconnector.model.route.RouteFactory;
-import io.dataspaceconnector.repositories.EndpointRepository;
-import io.dataspaceconnector.repositories.RouteRepository;
-import io.dataspaceconnector.services.configuration.EntityLinkerService;
-import io.dataspaceconnector.services.configuration.RouteService;
-import io.dataspaceconnector.view.ArtifactView;
+import io.dataspaceconnector.repository.EndpointRepository;
+import io.dataspaceconnector.repository.RouteRepository;
+import io.dataspaceconnector.service.configuration.EntityLinkerService;
+import io.dataspaceconnector.service.configuration.RouteService;
 import io.dataspaceconnector.view.RouteView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

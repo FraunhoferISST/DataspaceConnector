@@ -16,7 +16,7 @@
 package io.dataspaceconnector.model;
 
 import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.util.MetadataUtils;
 
 /**
  * Abstract factory class which holds additional information like title, description.
@@ -36,6 +36,12 @@ public abstract class AbstractNamedFactory<T extends NamedEntity, D extends Name
      */
     public static final String DEFAULT_DESCRIPTION = "";
 
+    /**
+     * Updates an entity with a new given description.
+     * @param entity The entity.
+     * @param desc The description of the entity.
+     * @return If updating the entity was successful.
+     */
     @Override
     public boolean update(final T entity, final D desc)  {
         final var hasParentUpdated = super.update(entity, desc);

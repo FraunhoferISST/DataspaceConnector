@@ -15,22 +15,13 @@
  */
 package io.dataspaceconnector.model.resource;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.ElementCollection;
-import javax.persistence.Inheritance;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import java.net.URI;
-import java.util.List;
-
+import io.dataspaceconnector.model.util.UriConverter;
 import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.representation.Representation;
-import io.dataspaceconnector.model.utils.UriConverter;
-import io.dataspaceconnector.utils.exceptions.NotImplemented;
+import io.dataspaceconnector.util.exception.NotImplemented;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -39,6 +30,15 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.Version;
+
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
+import javax.persistence.Inheritance;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import java.net.URI;
+import java.util.List;
 
 import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 

@@ -19,6 +19,9 @@ package io.dataspaceconnector.view.util;
  * This class holds constants for the view.
  */
 public class ViewConstants {
+    protected ViewConstants() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Constant for the date time.

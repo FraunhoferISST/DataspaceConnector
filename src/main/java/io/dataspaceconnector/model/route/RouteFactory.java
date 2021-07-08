@@ -18,7 +18,7 @@ package io.dataspaceconnector.model.route;
 import io.dataspaceconnector.model.AbstractNamedFactory;
 import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.endpoint.Endpoint;
-import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

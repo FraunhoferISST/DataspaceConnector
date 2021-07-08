@@ -15,19 +15,14 @@
  */
 package io.dataspaceconnector.bootstrap;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
-import io.dataspaceconnector.model.templates.CatalogTemplate;
-import io.dataspaceconnector.services.messages.GlobalMessageService;
-import io.dataspaceconnector.services.resources.CatalogService;
-import io.dataspaceconnector.services.resources.TemplateBuilder;
-import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.model.template.CatalogTemplate;
+import io.dataspaceconnector.service.message.GlobalMessageService;
+import io.dataspaceconnector.service.resource.CatalogService;
+import io.dataspaceconnector.service.resource.TemplateBuilder;
+import io.dataspaceconnector.util.Utils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -36,6 +31,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

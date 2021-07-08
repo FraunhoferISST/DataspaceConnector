@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.model.artifact;
 
+import io.dataspaceconnector.util.MetadataUtils;
+import org.springframework.stereotype.Component;
+import io.dataspaceconnector.model.AbstractNamedFactory;
+
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.zip.CRC32C;
-
-import io.dataspaceconnector.model.AbstractNamedFactory;
-import io.dataspaceconnector.utils.MetadataUtils;
-import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates an artifact.

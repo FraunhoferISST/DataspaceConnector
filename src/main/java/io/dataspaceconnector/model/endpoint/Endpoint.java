@@ -23,7 +23,7 @@ import java.net.URI;
 
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.base.RemoteService;
-import io.dataspaceconnector.model.utils.UriConverter;
+import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

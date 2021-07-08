@@ -16,7 +16,7 @@
 package io.dataspaceconnector.model.endpoint;
 
 import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.util.MetadataUtils;
 
 import java.net.URI;
 

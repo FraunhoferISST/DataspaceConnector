@@ -15,10 +15,9 @@
  */
 package io.dataspaceconnector.config;
 
-import io.dataspaceconnector.services.ids.ConnectorService;
+import io.dataspaceconnector.service.ids.ConnectorService;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -28,7 +27,6 @@ import java.io.Serializable;
 /**
  * This class provides DAT validation.
  */
-@Log4j2
 @Component
 @AllArgsConstructor
 public final class DapsTokenValidator implements PermissionEvaluator {

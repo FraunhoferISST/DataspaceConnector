@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.model.representation;
 
+import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.model.AbstractNamedFactory;
+import org.springframework.stereotype.Component;
+
 import java.net.URI;
 import java.util.ArrayList;
-
-import io.dataspaceconnector.model.AbstractNamedFactory;
-import io.dataspaceconnector.utils.MetadataUtils;
-import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates a representation.

@@ -15,18 +15,18 @@
  */
 package io.dataspaceconnector.model.rule;
 
+import java.net.URI;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import java.net.URI;
-import java.util.List;
 
 import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.base.RemoteObject;
 import io.dataspaceconnector.model.contract.Contract;
-import io.dataspaceconnector.model.utils.UriConverter;
+import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

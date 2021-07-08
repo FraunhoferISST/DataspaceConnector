@@ -20,7 +20,7 @@ import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 
-import io.dataspaceconnector.model.utils.UrlConverter;
+import io.dataspaceconnector.model.util.UrlConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
