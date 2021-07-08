@@ -28,12 +28,13 @@
  */
 package io.configmanager.extensions.gui.api.service;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.fraunhofer.iais.eis.ConnectorDeployMode;
 import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.Language;
-import de.fraunhofer.iais.eis.LogLevel;
 import io.configmanager.util.enums.BrokerRegistrationStatus;
 import io.configmanager.util.enums.RouteDeployMethod;
+import io.dataspaceconnector.model.configuration.LogLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -175,10 +176,15 @@ public class GuiUtilService {
         final var logLevels = LogLevel.values();
 
         for (final var logLevel : logLevels) {
-            var jsonObject = new JSONObject();
-            jsonObject.put("originalName", logLevel.name());
-            jsonObject.put("displayName", logLevel.getLabel().get(0).getValue());
-            jsonArray.add(jsonObject);
+            try {
+                var jsonObject = new JSONObject();
+                jsonObject.put("originalName", logLevel.name());
+                jsonObject.put("displayName", LogLevel.class.getField(logLevel.name())
+                        .getAnnotation(JsonProperty.class).value());
+                jsonArray.add(jsonObject);
+            } catch (NoSuchFieldException e) {
+                log.debug("Missing JsonProperty found for logLevel!");
+            }
         }
 
         sortedJsonArray = sortJsonArray(jsonArray);
