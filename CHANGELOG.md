@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - Refactor message handlers using Camel routes.
 - Increase postgres version to 42.2.23.
 - Increase jackson version to 2.12.4.
+- Increase camel version from 3.10.0 to 3.11.0.
 
 ## [5.2.1] - 2021-07-02
 
