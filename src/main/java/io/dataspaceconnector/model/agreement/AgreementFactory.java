@@ -17,9 +17,13 @@ package io.dataspaceconnector.model.agreement;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.util.Utils;
+import io.dataspaceconnector.util.ErrorMessages;
 import org.springframework.stereotype.Component;
 
 /**

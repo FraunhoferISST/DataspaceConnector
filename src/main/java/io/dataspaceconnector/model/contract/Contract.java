@@ -15,19 +15,19 @@
  */
 package io.dataspaceconnector.model.contract;
 
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.util.List;
 
+import io.dataspaceconnector.model.util.UriConverter;
 import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.base.RemoteObject;
 import io.dataspaceconnector.model.resource.Resource;
 import io.dataspaceconnector.model.rule.ContractRule;
-import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

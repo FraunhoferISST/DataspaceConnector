@@ -25,7 +25,7 @@ import java.net.URI;
 import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.base.RemoteService;
-import io.dataspaceconnector.model.utils.UriConverter;
+import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

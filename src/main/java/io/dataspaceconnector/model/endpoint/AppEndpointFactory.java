@@ -17,9 +17,9 @@ package io.dataspaceconnector.model.endpoint;
 
 import java.util.Objects;
 
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.MetadataUtils;
-import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.util.Utils;
 import org.springframework.stereotype.Component;
 
 /**

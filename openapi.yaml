@@ -3228,7 +3228,7 @@ paths:
           required: false
           schema:
             type: boolean
-        - name: agreementUri
+        - name: agreementId
           in: query
           required: false
           schema:

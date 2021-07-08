@@ -16,11 +16,16 @@
 package io.dataspaceconnector.model.resource;
 
 import io.dataspaceconnector.model.AbstractNamedFactory;
-import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.util.Utils;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Base class for creating and updating resources.

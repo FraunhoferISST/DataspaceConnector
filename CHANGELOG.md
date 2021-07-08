@@ -7,9 +7,12 @@ All notable changes to this project will be documented in this file.
 - Provide REST endpoint for full-text search at the IDS Broker: `/ids/search`.
 - Check if the issuer connector of an artifact request does correspond to the signed consumer of the
   transfer contract.
+- Integrate Camel-Spring-Boot version 3.10.0.
+- Provide REST endpoints for adding and removing Camel routes and Spring beans at runtime.
+- Add Camel error handler for propagating errors in routes to the Configuration Manager.
 
 ### Changed
-- Replace IDS Connector Framework v5.0.4 by IDS Messaging Services v4.1.1.3.
+- Replace IDS Connector Framework v5.0.4 by IDS Messaging Services v4.1.1.4.
 - Edit response codes and response content for the following endpoints: `/ids/connector/unavailable`,
   `/ids/connector/update`, `/ids/resource/unavailable`, `/ids/resource/update`, `/ids/query`.
 - Move implementation for sending IDS query, connector, and resource messages to
@@ -17,6 +20,7 @@ All notable changes to this project will be documented in this file.
 - Handle DAT retrieving errors in `PRODUCTIVE_DEPLOYMENT` with status code 500 and a corresponding
   message.
 - Change naming of the resource's license attribute from `licence` to `license`.
+- Refactor message handlers using Camel routes.
 - Increase postgres version to 42.2.23.
 - Increase jackson version to 2.12.4.
 

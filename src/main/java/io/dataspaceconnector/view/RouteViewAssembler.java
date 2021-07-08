@@ -18,6 +18,8 @@ package io.dataspaceconnector.view;
 import java.util.UUID;
 
 import io.dataspaceconnector.controller.configurations.RouteControllers;
+import io.dataspaceconnector.controller.resource.view.SelfLinking;
+import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.route.Route;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;

@@ -18,7 +18,7 @@ package io.dataspaceconnector.model;
 import java.util.ArrayList;
 
 import io.dataspaceconnector.model.resource.Resource;
-import io.dataspaceconnector.utils.exceptions.NotImplemented;
+import io.dataspaceconnector.util.exception.NotImplemented;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

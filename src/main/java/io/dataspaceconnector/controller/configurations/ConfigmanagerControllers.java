@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.configurations;
 
-import io.dataspaceconnector.controller.resources.BaseResourceController;
+import io.dataspaceconnector.controller.resource.BaseResourceController;
 import io.dataspaceconnector.model.clearinghouse.ClearingHouse;
 import io.dataspaceconnector.model.clearinghouse.ClearingHouseDesc;
 import io.dataspaceconnector.model.configuration.Configuration;
@@ -24,10 +24,10 @@ import io.dataspaceconnector.model.datasource.DataSource;
 import io.dataspaceconnector.model.datasource.DataSourceDesc;
 import io.dataspaceconnector.model.identityprovider.IdentityProvider;
 import io.dataspaceconnector.model.identityprovider.IdentityProviderDesc;
-import io.dataspaceconnector.services.configuration.ClearingHouseService;
-import io.dataspaceconnector.services.configuration.ConfigurationService;
-import io.dataspaceconnector.services.configuration.DataSourceService;
-import io.dataspaceconnector.services.configuration.IdentityProviderService;
+import io.dataspaceconnector.service.configuration.ClearingHouseService;
+import io.dataspaceconnector.service.configuration.ConfigurationService;
+import io.dataspaceconnector.service.configuration.DataSourceService;
+import io.dataspaceconnector.service.configuration.IdentityProviderService;
 import io.dataspaceconnector.view.ClearingHouseView;
 import io.dataspaceconnector.view.ConfigurationView;
 import io.dataspaceconnector.view.DataSourceView;

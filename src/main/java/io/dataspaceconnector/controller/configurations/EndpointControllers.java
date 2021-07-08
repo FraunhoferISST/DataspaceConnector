@@ -20,12 +20,12 @@ import java.io.IOException;
 import java.util.UUID;
 
 import io.dataspaceconnector.controller.base.CRUDController;
-import io.dataspaceconnector.controller.resources.swagger.responses.ResponseCodes;
+import io.dataspaceconnector.controller.resource.swagger.response.ResponseCodes;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
-import io.dataspaceconnector.services.configuration.GenericEndpointService;
-import io.dataspaceconnector.services.resources.EndpointServiceProxy;
-import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.service.configuration.GenericEndpointService;
+import io.dataspaceconnector.service.resource.EndpointServiceProxy;
+import io.dataspaceconnector.util.Utils;
 import io.dataspaceconnector.view.EndpointViewAssemblerProxy;
 import io.dataspaceconnector.view.EndpointViewProxy;
 import io.swagger.v3.oas.annotations.Operation;

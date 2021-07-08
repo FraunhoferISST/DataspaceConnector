@@ -18,8 +18,8 @@ package io.dataspaceconnector.controller.base;
 import javax.validation.Valid;
 import java.util.UUID;
 
-import io.dataspaceconnector.controller.resources.swagger.responses.ResponseCodes;
-import io.dataspaceconnector.controller.resources.swagger.responses.ResponseDescriptions;
+import io.dataspaceconnector.controller.resource.swagger.response.ResponseCodes;
+import io.dataspaceconnector.controller.resource.swagger.response.ResponseDescriptions;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.base.Description;
 import io.swagger.v3.oas.annotations.Operation;
@@ -75,7 +75,7 @@ public interface CRUDController<T extends Entity, D extends Description, V>  {
      * @param resourceId The id of the resource.
      * @return The resource.
      * @throws IllegalArgumentException if the resourceId is null.
-     * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
+     * @throws io.dataspaceconnector.exception.ResourceNotFoundException
      *          if the resourceId is unknown.
      */
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
@@ -91,7 +91,7 @@ public interface CRUDController<T extends Entity, D extends Description, V>  {
      * @return Response with code (No_Content) when the resource has been updated or response with
      * code (201) if the resource has been updated and been moved to a new endpoint.
      * @throws IllegalArgumentException if the any of the parameters is null.
-     * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
+     * @throws io.dataspaceconnector.exception.ResourceNotFoundException
      *          if the resourceId is unknown.
      */
     @PutMapping("{id}")

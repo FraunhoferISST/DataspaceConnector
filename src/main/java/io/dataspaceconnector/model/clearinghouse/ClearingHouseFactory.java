@@ -20,7 +20,7 @@ import java.util.Objects;
 
 import io.dataspaceconnector.model.AbstractNamedFactory;
 import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
 
 /**

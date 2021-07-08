@@ -17,7 +17,7 @@ package io.dataspaceconnector.model.resource;
 
 import java.net.URI;
 
-import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
 
 /**
