@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * Handles the basic logic for subscribers.
+ * Handles the basic logic for subscriptions.
  */
 @Service
 @NoArgsConstructor

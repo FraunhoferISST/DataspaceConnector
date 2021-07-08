@@ -32,7 +32,7 @@ import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.service.EntityUpdateService;
-import io.dataspaceconnector.service.resource.SubscriberNotificationService;
+import io.dataspaceconnector.service.message.subscription.SubscriberNotificationService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

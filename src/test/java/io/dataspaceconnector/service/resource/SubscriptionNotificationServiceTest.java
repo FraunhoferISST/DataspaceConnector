@@ -18,6 +18,7 @@ package io.dataspaceconnector.service.resource;
 import io.dataspaceconnector.model.RequestedResource;
 import io.dataspaceconnector.model.RequestedResourceDesc;
 import io.dataspaceconnector.model.RequestedResourceFactory;
+import io.dataspaceconnector.service.message.subscription.SubscriberNotificationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

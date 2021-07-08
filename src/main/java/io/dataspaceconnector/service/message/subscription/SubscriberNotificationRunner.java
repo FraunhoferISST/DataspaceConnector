@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.resource;
+package io.dataspaceconnector.service.message.subscription;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -38,10 +38,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SubscriberNotificationRunner implements Runnable {
 
-    /** Maximum number of retries when a notification fails. */
+    /**
+     * Maximum number of retries when a notification fails.
+     */
     private static final long MAX_RETRIES = 5;
 
-    /** Time between retries in seconds. */
+    /**
+     * Time between retries in seconds.
+     */
     private static final long RETRY_DELAY = 5;
 
     /**
@@ -54,7 +58,9 @@ public class SubscriberNotificationRunner implements Runnable {
      */
     private final @NonNull List<URI> subscribers;
 
-    /** The {@link WebClient} to use for sending the notifications. */
+    /**
+     * The {@link WebClient} to use for sending the notifications.
+     */
     private final WebClient webClient = WebClient.create();
 
     /**
@@ -70,9 +76,8 @@ public class SubscriberNotificationRunner implements Runnable {
     }
 
     /**
-     * Sends the given resource ID to the given URL as the body of a POST request. If the
-     * response has a status code 5xx, the request is retried 5 times with a delay of 5
-     * seconds each.
+     * Sends the given resource ID to the given URL as the body of a POST request. If the response
+     * has a status code 5xx, the request is retried 5 times with a delay of 5 seconds each.
      *
      * @param uri the recipient
      * @return a {@link Mono} with the response body as string

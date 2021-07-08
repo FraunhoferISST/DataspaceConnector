@@ -20,7 +20,7 @@ import io.dataspaceconnector.controller.resource.view.RequestedResourceViewAssem
 import io.dataspaceconnector.model.RequestedResource;
 import io.dataspaceconnector.model.RequestedResourceDesc;
 import io.dataspaceconnector.service.resource.ResourceService;
-import io.dataspaceconnector.service.resource.SubscriberNotificationService;
+import io.dataspaceconnector.service.message.subscription.SubscriberNotificationService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import io.dataspaceconnector.service.resource.SubscriberNotificationRunner;
+import io.dataspaceconnector.service.message.subscription.SubscriberNotificationRunner;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

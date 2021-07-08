@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 package io.dataspaceconnector.services.messages.handler;
 
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
@@ -28,7 +29,7 @@ import io.dataspaceconnector.service.EntityUpdateService;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.message.MessageResponseService;
 import io.dataspaceconnector.service.message.type.MessageProcessedNotificationService;
-import io.dataspaceconnector.service.resource.SubscriberNotificationService;
+import io.dataspaceconnector.service.message.subscription.SubscriberNotificationService;
 import io.dataspaceconnector.util.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -37,51 +38,65 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URI;
 
+*/
 /**
  * This @{@link ResourceUpdateMessageHandler} handles all incoming messages that have a
  * {@link de.fraunhofer.iais.eis.ResourceUpdateMessageImpl} as part one in the multipart message.
  * This header must have the correct '@type' reference as defined in the
  * {@link ResourceUpdateMessageImpl} JsonTypeName annotation.
- */
+ *//*
+
 
 @Component
 @RequiredArgsConstructor
 @SupportedMessageType(ResourceUpdateMessageImpl.class)
 public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpdateMessageImpl> {
 
-    /**
+    */
+/**
      * Service for building and sending message responses.
-     */
+     *//*
+
     private final @NonNull MessageResponseService responseService;
 
-    /**
+    */
+/**
      * Service for handling response messages.
-     */
+     *//*
+
     private final @NonNull MessageProcessedNotificationService messageService;
 
-    /**
+    */
+/**
      * Service for ids deserialization.
-     */
+     *//*
+
     private final @NonNull DeserializationService deserializationService;
 
-    /**
+    */
+/**
      * Service for updating database entities from ids object.
-     */
+     *//*
+
     private final @NonNull EntityUpdateService updateService;
 
-    /**
+    */
+/**
      * Service for notifying subscribers when a requested resource has been updated.
-     */
+     *//*
+
     private final @NonNull SubscriberNotificationService notificationService;
 
-    /**
+    */
+/**
      * This message implements the logic that is needed to handle the message. As it just returns
      * the input as string the messagePayload-InputStream is converted to a String.
      *
      * @param message The ids request message as header.
      * @param payload The notification message payload.
      * @return The response message.
-     */
+     *//*
+
     @Override
     public MessageResponse handleMessage(final ResourceUpdateMessageImpl message,
                                          final MessagePayload payload) throws RuntimeException {
@@ -119,7 +134,8 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
         return updateResource(payloadAsString, affected, issuer, messageId);
     }
 
-    /**
+    */
+/**
      * Update resource in internal database.
      *
      * @param payload   The payload as string.
@@ -127,7 +143,8 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
      * @param issuer    The issuer connector.
      * @param messageId The message id.
      * @return A message response.
-     */
+     *//*
+
     private MessageResponse updateResource(final String payload, final URI affected,
                                            final URI issuer, final URI messageId) {
         // Get ids resource from payload.
@@ -154,13 +171,15 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
         return respondToMessage(issuer, messageId);
     }
 
-    /**
+    */
+/**
      * Build and send response message.
      *
      * @param issuer    The issuer connector.
      * @param messageId The message id.
      * @return A message response.
-     */
+     *//*
+
     private MessageResponse respondToMessage(final URI issuer, final URI messageId) {
         try {
             // Build ids response message.
@@ -174,3 +193,4 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
         }
     }
 }
+*/

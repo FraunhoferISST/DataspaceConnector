@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.resource;
+package io.dataspaceconnector.service.message.subscription;
 
 import io.dataspaceconnector.model.Subscription;
+import io.dataspaceconnector.service.resource.RequestedResourceService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
