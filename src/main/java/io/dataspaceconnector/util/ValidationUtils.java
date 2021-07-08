@@ -17,9 +17,9 @@ package io.dataspaceconnector.util;
 
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
 
@@ -27,12 +27,6 @@ import java.util.Map;
  * This class provides methods to validate values.
  */
 public final class ValidationUtils {
-
-    /**
-     * The pattern for a date format.
-     */
-    private static final SimpleDateFormat SIMPLE_DATE_FORMAT =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     /**
      * Utility class does not have to be instantiated.
@@ -127,9 +121,9 @@ public final class ValidationUtils {
      */
     public static boolean isInvalidDate(final String string) {
         try {
-            SIMPLE_DATE_FORMAT.parse(string);
+            ZonedDateTime.parse(string, DateTimeFormatter.ISO_ZONED_DATE_TIME);
             return false;
-        } catch (ParseException e) {
+        } catch (DateTimeParseException e) {
             return true;
         }
     }
