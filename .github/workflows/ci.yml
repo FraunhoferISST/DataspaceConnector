@@ -50,6 +50,7 @@ jobs:
       run: mvn -B -U -Dmaven.javadoc.skip=true license:check --file pom.xml
 
   test:
+    needs: [style, license]
     timeout-minutes: 30
     runs-on: ${{ matrix.os }}
     strategy:
