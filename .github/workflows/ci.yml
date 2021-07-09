@@ -30,7 +30,7 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Run style checks
-      run: mvn -B -U -Dmaven.javadoc.skip=true checkstyle:check --file pom.xml
+      run: mvn -B -U checkstyle:check --file pom.xml
 
   license:
     timeout-minutes: 5
@@ -48,8 +48,8 @@ jobs:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
-    - name: Run style checks
-      run: mvn -B -U -Dmaven.javadoc.skip=true license:check --file pom.xml
+    - name: Run license checks
+      run: mvn -B -U license:check --file pom.xml
 
   linting:
     timeout-minutes: 5
@@ -69,6 +69,28 @@ jobs:
         output_format: github_failed_only
         download_external_modules: true
         soft_fail: true
+
+  static-code-analysis:
+    needs: [style, license, linting]
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK ${{ matrix.java }}
+      uses: actions/setup-java@v1
+      with:
+       java-version: 11
+    - name: Cache maven packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+    - name: Run static code analysis
+      run: mvn -B -U compile spotbugs:check --file pom.xml
 
   unit-and-integration-tests:
     needs: [style, license, linting]
@@ -94,10 +116,13 @@ jobs:
     - name: Unit- and Integrationtests
       run: mvn -B -U verify --file pom.xml -Prelease
 
-  test-introspection:
+  mutation-tests:
     needs: unit-and-integration-tests
     timeout-minutes: 30
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK ${{ matrix.java }}
@@ -117,37 +142,41 @@ jobs:
     needs: unit-and-integration-tests
     timeout-minutes: 15
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
 
     steps:
-      -
-        name: Checkout Repo
+      - name: Checkout Repo
         uses: actions/checkout@v2
-      -
-        name: Build registry path
+      - name: Build registry path
         id: get_repo
         run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspace-connector"
-      -
-       name: Login to registry
-       uses: docker/login-action@v1
-       with:
-         # This should use REGISTRY instead of the secret directly
-         registry: ${{ secrets.IMAGE_REGISTRY }}
-         username: ${{ github.actor }}
-         password: ${{ secrets.GITHUB_TOKEN }}
-      -
-       name: Build image
-       run: |
-        docker build . -t $IMAGE:ci
-       env:
-         IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
-      -
-       name: Push image
-       run: |
-         docker push $IMAGE:ci
-       env:
-         IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
+      - name: Login to registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.IMAGE_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build image
+        run: docker build . -t $IMAGE:ci
+        env:
+          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
+          DOCKER_BUILDKIT: 1
+      - name: Push image
+        run: docker push $IMAGE:ci
+        env:
+          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
+      - name: Run vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ steps.get_repo.outputs.IMAGE }}:ci'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
 
-  e2e:
+  e2e-tests:
     needs: build-test-image
     timeout-minutes: 30
     runs-on: ubuntu-latest

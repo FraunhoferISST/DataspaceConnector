@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.bootstrap.util;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -32,6 +33,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 /**
  * Offers utility functions for bootstrapping data.
  */
@@ -150,6 +152,7 @@ public final class BootstrapUtils {
      * extension and optional required filename.
      * @throws FileNotFoundException if the given path does not exist.
      */
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     public static List<File> findFilesByExtension(final String path, final String filename,
                                                   final String extension)
             throws FileNotFoundException {
