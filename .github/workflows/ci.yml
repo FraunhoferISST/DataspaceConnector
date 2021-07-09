@@ -30,7 +30,7 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Run style checks
-      run: mvn -B -U -Dmaven.javadoc.skip=true checkstyle:check --file pom.xml
+      run: mvn -B -U checkstyle:check --file pom.xml
 
   license:
     timeout-minutes: 5
@@ -49,7 +49,7 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Run license checks
-      run: mvn -B -U -Dmaven.javadoc.skip=true license:check --file pom.xml
+      run: mvn -B -U license:check --file pom.xml
 
   linting:
     timeout-minutes: 5
@@ -87,7 +87,7 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Run static code analysis
-      run: mvn -B -U -Dmaven.javadoc.skip=true spotbugs:check --file pom.xml
+      run: mvn -B -U compile spotbugs:check --file pom.xml
 
   unit-and-integration-tests:
     needs: [style, license, linting, static-code-analysis]

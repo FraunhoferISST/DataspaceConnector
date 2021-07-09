@@ -270,7 +270,7 @@ class PayloadStreamReader extends IdsTransformer<
         inputStream.reset();
 
         var payload = "Payload could not be read from request.";
-        try (final var reader = new BufferedReader(new InputStreamReader(inputStream))) {
+        try (var reader = new BufferedReader(new InputStreamReader(inputStream))) {
             payload = reader.lines().parallel().collect(Collectors.joining("\n"));
         }
 
