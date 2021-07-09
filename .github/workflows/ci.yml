@@ -16,6 +16,7 @@ jobs:
   style:
     timeout-minutes: 5
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK ${{ matrix.java }}
@@ -34,6 +35,7 @@ jobs:
   license:
     timeout-minutes: 5
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK ${{ matrix.java }}
@@ -54,7 +56,6 @@ jobs:
     timeout-minutes: 30
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         java: [11, 12, 13, 14, 15, 16]
@@ -78,8 +79,6 @@ jobs:
     needs: unit-and-integration-tests
     timeout-minutes: 30
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK ${{ matrix.java }}
@@ -99,6 +98,7 @@ jobs:
     needs: unit-and-integration-tests
     timeout-minutes: 15
     runs-on: ubuntu-latest
+
     steps:
       -
         name: Checkout Repo
