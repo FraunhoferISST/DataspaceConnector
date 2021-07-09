@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
-import java.net.URI;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,11 +23,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConnectorEndpointFactory
         extends EndpointFactory<ConnectorEndpoint, ConnectorEndpointDesc> {
-
-    /**
-     * Default absolute path.
-     */
-    private static final URI DEFAULT_ACCESS_URL = URI.create("https://path");
 
     /**
      * @param desc The description passed to the factory.
