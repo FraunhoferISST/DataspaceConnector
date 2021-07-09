@@ -18,14 +18,16 @@ apiVersion: v1
 kind: Secret
 type: Opaque
 metadata:
-  name: {{ include "dataspace-connector.fullname" . }}
+  name: {{ include "dataspace-connector.fullname" . }}-certs
   labels:
     {{- include "dataspace-connector.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
 data:
-  {{- range $key, $val := .Values.env.secrets }}
-    {{- $key }}: {{ $val | b64enc }}
-  {{- end}}
-  {{- if .Values.postgresql }}
-  SPRING_DATASOURCE_USERNAME: {{ .Values.postgresql.postgresqlUsername }}
-  SPRING_DATASOURCE_PASSWORD: {{ .Values.postgresql.postgresqlPassword }}
-  {{- end}}
+{{ ( include "dataspace-connector.gen-certs" . ) | indent 2 }}
+  {{- $files := .Files }}
+  {{- range tuple "truststore.p12" "keystore.p12"}}
+  {{ . }}: |-
+        {{ $files.Get . | b64enc}}
+  {{- end }}
