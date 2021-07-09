@@ -93,8 +93,7 @@ public abstract class AbstractFactory<T extends Entity, D extends Description> {
     }
 
     protected final boolean updateBootstrapId(final T entity, final URI bootstrapId) {
-        // TODO Fix me
-        if (bootstrapId == null) {
+        if (entity.getBootstrapId() == null && bootstrapId == null) {
             return false;
         }
 
