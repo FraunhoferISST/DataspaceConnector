@@ -20,8 +20,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -57,6 +55,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(properties = {"clearing.house.url=https://ch-ids.aisec.fraunhofer.de/logs/messages/"})
@@ -237,16 +237,13 @@ class ContractAgreementHandlerTest {
 
         /* ASSERT */
         assertNotNull(result.getHeader());
-
-        //TODO fails because deserializer changes timezone of dates from +2:00 to Z
-//        verify(logMessageService, times(1)).sendMessage(chUri, agreement.toRdf());
+        verify(logMessageService, times(1)).sendMessage(chUri, agreement.toRdf());
     }
 
     @SneakyThrows
     private XMLGregorianCalendar getXmlCalendar() {
-        final var calendar = new GregorianCalendar();
-        calendar.setTime(new Date());
-        return DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
+        return DatatypeFactory.newInstance()
+                        .newXMLGregorianCalendar("2009-05-07T17:05:45.678Z");
     }
 
     @SneakyThrows
