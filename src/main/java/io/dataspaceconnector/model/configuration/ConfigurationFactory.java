@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.model.configuration;
 
-import java.util.Objects;
-
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
@@ -93,22 +91,28 @@ public class ConfigurationFactory extends AbstractFactory<Configuration, Configu
 
     private boolean updateDeployMode(final Configuration config,
                                      final DeployMode deployMode) {
-        // TODO
-        config.setDeployMode(Objects.requireNonNullElse(deployMode, DeployMode.TEST));
+        if (deployMode.equals(config.getDeployMode())) {
+            return false;
+        }
+
+        config.setDeployMode(deployMode);
         return true;
     }
 
     private boolean updateLogLevel(final Configuration config, final LogLevel logLevel) {
-        // TODO
-        config.setLogLevel(Objects.requireNonNullElse(logLevel, LogLevel.OFF));
+        if (config.getLogLevel().equals(logLevel)) {
+            return false;
+        }
+
+        config.setLogLevel(logLevel);
         return true;
     }
 
     private boolean updateProxy(final Configuration configuration, final ProxyDesc desc) {
-        // TODO only update if proxy really changed
         if (configuration.getProxy() == null && desc == null) {
             return false;
         }
+
         if (configuration.getProxy() != null && desc == null) {
             configuration.setProxy(null);
             return true;
