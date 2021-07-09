@@ -539,7 +539,7 @@
 						<threshold>Low</threshold>
 						<xmlOutput>true</xmlOutput>
 						<excludeFilterFile>./scripts/ci/spotbugs-excludes.xml</excludeFilterFile>
-						<failThreshold>High</failThreshold>
+						<failThreshold>Medium</failThreshold>
 						<plugins>
 							<plugin>
 								<groupId>com.h3xstream.findsecbugs</groupId>
