@@ -269,11 +269,9 @@ class PayloadStreamReader extends IdsTransformer<
         // Reset the stream so it can be read again.
         inputStream.reset();
 
-        String payload;
+        var payload = "Payload could not be read from request.";
         try (final var reader = new BufferedReader(new InputStreamReader(inputStream))) {
             payload = reader.lines().parallel().collect(Collectors.joining("\n"));
-        } catch (Exception e) {
-            payload = "Payload could not be read from request.";
         }
 
         return new Request<>(msg.getHeader(), payload);
