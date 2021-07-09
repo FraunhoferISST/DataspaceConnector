@@ -135,19 +135,19 @@ jobs:
         env:
           IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
           DOCKER_BUILDKIT: 1
+      - name: Push image
+        run: docker push $IMAGE:ci
+        env:
+          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
       - name: Run vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: '${{ steps.get_repo.outputs.IMAGE }}:${{ steps.get_branch.outputs.BRANCH }}'
+          image-ref: '${{ steps.get_repo.outputs.IMAGE }}:ci'
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
-      - name: Push image
-        run: docker push $IMAGE:ci
-        env:
-          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
 
   e2e-tests:
     needs: build-test-image
