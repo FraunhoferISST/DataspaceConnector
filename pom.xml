@@ -540,6 +540,7 @@
 						<xmlOutput>true</xmlOutput>
 						<excludeFilterFile>./scripts/ci/spotbugs-excludes.xml</excludeFilterFile>
 						<failThreshold>Medium</failThreshold>
+						<fork>false</fork>
 						<plugins>
 							<plugin>
 								<groupId>com.h3xstream.findsecbugs</groupId>

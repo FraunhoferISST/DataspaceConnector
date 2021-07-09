@@ -48,7 +48,7 @@ jobs:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
-    - name: Run style checks
+    - name: Run license checks
       run: mvn -B -U -Dmaven.javadoc.skip=true license:check --file pom.xml
 
   linting:
@@ -86,7 +86,7 @@ jobs:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
-    - name: Run style checks
+    - name: Run static code analysis
       run: mvn -B -U -Dmaven.javadoc.skip=true spotbugs:check --file pom.xml
 
   unit-and-integration-tests:
