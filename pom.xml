@@ -392,6 +392,13 @@
 			<version>${camel.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.github.spotbugs</groupId>
+			<artifactId>spotbugs-annotations</artifactId>
+			<version>${spotbugs.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
 
 	</dependencies>
 
@@ -522,6 +529,25 @@
 							<version>${pmd.version}</version>
 						  </dependency>
 					</dependencies>
+				</plugin>
+				<plugin>
+					<groupId>com.github.spotbugs</groupId>
+					<artifactId>spotbugs-maven-plugin</artifactId>
+					<version>${spotbugs.version}</version>
+					<configuration>
+						<effort>Max</effort>
+						<threshold>Low</threshold>
+						<xmlOutput>true</xmlOutput>
+						<excludeFilterFile>./scripts/ci/spotbugs-excludes.xml</excludeFilterFile>
+						<failThreshold>High</failThreshold>
+						<plugins>
+							<plugin>
+								<groupId>com.h3xstream.findsecbugs</groupId>
+								<artifactId>findsecbugs-plugin</artifactId>
+								<version>${findsecbugs-plugin.version}</version>
+							</plugin>
+						</plugins>
+					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -756,20 +782,6 @@
 			<plugin>
 				<groupId>com.github.spotbugs</groupId>
 				<artifactId>spotbugs-maven-plugin</artifactId>
-				<version>${spotbugs.version}</version>
-				<configuration>
-					<effort>Max</effort>
-					<threshold>Low</threshold>
-					<xmlOutput>true</xmlOutput>
-					<excludeFilterFile>./scripts/ci/spotbugs-excludes.xml</excludeFilterFile>
-					<plugins>
-						<plugin>
-							<groupId>com.h3xstream.findsecbugs</groupId>
-							<artifactId>findsecbugs-plugin</artifactId>
-							<version>${findsecbugs-plugin.version}</version>
-						</plugin>
-					</plugins>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

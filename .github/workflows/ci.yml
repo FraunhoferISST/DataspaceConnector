@@ -70,8 +70,27 @@ jobs:
         download_external_modules: true
         soft_fail: true
 
+  static-code-analysis:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK ${{ matrix.java }}
+      uses: actions/setup-java@v1
+      with:
+       java-version: 11
+    - name: Cache maven packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+    - name: Run style checks
+      run: mvn -B -U -Dmaven.javadoc.skip=true spotbugs:check --file pom.xml
+
   unit-and-integration-tests:
-    needs: [style, license, linting]
+    needs: [style, license, linting, static-code-analysis]
     timeout-minutes: 30
     runs-on: ${{ matrix.os }}
     strategy:

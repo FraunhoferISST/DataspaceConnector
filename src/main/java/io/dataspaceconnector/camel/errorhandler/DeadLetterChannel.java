@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.camel.errorhandler;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,13 +39,16 @@ public class DeadLetterChannel extends RouteBuilder {
      * and then sends this to the Configuration Manager.
      */
     @Override
+    @SuppressFBWarnings("CRLF_INJECTION_LOGS")
     public void configure() {
         onException(Exception.class)
                 .process(exchange -> {
-                    final var cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT,
-                            Exception.class);
-                    log.warn("Failed to send error logs to Configuration Manager. [exception=({})]",
-                            cause.getMessage());
+                    if (log.isWarnEnabled()) {
+                        final var cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT,
+                                                               Exception.class);
+                        log.warn("Failed to send error logs to Configuration Manager. "
+                                 + "[exception=({})]", cause.getMessage());
+                    }
                 })
                 .handled(true);
 

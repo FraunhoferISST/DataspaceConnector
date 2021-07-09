@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.config;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,6 +46,7 @@ public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
     private boolean isH2ConsoleEnabled;
 
     @Override
+    @SuppressFBWarnings("SPRING_CSRF_PROTECTION_DISABLED")
     protected final void configure(final HttpSecurity http) throws Exception {
         http
                 .sessionManagement()
