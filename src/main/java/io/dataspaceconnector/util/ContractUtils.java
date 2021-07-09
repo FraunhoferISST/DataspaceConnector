@@ -197,7 +197,6 @@ public final class ContractUtils {
      */
     public static void validateRuleAssigner(final ContractAgreement agreement)
             throws ContractException {
-        // TODO implement later
         // NOTE: Recipient url might not be the connector id.
     }
 
