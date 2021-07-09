@@ -254,8 +254,6 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
 
     private boolean shouldDownload(final Artifact artifact, final Boolean forceDownload) {
         if (forceDownload == null) {
-            // TODO: Add checks if the data is still up to date. This will remove unnecessary
-            //  downloads.
             return !isDataPresent() || artifact.isAutomatedDownload();
         } else {
             return forceDownload;
@@ -263,7 +261,6 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     }
 
     private boolean isDataPresent() {
-        // TODO: Check if the data has been downloaded at least once.
         return false;
     }
 
@@ -368,7 +365,6 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                 throw new IOException("Failed to store data.", e);
             }
         } else {
-            // TODO Push data to remote backend. Missing concept.
             throw new NotImplementedError();
         }
     }
