@@ -7,7 +7,7 @@
         <from uri="idscp2server://0.0.0.0:29292?sslContextParameters=#serverSslContext&amp;useIdsMessages=true"/>
         <log message="${body}"/>
         <process ref="TypeExtractionProcessor"/>
-        <process ref="idscpWrapperProcessorIncoming"/>
+        <process ref="IncomingIdscpMessageParser"/>
         <choice>
             <when>
                 <simple>${exchangeProperty.ids-type} == 'DescriptionRequestMessage'</simple>
@@ -34,7 +34,7 @@
                 <to uri="direct:resourceUpdateHandler"/>
             </when>
         </choice>
-        <process ref="idscpWrapperProcessorOutgoing"/>
+        <process ref="OutgoingIdscpMessageParser"/>
     </route>
 
 </routes>

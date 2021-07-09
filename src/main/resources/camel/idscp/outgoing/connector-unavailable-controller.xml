@@ -1,0 +1,13 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="connectorUnavailableSender">
+
+        <from uri="direct:connectorUnavailableSender"/>
+        <process ref="ConfigurationUpdater"/>
+        <process ref="ConnectorUpdateMessageBuilder"/>
+        <process ref="RequestWithConnectorPayloadPreparer"/>
+        <to uri="idscp2client://${exchangeProperty.recipient}?awaitResponse=true&amp;connectionShareId=ucConnection
+            &amp;sslContextParameters=#serverSslContext&amp;useIdsMessages=true"/>
+        <process ref="ResponseToDtoConverter"/>
+
+    </route>
+</routes>
