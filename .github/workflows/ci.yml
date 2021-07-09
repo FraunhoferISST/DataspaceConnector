@@ -119,35 +119,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      -
-        name: Checkout Repo
+      - name: Checkout Repo
         uses: actions/checkout@v2
-      -
-        name: Build registry path
+      - name: Build registry path
         id: get_repo
         run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspace-connector"
-      -
-       name: Login to registry
-       uses: docker/login-action@v1
-       with:
-         # This should use REGISTRY instead of the secret directly
-         registry: ${{ secrets.IMAGE_REGISTRY }}
-         username: ${{ github.actor }}
-         password: ${{ secrets.GITHUB_TOKEN }}
-      -
-       name: Build image
-       run: |
-        docker build . -t $IMAGE:ci
-       env:
-         IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
-      -
-       name: Push image
-       run: |
-         docker push $IMAGE:ci
-       env:
-         IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
+      - name: Login to registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.IMAGE_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build image
+        run: docker build . -t $IMAGE:ci
+        env:
+          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
+          DOCKER_BUILDKIT: 1
+      - name: Push image
+        run: docker push $IMAGE:ci
+        env:
+          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
 
-  e2e:
+  e2e-tests:
     needs: build-test-image
     timeout-minutes: 30
     runs-on: ubuntu-latest
