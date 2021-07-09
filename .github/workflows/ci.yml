@@ -71,7 +71,7 @@ jobs:
         soft_fail: true
 
   unit-and-integration-tests:
-    needs: [style, license]
+    needs: [style, license, linting]
     timeout-minutes: 30
     runs-on: ${{ matrix.os }}
     strategy:
