@@ -65,6 +65,21 @@ public final class RelationServices {
     }
 
     /**
+     * Handles the relation between artifacts and subscriptions.
+     */
+    @Service
+    @NoArgsConstructor
+    public static class ArtifactSubscriptionLinker
+            extends NonOwningRelationService<Artifact, Subscription, ArtifactService,
+            SubscriptionService> {
+
+        @Override
+        protected final List<Subscription> getInternal(final Artifact owner) {
+            return owner.getSubscriptions();
+        }
+    }
+
+    /**
      * Handles the relation between representations and offered resources.
      */
     @Service
@@ -93,6 +108,22 @@ public final class RelationServices {
         @SuppressWarnings("unchecked")
         protected final List<RequestedResource> getInternal(final Representation owner) {
             return (List<RequestedResource>) (List<?>) owner.getResources();
+        }
+    }
+
+    /**
+     * Handles the relation between representations and subscriptions.
+     */
+    @Service
+    @NoArgsConstructor
+    public static class RepresentationSubscriptionLinker
+            extends NonOwningRelationService<Representation, Subscription,
+            RepresentationService, SubscriptionService> {
+
+        @Override
+        @SuppressWarnings("unchecked")
+        protected final List<Subscription> getInternal(final Representation owner) {
+            return (List<Subscription>) (List<?>) owner.getSubscriptions();
         }
     }
 
@@ -196,6 +227,7 @@ public final class RelationServices {
             Artifact, RepresentationService, ArtifactService> {
         /**
          * Get the list of artifacts owned by the representation.
+         *
          * @param owner The owner of the artifacts.
          * @return The list of owned artifacts.
          */
@@ -214,6 +246,7 @@ public final class RelationServices {
             ContractService, RuleService> {
         /**
          * Get the list of rules owned by the contract.
+         *
          * @param owner The owner of the rules.
          * @return The list of owned rules.
          */

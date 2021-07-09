@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers.OfferedResourceController;
 import io.dataspaceconnector.model.OfferedResource;
@@ -52,7 +50,7 @@ public class OfferedResourceViewAssembler
 
         final var contractsLink =
                 linkTo(methodOn(RelationControllers.OfferedResourcesToContracts.class)
-                                .getResource(resource.getId(), null, null))
+                        .getResource(resource.getId(), null, null))
                         .withRel("contracts");
         view.add(contractsLink);
 

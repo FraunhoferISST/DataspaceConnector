@@ -118,12 +118,6 @@ public class Resource extends AbstractEntity {
     private List<Representation> representations;
 
     /**
-     * List of subscribers subscribed to updates for this resource.
-     */
-    @ManyToMany
-    private List<Subscription> subscriptions;
-
-    /**
      * The contracts available for the resource.
      */
     @ManyToMany
@@ -152,4 +146,10 @@ public class Resource extends AbstractEntity {
          */
         throw new ResourceException("Not implemented");
     }
+
+    /**
+     * List of subscriptions listening to updates for this resource.
+     */
+    @ManyToMany
+    private List<Subscription> subscriptions;
 }

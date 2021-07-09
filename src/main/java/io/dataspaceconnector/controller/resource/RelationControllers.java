@@ -82,6 +82,16 @@ public final class RelationControllers {
     }
 
     /**
+     * Offers the endpoints for managing the relations between artifacts and subscriptions.
+     */
+    @RestController
+    @RequestMapping("/api/artifacts/{id}/subscriptions")
+    @Tag(name = ResourceNames.ARTIFACTS, description = ResourceDescriptions.ARTIFACTS)
+    public static class ArtifactsToSubscriptions extends BaseResourceChildController<
+            RelationServices.ArtifactSubscriptionLinker, Subscription, SubscriptionView> {
+    }
+
+    /**
      * Offers the endpoints for managing the relations between representations and offered
      * resources.
      */
@@ -103,6 +113,16 @@ public final class RelationControllers {
     public static class RepresentationsToRequestedResources extends BaseResourceChildController<
             RelationServices.RepresentationOfferedResourceLinker, RequestedResource,
             RequestedResourceView> {
+    }
+
+    /**
+     * Offers the endpoints for managing the relations between representations and subscriptions.
+     */
+    @RestController
+    @RequestMapping("/api/representations/{id}/subscriptions")
+    @Tag(name = ResourceNames.REPRESENTATIONS, description = ResourceDescriptions.REPRESENTATIONS)
+    public static class RepresentationsToSubscriptions extends BaseResourceChildController<
+            RelationServices.RepresentationSubscriptionLinker, Subscription, SubscriptionView> {
     }
 
     /**
@@ -132,8 +152,7 @@ public final class RelationControllers {
     @RequestMapping("/api/contracts/{id}/offers")
     @Tag(name = ResourceNames.CONTRACTS, description = ResourceDescriptions.CONTRACTS)
     public static class ContractsToOfferedResources extends BaseResourceChildController<
-            RelationServices.ContractOfferedResourceLinker, OfferedResource,
-            OfferedResourceView> {
+            RelationServices.ContractOfferedResourceLinker, OfferedResource, OfferedResourceView> {
     }
 
     /**

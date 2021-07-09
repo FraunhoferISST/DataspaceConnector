@@ -35,6 +35,7 @@ public class SubscriptionViewAssembler
 
     /**
      * Constructs the SubscriberView from a Subscription.
+     *
      * @param subscription the subscription.
      * @return the corresponding subscription view.
      */
@@ -49,12 +50,14 @@ public class SubscriptionViewAssembler
 
     /**
      * Returns the self link for a subscription.
+     *
      * @param entityId the ID of the subscription.
      * @return the self link.
      */
     @Override
     public Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, ResourceControllers.SubscriptionController.class);
+        return ViewAssemblerHelper.getSelfLink(entityId,
+                ResourceControllers.SubscriptionController.class);
     }
 
 }

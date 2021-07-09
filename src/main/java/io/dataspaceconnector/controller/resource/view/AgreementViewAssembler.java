@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers.AgreementController;
 import io.dataspaceconnector.model.Agreement;
@@ -25,6 +23,8 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -42,7 +42,7 @@ public class AgreementViewAssembler
 
         final var artifactLink = WebMvcLinkBuilder
                 .linkTo(methodOn(RelationControllers.AgreementsToArtifacts.class)
-                .getResource(agreement.getId(), null, null))
+                        .getResource(agreement.getId(), null, null))
                 .withRel("artifacts");
         view.add(artifactLink);
 
