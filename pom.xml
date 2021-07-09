@@ -487,15 +487,6 @@
 						<consoleOutput>true</consoleOutput>
 						<failOnViolation>true</failOnViolation>
 					</configuration>
-					<executions>
-						<execution>
-							<id>validate</id>
-							<phase>verify</phase>
-							<goals>
-								<goal>check</goal>
-							</goals>
-						</execution>
-					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -685,15 +676,6 @@
 					<coverageThreshold>95</coverageThreshold>
 					<mutationThreshold>90</mutationThreshold>
 				</configuration>
-				<executions>
-					<execution>
-						<id>verify</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>mutationCoverage</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
