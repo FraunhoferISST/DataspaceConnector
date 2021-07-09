@@ -51,6 +51,25 @@ jobs:
     - name: Run style checks
       run: mvn -B -U -Dmaven.javadoc.skip=true license:check --file pom.xml
 
+  linting:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Lint Docker
+      uses: hadolint/hadolint-action@v1.5.0
+      with:
+        dockerfile: Dockerfile
+        config: .hadolint.yaml
+    - name: Lint Docker and Yaml
+      uses: bridgecrewio/checkov-action@master
+      with:
+        directory: .
+        quiet: true
+        output_format: github_failed_only
+        download_external_modules: true
+        soft_fail: true
+
   unit-and-integration-tests:
     needs: [style, license]
     timeout-minutes: 30
