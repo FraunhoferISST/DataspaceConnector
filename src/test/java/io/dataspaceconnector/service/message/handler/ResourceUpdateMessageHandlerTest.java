@@ -217,10 +217,7 @@ class ResourceUpdateMessageHandlerTest {
         final var result = (BodyResponse<?>) handler.handleMessage((ResourceUpdateMessageImpl) message,
                                                                 new MessagePayloadInputstream(stream, new ObjectMapper()));
 
-        /* ASSERT TODO*/
-        // Mockito.verify(updateService).updateResource(Mockito.argThat(x -> x.getId().equals(resource.getId())));
-        // Mockito.verify(updateService).updateRepresentation(Mockito.argThat(x -> x.getId().equals(representation.getId())));
-        // Mockito.verify(updateService).updateArtifact(Mockito.argThat(x -> x.getId().equals(artifact.getId())));
+        /* ASSERT */
         assertTrue(result.getHeader() instanceof MessageProcessedNotificationMessage);
     }
 
