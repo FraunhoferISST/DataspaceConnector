@@ -212,8 +212,7 @@ public class ContractManager {
                 ._consumer_(issuer)
                 ._contractDate_(IdsMessageUtils.getGregorianNow())
                 ._contractStart_(IdsMessageUtils.getGregorianNow())
-                ._contractEnd_(request.getContractEnd()) // TODO Improve calculation of contract
-                // end.
+                ._contractEnd_(request.getContractEnd())
                 ._obligation_(obligations)
                 ._permission_(permissions)
                 ._prohibition_(prohibitions)
