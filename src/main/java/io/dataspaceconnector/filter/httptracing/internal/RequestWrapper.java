@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import lombok.extern.log4j.Log4j2;
@@ -83,9 +84,9 @@ public final class RequestWrapper extends HttpServletRequestWrapper {
     }
 
     @Override
-    public BufferedReader getReader() {
+    public BufferedReader getReader() throws UnsupportedEncodingException {
         final var bais = new ByteArrayInputStream(this.requestBody);
-        return new BufferedReader(new InputStreamReader(bais));
+        return new BufferedReader(new InputStreamReader(bais, this.getCharacterEncoding()));
     }
 
     /**
