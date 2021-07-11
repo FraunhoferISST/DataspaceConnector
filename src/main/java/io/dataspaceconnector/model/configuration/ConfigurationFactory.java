@@ -105,20 +105,22 @@ public class ConfigurationFactory extends AbstractFactory<Configuration, Configu
 
     private boolean updateDeployMode(final Configuration config,
                                      final DeployMode deployMode) {
-        if (config.getDeployMode().equals(deployMode)) {
+        final var tmp = deployMode == null ? DEFAULT_DEPLOY_MODE : deployMode;
+        if (config.getDeployMode().equals(tmp)) {
             return false;
         }
 
-        config.setDeployMode(deployMode);
+        config.setDeployMode(tmp);
         return true;
     }
 
     private boolean updateLogLevel(final Configuration config, final LogLevel logLevel) {
-        if (config.getLogLevel().equals(logLevel)) {
+        final var tmp = logLevel == null ? DEFAULT_LOG_LEVEL : logLevel;
+        if (config.getLogLevel().equals(tmp)) {
             return false;
         }
 
-        config.setLogLevel(logLevel);
+        config.setLogLevel(tmp);
         return true;
     }
 
