@@ -15,9 +15,16 @@
  */
 package io.dataspaceconnector.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
 import io.dataspaceconnector.util.ErrorMessages;
-import io.dataspaceconnector.util.Utils;
 import io.dataspaceconnector.util.QueryInput;
+import io.dataspaceconnector.util.Utils;
 import kotlin.NotImplementedError;
 import kotlin.Pair;
 import lombok.Data;
@@ -27,13 +34,6 @@ import lombok.RequiredArgsConstructor;
 import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import org.springframework.stereotype.Service;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This class builds up http or httpS endpoint connections and sends GET requests.
@@ -154,7 +154,7 @@ public class HttpService {
 
     private InputStream getBody(final okhttp3.Response response) throws IOException {
         final var body = response.body();
-        if(body != null) {
+        if (body != null) {
             final var tmp = body.bytes();
             body.close();
             return new ByteArrayInputStream(tmp);
@@ -208,8 +208,10 @@ public class HttpService {
 
     private HttpUrl toUrl(final URL target) {
         final var url = HttpUrl.get(target);
-        if(url == null)
+        if (url == null) {
             throw new IllegalArgumentException();
+        }
+
         return url;
     }
 
