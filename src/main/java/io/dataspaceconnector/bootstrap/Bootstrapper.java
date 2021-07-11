@@ -182,7 +182,6 @@ public class Bootstrapper {
      * @param properties Bootstrap properties.
      * @param resources  The ids resources to register.
      * @return true if all resources could be registered.
-     * @throws URISyntaxException
      */
     private boolean registerAtBroker(final Properties properties,
                                     final Map<URI, Resource> resources) {
