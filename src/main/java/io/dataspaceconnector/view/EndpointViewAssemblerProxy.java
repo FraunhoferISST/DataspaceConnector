@@ -56,14 +56,15 @@ public class EndpointViewAssemblerProxy
      */
     @Override
     public RepresentationModel<?> toModel(final Endpoint endpoint) {
-        if (AppEndpoint.class.equals(endpoint.getClass())) {
+        if (endpoint instanceof AppEndpoint) {
             return appAssembler.toModel((AppEndpoint) endpoint);
         }
 
-        if (ConnectorEndpoint.class.equals(endpoint.getClass())) {
+        if (endpoint instanceof ConnectorEndpoint) {
             return connectorAssembler.toModel((ConnectorEndpoint) endpoint);
         }
 
+        assert endpoint instanceof GenericEndpoint;
         return genericAssembler.toModel((GenericEndpoint) endpoint);
     }
 }
