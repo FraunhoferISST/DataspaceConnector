@@ -49,12 +49,26 @@ public class ConfigurationFactory extends AbstractFactory<Configuration, Configu
     private final @NonNull KeystoreFactory keystoreFactory;
 
     /**
+     * Default log level.
+     */
+    public static final LogLevel DEFAULT_LOG_LEVEL = LogLevel.WARN;
+
+    /**
+     * Default deploy mode.
+     */
+    public static final DeployMode DEFAULT_DEPLOY_MODE = DeployMode.TEST;
+
+    /**
      * @param desc The description of the entity.
      * @return The new configuration entity.
      */
     @Override
     protected Configuration initializeEntity(final ConfigurationDesc desc) {
-        return new Configuration();
+        final var config = new Configuration();
+        config.setLogLevel(DEFAULT_LOG_LEVEL);
+        config.setDeployMode(DEFAULT_DEPLOY_MODE);
+
+        return config;
     }
 
     /**
@@ -91,7 +105,7 @@ public class ConfigurationFactory extends AbstractFactory<Configuration, Configu
 
     private boolean updateDeployMode(final Configuration config,
                                      final DeployMode deployMode) {
-        if (deployMode.equals(config.getDeployMode())) {
+        if (config.getDeployMode().equals(deployMode)) {
             return false;
         }
 
