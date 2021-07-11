@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.model.artifact;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -46,7 +48,12 @@ import org.hibernate.annotations.Where;
 @EqualsAndHashCode
 @RequiredArgsConstructor
 @SuppressWarnings("PMD.ShortClassName")
-public class Data {
+public class Data implements Serializable {
+
+    /**
+     * Serial version uid.
+     **/
+    private static final long serialVersionUID = 1L;
 
     /**
      * The primary key of the data.
