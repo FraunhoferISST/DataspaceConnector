@@ -15,19 +15,62 @@
  */
 package io.dataspaceconnector.model.configuration;
 
-import io.dataspaceconnector.model.base.Description;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dataspaceconnector.model.NamedDescription;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.proxy.ProxyDesc;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.net.URI;
+import java.util.List;
+
 /**
  * Describing the configuration's properties.
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ConfigurationDesc extends Description {
+public class ConfigurationDesc extends NamedDescription {
+
+    /**
+     * The access url of the connector.
+     */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private URI connectorEndpoint;
+
+    /**
+     * The project version.
+     */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String version;
+
+    /**
+     * The curator.
+     */
+    private URI curator;
+
+    /**
+     * The maintainer.
+     */
+    private URI maintainer;
+
+    /**
+     * The list of inbound model version.
+     */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private List<String> inboundModelVersion;
+
+    /**
+     * The outbound model version.
+     */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String outboundModelVersion;
+
+    /**
+     * The security profile.
+     */
+    private SecurityProfile securityProfile;
 
     /**
      * The log level.

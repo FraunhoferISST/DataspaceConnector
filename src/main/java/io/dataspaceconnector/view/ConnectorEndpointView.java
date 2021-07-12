@@ -16,6 +16,7 @@
 package io.dataspaceconnector.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.dataspaceconnector.model.endpoint.EndpointType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,6 +34,11 @@ import java.time.ZonedDateTime;
 @EqualsAndHashCode(callSuper = true)
 @Relation(collectionRelation = "endpoints", itemRelation = "endpoint")
 public class ConnectorEndpointView extends RepresentationModel<ConnectorEndpointView> {
+
+    /**
+     * The endpoint type.
+     */
+    private final EndpointType type = EndpointType.CONNECTOR;
 
     /**
      * The creation date.
