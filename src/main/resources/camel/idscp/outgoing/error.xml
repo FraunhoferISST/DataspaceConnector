@@ -54,4 +54,10 @@
         <to uri="bean:io.dataspaceconnector.util.ControllerUtils?method=respondResourceNotFound(${exchangeProperty.resourceId})"/>
     </route>
 
+    <route id="configUpdateException">
+        <from uri="direct:handleConfigUpdateException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling ConfigUpdateException called."/>
+        <to uri="bean:io.dataspaceconnector.util.ControllerUtils?method=respondConfigurationUpdateError(${exception})"/>
+    </route>
+
 </routes>
