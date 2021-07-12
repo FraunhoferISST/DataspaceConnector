@@ -15,30 +15,29 @@
  */
 package io.dataspaceconnector.controller.resource.swagger.response;
 
-/**
- * This class holds information about response codes.
- */
-public class ResponseCodes {
+import org.junit.jupiter.api.Test;
 
-    private ResponseCodes() {
-        // Nothing to do here.
+import static org.junit.jupiter.api.Assertions.*;
+
+class ResponseCodesTest {
+
+    @Test
+    public void ok_is_code_200() {
+        assertEquals("200", ResponseCodes.OK);
     }
 
-    /**
-     * Response code is OK.
-     */
-    @SuppressWarnings("PMD.ShortVariable")
-    public static final String OK = "200";
-    /**
-     * Response code is CREATED.
-     */
-    public static final String CREATED = "201";
-    /**
-     * Response code is NO_CONTENT.
-     */
-    public static final String NO_CONTENT = "204";
-    /**
-     * Response code is METHOD_NOT_ALLOWED.
-     */
-    public static final String METHOD_NOT_ALLOWED = "405";
+    @Test
+    public void created_is_code_201() {
+        assertEquals("201", ResponseCodes.CREATED);
+    }
+
+    @Test
+    public void no_content_is_code_204() {
+        assertEquals("204", ResponseCodes.NO_CONTENT);
+    }
+
+    @Test
+    public void method_not_allowed_is_code_405() {
+        assertEquals("405", ResponseCodes.METHOD_NOT_ALLOWED);
+    }
 }
