@@ -43,10 +43,6 @@ public class SubscriptionFactory implements AbstractFactory<Subscription, Subscr
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var subscription = new Subscription();
-        subscription.setUrl(desc.getUrl());
-        subscription.setTarget(desc.getTarget());
-        subscription.setPushData(desc.isPushData());
-        subscription.setSubscriber(desc.getSubscriber());
 
         update(subscription, desc);
 

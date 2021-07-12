@@ -88,6 +88,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         resource.setRepresentations(new ArrayList<>());
         resource.setContracts(new ArrayList<>());
         resource.setCatalogs(new ArrayList<>());
+        resource.setSubscriptions(new ArrayList<>());
 
         update(resource, desc);
 

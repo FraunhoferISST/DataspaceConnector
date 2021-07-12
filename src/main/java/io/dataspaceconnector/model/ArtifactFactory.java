@@ -68,6 +68,7 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
         final var artifact = new ArtifactImpl();
         artifact.setAgreements(new ArrayList<>());
         artifact.setRepresentations(new ArrayList<>());
+        artifact.setSubscriptions(new ArrayList<>());
         if (desc.getBootstrapId() != null) {
             artifact.setBootstrapId(URI.create(desc.getBootstrapId()));
         }

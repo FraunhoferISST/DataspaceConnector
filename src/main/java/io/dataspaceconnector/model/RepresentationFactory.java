@@ -69,6 +69,7 @@ public class RepresentationFactory implements AbstractFactory<Representation, Re
         final var representation = new Representation();
         representation.setArtifacts(new ArrayList<>());
         representation.setResources(new ArrayList<>());
+        representation.setSubscriptions(new ArrayList<>());
 
         update(representation, desc);
 
