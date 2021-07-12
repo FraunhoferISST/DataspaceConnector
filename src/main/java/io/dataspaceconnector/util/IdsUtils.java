@@ -25,6 +25,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import de.fraunhofer.iais.eis.Artifact;
@@ -215,13 +216,11 @@ public final class IdsUtils {
      */
     @SuppressFBWarnings("IMPROPER_UNICODE")
     public static Language getLanguage(final String language) {
-        switch (Normalizer.normalize(language, Form.NFC)) {
-            case "DE":
-                return Language.DE;
-            case "EN":
-            default:
-                return Language.EN;
+        if (Normalizer.normalize(language.toLowerCase(Locale.ROOT), Form.NFC).equals("de")) {
+            return Language.DE;
         }
+
+        return Language.EN;
     }
 
     /**
