@@ -28,4 +28,12 @@
         <!-- Fixed in java 8, project requires java 11, thus disabled -->
         <Bug pattern="WEAK_FILENAMEUTILS"/>
     </Match>
+    <Match>
+        <!-- Too many warnings, needs too be evaluated some time. -->
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+    <Match>
+        <!-- Too many warnings, needs too be evaluated some time. -->
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
 </FindBugsFilter>
