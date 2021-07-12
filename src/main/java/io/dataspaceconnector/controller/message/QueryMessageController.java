@@ -15,9 +15,16 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.util.Objects;
+
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
+import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.util.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,6 +35,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.ExchangeBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,10 +47,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.net.URI;
 
 /**
  * Controller for sending ids query messages.
@@ -56,9 +63,20 @@ public class QueryMessageController {
     private final @NonNull GlobalMessageService messageService;
 
     /**
+     * Template for triggering Camel routes.
+     */
+    private final @NonNull ProducerTemplate template;
+
+    /**
+     * The CamelContext required for constructing the {@link ProducerTemplate}.
+     */
+    private final @NonNull CamelContext context;
+
+    /**
      * Send an ids query message with a query message as payload.
      *
      * @param recipient The url of the recipient.
+     * @param protocol  The communication protocol to use.
      * @param query     The query statement.
      * @return The response message or an error.
      */
@@ -76,23 +94,43 @@ public class QueryMessageController {
     public ResponseEntity<Object> sendQueryMessage(
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
+            @Parameter(description = "The protocol to use for IDS communication.")
+            @RequestParam("protocol") final CommunicationProtocol protocol,
             @Schema(description = "Database query (SparQL)", required = true,
                     example = "SELECT ?subject ?predicate ?object\n"
                             + "FROM <urn:x-arq:UnionGraph>\n"
                             + "WHERE {\n"
                             + "  ?subject ?predicate ?object\n"
                             + "};") @RequestBody final String query) {
-        try {
-            // Send the query message.
-            final var response = messageService.sendQueryMessage(recipient, query);
-            return response.<ResponseEntity<Object>>map(ResponseEntity::ok)
-                    .orElseGet(ControllerUtils::respondReceivedInvalidResponse);
-        } catch (SocketTimeoutException exception) {
-            return ControllerUtils.respondConnectionTimedOut(exception);
-        } catch (MultipartParseException exception) {
-            return ControllerUtils.respondReceivedInvalidResponse(exception);
-        } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
-            return ControllerUtils.respondIdsMessageFailed(exception);
+        if (CommunicationProtocol.IDSCP.equals(protocol)) {
+            final var result = template.send("direct:querySender",
+                    ExchangeBuilder.anExchange(context)
+                            .withProperty("recipient", recipient)
+                            .withProperty("query", query)
+                            .build());
+
+            final var response = result.getIn().getBody(Response.class);
+            if (response != null) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                final var responseEntity = result.getIn().getBody(ResponseEntity.class);
+                return Objects.requireNonNullElseGet(responseEntity,
+                        () -> new ResponseEntity<Object>("An internal server error occurred.",
+                                HttpStatus.INTERNAL_SERVER_ERROR));
+            }
+        } else {
+            try {
+                // Send the query message.
+                final var response = messageService.sendQueryMessage(recipient, query);
+                return response.<ResponseEntity<Object>>map(ResponseEntity::ok)
+                        .orElseGet(ControllerUtils::respondReceivedInvalidResponse);
+            } catch (SocketTimeoutException exception) {
+                return ControllerUtils.respondConnectionTimedOut(exception);
+            } catch (MultipartParseException exception) {
+                return ControllerUtils.respondReceivedInvalidResponse(exception);
+            } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
+                return ControllerUtils.respondIdsMessageFailed(exception);
+            }
         }
     }
 
@@ -123,20 +161,42 @@ public class QueryMessageController {
             @RequestParam(value = "limit", defaultValue = "50") final Integer limit,
             @Parameter(description = "The offset value.", required = true)
             @RequestParam(value = "offset", defaultValue = "0") final Integer offset,
+            @Parameter(description = "Whether to IDSCP as the communication protocol.")
+            @RequestParam("protocol") final boolean useIdscp,
             @Parameter(description = "The search term.", required = true)
             @RequestBody final String term) {
-        try {
-            // Send the query message.
-            final var response =
-                    messageService.sendFullTextSearchQueryMessage(recipient, term, limit, offset);
-            return response.<ResponseEntity<Object>>map(ResponseEntity::ok)
-                    .orElseGet(ControllerUtils::respondReceivedInvalidResponse);
-        } catch (SocketTimeoutException exception) {
-            return ControllerUtils.respondConnectionTimedOut(exception);
-        } catch (MultipartParseException exception) {
-            return ControllerUtils.respondReceivedInvalidResponse(exception);
-        } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
-            return ControllerUtils.respondIdsMessageFailed(exception);
+        if (useIdscp) {
+            final var result = template.send("direct:querySender",
+                    ExchangeBuilder.anExchange(context)
+                            .withProperty("recipient", recipient)
+                            .withProperty("limit", limit)
+                            .withProperty("offset", offset)
+                            .withProperty("term", term)
+                            .build());
+
+            final var response = result.getIn().getBody(Response.class);
+            if (response != null) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                final var responseEntity = result.getIn().getBody(ResponseEntity.class);
+                return Objects.requireNonNullElseGet(responseEntity,
+                        () -> new ResponseEntity<Object>("An internal server error occurred.",
+                                HttpStatus.INTERNAL_SERVER_ERROR));
+            }
+        } else {
+            try {
+                // Send the query message.
+                final var response =
+                        messageService.sendFullTextSearchQueryMessage(recipient, term, limit, offset);
+                return response.<ResponseEntity<Object>>map(ResponseEntity::ok)
+                        .orElseGet(ControllerUtils::respondReceivedInvalidResponse);
+            } catch (SocketTimeoutException exception) {
+                return ControllerUtils.respondConnectionTimedOut(exception);
+            } catch (MultipartParseException exception) {
+                return ControllerUtils.respondReceivedInvalidResponse(exception);
+            } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
+                return ControllerUtils.respondIdsMessageFailed(exception);
+            }
         }
     }
 }

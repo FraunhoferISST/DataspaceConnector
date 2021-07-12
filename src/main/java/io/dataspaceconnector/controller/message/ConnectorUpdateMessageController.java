@@ -15,10 +15,17 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.util.Objects;
+
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
+import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.util.ControllerUtils;
@@ -29,6 +36,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.ExchangeBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,10 +47,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.net.URI;
 
 /**
  * Controller for sending ids connector update messages.
@@ -62,9 +68,20 @@ public class ConnectorUpdateMessageController {
     private final @NonNull ConnectorService connectorService;
 
     /**
+     * Template for triggering Camel routes.
+     */
+    private final @NonNull ProducerTemplate template;
+
+    /**
+     * The CamelContext required for constructing the {@link ProducerTemplate}.
+     */
+    private final @NonNull CamelContext context;
+
+    /**
      * Sending an ids connector update message with the current connector as payload.
      *
      * @param recipient The url of the recipient.
+     * @param protocol  The communication protocol to use.
      * @return The response message or an error.
      */
     @PostMapping("/connector/update")
@@ -80,25 +97,44 @@ public class ConnectorUpdateMessageController {
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     public ResponseEntity<Object> sendMessage(
             @Parameter(description = "The recipient url.", required = true)
-            @RequestParam("recipient") final URI recipient) {
-        try {
-            // Update the config model.
-            connectorService.updateConfigModel();
+            @RequestParam("recipient") final URI recipient,
+            @Parameter(description = "The protocol to use for IDS communication.")
+            @RequestParam("protocol") final CommunicationProtocol protocol) {
+        if (CommunicationProtocol.IDSCP.equals(protocol)) {
+            final var result = template.send("direct:connectorUpdateSender",
+                    ExchangeBuilder.anExchange(context)
+                            .withProperty("recipient", recipient)
+                            .build());
 
-            // Send the connector update message.
-            if (messageService.sendConnectorUpdateMessage(recipient)) {
+            final var response = result.getIn().getBody(Response.class);
+            if (response != null) {
                 return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                final var responseEntity = result.getIn().getBody(ResponseEntity.class);
+                return Objects.requireNonNullElseGet(responseEntity,
+                        () -> new ResponseEntity<Object>("An internal server error occurred.",
+                                HttpStatus.INTERNAL_SERVER_ERROR));
             }
+        } else {
+            try {
+                // Update the config model.
+                connectorService.updateConfigModel();
 
-            return ControllerUtils.respondReceivedInvalidResponse();
-        } catch (ConfigUpdateException exception) {
-            return ControllerUtils.respondConfigurationUpdateError(exception);
-        } catch (SocketTimeoutException exception) {
-            return ControllerUtils.respondConnectionTimedOut(exception);
-        } catch (MultipartParseException exception) {
-            return ControllerUtils.respondReceivedInvalidResponse(exception);
-        } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
-            return ControllerUtils.respondIdsMessageFailed(exception);
+                // Send the connector update message.
+                if (messageService.sendConnectorUpdateMessage(recipient)) {
+                    return new ResponseEntity<>(HttpStatus.OK);
+                }
+
+                return ControllerUtils.respondReceivedInvalidResponse();
+            } catch (ConfigUpdateException exception) {
+                return ControllerUtils.respondConfigurationUpdateError(exception);
+            } catch (SocketTimeoutException exception) {
+                return ControllerUtils.respondConnectionTimedOut(exception);
+            } catch (MultipartParseException exception) {
+                return ControllerUtils.respondReceivedInvalidResponse(exception);
+            } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
+                return ControllerUtils.respondIdsMessageFailed(exception);
+            }
         }
     }
 }

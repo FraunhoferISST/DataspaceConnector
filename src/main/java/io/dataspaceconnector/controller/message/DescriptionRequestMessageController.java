@@ -15,6 +15,11 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import java.net.URI;
+import java.util.Objects;
+
+import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.service.ids.DeserializationService;
@@ -29,6 +34,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.ExchangeBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,8 +45,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
 
 /**
  * Controller for sending description request messages.
@@ -60,10 +66,21 @@ public class DescriptionRequestMessageController {
     private final @NonNull DeserializationService deserializationSvc;
 
     /**
+     * Template for triggering Camel routes.
+     */
+    private final @NonNull ProducerTemplate template;
+
+    /**
+     * The CamelContext required for constructing the {@link ProducerTemplate}.
+     */
+    private final @NonNull CamelContext context;
+
+    /**
      * Requests metadata from an external connector by building an DescriptionRequestMessage.
      *
      * @param recipient The target connector url.
      * @param elementId The requested element id.
+     * @param protocol  The communication protocol to use.
      * @return The response entity.
      */
     @PostMapping("/description")
@@ -79,20 +96,48 @@ public class DescriptionRequestMessageController {
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The id of the requested resource.")
-            @RequestParam(value = "elementId", required = false) final URI elementId) {
+            @RequestParam(value = "elementId", required = false) final URI elementId,
+            @Parameter(description = "The protocol to use for IDS communication.")
+            @RequestParam("protocol") final CommunicationProtocol protocol) {
         String payload = null;
         try {
-            // Send and validate description request/response message.
-            final var response = descriptionReqSvc.sendMessage(recipient, elementId);
-            final var valid = descriptionReqSvc.validateResponse(response);
-            if (!valid) {
-                // If the response is not a description response message, show the response.
-                final var content = descriptionReqSvc.getResponseContent(response);
-                return ControllerUtils.respondWithMessageContent(content);
+            if (CommunicationProtocol.IDSCP.equals(protocol)) {
+                final var result = template.send("direct:descriptionRequestSender",
+                        ExchangeBuilder.anExchange(context)
+                                .withProperty("recipient", recipient)
+                                .withProperty("elementId", elementId)
+                                .build());
+
+                final var response = result.getIn().getBody(Response.class);
+                if (response != null) {
+                    payload = response.getBody();
+                } else {
+                    final var responseEntity = result.getIn().getBody(ResponseEntity.class);
+                    return Objects.requireNonNullElseGet(responseEntity,
+                            () -> new ResponseEntity<Object>("An internal server error occurred.",
+                                    HttpStatus.INTERNAL_SERVER_ERROR));
+                }
+            } else {
+                try {
+                    // Send and validate description request/response message.
+                    final var response = descriptionReqSvc.sendMessage(recipient, elementId);
+                    final var valid = descriptionReqSvc.validateResponse(response);
+                    if (!valid) {
+                        // If the response is not a description response message, show the response.
+                        final var content = descriptionReqSvc.getResponseContent(response);
+                        return ControllerUtils.respondWithMessageContent(content);
+                    }
+
+                    // Read the response message.
+                    payload = MessageUtils.extractPayloadFromMultipartMessage(response);
+                } catch (MessageException exception) {
+                    return ControllerUtils.respondIdsMessageFailed(exception);
+                } catch (MessageResponseException exception) {
+                    return ControllerUtils.respondReceivedInvalidResponse(exception);
+                }
             }
 
-            // Read and process the response message.
-            payload = MessageUtils.extractPayloadFromMultipartMessage(response);
+            // Process the response message.
             if (!Utils.isEmptyOrNull(elementId)) {
                 return new ResponseEntity<>(payload, HttpStatus.OK);
             } else {
@@ -101,10 +146,6 @@ public class DescriptionRequestMessageController {
                         deserializationSvc.getInfrastructureComponent(payload);
                 return ResponseEntity.ok(component.toRdf());
             }
-        } catch (MessageException exception) {
-            return ControllerUtils.respondIdsMessageFailed(exception);
-        } catch (MessageResponseException exception) {
-            return ControllerUtils.respondReceivedInvalidResponse(exception);
         } catch (IllegalArgumentException exception) {
             // If the response is not of type base connector.
             return new ResponseEntity<>(payload, HttpStatus.OK);

@@ -15,8 +15,19 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+import javax.persistence.PersistenceException;
+
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;
+import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
 import io.dataspaceconnector.exception.MessageException;
@@ -33,7 +44,6 @@ import io.dataspaceconnector.service.usagecontrol.ContractManager;
 import io.dataspaceconnector.util.ControllerUtils;
 import io.dataspaceconnector.util.MessageUtils;
 import io.dataspaceconnector.util.RuleUtils;
-import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -42,6 +52,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.ExchangeBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,13 +65,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.persistence.PersistenceException;
-import java.io.IOException;
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * This controller provides the endpoint for sending a contract request message and starting the
@@ -117,12 +123,23 @@ public class ContractRequestMessageController {
     private final @NonNull EntityPersistenceService persistenceSvc;
 
     /**
+     * Template for triggering Camel routes.
+     */
+    private final @NonNull ProducerTemplate template;
+
+    /**
+     * The CamelContext required for constructing the {@link ProducerTemplate}.
+     */
+    private final @NonNull CamelContext context;
+
+    /**
      * Starts a contract, metadata, and data exchange with an external connector.
      *
      * @param recipient    The recipient.
      * @param resources List of requested resources by IDs.
      * @param artifacts List of requested artifacts by IDs.
      * @param download     Download data directly after successful contract and description request.
+     * @param protocol The communication protocol to use.
      * @param ruleList     List of rules that should be used within a contract request.
      * @return The response entity.
      */
@@ -148,104 +165,126 @@ public class ContractRequestMessageController {
             @Parameter(description = "Indicates whether the connector should automatically "
                     + "download data of an artifact.")
             @RequestParam("download") final boolean download,
+            @Parameter(description = "The protocol to use for IDS communication.")
+            @RequestParam("protocol") final CommunicationProtocol protocol,
             @Parameter(description = "List of ids rules with an artifact id as target.")
             @RequestBody final List<Rule> ruleList) {
         UUID agreementId;
+        if (CommunicationProtocol.IDSCP.equals(protocol)) {
+            final var result = template.send("direct:contractRequestSender",
+                    ExchangeBuilder.anExchange(context)
+                            .withProperty("recipient", recipient)
+                            .withProperty("resources", resources)
+                            .withProperty("artifacts", artifacts)
+                            .withProperty("download", download)
+                            .withProperty("ruleList", ruleList)
+                            .build());
 
-        Map<String, String> response;
-        try {
-            // Validate input for contract request.
-            RuleUtils.validateRuleTarget(ruleList);
-            final var request = contractManager.buildContractRequest(ruleList);
-
-            // CONTRACT NEGOTIATION ----------------------------------------------------------------
-            // Send and validate contract request/response message.
-            response = contractReqSvc.sendMessage(recipient, request);
-            if (!contractReqSvc.validateResponse(response)) {
-                // If the response is not a contract agreement message, show the response.
-                final var content = contractReqSvc.getResponseContent(response);
-                return ControllerUtils.respondWithMessageContent(content);
+            final var response = result.getIn().getBody(Response.class);
+            if (response != null) {
+                agreementId = result.getProperty("agreementId", UUID.class);
+            } else {
+                final var responseEntity = result.getIn().getBody(ResponseEntity.class);
+                return Objects.requireNonNullElseGet(responseEntity,
+                        () -> new ResponseEntity<Object>("An internal server error occurred.",
+                                HttpStatus.INTERNAL_SERVER_ERROR));
             }
+        } else {
+            Map<String, String> response;
+            try {
+                // Validate input for contract request.
+                RuleUtils.validateRuleTarget(ruleList);
+                final var request = contractManager.buildContractRequest(ruleList);
 
-            // Read and process the response message.
-            final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
-            final var agreement = contractManager.validateContractAgreement(payload, request);
-
-            // Send and validate contract agreement/response message.
-            response = agreementSvc.sendMessage(recipient, agreement);
-            if (!agreementSvc.validateResponse(response)) {
-                // If the response is not a notification message, show the response.
-                final var content = agreementSvc.getResponseContent(response);
-                return ControllerUtils.respondWithMessageContent(content);
-            }
-
-            // Save contract agreement to database.
-            agreementId = persistenceSvc.saveContractAgreement(agreement);
-            if (log.isDebugEnabled()) {
-                log.debug("Policy negotiation success. Saved agreement. [agreemendId=({})].",
-                        agreementId);
-            }
-
-            // DESCRIPTION REQUESTS ----------------------------------------------------------------
-            // Iterate over list of resource ids to send description request messages for each.
-            for (final var resource : resources) {
-                // Send and validate description request/response message.
-                response = descReqSvc.sendMessage(recipient, resource);
-                if (!descReqSvc.validateResponse(response)) {
-                    // If the response is not a description response message, show the response.
-                    final var content = descReqSvc.getResponseContent(response);
+                // CONTRACT NEGOTIATION ------------------------------------------------------------
+                // Send and validate contract request/response message.
+                response = contractReqSvc.sendMessage(recipient, request);
+                if (!contractReqSvc.validateResponse(response)) {
+                    // If the response is not a contract agreement message, show the response.
+                    final var content = contractReqSvc.getResponseContent(response);
                     return ControllerUtils.respondWithMessageContent(content);
                 }
 
-                // Read and process the response message. Save resource, recipient, and agreement
-                // id to database.
-                persistenceSvc.saveMetadata(response, artifacts, download, recipient);
-            }
+                // Read and process the response message.
+                final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
+                final var agreement = contractManager.validateContractAgreement(payload, request);
 
-            updateService.linkArtifactToAgreement(artifacts, agreementId);
+                // Send and validate contract agreement/response message.
+                response = agreementSvc.sendMessage(recipient, agreement);
+                if (!agreementSvc.validateResponse(response)) {
+                    // If the response is not a notification message, show the response.
+                    final var content = agreementSvc.getResponseContent(response);
+                    return ControllerUtils.respondWithMessageContent(content);
+                }
 
-            // ARTIFACT REQUESTS -------------------------------------------------------------------
-            // Download data depending on user input.
-            if (download) {
-                // Iterate over list of resource ids to send artifact request messages for each.
-                for (final var artifact : artifacts) {
-                    // Send and validate artifact request/response message.
-                    final var transferContract = agreement.getId();
-                    response = artifactReqSvc.sendMessage(recipient, artifact, transferContract);
-                    if (!artifactReqSvc.validateResponse(response)) {
-                        // If the response is not an artifact response message, show the response.
-                        // Ignore when data could not be downloaded, because the artifact request
-                        // can be triggered later again.
-                        final var content = artifactReqSvc.getResponseContent(response);
-                        if (log.isDebugEnabled()) {
-                            log.debug("Data could not be loaded. [content=({})]", content);
-                        }
+                // Save contract agreement to database.
+                agreementId = persistenceSvc.saveContractAgreement(agreement);
+                if (log.isDebugEnabled()) {
+                    log.debug("Policy negotiation success. Saved agreement. [agreemendId=({})].",
+                            agreementId);
+                }
+
+                // DESCRIPTION REQUESTS ----------------------------------------------------------------
+                // Iterate over list of resource ids to send description request messages for each.
+                for (final var resource : resources) {
+                    // Send and validate description request/response message.
+                    response = descReqSvc.sendMessage(recipient, resource);
+                    if (!descReqSvc.validateResponse(response)) {
+                        // If the response is not a description response message, show the response.
+                        final var content = descReqSvc.getResponseContent(response);
+                        return ControllerUtils.respondWithMessageContent(content);
                     }
 
-                    // Read and process the response message.
-                    try {
-                        persistenceSvc.saveData(response, artifact);
-                    } catch (IOException | ResourceNotFoundException
-                             | MessageResponseException e) {
-                        // Ignore that the data saving failed. Another try can take place later.
-                        if (log.isWarnEnabled()) {
-                            log.warn("Could not save data for artifact."
-                                            + "[artifact=({}), exception=({})]",
-                                    artifact, e.getMessage());
+                    // Read and process the response message. Save resource, recipient, and agreement
+                    // id to database.
+                    persistenceSvc.saveMetadata(response, artifacts, download, recipient);
+                }
+
+                updateService.linkArtifactToAgreement(artifacts, agreementId);
+
+                // ARTIFACT REQUESTS -------------------------------------------------------------------
+                // Download data depending on user input.
+                if (download) {
+                    // Iterate over list of resource ids to send artifact request messages for each.
+                    for (final var artifact : artifacts) {
+                        // Send and validate artifact request/response message.
+                        final var transferContract = agreement.getId();
+                        response = artifactReqSvc.sendMessage(recipient, artifact, transferContract);
+                        if (!artifactReqSvc.validateResponse(response)) {
+                            // If the response is not an artifact response message, show the response.
+                            // Ignore when data could not be downloaded, because the artifact request
+                            // can be triggered later again.
+                            final var content = artifactReqSvc.getResponseContent(response);
+                            if (log.isDebugEnabled()) {
+                                log.debug("Data could not be loaded. [content=({})]", content);
+                            }
+                        }
+
+                        // Read and process the response message.
+                        try {
+                            persistenceSvc.saveData(response, artifact);
+                        } catch (IOException | ResourceNotFoundException
+                                | MessageResponseException e) {
+                            // Ignore that the data saving failed. Another try can take place later.
+                            if (log.isWarnEnabled()) {
+                                log.warn("Could not save data for artifact."
+                                                + "[artifact=({}), exception=({})]",
+                                        artifact, e.getMessage());
+                            }
                         }
                     }
                 }
+            } catch (InvalidInputException exception) {
+                return ControllerUtils.respondInvalidInput(exception);
+            } catch (ConstraintViolationException exception) {
+                return ControllerUtils.respondFailedToBuildContractRequest(exception);
+            } catch (PersistenceException exception) {
+                return ControllerUtils.respondFailedToStoreEntity(exception);
+            } catch (MessageException exception) {
+                return ControllerUtils.respondIdsMessageFailed(exception);
+            } catch (MessageResponseException | IllegalArgumentException | ContractException e) {
+                return ControllerUtils.respondReceivedInvalidResponse(e);
             }
-        } catch (InvalidInputException exception) {
-            return ControllerUtils.respondInvalidInput(exception);
-        } catch (ConstraintViolationException exception) {
-            return ControllerUtils.respondFailedToBuildContractRequest(exception);
-        } catch (PersistenceException exception) {
-            return ControllerUtils.respondFailedToStoreEntity(exception);
-        } catch (MessageException exception) {
-            return ControllerUtils.respondIdsMessageFailed(exception);
-        } catch (MessageResponseException | IllegalArgumentException | ContractException e) {
-            return ControllerUtils.respondReceivedInvalidResponse(e);
         }
 
         // Return response entity containing the locations of the contract agreement, the
