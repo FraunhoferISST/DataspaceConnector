@@ -140,6 +140,6 @@ public class PlaceImpl implements Place {
      */
     @Override
     public int hashCode() {
-        return id.hashCode() + sourceArcs.hashCode() + targetArcs.hashCode() + markers;
+        return id.hashCode();
     }
 }
