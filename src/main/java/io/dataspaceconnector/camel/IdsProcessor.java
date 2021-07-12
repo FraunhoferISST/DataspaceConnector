@@ -72,7 +72,7 @@ import org.springframework.util.Base64Utils;
  *
  * @param <I> the expected input type (body of the Camel {@link Exchange}).
  */
-public abstract class IdsProcessor<I> implements Processor {
+public abstract class IdsProcessor<I extends RouteMsg<?, ?>> implements Processor {
 
     /**
      * Override of the the {@link Processor}'s process method. Calls the implementing class's
@@ -82,6 +82,7 @@ public abstract class IdsProcessor<I> implements Processor {
      * @throws Exception if an error occurs.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public void process(final Exchange exchange) throws Exception {
         exchange.getIn().setBody(processInternal((I) exchange.getIn().getBody(Request.class)));
     }
