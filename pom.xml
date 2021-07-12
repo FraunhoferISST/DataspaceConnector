@@ -916,7 +916,7 @@
 						<configuration>
 							<showWarnings>true</showWarnings>
 							<showDeprecation>true</showDeprecation>
-							<failOnViolation>true</failOnViolation>
+							<failOnWarning>true</failOnWarning>
 
 							<compilerArgs>
 								<arg>-Xlint:all</arg>
