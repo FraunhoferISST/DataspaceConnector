@@ -15,6 +15,18 @@
  */
 package io.dataspaceconnector.util;
 
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.text.Normalizer;
+import java.text.Normalizer.Form;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.TimeZone;
+
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.Catalog;
@@ -26,19 +38,9 @@ import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.exception.RdfBuilderException;
 import lombok.SneakyThrows;
-
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  *
@@ -211,11 +213,12 @@ public final class IdsUtils {
      * @param language The language as string.
      * @return The ids language object.
      */
+    @SuppressFBWarnings("IMPROPER_UNICODE")
     public static Language getLanguage(final String language) {
-        switch (language.toLowerCase(Locale.ENGLISH)) {
-            case "de":
+        switch (Normalizer.normalize(language, Form.NFC)) {
+            case "DE":
                 return Language.DE;
-            case "en":
+            case "EN":
             default:
                 return Language.EN;
         }
