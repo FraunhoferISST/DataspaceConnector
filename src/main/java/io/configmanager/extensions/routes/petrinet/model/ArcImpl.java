@@ -19,9 +19,21 @@ package io.configmanager.extensions.routes.petrinet.model;
  * Implementation class of the {@link Arc} interface.
  */
 public class ArcImpl implements Arc {
+    /**
+     * The source node of the arc.
+     */
     private Node source;
+
+    /**
+     * The target node of the arc.
+     */
     private Node target;
 
+    /**
+     * The implementation of an arc with source and target node.
+     * @param source The arc source node.
+     * @param target The arc target node.
+     */
     public ArcImpl(final Node source, final Node target) {
         if (source.isComplementOf(target)) {
             this.source = source;
@@ -38,16 +50,28 @@ public class ArcImpl implements Arc {
         }
     }
 
+    /**
+     * Returns the source node of the arc.
+     * @return The arc source node.
+     */
     @Override
     public Node getSource() {
         return source;
     }
 
+    /**
+     * Returns the target node of the arc.
+     * @return The arc target node.
+     */
     @Override
     public Node getTarget() {
         return target;
     }
 
+    /**
+     * Sets the source node of the arc.
+     * @param source Node that will be set as source.
+     */
     @Override
     public void setSource(final Node source) {
         if (target.isComplementOf(source)) {
@@ -66,6 +90,10 @@ public class ArcImpl implements Arc {
         }
     }
 
+    /**
+     * Sets the targe node of the arc.
+     * @param target Node that will be set as target.
+     */
     @Override
     public void setTarget(final Node target) {
         if (source.isComplementOf(target)) {
@@ -84,6 +112,11 @@ public class ArcImpl implements Arc {
         }
     }
 
+    /**
+     * Checks if the arc is equal to the passed object.
+     * @param o The object to check against the arc.
+     * @return True if the arc equals the passed object.
+     */
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -94,9 +127,30 @@ public class ArcImpl implements Arc {
             return false;
         }
 
+        if (source == null || target == null) {
+            return false;
+        }
+
         final var arc = (ArcImpl) o;
 
         return source.equals(arc.source) && target.equals(arc.target);
     }
 
+    /**
+     * Return the hashcode for the arc.
+     * @return The arc hashcode.
+     */
+    @Override
+    public int hashCode() {
+        var hashcode = 0;
+
+        if (source != null) {
+            hashcode += source.hashCode();
+        }
+
+        if (target != null) {
+            hashcode += target.hashCode();
+        }
+        return hashcode;
+    }
 }

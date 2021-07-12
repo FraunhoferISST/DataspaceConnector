@@ -22,5 +22,10 @@ import io.configmanager.extensions.routes.petrinet.model.Transition;
  */
 @FunctionalInterface
 public interface ArcSubExpression {
+    /**
+     * Evaluates a arc transition.
+     * @param transition The arc transition to be evaluated.
+     * @return True if evaluation passed.
+     */
     boolean evaluate(Transition transition);
 }
