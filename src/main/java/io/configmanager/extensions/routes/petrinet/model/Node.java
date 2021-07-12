@@ -46,9 +46,9 @@ public interface Node extends HasId {
      */
     boolean isComplementOf(Node other);
 
-    /*
-     * create a deep copy of the Node.
-     * @return a deep copy of the Node
+    /**
+     * Create a deep copy of the Node.
+     * @return A deep copy of the Node.
      */
     Node deepCopy();
 }

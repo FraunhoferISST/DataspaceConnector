@@ -23,10 +23,23 @@ import java.util.List;
  * A generic Formula, can be a StateFormula or a TransitionFormula.
  */
 public interface Formula {
-
+    /**
+     * Evaluates a given formula.
+     * @param node The starting node.
+     * @param paths The node path.
+     * @return Evaluation result.
+     */
     boolean evaluate(Node node, List<List<Node>> paths);
 
+    /**
+     * The representing symbol of the formula.
+     * @return The symbol representing the formula.
+     */
     String symbol();
 
+    /**
+     * Converts the formula into a String.
+     * @return The formula as String.
+     */
     String writeFormula();
 }

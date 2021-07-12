@@ -21,29 +21,46 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.TT.TT;
-import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeFORALL_UNTIL.nodeFORALL_UNTIL;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeFORALLUNTIL.nodeFORALLUNTIL;
 
 /**
  * Evaluates to true, if a place fulfilling the given parameter is eventually reached on every path.
  */
 @AllArgsConstructor
 public class NodeEV implements StateFormula {
+    /**
+     * The parameter to be reached.
+     */
     private StateFormula parameter;
 
+    /**
+     * Place fulfilling the given parameter needs to be reached on every path.
+     * @param parameter The parameter to be reached.
+     * @return Node representing the state formula.
+     */
     public static NodeEV nodeEV(final StateFormula parameter) {
         return new NodeEV(parameter);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
-        return nodeFORALL_UNTIL(TT(), parameter).evaluate(node, paths);
+        return nodeFORALLUNTIL(TT(), parameter).evaluate(node, paths);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "EV";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.writeFormula());

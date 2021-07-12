@@ -25,24 +25,46 @@ import java.util.List;
  */
 @AllArgsConstructor
 public class NodeOR implements StateFormula {
+    /**
+     * Subformula 1.
+     */
     private StateFormula parameter1;
+
+    /**
+     * Subformula 2.
+     */
     private StateFormula parameter2;
 
+    /**
+     * Evaluates to true, if at least one of the two subformulas evaluates to true.
+     * @param parameter1 Subformula 1.
+     * @param parameter2 Subformula 2.
+     * @return Node representing the formula.
+     */
     public static NodeOR nodeOR(final StateFormula parameter1,
                                 final StateFormula parameter2) {
         return new NodeOR(parameter1, parameter2);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         return parameter1.evaluate(node, paths) || parameter2.evaluate(node, paths);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "OR";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s, %s)",

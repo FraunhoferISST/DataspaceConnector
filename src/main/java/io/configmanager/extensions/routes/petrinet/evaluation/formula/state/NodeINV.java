@@ -27,22 +27,30 @@ import static io.configmanager.extensions.routes.petrinet.evaluation.formula.sta
  */
 @AllArgsConstructor
 public class NodeINV implements StateFormula {
+    /**
+     * Formula must evaluate to true for every reachable place.
+     */
     private StateFormula parameter;
 
-    public static NodeINV nodeINV(final StateFormula parameter) {
-        return new NodeINV(parameter);
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         return nodeNOT(nodePOS(nodeNOT(parameter))).evaluate(node, paths);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "INV";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.writeFormula());

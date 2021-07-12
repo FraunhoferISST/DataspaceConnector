@@ -25,22 +25,39 @@ import java.util.List;
  */
 @AllArgsConstructor
 public class NodeNOT implements StateFormula {
+    /**
+     * The subformula.
+     */
     private StateFormula parameter;
 
+    /**
+     * Formula which evaluates to true, if given subformula evaluates to false.
+     * @param parameter The subformula to be evaluated.
+     * @return Node representing the formula.
+     */
     public static NodeNOT nodeNOT(final StateFormula parameter) {
         return new NodeNOT(parameter);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         return !parameter.evaluate(node, paths);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "NOT";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.writeFormula());

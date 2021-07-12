@@ -23,25 +23,38 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 /**
- * FF operator evaluates to False everytime.
+ * falseOperator operator evaluates to False everytime.
  */
 @NoArgsConstructor
-public class FF implements StateFormula, TransitionFormula {
+public class FalseOperator implements StateFormula, TransitionFormula {
 
-    public static FF FF() {
-        return new FF();
+    /**
+     * falseOperator operator evaluates to False everytime.
+     * @return New instace of this operator.
+     */
+    public static FalseOperator falseOperator() {
+        return new FalseOperator();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
-        return "FF";
+        return "falseOperator";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return symbol();

@@ -29,13 +29,26 @@ import java.util.List;
  */
 @AllArgsConstructor
 public class NodeMODAL implements StateFormula {
+    /**
+     * Must evaluate to true for a transition directly following
+     * the current place.
+     */
     private TransitionFormula parameter;
 
+    /**
+     * Formula which evaluates to true, if parameter evaluates to true for a transition
+     * directly following the current place.
+     * @param parameter The formula which needs to be evaluated.
+     * @return Node representing the formula.
+     */
     public static NodeMODAL nodeMODAL(final TransitionFormula parameter) {
         return new NodeMODAL(parameter);
     }
 
     // MODAL, is true if parameter evaluates to true for a transition following the current state
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         return node instanceof Place
@@ -45,11 +58,17 @@ public class NodeMODAL implements StateFormula {
                         .reduce(false, (a, b) -> a || b);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "MODAL";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.writeFormula());

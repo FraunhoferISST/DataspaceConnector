@@ -49,12 +49,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static io.configmanager.extensions.routes.petrinet.evaluation.formula.FF.FF;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.FalseOperator.falseOperator;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.TT.TT;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeAND.nodeAND;
-import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeEXIST_UNTIL.nodeEXIST_UNTIL;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeEXISTUNTIL.nodeEXISTUNTIL;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeExpression.nodeExpression;
-import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeFORALL_NEXT.nodeFORALL_NEXT;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeFORALLNEXT.nodeFORALLNEXT;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeMODAL.nodeMODAL;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeNF.nodeNF;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeOR.nodeOR;
@@ -130,9 +130,9 @@ class InfomodelPetriNetBuilderTest {
             log.info(allPaths.toString());
         }
 
-        final var formula = nodeAND(nodeMODAL(transitionNOT(FF())), nodeOR(nodeNF(nodeExpression(x -> true, "testMsg")),TT()));
-        final var formula2 = nodeAND(nodeFORALL_NEXT(nodeMODAL(transitionAF(arcExpression(x -> true,"")))), TT());
-        final var formula3 = nodeEXIST_UNTIL(nodeMODAL(TT()), nodeNF(nodeExpression(x -> x.getSourceArcs().isEmpty(), "")));
+        final var formula = nodeAND(nodeMODAL(transitionNOT(falseOperator())), nodeOR(nodeNF(nodeExpression(x -> true, "testMsg")),TT()));
+        final var formula2 = nodeAND(nodeFORALLNEXT(nodeMODAL(transitionAF(arcExpression(x -> true,"")))), TT());
+        final var formula3 = nodeEXISTUNTIL(nodeMODAL(TT()), nodeNF(nodeExpression(x -> x.getSourceArcs().isEmpty(), "")));
 
         if (log.isInfoEnabled()) {
             log.info("Formula 1: " + formula.writeFormula());

@@ -26,22 +26,39 @@ import java.util.List;
  */
 @AllArgsConstructor
 public class NodeNF implements StateFormula {
+    /**
+     * Node expression which needs to be evaluated.
+     */
     private NodeExpression parameter;
 
+    /**
+     * Evaluates to true, if given {@link NodeExpression} evaluates to true.
+     * @param parameter The NodeExpression.
+     * @return Node representing the formula.
+     */
     public static NodeNF nodeNF(final NodeExpression parameter) {
         return new NodeNF(parameter);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         return node instanceof Place && parameter.getSubExpression().evaluate((Place) node);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "NF";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.getMessage());

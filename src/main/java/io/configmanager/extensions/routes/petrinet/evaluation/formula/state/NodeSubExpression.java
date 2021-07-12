@@ -22,5 +22,10 @@ import io.configmanager.extensions.routes.petrinet.model.Place;
  */
 @FunctionalInterface
 public interface NodeSubExpression {
+    /**
+     * Evaluation of NodeSubExpressions, can be used as lambda.
+     * @param place The place to evaluate against given formulas.
+     * @return True if evalutaion was successful.
+     */
     boolean evaluate(Place place);
 }

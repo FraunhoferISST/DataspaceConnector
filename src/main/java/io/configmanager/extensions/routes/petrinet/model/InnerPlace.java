@@ -34,11 +34,19 @@ public class InnerPlace extends PlaceImpl {
      */
     private Transition originalTrans;
 
+    /**
+     * Inner places of unfolded transition.
+     * @param id Id of the inner place.
+     * @param originalTrans Original Transition, which was unfolded to create the InnerPlace.
+     */
     public InnerPlace(final URI id, final Transition originalTrans) {
         super(id);
         this.originalTrans = originalTrans;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Node deepCopy() {
         final var copy = new InnerPlace(this.getID(), this.originalTrans);
@@ -46,6 +54,9 @@ public class InnerPlace extends PlaceImpl {
         return copy;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -61,5 +72,13 @@ public class InnerPlace extends PlaceImpl {
         return originalTrans.equals(place.originalTrans)
                 && getMarkers() == place.getMarkers()
                 && Objects.equals(getID(), place.getID());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return originalTrans.hashCode() + super.getID().hashCode();
     }
 }

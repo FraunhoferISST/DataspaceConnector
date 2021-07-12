@@ -26,15 +26,32 @@ import java.util.List;
  * until parameter2 evaluates to true.
  */
 @AllArgsConstructor
-public class NodeEXIST_UNTIL implements StateFormula {
+public class NodeEXISTUNTIL implements StateFormula {
+    /**
+     * Parameter which needs to be evaluated to true every time.
+     */
     private StateFormula parameter1;
+
+    /**
+     * Parameter which ends the evaluation by turning true.
+     */
     private StateFormula parameter2;
 
-    public static NodeEXIST_UNTIL nodeEXIST_UNTIL(final StateFormula parameter1,
-                                                  final StateFormula parameter2) {
-        return new NodeEXIST_UNTIL(parameter1, parameter2);
+    /**
+     * Node representing the formula which evaluates to true, if a path exists, where parameter1
+     * evaluates to true for every place, until parameter2 evaluates to true.
+     * @param parameter1 Parameter which needs to be evaluated to true every time.
+     * @param parameter2 Parameter which ends the evaluation by turning true.
+     * @return Node representing the formula.
+     */
+    public static NodeEXISTUNTIL nodeEXISTUNTIL(final StateFormula parameter1,
+                                                final StateFormula parameter2) {
+        return new NodeEXISTUNTIL(parameter1, parameter2);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     // True if a path exists, where parameter1 is true on each node of the path,
     // and parameter2 is true on the final node of the path
@@ -75,11 +92,17 @@ public class NodeEXIST_UNTIL implements StateFormula {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "EXIST_UNTIL";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s, %s)",

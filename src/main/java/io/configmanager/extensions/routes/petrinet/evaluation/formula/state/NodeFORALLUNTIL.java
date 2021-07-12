@@ -30,16 +30,32 @@ import java.util.List;
  */
 @Slf4j
 @AllArgsConstructor
-public class NodeFORALL_UNTIL implements StateFormula {
+public class NodeFORALLUNTIL implements StateFormula {
+    /**
+     * Every place must fulfill this formula until formula2 is fulfilled.
+     */
     private StateFormula parameter1;
+
+    /**
+     * Formula which ends the evaluation if the formula is fulfilled.
+     */
     private StateFormula parameter2;
 
-    public static NodeFORALL_UNTIL nodeFORALL_UNTIL(final StateFormula parameter1,
-                                                    final StateFormula parameter2) {
-        return new NodeFORALL_UNTIL(parameter1, parameter2);
+    /**
+     * Formula which evaluates to true, if on any possible path every place fulfills parameter1,
+     *  until a place fulfills parameter2.
+     * @param parameter1 Every place must fulfill this formula until formula2 is fulfilled.
+     * @param parameter2 Formula which ends the evaluation if the formula is fulfilled.
+     * @return Node representing the formula.
+     */
+    public static NodeFORALLUNTIL nodeFORALLUNTIL(final StateFormula parameter1,
+                                                  final StateFormula parameter2) {
+        return new NodeFORALLUNTIL(parameter1, parameter2);
     }
 
-    //like EXIST_UNTIL for all paths
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         if (!(node instanceof Place)) {
@@ -99,11 +115,17 @@ public class NodeFORALL_UNTIL implements StateFormula {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "FORALL_UNTIL";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s, %s)",

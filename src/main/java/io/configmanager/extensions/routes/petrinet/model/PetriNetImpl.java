@@ -30,20 +30,40 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @AllArgsConstructor
 public class PetriNetImpl implements PetriNet, HasId {
+    /**
+     * The if of the PetriNet.
+     */
     private URI id;
+
+    /**
+     * Nodes of the PetriNet.
+     */
     private Set<Node> nodes;
+
+    /**
+     * Arcs of the Petrinet.
+     */
     private Set<Arc> arcs;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Node> getNodes() {
         return nodes;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Arc> getArcs() {
         return arcs;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SneakyThrows
     public PetriNet deepCopy() {
@@ -65,26 +85,17 @@ public class PetriNetImpl implements PetriNet, HasId {
         return new PetriNetImpl(this.id, nodeCopy, arcCopy);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public URI getID() {
         return id;
     }
 
     /**
-     * Get a node by its id (if it exists).
-     * @param id the ID of the Node to search for
-     * @param nodes a Set of Nodes
-     * @return the node with the given id (if it exists)
+     * {@inheritDoc}
      */
-    private static Node nodeById(final URI id, final Set<Node> nodes) {
-        for (final var node : nodes) {
-            if (node.getID().equals(id)) {
-                return node;
-            }
-        }
-        return null;
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -98,6 +109,14 @@ public class PetriNetImpl implements PetriNet, HasId {
         return Objects.equals(id, petriNet.id)
                 && arcsEqual(petriNet.arcs)
                 && nodesEqual(petriNet.nodes);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return id.hashCode() + nodes.hashCode() + arcs.hashCode();
     }
 
     private boolean nodesEqual(final Set<Node> otherNodes) {

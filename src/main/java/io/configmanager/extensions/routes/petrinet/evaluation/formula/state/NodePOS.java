@@ -21,32 +21,49 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.TT.TT;
-import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeEXIST_UNTIL.nodeEXIST_UNTIL;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeEXISTUNTIL.nodeEXISTUNTIL;
 
 /**
  * Evaluates to true, if some Place is reachable, which fulfills the given parameter.
  */
 @AllArgsConstructor
 public class NodePOS implements StateFormula {
+    /**
+     * Formula which must be fulfilled at some reachable place.
+     */
     private StateFormula parameter;
 
+    /**
+     * Formula which evaluates to true, if some Place is reachable,
+     * which fulfills the given parameter.
+     * @param parameter Formula which must be fulfilled at some reachable place.
+     * @return Node representing the formula.
+     */
     public static NodePOS nodePOS(final StateFormula parameter) {
         return new NodePOS(parameter);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
-        return nodeEXIST_UNTIL(TT(), parameter).evaluate(node, paths);
+        return nodeEXISTUNTIL(TT(), parameter).evaluate(node, paths);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "POS";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.writeFormula());
     }
-
 }

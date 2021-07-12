@@ -20,33 +20,49 @@ import lombok.AllArgsConstructor;
 
 import java.util.List;
 
-import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeEXIST_NEXT.nodeEXIST_NEXT;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeEXISTNEXT.nodeEXISTNEXT;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeNOT.nodeNOT;
 
 /**
  * Evaluates to true, if all following places satisfy the given formula.
  */
 @AllArgsConstructor
-public class NodeFORALL_NEXT implements StateFormula {
+public class NodeFORALLNEXT implements StateFormula {
+    /**
+     * Formula which all places must fulfill.
+     */
     private StateFormula parameter;
 
-    public static NodeFORALL_NEXT nodeFORALL_NEXT(final StateFormula parameter) {
-        return new NodeFORALL_NEXT(parameter);
+    /**
+     * Node which evaluates to true, if all following places satisfy the given formula.
+     * @param parameter Formula which all places must fulfill.
+     * @return Node representing the formula.
+     */
+    public static NodeFORALLNEXT nodeFORALLNEXT(final StateFormula parameter) {
+        return new NodeFORALLNEXT(parameter);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
-        return nodeNOT(nodeEXIST_NEXT(nodeNOT(parameter))).evaluate(node, paths);
+        return nodeNOT(nodeEXISTNEXT(nodeNOT(parameter))).evaluate(node, paths);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "FORALL_NEXT";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.writeFormula());
     }
-
 }

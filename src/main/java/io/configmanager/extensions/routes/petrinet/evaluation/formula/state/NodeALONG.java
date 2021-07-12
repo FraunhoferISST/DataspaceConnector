@@ -28,22 +28,30 @@ import static io.configmanager.extensions.routes.petrinet.evaluation.formula.sta
  */
 @AllArgsConstructor
 public class NodeALONG implements StateFormula {
+    /**
+     * Parameter needed to hold for every place.
+     */
     private StateFormula parameter;
 
-    public static NodeALONG nodeALONG(final StateFormula parameter) {
-        return new NodeALONG(parameter);
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         return nodeNOT(nodeEV(nodeNOT(parameter))).evaluate(node, paths);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "ALONG";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.writeFormula());

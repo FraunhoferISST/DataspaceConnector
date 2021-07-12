@@ -21,27 +21,49 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 
 /**
- * evaluates to true, if parameter1 and parameter2 evaluate to true.
+ * Evaluates to true, if parameter1 and parameter2 evaluate to true.
  */
 @AllArgsConstructor
 public class NodeAND implements StateFormula {
+    /**
+     * Parameter 1 of the formula.
+     */
     private StateFormula parameter1;
+
+    /**
+     * Parameter 2 of the formula.
+     */
     private StateFormula parameter2;
 
+    /**
+     * Node representing an AND.
+     * @param parameter1 Parameter 1 of the formula.
+     * @param parameter2 Parameter 2 of the formula.
+     * @return The AND-Node.
+     */
     public static NodeAND nodeAND(final StateFormula parameter1, final StateFormula parameter2) {
         return new NodeAND(parameter1, parameter2);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         return parameter1.evaluate(node, paths) && parameter2.evaluate(node, paths);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "AND";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s, %s)", symbol(),

@@ -27,23 +27,41 @@ import static io.configmanager.extensions.routes.petrinet.evaluation.formula.tra
  * Evaluates to true, if there is a following place fulfilling the given formula.
  */
 @AllArgsConstructor
-public class NodeEXIST_NEXT implements StateFormula {
+public class NodeEXISTNEXT implements StateFormula {
+    /**
+     * The given formula.
+     */
     private StateFormula parameter;
 
-    public static NodeEXIST_NEXT nodeEXIST_NEXT(final StateFormula parameter) {
-        return new NodeEXIST_NEXT(parameter);
+    /**
+     * Node representing formula which evaluates to true,
+     * if there is a following place fulfilling the given formula.
+     * @param parameter The formula to be evaluated.
+     * @return The formula representing node.
+     */
+    public static NodeEXISTNEXT nodeEXISTNEXT(final StateFormula parameter) {
+        return new NodeEXISTNEXT(parameter);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         return nodeMODAL(transitionMODAL(parameter)).evaluate(node, paths);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "EXIST_NEXT";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.writeFormula());

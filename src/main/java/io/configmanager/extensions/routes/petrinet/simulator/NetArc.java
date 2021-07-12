@@ -38,5 +38,8 @@ public class NetArc {
      */
     private PetriNet target;
 
+    /**
+     * The transition to reach to the target from the source.
+     */
     private URI usedTransition;
 }

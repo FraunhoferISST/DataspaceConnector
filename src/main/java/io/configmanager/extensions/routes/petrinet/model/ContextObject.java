@@ -30,16 +30,42 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 public class ContextObject {
+    /**
+     * The context of the context-object.
+     */
     private Set<String> context;
+
+    /**
+     * The area to be read.
+     */
     private Set<String> read;
+
+    /**
+     * The area to be written.
+     */
     private Set<String> write;
+
+    /**
+     * The area to be erased.
+     */
     private Set<String> erase;
+
+    /**
+     * The type, e.g. App or Control.
+     */
     private TransType type;
 
+    /**
+     * Generates a new object as copy of the ContextObject.
+     * @return The new object.
+     */
     public ContextObject deepCopy() {
         return new ContextObject(context, read, write, erase, type);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -58,6 +84,9 @@ public class ContextObject {
                 && Objects.equals(erase, that.erase);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return Objects.hash(new ArrayList<>(context), read, write, erase);
@@ -68,7 +97,14 @@ public class ContextObject {
      * only APP transitions have to be unfolded for parallel checks.
      */
     public enum TransType {
+        /**
+         * Transitiontype: App.
+         */
         APP,
+
+        /**
+         * Transitiontype: Control.
+         */
         CONTROL
     }
 }
