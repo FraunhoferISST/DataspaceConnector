@@ -29,6 +29,7 @@ import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
@@ -113,8 +114,8 @@ public abstract class Artifact extends AbstractEntity {
     }
 
     /**
-     * List of subscriptions listening to updates for this resource.
+     * List of subscriptions listening to updates for this artifact.
      */
-    @ManyToMany
+    @OneToMany
     private List<Subscription> subscriptions;
 }

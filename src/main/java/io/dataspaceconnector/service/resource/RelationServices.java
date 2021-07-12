@@ -70,7 +70,7 @@ public final class RelationServices {
     @Service
     @NoArgsConstructor
     public static class ArtifactSubscriptionLinker
-            extends NonOwningRelationService<Artifact, Subscription, ArtifactService,
+            extends OwningRelationService<Artifact, Subscription, ArtifactService,
             SubscriptionService> {
 
         @Override
@@ -117,13 +117,12 @@ public final class RelationServices {
     @Service
     @NoArgsConstructor
     public static class RepresentationSubscriptionLinker
-            extends NonOwningRelationService<Representation, Subscription,
+            extends OwningRelationService<Representation, Subscription,
             RepresentationService, SubscriptionService> {
 
         @Override
-        @SuppressWarnings("unchecked")
         protected final List<Subscription> getInternal(final Representation owner) {
-            return (List<Subscription>) (List<?>) owner.getSubscriptions();
+            return owner.getSubscriptions();
         }
     }
 

@@ -32,6 +32,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
@@ -150,6 +151,6 @@ public class Resource extends AbstractEntity {
     /**
      * List of subscriptions listening to updates for this resource.
      */
-    @ManyToMany
+    @OneToMany
     private List<Subscription> subscriptions;
 }
