@@ -100,7 +100,7 @@ pprint.pprint(first_artifact)
 data = consumerResources.get_data(first_artifact).text
 pprint.pprint(data)
 
-if data == dataValue:
+if data != dataValue:
     exit(1)
 
 exit(0)
