@@ -126,6 +126,20 @@ class RequestWithConnectorPayloadPreparer extends Idscp2MappingProcessor {
 
 }
 
+@Component("QueryPreparer")
+class QueryPreparer extends Idscp2MappingProcessor {
+
+    @Override
+    protected void processInternal(final Message in) {
+        final var request = in.getBody(Request.class);
+        final var payload = (String) request.getBody();
+
+        in.setHeader(IDSCP2_HEADER, request.getHeader());
+        in.setBody(payload.getBytes(StandardCharsets.UTF_8));
+    }
+
+}
+
 @Component("IncomingIdscpMessageParser")
 class IncomingMessageParser extends Idscp2MappingProcessor {
 

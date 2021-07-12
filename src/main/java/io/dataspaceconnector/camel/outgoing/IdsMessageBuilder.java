@@ -28,11 +28,16 @@ import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
 import de.fraunhofer.iais.eis.Message;
+import de.fraunhofer.iais.eis.QueryLanguage;
+import de.fraunhofer.iais.eis.QueryMessageImpl;
+import de.fraunhofer.iais.eis.QueryScope;
+import de.fraunhofer.iais.eis.QueryTarget;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUnavailableMessageImpl;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.ids.messaging.broker.util.FullTextQueryTemplate;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Request;
 import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
@@ -284,6 +289,51 @@ class ConnectorUnavailableMessageBuilder extends IdsMessageBuilder<ConnectorUnav
                 .build();
 
         return new Request<>((ConnectorUnavailableMessageImpl) message, connector);
+    }
+
+}
+
+@Component("QueryMessageBuilder")
+@RequiredArgsConstructor
+class QueryMessageBuilder extends IdsMessageBuilder<QueryMessageImpl, String> {
+
+    /**
+     * Service for the current connector configuration.
+     */
+    private final @NonNull ConnectorService connectorService;
+
+    @Override
+    protected Request<QueryMessageImpl, String> processInternal(Exchange exchange) {
+        final var modelVersion = connectorService.getOutboundModelVersion();
+        final var token = connectorService.getCurrentDat();
+        final var connector = connectorService.getConnectorWithoutResources();
+        final var connectorId = connector.getId();
+        final var recipient = exchange.getProperty("recipient", URI.class);
+
+        final var message = new de.fraunhofer.iais.eis.QueryMessageBuilder()
+                ._issued_(IdsMessageUtils.getGregorianNow())
+                ._modelVersion_(modelVersion)
+                ._issuerConnector_(connectorId)
+                ._senderAgent_(connectorId)
+                ._securityToken_(token)
+                ._recipientConnector_(Util.asList(recipient))
+                ._queryLanguage_(QueryLanguage.SPARQL)
+                ._queryScope_(QueryScope.ALL)
+                ._recipientScope_(QueryTarget.BROKER)
+                .build();
+
+        String payload;
+        if (exchange.getProperty("query") != null) {
+            payload = (String) exchange.getProperty("query");
+        } else {
+            final var searchTerm = exchange.getProperty("term", String.class);
+            final var limit = exchange.getProperty("limit", Integer.class);
+            final var offset = exchange.getProperty("offset", Integer.class);
+
+            payload = String.format(FullTextQueryTemplate.FULL_TEXT_QUERY, searchTerm, limit, offset);
+        }
+
+        return new Request<>((QueryMessageImpl) message, payload);
     }
 
 }
