@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.service.message.handler;
 
-import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
+import de.fraunhofer.iais.eis.RequestMessageImpl;
 import de.fraunhofer.ids.messaging.handler.message.SupportedMessageType;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import lombok.NonNull;
@@ -24,25 +24,25 @@ import org.apache.camel.ProducerTemplate;
 import org.springframework.stereotype.Component;
 
 /**
- * This @{@link ContractAgreementHandler} handles all incoming messages that have a
- * {@link ContractAgreementMessageImpl} as part one in the multipart message. This header must have
- * the correct '@type' reference as defined in the {@link ContractAgreementMessageImpl}
- * JsonTypeName annotation.
+ * This @{@link SubscriptionMessageHandler} handles all incoming messages that have a
+ * {@link RequestMessageImpl} as part one in the multipart message.
+ * This header must have the correct '@type' reference as defined in the
+ * {@link RequestMessageImpl} JsonTypeName annotation.
  */
 @Component
-@SupportedMessageType(ContractAgreementMessageImpl.class)
-public class ContractAgreementHandler extends AbstractMessageHandler<ContractAgreementMessageImpl> {
+@SupportedMessageType(RequestMessageImpl.class)
+public class SubscriptionMessageHandler extends AbstractMessageHandler<RequestMessageImpl> {
 
     /**
-     * Constructs a ContractAgreementHandler with the required super class parameters.
+     * Constructs an SubscriptionMessageHandler with the required super class parameters.
      *
      * @param template         Template for triggering Camel routes.
      * @param context          Camel Context required for constructing the {@link ProducerTemplate}.
      * @param connectorService Service for the current connector configuration.
      */
-    public ContractAgreementHandler(final @NonNull ProducerTemplate template,
-                                    final @NonNull CamelContext context,
-                                    final @NonNull ConnectorService connectorService) {
+    public SubscriptionMessageHandler(final @NonNull ProducerTemplate template,
+                                      final @NonNull CamelContext context,
+                                      final @NonNull ConnectorService connectorService) {
         super(template, context, connectorService);
     }
 
@@ -51,7 +51,6 @@ public class ContractAgreementHandler extends AbstractMessageHandler<ContractAgr
      */
     @Override
     protected String getHandlerRouteDirect() {
-        return "direct:contractAgreementHandler";
+        return "direct:subscriptionMsgHandler";
     }
-
 }

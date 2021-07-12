@@ -36,7 +36,7 @@ public class ResourceUpdateMessageHandler
         extends AbstractMessageHandler<ResourceUpdateMessageImpl> {
 
     /**
-     * Constructs an ResourceUpdateMessageHandler with the required super class parameters.
+     * Constructs a ResourceUpdateMessageHandler with the required super class parameters.
      *
      * @param template         Template for triggering Camel routes.
      * @param context          Camel Context required for constructing the {@link ProducerTemplate}.

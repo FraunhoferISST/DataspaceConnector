@@ -35,7 +35,7 @@ public class DescriptionRequestHandler
         extends AbstractMessageHandler<DescriptionRequestMessageImpl> {
 
     /**
-     * Constructs an DescriptionRequestHandler with the required super class parameters.
+     * Constructs a DescriptionRequestHandler with the required super class parameters.
      *
      * @param template         Template for triggering Camel routes.
      * @param context          Camel Context required for constructing the {@link ProducerTemplate}.
