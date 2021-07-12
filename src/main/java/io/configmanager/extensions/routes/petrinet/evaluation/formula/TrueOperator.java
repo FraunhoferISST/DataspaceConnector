@@ -18,30 +18,41 @@ package io.configmanager.extensions.routes.petrinet.evaluation.formula;
 import io.configmanager.extensions.routes.petrinet.evaluation.formula.state.StateFormula;
 import io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionFormula;
 import io.configmanager.extensions.routes.petrinet.model.Node;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 /**
- * TT operator evaluates to True everytime.
+ * TrueOperator evaluates to True every time.
  */
-@NoArgsConstructor
-public class TT implements StateFormula, TransitionFormula {
 
-    public static TT TT() {
-        return new TT();
+public class TrueOperator implements StateFormula, TransitionFormula {
+    /**
+     * TrueOperator evaluates to True every time.
+     * @return The TrueOperator.
+     */
+    public static TrueOperator trueOperator() {
+        return new TrueOperator();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
-        return "TT";
+        return "TrueOperator";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return symbol();

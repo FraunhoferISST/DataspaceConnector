@@ -20,7 +20,7 @@ import lombok.AllArgsConstructor;
 
 import java.util.List;
 
-import static io.configmanager.extensions.routes.petrinet.evaluation.formula.TT.TT;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.TrueOperator.trueOperator;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeFORALLUNTIL.nodeFORALLUNTIL;
 
 /**
@@ -47,7 +47,7 @@ public class NodeEV implements StateFormula {
      */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
-        return nodeFORALLUNTIL(TT(), parameter).evaluate(node, paths);
+        return nodeFORALLUNTIL(trueOperator(), parameter).evaluate(node, paths);
     }
 
     /**

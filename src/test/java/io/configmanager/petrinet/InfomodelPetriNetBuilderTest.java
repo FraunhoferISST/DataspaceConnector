@@ -50,7 +50,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.FalseOperator.falseOperator;
-import static io.configmanager.extensions.routes.petrinet.evaluation.formula.TT.TT;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.TrueOperator.trueOperator;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeAND.nodeAND;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeEXISTUNTIL.nodeEXISTUNTIL;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeExpression.nodeExpression;
@@ -130,9 +130,9 @@ class InfomodelPetriNetBuilderTest {
             log.info(allPaths.toString());
         }
 
-        final var formula = nodeAND(nodeMODAL(transitionNOT(falseOperator())), nodeOR(nodeNF(nodeExpression(x -> true, "testMsg")),TT()));
-        final var formula2 = nodeAND(nodeFORALLNEXT(nodeMODAL(transitionAF(arcExpression(x -> true,"")))), TT());
-        final var formula3 = nodeEXISTUNTIL(nodeMODAL(TT()), nodeNF(nodeExpression(x -> x.getSourceArcs().isEmpty(), "")));
+        final var formula = nodeAND(nodeMODAL(transitionNOT(falseOperator())), nodeOR(nodeNF(nodeExpression(x -> true, "testMsg")), trueOperator()));
+        final var formula2 = nodeAND(nodeFORALLNEXT(nodeMODAL(transitionAF(arcExpression(x -> true,"")))), trueOperator());
+        final var formula3 = nodeEXISTUNTIL(nodeMODAL(trueOperator()), nodeNF(nodeExpression(x -> x.getSourceArcs().isEmpty(), "")));
 
         if (log.isInfoEnabled()) {
             log.info("Formula 1: " + formula.writeFormula());

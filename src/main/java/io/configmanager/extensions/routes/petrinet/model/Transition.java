@@ -29,5 +29,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes({@JsonSubTypes.Type(TransitionImpl.class)})
 @JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, property = "@type")
 public interface Transition extends Node {
+    /**
+     * Transitions are Nodes, which decide if a step can be taken in the petri net.
+     * @return The context of the transition.
+     */
     ContextObject getContext();
 }

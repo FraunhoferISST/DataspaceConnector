@@ -26,6 +26,9 @@ import java.util.Set;
  */
 @Getter
 public class StepGraph {
+    /**
+     * The inital PetriNet.
+     */
     private PetriNet initial;
 
     /**
@@ -38,6 +41,10 @@ public class StepGraph {
      */
     private Set<NetArc> arcs;
 
+    /**
+     * Creates a Step-Graph of the given Petrinet, containing every Step a PetriNet can make.
+     * @param initial The initial Petrinet.
+     */
     public StepGraph(final PetriNet initial) {
         this.initial = initial;
         steps = new HashSet<>();

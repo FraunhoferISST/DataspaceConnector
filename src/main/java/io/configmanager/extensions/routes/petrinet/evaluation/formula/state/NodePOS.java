@@ -20,7 +20,7 @@ import lombok.AllArgsConstructor;
 
 import java.util.List;
 
-import static io.configmanager.extensions.routes.petrinet.evaluation.formula.TT.TT;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.TrueOperator.trueOperator;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeEXISTUNTIL.nodeEXISTUNTIL;
 
 /**
@@ -48,7 +48,7 @@ public class NodePOS implements StateFormula {
      */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
-        return nodeEXISTUNTIL(TT(), parameter).evaluate(node, paths);
+        return nodeEXISTUNTIL(trueOperator(), parameter).evaluate(node, paths);
     }
 
     /**

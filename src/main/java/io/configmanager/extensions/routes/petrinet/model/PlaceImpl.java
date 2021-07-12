@@ -26,15 +26,32 @@ import java.util.Set;
  * Implementation class of the {@link Place} interface.
  */
 public class PlaceImpl implements Place {
+    /**
+     * The id of the Place.
+     */
     private URI id;
+
+    /**
+     * The num of markers at the place.
+     */
     private int markers;
 
+    /**
+     * The outgoing arcs of the place.
+     */
     @JsonIgnore
     private Set<Arc> sourceArcs;
 
+    /**
+     * The incoming arcs of the place.
+     */
     @JsonIgnore
     private Set<Arc> targetArcs;
 
+    /**
+     * Creates a new PetiNets place.
+     * @param id The id for the place.
+     */
     public PlaceImpl(final URI id) {
         this.id = id;
         this.sourceArcs = new HashSet<>();
@@ -42,26 +59,41 @@ public class PlaceImpl implements Place {
         this.markers = 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public URI getID() {
         return id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Arc> getSourceArcs() {
         return sourceArcs;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Arc> getTargetArcs() {
         return targetArcs;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isComplementOf(final Node other) {
         return Transition.class.isAssignableFrom(other.getClass());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Node deepCopy() {
         final var copy = new PlaceImpl(this.getID());
@@ -69,16 +101,25 @@ public class PlaceImpl implements Place {
         return copy;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getMarkers() {
         return markers;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setMarkers(final int markers) {
         this.markers = markers;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -94,17 +135,11 @@ public class PlaceImpl implements Place {
         return markers == place.markers && Objects.equals(id, place.id);
     }
 
-    public boolean equalsExceptMarking(final Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        final var place = (PlaceImpl) o;
-        return Objects.equals(id, place.id);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return id.hashCode() + sourceArcs.hashCode() + targetArcs.hashCode() + markers;
     }
-
 }

@@ -23,7 +23,7 @@ import io.dataspaceconnector.util.RuleUtils;
 
 import java.net.URI;
 
-import static io.configmanager.extensions.routes.petrinet.evaluation.formula.TT.TT;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.TrueOperator.trueOperator;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeMODAL.nodeMODAL;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeNOT.nodeNOT;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.ArcExpression.arcExpression;
@@ -43,10 +43,10 @@ public final class RuleFormulaBuilder {
 
     /**
      * Builds a formula for a given PolicyPattern, Rule and Resource ID (URI).
-     *
      * @param pattern         The recognized policy pattern.
      * @param rule            The ids rule.
      * @param target          The requested/accessed element.
+     * @return The build formula.
      */
     public static Formula buildFormula(final PolicyPattern pattern,
                                        final Rule rule,
@@ -54,7 +54,7 @@ public final class RuleFormulaBuilder {
         switch (pattern) {
             case PROVIDE_ACCESS:
                 //when access is provided, policy is Fulfilled everytime
-                return TT();
+                return trueOperator();
             case USAGE_UNTIL_DELETION:
                 return buildUsageUntilDeletionFormula(target);
             case USAGE_LOGGING:

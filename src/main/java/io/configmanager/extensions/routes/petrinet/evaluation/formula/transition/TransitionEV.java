@@ -20,7 +20,7 @@ import lombok.AllArgsConstructor;
 
 import java.util.List;
 
-import static io.configmanager.extensions.routes.petrinet.evaluation.formula.TT.TT;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.TrueOperator.trueOperator;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionFORALL_UNTIL.transitionFORALL_UNTIL;
 
 /**
@@ -37,7 +37,7 @@ public class TransitionEV implements TransitionFormula {
 
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
-        return transitionFORALL_UNTIL(TT(), parameter).evaluate(node, paths);
+        return transitionFORALL_UNTIL(trueOperator(), parameter).evaluate(node, paths);
     }
 
     @Override
