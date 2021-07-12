@@ -18,7 +18,7 @@ package io.dataspaceconnector.controller.resource.swagger.response;
 /**
  * This class holds information about response codes.
  */
-public class ResponseCodes {
+public final class ResponseCodes {
 
     private ResponseCodes() {
         // Nothing to do here.
