@@ -15,30 +15,22 @@
  */
 package io.dataspaceconnector.model.route;
 
-import io.dataspaceconnector.model.NamedDescription;
-import io.dataspaceconnector.model.configuration.DeployMethod;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Describing route's properties.
+ * Enumeration for route types.
  */
-@Data
-@EqualsAndHashCode(callSuper = true)
-public class RouteDesc extends NamedDescription {
+public enum RouteType {
 
     /**
-     * The route configuration.
+     * Route type is app route.
      */
-    private String configuration;
+    @JsonProperty("Route")
+    ROUTE,
 
     /**
-     * The deploy method of the route.
+     * Route type is sub route.
      */
-    private DeployMethod deploy;
-
-    /**
-     * The route type of the route.
-     */
-    private RouteType routeType;
+    @JsonProperty("Subroute")
+    SUBROUTE;
 }
