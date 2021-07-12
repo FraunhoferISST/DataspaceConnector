@@ -58,8 +58,22 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
                 desc.getConfiguration());
         final var hasUpdatedDeployMethod = updateRouteDeployMethod(route,
                 desc.getDeploy());
+        final var hasUpdatedRouteType = updateRouteType(route, desc.getRouteType());
 
-        return hasUpdatedRouteConfig || hasUpdatedDeployMethod;
+        return hasUpdatedRouteConfig || hasUpdatedDeployMethod || hasUpdatedRouteType;
+    }
+
+    /**
+     * @param route     The route.
+     * @param routeType The route type.
+     * @return True, if route type is updated.
+     */
+    private boolean updateRouteType(final Route route, final RouteType routeType) {
+        if (routeType != null) {
+            route.setRouteType(routeType);
+            return true;
+        }
+        return false;
     }
 
     /**

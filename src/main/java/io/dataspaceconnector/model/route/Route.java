@@ -53,21 +53,27 @@ public class Route extends NamedEntity {
     private static final long serialVersionUID = 1L;
 
     /**
+     * The route configuration.
+     */
+    private String configuration;
+
+    /**
      * The deploy method of the route.
      */
     @Enumerated(EnumType.STRING)
     private DeployMethod deploy;
 
     /**
+     * The route type of the route.
+     */
+    @Enumerated(EnumType.STRING)
+    private RouteType routeType;
+
+    /**
      * List of subroutes.
      */
     @OneToMany
     private List<Route> steps;
-
-    /**
-     * The route configuration.
-     */
-    private String configuration;
 
     /**
      * The start endpoint of the route.
