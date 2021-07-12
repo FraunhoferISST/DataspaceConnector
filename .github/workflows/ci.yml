@@ -16,6 +16,8 @@ jobs:
   style:
     timeout-minutes: 5
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
 
     steps:
     - uses: actions/checkout@v2
@@ -35,6 +37,8 @@ jobs:
   license:
     timeout-minutes: 5
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
 
     steps:
     - uses: actions/checkout@v2
@@ -54,6 +58,9 @@ jobs:
   linting:
     timeout-minutes: 5
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
     steps:
     - uses: actions/checkout@v2
     - name: Lint Docker

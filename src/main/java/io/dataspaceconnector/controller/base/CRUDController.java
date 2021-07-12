@@ -101,7 +101,7 @@ public interface CRUDController<T extends Entity, D extends Description, V>  {
                     description = ResponseDescriptions.CREATED),
             @ApiResponse(responseCode = ResponseCodes.NO_CONTENT,
                     description = ResponseDescriptions.NO_CONTENT)})
-    ResponseEntity<Object> update(
+    ResponseEntity<V> update(
             @Valid @PathVariable(name = "id") UUID resourceId, @RequestBody D desc);
 
     /**

@@ -69,6 +69,7 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
      * @param <Y> Types of the endpoint description.
      * @return entity service.
      */
+    @SuppressWarnings("unchecked")
     private <X extends Endpoint, Y extends EndpointDesc> EntityService<X, Y>
     getService(final Class<?> clazz) {
         if (AppEndpointDesc.class.equals(clazz) || AppEndpoint.class.equals(clazz)) {

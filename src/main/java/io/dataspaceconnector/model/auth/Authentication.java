@@ -22,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -33,7 +35,12 @@ import javax.persistence.Id;
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @RequiredArgsConstructor
-public class Authentication {
+public class Authentication implements Serializable {
+    /**
+     * Serial version uid.
+     **/
+    private static final long serialVersionUID = 1L;
+
     /**
      * The primary key of the authentication.
      */

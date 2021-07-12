@@ -21,7 +21,7 @@ package io.dataspaceconnector.camel.dto;
  * @param <H> the header type.
  * @param <B> the body/payload type.
  */
-public interface RouteMsg<H, B> {
+public interface RouteMsg<H, B>{
     /**
      * Returns the header of this RouteMsg.
      *

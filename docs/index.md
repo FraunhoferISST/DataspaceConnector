@@ -37,7 +37,7 @@ data consumer, and thus both provide data in a data ecosystem and request it fro
 connectors. The Dataspace Connector supports various usage control rules, which are implemented and
 enforced. This allows data in the IDS data ecosystem to be assigned usage control rules and ensures
 data sovereignty throughout the data lifecycle. Furthermore, identity management is supported by the
-integration of an identity provider in the IDS context, such as a DAPS.
+integration of an identity provider in the IDS context, such as a [DAPS](https://github.com/International-Data-Spaces-Association/IDS-G/tree/master/core/DAPS).
 
 The Dataspace Connector is an open source project whose development is being driven in collaboration
 with various research institutes and companies. Its architecture allows the existing implementation

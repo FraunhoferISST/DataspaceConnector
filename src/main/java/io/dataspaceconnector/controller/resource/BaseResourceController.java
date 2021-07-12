@@ -121,19 +121,16 @@ public class BaseResourceController<T extends Entity, D extends Description, V
 
     /** {@inheritDoc} */
     @Override
-    public ResponseEntity<Object> update(final UUID resourceId, final D desc) {
+    public ResponseEntity<V> update(final UUID resourceId, final D desc) {
         final var resource = service.update(resourceId, desc);
 
-        ResponseEntity<?> response;
         if (resource.getId().equals(resourceId)) {
             // The resource was not moved
-            response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             // The resource has been moved
-            response = respondCreated(resource);
+            return respondCreated(resource);
         }
-
-        return (ResponseEntity<Object>) response;
     }
 
     /** {@inheritDoc} */

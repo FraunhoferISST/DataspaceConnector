@@ -24,7 +24,6 @@ import lombok.EqualsAndHashCode;
 /**
  * Class for inputs of a policy pattern.
  */
-@SuppressWarnings("rawtypes")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")

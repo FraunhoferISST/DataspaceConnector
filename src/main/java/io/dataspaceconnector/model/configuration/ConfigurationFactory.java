@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.model.configuration;
 
-import java.util.Objects;
-
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
@@ -51,12 +49,26 @@ public class ConfigurationFactory extends AbstractFactory<Configuration, Configu
     private final @NonNull KeystoreFactory keystoreFactory;
 
     /**
+     * Default log level.
+     */
+    public static final LogLevel DEFAULT_LOG_LEVEL = LogLevel.WARN;
+
+    /**
+     * Default deploy mode.
+     */
+    public static final DeployMode DEFAULT_DEPLOY_MODE = DeployMode.TEST;
+
+    /**
      * @param desc The description of the entity.
      * @return The new configuration entity.
      */
     @Override
     protected Configuration initializeEntity(final ConfigurationDesc desc) {
-        return new Configuration();
+        final var config = new Configuration();
+        config.setLogLevel(DEFAULT_LOG_LEVEL);
+        config.setDeployMode(DEFAULT_DEPLOY_MODE);
+
+        return config;
     }
 
     /**
@@ -93,22 +105,30 @@ public class ConfigurationFactory extends AbstractFactory<Configuration, Configu
 
     private boolean updateDeployMode(final Configuration config,
                                      final DeployMode deployMode) {
-        // TODO
-        config.setDeployMode(Objects.requireNonNullElse(deployMode, DeployMode.TEST));
+        final var tmp = deployMode == null ? DEFAULT_DEPLOY_MODE : deployMode;
+        if (config.getDeployMode().equals(tmp)) {
+            return false;
+        }
+
+        config.setDeployMode(tmp);
         return true;
     }
 
     private boolean updateLogLevel(final Configuration config, final LogLevel logLevel) {
-        // TODO
-        config.setLogLevel(Objects.requireNonNullElse(logLevel, LogLevel.OFF));
+        final var tmp = logLevel == null ? DEFAULT_LOG_LEVEL : logLevel;
+        if (config.getLogLevel().equals(tmp)) {
+            return false;
+        }
+
+        config.setLogLevel(tmp);
         return true;
     }
 
     private boolean updateProxy(final Configuration configuration, final ProxyDesc desc) {
-        // TODO only update if proxy really changed
         if (configuration.getProxy() == null && desc == null) {
             return false;
         }
+
         if (configuration.getProxy() != null && desc == null) {
             configuration.setProxy(null);
             return true;

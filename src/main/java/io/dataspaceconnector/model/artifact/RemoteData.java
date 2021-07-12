@@ -44,6 +44,11 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 public class RemoteData extends Data {
 
     /**
+     * Serial version uid.
+     **/
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Access url of the backend.
      */
     @Convert(converter = UrlConverter.class)

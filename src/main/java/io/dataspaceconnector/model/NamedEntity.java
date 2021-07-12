@@ -29,6 +29,10 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class NamedEntity extends Entity {
     /**
+     * Serial version uid.
+     **/
+    private static final long serialVersionUID = 1L;
+    /**
      * The title of the entity.
      */
     private String title;

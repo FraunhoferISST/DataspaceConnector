@@ -39,23 +39,25 @@ public class DeadLetterChannel extends RouteBuilder {
      * and then sends this to the Configuration Manager.
      */
     @Override
-    @SuppressFBWarnings("CRLF_INJECTION_LOGS")
     public void configure() {
         onException(Exception.class)
-                .process(exchange -> {
-                    if (log.isWarnEnabled()) {
-                        final var cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT,
-                                                               Exception.class);
-                        log.warn("Failed to send error logs to Configuration Manager. "
-                                 + "[exception=({})]", cause.getMessage());
-                    }
-                })
+                .process(this::processException)
                 .handled(true);
 
         from("direct:deadLetterChannel")
                 .process("dlcProcessor")
                 .setHeader(Exchange.HTTP_METHOD, constant("POST"))
                 .to(errorLogEndpoint);
+    }
+
+    @SuppressFBWarnings("CRLF_INJECTION_LOGS")
+    private void processException(final Exchange exchange) {
+        if (log.isWarnEnabled()) {
+            final var cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT,
+                                                   Exception.class);
+            log.warn("Failed to send error logs to Configuration Manager. "
+                     + "[exception=({})]", cause.getMessage());
+        }
     }
 
 }

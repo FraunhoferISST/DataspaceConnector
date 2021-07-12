@@ -48,6 +48,8 @@ If you want to build and run locally, ensure that at least Java 11 is installed.
 
 For more details, see [here](https://international-data-spaces-association.github.io/DataspaceConnector/).
 
+For Docker or Kubernetes deployment as well as full setup with Configurationmanager and UI, see [here](https://github.com/International-Data-Spaces-Association/IDS-Deployment-Examples/tree/main/dataspace-connector).
+
 ## Contributing
 
 You are very welcome to contribute to this project when you find a bug, want to suggest an

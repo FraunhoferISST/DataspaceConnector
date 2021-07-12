@@ -17,11 +17,12 @@
 
 echo "Setup provider and consumer"
 
-# Provider setup
-helm install provider charts/dataspace-connector --set env.config.SPRING_APPLICATION_NAME="Producer Connector"
-
 # Consumer setup
 helm install consumer charts/dataspace-connector --set env.config.SPRING_APPLICATION_NAME="Consumer Connector"
+
+# Provider setup
+sed -i "s/^appVersion:.*$/appVersion: ci/" charts/dataspace-connector/Chart.yaml
+helm install provider charts/dataspace-connector --set env.config.SPRING_APPLICATION_NAME="Producer Connector"
 
 echo "Waiting for readiness"
 kubectl rollout status deployments/provider-dataspace-connector

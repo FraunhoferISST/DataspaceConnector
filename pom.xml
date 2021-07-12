@@ -105,7 +105,7 @@
 		<springdoc-security.version>1.5.9</springdoc-security.version>
 		<springdoc-hateoas.version>1.5.9</springdoc-hateoas.version>
 		<jsonld-java.version>0.13.3</jsonld-java.version>
-		<equalsverifier.version>3.6.1</equalsverifier.version>
+		<equalsverifier.version>3.7</equalsverifier.version>
 		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
 		<velocity.version>1.7</velocity.version>
@@ -548,7 +548,7 @@
 						<threshold>Low</threshold>
 						<xmlOutput>true</xmlOutput>
 						<excludeFilterFile>./scripts/ci/spotbugs-excludes.xml</excludeFilterFile>
-						<failThreshold>Medium</failThreshold>
+						<failThreshold>Low</failThreshold>
 						<plugins>
 							<plugin>
 								<groupId>com.h3xstream.findsecbugs</groupId>
@@ -770,7 +770,7 @@
 										<limit>
 											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>45%</minimum>
+											<minimum>50%</minimum>
 										</limit>
 									</limits>
 								</rule>
@@ -926,7 +926,7 @@
 						<configuration>
 							<showWarnings>true</showWarnings>
 							<showDeprecation>true</showDeprecation>
-							<failOnViolation>true</failOnViolation>
+							<failOnWarning>true</failOnWarning>
 
 							<compilerArgs>
 								<arg>-Xlint:all</arg>

@@ -40,6 +40,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.stream.Collectors;
 
 /**
@@ -270,7 +271,8 @@ class PayloadStreamReader extends IdsTransformer<
         inputStream.reset();
 
         var payload = "Payload could not be read from request.";
-        try (var reader = new BufferedReader(new InputStreamReader(inputStream))) {
+        try (var reader = new BufferedReader(new InputStreamReader(inputStream,
+                                                                    Charset.defaultCharset()))) {
             payload = reader.lines().parallel().collect(Collectors.joining("\n"));
         }
 

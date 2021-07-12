@@ -37,6 +37,11 @@ import org.hibernate.annotations.Where;
 public class LocalData extends Data {
 
     /**
+     * Serial version uid.
+     **/
+    private static final long serialVersionUID = 1L;
+
+    /**
      * The data.
      */
     @Lob

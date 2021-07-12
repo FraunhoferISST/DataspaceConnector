@@ -272,17 +272,6 @@ public class EntityResolver {
     }
 
     /**
-     * Get agreement by remote id.
-     *
-     * @param agreementUri The remote id (at provider side).
-     * @return The artifact of the database.
-     * @throws ResourceNotFoundException If the resource could not be found.
-     */
-    public Agreement getAgreementByUri(final URI agreementUri) throws ResourceNotFoundException {
-        return agreementService.get(EndpointUtils.getUUIDFromPath(agreementUri));
-    }
-
-    /**
      * Get stored contract agreement for requested element.
      *
      * @param target The requested element.

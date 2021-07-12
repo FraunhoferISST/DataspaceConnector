@@ -182,7 +182,7 @@ public final class ResourceControllers {
         @Hidden
         @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.METHOD_NOT_ALLOWED,
                 description = ResponseDescriptions.METHOD_NOT_ALLOWED)})
-        public final ResponseEntity<Object> update(@Valid final UUID resourceId,
+        public final ResponseEntity<AgreementView> update(@Valid final UUID resourceId,
                                                    final AgreementDesc desc) {
             throw new MethodNotAllowed();
         }
@@ -269,8 +269,6 @@ public final class ResourceControllers {
                 If no agreement information has been passed the connector needs
                 to check if the data access is restricted by the usage control.
              */
-            // TODO: Check what happens when this connector is the provider and one of its provided
-            //  agreements is passed.
             final var data = (agreementUri == null)
                     ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput)
                     : artifactSvc.getData(accessVerifier, dataReceiver, artifactId,

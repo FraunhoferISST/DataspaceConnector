@@ -15,9 +15,16 @@
  */
 package io.dataspaceconnector.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
 import io.dataspaceconnector.util.ErrorMessages;
-import io.dataspaceconnector.util.Utils;
 import io.dataspaceconnector.util.QueryInput;
+import io.dataspaceconnector.util.Utils;
 import kotlin.NotImplementedError;
 import kotlin.Pair;
 import lombok.Data;
@@ -27,13 +34,6 @@ import lombok.RequiredArgsConstructor;
 import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import org.springframework.stereotype.Service;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This class builds up http or httpS endpoint connections and sends GET requests.
@@ -117,7 +117,7 @@ public class HttpService {
         Utils.requireNonNull(target, ErrorMessages.URI_NULL);
         Utils.requireNonNull(args, ErrorMessages.HTTP_ARGS_NULL);
 
-        final var urlBuilder = HttpUrl.parse(target.toString()).newBuilder();
+        final var urlBuilder = createUrlBuilder(target);
 
         if (args.getParams() != null) {
             for (final var key : args.getParams().keySet()) {
@@ -146,12 +146,21 @@ public class HttpService {
 
         final var output = new Response();
         output.setCode(response.code());
-        output.setBody(response.body() == null
-                ? InputStream.nullInputStream()
-                : new ByteArrayInputStream(response.body().bytes()));
+        output.setBody(getBody(response));
         response.close();
 
         return output;
+    }
+
+    private InputStream getBody(final okhttp3.Response response) throws IOException {
+        final var body = response.body();
+        if (body != null) {
+            final var tmp = body.bytes();
+            body.close();
+            return new ByteArrayInputStream(tmp);
+        }
+
+        return InputStream.nullInputStream();
     }
 
     /**
@@ -185,12 +194,25 @@ public class HttpService {
     }
 
     private URL buildTargetUrl(final URL target, final String optional) {
-        final var urlBuilder = HttpUrl.parse(target.toString()).newBuilder();
+        final var urlBuilder = createUrlBuilder(target);
         if (optional != null) {
             urlBuilder.addPathSegments(optional.startsWith("/") ? optional.substring(1) : optional);
         }
 
         return urlBuilder.build().url();
+    }
+
+    private HttpUrl.Builder createUrlBuilder(final URL target) {
+        return toUrl(target).newBuilder();
+    }
+
+    private HttpUrl toUrl(final URL target) {
+        final var url = HttpUrl.get(target);
+        if (url == null) {
+            throw new IllegalArgumentException();
+        }
+
+        return url;
     }
 
     /**

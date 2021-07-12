@@ -109,18 +109,18 @@ public final class EndpointControllers {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public PagedModel<Object> getAll(final Integer page, final Integer size) {
             final var pageable = Utils.toPageRequest(page, size);
             final var entities = service.getAll(pageable);
-            PagedModel<RepresentationModel<?>> model;
+            final PagedModel<?> model;
             if (entities.hasContent()) {
                 model = pagedAssembler.toModel(entities, assemblerProxy);
             } else {
-                model = (PagedModel<RepresentationModel<?>>) pagedAssembler
-                        .toEmptyModel(entities, EndpointViewProxy.class);
+                model = pagedAssembler.toEmptyModel(entities, EndpointViewProxy.class);
             }
 
-            return (PagedModel<Object>) (PagedModel<?>) model;
+            return (PagedModel<Object>) model;
         }
 
         @Override

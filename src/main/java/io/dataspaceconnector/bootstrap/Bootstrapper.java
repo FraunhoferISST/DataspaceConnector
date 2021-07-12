@@ -18,6 +18,9 @@ package io.dataspaceconnector.bootstrap;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
+import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
+import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import io.dataspaceconnector.bootstrap.util.BootstrapUtils;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
@@ -49,6 +52,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -181,7 +185,7 @@ public class Bootstrapper {
      */
     private boolean registerAtBroker(final Properties properties,
                                     final Map<URI, Resource> resources) {
-        final var knownBrokers = new HashSet<URL>();
+        final var knownBrokers = new HashSet<String>();
         // Iterate over all registered resources.
         for (final var entry : resources.entrySet()) {
             final var propertyKey = "broker.register." + entry.getKey().toString();
@@ -198,8 +202,8 @@ public class Bootstrapper {
                 final var broker = brokerUrl.get();
 
                 try {
-                    if (!knownBrokers.contains(broker)) {
-                        knownBrokers.add(broker);
+                    if (!knownBrokers.contains(broker.toString())) {
+                        knownBrokers.add(broker.toString());
                         if (!brokerSvc.sendConnectorUpdateMessage(broker.toURI())) {
                             return false;
                         }
@@ -208,7 +212,8 @@ public class Bootstrapper {
                     if (!brokerSvc.sendResourceUpdateMessage(broker.toURI(), entry.getValue())) {
                         return false;
                     }
-                } catch (Exception e) {
+                } catch (MultipartParseException |  ClaimsException | DapsTokenManagerException
+                 | IOException | URISyntaxException e) {
                     if (log.isDebugEnabled()) {
                         log.debug("Could not register resource at broker [resourceId=({}), "
                                 + "broker=({})].", entry.getKey().toString(), broker, e);

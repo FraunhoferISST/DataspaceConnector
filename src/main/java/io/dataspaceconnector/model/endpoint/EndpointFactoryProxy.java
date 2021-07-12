@@ -18,6 +18,7 @@ package io.dataspaceconnector.model.endpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+
 /**
  * The endpoint factory proxy class.
  */
@@ -44,25 +45,26 @@ public class EndpointFactoryProxy extends EndpointFactory<Endpoint, EndpointDesc
 
     @Override
     protected final Endpoint initializeEntity(final EndpointDesc desc) {
-        if (AppEndpoint.class.equals(desc.getClass())) {
+        if (desc instanceof AppEndpointDesc) {
             return apps.initializeEntity((AppEndpointDesc) desc);
-        } else if (ConnectorEndpoint.class.equals(desc.getClass())) {
+        } else if (desc instanceof ConnectorEndpointDesc) {
             return connector.initializeEntity((ConnectorEndpointDesc) desc);
         }
 
+        assert desc instanceof GenericEndpointDesc;
         return generic.initializeEntity((GenericEndpointDesc) desc);
     }
 
     @Override
     protected final boolean updateInternal(final Endpoint endpoint, final EndpointDesc desc) {
-        if (AppEndpoint.class.equals(desc.getClass())) {
+        if (endpoint instanceof AppEndpoint && desc instanceof AppEndpointDesc) {
             return apps.updateInternal((AppEndpoint) endpoint, (AppEndpointDesc) desc);
-        } else if (ConnectorEndpoint.class.equals(desc.getClass())) {
-            return connector.updateInternal(
-                    (ConnectorEndpoint) endpoint,
-                    (ConnectorEndpointDesc) desc);
+        } else if (endpoint instanceof ConnectorEndpoint && desc instanceof ConnectorEndpointDesc) {
+            return connector.updateInternal((ConnectorEndpoint) endpoint,
+                                            (ConnectorEndpointDesc) desc);
         }
 
+        assert endpoint instanceof GenericEndpoint && desc instanceof GenericEndpointDesc;
         return generic.updateInternal((GenericEndpoint) endpoint, (GenericEndpointDesc) desc);
     }
 }

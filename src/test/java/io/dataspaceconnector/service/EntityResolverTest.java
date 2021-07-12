@@ -15,16 +15,19 @@
  */
 package io.dataspaceconnector.service;
 
+import java.net.URI;
+import java.util.UUID;
+
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;
-import io.dataspaceconnector.model.rule.ContractRule;
+import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
-import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.ids.builder.IdsArtifactBuilder;
 import io.dataspaceconnector.service.ids.builder.IdsCatalogBuilder;
@@ -46,9 +49,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.net.URI;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -215,7 +215,7 @@ public class EntityResolverTest {
     }
 
     @Test
-    public void getEntityById_malformedAgreement_() {
+    public void getEntityById_malformedAgreement_throwsResourceNotFoundException() {
         /* ARRANGE */
         final var resourceUri =
                 URI.create("https://localhost:8080/someWhereIdontKnow/" + resourceId);
@@ -223,6 +223,7 @@ public class EntityResolverTest {
         /* ACT && ASSERT */
         assertThrows(ResourceNotFoundException.class, () -> resolver.getEntityById(resourceUri));
     }
+
 
     /***********************************************************************************************
      * Utilities.                                                                                  *
