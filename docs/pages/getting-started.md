@@ -85,11 +85,11 @@ Possible rejection messages:
 ### More IDS
 
 Other IDS components also have running instances that can be used for testing. The Dataspace
-Connector currently mainly supports communication with the IDS Broker and DAPS - as described
+Connector currently mainly supports communication with the IDS Broker and [DAPS](https://github.com/International-Data-Spaces-Association/IDS-G/tree/master/core/DAPS) - as described
 [here](features.md#ids-communication). A working communication with other components is not
 guaranteed.
 
-* The Dynamic Attribute Provisioning Service (DAPS) is available at
+* [The Dynamic Attribute Provisioning Service](https://github.com/International-Data-Spaces-Association/IDS-G/tree/master/core/DAPS) (DAPS) is available at
 [https://daps.aisec.fraunhofer.de/](https://daps.aisec.fraunhofer.de/).
 
 * The IDS Metadata Broker is available at
