@@ -210,6 +210,7 @@ class ContractAgreementHandlerTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void handleMessage_validAgreement_returnMessageProcessedNotificationMessageAndLogToCH() {
         /* ARRANGE */
         final var message = new ContractAgreementMessageBuilder()

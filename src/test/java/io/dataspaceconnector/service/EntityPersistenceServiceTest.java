@@ -75,6 +75,7 @@ public class EntityPersistenceServiceTest {
     private EntityPersistenceService entityPersistenceService;
 
     @Test
+    @SuppressWarnings("unchecked")
     public void saveMetadata_validResource_persistEntities() {
         /* ARRANGE */
         final var response = new HashMap<String, String>();
