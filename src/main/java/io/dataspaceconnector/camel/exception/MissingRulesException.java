@@ -32,7 +32,7 @@ public class MissingRulesException extends RuntimeException {
      * The contract request.
      */
     @Getter
-    private transient final ContractRequest contractRequest;
+    private final transient ContractRequest contractRequest;
 
     /**
      * Constructs a MissingRulesException with the specified contract request and detail message.
