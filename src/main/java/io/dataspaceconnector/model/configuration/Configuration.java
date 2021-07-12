@@ -15,17 +15,12 @@
  */
 package io.dataspaceconnector.model.configuration;
 
-import javax.persistence.CascadeType;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import de.fraunhofer.iais.eis.ConnectorStatus;
-import io.dataspaceconnector.model.base.Entity;
+import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.keystore.Keystore;
 import io.dataspaceconnector.model.proxy.Proxy;
 import io.dataspaceconnector.model.truststore.Truststore;
+import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -33,6 +28,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.net.URI;
+import java.util.List;
 
 /**
  * The configuration describes the configuration of a connector.
@@ -45,12 +50,52 @@ import org.hibernate.annotations.Where;
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class Configuration extends Entity {
+public class Configuration extends NamedEntity {
 
     /**
      * Serial version uid.
      **/
     private static final long serialVersionUID = 1L;
+
+    /**
+     * The access url of the connector.
+     */
+    @Convert(converter = UriConverter.class)
+    private URI connectorEndpoint;
+
+    /**
+     * The project version.
+     */
+    private String version;
+
+    /**
+     * The curator.
+     */
+    @Convert(converter = UriConverter.class)
+    private URI curator;
+
+    /**
+     * The maintainer.
+     */
+    @Convert(converter = UriConverter.class)
+    private URI maintainer;
+
+    /**
+     * The list of inbound model version.
+     */
+    @ElementCollection
+    private List<String> inboundModelVersion;
+
+    /**
+     * The outbound model version.
+     */
+    private String outboundModelVersion;
+
+    /**
+     * The security profile.
+     */
+    @Enumerated(EnumType.STRING)
+    private SecurityProfile securityProfile;
 
     /**
      * The log level.

@@ -53,15 +53,12 @@ public class ProxyFactory extends AbstractFactory<Proxy, ProxyDesc> {
     }
 
     private boolean updateExclusions(final Proxy proxy, final List<String> exclusions) {
-        if (proxy.getExclusions().isEmpty() && exclusions.isEmpty()) {
-            return false;
-        }
-        if (!proxy.getExclusions().isEmpty() && exclusions.isEmpty()) {
-            proxy.setExclusions(new ArrayList<>());
-            return true;
-        }
-        proxy.setExclusions(exclusions);
-        return true;
+        final var newExclusionList =
+                MetadataUtils.updateStringList(proxy.getExclusions(), exclusions,
+                        new ArrayList<>());
+        newExclusionList.ifPresent(proxy::setExclusions);
+
+        return newExclusionList.isPresent();
     }
 
     private boolean updateAuthentication(final Proxy proxy, final Authentication authentication) {

@@ -15,23 +15,29 @@
  */
 package io.dataspaceconnector.model.configuration;
 
-import io.dataspaceconnector.model.base.AbstractFactory;
+import io.dataspaceconnector.model.AbstractNamedFactory;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
 import io.dataspaceconnector.model.proxy.ProxyDesc;
 import io.dataspaceconnector.model.proxy.ProxyFactory;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
 import io.dataspaceconnector.model.truststore.TruststoreFactory;
+import io.dataspaceconnector.util.MetadataUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Creates and updates a configuration.
  */
 @Component
 @RequiredArgsConstructor
-public class ConfigurationFactory extends AbstractFactory<Configuration, ConfigurationDesc> {
+public class ConfigurationFactory extends AbstractNamedFactory<Configuration, ConfigurationDesc> {
 
     /**
      * Contains creation and update logic for proxy objects.
@@ -59,6 +65,32 @@ public class ConfigurationFactory extends AbstractFactory<Configuration, Configu
     public static final DeployMode DEFAULT_DEPLOY_MODE = DeployMode.TEST;
 
     /**
+     * Default connector endpoint.
+     */
+    private static final URI DEFAULT_CONNECTOR_ENDPOINT =
+            URI.create("https://localhost:8080/api/ids/data");
+
+    /**
+     * The default version.
+     */
+    private static final String DEFAULT_VERSION = "6.0.0";
+
+    /**
+     * The default outbound model version.
+     */
+    private static final String DEFAULT_OUTBOUND_VERSION = "4.1.0";
+
+    /**
+     * The default maintainer.
+     */
+    private static final URI DEFAULT_MAINTAINER = URI.create("https://www.isst.fraunhofer.de/");
+
+    /**
+     * The default curator.
+     */
+    private static final URI DEFAULT_CURATOR = URI.create("https://www.isst.fraunhofer.de/");
+
+    /**
      * @param desc The description of the entity.
      * @return The new configuration entity.
      */
@@ -67,6 +99,7 @@ public class ConfigurationFactory extends AbstractFactory<Configuration, Configu
         final var config = new Configuration();
         config.setLogLevel(DEFAULT_LOG_LEVEL);
         config.setDeployMode(DEFAULT_DEPLOY_MODE);
+        config.setInboundModelVersion(new ArrayList<>());
 
         return config;
     }
@@ -78,17 +111,134 @@ public class ConfigurationFactory extends AbstractFactory<Configuration, Configu
      */
     @Override
     protected boolean updateInternal(final Configuration config, final ConfigurationDesc desc) {
+        final var hasUpdatedConnectorEndpoint = updateConnectorEndpoint(config,
+                desc.getConnectorEndpoint());
+        final var hasUpdatedVersion = updateVersion(config, desc.getVersion());
+        final var hasUpdatedCurator = updateCurator(config, desc.getCurator());
+        final var hasUpdatedMaintainer = updateMaintainer(config, desc.getMaintainer());
+        final var hasUpdatedInboundModelVersions = updateInboundModelVersion(config,
+                desc.getInboundModelVersion());
+        final var hasUpdatedOutboundModelVersion = updateOutboundModelVersion(config,
+                desc.getOutboundModelVersion());
+        final var hasUpdatedSecurityProfile = updateSecurityProfile(config,
+                desc.getSecurityProfile());
         final var hasUpdatedLogLevel = updateLogLevel(config, desc.getLogLevel());
         final var hasUpdatedDeployMode = updateDeployMode(config, desc.getDeployMode());
         final var hasUpdatedTrustStore = updateTrustStore(config, desc.getTruststoreSettings());
         final var hasUpdatedKeyStore = updateKeyStore(config, desc.getKeystoreSettings());
         final var hasUpdatedProxy = updateProxy(config, desc.getProxySettings());
 
-        return hasUpdatedLogLevel
+        return hasUpdatedConnectorEndpoint
+                || hasUpdatedVersion
+                || hasUpdatedCurator
+                || hasUpdatedMaintainer
+                || hasUpdatedInboundModelVersions
+                || hasUpdatedOutboundModelVersion
+                || hasUpdatedSecurityProfile
+                || hasUpdatedLogLevel
                 || hasUpdatedDeployMode
                 || hasUpdatedTrustStore
                 || hasUpdatedKeyStore
                 || hasUpdatedProxy;
+    }
+
+    /**
+     * @param config The configuration.
+     * @param securityProfile The new security profile.
+     * @return True, if security profile is updated.
+     */
+    private boolean updateSecurityProfile(final Configuration config,
+                                          final SecurityProfile securityProfile) {
+        config.setSecurityProfile(Objects.requireNonNullElse(securityProfile,
+                SecurityProfile.BASE_SECURITY));
+        return true;
+    }
+
+    /**
+     * @param config The configuration.
+     * @param outboundModelVersion The outbound model version.
+     * @return True, if outbound model version is updated.
+     */
+    private boolean updateOutboundModelVersion(final Configuration config,
+                                               final String outboundModelVersion) {
+        final var newOutboundVersion =
+                MetadataUtils.updateString(config.getOutboundModelVersion(), outboundModelVersion,
+                        DEFAULT_OUTBOUND_VERSION);
+        newOutboundVersion.ifPresent(config::setOutboundModelVersion);
+
+        return newOutboundVersion.isPresent();
+    }
+
+    /**
+     * @param config The configuration.
+     * @param inboundModelVersion The new inbound model version list.
+     * @return True, if list is updated.
+     */
+    private boolean updateInboundModelVersion(final Configuration config,
+                                              final List<String> inboundModelVersion) {
+        final var newInboundModelVersionList =
+                MetadataUtils.updateStringList(config.getInboundModelVersion(), inboundModelVersion,
+                        new ArrayList<>());
+        newInboundModelVersionList.ifPresent(config::setInboundModelVersion);
+
+        return newInboundModelVersionList.isPresent();
+    }
+
+    /**
+     * @param config The configuration.
+     * @param maintainer The new maintainer.
+     * @return True, if maintainer is updated.
+     */
+    private boolean updateMaintainer(final Configuration config, final URI maintainer) {
+        final var newUri =
+                MetadataUtils.updateUri(config.getMaintainer(), maintainer,
+                        DEFAULT_MAINTAINER);
+        newUri.ifPresent(config::setMaintainer);
+
+        return newUri.isPresent();
+    }
+
+    /**
+     * @param config The configuration.
+     * @param curator The new curator.
+     * @return True, if curator is updated.
+     */
+    private boolean updateCurator(final Configuration config, final URI curator) {
+        final var newUri =
+                MetadataUtils.updateUri(config.getMaintainer(), curator,
+                        DEFAULT_CURATOR);
+        newUri.ifPresent(config::setCurator);
+
+        return newUri.isPresent();
+    }
+
+    /**
+     * @param config The configuration.
+     * @param version The updated project version.
+     * @return True, if version is updated.
+     */
+    private boolean updateVersion(final Configuration config,
+                                  final String version) {
+        final var newVersion = MetadataUtils.updateString(config.getVersion(),
+                version, DEFAULT_VERSION);
+        newVersion.ifPresent(config::setVersion);
+
+        return newVersion.isPresent();
+    }
+
+    /**
+     * @param config The configuration
+     * @param connectorEndpoint The new connector endpoint.
+     * @return True, if connector endpoint is updated.
+     */
+    private boolean updateConnectorEndpoint(final Configuration config,
+                                            final URI connectorEndpoint) {
+        final var newUri =
+                MetadataUtils.updateUri(config.getConnectorEndpoint(), connectorEndpoint,
+                        DEFAULT_CONNECTOR_ENDPOINT);
+        newUri.ifPresent(config::setConnectorEndpoint);
+
+        return newUri.isPresent();
     }
 
     private boolean updateKeyStore(final Configuration config, final KeystoreDesc desc) {
