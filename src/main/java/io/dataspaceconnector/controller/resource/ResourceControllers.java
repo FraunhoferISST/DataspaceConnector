@@ -182,7 +182,7 @@ public final class ResourceControllers {
         @Hidden
         @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.METHOD_NOT_ALLOWED,
                 description = ResponseDescriptions.METHOD_NOT_ALLOWED)})
-        public final ResponseEntity<Object> update(@Valid final UUID resourceId,
+        public final ResponseEntity<AgreementView> update(@Valid final UUID resourceId,
                                                    final AgreementDesc desc) {
             throw new MethodNotAllowed();
         }
