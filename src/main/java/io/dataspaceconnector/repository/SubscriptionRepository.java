@@ -16,9 +16,27 @@
 package io.dataspaceconnector.repository;
 
 import io.dataspaceconnector.model.Subscription;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.net.URI;
+import java.util.List;
 
 /**
  * The repository containing all objects of type {@link Subscription}.
  */
+@Repository
 public interface SubscriptionRepository extends BaseEntityRepository<Subscription> {
+
+    /**
+     * Finds all subscriptions with the current connector as subscriber.
+     *
+     * @param subscriber URI of the subscriber.
+     * @return List of all subscription with the subscriber.
+     */
+    @Query("SELECT r "
+            + "FROM Subscription r "
+            + "WHERE r.subscriber = :subscriber "
+            + "AND r.deleted = false")
+    List<Subscription> findAllBySubscriber(URI subscriber);
 }

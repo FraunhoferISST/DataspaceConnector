@@ -17,8 +17,15 @@ package io.dataspaceconnector.service.resource;
 
 import io.dataspaceconnector.model.Subscription;
 import io.dataspaceconnector.model.SubscriptionDesc;
+import io.dataspaceconnector.repository.SubscriptionRepository;
+import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.Utils;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.util.List;
 
 /**
  * Handles the basic logic for subscriptions.
@@ -26,4 +33,17 @@ import org.springframework.stereotype.Service;
 @Service
 @NoArgsConstructor
 public class SubscriptionService extends BaseEntityService<Subscription, SubscriptionDesc> {
+
+    /**
+     * Get a list of all subscriptions with a matching subscriber.
+     *
+     * @param pageable   Range selection of the complete data set.
+     * @param subscriber The subscriber id.
+     * @return The id list of all entities.
+     * @throws IllegalArgumentException if the passed pageable is null.
+     */
+    public List<Subscription> getOwnSubscriptions(final Pageable pageable, final URI subscriber) {
+        Utils.requireNonNull(pageable, ErrorMessages.PAGEABLE_NULL);
+        return ((SubscriptionRepository) getRepository()).findAllBySubscriber(subscriber);
+    }
 }

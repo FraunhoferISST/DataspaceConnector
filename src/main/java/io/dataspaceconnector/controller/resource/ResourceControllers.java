@@ -47,6 +47,7 @@ import io.dataspaceconnector.model.RequestedResourceDesc;
 import io.dataspaceconnector.model.Subscription;
 import io.dataspaceconnector.model.SubscriptionDesc;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
+import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.resource.AgreementService;
 import io.dataspaceconnector.service.resource.ArtifactService;
 import io.dataspaceconnector.service.resource.CatalogService;
@@ -55,8 +56,9 @@ import io.dataspaceconnector.service.resource.RepresentationService;
 import io.dataspaceconnector.service.resource.ResourceService;
 import io.dataspaceconnector.service.resource.RetrievalInformation;
 import io.dataspaceconnector.service.resource.RuleService;
-import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
 import io.dataspaceconnector.service.resource.SubscriptionService;
+import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
+import io.dataspaceconnector.util.Utils;
 import io.dataspaceconnector.util.ValidationUtils;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -65,6 +67,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -149,9 +153,51 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/subscriptions")
+    @RequiredArgsConstructor
     @Tag(name = ResourceNames.SUBSCRIPTIONS, description = ResourceDescriptions.SUBSCRIPTIONS)
     public static class SubscriptionController extends BaseResourceController<Subscription,
             SubscriptionDesc, SubscriptionView, SubscriptionService> {
+
+        /**
+         * The service for managing subscriptions.
+         */
+        private final @NonNull SubscriptionService subscriptionSvc;
+
+        /**
+         * The service for managing connector settings.
+         */
+        private final @NonNull ConnectorService connectorSvc;
+
+        /**
+         * Get a list of all resources endpoints of subscription selected by a given filter.
+         *
+         * @param page The page index.
+         * @param size The page size.
+         * @return Response with code 200 (Ok) and the list of all endpoints of this resource type.
+         */
+        @GetMapping("owning")
+        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        public final PagedModel<SubscriptionView> getAllFiltered(
+                @RequestParam(required = false, defaultValue = "0") final Integer page,
+                @RequestParam(required = false, defaultValue = "30") final Integer size) {
+            final var pageable = Utils.toPageRequest(page, size);
+
+            final var connectorId = connectorSvc.getConnectorId();
+            final var list = subscriptionSvc.getOwnSubscriptions(pageable,
+                    connectorId);
+
+            final var entities = new PageImpl<>(list);
+            PagedModel<SubscriptionView> model;
+            if (entities.hasContent()) {
+                model = getPagedAssembler().toModel(entities, getAssembler());
+            } else {
+                model = (PagedModel<SubscriptionView>) getPagedAssembler().toEmptyModel(entities,
+                        getResourceType());
+            }
+
+            return model;
+
+        }
     }
 
     /**
@@ -283,7 +329,7 @@ public final class ResourceControllers {
                     ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput)
                     : artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
                     new RetrievalInformation(agreementUri, download,
-                                             queryInput));
+                            queryInput));
 
             return returnData(artifactId, data);
         }
