@@ -18,4 +18,10 @@ package io.dataspaceconnector.util.exception;
 /**
  * Exception class for not implemented code.
  */
-public class NotImplemented extends RuntimeException { }
+public class NotImplemented extends RuntimeException {
+
+    /**
+    * Serial version uid.
+    **/
+   private static final long serialVersionUID = 1L;
+}
