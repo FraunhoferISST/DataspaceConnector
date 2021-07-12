@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.camel;
 
+import javax.persistence.PersistenceException;
+import java.util.ArrayList;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -35,6 +38,7 @@ import io.dataspaceconnector.camel.exception.AgreementPersistenceException;
 import io.dataspaceconnector.camel.exception.UnconfirmedAgreementException;
 import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
+import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.message.ArtifactResponseMessageDesc;
 import io.dataspaceconnector.model.message.ContractAgreementMessageDesc;
 import io.dataspaceconnector.model.message.ContractRejectionMessageDesc;
@@ -61,9 +65,6 @@ import org.apache.camel.Processor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
-
-import javax.persistence.PersistenceException;
-import java.util.ArrayList;
 
 /**
  * Superclass for Camel processors that execute the final logic to generate a response to an
@@ -474,7 +475,7 @@ class AgreementComparisonProcessor extends IdsProcessor<
     protected Response processInternal(
             final RouteMsg<ContractAgreementMessageImpl, ContractAgreement> msg) throws Exception {
         final var agreement = msg.getBody();
-        final var storedAgreement = entityResolver.getAgreementByUri(agreement.getId());
+        final var storedAgreement = (Agreement) entityResolver.getEntityById(agreement.getId());
         final var storedIdsAgreement = deserializationService
                 .getContractAgreement(storedAgreement.getValue());
 

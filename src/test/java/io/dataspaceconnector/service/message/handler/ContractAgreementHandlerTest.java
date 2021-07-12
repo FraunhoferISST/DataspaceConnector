@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.service.message.handler;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.Action;
@@ -165,7 +165,7 @@ class ContractAgreementHandlerTest {
         final var storedAgreement = getAgreement(agreement.toRdf());
         final var differentAgreement = getDifferentContractAgreement();
 
-        when(entityResolver.getAgreementByUri(any())).thenReturn(storedAgreement);
+        when(entityResolver.getEntityById(any())).thenReturn(storedAgreement);
 
         /* ACT */
         final var result = (ErrorResponse)
@@ -194,7 +194,7 @@ class ContractAgreementHandlerTest {
         final var agreement = getContractAgreement();
         final var storedAgreement = getAgreement(agreement.toRdf());
 
-        when(entityResolver.getAgreementByUri(any())).thenReturn(storedAgreement);
+        when(entityResolver.getEntityById(any())).thenReturn(storedAgreement);
         when(updateService.confirmAgreement(any())).thenReturn(false);
 
         /* ACT */
@@ -224,7 +224,7 @@ class ContractAgreementHandlerTest {
         final var agreement = getContractAgreement();
         final var storedAgreement = getAgreement(agreement.toRdf());
 
-        when(entityResolver.getAgreementByUri(any())).thenReturn(storedAgreement);
+        when(entityResolver.getEntityById(any())).thenReturn(storedAgreement);
         when(updateService.confirmAgreement(any())).thenReturn(true);
         doNothing().when(logMessageService).sendMessage(any(), any());
 

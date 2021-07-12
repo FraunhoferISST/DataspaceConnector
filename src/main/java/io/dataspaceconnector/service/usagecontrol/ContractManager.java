@@ -32,6 +32,7 @@ import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.ids.DeserializationService;
@@ -88,7 +89,7 @@ public class ContractManager {
     public ContractAgreement validateTransferContract(
             final URI agreementId, final URI requestedArtifact, final URI issuer)
             throws IllegalArgumentException, ResourceNotFoundException, ContractException {
-        final var agreement = entityResolver.getAgreementByUri(agreementId);
+        final var agreement = (Agreement) entityResolver.getEntityById(agreementId);
         final var artifacts = dependencyResolver.getArtifactsByAgreement(agreement);
 
         final var valid = ContractUtils.isMatchingTransferContract(artifacts, requestedArtifact);
