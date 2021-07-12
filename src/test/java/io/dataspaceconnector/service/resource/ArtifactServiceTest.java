@@ -496,6 +496,9 @@ class ArtifactServiceTest {
     }
 
     private class UnknownData extends Data {
-
+        /**
+         * Default serial version uid.
+         */
+        private static final long serialVersionUID = 1L;
     }
 }
