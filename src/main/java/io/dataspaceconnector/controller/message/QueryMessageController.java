@@ -19,7 +19,7 @@ import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import io.dataspaceconnector.service.message.GlobalMessageService;
-import io.dataspaceconnector.util.ControllerUtils;
+import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.util;
 
+import io.dataspaceconnector.controller.util.ControllerUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;

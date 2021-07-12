@@ -40,7 +40,7 @@ import io.dataspaceconnector.model.pattern.ProhibitionDesc;
 import io.dataspaceconnector.model.pattern.RestrictionDesc;
 import io.dataspaceconnector.model.pattern.UsageNumberDesc;
 import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.util.ControllerUtils;
+import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.util.PatternUtils;
 import io.dataspaceconnector.util.RuleUtils;
 import io.swagger.v3.oas.annotations.Hidden;

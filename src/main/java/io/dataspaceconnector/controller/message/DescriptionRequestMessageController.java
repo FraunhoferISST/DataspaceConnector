@@ -19,7 +19,7 @@ import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
-import io.dataspaceconnector.util.ControllerUtils;
+import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.util.MessageUtils;
 import io.dataspaceconnector.util.Utils;
 import io.swagger.v3.oas.annotations.Operation;

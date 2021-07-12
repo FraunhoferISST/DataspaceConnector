@@ -30,7 +30,7 @@ import io.dataspaceconnector.service.message.type.ContractRequestService;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
 import io.dataspaceconnector.service.resource.AgreementService;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
-import io.dataspaceconnector.util.ControllerUtils;
+import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.util.MessageUtils;
 import io.dataspaceconnector.util.RuleUtils;
 import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;

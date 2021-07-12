@@ -19,7 +19,7 @@ import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.util.ControllerUtils;
+import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
