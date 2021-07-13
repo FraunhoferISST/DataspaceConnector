@@ -22,6 +22,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class ResponseCodesTest {
 
     @Test
+    public void constructor_is_hidden() {
+        assertThrows(UnsupportedOperationException.class, ResponseCodes::new);
+    }
+
+    @Test
     public void ok_is_code_200() {
         assertEquals("200", ResponseCodes.OK);
     }
