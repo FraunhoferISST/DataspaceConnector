@@ -105,7 +105,7 @@
 		<springdoc-security.version>1.5.9</springdoc-security.version>
 		<springdoc-hateoas.version>1.5.9</springdoc-hateoas.version>
 		<jsonld-java.version>0.13.3</jsonld-java.version>
-		<equalsverifier.version>3.6.1</equalsverifier.version>
+		<equalsverifier.version>3.7</equalsverifier.version>
 		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
 		<camel.version>3.11.0</camel.version>
@@ -119,7 +119,7 @@
 		<tidy.version>1.1.0</tidy.version>
 		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
 		<maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
-		<spotbugs.version>4.2.3</spotbugs.version>
+		<spotbugs.version>4.3.0</spotbugs.version>
 		<findsecbugs-plugin.version>1.11.0</findsecbugs-plugin.version>
 		<checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
 		<checkstyle.version>8.44</checkstyle.version>
