@@ -27,6 +27,7 @@
         </onException>
 
         <from uri="direct:resourceUpdateHandler"/>
+        <transacted ref="transactionPolicy"/>
         <to uri="direct:ids-validation"/>
         <process ref="AffectedResourceValidator"/>
         <doTry>

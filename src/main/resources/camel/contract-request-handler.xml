@@ -47,6 +47,7 @@
         </onException>
 
         <from uri="direct:contractRequestHandler"/>
+        <transacted ref="transactionPolicy"/>
         <to uri="direct:ids-validation"/>
         <process ref="ContractDeserializer"/>
         <process ref="ContractRuleListTransformer"/>

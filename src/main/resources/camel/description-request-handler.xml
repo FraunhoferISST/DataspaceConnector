@@ -23,6 +23,7 @@
         </onException>
 
         <from uri="direct:descriptionRequestHandler"/>
+        <transacted ref="transactionPolicy"/>
         <to uri="direct:ids-validation"/>
         <choice>
             <when>

@@ -9,6 +9,7 @@
         </onException>
 
         <from uri="direct:notificationMsgHandler"/>
+        <transacted ref="transactionPolicy"/>
         <to uri="direct:ids-validation"/>
         <process ref="ProcessedNotification"/>
 

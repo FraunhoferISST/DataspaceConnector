@@ -28,6 +28,7 @@
         </onException>
 
         <from uri="direct:artifactRequestHandler"/>
+        <transacted ref="transactionPolicy"/>
         <to uri="direct:ids-validation"/>
         <process ref="RequestedArtifactValidator"/>
         <choice>

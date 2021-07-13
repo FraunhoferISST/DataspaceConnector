@@ -39,6 +39,7 @@
         </onException>
 
         <from uri="direct:contractAgreementHandler"/>
+        <transacted ref="transactionPolicy"/>
         <to uri="direct:ids-validation"/>
         <process ref="AgreementDeserializer"/>
         <process ref="AgreementComparisonProcessor"/>
