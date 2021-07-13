@@ -49,11 +49,9 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
     @Override
     protected boolean updateInternal(final DataSource dataSource, final DataSourceDesc desc) {
         final var hasUpdatedAuthentication = updateAuthentication(
-                dataSource,
-                desc.getAuthentication());
+                dataSource, desc.getAuthentication());
         final var hasUpdatedDataSourceType = updateDataSourceType(
-                dataSource,
-                desc.getType());
+                dataSource, desc.getType());
 
         return hasUpdatedAuthentication || hasUpdatedDataSourceType;
     }

@@ -29,19 +29,14 @@ import org.springframework.stereotype.Component;
 public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpointDesc> {
 
     /**
-     * The default access url.
+     * The default string.
      */
-    public static final String DEFAULT_ACCESS_URL = "https://default";
+    public static final String DEFAULT_STRING = "";
 
     /**
-     *
+     * The default media type.
      */
-    public static final String DEFAULT_STRING = "unknown";
-
-    /**
-     *
-     */
-    public static final String DEFAULT_MEDIATYPE = "mediatype";
+    public static final String DEFAULT_MEDIATYPE = "";
 
     /**
      * @param desc The description passed to the factory.

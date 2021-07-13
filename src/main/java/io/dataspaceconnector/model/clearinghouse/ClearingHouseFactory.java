@@ -77,9 +77,9 @@ public class ClearingHouseFactory extends AbstractNamedFactory<ClearingHouse, Cl
      * @return True, if clearing house is updated.
      */
     private boolean updateLocation(final ClearingHouse clearingHouse, final URI location) {
-        final var newAccessUrl =
+        final var newLocation =
                 MetadataUtils.updateUri(clearingHouse.getLocation(), location, DEFAULT_LOCATION);
-        newAccessUrl.ifPresent(clearingHouse::setLocation);
-        return newAccessUrl.isPresent();
+        newLocation.ifPresent(clearingHouse::setLocation);
+        return newLocation.isPresent();
     }
 }

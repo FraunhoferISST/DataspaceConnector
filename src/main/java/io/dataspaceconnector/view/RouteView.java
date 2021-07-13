@@ -16,6 +16,7 @@
 package io.dataspaceconnector.view;
 
 import java.time.ZonedDateTime;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dataspaceconnector.model.configuration.DeployMethod;
@@ -83,4 +84,9 @@ public class RouteView extends RepresentationModel<RouteView> {
      * The last endpoint of the route.
      */
     private Endpoint end;
+
+    /**
+     * Additional properties.
+     */
+    private Map<String, String> additional;
 }

@@ -33,7 +33,7 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
     /**
      * The default string.
      */
-    private static final String DEFAULT_CONFIGURATION = "Default configuration";
+    private static final String DEFAULT_CONFIGURATION = "Configuration";
 
     /**
      * @param desc The description of the entity.
