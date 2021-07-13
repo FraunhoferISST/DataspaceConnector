@@ -20,6 +20,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.UUID;
 
+import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
@@ -29,6 +31,9 @@ import io.dataspaceconnector.util.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.ExchangeBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 
@@ -52,12 +57,22 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
     private final @NonNull ArtifactService artifactService;
 
     /**
+     * Template for triggering Camel routes.
+     */
+    private final @NonNull ProducerTemplate template;
+
+    /**
+     * The CamelContext required for constructing the {@link ProducerTemplate}.
+     */
+    private final @NonNull CamelContext context;
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public InputStream retrieve(final UUID artifactId, final URI recipient,
-                                final URI transferContract) {
-        return retrieve(artifactId, recipient, transferContract, null);
+                                final URI transferContract, final CommunicationProtocol protocol) {
+        return retrieve(artifactId, recipient, transferContract, protocol, null);
     }
 
     /**
@@ -65,21 +80,38 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
      */
     @Override
     public InputStream retrieve(final UUID artifactId, final URI recipient,
-                                final URI transferContract, final QueryInput queryInput)
+                                final URI transferContract, final CommunicationProtocol protocol,
+                                final QueryInput queryInput)
             throws PolicyRestrictionException {
         final var artifact = artifactService.get(artifactId);
-        final var response = artifactReqSvc.sendMessage(recipient,
-                artifact.getRemoteId(), transferContract, queryInput);
-        if (!artifactReqSvc.validateResponse(response)) {
-            final var content = artifactReqSvc.getResponseContent(response);
-            if (log.isDebugEnabled()) {
-                log.debug("Data could not be loaded. [content=({})]", content);
+
+        String data;
+        if (CommunicationProtocol.IDSCP.equals(protocol)) {
+            final var result = template.send("direct:artifactRequestSender",
+                    ExchangeBuilder.anExchange(context)
+                            .withProperty("recipient", recipient)
+                            .withProperty("artifactId", artifactId)
+                            .withProperty("transferContract", transferContract)
+                            .withProperty("queryInput", queryInput)
+                            .build());
+
+            final var response = result.getIn().getBody(Response.class);
+            data = response.getBody();
+        } else {
+            final var response = artifactReqSvc.sendMessage(recipient,
+                    artifact.getRemoteId(), transferContract, queryInput);
+            if (!artifactReqSvc.validateResponse(response)) {
+                final var content = artifactReqSvc.getResponseContent(response);
+                if (log.isDebugEnabled()) {
+                    log.debug("Data could not be loaded. [content=({})]", content);
+                }
+
+                throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
             }
 
-            throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
+            data = MessageUtils.extractPayloadFromMultipartMessage(response);
         }
 
-        final var data = MessageUtils.extractPayloadFromMultipartMessage(response);
         return new ByteArrayInputStream(Base64Utils.decodeFromString(data));
     }
 }

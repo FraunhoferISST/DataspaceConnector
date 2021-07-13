@@ -17,6 +17,7 @@ package io.dataspaceconnector.service.resource;
 
 import java.net.URI;
 
+import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.model.QueryInput;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,6 +44,11 @@ public class RetrievalInformation {
      * false - Do not download the data under any condition.
      */
     private Boolean forceDownload;
+
+    /**
+     * The protocol to use for downloading the data, if it is downloaded.
+     */
+    private CommunicationProtocol protocol;
 
     /**
      * Query option for limiting the scope of the data pulled.

@@ -15,18 +15,27 @@
  */
 package io.dataspaceconnector.controller.resource;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
 import io.dataspaceconnector.controller.resource.tag.ResourceDescriptions;
 import io.dataspaceconnector.controller.resource.tag.ResourceNames;
+import io.dataspaceconnector.controller.resource.view.AgreementView;
+import io.dataspaceconnector.controller.resource.view.ArtifactView;
+import io.dataspaceconnector.controller.resource.view.CatalogView;
+import io.dataspaceconnector.controller.resource.view.ContractRuleView;
+import io.dataspaceconnector.controller.resource.view.ContractView;
+import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
+import io.dataspaceconnector.controller.resource.view.RepresentationView;
+import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
+import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.AgreementDesc;
 import io.dataspaceconnector.model.Artifact;
@@ -55,14 +64,6 @@ import io.dataspaceconnector.service.resource.RetrievalInformation;
 import io.dataspaceconnector.service.resource.RuleService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
 import io.dataspaceconnector.util.ValidationUtils;
-import io.dataspaceconnector.controller.resource.view.AgreementView;
-import io.dataspaceconnector.controller.resource.view.ArtifactView;
-import io.dataspaceconnector.controller.resource.view.CatalogView;
-import io.dataspaceconnector.controller.resource.view.ContractRuleView;
-import io.dataspaceconnector.controller.resource.view.ContractView;
-import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
-import io.dataspaceconnector.controller.resource.view.RepresentationView;
-import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -224,6 +225,7 @@ public final class ResourceControllers {
          * @param artifactId   Artifact id.
          * @param download     If the data should be forcefully downloaded.
          * @param agreementUri The agreement which should be used for access control.
+         * @param protocol     The communication protocol to use.
          * @param params       All request parameters.
          * @param headers      All request headers.
          * @param request      The current http request.
@@ -237,6 +239,7 @@ public final class ResourceControllers {
                 @Valid @PathVariable(name = "id") final UUID artifactId,
                 @RequestParam(required = false) final Boolean download,
                 @RequestParam(required = false) final URI agreementUri,
+                @RequestParam(required = false) final CommunicationProtocol protocol,
                 @RequestParam(required = false) final Map<String, String> params,
                 @RequestHeader final Map<String, String> headers,
                 final HttpServletRequest request) throws IOException {
@@ -265,9 +268,9 @@ public final class ResourceControllers {
             // TODO: Check what happens when this connector is the provider and one of its provided
             //  agreements is passed.
             final var data = (agreementUri == null)
-                    ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput)
+                    ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId, protocol, queryInput)
                     : artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
-                    new RetrievalInformation(agreementUri, download,
+                    new RetrievalInformation(agreementUri, download, protocol,
                                              queryInput));
 
             return returnData(artifactId, data);
@@ -279,6 +282,7 @@ public final class ResourceControllers {
          * used when fetching the data.
          *
          * @param artifactId Artifact id.
+         * @param protocol The communication protocol to use.
          * @param queryInput Query input containing headers, query parameters, and path variables.
          * @return The data object.
          * @throws IOException if the data could not be stored.
@@ -288,10 +292,11 @@ public final class ResourceControllers {
         @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
         public ResponseEntity<StreamingResponseBody> getData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
+                @RequestParam(required = false) final CommunicationProtocol protocol,
                 @RequestBody(required = false) final QueryInput queryInput) throws IOException {
             ValidationUtils.validateQueryInput(queryInput);
             final var data =
-                    artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput);
+                    artifactSvc.getData(accessVerifier, dataReceiver, artifactId, protocol, queryInput);
             return returnData(artifactId, data);
         }
 

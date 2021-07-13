@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.service;
 
+import java.net.URI;
+import java.util.HashMap;
+import java.util.UUID;
+
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactImpl;
@@ -27,10 +31,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.Base64Utils;
-
-import java.net.URI;
-import java.util.HashMap;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -83,7 +83,7 @@ public class BlockingArtifactReceiverTest {
 
         /* ACT */
         final var result = blockingArtifactReceiver.retrieve(
-                artifactId, recipient, transferContract);
+                artifactId, recipient, transferContract, null);
 
         /* ASSERT */
         assertEquals(data, Base64Utils.encodeToString(result.readAllBytes()));
@@ -110,7 +110,7 @@ public class BlockingArtifactReceiverTest {
 
         /* ACT && ASSERT */
         assertThrows(PolicyRestrictionException.class, () -> blockingArtifactReceiver
-                .retrieve(artifactId, recipient, transferContract));
+                .retrieve(artifactId, recipient, transferContract, null));
     }
 
     /***********************************************************************************************
