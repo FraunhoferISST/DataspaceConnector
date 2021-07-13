@@ -116,7 +116,7 @@ public class PetriNetImpl implements PetriNet, HasId {
      */
     @Override
     public int hashCode() {
-        return id.hashCode() + nodes.hashCode() + arcs.hashCode();
+        return id.hashCode();
     }
 
     private boolean nodesEqual(final Set<Node> otherNodes) {
