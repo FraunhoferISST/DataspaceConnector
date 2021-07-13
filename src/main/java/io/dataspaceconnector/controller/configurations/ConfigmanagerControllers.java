@@ -16,16 +16,12 @@
 package io.dataspaceconnector.controller.configurations;
 
 import io.dataspaceconnector.controller.resource.BaseResourceController;
-import io.dataspaceconnector.model.clearinghouse.ClearingHouse;
-import io.dataspaceconnector.model.clearinghouse.ClearingHouseDesc;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
 import io.dataspaceconnector.model.datasource.DataSource;
 import io.dataspaceconnector.model.datasource.DataSourceDesc;
-import io.dataspaceconnector.service.configuration.ClearingHouseService;
 import io.dataspaceconnector.service.configuration.ConfigurationService;
 import io.dataspaceconnector.service.configuration.DataSourceService;
-import io.dataspaceconnector.view.ClearingHouseView;
 import io.dataspaceconnector.view.ConfigurationView;
 import io.dataspaceconnector.view.DataSourceView;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,16 +33,6 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller for the Configuration Manager.
  */
 public final class ConfigmanagerControllers {
-
-    /**
-     * Offers the endpoints for managing clearing houses.
-     */
-    @RestController
-    @RequestMapping("/api/clearinghouses")
-    @Tag(name = "Clearing House", description = "Endpoints for CRUD operations on clearing houses")
-    public static class ClearingHouseController
-            extends BaseResourceController<ClearingHouse, ClearingHouseDesc,
-            ClearingHouseView, ClearingHouseService> { }
 
     /**
      * Offers the endpoints for managing configurations.
