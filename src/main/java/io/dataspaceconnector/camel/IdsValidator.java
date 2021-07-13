@@ -48,7 +48,6 @@ import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
@@ -89,7 +88,6 @@ public abstract class IdsValidator<I> implements Processor {
 /**
  * Validates that the correct resource ID was used in a ResourceUpdateMessage.
  */
-@Log4j2
 @Component("CorrectAffectedResourceValidator")
 class CorrectAffectedResourceValidator extends IdsValidator<
         RouteMsg<ResourceUpdateMessageImpl, Resource>> {
@@ -117,7 +115,6 @@ class CorrectAffectedResourceValidator extends IdsValidator<
  * Validates that the resource ID given in the header of a ResourceUpdateMessage is not null or
  * empty.
  */
-@Log4j2
 @Component("AffectedResourceValidator")
 class AffectedResourceValidator extends IdsValidator<
         RouteMsg<ResourceUpdateMessageImpl, MessagePayload>> {
@@ -143,7 +140,6 @@ class AffectedResourceValidator extends IdsValidator<
  * Validates the contract used in an ArtifactRequestMessage and checks whether data provision
  * is allowed.
  */
-@Log4j2
 @Component("PolicyValidator")
 @RequiredArgsConstructor
 class PolicyValidator extends IdsValidator<RouteMsg<ArtifactRequestMessageImpl, MessagePayload>> {
@@ -189,7 +185,6 @@ class PolicyValidator extends IdsValidator<RouteMsg<ArtifactRequestMessageImpl, 
 /**
  * Validates the requested artifact given in an ArtifactRequestMessage.
  */
-@Log4j2
 @Component("RequestedArtifactValidator")
 class RequestedArtifactValidator extends IdsValidator<
         RouteMsg<ArtifactRequestMessageImpl, MessagePayload>> {
@@ -215,7 +210,6 @@ class RequestedArtifactValidator extends IdsValidator<
  * Validates any incoming message by checking whether the message is empty and whether it references
  * an Infomodel version supported by this connector.
  */
-@Log4j2
 @RequiredArgsConstructor
 @Component("MessageHeaderValidator")
 class MessageHeaderValidator extends IdsValidator<RouteMsg<? extends Message, ?>> {

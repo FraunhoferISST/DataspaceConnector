@@ -71,7 +71,7 @@ public abstract class AbstractMessageHandler<T extends Message> implements Messa
                                          final MessagePayload payload) throws RuntimeException {
         final var result = template.send(getHandlerRouteDirect(),
                 ExchangeBuilder.anExchange(context)
-                        .withBody(new Request(message, payload))
+                        .withBody(new Request<>(message, payload))
                         .build());
 
         final var response = result.getIn().getBody(Response.class);

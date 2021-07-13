@@ -299,7 +299,6 @@ class MessageProcessedProcessor extends IdsProcessor<RouteMsg<NotificationMessag
 /**
  * Updates a requested resource when a ResourceUpdateMessage is received and generates the response.
  */
-@Log4j2
 @Component("ResourceUpdateProcessor")
 @RequiredArgsConstructor
 class ResourceUpdateProcessor extends IdsProcessor<RouteMsg<ResourceUpdateMessageImpl, Resource>> {
@@ -399,7 +398,6 @@ class AcceptContractProcessor extends
 /**
  * Rejects a contract request and generates the response.
  */
-@Log4j2
 @Component("RejectContractProcessor")
 @RequiredArgsConstructor
 class RejectContractProcessor extends
@@ -437,7 +435,6 @@ class RejectContractProcessor extends
  * Compares the contract agreement given in a ContractAgreementMessage to the locally stored
  * agreement and generates the response.
  */
-@Log4j2
 @Component("AgreementComparisonProcessor")
 @RequiredArgsConstructor
 class AgreementComparisonProcessor extends IdsProcessor<

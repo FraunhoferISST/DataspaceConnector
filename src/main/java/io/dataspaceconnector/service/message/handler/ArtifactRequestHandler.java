@@ -31,7 +31,6 @@ import org.springframework.stereotype.Component;
  * {@link de.fraunhofer.iais.eis.ArtifactRequestMessageImpl} JsonTypeName annotation.
  */
 @Component
-@Log4j2
 @SupportedMessageType(ArtifactRequestMessageImpl.class)
 public class ArtifactRequestHandler extends AbstractMessageHandler<ArtifactRequestMessageImpl> {
 
