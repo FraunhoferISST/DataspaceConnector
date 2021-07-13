@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model.app;
+package io.dataspaceconnector.model.proxy;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
-class AppDescTest {
+public class ProxyDescTest {
     @Test
     void testEquals_valid() {
-        EqualsVerifier.simple().forClass(AppDesc.class);
+        EqualsVerifier.simple().forClass(ProxyDesc.class);
     }
 }
