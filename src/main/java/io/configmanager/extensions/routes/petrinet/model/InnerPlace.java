@@ -37,11 +37,11 @@ public class InnerPlace extends PlaceImpl {
     /**
      * Inner places of unfolded transition.
      * @param id Id of the inner place.
-     * @param originalTrans Original Transition, which was unfolded to create the InnerPlace.
+     * @param pOriginalTrans Original Transition, which was unfolded to create the InnerPlace.
      */
-    public InnerPlace(final URI id, final Transition originalTrans) {
+    public InnerPlace(final URI id, final Transition pOriginalTrans) {
         super(id);
-        this.originalTrans = originalTrans;
+        this.originalTrans = pOriginalTrans;
     }
 
     /**

@@ -71,17 +71,17 @@ public class RouteManager {
 
     /**
      * Constructor of RouteManager.
-     * @param routeHttpHelper Helper for deploying and deleting Camel routes via HTTP.
-     * @param routeFileHelper Helper for deploying and deleting Camel routes in the file system.
-     * @param routeConfigurer Helper for configuring Camel routes for the Dataspace Connector.
+     * @param pRouteHttpHelper Helper for deploying and deleting Camel routes via HTTP.
+     * @param pRouteFileHelper Helper for deploying and deleting Camel routes in the file system.
+     * @param pRouteConfigurer Helper for configuring Camel routes for the Dataspace Connector.
      */
     @Autowired
-    public RouteManager(final RouteHttpHelper routeHttpHelper,
-                        final RouteFileHelper routeFileHelper,
-                        final RouteConfigurer routeConfigurer) {
-        this.routeHttpHelper = routeHttpHelper;
-        this.routeFileHelper = routeFileHelper;
-        this.routeConfigurer = routeConfigurer;
+    public RouteManager(final RouteHttpHelper pRouteHttpHelper,
+                        final RouteFileHelper pRouteFileHelper,
+                        final RouteConfigurer pRouteConfigurer) {
+        this.routeHttpHelper = pRouteHttpHelper;
+        this.routeFileHelper = pRouteFileHelper;
+        this.routeConfigurer = pRouteConfigurer;
     }
 
     /**

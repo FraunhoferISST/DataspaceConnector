@@ -40,11 +40,11 @@ public class GuiUtilController implements GuiUtilApi {
 
     /**
      * Constructor of GuiUtilController.
-     * @param utilService A Util-Service class for returning values for API calls.
+     * @param pUtilService A Util-Service class for returning values for API calls.
      */
     @Autowired
-    public GuiUtilController(final GuiUtilService utilService) {
-        this.utilService = utilService;
+    public GuiUtilController(final GuiUtilService pUtilService) {
+        this.utilService = pUtilService;
     }
 
     /**

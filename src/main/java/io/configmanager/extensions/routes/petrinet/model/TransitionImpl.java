@@ -50,20 +50,20 @@ public class TransitionImpl implements Transition {
 
     /**
      * Creates a new transition object.
-     * @param id The id of the transition.
+     * @param pId The id of the transition.
      */
-    public TransitionImpl(final URI id) {
-        this.id = id;
+    public TransitionImpl(final URI pId) {
+        this.id = pId;
         this.sourceArcs = new HashSet<>();
         this.targetArcs = new HashSet<>();
     }
 
     /**
      * Sets the context of the transition.
-     * @param contextObject The transition context.
+     * @param pContextObject The transition context.
      */
-    public void setContextObject(final ContextObject contextObject) {
-        this.contextObject = contextObject;
+    public void setContextObject(final ContextObject pContextObject) {
+        this.contextObject = pContextObject;
     }
 
     /**

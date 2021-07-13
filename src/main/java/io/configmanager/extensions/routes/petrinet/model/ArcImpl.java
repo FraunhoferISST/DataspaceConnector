@@ -31,20 +31,20 @@ public class ArcImpl implements Arc {
 
     /**
      * The implementation of an arc with source and target node.
-     * @param source The arc source node.
-     * @param target The arc target node.
+     * @param pSource The arc source node.
+     * @param pTarget The arc target node.
      */
-    public ArcImpl(final Node source, final Node target) {
-        if (source.isComplementOf(target)) {
-            this.source = source;
-            source.getSourceArcs().add(this);
-            this.target = target;
-            target.getTargetArcs().add(this);
+    public ArcImpl(final Node pSource, final Node pTarget) {
+        if (pSource.isComplementOf(pTarget)) {
+            this.source = pSource;
+            pSource.getSourceArcs().add(this);
+            this.target = pTarget;
+            pTarget.getTargetArcs().add(this);
         } else {
             throw new IllegalArgumentException(
                     String.format(
                             "Node source is of type %s, target should be another Type!",
-                            source.getClass().getSimpleName()
+                            pSource.getClass().getSimpleName()
                     )
             );
         }
@@ -70,15 +70,15 @@ public class ArcImpl implements Arc {
 
     /**
      * Sets the source node of the arc.
-     * @param source Node that will be set as source.
+     * @param pSource Node that will be set as source.
      */
     @Override
-    public void setSource(final Node source) {
-        if (target.isComplementOf(source)) {
+    public void setSource(final Node pSource) {
+        if (target.isComplementOf(pSource)) {
             //if given node is a different type as current target: set as source
             this.source.getSourceArcs().remove(this);
-            this.source = source;
-            source.getSourceArcs().add(this);
+            this.source = pSource;
+            pSource.getSourceArcs().add(this);
         } else {
             //if given node is same type as current target: throw an Exception
             throw new IllegalArgumentException(
@@ -92,15 +92,15 @@ public class ArcImpl implements Arc {
 
     /**
      * Sets the targe node of the arc.
-     * @param target Node that will be set as target.
+     * @param pTarget Node that will be set as target.
      */
     @Override
-    public void setTarget(final Node target) {
-        if (source.isComplementOf(target)) {
+    public void setTarget(final Node pTarget) {
+        if (source.isComplementOf(pTarget)) {
             //if given node is a different type as current source: set as target
             this.target.getTargetArcs().remove(this);
-            this.target = target;
-            target.getTargetArcs().add(this);
+            this.target = pTarget;
+            pTarget.getTargetArcs().add(this);
         } else {
             //if given node is same type as current source: throw an Exception
             throw new IllegalArgumentException(

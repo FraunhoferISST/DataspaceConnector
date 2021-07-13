@@ -21,6 +21,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpMethod;
 
+/**
+ * Camel route step endpoint data.
+ */
 @Data
 @AllArgsConstructor
 public class RouteStepEndpoint {

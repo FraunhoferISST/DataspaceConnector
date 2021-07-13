@@ -50,10 +50,10 @@ public class PlaceImpl implements Place {
 
     /**
      * Creates a new PetiNets place.
-     * @param id The id for the place.
+     * @param pId The id for the place.
      */
-    public PlaceImpl(final URI id) {
-        this.id = id;
+    public PlaceImpl(final URI pId) {
+        this.id = pId;
         this.sourceArcs = new HashSet<>();
         this.targetArcs = new HashSet<>();
         this.markers = 0;
@@ -113,8 +113,8 @@ public class PlaceImpl implements Place {
      * {@inheritDoc}
      */
     @Override
-    public void setMarkers(final int markers) {
-        this.markers = markers;
+    public void setMarkers(final int pMarkers) {
+        this.markers = pMarkers;
     }
 
     /**

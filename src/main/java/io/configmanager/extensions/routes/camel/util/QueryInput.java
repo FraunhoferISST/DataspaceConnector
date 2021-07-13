@@ -19,6 +19,9 @@ import lombok.Data;
 
 import java.util.HashMap;
 
+/**
+ * Camel Query-Input data.
+ */
 @Data
 public class QueryInput {
     /**

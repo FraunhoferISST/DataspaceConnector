@@ -21,6 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+/**
+ * Utility API for Configmanager / Dataspace Connector GUI.
+ */
 public interface GuiUtilApi {
     /**
      * Auxiliary API to provide data to a GUI,

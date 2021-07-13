@@ -43,10 +43,10 @@ public class StepGraph {
 
     /**
      * Creates a Step-Graph of the given Petrinet, containing every Step a PetriNet can make.
-     * @param initial The initial Petrinet.
+     * @param pInitial The initial Petrinet.
      */
-    public StepGraph(final PetriNet initial) {
-        this.initial = initial;
+    public StepGraph(final PetriNet pInitial) {
+        this.initial = pInitial;
         steps = new HashSet<>();
         arcs = new HashSet<>();
     }
