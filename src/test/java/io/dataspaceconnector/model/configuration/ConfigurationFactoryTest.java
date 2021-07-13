@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.model.configuration;
 
-import io.dataspaceconnector.model.datasource.DataSourceType;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
 import io.dataspaceconnector.model.proxy.ProxyFactory;
 import io.dataspaceconnector.model.truststore.TruststoreFactory;
