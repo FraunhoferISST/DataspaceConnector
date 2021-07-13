@@ -26,7 +26,7 @@ import io.configmanager.extensions.routes.petrinet.model.Place;
 import io.configmanager.extensions.routes.petrinet.model.PlaceImpl;
 import io.configmanager.extensions.routes.petrinet.model.Transition;
 import io.configmanager.extensions.routes.petrinet.model.TransitionImpl;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  * (both methods could be running indefinitely, if the given initial PetriNet contains a
  * marker generating circle, so the PetriNet has an infinite amount of reachable states)
  */
-@Slf4j
+@Log4j2
 public final class PetriNetSimulator {
     private PetriNetSimulator() {
         throw new UnsupportedOperationException();
