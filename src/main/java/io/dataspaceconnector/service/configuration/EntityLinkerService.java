@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.service.configuration;
 
-import io.dataspaceconnector.model.app.App;
-import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.resource.OfferedResource;
@@ -33,20 +31,6 @@ import java.util.List;
  * This class contains all implementations of {@link OwningRelationService}.
  */
 public final class EntityLinkerService {
-
-    /**
-     * Handles the relation between app store and apps.
-     */
-    @Service
-    @NoArgsConstructor
-    public static class AppStoreAppLinker
-            extends OwningRelationService<AppStore, App, AppStoreService, AppService> {
-
-        @Override
-        protected final List<App> getInternal(final AppStore owner) {
-            return owner.getAppList();
-        }
-    }
 
     /**
      * Handles the relation between broker and offered resources.
