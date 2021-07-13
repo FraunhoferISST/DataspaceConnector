@@ -37,7 +37,7 @@ public class ResponseDescriptions {
      */
     public static final String NO_CONTENT = "No Content";
     /**
-     * Description is No Allowed.
+     * Description is Not Allowed.
      */
     public static final String METHOD_NOT_ALLOWED = "Not Allowed";
 }
