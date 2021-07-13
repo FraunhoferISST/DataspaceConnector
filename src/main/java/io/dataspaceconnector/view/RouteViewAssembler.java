@@ -15,16 +15,19 @@
  */
 package io.dataspaceconnector.view;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.configurations.RouteControllers;
 import io.dataspaceconnector.controller.resource.view.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
+import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
+import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.route.Route;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -47,6 +50,7 @@ public class RouteViewAssembler
         final var modelMapper = new ModelMapper();
         final var view = modelMapper.map(route,
                 RouteView.class);
+        setEndpointType(view);
         view.add(getSelfLink(route.getId()));
 
         final var steps = linkTo(methodOn(RouteControllers.RoutesToSteps.class)
@@ -60,18 +64,39 @@ public class RouteViewAssembler
                         .withRel("artifacts");
         view.add(artifacts);
 
-//        final var startEndpoints =
-//                linkTo(methodOn(RouteControllers.RoutesToStartEndpoints.class)
-//                        .getResource(route.getId(), null, null))
-//                        .withRel("endpoints");
-//        view.add(startEndpoints);
-//
-//        final var lastEndpoints =
-//                linkTo(methodOn(RouteControllers.RoutesToEndpoints.class)
-//                        .getResource(route.getId(), null, null))
-//                        .withRel("endpoints");
-//        view.add(lastEndpoints);
-
         return view;
+    }
+
+    /**
+     * This method determines the endpoint type.
+     * @param view The route view.
+     */
+    private void setEndpointType(final RouteView view) {
+        if (view != null) {
+            if (view.getStart() != null) {
+                if (view.getStart() instanceof GenericEndpoint) {
+                    final var end = (GenericEndpoint) view.getStart();
+                    end.setType("GENERIC");
+                } else if (view.getStart() instanceof ConnectorEndpoint) {
+                    final var end = (ConnectorEndpoint) view.getStart();
+                    end.setType("CONNECTOR");
+                } else {
+                    final var end = (AppEndpoint) view.getStart();
+                    end.setType("APP");
+                }
+            }
+            if (view.getEnd() != null) {
+                if (view.getEnd() instanceof GenericEndpoint) {
+                    final var end = (GenericEndpoint) view.getEnd();
+                    end.setType("GENERIC");
+                } else if (view.getEnd() instanceof ConnectorEndpoint) {
+                    final var end = (ConnectorEndpoint) view.getEnd();
+                    end.setType("CONNECTOR");
+                } else {
+                    final var end = (AppEndpoint) view.getEnd();
+                    end.setType("APP");
+                }
+            }
+        }
     }
 }

@@ -68,6 +68,11 @@ public class AppEndpoint extends Endpoint {
     private AppEndpointType appEndpointType;
 
     /**
+     * Holds the information about the endpoint type.
+     */
+    private String type;
+
+    /**
      * Default constructor.
      */
     public AppEndpoint() {

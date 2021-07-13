@@ -40,6 +40,11 @@ public class ConnectorEndpoint extends Endpoint {
     private static final long serialVersionUID = 1L;
 
     /**
+     * Holds the information about the endpoint type.
+     */
+    private String type;
+
+    /**
      * Default constructor.
      */
     protected ConnectorEndpoint() {

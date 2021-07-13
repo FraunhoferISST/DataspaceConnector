@@ -71,4 +71,9 @@ public class Endpoint extends Entity implements RemoteService {
      * The information about the endpoint.
      */
     private String info;
+
+    /**
+     * The type information.
+     */
+    private String type;
 }
