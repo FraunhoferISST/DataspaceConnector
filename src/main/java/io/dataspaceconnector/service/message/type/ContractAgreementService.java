@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.service.message.type;
 
+import java.net.URI;
+import java.util.Map;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementMessageBuilder;
 import de.fraunhofer.iais.eis.Message;
@@ -25,13 +28,11 @@ import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.model.message.ContractAgreementMessageDesc;
+import io.dataspaceconnector.service.message.type.exceptions.InvalidResponse;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.IdsUtils;
 import io.dataspaceconnector.util.Utils;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.Map;
 
 /**
  * Message service for ids contract agreement messages.
@@ -100,5 +101,29 @@ public final class ContractAgreementService
     public boolean validateResponse(final Map<String, String> response)
             throws MessageResponseException {
         return isValidResponseType(response);
+    }
+
+    /**
+     * Build and send a contract agreement message and then validate the response.
+     * @param recipient The recipient.
+     * @param agreement The contract agreement.
+     * @return The response map.
+     * @throws InvalidResponse if the response is not valid.
+     * @throws MessageException if message handling failed.
+     * @throws ConstraintViolationException if contract agreement is null.
+     */
+    public Map<String, String> sendMessageAndValidate(final URI recipient,
+                                                      final ContractAgreement agreement)
+            throws InvalidResponse, MessageException, ConstraintViolationException {
+        final var response = sendMessage(recipient, agreement);
+        try {
+            if (!validateResponse(response)) {
+                throw new InvalidResponse(getResponseContent(response));
+            }
+        } catch (MessageResponseException e) {
+            throw new InvalidResponse(getResponseContent(response), e);
+        }
+
+        return response;
     }
 }
