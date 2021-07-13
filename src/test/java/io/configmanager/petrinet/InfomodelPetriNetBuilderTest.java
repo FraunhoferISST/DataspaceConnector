@@ -73,11 +73,11 @@ import static io.configmanager.extensions.routes.petrinet.evaluation.formula.tra
 @Log4j2
 @NoArgsConstructor
 class InfomodelPetriNetBuilderTest {
-    private final static int MINIMUM_ENDPOINT = 5;
-    private final static int MAXIMUM_ENDPOINT = 10;
+    private final static int MINIMUM_ENDPOINT = 2;
+    private final static int MAXIMUM_ENDPOINT = 3;
 
-    private final static int MINIMUM_SUBROUTE = 3;
-    private final static int MAXIMUM_SUBROUTE = 5;
+    private final static int MINIMUM_SUBROUTE = 2;
+    private final static int MAXIMUM_SUBROUTE = 3;
 
     private final static int MINIMUM_STARTEND = 1;
     private final static int MAXIMUM_STARTEND = 3;
