@@ -23,6 +23,8 @@ import java.util.List;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.service.EntityPersistenceService;
+import io.dataspaceconnector.service.EntityUpdateService;
+import io.dataspaceconnector.util.UUIDUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.Exchange;
@@ -105,6 +107,26 @@ class DataPersistenceProcessor extends IdsResponseProcessor {
         exchange.setProperty("currentArtifact", artifactId);
 
         persistenceSvc.saveData(map, artifactId);
+    }
+
+}
+
+@Component("AgreementToArtifactsLinker")
+@RequiredArgsConstructor
+class AgreementToArtifactsLinker extends IdsResponseProcessor {
+
+    /**
+     * Service for updating database entities.
+     */
+    private final @NonNull EntityUpdateService updateService;
+
+    @Override
+    protected void processInternal(Exchange exchange) throws Exception {
+        final var agreementUri = exchange.getProperty("agreementId", URI.class);
+        final var agreementUuid = UUIDUtils.uuidFromUri(agreementUri);
+        final var artifacts = (List<URI>) exchange.getProperty("artifacts", List.class);
+
+        updateService.linkArtifactToAgreement(artifacts, agreementUuid);
     }
 
 }

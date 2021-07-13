@@ -63,6 +63,7 @@
             <process ref="ResponseToDtoConverter"/>
             <process ref="DescriptionResponseValidator"/>
             <process ref="MetadataPersistenceProcessor"/>
+            <process ref="AgreementToArtifactsLinker"/>
         </loop>
 
         <choice>
