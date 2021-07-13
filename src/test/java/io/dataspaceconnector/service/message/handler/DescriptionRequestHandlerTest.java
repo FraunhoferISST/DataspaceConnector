@@ -104,10 +104,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
          /* ACT */
          final var result =
-                 (BodyResponse) handler.handleMessage((DescriptionRequestMessageImpl) message, null);
+                 (BodyResponse<?>) handler.handleMessage((DescriptionRequestMessageImpl) message, null);
 
          /* ASSERT */
-         final var expected = (BodyResponse) constructSelfDescription(
+         final var expected = (BodyResponse<?>) constructSelfDescription(
                  message.getIssuerConnector(), message.getId());
 
          // Compare payload
@@ -166,10 +166,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
          /* ACT */
          final var result =
-                 (BodyResponse) handler.handleMessage((DescriptionRequestMessageImpl) message, null);
+                 (BodyResponse<?>) handler.handleMessage((DescriptionRequestMessageImpl) message, null);
 
          /* ASSERT */
-         final var expected = (BodyResponse) constructResourceDescription(
+         final var expected = (BodyResponse<?>) constructResourceDescription(
                  message.getRequestedElement(), message.getIssuerConnector(), message.getId());
 
          // Compare payload

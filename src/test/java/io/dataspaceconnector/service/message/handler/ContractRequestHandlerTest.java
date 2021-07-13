@@ -458,7 +458,7 @@ class ContractRequestHandlerTest {
                 any(), Mockito.eq(Arrays.asList(artifactId)), Mockito.eq(issuerConnector));
 
         /* ACT */
-        final var result = (BodyResponse) handler
+        final var result = (BodyResponse<?>) handler
                 .handleMessage((ContractRequestMessageImpl) message,
                         new MessagePayloadInputstream(
                                 new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));

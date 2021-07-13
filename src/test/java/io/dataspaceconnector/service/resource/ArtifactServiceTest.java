@@ -23,13 +23,11 @@ import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
-import io.dataspaceconnector.model.artifact.Data;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.model.artifact.RemoteData;
 import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.HttpService;
-import io.dataspaceconnector.util.QueryInput;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -489,16 +487,16 @@ class ArtifactServiceTest {
         return artifact;
     }
 
-    private QueryInput getQueryInput() {
-        QueryInput queryInput = new QueryInput();
-        queryInput.getParams().put("paramName", "paramValue");
-        return queryInput;
-    }
+    // private QueryInput getQueryInput() {
+    //     QueryInput queryInput = new QueryInput();
+    //     queryInput.getParams().put("paramName", "paramValue");
+    //     return queryInput;
+    // }
 
-    private class UnknownData extends Data {
-        /**
-         * Default serial version uid.
-         */
-        private static final long serialVersionUID = 1L;
-    }
+    // private class UnknownData extends Data {
+    //     /**
+    //      * Default serial version uid.
+    //      */
+    //     private static final long serialVersionUID = 1L;
+    // }
 }
