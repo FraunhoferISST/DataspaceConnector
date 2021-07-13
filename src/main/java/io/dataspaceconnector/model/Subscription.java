@@ -65,4 +65,9 @@ public class Subscription extends AbstractEntity {
      */
     private boolean pushData;
 
+    /**
+     * Indicates whether the subscriber is an ids participant or not.
+     */
+    private boolean idsProtocol;
+
 }

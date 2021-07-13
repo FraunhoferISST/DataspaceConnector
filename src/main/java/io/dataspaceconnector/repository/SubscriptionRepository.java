@@ -31,7 +31,7 @@ public interface SubscriptionRepository extends BaseEntityRepository<Subscriptio
     /**
      * Finds all subscriptions with a given connector id as subscriber.
      *
-     * @param subscriber URI of the subscriber.
+     * @param subscriber The subscriber id.
      * @return List of all matching subscriptions.
      */
     @Query("SELECT r "
@@ -53,4 +53,16 @@ public interface SubscriptionRepository extends BaseEntityRepository<Subscriptio
             + "AND r.target = :target "
             + "AND r.deleted = false")
     List<Subscription> findAllBySubscriberAndTarget(URI subscriber, URI target);
+
+    /**
+     * Finds all subscriptions with a given target id.
+     *
+     * @param target The target id.
+     * @return List of all matching subscriptions.
+     */
+    @Query("SELECT r "
+            + "FROM Subscription r "
+            + "WHERE r.target = :target "
+            + "AND r.deleted = false")
+    List<Subscription> findAllByTarget(URI target);
 }

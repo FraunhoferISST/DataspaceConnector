@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -46,5 +47,11 @@ public class SubscriptionDesc extends AbstractDescription<Subscription> {
      * Indicates whether the subscriber wants the data to be pushed.
      */
     private boolean pushData;
+
+    /**
+     * Indicates whether the subscriber is an ids participant or not.
+     */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private boolean idsProtocol;
 
 }

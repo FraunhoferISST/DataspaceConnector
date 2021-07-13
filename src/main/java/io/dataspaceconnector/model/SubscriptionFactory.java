@@ -67,8 +67,10 @@ public class SubscriptionFactory implements AbstractFactory<Subscription, Subscr
         final var hasUpdatedTarget = this.updateTarget(subscription, desc.getTarget());
         final var hasUpdatedPushData = this.updatePushData(subscription, desc.isPushData());
         final var hasUpdatedSubscriber = this.updateSubscriber(subscription, desc.getSubscriber());
+        final var hasUpdateIdsValue = this.updateIdsValue(subscription, desc.isIdsProtocol());
 
-        return hasUpdatedUrl || hasUpdatedTarget || hasUpdatedPushData || hasUpdatedSubscriber;
+        return hasUpdatedUrl || hasUpdatedTarget || hasUpdatedPushData || hasUpdatedSubscriber
+                || hasUpdateIdsValue;
     }
 
     /**
@@ -131,7 +133,7 @@ public class SubscriptionFactory implements AbstractFactory<Subscription, Subscr
      *
      * @param subscription The subscription.
      * @param push         The new push value.
-     * @return true, if the URL was updated; false otherwise.
+     * @return true, if the value was updated; false otherwise.
      */
     private boolean updatePushData(final Subscription subscription, final boolean push) {
         final var newPushValue =
@@ -139,6 +141,21 @@ public class SubscriptionFactory implements AbstractFactory<Subscription, Subscr
         newPushValue.ifPresent(subscription::setPushData);
 
         return newPushValue.isPresent();
+    }
+
+    /**
+     * Updates the ids value of a subscription.
+     *
+     * @param subscription The subscription.
+     * @param ids          The new ids value.
+     * @return true, if the value was updated; false otherwise.
+     */
+    private boolean updateIdsValue(final Subscription subscription, final boolean ids) {
+        final var newIdsValue =
+                MetadataUtils.updateBoolean(subscription.isIdsProtocol(), ids, false);
+        newIdsValue.ifPresent(subscription::setIdsProtocol);
+
+        return newIdsValue.isPresent();
     }
 
 }
