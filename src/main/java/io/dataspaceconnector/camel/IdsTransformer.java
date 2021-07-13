@@ -180,8 +180,8 @@ class ContractAgreementTransformer extends IdsTransformer<
     @Override
     protected RouteMsg<ContractAgreementMessageImpl, ContractAgreement> processInternal(
             final RouteMsg<ContractAgreementMessageImpl, MessagePayload> msg) throws Exception {
-        final var agreement = deserializationService
-                .getContractAgreement(MessageUtils.getPayloadAsString(msg.getBody()));
+        final var payload = MessageUtils.getPayloadAsString(msg.getBody());
+        final var agreement = deserializationService.getContractAgreement(payload);
         return new Request<>(msg.getHeader(), agreement);
     }
 
@@ -271,8 +271,7 @@ class PayloadStreamReader extends IdsTransformer<
 
         String payload;
         try {
-            payload = new BufferedReader(
-                    new InputStreamReader(inputStream))
+            payload = new BufferedReader(new InputStreamReader(inputStream))
                     .lines()
                     .parallel()
                     .collect(Collectors.joining("\n"));

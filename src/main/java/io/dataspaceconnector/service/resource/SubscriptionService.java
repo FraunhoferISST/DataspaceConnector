@@ -40,10 +40,26 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
      * @param pageable   Range selection of the complete data set.
      * @param subscriber The subscriber id.
      * @return The id list of all entities.
-     * @throws IllegalArgumentException if the passed pageable is null.
+     * @throws IllegalArgumentException if a passed parameter is null.
      */
-    public List<Subscription> getOwnSubscriptions(final Pageable pageable, final URI subscriber) {
+    public List<Subscription> getBySubscriber(final Pageable pageable, final URI subscriber) {
         Utils.requireNonNull(pageable, ErrorMessages.PAGEABLE_NULL);
+        Utils.requireNonNull(subscriber, ErrorMessages.ENTITYID_NULL);
         return ((SubscriptionRepository) getRepository()).findAllBySubscriber(subscriber);
+    }
+
+    /**
+     * Get a list if all subscriptions with a matching subscriber and target.
+     *
+     * @param subscriber The subscriber id.
+     * @param target     The target id.
+     * @return The id list of all entities.
+     * @throws IllegalArgumentException if a passed parameter is null.
+     */
+    public List<Subscription> getBySubscriberAndTarget(final URI subscriber, final URI target) {
+        Utils.requireNonNull(subscriber, ErrorMessages.ENTITYID_NULL);
+        Utils.requireNonNull(target, ErrorMessages.ENTITYID_NULL);
+        return ((SubscriptionRepository) getRepository()).findAllBySubscriberAndTarget(subscriber,
+                target);
     }
 }

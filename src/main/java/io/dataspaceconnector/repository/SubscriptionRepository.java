@@ -29,14 +29,28 @@ import java.util.List;
 public interface SubscriptionRepository extends BaseEntityRepository<Subscription> {
 
     /**
-     * Finds all subscriptions with the current connector as subscriber.
+     * Finds all subscriptions with a given connector id as subscriber.
      *
      * @param subscriber URI of the subscriber.
-     * @return List of all subscription with the subscriber.
+     * @return List of all matching subscriptions.
      */
     @Query("SELECT r "
             + "FROM Subscription r "
             + "WHERE r.subscriber = :subscriber "
             + "AND r.deleted = false")
     List<Subscription> findAllBySubscriber(URI subscriber);
+
+    /**
+     * Finds all subscriptions with a given subscriber id and target id.
+     *
+     * @param subscriber The subscriber id.
+     * @param target     The target id.
+     * @return List of all matching subscriptions.
+     */
+    @Query("SELECT r "
+            + "FROM Subscription r "
+            + "WHERE r.subscriber = :subscriber "
+            + "AND r.target = :target "
+            + "AND r.deleted = false")
+    List<Subscription> findAllBySubscriberAndTarget(URI subscriber, URI target);
 }

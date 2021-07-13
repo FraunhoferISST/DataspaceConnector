@@ -1,26 +1,26 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
     <route id="policyCheck">
 
-        <!-- Transfer contract is missing from message header -->
+        <!-- transfer contract is missing from message header -->
         <onException>
             <exception>io.dataspaceconnector.camel.exception.NoTransferContractException</exception>
             <to uri="direct:handleNoTransferContractException"/>
         </onException>
 
-        <!-- Agreement could not be loaded or deserialized -->
+        <!-- agreement could not be loaded or deserialized -->
         <onException>
             <exception>io.dataspaceconnector.exception.ResourceNotFoundException</exception>
             <exception>java.lang.IllegalArgumentException</exception>
             <to uri="direct:handleMessageProcessingFailedForArtifact"/>
         </onException>
 
-        <!-- Policy conditions are not fulfilled, data provision is not allowed -->
+        <!-- policy conditions are not fulfilled, data provision is not allowed -->
         <onException>
             <exception>io.dataspaceconnector.exception.PolicyRestrictionException</exception>
             <to uri="direct:handlePolicyRestrictionException"/>
         </onException>
 
-        <!-- Transfer contract is invalid -->
+        <!-- transfer contract is invalid -->
         <onException>
             <exception>io.dataspaceconnector.exception.ContractException</exception>
             <to uri="direct:handleInvalidTransferContract"/>

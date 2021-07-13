@@ -183,7 +183,7 @@ public final class ResourceControllers {
             final var pageable = Utils.toPageRequest(page, size);
 
             final var connectorId = connectorSvc.getConnectorId();
-            final var list = subscriptionSvc.getOwnSubscriptions(pageable,
+            final var list = subscriptionSvc.getBySubscriber(pageable,
                     connectorId);
 
             final var entities = new PageImpl<>(list);

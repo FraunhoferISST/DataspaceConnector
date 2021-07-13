@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.exception.InvalidResourceException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
@@ -58,6 +51,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * This service offers methods for finding entities by their identifying URI.
  */
@@ -69,92 +69,77 @@ public class EntityResolver {
     /**
      * Service for artifacts.
      */
-    private final @NonNull
-    ArtifactService artifactService;
+    private final @NonNull ArtifactService artifactService;
 
     /**
      * Service for representations.
      */
-    private final @NonNull
-    RepresentationService representationService;
+    private final @NonNull RepresentationService representationService;
 
     /**
      * Service for offered resources.
      */
-    private final @NonNull
-    ResourceService<OfferedResource, OfferedResourceDesc> offerService;
+    private final @NonNull ResourceService<OfferedResource, OfferedResourceDesc> offerService;
 
     /**
      * Service for catalogs.
      */
-    private final @NonNull
-    CatalogService catalogService;
+    private final @NonNull CatalogService catalogService;
 
     /**
      * Service for contract offers.
      */
-    private final @NonNull
-    ContractService contractService;
+    private final @NonNull ContractService contractService;
 
     /**
      * Service for contract rules.
      */
-    private final @NonNull
-    RuleService ruleService;
+    private final @NonNull RuleService ruleService;
 
     /**
      * Service for contract agreements.
      */
-    private final @NonNull
-    AgreementService agreementService;
+    private final @NonNull AgreementService agreementService;
 
     /**
      * Service for building ids objects.
      */
-    private final @NonNull
-    IdsCatalogBuilder catalogBuilder;
+    private final @NonNull IdsCatalogBuilder catalogBuilder;
 
     /**
      * Service for building ids resource.
      */
-    private final @NonNull
-    IdsResourceBuilder<OfferedResource> offerBuilder;
+    private final @NonNull IdsResourceBuilder<OfferedResource> offerBuilder;
 
     /**
      * Service for building ids artifact.
      */
-    private final @NonNull
-    IdsArtifactBuilder artifactBuilder;
+    private final @NonNull IdsArtifactBuilder artifactBuilder;
 
     /**
      * Service for building ids representation.
      */
-    private final @NonNull
-    IdsRepresentationBuilder representationBuilder;
+    private final @NonNull IdsRepresentationBuilder representationBuilder;
 
     /**
      * Service for building ids contract.
      */
-    private final @NonNull
-    IdsContractBuilder contractBuilder;
+    private final @NonNull IdsContractBuilder contractBuilder;
 
     /**
      * Skips the data access verification.
      */
-    private final @NonNull
-    AllowAccessVerifier allowAccessVerifier;
+    private final @NonNull AllowAccessVerifier allowAccessVerifier;
 
     /**
      * Performs a artifact requests.
      */
-    private final @NonNull
-    BlockingArtifactReceiver artifactReceiver;
+    private final @NonNull BlockingArtifactReceiver artifactReceiver;
 
     /**
      * Service for deserialization.
      */
-    private final @NonNull
-    DeserializationService deserializationService;
+    private final @NonNull DeserializationService deserializationService;
 
     /**
      * Return any connector entity by its id.

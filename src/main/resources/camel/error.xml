@@ -112,8 +112,8 @@
 
     <route id="invalidInputException">
         <from uri="direct:handleInvalidInputException"/>
-        <log loggingLevel="DEBUG" message="Error route for handling invalid query input called."/>
-        <to uri="bean:messageResponseService?method=handleInvalidQueryInput(${exception},
+        <log loggingLevel="DEBUG" message="Error route for handling invalid input called."/>
+        <to uri="bean:messageResponseService?method=handleInvalidInput(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getHeader().getRequestedArtifact()},
         ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getHeader().getTransferContract()},
         ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getHeader().getIssuerConnector()},
@@ -142,6 +142,15 @@
 
     <route id="messageProcessingFailedForAgreement">
         <from uri="direct:handleMessageProcessingFailedForAgreement"/>
+        <log loggingLevel="DEBUG" message="Error route for handling failed message processing called."/>
+        <to uri="bean:messageResponseService?method=handleMessageProcessingFailed(${exception},
+        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getBody().toRdf(),
+        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getHeader().getId()})"/>
+    </route>
+
+    <route id="messageProcessingFailedForSubscription">
+        <from uri="direct:handleMessageProcessingFailedForSubscription"/>
         <log loggingLevel="DEBUG" message="Error route for handling failed message processing called."/>
         <to uri="bean:messageResponseService?method=handleMessageProcessingFailed(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getBody().toRdf(),

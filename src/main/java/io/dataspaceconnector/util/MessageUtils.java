@@ -123,6 +123,19 @@ public final class MessageUtils {
     }
 
     /**
+     * Extract the id of an targeted element.
+     *
+     * @param message The ids message.
+     * @return The id of the target element.
+     * @throws IllegalArgumentException If the message is null.
+     */
+    public static URI extractTargetId(final Message message) {
+        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
+        message.getProperties().get("ids:target");
+        return message.getId();
+    }
+
+    /**
      * Extract the ids of an ids message.
      *
      * @param message The ids message.

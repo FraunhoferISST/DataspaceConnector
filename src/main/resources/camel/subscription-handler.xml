@@ -1,6 +1,25 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
     <route id="subscription-handler-route">
 
+        <!-- the subscription from the consumer is invalid -->
+        <onException>
+            <exception>io.dataspaceconnector.exception.InvalidInputException</exception>
+            <exception>io.dataspaceconnector.exception.InvalidEntityException</exception>
+            <to uri="direct:handleInvalidInputException"/>
+        </onException>
+
+        <!-- the un/subscription could not be processed -->
+        <onException>
+            <exception>io.dataspaceconnector.camel.exception.SubscriptionProcessingException</exception>
+            <to uri="direct:handleMessageProcessingFailedForSubscription"/>
+        </onException>
+
+        <!-- an element for the target id could not be found -->
+        <onException>
+            <exception>io.dataspaceconnector.exception.ResourceNotFoundException</exception>
+            <to uri="direct:handleResourceNotFoundException"/>
+        </onException>
+
         <!-- the response could not be built -->
         <onException>
             <exception>java.lang.IllegalStateException</exception>
@@ -10,7 +29,7 @@
 
         <from uri="direct:subscriptionMsgHandler"/>
         <to uri="direct:ids-validation"/>
-        <process ref="ProcessedNotification"/>
+        <process ref="ProcessedSubscription"/>
 
     </route>
 </routes>

@@ -7,7 +7,7 @@
             <to uri="direct:handleVersionNotSupportedException"/>
         </onException>
 
-        <!-- Message header is empty -->
+        <!-- message header is empty -->
         <onException>
             <exception>io.dataspaceconnector.exception.MessageEmptyException</exception>
             <to uri="direct:handleMessageEmptyException"/>
