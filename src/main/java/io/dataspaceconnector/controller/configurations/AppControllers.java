@@ -19,12 +19,8 @@ import io.dataspaceconnector.controller.resource.BaseResourceChildController;
 import io.dataspaceconnector.controller.resource.BaseResourceController;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
-import io.dataspaceconnector.model.appstore.AppStore;
-import io.dataspaceconnector.model.appstore.AppStoreDesc;
 import io.dataspaceconnector.service.configuration.AppService;
-import io.dataspaceconnector.service.configuration.AppStoreService;
 import io.dataspaceconnector.service.configuration.EntityLinkerService;
-import io.dataspaceconnector.view.AppStoreView;
 import io.dataspaceconnector.view.AppView;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,17 +39,6 @@ public final class AppControllers {
     @Tag(name = "Apps", description = "Endpoints for CRUD operations on apps")
     public static class AppController
             extends BaseResourceController<App, AppDesc, AppView, AppService> { }
-
-    /**
-     * Offers the endpoints for managing app stores.
-     */
-    @RestController
-    @RequestMapping("/api/appstores")
-    @Tag(name = "App Store", description = "Endpoints for CRUD operations on app store")
-    public static class AppStoreController
-            extends BaseResourceController<AppStore, AppStoreDesc, AppStoreView, AppStoreService> {
-
-    }
 
     /**
      * Offers the endpoints for managing the relations between app store and apps.
