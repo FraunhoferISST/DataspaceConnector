@@ -15,29 +15,13 @@
  */
 package io.dataspaceconnector.controller.resource.swagger.response;
 
-/**
- * This class holds descriptions for the responses.
- */
-public class ResponseDescriptions {
-    protected ResponseDescriptions() {
-        throw new UnsupportedOperationException();
-    }
+import org.junit.jupiter.api.Test;
 
-    /**
-     * Description is Ok.
-     */
-    @SuppressWarnings("PMD.ShortVariable")
-    public static final String OK = "Ok";
-    /**
-     * Description is Created.
-     */
-    public static final String CREATED = "Created";
-    /**
-     * Description is No Content.
-     */
-    public static final String NO_CONTENT = "No Content";
-    /**
-     * Description is Not Allowed.
-     */
-    public static final String METHOD_NOT_ALLOWED = "Not Allowed";
+import static org.junit.jupiter.api.Assertions.*;
+
+class ResponseDescriptionsTest {
+    @Test
+    public void constructor_is_hidden() {
+        assertThrows(UnsupportedOperationException.class, ResponseDescriptions::new);
+    }
 }

@@ -13,36 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.resource.swagger.response;
+package io.dataspaceconnector.view.util;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ResponseCodesTest {
-
+class ViewConstantsTest {
     @Test
     public void constructor_is_hidden() {
-        assertThrows(UnsupportedOperationException.class, ResponseCodes::new);
-    }
-
-    @Test
-    public void ok_is_code_200() {
-        assertEquals("200", ResponseCodes.OK);
-    }
-
-    @Test
-    public void created_is_code_201() {
-        assertEquals("201", ResponseCodes.CREATED);
-    }
-
-    @Test
-    public void no_content_is_code_204() {
-        assertEquals("204", ResponseCodes.NO_CONTENT);
-    }
-
-    @Test
-    public void method_not_allowed_is_code_405() {
-        assertEquals("405", ResponseCodes.METHOD_NOT_ALLOWED);
+        assertThrows(UnsupportedOperationException.class, ViewConstants::new);
     }
 }
