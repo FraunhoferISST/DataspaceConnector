@@ -48,12 +48,12 @@ import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.EntityUpdateService;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.service.message.subscription.SubscriptionHandler;
 import io.dataspaceconnector.service.message.type.ArtifactResponseService;
 import io.dataspaceconnector.service.message.type.ContractAgreementService;
 import io.dataspaceconnector.service.message.type.ContractRejectionService;
 import io.dataspaceconnector.service.message.type.DescriptionResponseService;
 import io.dataspaceconnector.service.message.type.MessageProcessedNotificationService;
+import io.dataspaceconnector.service.resource.SubscriptionService;
 import io.dataspaceconnector.util.ContractUtils;
 import io.dataspaceconnector.util.MessageUtils;
 import lombok.NonNull;
@@ -520,7 +520,7 @@ class SubscriptionProcessor extends IdsProcessor<RouteMsg<RequestMessageImpl, ?>
     /**
      * Handler for adding and removing subscriptions.
      */
-    private final @NonNull SubscriptionHandler subscriptionHandler;
+    private final @NonNull SubscriptionService subscriptionHandler;
 
     /**
      * private final @NonNull
