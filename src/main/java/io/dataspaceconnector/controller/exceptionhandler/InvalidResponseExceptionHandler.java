@@ -17,7 +17,6 @@ package io.dataspaceconnector.controller.exceptionhandler;
 
 import io.dataspaceconnector.service.message.type.exceptions.InvalidResponse;
 import io.dataspaceconnector.util.ControllerUtils;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 /**
  * Global exception handler for {@link InvalidResponse}.
  */
-@Log4j2
 @ControllerAdvice
 @Order
 public final class InvalidResponseExceptionHandler {

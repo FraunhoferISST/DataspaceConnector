@@ -42,7 +42,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,7 +57,6 @@ import org.springframework.web.bind.annotation.RestController;
  * This controller provides the endpoint for sending a contract request message and starting the
  * metadata and data exchange.
  */
-@Log4j2
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
