@@ -21,6 +21,8 @@ import okhttp3.OkHttpClient;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.TimeUnit;
 
@@ -80,8 +82,10 @@ public final class OkHttpUtils {
             builder.readTimeout(TIMEOUT, TimeUnit.SECONDS);
 
             return builder.build();
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            if (log.isErrorEnabled()) {
+                log.error("Error getting the SSL-Context: " + e.getCause());
+            }
 
             throw new UnsupportedOperationException(e);
         }

@@ -88,6 +88,7 @@ class InfomodelPetriNetBuilderTest {
      * example will run indefinitely.
      */
     @Test
+    @SuppressWarnings("unchecked")
     void testBuildPetriNet() throws IOException {
         //Randomly generate an AppRoute
         final var endpointlist = new ArrayList<Endpoint>();
