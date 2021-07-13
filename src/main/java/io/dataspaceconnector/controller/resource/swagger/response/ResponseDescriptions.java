@@ -37,6 +37,10 @@ public class ResponseDescriptions {
      */
     public static final String NO_CONTENT = "No Content";
     /**
+     * Response code is UNAUTHORIZED.
+     */
+    public static final String UNAUTHORIZED = "Unauthorized";
+    /**
      * Description is Not Allowed.
      */
     public static final String METHOD_NOT_ALLOWED = "Not Allowed";

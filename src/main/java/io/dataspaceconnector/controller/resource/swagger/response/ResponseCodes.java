@@ -38,6 +38,10 @@ public class ResponseCodes {
      */
     public static final String NO_CONTENT = "204";
     /**
+     * Response code is UNAUTHORIZED.
+     */
+    public static final String UNAUTHORIZED = "401";
+    /**
      * Response code is METHOD_NOT_ALLOWED.
      */
     public static final String METHOD_NOT_ALLOWED = "405";
