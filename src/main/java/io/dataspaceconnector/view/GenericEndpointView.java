@@ -16,6 +16,7 @@
 package io.dataspaceconnector.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.dataspaceconnector.model.datasource.DataSource;
 import io.dataspaceconnector.model.endpoint.EndpointType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -66,4 +67,9 @@ public class GenericEndpointView extends RepresentationModel<GenericEndpointView
      * The information of the endpoint.
      */
     private String info;
+
+    /**
+     * The data source information.
+     */
+    private DataSource datasource;
 }
