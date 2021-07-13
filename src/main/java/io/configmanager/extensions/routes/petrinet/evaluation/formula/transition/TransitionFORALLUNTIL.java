@@ -19,7 +19,7 @@ import io.configmanager.extensions.routes.petrinet.model.Node;
 import io.configmanager.extensions.routes.petrinet.model.Transition;
 import io.configmanager.extensions.routes.petrinet.simulator.PetriNetSimulator;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ import java.util.List;
  * Evaluates to true, if on any possible path every transition fulfills parameter1,
  * until a transition fulfills parameter2.
  */
-@Slf4j
+@Log4j2
 @AllArgsConstructor
 public class TransitionFORALLUNTIL implements TransitionFormula {
     /**

@@ -16,7 +16,7 @@
 package io.configmanager.extensions.routes.camel;
 
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +31,7 @@ import java.nio.file.Paths;
 /**
  * Component for deploying and deleting Camel routes in the file system.
  */
-@Slf4j
+@Log4j2
 @Component
 @NoArgsConstructor
 public class RouteFileHelper {

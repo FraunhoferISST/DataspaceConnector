@@ -27,7 +27,7 @@ import io.configmanager.extensions.routes.camel.dto.RouteStepEndpoint;
 import io.configmanager.extensions.routes.camel.exceptions.NoSuitableTemplateException;
 import io.configmanager.extensions.routes.camel.exceptions.RouteCreationException;
 import io.configmanager.extensions.routes.camel.exceptions.RouteDeletionException;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -45,7 +45,7 @@ import java.util.List;
 /**
  * Component for creating Camel routes from AppRoutes.
  */
-@Slf4j
+@Log4j2
 @Component
 public class RouteManager {
     /**

@@ -37,7 +37,7 @@ import io.configmanager.extensions.routes.petrinet.simulator.PetriNetSimulator;
 import io.dataspaceconnector.util.ContractUtils;
 import io.dataspaceconnector.util.RuleUtils;
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ import java.util.stream.Stream;
  * Provide static methods, to generate a Petri Net
  * (https://en.wikipedia.org/wiki/Petri_net) from an Infomodel AppRoute.
  */
-@Slf4j
+@Log4j2
 @UtilityClass
 public class InfomodelPetriNetBuilder {
 

@@ -36,7 +36,7 @@ import io.configmanager.extensions.routes.petrinet.model.TransitionImpl;
 import io.configmanager.extensions.routes.petrinet.simulator.ParallelEvaluator;
 import io.configmanager.extensions.routes.petrinet.simulator.PetriNetSimulator;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -70,14 +70,14 @@ import static io.configmanager.extensions.routes.petrinet.evaluation.formula.tra
 /**
  * Test building a PetriNet from a randomly generated AppRoute
  */
-@Slf4j
+@Log4j2
 @NoArgsConstructor
 class InfomodelPetriNetBuilderTest {
-    private final static int MINIMUM_ENDPOINT = 5;
-    private final static int MAXIMUM_ENDPOINT = 10;
+    private final static int MINIMUM_ENDPOINT = 2;
+    private final static int MAXIMUM_ENDPOINT = 3;
 
-    private final static int MINIMUM_SUBROUTE = 3;
-    private final static int MAXIMUM_SUBROUTE = 5;
+    private final static int MINIMUM_SUBROUTE = 2;
+    private final static int MAXIMUM_SUBROUTE = 3;
 
     private final static int MINIMUM_STARTEND = 1;
     private final static int MAXIMUM_STARTEND = 3;

@@ -15,7 +15,7 @@
  */
 package io.configmanager.core;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import okhttp3.OkHttpClient;
 
 import javax.net.ssl.SSLContext;
@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Utility Class for generating an OkHttpClient which does not validate Certificate Chains.
  */
-@Slf4j
+@Log4j2
 public final class OkHttpUtils {
     /**
      * Default timeout for HTTP-Requests.

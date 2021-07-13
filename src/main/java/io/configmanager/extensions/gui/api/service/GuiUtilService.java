@@ -36,7 +36,7 @@ import io.configmanager.util.enums.RouteDeployMethod;
 import io.dataspaceconnector.model.configuration.DeployMode;
 import io.dataspaceconnector.model.configuration.LogLevel;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.json.JSONException;
@@ -50,7 +50,7 @@ import java.util.List;
 /**
  * The class can be used to define auxiliary methods that are needed again and again.
  */
-@Slf4j
+@Log4j2
 @Service
 @Transactional
 @NoArgsConstructor

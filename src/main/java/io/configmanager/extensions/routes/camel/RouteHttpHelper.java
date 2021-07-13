@@ -17,7 +17,7 @@ package io.configmanager.extensions.routes.camel;
 
 import io.configmanager.core.OkHttpUtils;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import okhttp3.Credentials;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -34,7 +34,7 @@ import java.util.Objects;
 /**
  * Component for deploying and deleting Camel routes at the Camel application via HTTP.
  */
-@Slf4j
+@Log4j2
 @Component
 @NoArgsConstructor
 public class RouteHttpHelper {
