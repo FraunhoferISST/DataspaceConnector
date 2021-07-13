@@ -17,6 +17,7 @@ package io.dataspaceconnector.controller.message;
 
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
 import io.dataspaceconnector.exception.MessageException;
@@ -24,16 +25,19 @@ import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.service.EntityPersistenceService;
 import io.dataspaceconnector.service.EntityUpdateService;
+import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
 import io.dataspaceconnector.service.message.type.ContractAgreementService;
 import io.dataspaceconnector.service.message.type.ContractRequestService;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
+import io.dataspaceconnector.service.message.type.LogMessageService;
 import io.dataspaceconnector.service.resource.AgreementService;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
 import io.dataspaceconnector.util.ControllerUtils;
 import io.dataspaceconnector.util.MessageUtils;
 import io.dataspaceconnector.util.RuleUtils;
 import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;
+import io.dataspaceconnector.util.UUIDUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -42,6 +46,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -115,6 +120,22 @@ public class ContractRequestMessageController {
      * Service for persisting entities.
      */
     private final @NonNull EntityPersistenceService persistenceSvc;
+
+    /**
+     * The current connector configuration.
+     */
+    private final @NonNull ConnectorConfiguration connectorConfig;
+
+    /**
+     * Service for ids LogMessages.
+     */
+    private final @NonNull LogMessageService logMessageService;
+
+    /**
+     * Service for ids deserialization.
+     */
+    @Autowired
+    private DeserializationService deserializer;
 
     /**
      * Starts a contract, metadata, and data exchange with an external connector.
@@ -204,6 +225,7 @@ public class ContractRequestMessageController {
 
             updateService.linkArtifactToAgreement(artifacts, agreementId);
 
+
             // ARTIFACT REQUESTS -------------------------------------------------------------------
             // Download data depending on user input.
             if (download) {
@@ -220,6 +242,17 @@ public class ContractRequestMessageController {
                         if (log.isDebugEnabled()) {
                             log.debug("Data could not be loaded. [content=({})]", content);
                         }
+                    }
+
+                    // Logging the ArtifactResponseMessage
+                    final var clearingHouse = connectorConfig.getClearingHouse();
+                    if (!clearingHouse.equals(URI.create(""))) {
+                        var header = deserializer.getResponseMessage(response.get("header"));
+                        var transferContractID = UUIDUtils.uuidFromUri(
+                                header.getTransferContract());
+                        logMessageService.sendMessage(
+                                URI.create(clearingHouse + transferContractID.toString()),
+                                header.toRdf());
                     }
 
                     // Read and process the response message.
