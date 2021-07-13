@@ -105,7 +105,9 @@ class DescriptionRequestMessageBuilder extends
 
         var elementId = exchange.getProperty("elementId", URI.class);
         if (elementId == null) {
-            elementId = exchange.getProperty(Exchange.LOOP_INDEX, URI.class);
+            final var index = exchange.getProperty(Exchange.LOOP_INDEX, Integer.class);
+            final var resources = (List<URI>) exchange.getProperty("resources", List.class);
+            elementId = resources.get(index);
         }
         final var message = (DescriptionRequestMessageImpl) descReqSvc
                 .buildMessage(new DescriptionRequestMessageDesc(recipient, elementId));
@@ -126,8 +128,14 @@ class ArtifactRequestMessageBuilder extends IdsMessageBuilder<ArtifactRequestMes
     @Override
     protected Request<ArtifactRequestMessageImpl, String> processInternal(final Exchange exchange) {
         final var recipient = exchange.getProperty("recipient", URI.class);
-        final var artifactId = exchange.getProperty(Exchange.LOOP_INDEX, URI.class);
         final var agreementId = exchange.getProperty("agreementId", URI.class);
+
+        URI artifactId = exchange.getProperty("artifactId", URI.class);
+        if (artifactId == null) {
+            final var index = exchange.getProperty(Exchange.LOOP_INDEX, Integer.class);
+            final var artifacts = (List<URI>) exchange.getProperty("artifacts", List.class);
+            artifactId = artifacts.get(index);
+        }
 
         final var message = (ArtifactRequestMessageImpl) artifactReqSvc
                 .buildMessage(new ArtifactRequestMessageDesc(recipient, artifactId, agreementId));
@@ -158,6 +166,7 @@ class ContractRequestMessageBuilder extends IdsMessageBuilder<ContractRequestMes
         final var recipient = exchange.getProperty("recipient", URI.class);
 
         final var request = contractManager.buildContractRequest(ruleList);
+        exchange.setProperty("contractRequest", request);
 
         final var message = (ContractRequestMessageImpl) contractReqSvc
                 .buildMessage(new ContractRequestMessageDesc(recipient, request.getId()));

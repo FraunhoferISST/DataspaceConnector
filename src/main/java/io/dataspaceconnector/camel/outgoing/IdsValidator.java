@@ -19,6 +19,7 @@ import java.util.List;
 
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.Rule;
+import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
 import io.dataspaceconnector.util.RuleUtils;
 import lombok.NonNull;
@@ -48,7 +49,7 @@ class ContractAgreementValidator extends IdsValidator {
     protected void processInternal(final Exchange exchange) {
         final var contractRequest = exchange
                 .getProperty("contractRequest", ContractRequest.class);
-        final var agreementString = exchange.getIn().getBody(String.class);
+        final var agreementString = exchange.getIn().getBody(Response.class).getBody();
 
         final var agreement = contractManager
                 .validateContractAgreement(agreementString, contractRequest);

@@ -90,7 +90,7 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
             final var result = template.send("direct:artifactRequestSender",
                     ExchangeBuilder.anExchange(context)
                             .withProperty("recipient", recipient)
-                            .withProperty("artifactId", artifactId)
+                            .withProperty("artifactId", artifact.getRemoteId())
                             .withProperty("transferContract", transferContract)
                             .withProperty("queryInput", queryInput)
                             .build());

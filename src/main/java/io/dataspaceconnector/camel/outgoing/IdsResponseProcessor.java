@@ -19,12 +19,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.service.EntityPersistenceService;
 import io.dataspaceconnector.service.EntityUpdateService;
-import io.dataspaceconnector.util.UUIDUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.Exchange;
@@ -122,11 +122,10 @@ class AgreementToArtifactsLinker extends IdsResponseProcessor {
 
     @Override
     protected void processInternal(Exchange exchange) throws Exception {
-        final var agreementUri = exchange.getProperty("agreementId", URI.class);
-        final var agreementUuid = UUIDUtils.uuidFromUri(agreementUri);
+        final var agreementId = exchange.getProperty("agreementId", UUID.class);
         final var artifacts = (List<URI>) exchange.getProperty("artifacts", List.class);
 
-        updateService.linkArtifactToAgreement(artifacts, agreementUuid);
+        updateService.linkArtifactToAgreement(artifacts, agreementId);
     }
 
 }

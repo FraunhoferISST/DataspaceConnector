@@ -27,9 +27,7 @@
         <to uri="direct:ids-validation"/>
         <choice>
             <when>
-                <simple>${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getHeader().getRequestedElement()}
-                    ==
-                    null</simple>
+                <simple>${body.getHeader().getRequestedElement()} == null</simple>
                 <process ref="SelfDescription"/>
             </when>
             <otherwise>

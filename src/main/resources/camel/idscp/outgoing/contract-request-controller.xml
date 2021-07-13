@@ -56,7 +56,7 @@
         <process ref="ContractAgreementPersistenceProcessor"/>
 
         <loop>
-            <simple>${exchangeProperty.resources}</simple>
+            <simple>${exchangeProperty.resources.size()}</simple>
             <process ref="DescriptionRequestMessageBuilder"/>
             <process ref="RequestWithoutPayloadPreparer"/>
             <toD uri="idscp2client://${exchangeProperty.recipient}?awaitResponse=true&amp;sslContextParameters=#serverSslContext&amp;useIdsMessages=true"/>
@@ -70,7 +70,7 @@
             <when>
                 <simple>${exchangeProperty.download}</simple>
                 <loop>
-                    <simple>${exchangeProperty.artifacts}</simple>
+                    <simple>${exchangeProperty.artifacts.size()}</simple>
                     <process ref="ArtifactRequestMessageBuilder"/>
                     <process ref="RequestWithoutPayloadPreparer"/>
                     <toD uri="idscp2client://${exchangeProperty.recipient}?awaitResponse=true&amp;sslContextParameters=#serverSslContext&amp;useIdsMessages=true"/>

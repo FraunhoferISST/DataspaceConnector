@@ -66,7 +66,7 @@ class RequestWithoutPayloadPreparer extends Idscp2MappingProcessor {
         final var request = in.getBody(Request.class);
 
         in.setHeader(IDSCP2_HEADER, request.getHeader());
-        in.setBody(null); //TODO null value okay? / else use "".getBytes()
+        in.setBody(null);
     }
 
 }
