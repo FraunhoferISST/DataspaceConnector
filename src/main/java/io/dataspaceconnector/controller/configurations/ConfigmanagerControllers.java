@@ -22,16 +22,12 @@ import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
 import io.dataspaceconnector.model.datasource.DataSource;
 import io.dataspaceconnector.model.datasource.DataSourceDesc;
-import io.dataspaceconnector.model.identityprovider.IdentityProvider;
-import io.dataspaceconnector.model.identityprovider.IdentityProviderDesc;
 import io.dataspaceconnector.service.configuration.ClearingHouseService;
 import io.dataspaceconnector.service.configuration.ConfigurationService;
 import io.dataspaceconnector.service.configuration.DataSourceService;
-import io.dataspaceconnector.service.configuration.IdentityProviderService;
 import io.dataspaceconnector.view.ClearingHouseView;
 import io.dataspaceconnector.view.ConfigurationView;
 import io.dataspaceconnector.view.DataSourceView;
-import io.dataspaceconnector.view.IdentityProviderView;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,16 +69,4 @@ public final class ConfigmanagerControllers {
     public static class DataSourceController
             extends BaseResourceController<DataSource, DataSourceDesc, DataSourceView,
             DataSourceService> { }
-
-    /**
-     * Offers the endpoints for managing identity provider endpoints.
-     */
-    @RestController
-    @RequestMapping("/api/identityproviders")
-    @Tag(name = "Identity Provider", description = "Endpoints for CRUD operations on"
-            + " identity providers")
-    public static class IdentityProviderController
-            extends BaseResourceController<IdentityProvider, IdentityProviderDesc,
-            IdentityProviderView, IdentityProviderService> {
-    }
 }
