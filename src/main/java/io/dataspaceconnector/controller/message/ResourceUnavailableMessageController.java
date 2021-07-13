@@ -18,6 +18,7 @@ package io.dataspaceconnector.controller.message;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
+import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.controller.util.ControllerUtils;
@@ -87,7 +88,7 @@ public class ResourceUnavailableMessageController {
         try {
             final var resource = connectorService.getOfferedResourceById(resourceId);
             if (resource.isEmpty()) {
-                return ControllerUtils.respondResourceNotFound(resourceId);
+                throw new ResourceNotFoundException(String.format("%s", resourceId));
             }
 
             // Send the resource unavailable message.

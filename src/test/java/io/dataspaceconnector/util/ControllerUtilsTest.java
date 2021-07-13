@@ -102,21 +102,6 @@ class ControllerUtilsTest {
     }
 
     @Test
-    public void respondDeserializationError_validUri_returnValidResponseEntity() {
-        /* ARRANGE */
-        final var resourceId = URI.create("https://requestedResource");
-        final var expectedResponse = new ResponseEntity<>(String.format("Resource %s not found.",
-                resourceId), HttpStatus.NOT_FOUND);
-
-        /* ACT */
-        final var response = ControllerUtils.respondResourceNotFound(resourceId);
-
-        /* ARRANGE */
-        assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
-    }
-
-    @Test
     public void respondResourceCouldNotBeLoaded_validUri_returnValidResponseEntity() {
         /* ARRANGE */
         final var resourceId = URI.create("https://requestedResource");

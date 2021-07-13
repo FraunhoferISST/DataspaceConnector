@@ -52,9 +52,8 @@ public class GlobalMessageService {
      * @param recipient The recipient.
      * @return True if the message was successfully processed by the recipient, false if not.
      */
-    public boolean sendConnectorUpdateMessage(final URI recipient)
-            throws MultipartParseException, ClaimsException, DapsTokenManagerException,
-            IOException {
+    public boolean sendConnectorUpdateMessage(final URI recipient) throws MultipartParseException,
+            ClaimsException, DapsTokenManagerException, IOException {
         final var response = brokerSvc.updateSelfDescriptionAtBroker(recipient);
         final var msg = String.format("Successfully registered connector. [url=(%s)]", recipient);
         return validateResponse(response, msg);

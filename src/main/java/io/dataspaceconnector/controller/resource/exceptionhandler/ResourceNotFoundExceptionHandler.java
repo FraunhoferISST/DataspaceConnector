@@ -52,7 +52,8 @@ public final class ResourceNotFoundExceptionHandler {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         final var body = new JSONObject();
-        body.put("message", "Resource not found.");
+        body.put("message", String.format("Resource not found. %s", exception == null ? ""
+                : exception.getMessage()));
 
         return new ResponseEntity<>(body, headers, HttpStatus.NOT_FOUND);
     }

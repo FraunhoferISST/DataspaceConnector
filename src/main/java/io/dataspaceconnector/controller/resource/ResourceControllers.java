@@ -196,7 +196,6 @@ public final class ResourceControllers {
             }
 
             return model;
-
         }
     }
 

@@ -114,21 +114,6 @@ public final class ControllerUtils {
     }
 
     /**
-     * Creates a ResponseEntity with status code 404 and a message indicating that a resource could
-     * not be found.
-     *
-     * @param resourceId ID for that no match was found.
-     * @return ResponseEntity with status code 404.
-     */
-    public static ResponseEntity<Object> respondResourceNotFound(final URI resourceId) {
-        if (log.isDebugEnabled()) {
-            log.debug("The resource does not exist. [resourceId=({})]", resourceId);
-        }
-        return new ResponseEntity<>(String.format("Resource %s not found.", resourceId),
-                HttpStatus.NOT_FOUND);
-    }
-
-    /**
      * Creates a ResponseEntity with status code 500 and a message indicating that a resource could
      * not be loaded.
      *
