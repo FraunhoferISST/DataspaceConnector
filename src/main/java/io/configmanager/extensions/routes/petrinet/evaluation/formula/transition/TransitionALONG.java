@@ -28,22 +28,30 @@ import static io.configmanager.extensions.routes.petrinet.evaluation.formula.tra
  */
 @AllArgsConstructor
 public class TransitionALONG implements TransitionFormula {
+    /**
+     * Formula which needs to hold for every transition.
+     */
     private TransitionFormula parameter;
 
-    public static TransitionALONG transitionALONG(final TransitionFormula parameter) {
-        return new TransitionALONG(parameter);
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         return transitionNOT(transitionEV(transitionNOT(parameter))).evaluate(node, paths);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "ALONG";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.writeFormula());

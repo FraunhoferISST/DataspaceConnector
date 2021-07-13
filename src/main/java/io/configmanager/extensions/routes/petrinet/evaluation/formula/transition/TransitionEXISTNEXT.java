@@ -20,33 +20,49 @@ import lombok.AllArgsConstructor;
 
 import java.util.List;
 
-import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionEXIST_NEXT.transitionEXIST_NEXT;
-import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionNOT.transitionNOT;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeMODAL.nodeMODAL;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionMODAL.transitionMODAL;
 
 /**
- * Evaluates to true, if all following transitions satisfy the given formula.
+ * Evaluates to true, if there is a following transition fulfilling the given formula.
  */
 @AllArgsConstructor
-public class TransitionFORALL_NEXT implements TransitionFormula {
+public class TransitionEXISTNEXT implements TransitionFormula {
+    /**
+     * Following transition needs to fulfill this formula.
+     */
     private TransitionFormula parameter;
 
-    public static TransitionFORALL_NEXT transitionFORALL_NEXT(final TransitionFormula parameter) {
-        return new TransitionFORALL_NEXT(parameter);
+    /**
+     * Evaluates to true, if there is a following transition fulfilling the given formula.
+     * @param parameter Following transition needs to fulfill this formula.
+     * @return Transition representing the formula.
+     */
+    public static TransitionEXISTNEXT transitionEXISTNEXT(final TransitionFormula parameter) {
+        return new TransitionEXISTNEXT(parameter);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
-        return transitionNOT(transitionEXIST_NEXT(transitionNOT(parameter))).evaluate(node, paths);
+        return transitionMODAL(nodeMODAL(parameter)).evaluate(node, paths);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
-        return "FORALL_NEXT";
+        return "EXIST_NEXT";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.writeFormula());
     }
-
 }

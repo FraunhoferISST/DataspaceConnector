@@ -30,16 +30,34 @@ import java.util.List;
  */
 @Slf4j
 @AllArgsConstructor
-public class TransitionFORALL_UNTIL implements TransitionFormula {
+public class TransitionFORALLUNTIL implements TransitionFormula {
+    /**
+     * On any possible path every transition needs to fulfill this parameter.
+     */
     private TransitionFormula parameter1;
+
+    /**
+     * Parameter 1 needs to be fulfilled until a transition fulfills his parameter.
+     */
     private TransitionFormula parameter2;
 
-    public static TransitionFORALL_UNTIL transitionFORALL_UNTIL(final TransitionFormula parameter1,
-                                                            final TransitionFormula parameter2) {
-        return new TransitionFORALL_UNTIL(parameter1, parameter2);
+    /**
+     * Evaluates to true, if on any possible path every transition fulfills parameter1,
+     * until a transition fulfills parameter2.
+     * @param parameter1 On any possible path every transition needs to fulfill this parameter.
+     * @param parameter2 Parameter 1 needs to be fulfilled until a transition
+     *                   fulfills his parameter.
+     * @return Transition representing the formula.
+     */
+    public static TransitionFORALLUNTIL transitionFORALLUNTIL(final TransitionFormula parameter1,
+                                                              final TransitionFormula parameter2) {
+        return new TransitionFORALLUNTIL(parameter1, parameter2);
     }
 
     //like EXIST_UNTIL but requires conditions for all paths
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         if (!(node instanceof Transition)) {
@@ -105,11 +123,17 @@ public class TransitionFORALL_UNTIL implements TransitionFormula {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "FORALL_UNTIL";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s, %s)",

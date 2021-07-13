@@ -30,26 +30,37 @@ import static io.configmanager.extensions.routes.petrinet.evaluation.formula.tra
  * while parameter2 holds for the place in between.
  */
 @AllArgsConstructor
-public class TransitionEXIST_MODAL implements TransitionFormula {
+public class TransitionEXISTMODAL implements TransitionFormula {
+    /**
+     * Successor transition needs to hold for this formula.
+     */
     private TransitionFormula parameter1;
+
+    /**
+     * Place in between transition needs to hold for this formula.
+     */
     private StateFormula parameter2;
 
-    private static TransitionEXIST_MODAL transitionEXIST_MODAL(final TransitionFormula parameter1,
-                                                               final StateFormula parameter2) {
-        return new TransitionEXIST_MODAL(parameter1, parameter2);
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         return nodeMODAL(transitionAND(parameter1,
                 transitionMODAL(parameter2))).evaluate(node, paths);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "EXIST_MODAL";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s, %s)",

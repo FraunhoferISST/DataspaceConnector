@@ -25,24 +25,46 @@ import java.util.List;
  */
 @AllArgsConstructor
 public class TransitionOR implements TransitionFormula {
+    /**
+     * One of two subformula-candidates to evanulate to true.
+     */
     private TransitionFormula parameter1;
+
+    /**
+     * One of two subformula-candidates to evanulate to true.
+     */
     private TransitionFormula parameter2;
 
+    /**
+     * Evaluates to true, if at least one of the two subformulas evaluates to true.
+     * @param parameter1 One of two subformula-candidates to evanulate to true.
+     * @param parameter2 One of two subformula-candidates to evanulate to true.
+     * @return Transition representing the formula.
+     */
     public static TransitionOR transitionOR(final TransitionFormula parameter1,
                                             final TransitionFormula parameter2) {
         return new TransitionOR(parameter1, parameter2);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         return parameter1.evaluate(node, paths) || parameter2.evaluate(node, paths);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "OR";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s, %s)",

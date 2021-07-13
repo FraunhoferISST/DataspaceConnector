@@ -20,30 +20,38 @@ import lombok.AllArgsConstructor;
 
 import java.util.List;
 
-import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeMODAL.nodeMODAL;
-import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionMODAL.transitionMODAL;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionEXISTNEXT.transitionEXISTNEXT;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionNOT.transitionNOT;
 
 /**
- * Evaluates to true, if there is a following transition fulfilling the given formula.
+ * Evaluates to true, if all following transitions satisfy the given formula.
  */
 @AllArgsConstructor
-public class TransitionEXIST_NEXT implements TransitionFormula {
+public class TransitionFORALLNEXT implements TransitionFormula {
+    /**
+     * All following transitions need to satisfy the given formula.
+     */
     private TransitionFormula parameter;
 
-    public static TransitionEXIST_NEXT transitionEXIST_NEXT(final TransitionFormula parameter) {
-        return new TransitionEXIST_NEXT(parameter);
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
-        return transitionMODAL(nodeMODAL(parameter)).evaluate(node, paths);
+        return transitionNOT(transitionEXISTNEXT(transitionNOT(parameter))).evaluate(node, paths);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
-        return "EXIST_NEXT";
+        return "FORALL_NEXT";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.writeFormula());

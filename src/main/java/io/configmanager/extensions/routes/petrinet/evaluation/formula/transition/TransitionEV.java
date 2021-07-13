@@ -21,7 +21,7 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.TrueOperator.trueOperator;
-import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionFORALL_UNTIL.transitionFORALL_UNTIL;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionFORALLUNTIL.transitionFORALLUNTIL;
 
 /**
  * Evaluates to true, if a transition fulfilling the given parameter
@@ -29,22 +29,40 @@ import static io.configmanager.extensions.routes.petrinet.evaluation.formula.tra
  */
 @AllArgsConstructor
 public class TransitionEV implements TransitionFormula {
+    /**
+     * The formula which needs to be fulfilled.
+     */
     private TransitionFormula parameter;
 
+    /**
+     * Evaluates to true, if a transition fulfilling the given parameter
+     * is eventually reached on every path.
+     * @param parameter The formula which needs to be fulfilled.
+     * @return Transition representing the formula.
+     */
     public static TransitionEV transitionEV(final TransitionFormula parameter) {
         return new TransitionEV(parameter);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
-        return transitionFORALL_UNTIL(trueOperator(), parameter).evaluate(node, paths);
+        return transitionFORALLUNTIL(trueOperator(), parameter).evaluate(node, paths);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "EV";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.writeFormula());

@@ -29,17 +29,22 @@ import java.util.stream.Collectors;
  * and parameter2 evaluates to true for every Place in between.
  */
 @AllArgsConstructor
-public class TransitionFORALL_MODAL implements TransitionFormula {
+public class TransitionFORALLMODAL implements TransitionFormula {
+    /**
+     * This parameter has to evaluate to true for every following transition.
+     */
     private TransitionFormula parameter1;
-    private StateFormula parameter2;
 
-    public static TransitionFORALL_MODAL transitionFORALL_MODAL(final TransitionFormula parameter1,
-                                                                final StateFormula parameter2) {
-        return new TransitionFORALL_MODAL(parameter1, parameter2);
-    }
+    /**
+     * Parameter2 evaluates to true for every Place in between.
+     */
+    private StateFormula parameter2;
 
     // parameter1, must be true for all successor transitions, parameter2 must
     // be true for the states between the current transition and its successors.
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         if (!(node instanceof Transition)) {
@@ -73,11 +78,17 @@ public class TransitionFORALL_MODAL implements TransitionFormula {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "FORALL_MODAL";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s, %s)",

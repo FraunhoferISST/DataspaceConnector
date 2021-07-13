@@ -25,22 +25,39 @@ import java.util.List;
  */
 @AllArgsConstructor
 public class TransitionNOT implements TransitionFormula {
+    /**
+     * Subformula which needs to evaluate to false.
+     */
     private TransitionFormula parameter;
 
+    /**
+     * Evaluates to true, if given subformula evaluates to false.
+     * @param parameter Subformula which needs to evaluate to false.
+     * @return Transition representing the formula.
+     */
     public static TransitionNOT transitionNOT(final TransitionFormula parameter) {
         return new TransitionNOT(parameter);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         return !parameter.evaluate(node, paths);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "NOT";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.writeFormula());

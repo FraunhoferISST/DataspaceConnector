@@ -26,18 +26,35 @@ import java.util.List;
  * until parameter2 evaluates to true.
  */
 @AllArgsConstructor
-public class TransitionEXIST_UNTIL implements TransitionFormula {
+public class TransitionEXISTUNTIL implements TransitionFormula {
+    /**
+     * Evaluates to true for every transition on the path.
+     */
     private TransitionFormula parameter1;
+
+    /**
+     * Path check ends when this parameter evaluates to true.
+     */
     private TransitionFormula parameter2;
 
-    public static TransitionEXIST_UNTIL transitionEXIST_UNTIL(final TransitionFormula parameter1,
-                                                              final TransitionFormula parameter2) {
-        return new TransitionEXIST_UNTIL(parameter1, parameter2);
+    /**
+     * Evaluates to true, if a path exists, where parameter1 evaluates to true for every transition,
+     * until parameter2 evaluates to true.
+     * @param parameter1 Evaluates to true for every transition on the path.
+     * @param parameter2 Path check ends when this parameter evaluates to true.
+     * @return Transition representing the formula.
+     */
+    public static TransitionEXISTUNTIL transitionEXISTUNTIL(final TransitionFormula parameter1,
+                                                            final TransitionFormula parameter2) {
+        return new TransitionEXISTUNTIL(parameter1, parameter2);
     }
 
     // True if a path exists, where parameter1 is true on each transition of the path,
     // and parameter2 is true on the final transition of the path
     //TODO fix evaluation: use filtered paths
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         if (!(node instanceof Transition)) {
@@ -71,11 +88,17 @@ public class TransitionEXIST_UNTIL implements TransitionFormula {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "EXIST_UNTIL";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s, %s)",

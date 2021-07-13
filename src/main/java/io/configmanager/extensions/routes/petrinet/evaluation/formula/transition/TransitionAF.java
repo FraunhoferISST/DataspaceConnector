@@ -26,23 +26,40 @@ import java.util.List;
  */
 @AllArgsConstructor
 public class TransitionAF implements TransitionFormula {
+    /**
+     * Expression which needs to evaluate to true.
+     */
     private ArcExpression parameter;
 
+    /**
+     * Transition evaluates to true, if given {@link ArcExpression} evaluates to true.
+     * @param parameter The expression.
+     * @return The build transition.
+     */
     public static TransitionAF transitionAF(final ArcExpression parameter) {
         return new TransitionAF(parameter);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         return node instanceof Transition
                 && parameter.getSubExpression().evaluate((Transition) node);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "AF";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.getMessage());

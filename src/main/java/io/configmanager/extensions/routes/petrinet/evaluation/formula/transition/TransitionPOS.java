@@ -21,32 +21,48 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.TrueOperator.trueOperator;
-import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionEXIST_UNTIL.transitionEXIST_UNTIL;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionEXISTUNTIL.transitionEXISTUNTIL;
 
 /**
  * Evaluates to true, if some Transition is reachable, which fulfills the given parameter.
  */
 @AllArgsConstructor
 public class TransitionPOS implements TransitionFormula {
+    /**
+     * Formula which needs to be fulfilled.
+     */
     private TransitionFormula parameter;
 
+    /**
+     * Evaluates to true, if some Transition is reachable, which fulfills the given parameter.
+     * @param parameter Formula which needs to be fulfilled.
+     * @return Transition representing the formula.
+     */
     public static TransitionPOS transitionPOS(final TransitionFormula parameter) {
         return new TransitionPOS(parameter);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
-        return transitionEXIST_UNTIL(trueOperator(), parameter).evaluate(node, paths);
+        return transitionEXISTUNTIL(trueOperator(), parameter).evaluate(node, paths);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "POS";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.writeFormula());
     }
-
 }

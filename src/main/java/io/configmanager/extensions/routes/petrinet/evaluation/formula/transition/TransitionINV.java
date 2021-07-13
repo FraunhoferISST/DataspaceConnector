@@ -28,22 +28,30 @@ import static io.configmanager.extensions.routes.petrinet.evaluation.formula.tra
  */
 @AllArgsConstructor
 public class TransitionINV implements TransitionFormula {
+    /**
+     * Parameter needs to evaluate to true for all reachable transitions.
+     */
     private TransitionFormula parameter;
 
-    public static TransitionINV transitionINV(final TransitionFormula parameter) {
-        return new TransitionINV(parameter);
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         return transitionNOT(transitionPOS(transitionNOT(parameter))).evaluate(node, paths);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String symbol() {
         return "INV";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String writeFormula() {
         return String.format("%s(%s)", symbol(), parameter.writeFormula());

@@ -26,50 +26,89 @@ import java.util.Set;
  * Implementation class of the {@link Transition} interface.
  */
 public class TransitionImpl implements Transition {
+    /**
+     * ID of the transition.
+     */
     private URI id;
+
+    /**
+     * The context of the transition.
+     */
     private ContextObject contextObject;
 
+    /**
+     * All source arcs of the transition.
+     */
     @JsonIgnore
     private Set<Arc> sourceArcs;
 
+    /**
+     * All target arcs of the transition.
+     */
     @JsonIgnore
     private Set<Arc> targetArcs;
 
+    /**
+     * Creates a new transition object.
+     * @param id The id of the transition.
+     */
     public TransitionImpl(final URI id) {
         this.id = id;
         this.sourceArcs = new HashSet<>();
         this.targetArcs = new HashSet<>();
     }
 
+    /**
+     * Sets the context of the transition.
+     * @param contextObject The transition context.
+     */
     public void setContextObject(final ContextObject contextObject) {
         this.contextObject = contextObject;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ContextObject getContext() {
         return contextObject;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public URI getID() {
         return id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Arc> getSourceArcs() {
         return sourceArcs;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Arc> getTargetArcs() {
         return targetArcs;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isComplementOf(final Node other) {
         return Place.class.isAssignableFrom(other.getClass());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Node deepCopy() {
         final var copy = new TransitionImpl(this.getID());
@@ -80,6 +119,9 @@ public class TransitionImpl implements Transition {
         return copy;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -94,5 +136,12 @@ public class TransitionImpl implements Transition {
 
         return Objects.equals(id, trans.id) && Objects.equals(contextObject, trans.contextObject);
     }
-}
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+}
