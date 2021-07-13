@@ -19,7 +19,6 @@ package io.dataspaceconnector.service.message.handler;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.ids.messaging.handler.message.SupportedMessageType;
 import io.dataspaceconnector.service.ids.ConnectorService;
-import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -43,9 +42,9 @@ public class ArtifactRequestHandler extends AbstractMessageHandler<ArtifactReque
      * @param context          Camel context required for constructing the {@link ProducerTemplate}.
      * @param connectorService Service for the current connector configuration.
      */
-    public ArtifactRequestHandler(final @NonNull ProducerTemplate template,
-                                  final @NonNull CamelContext context,
-                                  final @NonNull ConnectorService connectorService) {
+    public ArtifactRequestHandler(final ProducerTemplate template,
+                                  final CamelContext context,
+                                  final ConnectorService connectorService) {
         super(template, context, connectorService);
     }
 
