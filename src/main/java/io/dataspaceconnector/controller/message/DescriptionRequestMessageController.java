@@ -101,7 +101,7 @@ public class DescriptionRequestMessageController {
             @RequestParam("protocol") final CommunicationProtocol protocol) {
         String payload = null;
         try {
-            if (CommunicationProtocol.IDSCP.equals(protocol)) {
+            if (CommunicationProtocol.IDSCP_V2.equals(protocol)) {
                 final var result = template.send("direct:descriptionRequestSender",
                         ExchangeBuilder.anExchange(context)
                                 .withProperty("recipient", recipient)

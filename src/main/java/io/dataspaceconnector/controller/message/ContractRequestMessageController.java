@@ -170,7 +170,7 @@ public class ContractRequestMessageController {
             @Parameter(description = "List of ids rules with an artifact id as target.")
             @RequestBody final List<Rule> ruleList) {
         UUID agreementId;
-        if (CommunicationProtocol.IDSCP.equals(protocol)) {
+        if (CommunicationProtocol.IDSCP_V2.equals(protocol)) {
             final var result = template.send("direct:contractRequestSender",
                     ExchangeBuilder.anExchange(context)
                             .withProperty("recipient", recipient)

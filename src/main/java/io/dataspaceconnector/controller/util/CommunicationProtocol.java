@@ -4,6 +4,6 @@ public enum CommunicationProtocol {
 
     MULTIPART,
 
-    IDSCP;
+    IDSCP_V2;
 
 }

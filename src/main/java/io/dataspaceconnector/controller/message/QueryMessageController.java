@@ -102,7 +102,7 @@ public class QueryMessageController {
                             + "WHERE {\n"
                             + "  ?subject ?predicate ?object\n"
                             + "};") @RequestBody final String query) {
-        if (CommunicationProtocol.IDSCP.equals(protocol)) {
+        if (CommunicationProtocol.IDSCP_V2.equals(protocol)) {
             final var result = template.send("direct:querySender",
                     ExchangeBuilder.anExchange(context)
                             .withProperty("recipient", recipient)

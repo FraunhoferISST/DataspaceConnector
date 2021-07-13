@@ -86,7 +86,7 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
         final var artifact = artifactService.get(artifactId);
 
         String data;
-        if (CommunicationProtocol.IDSCP.equals(protocol)) {
+        if (CommunicationProtocol.IDSCP_V2.equals(protocol)) {
             final var result = template.send("direct:artifactRequestSender",
                     ExchangeBuilder.anExchange(context)
                             .withProperty("recipient", recipient)

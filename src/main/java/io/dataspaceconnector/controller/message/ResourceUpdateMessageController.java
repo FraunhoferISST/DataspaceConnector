@@ -103,7 +103,7 @@ public class ResourceUpdateMessageController {
             @RequestParam("resourceId") final URI resourceId,
             @Parameter(description = "The protocol to use for IDS communication.")
             @RequestParam("protocol") final CommunicationProtocol protocol) {
-        if (CommunicationProtocol.IDSCP.equals(protocol)) {
+        if (CommunicationProtocol.IDSCP_V2.equals(protocol)) {
             final var result = template.send("direct:resourceUpdateSender",
                     ExchangeBuilder.anExchange(context)
                             .withProperty("recipient", recipient)
