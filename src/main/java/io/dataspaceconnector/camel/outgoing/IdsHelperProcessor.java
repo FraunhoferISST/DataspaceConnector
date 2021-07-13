@@ -18,10 +18,14 @@ package io.dataspaceconnector.camel.outgoing;
 import java.net.URI;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import io.dataspaceconnector.camel.outgoing.exceptions.InvalidResponseException;
+import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.util.ErrorMessages;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
@@ -72,6 +76,26 @@ class ConfigurationUpdater extends IdsHelperProcessor {
     protected void processInternal(final Exchange exchange) throws ConfigUpdateException {
         // Update the config model.
         connectorService.updateConfigModel();
+    }
+
+}
+
+@Component("PolicyRestrictionProcessor")
+@Log4j2
+class PolicyRestrictionProcessor extends IdsHelperProcessor {
+
+    @Override
+    protected void processInternal(final Exchange exchange) throws Exception {
+        final var exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+
+        if (exception instanceof InvalidResponseException) {
+            final var content = ((InvalidResponseException) exception).getResponse();
+            if (log.isDebugEnabled()) {
+                log.debug("Data could not be loaded. [content=({})]", content);
+            }
+
+            throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
+        }
     }
 
 }
