@@ -14,7 +14,15 @@
                 <to uri="direct:descriptionRequestHandler"/>
             </when>
             <when>
+                <simple>${exchangeProperty.ids-type} == 'DescriptionRequestMessageImpl'</simple>
+                <to uri="direct:descriptionRequestHandler"/>
+            </when>
+            <when>
                 <simple>${exchangeProperty.ids-type} == 'ContractRequestMessage'</simple>
+                <to uri="direct:contractRequestHandler"/>
+            </when>
+            <when>
+                <simple>${exchangeProperty.ids-type} == 'ContractRequestMessageImpl'</simple>
                 <to uri="direct:contractRequestHandler"/>
             </when>
             <when>
@@ -22,7 +30,15 @@
                 <to uri="direct:contractAgreementHandler"/>
             </when>
             <when>
+                <simple>${exchangeProperty.ids-type} == 'ContractAgreementMessageImpl'</simple>
+                <to uri="direct:contractAgreementHandler"/>
+            </when>
+            <when>
                 <simple>${exchangeProperty.ids-type} == 'ArtifactRequestMessage'</simple>
+                <to uri="direct:artifactRequestHandler"/>
+            </when>
+            <when>
+                <simple>${exchangeProperty.ids-type} == 'ArtifactRequestMessageImpl'</simple>
                 <to uri="direct:artifactRequestHandler"/>
             </when>
             <when>
@@ -30,7 +46,15 @@
                 <to uri="direct:notificationMsgHandler"/>
             </when>
             <when>
+                <simple>${exchangeProperty.ids-type} == 'NotificationMessageImpl'</simple>
+                <to uri="direct:notificationMsgHandler"/>
+            </when>
+            <when>
                 <simple>${exchangeProperty.ids-type} == 'ResourceUpdateMessage'</simple>
+                <to uri="direct:resourceUpdateHandler"/>
+            </when>
+            <when>
+                <simple>${exchangeProperty.ids-type} == 'ResourceUpdateMessageImpl'</simple>
                 <to uri="direct:resourceUpdateHandler"/>
             </when>
         </choice>
