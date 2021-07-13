@@ -48,7 +48,7 @@ import java.net.URI;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
-@Tag(name = "IDS Messages", description = "Endpoints for invoke sending IDS messages")
+@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
 public class ConnectorUpdateMessageController {
 
     /**

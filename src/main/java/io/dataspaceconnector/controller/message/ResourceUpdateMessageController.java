@@ -48,7 +48,7 @@ import java.net.URI;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
-@Tag(name = "IDS Messages", description = "Endpoints for invoke sending IDS messages")
+@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
 public class ResourceUpdateMessageController {
 
     /**
@@ -69,8 +69,8 @@ public class ResourceUpdateMessageController {
      * @return The response message or an error.
      */
     @PostMapping("/resource/update")
-    @Operation(summary = "Resource update message", description = "Can be used for registering or "
-            + "updating a resource at an IDS broker.")
+    @Operation(summary = "Resource update message", description = "Can be used for registering "
+            + "or updating a resource at an IDS broker or consumer connector.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),

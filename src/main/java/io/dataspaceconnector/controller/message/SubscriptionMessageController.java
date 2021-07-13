@@ -45,7 +45,7 @@ import java.net.URI;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
-@Tag(name = "IDS Messages", description = "Endpoints for invoke sending IDS messages")
+@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
 public class SubscriptionMessageController {
 
     /**
@@ -61,7 +61,7 @@ public class SubscriptionMessageController {
      * @return The response entity.
      */
     @PostMapping("/subscribe")
-    @Operation(summary = "Send ids request message for element subscription")
+    @Operation(summary = "Send IDS request message for element subscription")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -102,7 +102,7 @@ public class SubscriptionMessageController {
      * @return The response entity.
      */
     @PostMapping("/unsubscribe")
-    @Operation(summary = "Send ids request message for element unsubscription")
+    @Operation(summary = "Send IDS request message for element unsubscription")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),

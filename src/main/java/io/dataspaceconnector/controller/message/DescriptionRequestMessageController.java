@@ -46,7 +46,7 @@ import java.net.URI;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
-@Tag(name = "IDS Messages", description = "Endpoints for invoke sending IDS messages")
+@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
 public class DescriptionRequestMessageController {
 
     /**
@@ -67,7 +67,7 @@ public class DescriptionRequestMessageController {
      * @return The response entity.
      */
     @PostMapping("/description")
-    @Operation(summary = "Send ids description request message")
+    @Operation(summary = "Send IDS description request message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),

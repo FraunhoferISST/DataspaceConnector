@@ -48,7 +48,7 @@ import java.net.URI;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
-@Tag(name = "IDS Messages", description = "Endpoints for invoke sending IDS messages")
+@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
 public class ResourceUnavailableMessageController {
 
     /**
@@ -69,7 +69,7 @@ public class ResourceUnavailableMessageController {
      * @return The response message or an error.
      */
     @PostMapping("/resource/unavailable")
-    @Operation(summary = "Resource unavailable message", description = "Can be used for "
+    @Operation(summary = "Resource unavailable message", description = "Can be used for e.g. "
             + "unregistering a resource at an IDS broker.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),

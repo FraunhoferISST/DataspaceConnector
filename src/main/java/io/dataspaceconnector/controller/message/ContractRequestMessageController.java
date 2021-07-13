@@ -68,7 +68,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
-@Tag(name = "IDS Messages", description = "Endpoints for invoke sending IDS messages")
+@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
 public class ContractRequestMessageController {
 
     /**
@@ -127,7 +127,7 @@ public class ContractRequestMessageController {
      * @return The response entity.
      */
     @PostMapping("/contract")
-    @Operation(summary = "Send ids contract request message")
+    @Operation(summary = "Send IDS contract request message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "201", description = "Created"),
