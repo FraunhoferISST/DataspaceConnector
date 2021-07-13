@@ -76,8 +76,7 @@ public class GuiUtilService {
             default: break;
         }
 
-        assert sortedJsonArray != null;
-        return sortedJsonArray.toJSONString();
+        return sortedJsonArray != null ? sortedJsonArray.toJSONString() : null;
     }
 
     private JSONArray getBrokerStatus() {
