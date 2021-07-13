@@ -33,14 +33,7 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
      * The default uri.
      */
     private static final URI DEFAULT_URI = URI.create("https://documentation");
-    /**
-     * The default outbound path.
-     */
-    private static final String DEFAULT_OUTBOUND_PATH = "default";
-    /**
-     * The default inbound path.
-     */
-    private static final String DEFAULT_INBOUND_PATH = "default";
+
     /**
      * The default information.
      */
@@ -68,42 +61,13 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
         final var hasUpdatedLocation = updateLocation(endpoint, desc.getLocation());
         final var hasUpdatedDocs = updateDocs(endpoint, desc.getDocs());
         final var hasUpdatedInfo = updateInfo(endpoint, desc.getInfo());
-//        final var hasUpdatedInboundPath = updateInboundPath(endpoint, desc.getInboundPath());
-//        final var hasUpdatedOutboundPath = updateOutboundPath(endpoint, desc.getOutboundPath());
         final var hasUpdatedAdditional = updateAdditional(endpoint, endpoint.getAdditional());
 
         final var updatedInternal = updateInternal(endpoint, desc);
 
         return hasParentUpdated || hasUpdatedLocation || hasUpdatedDocs || hasUpdatedInfo
-                // || hasUpdatedInboundPath || hasUpdatedOutboundPath
                 || hasUpdatedAdditional || updatedInternal;
     }
-
-//    /**
-//     * @param endpoint     The endpoint entity.
-//     * @param outboundPath The outbound path of the entity.
-//     * @return True, if outbound path is updated.
-//     */
-//    private boolean updateOutboundPath(final Endpoint endpoint, final String outboundPath) {
-//        final var newOutboundPath = MetadataUtils.updateString(endpoint.getOutboundPath(),
-//                                    outboundPath, DEFAULT_OUTBOUND_PATH);
-//        newOutboundPath.ifPresent(endpoint::setOutboundPath);
-//
-//        return newOutboundPath.isPresent();
-//    }
-//
-//    /**
-//     * @param endpoint    The endpoint entity.
-//     * @param inboundPath The inbound path of the entity.
-//     * @return True, if inbound path is updated.
-//     */
-//    private boolean updateInboundPath(final Endpoint endpoint, final String inboundPath) {
-//        final var newInboundPath = MetadataUtils.updateString(endpoint.getInboundPath(),
-//                inboundPath, DEFAULT_INBOUND_PATH);
-//        newInboundPath.ifPresent(endpoint::setInboundPath);
-//
-//        return newInboundPath.isPresent();
-//    }
 
     /**
      * @param endpoint The endpoint entity.
