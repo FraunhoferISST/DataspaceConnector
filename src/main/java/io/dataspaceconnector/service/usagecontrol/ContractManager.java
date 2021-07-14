@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementBuilder;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -42,10 +46,6 @@ import io.dataspaceconnector.util.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This service offers methods related to contract management.
@@ -92,8 +92,7 @@ public class ContractManager {
         final var agreement = (Agreement) entityResolver.getEntityById(agreementId);
         final var artifacts = dependencyResolver.getArtifactsByAgreement(agreement);
 
-        final var valid = ContractUtils.isMatchingTransferContract(artifacts, requestedArtifact);
-        if (!valid) {
+        if (!ContractUtils.isMatchingTransferContract(artifacts, requestedArtifact)) {
             // If the requested artifact does not match the agreement, send rejection message.
             throw new ContractException("Transfer contract does not match the requested artifact.");
         }
