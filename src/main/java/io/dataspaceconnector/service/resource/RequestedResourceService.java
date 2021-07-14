@@ -37,7 +37,6 @@ public final class RequestedResourceService extends ResourceService<RequestedRes
      */
     @Override
     public Optional<UUID> identifyByRemoteId(final URI remoteId) {
-        final var repo = (RequestedResourcesRepository) getRepository();
-        return repo.identifyByRemoteId(remoteId);
+        return ((RequestedResourcesRepository) getRepository()).identifyByRemoteId(remoteId);
     }
 }
