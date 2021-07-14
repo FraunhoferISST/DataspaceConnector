@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {RouteConfigurer.class})
 @AutoConfigureMockMvc
-public class RouteConfigurerTest {
+class RouteConfigurerTest {
 
     @Autowired
     RouteConfigurer routeConfigurer;
