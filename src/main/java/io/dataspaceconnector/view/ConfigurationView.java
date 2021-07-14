@@ -52,6 +52,16 @@ public class ConfigurationView extends RepresentationModel<ConfigurationView> {
     private ZonedDateTime modificationDate;
 
     /**
+     * The title of the configuration.
+     */
+    private String title;
+
+    /**
+     * The description of the configuration.
+     */
+    private String description;
+
+    /**
      * The access url of the connector.
      */
     private URI connectorEndpoint;
