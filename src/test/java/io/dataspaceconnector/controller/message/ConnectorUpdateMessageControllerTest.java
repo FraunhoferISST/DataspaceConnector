@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import java.io.IOException;
+import java.net.URI;
+import javax.xml.datatype.DatatypeFactory;
+
 import de.fraunhofer.iais.eis.DynamicAttributeToken;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
@@ -30,11 +34,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-
-import javax.xml.datatype.DatatypeFactory;
-import java.io.IOException;
-import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -43,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ConnectorUpdateMessageControllerTest {
 
     @MockBean
@@ -89,7 +91,9 @@ public class ConnectorUpdateMessageControllerTest {
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/update")
-                .param("recipient", recipient)).andReturn();
+                .param("recipient", recipient)
+                .param("protocol", "MULTIPART"))
+                .andReturn();
 
         /* ASSERT */
         assertEquals("Failed to update configuration.", result.getResponse().getContentAsString());
@@ -105,7 +109,9 @@ public class ConnectorUpdateMessageControllerTest {
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/update")
-                .param("recipient", recipient)).andReturn();
+                .param("recipient", recipient)
+                .param("protocol", "MULTIPART"))
+                .andReturn();
 
         /* ASSERT */
         assertEquals(500, result.getResponse().getStatus());
@@ -120,7 +126,9 @@ public class ConnectorUpdateMessageControllerTest {
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/update")
-                .param("recipient", recipient)).andReturn();
+                .param("recipient", recipient)
+                .param("protocol", "MULTIPART"))
+                .andReturn();
 
         /* ASSERT */
         assertEquals(500, result.getResponse().getStatus());
@@ -147,7 +155,9 @@ public class ConnectorUpdateMessageControllerTest {
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/update")
-                .param("recipient", recipient)).andReturn();
+                .param("recipient", recipient)
+                .param("protocol", "MULTIPART"))
+                .andReturn();
 
         /* ASSERT */
         assertEquals("", result.getResponse().getContentAsString());

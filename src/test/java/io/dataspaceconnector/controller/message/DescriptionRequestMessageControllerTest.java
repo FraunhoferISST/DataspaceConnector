@@ -32,11 +32,14 @@ import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -46,6 +49,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {DescriptionRequestMessageController.class})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class DescriptionRequestMessageControllerTest {
 
     @MockBean
@@ -53,6 +57,12 @@ public class DescriptionRequestMessageControllerTest {
 
     @MockBean
     private DeserializationService deserializationService;
+
+    @MockBean
+    private CamelContext camelContext;
+
+    @MockBean
+    private ProducerTemplate producerTemplate;
 
     @Autowired
     private DescriptionRequestMessageController controller;
