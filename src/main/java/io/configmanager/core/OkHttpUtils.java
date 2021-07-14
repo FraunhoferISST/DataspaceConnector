@@ -15,6 +15,7 @@
  */
 package io.configmanager.core;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.OkHttpClient;
 
@@ -30,6 +31,8 @@ import java.util.concurrent.TimeUnit;
  * Utility Class for generating an OkHttpClient which does not validate Certificate Chains.
  */
 @Log4j2
+@SuppressFBWarnings(justification = "OkHttpClient does not validate Certificate Chains. "
+        + "(accepts any certificates)")
 public final class OkHttpUtils {
     /**
      * Default timeout for HTTP-Requests.
