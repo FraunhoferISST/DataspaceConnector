@@ -262,7 +262,9 @@ public class GlobalMessageService {
         if (brokerId.isPresent()) {
             linker.remove(brokerId.get(), Set.of(UUIDUtils.uuidFromUri(resource.getId())));
         } else {
-            throw new ResourceNotFoundException("Broker not found");
+            if (log.isWarnEnabled()) {
+                log.warn("Removed Resource from Broker but Broker was not linked to resource in OfferedResource-Broker-List.");
+            }
         }
     }
 }
