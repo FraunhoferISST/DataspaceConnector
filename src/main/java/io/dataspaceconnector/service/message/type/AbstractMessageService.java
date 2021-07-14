@@ -15,14 +15,12 @@
  */
 package io.dataspaceconnector.service.message.type;
 
-import de.fraunhofer.iais.eis.ArtifactRequestMessage;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.protocol.http.IdsHttpService;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
-import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.MessageBuilderException;
 import io.dataspaceconnector.exception.MessageEmptyException;
 import io.dataspaceconnector.exception.MessageException;
@@ -33,7 +31,6 @@ import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.MessageUtils;
-import io.dataspaceconnector.util.UUIDUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,7 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.net.URI;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,18 +65,6 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
 
     @Autowired
     private ConnectorService connectorService;
-
-    /**
-     * The current connector configuration.
-     */
-    @Autowired
-    private ConnectorConfiguration connectorConfig;
-
-    /**
-     * Service for ids LogMessages.
-     */
-    @Autowired
-    private LogMessageService logMessageService;
 
     /**
      * Service for ids deserialization.
@@ -119,16 +104,6 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             final var body = MessageUtils.buildIdsMultipartMessage(header, payload);
             if (log.isDebugEnabled()) {
                 log.debug("Built request message. [body=({})]", body);
-            }
-
-            // Send and log message and return response.
-            final var clearingHouse = connectorConfig.getClearingHouse();
-            if (!clearingHouse.equals(URI.create(""))
-                    && header instanceof ArtifactRequestMessage) {
-                var transferContractID = UUIDUtils.uuidFromUri(header.getTransferContract());
-                logMessageService.sendMessage(
-                        URI.create(clearingHouse + transferContractID.toString()),
-                        header.toRdf());
             }
 
             return idsHttpService.sendAndCheckDat(body, recipient);

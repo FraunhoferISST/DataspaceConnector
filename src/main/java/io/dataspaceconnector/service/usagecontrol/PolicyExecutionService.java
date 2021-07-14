@@ -21,7 +21,6 @@ import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.PolicyExecutionException;
 import io.dataspaceconnector.exception.RdfBuilderException;
-import io.dataspaceconnector.exception.UUIDFormatException;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.type.LogMessageService;
 import io.dataspaceconnector.service.message.type.NotificationService;
@@ -34,6 +33,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,14 +73,14 @@ public class PolicyExecutionService {
      */
     public void sendAgreement(final ContractAgreement agreement) {
         try {
-            final var recipient = connectorConfig.getClearingHouse();
-            if (!recipient.equals(URI.create(""))) {
-                var destination = URI.create(
-                        recipient.toString() + UUIDUtils.uuidFromUri(agreement.getId()));
-                logMessageService.sendMessage(destination, IdsUtils.toRdf(agreement));
+            final var clearingHouse = connectorConfig.getClearingHouse();
+            if (!clearingHouse.equals(URI.create(""))) {
+                var agreementUUID = UUIDUtils.uuidFromUri(agreement.getId());
+                var recipient = new URI(clearingHouse + agreementUUID.toString());
+                logMessageService.sendMessage(recipient, IdsUtils.toRdf(agreement));
             }
-        } catch (PolicyExecutionException | RdfBuilderException | NullPointerException
-                | UUIDFormatException exception) {
+        } catch (PolicyExecutionException | RdfBuilderException
+                | URISyntaxException | NullPointerException exception) {
             if (log.isWarnEnabled()) {
                 log.warn("Failed to send contract agreement to clearing house. "
                         + "[exception=({})]", exception.getMessage());

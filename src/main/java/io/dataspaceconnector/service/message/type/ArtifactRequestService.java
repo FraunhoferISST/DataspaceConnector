@@ -26,13 +26,16 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
+import io.dataspaceconnector.camel.ClearingHouseLoggingProcessor;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
+import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.message.type.exceptions.InvalidResponse;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.Utils;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -45,6 +48,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public final class ArtifactRequestService
         extends AbstractMessageService<ArtifactRequestMessageDesc> {
+
+    /**
+     * Service for ids deserialization.
+     */
+    private final @NonNull DeserializationService deserializer;
+
+    /**
+     * Clearing House logging utility.
+     */
+    private final @NonNull ClearingHouseLoggingProcessor clearingHouseLoggingProcessor;
 
     /**
      * @throws IllegalArgumentException     if desc is null.
@@ -64,7 +77,7 @@ public final class ArtifactRequestService
         final var artifactId = desc.getRequestedArtifact();
         final var contractId = desc.getTransferContract();
 
-        return new ArtifactRequestMessageBuilder()
+        var message = new ArtifactRequestMessageBuilder()
                 ._issued_(IdsMessageUtils.getGregorianNow())
                 ._modelVersion_(modelVersion)
                 ._issuerConnector_(connectorId)
@@ -74,6 +87,9 @@ public final class ArtifactRequestService
                 ._recipientConnector_(Util.asList(recipient))
                 ._transferContract_(contractId)
                 .build();
+            // Log outgoing ArtifactRequestMessages in ClearingHouse
+            clearingHouseLoggingProcessor.logIDSMessage(message);
+        return message;
     }
 
     @Override
@@ -163,6 +179,10 @@ public final class ArtifactRequestService
             }
             throw new InvalidResponse(content, e);
         }
+
+        // Log response header in the Clearing House
+        var header = deserializer.getResponseMessage(response.get("header"));
+        clearingHouseLoggingProcessor.logIDSMessage(header);
 
         return response;
     }
