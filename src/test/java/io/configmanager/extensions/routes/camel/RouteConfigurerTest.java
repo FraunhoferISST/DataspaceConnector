@@ -5,7 +5,6 @@ import de.fraunhofer.iais.eis.util.Util;
 import org.apache.velocity.VelocityContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.net.URI;
@@ -16,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * Tests for the RouteConfigurer class.
  */
 @SpringBootTest(classes = {RouteConfigurer.class})
-@AutoConfigureMockMvc
 class RouteConfigurerTest {
 
     @Autowired
