@@ -258,8 +258,8 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     private boolean updateTrustStore(final Configuration config, final TruststoreDesc desc) {
         if (desc != null
                 && config.getTruststore() != null
-                && config.getTruststore().getName() != null
-                && config.getTruststore().getName().equals(desc.getName())
+                && config.getTruststore().getLocation() != null
+                && config.getTruststore().getLocation().equals(desc.getLocation())
                 && config.getTruststore().getPassword() != null
                 && config.getTruststore().getPassword().equals(desc.getPassword())) {
             return false;

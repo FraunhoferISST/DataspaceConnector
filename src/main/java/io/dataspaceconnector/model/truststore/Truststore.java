@@ -54,7 +54,7 @@ public class Truststore extends Entity {
      */
     @Convert(converter = UriConverter.class)
     @Column(length = URI_COLUMN_LENGTH)
-    private URI name;
+    private URI location;
 
     /**
      * The password of the trust store.
