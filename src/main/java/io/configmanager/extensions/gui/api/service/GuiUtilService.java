@@ -46,6 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * The class can be used to define auxiliary methods that are needed again and again.
@@ -63,7 +64,7 @@ public class GuiUtilService {
      * @return enums as string
      */
     public String getSpecificEnum(final String enumName) {
-        final var name = enumName.toLowerCase();
+        final var name = enumName.toLowerCase(Locale.ENGLISH);
         JSONArray sortedJsonArray = null;
 
         switch (name) {
