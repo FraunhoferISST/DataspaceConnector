@@ -1,0 +1,141 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.dataspaceconnector.service.usagecontrol;
+
+import java.net.URI;
+import java.util.List;
+
+import de.fraunhofer.iais.eis.Action;
+import de.fraunhofer.iais.eis.BinaryOperator;
+import de.fraunhofer.iais.eis.ConstraintBuilder;
+import de.fraunhofer.iais.eis.LeftOperand;
+import de.fraunhofer.iais.eis.PermissionBuilder;
+import de.fraunhofer.iais.eis.util.RdfResource;
+import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.exception.PolicyRestrictionException;
+import io.dataspaceconnector.service.ids.DeserializationService;
+import io.dataspaceconnector.service.resource.EntityDependencyResolver;
+import io.dataspaceconnector.util.ErrorMessages;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.eq;
+
+
+@SpringBootTest(classes = { RuleValidator.class })
+class RuleValidatorTest {
+
+    @MockBean
+    private PolicyExecutionService executionService;
+
+    @MockBean
+    private PolicyInformationService informationService;
+
+    @MockBean
+    private EntityDependencyResolver dependencyResolver;
+
+    @MockBean
+    private DeserializationService deserializationService;
+
+    @Autowired
+    private RuleValidator validator;
+
+
+    @Test
+    public void validatePolicy_N_TIMES_USAGE_doNothing() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient");
+        final var rule = new PermissionBuilder()
+                ._action_(List.of(Action.USE))
+                ._constraint_(Util.asList(new ConstraintBuilder()
+                                                  ._leftOperand_(LeftOperand.COUNT)
+                                                  ._operator_(BinaryOperator.EQ)
+                                                  ._rightOperand_(new RdfResource("5"))
+                                                  .build()))
+                .build();
+        final var target = URI.create("htttps://target");
+
+        Mockito.when(informationService.getAccessNumber(eq(target))).thenReturn(0L);
+
+        /* ACT && ASSERT */
+        assertDoesNotThrow(() -> validator.validatePolicy( PolicyPattern.N_TIMES_USAGE, rule, target, recipient));
+    }
+
+    @Test
+    public void validatePolicy_N_TIMES_USAGE_failsOnExceededUsage() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient");
+        final var rule = new PermissionBuilder()
+                ._action_(List.of(Action.USE))
+                ._constraint_(Util.asList(new ConstraintBuilder()
+                                                  ._leftOperand_(LeftOperand.COUNT)
+                                                  ._operator_(BinaryOperator.EQ)
+                                                  ._rightOperand_(new RdfResource("5"))
+                                                  .build()))
+                .build();
+        final var target = URI.create("htttps://target");
+
+        Mockito.when(informationService.getAccessNumber(eq(target))).thenReturn(6L);
+
+        /* ACT && ASSERT */
+        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy(PolicyPattern.N_TIMES_USAGE, rule, target, recipient));
+        assertEquals(ErrorMessages.DATA_ACCESS_NUMBER_REACHED.toString(), result.getMessage());
+    }
+
+    @Test
+    public void validatePolicy_CONNECTOR_RESTRICTED_USAGE_doNothing() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient");
+        final var rule = new PermissionBuilder()
+                ._action_(List.of(Action.USE))
+                ._constraint_(Util.asList(new ConstraintBuilder()
+                                      ._leftOperand_(LeftOperand.ENDPOINT)
+                                      ._operator_(BinaryOperator.DEFINES_AS)
+                                      ._rightOperand_(new RdfResource(recipient.toString(), URI.create("xsd:anyURI")))
+                                      .build()))
+                                  .build();
+        final var target = URI.create("htttps://target");
+
+        /* ACT && ASSERT */
+        assertDoesNotThrow(() -> validator.validatePolicy( PolicyPattern.CONNECTOR_RESTRICTED_USAGE, rule, target, recipient));
+    }
+
+    @Test
+    public void validatePolicy_CONNECTOR_RESTRICTED_USAGE_failsOnDifferentConsumer() {
+        /* ARRANGE */
+        final var consumer = "https://consumer";
+        final var rule = new PermissionBuilder()
+                ._action_(List.of(Action.USE))
+                ._constraint_(Util.asList(new ConstraintBuilder()
+                                                  ._leftOperand_(LeftOperand.ENDPOINT)
+                                                  ._operator_(BinaryOperator.DEFINES_AS)
+                                                  ._rightOperand_(new RdfResource(consumer, URI.create("xsd:anyURI")))
+                                                  .build()))
+                .build();
+        final var recipient = URI.create("https://recipient");
+        final var target = URI.create("htttps://target");
+
+        /* ACT && ASSERT */
+        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy(PolicyPattern.CONNECTOR_RESTRICTED_USAGE, rule, target, recipient));
+        assertEquals(ErrorMessages.DATA_ACCESS_INVALID_CONSUMER.toString(), result.getMessage());
+    }
+}
