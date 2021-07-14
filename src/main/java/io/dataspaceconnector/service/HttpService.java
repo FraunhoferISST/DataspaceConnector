@@ -16,6 +16,9 @@
 package io.dataspaceconnector.service;
 
 import io.dataspaceconnector.model.QueryInput;
+import io.dataspaceconnector.model.auth.ApiKey;
+import io.dataspaceconnector.model.auth.AuthType;
+import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.Utils;
 import kotlin.NotImplementedError;
@@ -33,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -177,7 +181,7 @@ public class HttpService {
      * @return The response.
      * @throws IOException if the request failed.
      */
-    public Response get(final URL target, final QueryInput input, final Pair<String, String> auth)
+    public Response get(final URL target, final QueryInput input, final List<AuthType> auth)
             throws IOException {
         final var url = (input == null) ? buildTargetUrl(target, null)
                 : buildTargetUrl(target, input.getOptional());
@@ -235,10 +239,17 @@ public class HttpService {
      * @param auth  The authentication information.
      * @return The http request arguments.
      */
-    public HttpArgs toArgs(final QueryInput input, final Pair<String, String> auth) {
+    public HttpArgs toArgs(final QueryInput input, final List<AuthType> auth) {
         final var args = toArgs(input);
-        args.setAuth(auth);
-
+        for(AuthType el : auth) {
+            if(el instanceof BasicAuth) {
+                if(args.getAuth().getFirst() == null && args.getAuth().getSecond() == null) {
+                    args.setAuth(el.addAuth());
+                }
+            } else if(el instanceof ApiKey) {
+                args.getParams().put(el.addAuth().getFirst(), el.addAuth().getSecond());
+            }
+        }
         return args;
     }
 }

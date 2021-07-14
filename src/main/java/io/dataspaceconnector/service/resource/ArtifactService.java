@@ -25,6 +25,7 @@ import io.dataspaceconnector.model.LocalData;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.model.RemoteData;
 import io.dataspaceconnector.repository.ArtifactRepository;
+import io.dataspaceconnector.repository.AuthTypeRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.ArtifactRetriever;
 import io.dataspaceconnector.service.HttpService;
@@ -70,6 +71,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      **/
     private final @NonNull HttpService httpSvc;
 
+    private final @NonNull AuthTypeRepository authTypeRepository;
+
     /**
      * Constructor for ArtifactService.
      *
@@ -78,10 +81,12 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      */
     @Autowired
     public ArtifactService(final @NonNull DataRepository dataRepository,
-                           final @NonNull HttpService httpService) {
+                           final @NonNull HttpService httpService,
+                           final @NonNull AuthTypeRepository authTypeRepository) {
         super();
         this.dataRepo = dataRepository;
         this.httpSvc = httpService;
+        this.authTypeRepository = authTypeRepository;
     }
 
     /**
@@ -96,6 +101,10 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         if (tmp.getData() != null) {
             if (tmp.getData().getId() == null) {
                 // The data element is new, insert
+                if(tmp.getData() instanceof RemoteData) {
+                    var data = (RemoteData) tmp.getData();
+                    data.getAuthentification().forEach(authTypeRepository::saveAndFlush);
+                }
                 dataRepo.saveAndFlush(tmp.getData());
             } else {
                 // The data element exists already, check if an update is
@@ -289,9 +298,9 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             throws IOException {
         try {
             InputStream backendData;
-            if (data.getUsername() != null || data.getPassword() != null) {
+            if (!data.getAuthentification().isEmpty()) {
                 backendData = httpSvc.get(data.getAccessUrl(), queryInput,
-                                             new Pair<>(data.getUsername(), data.getPassword()))
+                                             data.getAuthentification())
                                       .getBody();
             } else {
                 backendData = httpSvc.get(data.getAccessUrl(), queryInput).getBody();

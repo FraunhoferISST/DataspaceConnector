@@ -16,10 +16,14 @@
 package io.dataspaceconnector.model;
 
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 
+import io.dataspaceconnector.model.auth.AuthType;
 import io.dataspaceconnector.model.util.UrlConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -51,12 +55,12 @@ public class RemoteData extends Data {
     private URL accessUrl;
 
     /**
-     * The username for accessing the backend.
+     * List of additional authentification elements
      */
-    private String username;
+    @OneToMany
+    private List<AuthType> authentification = new LinkedList<>();
 
-    /**
-     * The password for accessing the backend.
-     */
-    private String password;
+    public void addAuthentification(AuthType type) {
+        authentification.add(type);
+    }
 }
