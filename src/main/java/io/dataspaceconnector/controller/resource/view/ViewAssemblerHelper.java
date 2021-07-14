@@ -17,14 +17,32 @@ package io.dataspaceconnector.controller.resource.view;
 
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.Link;
+import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 /**
  * Helper for building self-links.
  */
+@Component
 public final class ViewAssemblerHelper {
+
+    /**
+     * The HTTP base URL of the application.
+     */
+    private static String baseUrl;
+
+    /**
+     * Setter for populating static attribute with property.
+     *
+     * @param applicationBaseUrl the base URL.
+     */
+    @Value("${application.http.base-url}")
+    public void setBaseUrl(final String applicationBaseUrl) {
+        ViewAssemblerHelper.baseUrl = applicationBaseUrl;
+    }
     /**
      * Default constructor.
      */
@@ -33,7 +51,9 @@ public final class ViewAssemblerHelper {
     }
 
     /**
-     * Build self-link for entity.
+     * Builds the complete self-link for an entity. As no request context is available to obtain
+     * the application's base URL from when communicating via IDSCPv2, this method then
+     * defaults to using the base URL set in application.properties.
      *
      * @param entityId The entity id.
      * @param tClass   The controller class for managing the entity class.
@@ -42,6 +62,11 @@ public final class ViewAssemblerHelper {
      * @throws IllegalArgumentException if the class is null.
      */
     public static <T> Link getSelfLink(final UUID entityId, final Class<T> tClass) {
-        return linkTo(tClass).slash(entityId).withSelfRel();
+        var link = linkTo(tClass).slash(entityId).withSelfRel();
+        if (!link.toUri().isAbsolute()) {
+            link = Link.of(baseUrl + link.getHref());
+        }
+
+        return link;
     }
 }
