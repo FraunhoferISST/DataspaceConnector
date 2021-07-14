@@ -149,6 +149,8 @@ jobs:
     needs: unit-and-integration-tests
     timeout-minutes: 15
     runs-on: ubuntu-latest
+    concurrency:
+      group: e2e
     strategy:
       fail-fast: false
 
@@ -187,6 +189,8 @@ jobs:
     needs: build-test-image
     timeout-minutes: 30
     runs-on: ubuntu-latest
+    concurrency:
+      group: e2e
 
     steps:
       - name: Checkout Repo

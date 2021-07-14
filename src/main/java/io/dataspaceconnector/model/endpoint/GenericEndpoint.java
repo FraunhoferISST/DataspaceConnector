@@ -48,6 +48,11 @@ public class GenericEndpoint extends Endpoint {
     private DataSource dataSource;
 
     /**
+     * Holds the information about the endpoint type.
+     */
+    private String type;
+
+    /**
      * Default constructor.
      */
     public GenericEndpoint() {

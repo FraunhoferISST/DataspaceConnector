@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * This package contains the clearing house models.
+ * Exceptions thows by ids message services.
  */
-package io.dataspaceconnector.model.clearinghouse;
+package io.dataspaceconnector.service.message.type.exceptions;

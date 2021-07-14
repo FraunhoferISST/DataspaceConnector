@@ -75,6 +75,7 @@ public class ConfigurationController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "400", description = "Failed to deserialize."),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "415", description = "Wrong media type."),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @ResponseBody
@@ -103,6 +104,7 @@ public class ConfigurationController {
     @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "404", description = "Not found")})
     @ResponseBody
     public ResponseEntity<Object> getConfiguration() {
@@ -123,7 +125,8 @@ public class ConfigurationController {
     @PutMapping(value = "/configuration/negotiation", produces = "application/json")
     @Operation(summary = "Set contract negotiation status")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @ResponseBody
     public ResponseEntity<JSONObject> setNegotiationStatus(
             @RequestParam("status") final boolean status) {
@@ -139,7 +142,8 @@ public class ConfigurationController {
     @GetMapping(value = "/configuration/negotiation", produces = "application/json")
     @Operation(summary = "Get contract negotiation status")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok"),
+    @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @ResponseBody
     public ResponseEntity<JSONObject> getNegotiationStatus() {
         final var headers = new HttpHeaders();
@@ -161,7 +165,8 @@ public class ConfigurationController {
     @Operation(summary = "Allow unsupported patterns", description = "Allow "
             + "requesting data without policy enforcement if an unsupported pattern is recognized.")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok"),
+    @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @ResponseBody
     public ResponseEntity<JSONObject> setPatternStatus(
             @RequestParam("status") final boolean status) {
@@ -178,7 +183,8 @@ public class ConfigurationController {
     @Operation(summary = "Get pattern validation status",
             description = "Return if unsupported patterns are ignored when requesting data.")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok"),
+    @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @ResponseBody
     public ResponseEntity<JSONObject> getPatternStatus() {
         final var headers = new HttpHeaders();

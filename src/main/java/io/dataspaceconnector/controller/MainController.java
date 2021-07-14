@@ -54,7 +54,8 @@ public class MainController {
     @GetMapping(value = {"/", ""}, produces = "application/ld+json")
     @Operation(summary = "Public IDS self-description")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok")})
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @ResponseBody
     public ResponseEntity<Object> getPublicSelfDescription() {
         return ResponseEntity.ok(connectorService.getConnectorWithoutResources().toRdf());
@@ -69,6 +70,7 @@ public class MainController {
     @Operation(summary = "Private IDS self-description")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @ResponseBody
     public ResponseEntity<Object> getPrivateSelfDescription() {
@@ -82,6 +84,9 @@ public class MainController {
      */
     @Hidden
     @GetMapping("/api")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Ok"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized")})
     public ResponseEntity<RepresentationModel<?>> root() {
         final var model = new RepresentationModel<>();
 

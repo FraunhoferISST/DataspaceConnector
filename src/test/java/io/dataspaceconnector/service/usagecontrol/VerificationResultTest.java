@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.configuration;
+package io.dataspaceconnector.service.usagecontrol;
 
-import io.dataspaceconnector.model.identityprovider.IdentityProvider;
-import io.dataspaceconnector.model.identityprovider.IdentityProviderDesc;
-import io.dataspaceconnector.service.resource.BaseEntityService;
-import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.junit.jupiter.api.Test;
 
-/**
- * Service class for identity provider.
- */
-@Service
-@NoArgsConstructor
-public class IdentityProviderService
-        extends BaseEntityService<IdentityProvider, IdentityProviderDesc> {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class VerificationResultTest {
+
+    @Test
+    public void toString_nothing_correctMsg() {
+        /* ARRANGE */
+        final var input = VerificationResult.ALLOWED;
+
+        /* ACT */
+        final var msg = input.toString();
+
+        /* ASSERT */
+        assertEquals("ALLOWED", msg);
+    }
 }

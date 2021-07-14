@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model.appstore;
+package io.dataspaceconnector.model.endpoint;
 
 import org.junit.jupiter.api.Test;
 
@@ -21,24 +21,24 @@ import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AppStoreFactoryTest {
+public class GenericEndpointFactoryTest {
 
-    final AppStoreDesc desc = new AppStoreDesc();
-    final AppStoreFactory factory = new AppStoreFactory();
+    final GenericEndpointDesc desc = new GenericEndpointDesc();
+    final GenericEndpointFactory factory = new GenericEndpointFactory();
 
     @Test
     void create_validDesc_returnNew() {
         /* ARRANGE */
-        final var title = "AppStore";
-        final var location = URI.create("https://appstore.com");
-        desc.setTitle(title);
+        final var location = URI.create("https://bakckend");
+        final var info = "Backend Information";
         desc.setLocation(location);
+        desc.setInfo(info);
 
         /* ACT */
         final var result = factory.create(desc);
 
         /* ASSERT */
-        assertEquals(title, result.getTitle());
         assertEquals(location, result.getLocation());
+        assertEquals(info, result.getInfo());
     }
 }

@@ -21,18 +21,20 @@ import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EndpointFactoryTest {
+public class AppEndpointFactoryTest {
 
-    final GenericEndpointDesc desc = new GenericEndpointDesc();
-    final GenericEndpointFactory factory = new GenericEndpointFactory();
+    final AppEndpointDesc desc = new AppEndpointDesc();
+    final AppEndpointFactory factory = new AppEndpointFactory();
 
     @Test
     void create_validDesc_returnNew() {
         /* ARRANGE */
         final var location = URI.create("https://bakckend");
         final var info = "Backend Information";
+        final var appEndpointType = AppEndpointType.INPUT_ENDPOINT;
         desc.setLocation(location);
         desc.setInfo(info);
+        desc.setType(appEndpointType);
 
         /* ACT */
         final var result = factory.create(desc);
@@ -40,5 +42,6 @@ public class EndpointFactoryTest {
         /* ASSERT */
         assertEquals(location, result.getLocation());
         assertEquals(info, result.getInfo());
+        assertEquals(appEndpointType, result.getAppEndpointType());
     }
 }

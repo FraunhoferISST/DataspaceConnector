@@ -16,6 +16,7 @@
 package io.dataspaceconnector.view;
 
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dataspaceconnector.model.datasource.DataSourceType;
@@ -46,6 +47,11 @@ public class DataSourceView extends RepresentationModel<DataSourceView> {
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ViewConstants.DATE_TIME_FORMAT)
     private ZonedDateTime modificationDate;
+
+    /**
+     * The id of the data source.
+     */
+    private UUID id;
 
     /**
      * The type of the data source.

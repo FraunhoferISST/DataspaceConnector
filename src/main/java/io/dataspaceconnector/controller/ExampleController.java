@@ -85,7 +85,8 @@ public class ExampleController {
     @Hidden
     @Operation(summary = "Get sample connector configuration",
             description = "Get a sample connector configuration for the config.json.")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok"),
+    @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @GetMapping("/configuration")
     @ResponseBody
     public ResponseEntity<Object> getConnectorConfiguration() {
@@ -146,6 +147,7 @@ public class ExampleController {
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @PostMapping("/validation")
     @ResponseBody
@@ -171,7 +173,8 @@ public class ExampleController {
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "400", description = "Bad Request")})
+            @ApiResponse(responseCode = "400", description = "Bad Request"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @PostMapping("/policy")
     @ResponseBody
     public ResponseEntity<Object> getExampleUsagePolicy(@RequestBody final PatternDesc input) {

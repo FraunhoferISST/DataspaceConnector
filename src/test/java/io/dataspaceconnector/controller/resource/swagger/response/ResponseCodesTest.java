@@ -42,6 +42,11 @@ class ResponseCodesTest {
     }
 
     @Test
+    public void no_content_is_code_401() {
+        assertEquals("401", ResponseCodes.UNAUTHORIZED);
+    }
+
+    @Test
     public void method_not_allowed_is_code_405() {
         assertEquals("405", ResponseCodes.METHOD_NOT_ALLOWED);
     }
