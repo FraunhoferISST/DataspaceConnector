@@ -18,8 +18,10 @@ package io.dataspaceconnector.service.message.type;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import de.fraunhofer.ids.messaging.common.DeserializeException;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.protocol.http.IdsHttpService;
+import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import io.dataspaceconnector.exception.MessageBuilderException;
 import io.dataspaceconnector.exception.MessageEmptyException;
@@ -136,14 +138,21 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
                         e.getMessage(), e);
             }
             throw new MessageException(ErrorMessages.INVALID_RESPONSE_DAT.toString(), e);
-        } catch (MultipartParseException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Message could not be parsed. [exception=({})]", e.getMessage(), e);
+        } catch (MultipartParseException | DeserializeException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Response message is of invalid format. [exception=({})]",
+                        e.getMessage(), e);
             }
-            throw new MessageException(ErrorMessages.MESSAGE_BUILD_FAILED.toString(), e);
+            throw new MessageException(ErrorMessages.MALFORMED_HEADER.toString(), e);
+        } catch (ShaclValidatorException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Response message is missing attributes. [exception=({})]",
+                        e.getMessage(), e);
+            }
+            throw new MessageException(ErrorMessages.MALFORMED_HEADER.toString(), e);
         } catch (IOException e) {
             if (log.isWarnEnabled()) {
-                log.warn("Message could not be sent. [exception=({})]", e.getMessage(), e);
+                log.warn("Messaging process failed. [exception=({})]", e.getMessage(), e);
             }
             throw new MessageException(ErrorMessages.MESSAGE_NOT_SENT.toString(), e);
         }

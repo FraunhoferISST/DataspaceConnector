@@ -128,7 +128,7 @@ public enum ErrorMessages {
     /**
      * Multipart message could not be sent.
      */
-    MESSAGE_NOT_SENT("Message could not be sent."),
+    MESSAGE_NOT_SENT("Messaging process failed."),
 
     /**
      * Multipart message could not be sent to recipient.
