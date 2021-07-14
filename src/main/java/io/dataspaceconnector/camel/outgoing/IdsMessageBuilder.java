@@ -106,8 +106,10 @@ class DescriptionRequestMessageBuilder extends
         var elementId = exchange.getProperty("elementId", URI.class);
         if (elementId == null) {
             final var index = exchange.getProperty(Exchange.LOOP_INDEX, Integer.class);
-            final var resources = (List<URI>) exchange.getProperty("resources", List.class);
-            elementId = resources.get(index);
+            if (index != null) {
+                final var resources = (List<URI>) exchange.getProperty("resources", List.class);
+                elementId = resources.get(index);
+            }
         }
         final var message = (DescriptionRequestMessageImpl) descReqSvc
                 .buildMessage(new DescriptionRequestMessageDesc(recipient, elementId));
