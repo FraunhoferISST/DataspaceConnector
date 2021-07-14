@@ -59,6 +59,76 @@ class RuleValidatorTest {
     @Autowired
     private RuleValidator validator;
 
+    @Test
+    public void validatePolicy_USAGE_DURING_INTERVAL_doNothing() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient");
+        final var rule = new PermissionBuilder()
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(new ConstraintBuilder()
+                                                  ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                                                  ._operator_(BinaryOperator.AFTER)
+                                                  ._rightOperand_(new RdfResource("2009-05-07T17:05:45.678Z",
+                                                                                  URI.create("xsd:dateTimeStamp")))
+                                                  .build(), new ConstraintBuilder()
+                                                  ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                                                  ._operator_(BinaryOperator.BEFORE)
+                                                  ._rightOperand_(new RdfResource("2029-05-07T17:05:45.678Z", URI.create("xsd:dateTimeStamp")))
+                                                  .build()))
+                .build();
+        final var target = URI.create("https://target");
+
+        /* ACT && ASSERT */
+        assertDoesNotThrow(() -> validator.validatePolicy( PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient));
+    }
+
+    @Test
+    public void validatePolicy_USAGE_DURING_INTERVAL_notATimeFail() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient");
+        final var rule = new PermissionBuilder()
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(new ConstraintBuilder()
+                                                  ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                                                  ._operator_(BinaryOperator.AFTER)
+                                                  ._rightOperand_(new RdfResource("some long long time ago",
+                                                                                  URI.create("xsd:dateTimeStamp")))
+                                                  .build(), new ConstraintBuilder()
+                                                  ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                                                  ._operator_(BinaryOperator.BEFORE)
+                                                  ._rightOperand_(new RdfResource("2029-05-07T17:05:45.678Z", URI.create("xsd:dateTimeStamp")))
+                                                  .build()))
+                .build();
+        final var target = URI.create("https://target");
+
+        /* ACT && ASSERT */
+        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy( PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient));
+        assertEquals(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL.toString(), result.getMessage());
+    }
+
+    @Test
+    public void validatePolicy_USAGE_DURING_INTERVAL_EndAlreadyPassedFails() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient");
+        final var rule = new PermissionBuilder()
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(new ConstraintBuilder()
+                                                  ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                                                  ._operator_(BinaryOperator.AFTER)
+                                                  ._rightOperand_(new RdfResource("2009-05-07T17:05:45.678Z",
+                                                                                  URI.create("xsd:dateTimeStamp")))
+                                                  .build(), new ConstraintBuilder()
+                                                  ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                                                  ._operator_(BinaryOperator.BEFORE)
+                                                  ._rightOperand_(new RdfResource("2019-05-07T17:05:45.678Z", URI.create("xsd:dateTimeStamp")))
+                                                  .build()))
+                .build();
+        final var target = URI.create("https://target");
+
+        /* ACT && ASSERT */
+        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy( PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient));
+        assertEquals(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL.toString(), result.getMessage());
+    }
 
     @Test
     public void validatePolicy_N_TIMES_USAGE_doNothing() {

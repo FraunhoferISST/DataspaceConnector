@@ -16,7 +16,6 @@
 package io.dataspaceconnector.service.usagecontrol;
 
 import java.net.URI;
-import java.text.ParseException;
 import java.time.Duration;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -172,7 +171,7 @@ public class RuleValidator {
         TimeInterval timeInterval;
         try {
             timeInterval = RuleUtils.getTimeInterval(rule);
-        } catch (ParseException e) {
+        } catch (DateTimeParseException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not read time interval. [exception=({})]", e.getMessage());
             }
