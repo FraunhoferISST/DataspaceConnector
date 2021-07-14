@@ -252,32 +252,6 @@ public class GlobalMessageService {
         brokerService.updateRegistrationStatus(recipient);
     }
 
-//    /**
-//     * TODO: Broken
-//     * @param recipient URI of the recipient
-//     * @param response The response.
-//     * @param msg The response message.
-//     * @return true, if connector is updated at the broker.
-//     */
-//    private boolean updateBroker(final URI recipient,
-//                                 final MessageProcessedNotificationMAP response,
-//                                 final String msg) {
-//        final var result = validateResponse(response, msg);
-//        if (result) {
-//            final var updatedRegistrationStatus = updateRegistrationStatus(recipient);
-//            if (updatedRegistrationStatus) {
-//                if (log.isInfoEnabled()) {
-//                    log.info("Successfully updated broker registration status.");
-//                }
-//            } else {
-//                if (log.isInfoEnabled()) {
-//                    log.info("Failed to update the registration status of the broker.");
-//                }
-//            }
-//        }
-//        return result;
-//    }
-
     /**
      * @param recipient The uri of the recipient.
      * @param resource  The offered resource.
