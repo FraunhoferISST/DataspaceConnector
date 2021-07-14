@@ -238,14 +238,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                                                   artifact.getRemoteAddress(),
                                                   information.getTransferContract(),
                                                   information.getQueryInput());
-        updateData(artifactId, artifact, dataStream);
-    }
-
-    private void updateData(final UUID artifactId,
-                                   final Artifact artifact,
-                                   final InputStream dataStream) throws IOException {
         setData(artifactId, dataStream);
-        incrementAccessCounter(artifact);
     }
 
     /**
