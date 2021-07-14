@@ -248,4 +248,18 @@ public final class ControllerUtils {
         }
         return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
     }
+
+    /**
+     * Creates a ResponseEntity with status code 200 and a message indicating that no subscription
+     * could be found for the targeted entity.
+     *
+     * @param target The target element.
+     * @return ResponseEntity with status code 200.
+     */
+    public static ResponseEntity<Object> respondNoSubscriptionsFound(final URI target) {
+        if (log.isDebugEnabled()) {
+            log.debug("No subscriptions found. [target=({})]", target);
+        }
+        return new ResponseEntity<>("No subscriptions found.", HttpStatus.OK);
+    }
 }

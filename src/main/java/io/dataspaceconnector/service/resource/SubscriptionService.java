@@ -17,7 +17,6 @@ package io.dataspaceconnector.service.resource;
 
 import io.dataspaceconnector.camel.exception.SubscriptionProcessingException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.model.AbstractFactory;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.OfferedResource;
@@ -29,6 +28,7 @@ import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.Utils;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,6 +40,7 @@ import java.util.Set;
 /**
  * Handles the basic logic for subscriptions.
  */
+@Log4j2
 @Service
 @NoArgsConstructor
 public class SubscriptionService extends BaseEntityService<Subscription, SubscriptionDesc> {
@@ -94,6 +95,8 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
     public Subscription create(final SubscriptionDesc desc) {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
+        // Set boolean to false as this subscription has been created via a REST API call.
+        desc.setIdsProtocol(false);
         final var subscription = persist(factory.create(desc));
         final var target = subscription.getTarget();
 
@@ -133,6 +136,18 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
         Utils.requireNonNull(target, ErrorMessages.ENTITYID_NULL);
         return ((SubscriptionRepository) getRepository()).findAllBySubscriberAndTarget(subscriber,
                 target);
+    }
+
+    /**
+     * Get a list of all subscriptions with a matching target.
+     *
+     * @param target The target id.
+     * @return The id list of all entities.
+     * @throws IllegalArgumentException if a passed parameter is null.
+     */
+    public List<Subscription> getByTarget(final URI target) {
+        Utils.requireNonNull(target, ErrorMessages.ENTITYID_NULL);
+        return ((SubscriptionRepository) getRepository()).findAllByTarget(target);
     }
 
     /**
@@ -182,6 +197,9 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
         desc.setPushData(subscription.isPushData());
         desc.setUrl(subscription.getUrl());
 
+        // Set boolean to true as this subscription has been created via ids message.
+        desc.setIdsProtocol(true);
+
         // Create subscription and link it to target.
         linkSubscriptionToEntityById(target, subscriptionSvc.create(desc));
     }
@@ -197,21 +215,20 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
     private void linkSubscriptionToEntityById(final URI target, final Subscription subscription)
             throws SubscriptionProcessingException, ResourceNotFoundException {
         // Check if target exists.
-        AbstractEntity entity;
-        try {
-            entity = entityResolver.getEntityById(target);
-        } catch (Exception exception) {
-            throw new ResourceNotFoundException("Element with target id could not be found.");
+        final var entity = entityResolver.getEntityById(target);
+        if (entity.isEmpty()) {
+            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString());
         }
 
         // Link subscription to entity.
         final var subscriptionId = subscription.getId();
-        if (entity instanceof Artifact) {
-            artSubLinker.add(entity.getId(), Set.of(subscriptionId));
-        } else if (entity instanceof Representation) {
-            repSubLinker.add(entity.getId(), Set.of(subscriptionId));
-        } else if (entity instanceof OfferedResource) {
-            offerSubLinker.add(entity.getId(), Set.of(subscriptionId));
+        final var value = entity.get();
+        if (value instanceof Artifact) {
+            artSubLinker.add(value.getId(), Set.of(subscriptionId));
+        } else if (value instanceof Representation) {
+            repSubLinker.add(value.getId(), Set.of(subscriptionId));
+        } else if (value instanceof OfferedResource) {
+            offerSubLinker.add(value.getId(), Set.of(subscriptionId));
         } else {
             throw new SubscriptionProcessingException("No subscription offered for this target.");
         }

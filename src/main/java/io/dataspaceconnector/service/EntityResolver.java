@@ -57,6 +57,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This service offers methods for finding entities by their identifying URI.
@@ -149,7 +150,7 @@ public class EntityResolver {
      * @throws ResourceNotFoundException If the resource could not be found.
      * @throws IllegalArgumentException  If the resource is null or the elementId.
      */
-    public AbstractEntity getEntityById(final URI elementId) throws ResourceNotFoundException {
+    public Optional<AbstractEntity> getEntityById(final URI elementId) {
         Utils.requireNonNull(elementId, ErrorMessages.URI_NULL);
 
         try {
@@ -162,28 +163,24 @@ public class EntityResolver {
             // Find the right service and return the requested element.
             switch (Objects.requireNonNull(pathEnum)) {
                 case ARTIFACTS:
-                    return artifactService.get(entityId);
+                    return Optional.of(artifactService.get(entityId));
                 case REPRESENTATIONS:
-                    return representationService.get(entityId);
+                    return Optional.of(representationService.get(entityId));
                 case OFFERS:
-                    return offerService.get(entityId);
+                    return Optional.of(offerService.get(entityId));
                 case CATALOGS:
-                    return catalogService.get(entityId);
+                    return Optional.of(catalogService.get(entityId));
                 case CONTRACTS:
-                    return contractService.get(entityId);
+                    return Optional.of(contractService.get(entityId));
                 case RULES:
-                    return ruleService.get(entityId);
+                    return Optional.of(ruleService.get(entityId));
                 case AGREEMENTS:
-                    return agreementService.get(entityId);
+                    return Optional.of(agreementService.get(entityId));
                 default:
-                    return null;
+                    return Optional.empty();
             }
         } catch (Exception exception) {
-            if (log.isDebugEnabled()) {
-                log.debug("Resource not found. [exception=({}), elementId=({})]",
-                        exception.getMessage(), elementId, exception);
-            }
-            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
+            return Optional.empty();
         }
     }
 

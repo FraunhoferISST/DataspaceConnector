@@ -273,8 +273,7 @@ public final class ResourceControllers {
         /**
          * The verifier for the data access.
          */
-        private final @NonNull
-        DataAccessVerifier accessVerifier;
+        private final @NonNull DataAccessVerifier accessVerifier;
 
         /**
          * Returns data from the local database or a remote data source. In case of a remote data

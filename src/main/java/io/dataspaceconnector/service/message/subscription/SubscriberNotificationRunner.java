@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.service.message.subscription;
 
+import io.dataspaceconnector.controller.util.Notification;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -25,10 +26,10 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.util.retry.Retry;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.time.Duration;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * A Runnable that asynchronously sends notifications with the ID of an updated requested resource
@@ -49,14 +50,19 @@ public class SubscriberNotificationRunner implements Runnable {
     private static final long RETRY_DELAY = 5;
 
     /**
-     * ID of the resource that was updated.
+     * Notification object that should be sent.
      */
-    private final @NonNull UUID resourceId;
+    private final @NonNull Notification notification;
 
     /**
      * List of URLs subscribed for updates to the resource.
      */
-    private final @NonNull List<URI> subscribers;
+    private final @NonNull List<URI> recipients;
+
+    /**
+     * The artifact's data.
+     */
+    private final @NonNull InputStream data;
 
     /**
      * The {@link WebClient} to use for sending the notifications.
@@ -68,7 +74,7 @@ public class SubscriberNotificationRunner implements Runnable {
      */
     @Override
     public void run() {
-        Flux.fromIterable(subscribers)
+        Flux.fromIterable(recipients)
                 .parallel()
                 .runOn(Schedulers.boundedElastic())
                 .flatMap(this::notifySubscriber)
@@ -76,7 +82,7 @@ public class SubscriberNotificationRunner implements Runnable {
     }
 
     /**
-     * Sends the given resource ID to the given URL as the body of a POST request. If the response
+     * Sends the given notification to the given URL as the body of a POST request. If the response
      * has a status code 5xx, the request is retried 5 times with a delay of 5 seconds each.
      *
      * @param uri the recipient
@@ -86,14 +92,17 @@ public class SubscriberNotificationRunner implements Runnable {
         return webClient
                 .post()
                 .uri(uri)
-                .bodyValue(resourceId)
+                .header("ids:target", notification.getTarget().toString())
+                .header("ids:event", notification.getEvent().toString())
+                .bodyValue(data)
                 .retrieve().bodyToMono(String.class)
-                .retryWhen(Retry
-                        .fixedDelay(MAX_RETRIES, Duration.ofSeconds(RETRY_DELAY))
+                .retryWhen(Retry.fixedDelay(MAX_RETRIES, Duration.ofSeconds(RETRY_DELAY))
                         .filter(this::shouldRetry))
                 .onErrorResume(throwable -> {
-                    log.error("Could not notify subscriber at: {}", uri);
-                    return Mono.just("Could not notify subscriber at: " + uri);
+                    if (log.isWarnEnabled()) {
+                        log.warn("Could not notify subscriber. [url=({})]", uri);
+                    }
+                    return Mono.just(String.format("Could not notify subscriber at %s.", uri));
                 });
     }
 
@@ -106,9 +115,7 @@ public class SubscriberNotificationRunner implements Runnable {
      */
     private boolean shouldRetry(final Throwable throwable) {
         if (throwable instanceof WebClientResponseException) {
-            return ((WebClientResponseException) throwable)
-                    .getStatusCode()
-                    .is5xxServerError();
+            return ((WebClientResponseException) throwable).getStatusCode().is5xxServerError();
         }
         return false;
     }

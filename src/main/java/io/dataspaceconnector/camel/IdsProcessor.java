@@ -36,6 +36,7 @@ import io.dataspaceconnector.camel.exception.AgreementPersistenceException;
 import io.dataspaceconnector.camel.exception.UnconfirmedAgreementException;
 import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
+import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.model.Subscription;
 import io.dataspaceconnector.model.message.ArtifactResponseMessageDesc;
@@ -55,6 +56,7 @@ import io.dataspaceconnector.service.message.type.DescriptionResponseService;
 import io.dataspaceconnector.service.message.type.MessageProcessedNotificationService;
 import io.dataspaceconnector.service.resource.SubscriptionService;
 import io.dataspaceconnector.util.ContractUtils;
+import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -104,6 +106,7 @@ public abstract class IdsProcessor<I> implements Processor {
  * element was given.
  */
 @Component("ResourceDescription")
+@Log4j2
 @RequiredArgsConstructor
 class ResourceDescriptionProcessor extends IdsProcessor<
         RouteMsg<DescriptionRequestMessageImpl, MessagePayload>> {
@@ -132,14 +135,18 @@ class ResourceDescriptionProcessor extends IdsProcessor<
             MessagePayload> msg) throws Exception {
         // Read relevant parameters for message processing.
         final var requested = MessageUtils.extractRequestedElement(msg.getHeader());
-        final var entity = entityResolver.getEntityById(requested);
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
         final var messageId = MessageUtils.extractMessageId(msg.getHeader());
+        final var entity = entityResolver.getEntityById(requested);
+
+        if (entity.isEmpty()) {
+            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString());
+        }
 
         // If the element has been found, build the ids response message.
         final var desc = new DescriptionResponseMessageDesc(issuer, messageId);
         final var header = messageService.buildMessage(desc);
-        final var payload = entityResolver.getEntityAsRdfString(entity);
+        final var payload = entityResolver.getEntityAsRdfString(entity.get());
 
         // Send ids response message.
         return new Response(header, payload);
