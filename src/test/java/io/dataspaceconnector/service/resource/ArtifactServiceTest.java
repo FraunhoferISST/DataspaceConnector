@@ -15,26 +15,41 @@
  */
 package io.dataspaceconnector.service.resource;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.UUID;
 
+import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.exception.UnreachableLineException;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
+import io.dataspaceconnector.model.artifact.Data;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.model.artifact.RemoteData;
 import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.HttpService;
+import io.dataspaceconnector.service.usagecontrol.AllowAccessVerifier;
+import io.dataspaceconnector.util.QueryInput;
+import kotlin.Pair;
 import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -59,6 +74,8 @@ class ArtifactServiceTest {
 
     @Autowired
     private ArtifactService service;
+
+    private final AllowAccessVerifier verifier = new AllowAccessVerifier();
 
     Artifact localArtifact = getLocalArtifact();
 
@@ -179,188 +196,191 @@ class ArtifactServiceTest {
         verify(artifactRepository, times(1)).saveAndFlush(artifact);
         verify(dataRepository, times(1)).saveAndFlush(data);
     }
-//
-//    /**************************************************************************
-//     * getData.
-//     *************************************************************************/
-//
-//    @Test
-//    public void getData_nullArtifactId_throwsIllegalArgumentException() {
-//        /* ARRANGE */
-//        final var queryInput = new QueryInput();
-//        when(artifactRepository.findById(null)).thenThrow(new IllegalArgumentException());
-//
-//        /* ACT && ASSERT */
-//        assertThrows(IllegalArgumentException.class, () -> service.getData(null, queryInput));
-//    }
-//
-//    @Test
-//    public void getData_unknownArtifactIdNullQuery_throwsResourceNotFoundException() {
-//        /* ARRANGE */
-//        final var unknownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
-//        when(artifactRepository.findById(unknownUuid))
-//                .thenThrow(new ResourceNotFoundException("not found"));
-//
-//        /* ACT && ASSERT */
-//        assertThrows(ResourceNotFoundException.class, () -> service.getData(unknownUuid, (QueryInput) null));
-//    }
-//
-//    @Test
-//    public void getData_knownArtifactIdNullQuery_returnLocalData() {
-//        /* ARRANGE */
-//        ArtifactImpl localArtifact = getLocalArtifact();
-//
-//        when(artifactRepository.findById(any())).thenReturn(Optional.of(localArtifact));
-//        when(artifactFactory.create(any())).thenReturn(localArtifact);
-//        when(dataRepository.getOne(any())).thenReturn(getLocalData());
-//
-//        /* ACT */
-//        final var data = service.getData(localArtifact.getId(), (QueryInput) null);
-//
-//        /* ASSERT */
-//        assertEquals(getLocalData().getValue(), (String) data);
-//    }
-//
-//    @SneakyThrows
-//    @Test
-//    public void getData_knownArtifactIdNullQuery_increaseAccessCounter() {
-//        /* ARRANGE */
-//        ArtifactImpl localArtifact = getLocalArtifact();
-//
-//        when(artifactRepository.findById(any())).thenReturn(Optional.of(localArtifact));
-//        when(artifactFactory.create(any())).thenReturn(localArtifact);
-//        when(dataRepository.getOne(any())).thenReturn(getLocalData());
-//
-//        final var before = localArtifact.getNumAccessed();
-//
-//        /* ACT */
-//        service.getData(localArtifact.getId(), (QueryInput) null);
-//
-//        /* ASSERT */
-//        Field numAccessedField = Artifact.class.getDeclaredField("numAccessed");
-//        numAccessedField.setAccessible(true);
-//        numAccessedField.set(localArtifact, before + 1);
-//
-//        verify(artifactRepository, times(1)).saveAndFlush(localArtifact);
-//    }
-//
-//    @SneakyThrows
-//    @Test
-//    public void getData_knownArtifactIdBasicAuthNullQuery_returnRemoteData() {
-//        /* ARRANGE */
-//        String remoteData = "I am data from a remote source.";
-//        ArtifactImpl remoteArtifact = getRemoteArtifact(getRemoteDataWithBasicAuth());
-//        URL url = ((RemoteData) remoteArtifact.getData()).getAccessUrl();
-//        String username = ((RemoteData) remoteArtifact.getData()).getUsername();
-//        String password = ((RemoteData) remoteArtifact.getData()).getPassword();
-//
-//        when(artifactRepository.findById(remoteArtifact.getId()))
-//                .thenReturn(Optional.of(remoteArtifact));
-//        when(httpService.sendHttpsGetRequestWithBasicAuth(url.toString(), username, password, null))
-//                .thenReturn(remoteData);
-//
-//        /* ACT */
-//        final var data = service.getData(remoteArtifact.getId(), (QueryInput)  null);
-//
-//        /* ASSERT */
-//        assertEquals(remoteData, data);
-//    }
-//
-//    @SneakyThrows
-//    @Test
-//    public void getData_knownArtifactIdNoBasicAuthNullQuery_returnRemoteData() {
-//        /* ARRANGE */
-//        String remoteData = "I am data from a remote source.";
-//        ArtifactImpl remoteArtifact = getRemoteArtifact(getRemoteData());
-//        URL url = ((RemoteData) remoteArtifact.getData()).getAccessUrl();
-//
-//        when(artifactRepository.findById(remoteArtifact.getId()))
-//                .thenReturn(Optional.of(remoteArtifact));
-//        when(httpService.sendHttpsGetRequest(url.toString(), null)).thenReturn(remoteData);
-//
-//        /* ACT */
-//        final var data = service.getData(remoteArtifact.getId(),(QueryInput)  null);
-//
-//        /* ASSERT */
-//        assertEquals(remoteData, data);
-//    }
-//
-//    @SneakyThrows
-//    @Test
-//    public void getData_knownArtifactIdNoBasicAuthWithQuery_returnRemoteData() {
-//        /* ARRANGE */
-//        String remoteData = "I am data from a remote source.";
-//        ArtifactImpl remoteArtifact = getRemoteArtifact(getRemoteData());
-//        URL url = ((RemoteData) remoteArtifact.getData()).getAccessUrl();
-//        QueryInput queryInput = getQueryInput();
-//
-//        when(artifactRepository.findById(remoteArtifact.getId()))
-//                .thenReturn(Optional.of(remoteArtifact));
-//        when(httpService.sendHttpsGetRequest(url.toString(), queryInput)).thenReturn(remoteData);
-//
-//        /* ACT */
-//        final var data = service.getData(remoteArtifact.getId(), queryInput);
-//
-//        /* ASSERT */
-//        assertEquals(remoteData, data);
-//    }
-//
-//    @SneakyThrows
-//    @Test
-//    public void getData_knownArtifactIdNoBasicAuthWithQueryMalformedUrl_throwRuntimeException() {
-//        /* ARRANGE */
-//        String remoteData = "I am data from a remote source.";
-//        String expectedExceptionMessage = "Could not connect to data source."; //from ArtifactService
-//        ArtifactImpl remoteArtifact = getRemoteArtifact(getRemoteData());
-//        URL url = ((RemoteData) remoteArtifact.getData()).getAccessUrl();
-//        QueryInput queryInput = getQueryInput();
-//
-//        when(artifactRepository.findById(remoteArtifact.getId()))
-//                .thenReturn(Optional.of(remoteArtifact));
-//        when(httpService.sendHttpsGetRequest(url.toString(), queryInput))
-//                .thenThrow(new URISyntaxException("input", "reason"));
-//
-//        /* ACT && ASSERT */
-//        assertThrows(RuntimeException.class, () -> service.getData(remoteArtifact.getId(), queryInput),
-//                expectedExceptionMessage);
-//    }
-//
-//    @SneakyThrows
-//    @Test
-//    public void getData_knownArtifactIdNoBasicAuthWithQuery_throwRuntimeException() {
-//        /* ARRANGE */
-//        String remoteData = "I am data from a remote source.";
-//        String expectedExceptionMessage = "Exception message";
-//        ArtifactImpl remoteArtifact = getRemoteArtifact(getRemoteData());
-//        URL url = ((RemoteData) remoteArtifact.getData()).getAccessUrl();
-//        QueryInput queryInput = getQueryInput();
-//
-//        when(artifactRepository.findById(remoteArtifact.getId()))
-//                .thenReturn(Optional.of(remoteArtifact));
-//        when(httpService.sendHttpsGetRequest(url.toString(), queryInput))
-//                .thenThrow(new RuntimeException(expectedExceptionMessage));
-//
-//        /* ACT && ASSERT */
-//        assertThrows(RuntimeException.class, () -> service.getData(remoteArtifact.getId(), queryInput),
-//                expectedExceptionMessage);
-//    }
-//
-//    @SneakyThrows
-//    @Test
-//    public void getData_unknownDataType_throwNotImplementedException() {
-//        /* ARRANGE */
-//        ArtifactImpl unknownArtifact = getUnknownArtifact();
-//        final var dataField = unknownArtifact.getClass().getDeclaredField("data");
-//        dataField.setAccessible(true);
-//        dataField.set(unknownArtifact, new UnknownData());
-//
-//        when(artifactRepository.findById(unknownArtifact.getId()))
-//                .thenReturn(Optional.of(unknownArtifact));
-//
-//        /* ACT && ASSERT */
-//        assertThrows(UnreachableLineException.class,
-//                () -> service.getData(unknownArtifact.getId(), (QueryInput) null));
-//    }
+
+    /**************************************************************************
+     * getData.
+     *************************************************************************/
+
+    @Test
+    public void getData_nullArtifactId_throwsIllegalArgumentException() {
+        /* ARRANGE */
+        final var queryInput = new QueryInput();
+        when(artifactRepository.findById(null)).thenThrow(new IllegalArgumentException());
+
+        /* ACT && ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> service.getData( verifier,
+                                                                            null,
+                                                                            null,
+                                                                            queryInput));
+    }
+
+    @Test
+    public void getData_unknownArtifactIdNullQuery_throwsResourceNotFoundException() {
+        /* ARRANGE */
+        final var unknownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
+        when(artifactRepository.findById(unknownUuid))
+                .thenThrow(new ResourceNotFoundException("not found"));
+
+        /* ACT && ASSERT */
+        assertThrows(ResourceNotFoundException.class, () -> service.getData(verifier,
+                                                                            null,
+                                                                            unknownUuid,
+                                                                            (QueryInput) null));
+    }
+
+    @Test
+    public void getData_knownArtifactIdNullQuery_returnLocalData() throws IOException {
+        /* ARRANGE */
+        ArtifactImpl localArtifact = getLocalArtifact();
+
+        when(artifactRepository.findById(any())).thenReturn(Optional.of(localArtifact));
+        when(artifactFactory.create(any())).thenReturn(localArtifact);
+        when(dataRepository.getById(any())).thenReturn(getLocalData());
+
+        /* ACT */
+        final var data = service.getData(verifier,
+                                                    null,
+                                                    localArtifact.getId(),
+                                                    (QueryInput) null);
+
+        /* ASSERT */
+        assertTrue(Arrays.compare(getLocalData().getValue(), IOUtils.toByteArray(data)) == 0);
+    }
+
+    @SneakyThrows
+    @Test
+    public void getData_knownArtifactIdNullQuery_increaseAccessCounter() {
+        /* ARRANGE */
+        ArtifactImpl localArtifact = getLocalArtifact();
+
+        when(artifactRepository.findById(any())).thenReturn(Optional.of(localArtifact));
+        when(artifactFactory.create(any())).thenReturn(localArtifact);
+        when(dataRepository.getById(any())).thenReturn(getLocalData());
+
+        final var before = localArtifact.getNumAccessed();
+
+        /* ACT */
+        service.getData(verifier, null, localArtifact.getId(), (QueryInput) null);
+
+        /* ASSERT */
+        Field numAccessedField = Artifact.class.getDeclaredField("numAccessed");
+        numAccessedField.setAccessible(true);
+        numAccessedField.set(localArtifact, before + 1);
+
+        verify(artifactRepository, times(1)).saveAndFlush(localArtifact);
+    }
+
+    @SneakyThrows
+    @Test
+    public void getData_knownArtifactIdBasicAuthNullQuery_returnRemoteData() {
+        /* ARRANGE */
+        final var remoteData = "I am data from a remote source.".getBytes(StandardCharsets.UTF_8);
+        ArtifactImpl remoteArtifact = getRemoteArtifact(getRemoteDataWithBasicAuth());
+        URL url = ((RemoteData) remoteArtifact.getData()).getAccessUrl();
+        String username = ((RemoteData) remoteArtifact.getData()).getUsername();
+        String password = ((RemoteData) remoteArtifact.getData()).getPassword();
+
+        final var response = new HttpService.Response();
+        response.setBody(new ByteArrayInputStream(remoteData));
+
+        when(artifactRepository.findById(remoteArtifact.getId()))
+                .thenReturn(Optional.of(remoteArtifact));
+        when(httpService.get(url, null, new Pair<>(username, password)))
+                .thenReturn(response);
+
+        /* ACT */
+        final var data = service.getData(verifier,
+                                                    null,
+                                                    remoteArtifact.getId(),
+                                                    (QueryInput)  null);
+
+        /* ASSERT */
+        assertEquals(response.getBody(), data);
+    }
+
+    @SneakyThrows
+    @Test
+    public void getData_knownArtifactIdNoBasicAuthNullQuery_returnRemoteData() {
+        /* ARRANGE */
+        final var remoteData = "I am data from a remote source.".getBytes(StandardCharsets.UTF_8);
+        ArtifactImpl remoteArtifact = getRemoteArtifact(getRemoteData());
+        URL url = ((RemoteData) remoteArtifact.getData()).getAccessUrl();
+
+        final var response = new HttpService.Response();
+        response.setBody(new ByteArrayInputStream(remoteData));
+
+        when(artifactRepository.findById(remoteArtifact.getId()))
+                .thenReturn(Optional.of(remoteArtifact));
+        when(httpService.get(url, (QueryInput) null)).thenReturn(response);
+
+        /* ACT */
+        final var data = service.getData(verifier, null,
+                remoteArtifact.getId(),(QueryInput)  null);
+
+        /* ASSERT */
+        assertEquals(response.getBody(), data);
+    }
+
+    @SneakyThrows
+    @Test
+    public void getData_knownArtifactIdNoBasicAuthWithQuery_returnRemoteData() {
+        /* ARRANGE */
+        final var remoteData = "I am data from a remote source.".getBytes(StandardCharsets.UTF_8);
+        ArtifactImpl remoteArtifact = getRemoteArtifact(getRemoteData());
+        URL url = ((RemoteData) remoteArtifact.getData()).getAccessUrl();
+        QueryInput queryInput = getQueryInput();
+
+        final var response = new HttpService.Response();
+        response.setBody(new ByteArrayInputStream(remoteData));
+
+        when(artifactRepository.findById(remoteArtifact.getId()))
+                .thenReturn(Optional.of(remoteArtifact));
+        when(httpService.get(url, queryInput)).thenReturn(response);
+
+        /* ACT */
+        final var data = service.getData(verifier, null,
+                                         remoteArtifact.getId(), queryInput);
+
+        /* ASSERT */
+        assertEquals(response.getBody(), data);
+    }
+
+    @SneakyThrows
+    @Test
+    public void getData_knownArtifactIdNoBasicAuthWithQuery_throwIOException() {
+        /* ARRANGE */
+        String expectedExceptionMessage = "Could not connect to data source.";
+        ArtifactImpl remoteArtifact = getRemoteArtifact(getRemoteData());
+        URL url = ((RemoteData) remoteArtifact.getData()).getAccessUrl();
+        QueryInput queryInput = getQueryInput();
+
+        when(artifactRepository.findById(remoteArtifact.getId()))
+                .thenReturn(Optional.of(remoteArtifact));
+        when(httpService.get(url, queryInput))
+                .thenThrow(new RuntimeException(expectedExceptionMessage));
+
+        /* ACT && ASSERT */
+        assertThrows(RuntimeException.class, () -> service.getData(verifier, null,
+                                                                   remoteArtifact.getId(), queryInput),
+                expectedExceptionMessage);
+    }
+
+    @SneakyThrows
+    @Test
+    public void getData_unknownDataType_throwNotImplementedException() {
+        /* ARRANGE */
+        ArtifactImpl unknownArtifact = getUnknownArtifact();
+        final var dataField = unknownArtifact.getClass().getDeclaredField("data");
+        dataField.setAccessible(true);
+        dataField.set(unknownArtifact, new UnknownData());
+
+        when(artifactRepository.findById(unknownArtifact.getId()))
+                .thenReturn(Optional.of(unknownArtifact));
+
+        /* ACT && ASSERT */
+        assertThrows(UnreachableLineException.class,
+                     () -> service.getData(verifier, null, unknownArtifact.getId(), (QueryInput) null));
+    }
 
     /**************************************************************************
      * Utilities.
@@ -487,16 +507,16 @@ class ArtifactServiceTest {
         return artifact;
     }
 
-    // private QueryInput getQueryInput() {
-    //     QueryInput queryInput = new QueryInput();
-    //     queryInput.getParams().put("paramName", "paramValue");
-    //     return queryInput;
-    // }
+     private QueryInput getQueryInput() {
+         QueryInput queryInput = new QueryInput();
+         queryInput.getParams().put("paramName", "paramValue");
+         return queryInput;
+     }
 
-    // private class UnknownData extends Data {
-    //     /**
-    //      * Default serial version uid.
-    //      */
-    //     private static final long serialVersionUID = 1L;
-    // }
+     private class UnknownData extends Data {
+         /**
+          * Default serial version uid.
+          */
+         private static final long serialVersionUID = 1L;
+     }
 }
