@@ -161,11 +161,11 @@ public class QueryMessageController {
             @RequestParam(value = "limit", defaultValue = "50") final Integer limit,
             @Parameter(description = "The offset value.", required = true)
             @RequestParam(value = "offset", defaultValue = "0") final Integer offset,
-            @Parameter(description = "Whether to IDSCP as the communication protocol.")
-            @RequestParam("protocol") final boolean useIdscp,
+            @Parameter(description = "The protocol to use for IDS communication.")
+            @RequestParam("protocol") final CommunicationProtocol protocol,
             @Parameter(description = "The search term.", required = true)
             @RequestBody final String term) {
-        if (useIdscp) {
+        if (CommunicationProtocol.IDSCP_V2.equals(protocol)) {
             final var result = template.send("direct:querySender",
                     ExchangeBuilder.anExchange(context)
                             .withProperty("recipient", recipient)
