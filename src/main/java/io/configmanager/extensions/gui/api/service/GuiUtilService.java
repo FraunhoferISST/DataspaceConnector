@@ -31,6 +31,7 @@ package io.configmanager.extensions.gui.api.service;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.Language;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.configmanager.util.enums.BrokerRegistrationStatus;
 import io.configmanager.util.enums.RouteDeployMethod;
 import io.dataspaceconnector.model.configuration.DeployMode;
@@ -63,6 +64,7 @@ public class GuiUtilService {
      * @param enumName name of the enum
      * @return enums as string
      */
+    @SuppressFBWarnings("IMPROPER_UNICODE")
     public String getSpecificEnum(final String enumName) {
         final var name = enumName.toLowerCase(Locale.ENGLISH);
         JSONArray sortedJsonArray = null;
