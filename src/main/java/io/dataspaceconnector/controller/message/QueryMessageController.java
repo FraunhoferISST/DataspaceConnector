@@ -15,9 +15,17 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import de.fraunhofer.ids.messaging.common.DeserializeException;
+import de.fraunhofer.ids.messaging.common.SerializeException;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
+import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
+import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
+import de.fraunhofer.ids.messaging.protocol.multipart.UnknownResponseException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
+import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
+import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
+import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.util.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -93,6 +101,22 @@ public class QueryMessageController {
             return ControllerUtils.respondReceivedInvalidResponse(exception);
         } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
+        } catch (DeserializeException e) {
+            e.printStackTrace();
+        } catch (UnknownResponseException e) {
+            e.printStackTrace();
+        } catch (SerializeException e) {
+            e.printStackTrace();
+        } catch (NoTemplateProvidedException e) {
+            e.printStackTrace();
+        } catch (UnexpectedPayloadException e) {
+            e.printStackTrace();
+        } catch (ShaclValidatorException e) {
+            e.printStackTrace();
+        } catch (RejectionException e) {
+            e.printStackTrace();
+        } catch (SendMessageException e) {
+            e.printStackTrace();
         }
     }
 
@@ -137,6 +161,22 @@ public class QueryMessageController {
             return ControllerUtils.respondReceivedInvalidResponse(exception);
         } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
+        } catch (DeserializeException e) {
+            e.printStackTrace();
+        } catch (UnknownResponseException e) {
+            e.printStackTrace();
+        } catch (SerializeException e) {
+            e.printStackTrace();
+        } catch (NoTemplateProvidedException e) {
+            e.printStackTrace();
+        } catch (UnexpectedPayloadException e) {
+            e.printStackTrace();
+        } catch (ShaclValidatorException e) {
+            e.printStackTrace();
+        } catch (RejectionException e) {
+            e.printStackTrace();
+        } catch (SendMessageException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -180,7 +180,7 @@ public class Bootstrapper {
      * @return true if all resources could be registered.
      */
     private boolean registerAtBroker(final Properties properties,
-                                    final Map<URI, Resource> resources) {
+                                     final Map<URI, Resource> resources) {
         final var knownBrokers = new HashSet<URL>();
         // Iterate over all registered resources.
         for (final var entry : resources.entrySet()) {
@@ -200,12 +200,13 @@ public class Bootstrapper {
                 try {
                     if (!knownBrokers.contains(broker)) {
                         knownBrokers.add(broker);
-                        if (!brokerSvc.sendConnectorUpdateMessage(broker.toURI())) {
+                        if (!brokerSvc.sendAndValidateConnectorUpdateMessage(broker.toURI())) {
                             return false;
                         }
                     }
 
-                    if (!brokerSvc.sendResourceUpdateMessage(broker.toURI(), entry.getValue())) {
+                    if (!brokerSvc.sendAndValidateResourceUpdateMessage(broker.toURI(),
+                            entry.getValue())) {
                         return false;
                     }
                 } catch (Exception e) {

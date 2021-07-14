@@ -20,10 +20,18 @@ import de.fraunhofer.iais.eis.QueryScope;
 import de.fraunhofer.iais.eis.QueryTarget;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
+import de.fraunhofer.ids.messaging.common.DeserializeException;
+import de.fraunhofer.ids.messaging.common.SerializeException;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
-import de.fraunhofer.ids.messaging.protocol.multipart.MessageAndPayload;
+import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
+import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
+import de.fraunhofer.ids.messaging.protocol.multipart.UnknownResponseException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
+import de.fraunhofer.ids.messaging.requests.MessageContainer;
+import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
+import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
+import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -47,31 +55,68 @@ public class GlobalMessageService {
     private final @NotNull IDSBrokerService brokerSvc;
 
     /**
+     * Send connector update message.
+     *
+     * @param recipient The recipient.
+     * @return Optional of message container providing the received ids response.
+     */
+    public Optional<MessageContainer<?>> sendConnectorUpdateMessage(final URI recipient)
+            throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
+            NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
+            UnexpectedPayloadException, SerializeException, DeserializeException,
+            RejectionException, UnknownResponseException {
+        return Optional.of(brokerSvc.updateSelfDescriptionAtBroker(recipient));
+    }
+
+    /**
      * Send connector update message and validate received response.
      *
      * @param recipient The recipient.
      * @return True if the message was successfully processed by the recipient, false if not.
      */
-    public boolean sendConnectorUpdateMessage(final URI recipient)
-            throws MultipartParseException, ClaimsException, DapsTokenManagerException,
-            IOException {
-        final var response = brokerSvc.updateSelfDescriptionAtBroker(recipient);
-        final var msg = String.format("Successfully registered connector. [url=(%s)]", recipient);
-        return validateResponse(response, msg);
+    public boolean sendAndValidateConnectorUpdateMessage(final URI recipient) {
+        try {
+            final var response = sendConnectorUpdateMessage(recipient);
+            if (response.isPresent()) {
+                if (log.isInfoEnabled()) {
+                    log.info(String.format("Successfully registered connector. [url=(%s)]",
+                            recipient));
+                }
+                return true;
+            }
+        } catch (Exception ignored) {
+        }
+        return false;
     }
 
     /**
-     * Send connector unavailable message and validate received response.
+     * Send connector unavailable message.
      *
      * @param recipient The recipient.
-     * @return True if the message was successfully processed by the recipient, false if not.
+     * @return Optional of message container providing the received ids response.
      */
-    public boolean sendConnectorUnavailableMessage(final URI recipient)
-            throws MultipartParseException, ClaimsException, DapsTokenManagerException,
-            IOException {
-        final var response = brokerSvc.unregisterAtBroker(recipient);
-        final var msg = String.format("Successfully unregistered connector. [url=(%s)]", recipient);
-        return validateResponse(response, msg);
+    public Optional<MessageContainer<?>> sendConnectorUnavailableMessage(final URI recipient)
+            throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
+            NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
+            UnexpectedPayloadException, SerializeException, DeserializeException,
+            RejectionException, UnknownResponseException {
+        return Optional.of(brokerSvc.unregisterAtBroker(recipient));
+    }
+
+    /**
+     * Send resource update message.
+     *
+     * @param recipient The recipient.
+     * @param resource  The ids resource that should be updated.
+     * @return Optional of message container providing the received ids response.
+     */
+    public Optional<MessageContainer<?>> sendResourceUpdateMessage(final URI recipient,
+                                                                   final Resource resource)
+            throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
+            NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
+            UnexpectedPayloadException, SerializeException, DeserializeException,
+            RejectionException, UnknownResponseException {
+        return Optional.of(brokerSvc.updateResourceAtBroker(recipient, resource));
     }
 
     /**
@@ -81,29 +126,36 @@ public class GlobalMessageService {
      * @param resource  The ids resource that should be updated.
      * @return True if the message was successfully processed by the recipient, false if not.
      */
-    public boolean sendResourceUpdateMessage(final URI recipient, final Resource resource)
-            throws MultipartParseException, ClaimsException, DapsTokenManagerException,
-            IOException {
-        final var response = brokerSvc.updateResourceAtBroker(recipient, resource);
-        final var msg = String.format("Successfully registered resource. "
-                + "[resourceId=(%s), url=(%s)]", resource.getId(), recipient);
-        return validateResponse(response, msg);
+    public boolean sendAndValidateResourceUpdateMessage(final URI recipient,
+                                                        final Resource resource) {
+        try {
+            final var response = sendResourceUpdateMessage(recipient, resource);
+            if (response.isPresent()) {
+                if (log.isInfoEnabled()) {
+                    log.info(String.format("Successfully registered resource. [resourceId=(%s), "
+                            + "url=(%s)]", resource.getId(), recipient));
+                }
+                return true;
+            }
+        } catch (Exception ignored) {
+        }
+        return false;
     }
 
     /**
-     * Send resource unavailable message and validate received response.
+     * Send resource unavailable message.
      *
      * @param recipient The recipient.
      * @param resource  The ids resource that should be updated.
-     * @return True if the message was successfully processed by the recipient, false if not.
+     * @return Optional of message container providing the received ids response.
      */
-    public boolean sendResourceUnavailableMessage(final URI recipient, final Resource resource)
-            throws MultipartParseException, ClaimsException, DapsTokenManagerException,
-            IOException {
-        final var response = brokerSvc.removeResourceFromBroker(recipient, resource);
-        final var msg = String.format("Successfully unregistered resource. "
-                + "[resourceId=(%s), url=(%s)]", resource.getId(), recipient);
-        return validateResponse(response, msg);
+    public Optional<MessageContainer<?>> sendResourceUnavailableMessage(final URI recipient,
+                                                                        final Resource resource)
+            throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
+            NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
+            UnexpectedPayloadException, SerializeException, DeserializeException,
+            RejectionException, UnknownResponseException {
+        return Optional.of(brokerSvc.removeResourceFromBroker(recipient, resource));
     }
 
     /**
@@ -111,19 +163,15 @@ public class GlobalMessageService {
      *
      * @param recipient The recipient.
      * @param query     The query statement.
-     * @return True if the message was successfully processed by the recipient, false if not.
+     * @return Optional of message container providing the received ids response.
      */
-    public Optional<String> sendQueryMessage(final URI recipient, final String query)
-            throws MultipartParseException, ClaimsException, DapsTokenManagerException,
-            IOException {
-        final var response = brokerSvc.queryBroker(recipient, query,
-                QueryLanguage.SPARQL, QueryScope.ALL, QueryTarget.BROKER);
-        final var msg = String.format("Successfully processed query. [url=(%s)]", recipient);
-        if (validateResponse(response, msg)) {
-            return response.getPayload();
-        }
-
-        return Optional.empty();
+    public Optional<MessageContainer<?>> sendQueryMessage(final URI recipient, final String query)
+            throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
+            NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
+            UnexpectedPayloadException, SerializeException, DeserializeException,
+            RejectionException, UnknownResponseException {
+        return Optional.of(brokerSvc.queryBroker(recipient, query, QueryLanguage.SPARQL,
+                QueryScope.ALL, QueryTarget.BROKER));
     }
 
     /**
@@ -133,39 +181,15 @@ public class GlobalMessageService {
      * @param term      The search term.
      * @param limit     The limit value.
      * @param offset    The offset value.
-     * @return True if the message was successfully processed by the recipient, false if not.
+     * @return Optional of message container providing the received ids response.
      */
-    public Optional<String> sendFullTextSearchQueryMessage(final URI recipient, final String term,
-                                                           final int limit, final int offset)
-            throws MultipartParseException, ClaimsException, DapsTokenManagerException,
-            IOException {
-        final var response = brokerSvc.fullTextSearchBroker(recipient, term,
-                QueryScope.ALL, QueryTarget.BROKER, limit, offset);
-
-        final var msg = String.format("Successfully processed full text search. [url=(%s)]",
-                recipient);
-        if (validateResponse(response, msg)) {
-            return response.getPayload();
-        }
-
-        return Optional.empty();
-    }
-
-    /**
-     * Check if a request was successfully processed by the recipient.
-     *
-     * @param response The response map.
-     * @param logMsg   The log message.
-     * @return true if the recipient successfully processed the message, false otherwise.
-     */
-    private boolean validateResponse(final MessageAndPayload response, final String logMsg) {
-        if (response != null) {
-            if (log.isInfoEnabled()) {
-                log.info(logMsg);
-            }
-            return true;
-        }
-
-        return false;
+    public Optional<MessageContainer<?>> sendFullTextSearchQueryMessage(
+            final URI recipient, final String term, final int limit, final int offset)
+            throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
+            NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
+            UnexpectedPayloadException, SerializeException, DeserializeException,
+            RejectionException, UnknownResponseException {
+        return Optional.of(brokerSvc.fullTextSearchBroker(recipient, term, QueryScope.ALL,
+                QueryTarget.BROKER, limit, offset));
     }
 }
