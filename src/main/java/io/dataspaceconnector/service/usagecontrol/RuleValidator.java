@@ -15,6 +15,14 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
+import java.net.URI;
+import java.text.ParseException;
+import java.time.Duration;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.model.contract.Contract;
@@ -28,14 +36,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.text.ParseException;
-import java.time.Duration;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This class provides policy pattern recognition and calls the {@link
@@ -236,9 +236,6 @@ public class RuleValidator {
     private void validateAccessNumber(final Rule rule, final URI target)
             throws PolicyRestrictionException {
         final var max = RuleUtils.getMaxAccess(rule);
-        // final var endpoint = PolicyUtils.getPipEndpoint(rule);
-        // NOTE: might be used later
-
         final var accessed = informationService.getAccessNumber(target);
         if (accessed >= max) {
             if (log.isDebugEnabled()) {

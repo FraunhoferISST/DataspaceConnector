@@ -21,7 +21,6 @@ import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -51,7 +50,7 @@ public final class OfferedResource extends Resource {
     /**
      * The list of brokers where the resource is registered.
      */
-    @OneToMany
+    @ManyToMany(mappedBy = "offeredResources")
     private List<Broker> brokers;
 
     /**

@@ -63,18 +63,14 @@ public class ArtifactDataDownloader {
      */
     public void download(final URI recipient, final List<URI> artifacts, final UUID agreementId)
             throws InvalidResponse, PersistenceException {
-        // Iterate over list of resource ids to send artifact request messages for each.
         for (final var artifact : artifacts) {
-            // Send and validate artifact request/response message.
             final var response = artifactReqSvc.sendMessageAndValidate(recipient,
                                         artifact, agreementService.get(agreementId).getRemoteId());
 
-            // Read and process the response message.
             try {
                 persistenceSvc.saveData(response, artifact);
             } catch (IOException | ResourceNotFoundException
                     | MessageResponseException e) {
-                // Ignore that the data saving failed. Another try can take place later.
                 if (log.isWarnEnabled()) {
                     log.warn("Could not save data for artifact."
                              + "[artifact=({}), exception=({})]",
