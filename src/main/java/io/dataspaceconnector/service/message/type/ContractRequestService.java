@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.service.message.type;
 
+import java.net.URI;
+import java.util.Map;
+
 import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessageBuilder;
@@ -26,13 +29,11 @@ import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.RdfBuilderException;
 import io.dataspaceconnector.model.message.ContractRequestMessageDesc;
+import io.dataspaceconnector.service.message.type.exceptions.InvalidResponse;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.IdsUtils;
 import io.dataspaceconnector.util.Utils;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.Map;
 
 /**
  * Message service for ids contract request messages.
@@ -102,5 +103,29 @@ public final class ContractRequestService
     public boolean validateResponse(final Map<String, String> response)
             throws MessageResponseException {
         return isValidResponseType(response);
+    }
+
+    /**
+     * Build and send a description request message and then validate the response.
+     * @param recipient The recipient.
+     * @param request The contract request.
+     * @return The response map.
+     * @throws InvalidResponse if the response is not valid.
+     * @throws MessageException if message handling failed.
+     * @throws RdfBuilderException if the contract request rdf string could not be built.
+     */
+    public Map<String, String> sendMessageAndValidate(final URI recipient,
+                                                      final ContractRequest request)
+            throws InvalidResponse, MessageException, RdfBuilderException {
+        final var response = sendMessage(recipient, request);
+        try {
+            if (!validateResponse(response)) {
+                throw new InvalidResponse(getResponseContent(response));
+            }
+        } catch (MessageResponseException e) {
+            throw new InvalidResponse(getResponseContent(response), e);
+        }
+
+        return response;
     }
 }

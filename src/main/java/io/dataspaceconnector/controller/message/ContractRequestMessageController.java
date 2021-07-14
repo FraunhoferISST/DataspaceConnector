@@ -15,29 +15,26 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;
 import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
-import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.service.EntityPersistenceService;
+import io.dataspaceconnector.service.ArtifactDataDownloader;
+import io.dataspaceconnector.service.ContractNegotiator;
 import io.dataspaceconnector.service.EntityUpdateService;
-import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.service.message.type.ArtifactRequestService;
-import io.dataspaceconnector.service.message.type.ContractAgreementService;
-import io.dataspaceconnector.service.message.type.ContractRequestService;
-import io.dataspaceconnector.service.message.type.DescriptionRequestService;
-import io.dataspaceconnector.service.message.type.LogMessageService;
+import io.dataspaceconnector.service.MetaDataDownloader;
+import io.dataspaceconnector.service.message.type.exceptions.InvalidResponse;
 import io.dataspaceconnector.service.resource.AgreementService;
-import io.dataspaceconnector.service.usagecontrol.ContractManager;
 import io.dataspaceconnector.util.ControllerUtils;
-import io.dataspaceconnector.util.MessageUtils;
 import io.dataspaceconnector.util.RuleUtils;
-import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;
-import io.dataspaceconnector.util.UUIDUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -46,7 +43,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,13 +54,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.persistence.PersistenceException;
-import java.io.IOException;
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 /**
  * This controller provides the endpoint for sending a contract request message and starting the
  * metadata and data exchange.
@@ -75,27 +64,6 @@ import java.util.UUID;
 @RequestMapping("/api/ids")
 @Tag(name = "IDS Messages", description = "Endpoints for invoke sending IDS messages")
 public class ContractRequestMessageController {
-
-    /**
-     * Service for contract request message handling.
-     */
-    private final @NonNull ContractRequestService contractReqSvc;
-
-    /**
-     * Service for artifact request message handling.
-     */
-    private final @NonNull ArtifactRequestService artifactReqSvc;
-
-    /**
-     * Service for description request message handling.
-     */
-    private final @NonNull DescriptionRequestService descReqSvc;
-
-    /**
-     * Service for contract agreement message handling.
-     */
-    private final @NonNull ContractAgreementService agreementSvc;
-
     /**
      * Service for updating database entities.
      */
@@ -112,30 +80,19 @@ public class ContractRequestMessageController {
     private final @NonNull AgreementService agreementService;
 
     /**
-     * Service for contract processing.
+     * Negotiates the contract.
      */
-    private final @NonNull ContractManager contractManager;
+    private final @NonNull ContractNegotiator negotiator;
 
     /**
-     * Service for persisting entities.
+     * Downloads metadata.
      */
-    private final @NonNull EntityPersistenceService persistenceSvc;
+    private final @NonNull MetaDataDownloader metaDataDownloader;
 
     /**
-     * The current connector configuration.
+     * Downloads artifact's data.
      */
-    private final @NonNull ConnectorConfiguration connectorConfig;
-
-    /**
-     * Service for ids LogMessages.
-     */
-    private final @NonNull LogMessageService logMessageService;
-
-    /**
-     * Service for ids deserialization.
-     */
-    @Autowired
-    private DeserializationService deserializer;
+    private final @NonNull ArtifactDataDownloader artifactDataDownloader;
 
     /**
      * Starts a contract, metadata, and data exchange with an external connector.
@@ -164,111 +121,23 @@ public class ContractRequestMessageController {
             @RequestParam("resourceIds") final List<URI> resources,
             @Parameter(description = "List of ids artifacts that should be requested.")
             @RequestParam("artifactIds") final List<URI> artifacts,
-//            @Parameter(description = "Indicates whether the connector should listen on remote "
-//                    + "updates.") @RequestParam(value = "subscribe") final boolean subscribe,
             @Parameter(description = "Indicates whether the connector should automatically "
                     + "download data of an artifact.")
             @RequestParam("download") final boolean download,
             @Parameter(description = "List of ids rules with an artifact id as target.")
-            @RequestBody final List<Rule> ruleList) {
-        UUID agreementId;
-
-        Map<String, String> response;
+            @RequestBody final List<Rule> ruleList) throws InvalidResponse {
         try {
-            // Validate input for contract request.
             RuleUtils.validateRuleTarget(ruleList);
-            final var request = contractManager.buildContractRequest(ruleList);
 
-            // CONTRACT NEGOTIATION ----------------------------------------------------------------
-            // Send and validate contract request/response message.
-            response = contractReqSvc.sendMessage(recipient, request);
-            if (!contractReqSvc.validateResponse(response)) {
-                // If the response is not a contract agreement message, show the response.
-                final var content = contractReqSvc.getResponseContent(response);
-                return ControllerUtils.respondWithMessageContent(content);
-            }
+            final var agreementId = negotiator.negotiate(recipient, ruleList);
 
-            // Read and process the response message.
-            final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
-            final var agreement = contractManager.validateContractAgreement(payload, request);
+            downloadMetaData(recipient, resources, artifacts, download, agreementId);
 
-            // Send and validate contract agreement/response message.
-            response = agreementSvc.sendMessage(recipient, agreement);
-            if (!agreementSvc.validateResponse(response)) {
-                // If the response is not a notification message, show the response.
-                final var content = agreementSvc.getResponseContent(response);
-                return ControllerUtils.respondWithMessageContent(content);
-            }
-
-            // Save contract agreement to database.
-            agreementId = persistenceSvc.saveContractAgreement(agreement);
-            if (log.isDebugEnabled()) {
-                log.debug("Policy negotiation success. Saved agreement. [agreemendId=({})].",
-                        agreementId);
-            }
-
-            // DESCRIPTION REQUESTS ----------------------------------------------------------------
-            // Iterate over list of resource ids to send description request messages for each.
-            for (final var resource : resources) {
-                // Send and validate description request/response message.
-                response = descReqSvc.sendMessage(recipient, resource);
-                if (!descReqSvc.validateResponse(response)) {
-                    // If the response is not a description response message, show the response.
-                    final var content = descReqSvc.getResponseContent(response);
-                    return ControllerUtils.respondWithMessageContent(content);
-                }
-
-                // Read and process the response message. Save resource, recipient, and agreement
-                // id to database.
-                persistenceSvc.saveMetadata(response, artifacts, download, recipient);
-            }
-
-            updateService.linkArtifactToAgreement(artifacts, agreementId);
-
-
-            // ARTIFACT REQUESTS -------------------------------------------------------------------
-            // Download data depending on user input.
             if (download) {
-                // Iterate over list of resource ids to send artifact request messages for each.
-                for (final var artifact : artifacts) {
-                    // Send and validate artifact request/response message.
-                    final var transferContract = agreement.getId();
-                    response = artifactReqSvc.sendMessage(recipient, artifact, transferContract);
-                    if (!artifactReqSvc.validateResponse(response)) {
-                        // If the response is not an artifact response message, show the response.
-                        // Ignore when data could not be downloaded, because the artifact request
-                        // can be triggered later again.
-                        final var content = artifactReqSvc.getResponseContent(response);
-                        if (log.isDebugEnabled()) {
-                            log.debug("Data could not be loaded. [content=({})]", content);
-                        }
-                    }
-
-                    // Logging the ArtifactResponseMessage
-                    final var clearingHouse = connectorConfig.getClearingHouse();
-                    if (!clearingHouse.equals(URI.create(""))) {
-                        var header = deserializer.getResponseMessage(response.get("header"));
-                        var transferContractID = UUIDUtils.uuidFromUri(
-                                header.getTransferContract());
-                        logMessageService.sendMessage(
-                                URI.create(clearingHouse + transferContractID.toString()),
-                                header.toRdf());
-                    }
-
-                    // Read and process the response message.
-                    try {
-                        persistenceSvc.saveData(response, artifact);
-                    } catch (IOException | ResourceNotFoundException
-                             | MessageResponseException e) {
-                        // Ignore that the data saving failed. Another try can take place later.
-                        if (log.isWarnEnabled()) {
-                            log.warn("Could not save data for artifact."
-                                            + "[artifact=({}), exception=({})]",
-                                    artifact, e.getMessage());
-                        }
-                    }
-                }
+                artifactDataDownloader.download(recipient, artifacts, agreementId);
             }
+
+            return respondWithCreatedAgreement(agreementId);
         } catch (InvalidInputException exception) {
             return ControllerUtils.respondInvalidInput(exception);
         } catch (ConstraintViolationException exception) {
@@ -281,9 +150,16 @@ public class ContractRequestMessageController {
             return ControllerUtils.respondReceivedInvalidResponse(e);
         }
 
-        // Return response entity containing the locations of the contract agreement, the
-        // downloaded resources, and the downloaded data.
+    }
 
+    private void downloadMetaData(final URI recipient, final List<URI> resources,
+                                  final List<URI> artifacts, final boolean download,
+                                  final UUID agreementId) throws InvalidResponse {
+        metaDataDownloader.download(recipient, resources, artifacts, download);
+        updateService.linkArtifactToAgreement(artifacts, agreementId);
+    }
+
+    private ResponseEntity<Object> respondWithCreatedAgreement(final UUID agreementId) {
         final var entity = agreementAsm.toModel(agreementService.get(agreementId));
 
         final var headers = new HttpHeaders();

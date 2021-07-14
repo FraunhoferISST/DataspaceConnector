@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.service.message.type;
 
+import java.net.URI;
+import java.util.Map;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageBuilder;
@@ -27,14 +30,12 @@ import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
+import io.dataspaceconnector.service.message.type.exceptions.InvalidResponse;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.Map;
 
 /**
  * Message service for ids artifact request messages.
@@ -132,5 +133,37 @@ public final class ArtifactRequestService
     public boolean validateResponse(final Map<String, String> response)
             throws MessageResponseException {
         return isValidResponseType(response);
+    }
+
+    /**
+     * Send artifact request message and then validate the response.
+     * @param recipient The recipient.
+     * @param elementId The requested artifact.
+     * @param agreementId The transfer contract.
+     * @return The response map.
+     * @throws InvalidResponse if the response is not valid.
+     * @throws MessageException if message handling failed.
+     */
+    public Map<String, String> sendMessageAndValidate(final URI recipient, final URI elementId,
+                                                      final URI agreementId)
+            throws InvalidResponse {
+        final var response = sendMessage(recipient, elementId, agreementId);
+        try {
+            if (!validateResponse(response)) {
+                final var content = getResponseContent(response);
+                if (log.isDebugEnabled()) {
+                    log.debug("Data could not be loaded. [content=({})]", content);
+                }
+                throw new InvalidResponse(content);
+            }
+        } catch (MessageResponseException e) {
+            final var content = getResponseContent(response);
+            if (log.isDebugEnabled()) {
+                log.debug("Data could not be loaded. [content=({})]", content);
+            }
+            throw new InvalidResponse(content, e);
+        }
+
+        return response;
     }
 }
