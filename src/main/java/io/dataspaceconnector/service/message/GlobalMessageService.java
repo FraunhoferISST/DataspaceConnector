@@ -15,6 +15,12 @@
  */
 package io.dataspaceconnector.service.message;
 
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Optional;
+import java.util.Set;
+
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.QueryLanguage;
 import de.fraunhofer.iais.eis.QueryScope;
@@ -25,19 +31,12 @@ import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
 import de.fraunhofer.ids.messaging.protocol.multipart.MessageAndPayload;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
-import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.service.configuration.BrokerService;
 import io.dataspaceconnector.service.configuration.EntityLinkerService;
 import io.dataspaceconnector.util.UUIDUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-
-import javax.validation.constraints.NotNull;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * Service for sending ids messages.
@@ -253,32 +252,6 @@ public class GlobalMessageService {
     }
 
     /**
-     *
-     * @param recipient URI of the recipient
-     * @param response The response.
-     * @param msg The response message.
-     * @return true, if connector is updated at the broker.
-     */
-    private boolean updateBroker(final URI recipient,
-                                 final MessageProcessedNotificationMAP response,
-                                 final String msg) {
-        final var result = validateResponse(response, msg);
-        if (result) {
-            final var updatedRegistrationStatus = updateRegistrationStatus(recipient);
-            if (updatedRegistrationStatus) {
-                if (log.isInfoEnabled()) {
-                    log.info("Successfully updated broker registration status.");
-                }
-            } else {
-                if (log.isInfoEnabled()) {
-                    log.info("Failed to update the registration status of the broker.");
-                }
-            }
-        }
-        return result;
-    }
-
-    /**
      * @param recipient The uri of the recipient.
      * @param resource  The offered resource.
      */
@@ -288,7 +261,10 @@ public class GlobalMessageService {
         if (brokerId.isPresent()) {
             linker.remove(brokerId.get(), Set.of(UUIDUtils.uuidFromUri(resource.getId())));
         } else {
-            throw new ResourceNotFoundException("Broker not found");
+            if (log.isWarnEnabled()) {
+                log.warn("Removed Resource from Broker but Broker was not linked "
+                        + "to resource in OfferedResource-Broker-List.");
+            }
         }
     }
 }

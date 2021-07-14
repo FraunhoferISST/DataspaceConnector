@@ -15,6 +15,13 @@
  */
 package io.dataspaceconnector.util;
 
+import java.net.URI;
+import java.time.Duration;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+
 import de.fraunhofer.iais.eis.AbstractConstraint;
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
@@ -31,14 +38,6 @@ import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
 import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
 import lombok.extern.log4j.Log4j2;
-
-import java.net.URI;
-import java.text.ParseException;
-import java.time.Duration;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.List;
 
 /**
  * Contains utility methods for validating the content of ids rules.
@@ -219,9 +218,9 @@ public final class RuleUtils {
      *
      * @param rule the policy rule object.
      * @return the time interval.
-     * @throws ParseException if the parsing fails.
+     * @throws DateTimeParseException if the parsing fails.
      */
-    public static TimeInterval getTimeInterval(final Rule rule) throws ParseException {
+    public static TimeInterval getTimeInterval(final Rule rule) throws DateTimeParseException {
         final var interval = new TimeInterval();
 
         for (final var constraint : rule.getConstraint()) {

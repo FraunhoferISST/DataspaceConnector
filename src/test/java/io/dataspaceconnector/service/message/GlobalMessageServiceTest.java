@@ -23,6 +23,8 @@ import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
 import io.dataspaceconnector.model.broker.BrokerFactory;
 import io.dataspaceconnector.repository.BrokerRepository;
+import io.dataspaceconnector.service.configuration.BrokerService;
+import io.dataspaceconnector.service.configuration.EntityLinkerService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -50,6 +52,12 @@ class GlobalMessageServiceTest {
 
     @MockBean
     private BrokerFactory brokerFactory;
+
+    @MockBean
+    private EntityLinkerService.BrokerOfferedResourcesLinker brokerOfferedResourcesLinker;
+
+    @MockBean
+    private BrokerService dscBrokerService;
 
     @Autowired
     GlobalMessageService messageService;
