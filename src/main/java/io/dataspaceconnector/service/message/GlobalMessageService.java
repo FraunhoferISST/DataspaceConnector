@@ -24,12 +24,11 @@ import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
 import de.fraunhofer.ids.messaging.protocol.multipart.MessageAndPayload;
-import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
-import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.model.broker.Broker;
-import io.dataspaceconnector.model.broker.BrokerFactory;
-import io.dataspaceconnector.repository.BrokerRepository;
+import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.service.configuration.BrokerService;
+import io.dataspaceconnector.service.configuration.EntityLinkerService;
+import io.dataspaceconnector.util.UUIDUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -38,6 +37,7 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service for sending ids messages.
@@ -53,14 +53,15 @@ public class GlobalMessageService {
     private final @NotNull IDSBrokerService brokerSvc;
 
     /**
-     * The broker repository.
+     * Service for relation between broker and offered resources.
      */
-    private final @NotNull BrokerRepository brokerRepository;
+    private final @NotNull EntityLinkerService.BrokerOfferedResourcesLinker linker;
 
     /**
-     * The broker factory.
+     * Service for the broker.
      */
-    private final @NotNull BrokerFactory brokerFactory;
+    private final @NotNull BrokerService brokerService;
+
 
     /**
      * Send connector update message and validate received response.
@@ -81,12 +82,15 @@ public class GlobalMessageService {
             IOException {
         final var response = brokerSvc.updateSelfDescriptionAtBroker(recipient);
         final var msg = String.format("Successfully registered connector. [url=(%s)]", recipient);
-        return updateBroker(recipient, response, msg);
+        final var result = validateResponse(response, msg);
+        if (result) {
+            updateBrokerRegistrationStatus(recipient);
+        }
+        return result;
     }
 
     /**
      * Send connector unavailable message and validate received response.
-     *
      * @param recipient The recipient.
      * @return True if the message was successfully processed by the recipient, false if not.
      * @throws MultipartParseException   If response could not be parsed to header and payload.
@@ -103,12 +107,15 @@ public class GlobalMessageService {
             IOException {
         final var response = brokerSvc.unregisterAtBroker(recipient);
         final var msg = String.format("Successfully unregistered connector. [url=(%s)]", recipient);
-        return updateBroker(recipient, response, msg);
+        final var result = validateResponse(response, msg);
+        if (result) {
+            updateBrokerRegistrationStatus(recipient);
+        }
+        return result;
     }
 
     /**
      * Send resource update message and validate received response.
-     *
      * @param recipient The recipient.
      * @param resource  The ids resource that should be updated.
      * @return True if the message was successfully processed by the recipient, false if not.
@@ -132,7 +139,6 @@ public class GlobalMessageService {
 
     /**
      * Send resource unavailable message and validate received response.
-     *
      * @param recipient The recipient.
      * @param resource  The ids resource that should be updated.
      * @return True if the message was successfully processed by the recipient, false if not.
@@ -152,12 +158,15 @@ public class GlobalMessageService {
         final var response = brokerSvc.removeResourceFromBroker(recipient, resource);
         final var msg = String.format("Successfully unregistered resource. "
                 + "[resourceId=(%s), url=(%s)]", resource.getId(), recipient);
-        return validateResponse(response, msg);
+        final var result = validateResponse(response, msg);
+        if (result) {
+            removeBrokerFromOfferedResourceBrokerList(recipient, resource);
+        }
+        return result;
     }
 
     /**
      * Send query message and validate received response.
-     *
      * @param recipient The recipient.
      * @param query     The query statement.
      * @return True if the message was successfully processed by the recipient, false if not.
@@ -185,7 +194,6 @@ public class GlobalMessageService {
 
     /**
      * Send query message and validate received response.
-     *
      * @param recipient The recipient.
      * @param term      The search term.
      * @param limit     The limit value.
@@ -220,7 +228,6 @@ public class GlobalMessageService {
 
     /**
      * Check if a request was successfully processed by the recipient.
-     *
      * @param response The response map.
      * @param logMsg   The log message.
      * @return true if the recipient successfully processed the message, false otherwise.
@@ -239,29 +246,10 @@ public class GlobalMessageService {
 
     /**
      * This method updates the registration status of the broker.
-     * @param recipient URI of the recipient
-     * @return true if registration status was updated
+     * @param recipient The uri of the recipient.
      */
-    private boolean updateRegistrationStatus(final URI recipient) {
-        final var allBrokers = brokerRepository.findAll();
-        Broker foundBroker = null;
-        for (final var broker : allBrokers) {
-            if (recipient.equals(broker.getLocation())) {
-                foundBroker = broker;
-                break;
-            }
-        }
-        if (foundBroker != null) {
-            if (RegistrationStatus.UNREGISTERED.equals(foundBroker.getStatus())) {
-                brokerFactory.updateRegistrationStatus(foundBroker, RegistrationStatus.REGISTERED);
-            } else {
-                brokerFactory.updateRegistrationStatus(foundBroker,
-                        RegistrationStatus.UNREGISTERED);
-            }
-            brokerRepository.saveAndFlush(foundBroker);
-            return true;
-        }
-        return false;
+    private void updateBrokerRegistrationStatus(final URI recipient) {
+        brokerService.updateRegistrationStatus(recipient);
     }
 
     /**
@@ -288,5 +276,19 @@ public class GlobalMessageService {
             }
         }
         return result;
+    }
+
+    /**
+     * @param recipient The uri of the recipient.
+     * @param resource  The offered resource.
+     */
+    private void removeBrokerFromOfferedResourceBrokerList(final URI recipient,
+                                                           final Resource resource) {
+        final var brokerId = brokerService.findByLocation(recipient);
+        if (brokerId.isPresent()) {
+            linker.remove(brokerId.get(), Set.of(UUIDUtils.uuidFromUri(resource.getId())));
+        } else {
+            throw new ResourceNotFoundException("Broker not found");
+        }
     }
 }

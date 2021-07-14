@@ -19,7 +19,7 @@ import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
@@ -73,6 +73,6 @@ public class Broker extends NamedEntity implements RemoteService {
     /**
      * The list of resources.
      */
-    @OneToMany
+    @ManyToMany
     private List<OfferedResource> offeredResources;
 }
