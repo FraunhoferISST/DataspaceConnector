@@ -36,12 +36,10 @@ import io.dataspaceconnector.model.artifact.RemoteData;
 import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.HttpService;
-import io.dataspaceconnector.service.usagecontrol.AllowAccessVerifier;
 import io.dataspaceconnector.util.QueryInput;
 import kotlin.Pair;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -74,15 +72,6 @@ class ArtifactServiceTest {
 
     @Autowired
     private ArtifactService service;
-
-    private final AllowAccessVerifier verifier = new AllowAccessVerifier();
-
-    Artifact localArtifact = getLocalArtifact();
-
-    @BeforeEach
-    public void init() {
-
-    }
 
     /**************************************************************************
      * persist
@@ -208,7 +197,7 @@ class ArtifactServiceTest {
         when(artifactRepository.findById(null)).thenThrow(new IllegalArgumentException());
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> service.getData( verifier,
+        assertThrows(IllegalArgumentException.class, () -> service.getData( null,
                                                                             null,
                                                                             null,
                                                                             queryInput));
@@ -222,7 +211,7 @@ class ArtifactServiceTest {
                 .thenThrow(new ResourceNotFoundException("not found"));
 
         /* ACT && ASSERT */
-        assertThrows(ResourceNotFoundException.class, () -> service.getData(verifier,
+        assertThrows(ResourceNotFoundException.class, () -> service.getData(null,
                                                                             null,
                                                                             unknownUuid,
                                                                             (QueryInput) null));
@@ -238,7 +227,7 @@ class ArtifactServiceTest {
         when(dataRepository.getById(any())).thenReturn(getLocalData());
 
         /* ACT */
-        final var data = service.getData(verifier,
+        final var data = service.getData(null,
                                                     null,
                                                     localArtifact.getId(),
                                                     (QueryInput) null);
@@ -260,7 +249,7 @@ class ArtifactServiceTest {
         final var before = localArtifact.getNumAccessed();
 
         /* ACT */
-        service.getData(verifier, null, localArtifact.getId(), (QueryInput) null);
+        service.getData(null, null, localArtifact.getId(), (QueryInput) null);
 
         /* ASSERT */
         Field numAccessedField = Artifact.class.getDeclaredField("numAccessed");
@@ -289,7 +278,7 @@ class ArtifactServiceTest {
                 .thenReturn(response);
 
         /* ACT */
-        final var data = service.getData(verifier,
+        final var data = service.getData(null,
                                                     null,
                                                     remoteArtifact.getId(),
                                                     (QueryInput)  null);
@@ -314,7 +303,7 @@ class ArtifactServiceTest {
         when(httpService.get(url, (QueryInput) null)).thenReturn(response);
 
         /* ACT */
-        final var data = service.getData(verifier, null,
+        final var data = service.getData(null, null,
                 remoteArtifact.getId(),(QueryInput)  null);
 
         /* ASSERT */
@@ -338,7 +327,7 @@ class ArtifactServiceTest {
         when(httpService.get(url, queryInput)).thenReturn(response);
 
         /* ACT */
-        final var data = service.getData(verifier, null,
+        final var data = service.getData(null, null,
                                          remoteArtifact.getId(), queryInput);
 
         /* ASSERT */
@@ -360,7 +349,7 @@ class ArtifactServiceTest {
                 .thenThrow(new RuntimeException(expectedExceptionMessage));
 
         /* ACT && ASSERT */
-        assertThrows(RuntimeException.class, () -> service.getData(verifier, null,
+        assertThrows(RuntimeException.class, () -> service.getData(null, null,
                                                                    remoteArtifact.getId(), queryInput),
                 expectedExceptionMessage);
     }
@@ -379,7 +368,7 @@ class ArtifactServiceTest {
 
         /* ACT && ASSERT */
         assertThrows(UnreachableLineException.class,
-                     () -> service.getData(verifier, null, unknownArtifact.getId(), (QueryInput) null));
+                     () -> service.getData(null, null, unknownArtifact.getId(), (QueryInput) null));
     }
 
     /**************************************************************************
