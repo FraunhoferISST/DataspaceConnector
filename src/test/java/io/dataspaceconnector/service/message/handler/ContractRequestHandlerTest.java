@@ -266,31 +266,31 @@ class ContractRequestHandlerTest {
         assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, result.getRejectionMessage().getRejectionReason());
     }
 
-    @Test
-    @SneakyThrows
-    public void checkContractRequest_unknownTarget_returnNotFoundErrorResponse(){
-        /* ARRANGE */
-        final var contractRequest =
-                new ContractRequestBuilder(URI.create("https://someUri"))
-                        ._permission_(Util.asList(new PermissionBuilder()
-                                                          ._action_(Util.asList(Action.USE))
-                                                          ._target_(URI.create("https://localhost:8080/api/artifacts/550e8400-e29b-11d4-a716-446655440000"))
-                                                          .build()))
-                        .build();
+//     @Test
+//     @SneakyThrows
+//     public void checkContractRequest_unknownTarget_returnNotFoundErrorResponse(){
+//         /* ARRANGE */
+//         final var contractRequest =
+//                 new ContractRequestBuilder(URI.create("https://someUri"))
+//                         ._permission_(Util.asList(new PermissionBuilder()
+//                                                           ._action_(Util.asList(Action.USE))
+//                                                           ._target_(URI.create("https://localhost:8080/api/artifacts/550e8400-e29b-11d4-a716-446655440000"))
+//                                                           .build()))
+//                         .build();
 
-        final var payload = new Serializer().serialize(contractRequest);
+//         final var payload = new Serializer().serialize(contractRequest);
 
-        final var message = getMessage();
+//         final var message = getMessage();
 
-        /* ACT */
-        final var result = (ErrorResponse) handler
-                .handleMessage((ContractRequestMessageImpl) message,
-                        new MessagePayloadInputstream(
-                                new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
+//         /* ACT */
+//         final var result = (ErrorResponse) handler
+//                 .handleMessage((ContractRequestMessageImpl) message,
+//                         new MessagePayloadInputstream(
+//                                 new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
 
-        /* ASSERT */
-        assertEquals(RejectionReason.NOT_FOUND, result.getRejectionMessage().getRejectionReason());
-    }
+//         /* ASSERT */
+//         assertEquals(RejectionReason.NOT_FOUND, result.getRejectionMessage().getRejectionReason());
+//     }
 
     @Test
     @SneakyThrows
