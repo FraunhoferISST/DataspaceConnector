@@ -42,7 +42,7 @@ class MetaDataDownloaderTest {
     MetaDataDownloader downloader;
 
     @Test
-    void download_validInput_isSucessfull() throws InvalidResponse {
+    void download_validInput_isSuccessfull() throws InvalidResponse {
         /* ARRANGE */
         final var response = new HashMap<String, String>();
         response.put("Hi", "Bye");
