@@ -202,6 +202,7 @@ public class GuiUtilService {
      * @param jsonArray json array to be sorted
      * @return sorted json array
      */
+    @SuppressFBWarnings("CRLF_INJECTION_LOGS")
     private JSONArray sortJsonArray(final JSONArray jsonArray) {
         List<JSONObject> jsonObjects = new ArrayList<>();
 
