@@ -33,12 +33,14 @@ import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.type.LogMessageService;
 import io.dataspaceconnector.service.message.type.NotificationService;
 import io.dataspaceconnector.util.IdsUtils;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.net.URI;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -66,7 +68,8 @@ public class PolicyExecutionServiceTest {
     @Autowired
     private PolicyExecutionService policyExecutionService;
 
-    private final URI chUri = URI.create("https://clearing-house.com");
+    private final URI chUri = URI.create("https://clearing-house.com/");
+    private final UUID agreementID = UUID.fromString("260eb25e-9a83-457b-8607-8829d57fda10");
 
     @Test
     public void sendAgreement_inputNull_doNothing() {
@@ -80,6 +83,7 @@ public class PolicyExecutionServiceTest {
         verify(logMessageService, never()).sendMessage(any(), any());
     }
 
+    @SneakyThrows
     @Test
     public void sendAgreement_validInput_sendAgreementToClearingHouse() {
         /* ARRANGE */
@@ -93,7 +97,7 @@ public class PolicyExecutionServiceTest {
 
         /* ASSERT */
         verify(logMessageService, times(1))
-                .sendMessage(chUri, IdsUtils.toRdf(agreement));
+                .sendMessage(new URI(chUri + agreementID.toString()), IdsUtils.toRdf(agreement));
     }
 
     @Test
@@ -135,7 +139,7 @@ public class PolicyExecutionServiceTest {
      **********************************************************************************************/
 
     private ContractAgreement getContractAgreement() {
-        return new ContractAgreementBuilder(URI.create("https://agreement.com"))
+        return new ContractAgreementBuilder(URI.create("https://agreement.com/api/agreements/" + agreementID))
                 ._contractStart_(IdsMessageUtils.getGregorianNow())
                 ._contractEnd_(IdsMessageUtils.getGregorianNow())
                 .build();

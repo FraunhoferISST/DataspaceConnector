@@ -18,6 +18,8 @@ package io.dataspaceconnector.service.message.type;
 import de.fraunhofer.iais.eis.ArtifactRequestMessage;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
+import io.dataspaceconnector.camel.ClearingHouseLoggingProcessor;
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.ids.DeserializationService;
@@ -38,6 +40,9 @@ class ArtifactRequestServiceTest {
 
     @MockBean
     private ConnectorService connectorService;
+
+    @MockBean
+    private ClearingHouseLoggingProcessor clearingHouseLoggingProcessor;
 
     @MockBean
     private IdsHttpService idsHttpService;
