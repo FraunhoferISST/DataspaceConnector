@@ -16,11 +16,27 @@
 package io.dataspaceconnector.repository;
 
 import io.dataspaceconnector.model.broker.Broker;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Repository for brokers.
  */
 @Repository
 public interface BrokerRepository extends BaseEntityRepository<Broker> {
+
+    /**
+     * Finds the broker by the location.
+     * @param location The uri of the broker.
+     * @return The uuid of the broker.
+     */
+    @Query("SELECT a.id "
+            + "FROM #{#entityName} a "
+            + "WHERE a.location = :location "
+            + "AND a.deleted = false")
+    Optional<UUID> findByLocation(URI location);
 }

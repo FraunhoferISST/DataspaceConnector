@@ -66,6 +66,12 @@ public class OfferedResourceViewAssembler
                         .withRel("catalogs");
         view.add(catalogLink);
 
+        final var brokerLink =
+                linkTo(methodOn(RelationControllers.OfferedResourcesToBrokers.class)
+                        .getResource(resource.getId(), null, null))
+                        .withRel("brokers");
+        view.add(brokerLink);
+
         return view;
     }
 
