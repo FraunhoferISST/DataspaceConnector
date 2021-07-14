@@ -31,7 +31,6 @@ import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
 import de.fraunhofer.ids.messaging.protocol.multipart.MessageAndPayload;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
-import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.service.configuration.BrokerService;
 import io.dataspaceconnector.service.configuration.EntityLinkerService;
 import io.dataspaceconnector.util.UUIDUtils;
@@ -263,7 +262,8 @@ public class GlobalMessageService {
             linker.remove(brokerId.get(), Set.of(UUIDUtils.uuidFromUri(resource.getId())));
         } else {
             if (log.isWarnEnabled()) {
-                log.warn("Removed Resource from Broker but Broker was not linked to resource in OfferedResource-Broker-List.");
+                log.warn("Removed Resource from Broker but Broker was not linked "
+                        + "to resource in OfferedResource-Broker-List.");
             }
         }
     }
