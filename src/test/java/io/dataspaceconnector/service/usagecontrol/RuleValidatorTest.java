@@ -72,7 +72,7 @@ class RuleValidatorTest {
                                                   ._rightOperand_(new RdfResource("5"))
                                                   .build()))
                 .build();
-        final var target = URI.create("htttps://target");
+        final var target = URI.create("https://target");
 
         Mockito.when(informationService.getAccessNumber(eq(target))).thenReturn(0L);
 
@@ -92,7 +92,7 @@ class RuleValidatorTest {
                                                   ._rightOperand_(new RdfResource("5"))
                                                   .build()))
                 .build();
-        final var target = URI.create("htttps://target");
+        final var target = URI.create("https://target");
 
         Mockito.when(informationService.getAccessNumber(eq(target))).thenReturn(6L);
 
@@ -113,7 +113,7 @@ class RuleValidatorTest {
                                       ._rightOperand_(new RdfResource(recipient.toString(), URI.create("xsd:anyURI")))
                                       .build()))
                                   .build();
-        final var target = URI.create("htttps://target");
+        final var target = URI.create("https://target");
 
         /* ACT && ASSERT */
         assertDoesNotThrow(() -> validator.validatePolicy( PolicyPattern.CONNECTOR_RESTRICTED_USAGE, rule, target, recipient));
@@ -132,7 +132,7 @@ class RuleValidatorTest {
                                                   .build()))
                 .build();
         final var recipient = URI.create("https://recipient");
-        final var target = URI.create("htttps://target");
+        final var target = URI.create("https://target");
 
         /* ACT && ASSERT */
         final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy(PolicyPattern.CONNECTOR_RESTRICTED_USAGE, rule, target, recipient));
