@@ -130,7 +130,7 @@ class ArtifactRequestMessageBuilder extends IdsMessageBuilder<ArtifactRequestMes
     @Override
     protected Request<ArtifactRequestMessageImpl, String> processInternal(final Exchange exchange) {
         final var recipient = exchange.getProperty("recipient", URI.class);
-        final var agreementId = exchange.getProperty("agreementId", URI.class);
+        final var agreementId = exchange.getProperty("transferContract", URI.class);
 
         URI artifactId = exchange.getProperty("artifactId", URI.class);
         if (artifactId == null) {
