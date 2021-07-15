@@ -23,7 +23,10 @@ import de.fraunhofer.iais.eis.RouteStepBuilder;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import io.configmanager.extensions.routes.petrinet.builder.GraphVizGenerator;
 import io.configmanager.extensions.routes.petrinet.builder.InfomodelPetriNetBuilder;
+import io.configmanager.extensions.routes.petrinet.builder.RuleFormulaBuilder;
 import io.configmanager.extensions.routes.petrinet.evaluation.formula.CTLEvaluator;
+import io.configmanager.extensions.routes.petrinet.evaluation.formula.TrueOperator;
+import io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeNOT;
 import io.configmanager.extensions.routes.petrinet.model.Arc;
 import io.configmanager.extensions.routes.petrinet.model.ArcImpl;
 import io.configmanager.extensions.routes.petrinet.model.ContextObject;
@@ -66,6 +69,14 @@ import static io.configmanager.extensions.routes.petrinet.evaluation.formula.tra
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionMODAL.transitionMODAL;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionNOT.transitionNOT;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionPOS.transitionPOS;
+import static io.dataspaceconnector.service.usagecontrol.PolicyPattern.CONNECTOR_RESTRICTED_USAGE;
+import static io.dataspaceconnector.service.usagecontrol.PolicyPattern.PROHIBIT_ACCESS;
+import static io.dataspaceconnector.service.usagecontrol.PolicyPattern.PROVIDE_ACCESS;
+import static io.dataspaceconnector.service.usagecontrol.PolicyPattern.USAGE_LOGGING;
+import static io.dataspaceconnector.service.usagecontrol.PolicyPattern.USAGE_NOTIFICATION;
+import static io.dataspaceconnector.service.usagecontrol.PolicyPattern.USAGE_UNTIL_DELETION;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test building a PetriNet from a randomly generated AppRoute
@@ -81,6 +92,40 @@ class InfomodelPetriNetBuilderTest {
 
     private final static int MINIMUM_STARTEND = 1;
     private final static int MAXIMUM_STARTEND = 3;
+
+    @Test
+    void testBuildFormula_PROVIDE_ACCESS() {
+        var formula = RuleFormulaBuilder.buildFormula(PROVIDE_ACCESS, null, null);
+        assertEquals(TrueOperator.class, formula.getClass());
+    }
+
+    @Test
+    void testBuildFormula_USAGE_UNTIL_DELETION() {
+        var formula = RuleFormulaBuilder.buildFormula(USAGE_UNTIL_DELETION, null,
+                URI.create("6ba7b810-9ffff-11d1-80b4-00c04fd430c8"));
+        assertEquals(NodeNOT.class, formula.getClass());
+    }
+
+    @Test
+    void testBuildFormula_USAGE_LOGGING() {
+        var formula = RuleFormulaBuilder.buildFormula(USAGE_LOGGING, null,
+                URI.create("6ba7b810-9ffff-11d1-80b4-00c04fd430c8"));
+        assertEquals(NodeNOT.class, formula.getClass());
+    }
+
+    @Test
+    void testBuildFormula_USAGE_NOTIFICATION() {
+        var formula = RuleFormulaBuilder.buildFormula(USAGE_NOTIFICATION, null,
+                URI.create("6ba7b810-9ffff-11d1-80b4-00c04fd430c8"));
+        assertEquals(NodeNOT.class, formula.getClass());
+    }
+
+    @Test
+    void testBuildFormula_PROHIBIT_ACCESS() {
+        var formula = RuleFormulaBuilder.buildFormula(PROHIBIT_ACCESS, null,
+                URI.create("6ba7b810-9ffff-11d1-80b4-00c04fd430c8"));
+        assertEquals(NodeNOT.class, formula.getClass());
+    }
 
     /**
      * Example: Generate a random PetriNet, try to simulate it and print out the GraphViz representation
