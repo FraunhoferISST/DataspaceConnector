@@ -196,9 +196,11 @@ public class InfomodelPetriNetBuilder {
             }
         }
 
-        //add every SubRoute of the AppRoute to the PetriNet
-        for (final var subroute : appRoute.getHasSubRoute()) {
-            addSubRouteToPetriNet(subroute, arcs, places, transitions);
+        if(appRoute.getHasSubRoute() != null) {
+            //add every SubRoute of the AppRoute to the PetriNet
+            for (final var subroute : appRoute.getHasSubRoute()) {
+                addSubRouteToPetriNet(subroute, arcs, places, transitions);
+            }
         }
 
         //create a PetriNet with all Arcs, Transitions and Places from the AppRoute

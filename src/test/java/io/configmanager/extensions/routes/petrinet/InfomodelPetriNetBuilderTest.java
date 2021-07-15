@@ -18,9 +18,11 @@ package io.configmanager.extensions.routes.petrinet;
 import de.fraunhofer.iais.eis.AppRouteBuilder;
 import de.fraunhofer.iais.eis.Endpoint;
 import de.fraunhofer.iais.eis.EndpointBuilder;
+import de.fraunhofer.iais.eis.GenericEndpointBuilder;
 import de.fraunhofer.iais.eis.RouteStep;
 import de.fraunhofer.iais.eis.RouteStepBuilder;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
+import de.fraunhofer.iais.eis.util.Util;
 import io.configmanager.extensions.routes.petrinet.builder.GraphVizGenerator;
 import io.configmanager.extensions.routes.petrinet.builder.InfomodelPetriNetBuilder;
 import io.configmanager.extensions.routes.petrinet.builder.RuleFormulaBuilder;
@@ -69,14 +71,13 @@ import static io.configmanager.extensions.routes.petrinet.evaluation.formula.tra
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionMODAL.transitionMODAL;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionNOT.transitionNOT;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionPOS.transitionPOS;
-import static io.dataspaceconnector.service.usagecontrol.PolicyPattern.CONNECTOR_RESTRICTED_USAGE;
 import static io.dataspaceconnector.service.usagecontrol.PolicyPattern.PROHIBIT_ACCESS;
 import static io.dataspaceconnector.service.usagecontrol.PolicyPattern.PROVIDE_ACCESS;
 import static io.dataspaceconnector.service.usagecontrol.PolicyPattern.USAGE_LOGGING;
 import static io.dataspaceconnector.service.usagecontrol.PolicyPattern.USAGE_NOTIFICATION;
 import static io.dataspaceconnector.service.usagecontrol.PolicyPattern.USAGE_UNTIL_DELETION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test building a PetriNet from a randomly generated AppRoute
@@ -92,6 +93,18 @@ class InfomodelPetriNetBuilderTest {
 
     private final static int MINIMUM_STARTEND = 1;
     private final static int MAXIMUM_STARTEND = 3;
+
+    @Test
+    void buildPetrinetFromAppRoute() {
+        final var appRoute = new AppRouteBuilder(URI.create("http://approute"))
+                ._routeDeployMethod_("CAMEL")
+                ._appRouteStart_(Util.asList(new GenericEndpointBuilder()._accessURL_(URI.create("http://test")).build()))
+                ._appRouteOutput_(Util.asList())
+                .build();
+
+        assertTrue(InfomodelPetriNetBuilder.buildAndCheck(appRoute));
+    }
+
 
     @Test
     void testBuildFormula_PROVIDE_ACCESS() {
