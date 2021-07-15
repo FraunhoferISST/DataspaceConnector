@@ -10,7 +10,7 @@
         <!-- any required input parameter is missing -->
         <onException>
             <exception>java.lang.IllegalArgumentException</exception>
-            <to uri="direct:handleIllegalArgumentException"/>
+            <to uri="direct:handleIllegalArgumentExceptionWithTransformer"/>
         </onException>
 
         <!-- payload stream cannot be read -->

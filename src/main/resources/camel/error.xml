@@ -65,6 +65,16 @@
         ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getHeader().getId()})"/>
     </route>
 
+    <route id="illegalArgumentExceptionWithTransformer">
+        <from uri="direct:handleIllegalArgumentExceptionWithTransformer"/>
+        <log loggingLevel="DEBUG" message="Error route for handling IllegalArgumentException called."/>
+        <process ref="PayloadStreamReader"/>
+        <to uri="bean:messageResponseService?method=handleIllegalArgumentException(${exception},
+        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getBody().toString()},
+        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getHeader().getId()})"/>
+    </route>
+
     <route id="wrappedIllegalArgumentException">
         <from uri="direct:handleWrappedIllegalArgumentException"/>
         <log loggingLevel="DEBUG" message="Error route for handling IllegalArgumentException called."/>
