@@ -15,20 +15,17 @@
  */
 package io.dataspaceconnector.service.configuration;
 
-import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.model.broker.Broker;
-import io.dataspaceconnector.model.broker.BrokerDesc;
-import io.dataspaceconnector.model.broker.BrokerFactory;
-import io.dataspaceconnector.repository.BrokerRepository;
-import io.dataspaceconnector.service.resource.BaseEntityService;
-import io.dataspaceconnector.util.ErrorMessages;
-import io.dataspaceconnector.util.Utils;
-import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
+
+import io.dataspaceconnector.model.base.RegistrationStatus;
+import io.dataspaceconnector.model.broker.Broker;
+import io.dataspaceconnector.model.broker.BrokerDesc;
+import io.dataspaceconnector.repository.BrokerRepository;
+import io.dataspaceconnector.service.resource.BaseEntityService;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Service;
 
 /**
  * Service class for brokers.
@@ -36,16 +33,6 @@ import java.util.UUID;
 @Service("ConfigurationBrokerService") //Clashes with IDS-Messaging-Services brokerService Bean
 @NoArgsConstructor
 public class BrokerService extends BaseEntityService<Broker, BrokerDesc> {
-
-    @Override
-    public final void delete(final UUID entityId) {
-        Utils.requireNonNull(entityId, ErrorMessages.ENTITYID_NULL);
-        if (!getRepository().getById(entityId).getOfferedResources().isEmpty()) {
-            return;
-        }
-
-        super.delete(entityId);
-    }
 
     /**
      * Finds a broker by the uri.
@@ -59,21 +46,9 @@ public class BrokerService extends BaseEntityService<Broker, BrokerDesc> {
     /**
      * This method updates the registration status of the broker.
      * @param location The uri of the broker.
+     * @param status The registration status
      */
-    public void updateRegistrationStatus(final URI location) {
-        final var brokerId = ((BrokerRepository) getRepository()).findByLocation(location);
-        if (brokerId.isPresent()) {
-            final var broker = getRepository().findById(brokerId.get());
-            if (broker.isPresent()) {
-                if (RegistrationStatus.UNREGISTERED.equals(broker.get().getStatus())) {
-                    ((BrokerFactory) getFactory()).updateRegistrationStatus(broker.get(),
-                            RegistrationStatus.REGISTERED);
-                } else {
-                    ((BrokerFactory) getFactory()).updateRegistrationStatus(broker.get(),
-                            RegistrationStatus.UNREGISTERED);
-                }
-                super.persist(broker.get());
-            }
-        }
+    public void setRegistrationStatus(final URI location, final RegistrationStatus status) {
+        ((BrokerRepository) getRepository()).setRegistrationStatus(location, status);
     }
 }
