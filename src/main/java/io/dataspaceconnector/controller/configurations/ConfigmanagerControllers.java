@@ -23,7 +23,7 @@ import io.dataspaceconnector.model.datasource.DataSourceDesc;
 import io.dataspaceconnector.service.configuration.ConfigurationService;
 import io.dataspaceconnector.service.configuration.DataSourceService;
 import io.dataspaceconnector.view.configuration.ConfigurationView;
-import io.dataspaceconnector.view.DataSourceView;
+import io.dataspaceconnector.view.datasource.DataSourceView;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
