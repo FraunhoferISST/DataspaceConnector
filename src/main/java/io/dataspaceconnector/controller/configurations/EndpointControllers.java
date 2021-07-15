@@ -16,7 +16,6 @@
 package io.dataspaceconnector.controller.configurations;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.UUID;
 
 import io.dataspaceconnector.controller.base.CRUDController;
@@ -34,9 +33,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.RepresentationModel;
@@ -69,26 +68,22 @@ public final class EndpointControllers {
         /**
          * Service for generic endpoint.
          */
-        @Autowired
-        private final GenericEndpointService genericEndpointService;
+        private final @NonNull GenericEndpointService genericEndpointService;
 
         /**
          * Service proxy for endpoints.
          */
-        @Autowired
-        private final EndpointServiceProxy service;
+        private final @NonNull EndpointServiceProxy service;
 
         /**
          * Assembler for pagination.
          */
-        @Autowired
-        private final PagedResourcesAssembler<Endpoint> pagedAssembler;
+        private final @NonNull PagedResourcesAssembler<Endpoint> pagedAssembler;
 
         /**
          * Assembler for the EndpointView.
          */
-        @Autowired
-        private final EndpointViewAssemblerProxy assemblerProxy;
+        private final @NonNull EndpointViewAssemblerProxy assemblerProxy;
 
         /**
          * @param obj The endpoint object.
@@ -131,16 +126,12 @@ public final class EndpointControllers {
         public ResponseEntity<Object> update(final UUID resourceId, final EndpointDesc desc) {
             final var resource = service.update(resourceId, desc);
 
-            ResponseEntity<Object> response;
             if (resource.getId().equals(resourceId)) {
                 // The resource was not moved
-                response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            } else {
-                // The resource has been moved
-                response = respondCreated(resource);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
 
-            return response;
+            return respondCreated(resource);
         }
 
         @Override
@@ -159,7 +150,7 @@ public final class EndpointControllers {
         @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.OK)})
         public ResponseEntity<String> createDataSource(
                 @Valid @PathVariable(name = "id") final UUID genericEndpointId,
-                @RequestBody final UUID dataSourceId) throws IOException {
+                @RequestBody final UUID dataSourceId) {
             genericEndpointService.setGenericEndpointDataSource(genericEndpointId, dataSourceId);
             return new ResponseEntity<>("Created DataSource", HttpStatus.OK);
         }
