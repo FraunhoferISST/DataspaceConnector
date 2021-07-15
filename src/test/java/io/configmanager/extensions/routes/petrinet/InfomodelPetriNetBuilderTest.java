@@ -152,15 +152,21 @@ class InfomodelPetriNetBuilderTest {
     void testExamplePetriNet(){
         //build the example net and log DOT visualization
         final var petriNet = buildPaperNet();
-        log.info(GraphVizGenerator.generateGraphViz(petriNet));
+        if (log.isInfoEnabled()) {
+            log.info(GraphVizGenerator.generateGraphViz(petriNet));
+        }
 
         //build stepGraph
         final var graph = PetriNetSimulator.buildStepGraph(petriNet);
-        log.info(String.format("%d possible states!", graph.getSteps().size()));
+        if (log.isInfoEnabled()) {
+            log.info(String.format("%d possible states!", graph.getSteps().size()));
+        }
 
         //get set of paths from calculated stepgraph
         final var allPaths = PetriNetSimulator.getAllPaths(graph);
-        log.info(String.format("Found %d valid Paths!", allPaths.size()));
+        if (log.isInfoEnabled()) {
+            log.info(String.format("Found %d valid Paths!", allPaths.size()));
+        }
 
         //Evaluate Formula 1: a transition is reachable, which reads data without 'france' in context, after that transition data is overwritten or erased (or an end is reached)
         final var formulaFrance = transitionPOS(
@@ -221,19 +227,27 @@ class InfomodelPetriNetBuilderTest {
 
         //unfold and visualize example petrinet
         final var unfolded = PetriNetSimulator.getUnfoldedPetriNet(petriNet);
-        log.info(GraphVizGenerator.generateGraphViz(unfolded));
+        if (log.isInfoEnabled()) {
+            log.info(GraphVizGenerator.generateGraphViz(unfolded));
+        }
 
         //build step graph of unfolded net
         final var unfoldedGraph = PetriNetSimulator.buildStepGraph(unfolded);
-        log.info(String.format("Step Graph has %d possible combinations!", unfoldedGraph.getSteps().size()));
+        if (log.isInfoEnabled()) {
+            log.info(String.format("Step Graph has %d possible combinations!", unfoldedGraph.getSteps().size()));
+        }
 
         //get possible parallel executions of transitions from the calculated stepgraph
         final var parallelSets = PetriNetSimulator.getParallelSets(unfoldedGraph);
-        log.info(String.format("Found %d possible parallel executions!", parallelSets.size()));
+        if (log.isInfoEnabled()) {
+            log.info(String.format("Found %d possible parallel executions!", parallelSets.size()));
+        }
 
         //evaluate: 3 transitions are reading data in parallel
         final var result = ParallelEvaluator.nParallelTransitionsWithCondition(x -> x.getContext().getRead() != null && x.getContext().getRead().equals("data"), 3, parallelSets);
-        log.info(String.format("3 parallel reading Transitions: %s", result));
+        if (log.isInfoEnabled()) {
+            log.info(String.format("3 parallel reading Transitions: %s", result));
+        }
     }
 
     /**

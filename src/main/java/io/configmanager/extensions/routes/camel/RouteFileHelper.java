@@ -15,6 +15,7 @@
  */
 package io.configmanager.extensions.routes.camel;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FilenameUtils;
@@ -52,6 +53,8 @@ public class RouteFileHelper {
      * @param content the content to write to the file
      * @throws IOException if the file cannot be created or written
      */
+    @SuppressFBWarnings(value = "PATH_TRAVERSAL_IN", justification = "filePath is not set"
+            + " by the user but by the application.properties or env-variabels, false positive")
     public void writeToFile(final String fileName, final String content) throws IOException {
         final var file = new File(filePath
                 + File.separator
@@ -87,6 +90,8 @@ public class RouteFileHelper {
      * @param name the filename
      * @throws IOException if the file cannot be deleted
      */
+    @SuppressFBWarnings(value = "PATH_TRAVERSAL_IN", justification = "filePath is not set"
+            + " by the user but by the application.properties or env-variabels, false positive")
     public void deleteFile(final String name) throws IOException {
         final var file = Paths.get(filePath + FilenameUtils.getName(name));
         if (Files.exists(file)) {

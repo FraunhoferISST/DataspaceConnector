@@ -37,6 +37,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -305,7 +306,8 @@ public class RouteManager {
      */
     private StringWriter populateTemplate(final Resource resource,
                                           final VelocityEngine velocityEngine,
-                                          final VelocityContext velocityContext) throws Exception {
+                                          final VelocityContext velocityContext)
+            throws IOException {
         final var stringWriter = new StringWriter();
         InputStreamReader inputStreamReader;
 
@@ -313,7 +315,7 @@ public class RouteManager {
             inputStreamReader = new InputStreamReader(resource.getInputStream(),
                     StandardCharsets.UTF_8);
             velocityEngine.evaluate(velocityContext, stringWriter, "", inputStreamReader);
-        } catch (Exception e) {
+        } catch (IOException e) {
             final var camelRouteId = (String) velocityContext.get("routeId");
 
             if (log.isErrorEnabled()) {
