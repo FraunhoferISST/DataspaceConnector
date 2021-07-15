@@ -247,7 +247,7 @@ public class HttpService {
                     args.setAuth(el.addAuth());
                 }
             } else if(el instanceof ApiKey) {
-                args.getParams().put(el.addAuth().getFirst(), el.addAuth().getSecond());
+                args.getHeaders().put(el.addAuth().getFirst(), el.addAuth().getSecond());
             }
         }
         return args;
