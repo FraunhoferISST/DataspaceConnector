@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.camel.outgoing;
+package io.dataspaceconnector.camel.processors.outgoing;
 
 import java.util.HashMap;
 
 import io.dataspaceconnector.camel.dto.Response;
-import io.dataspaceconnector.camel.outgoing.exceptions.InvalidResponseException;
+import io.dataspaceconnector.camel.exception.InvalidResponseException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
 import io.dataspaceconnector.service.message.type.ContractAgreementService;

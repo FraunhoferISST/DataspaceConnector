@@ -12,7 +12,7 @@
         </onException>
 
         <onException>
-            <exception>io.dataspaceconnector.camel.outgoing.exceptions.InvalidResponseException</exception>
+            <exception>io.dataspaceconnector.camel.exception.InvalidResponseException</exception>
             <to uri="direct:handleInvalidResponseException"/>
         </onException>
 

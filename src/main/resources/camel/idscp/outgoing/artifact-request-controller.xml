@@ -2,7 +2,7 @@
     <route id="artifactRequestSender">
 
         <onException>
-            <exception>io.dataspaceconnector.camel.outgoing.exceptions.InvalidResponseException</exception>
+            <exception>io.dataspaceconnector.camel.exception.InvalidResponseException</exception>
             <process ref="PolicyRestrictionProcessor"/>
         </onException>
 

@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.camel.outgoing;
+package io.dataspaceconnector.camel.processors.outgoing;
 
 import java.net.URI;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
-import io.dataspaceconnector.camel.outgoing.exceptions.InvalidResponseException;
+import io.dataspaceconnector.camel.exception.InvalidResponseException;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.service.ids.ConnectorService;

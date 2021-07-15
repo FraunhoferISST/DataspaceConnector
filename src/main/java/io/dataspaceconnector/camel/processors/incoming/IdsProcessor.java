@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.camel;
+package io.dataspaceconnector.camel.processors.incoming;
+
+import java.util.ArrayList;
+import javax.persistence.PersistenceException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
@@ -61,9 +64,6 @@ import org.apache.camel.Processor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
-
-import javax.persistence.PersistenceException;
-import java.util.ArrayList;
 
 /**
  * Superclass for Camel processors that execute the final logic to generate a response to an
