@@ -82,7 +82,7 @@ public class DescriptionRequestMessageController {
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The id of the requested resource.")
             @RequestParam(value = "elementId", required = false) final URI elementId) {
-        String payload = null;
+        String payload;
         try {
             // Send and validate description request/response message.
             final var response = descriptionReqSvc.sendMessage(recipient, elementId);

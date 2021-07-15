@@ -17,12 +17,16 @@ package io.dataspaceconnector.controller.message;
 
 import de.fraunhofer.iais.eis.DynamicAttributeToken;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
+import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
+import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
+import io.dataspaceconnector.util.ErrorMessages;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +36,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.xml.datatype.DatatypeFactory;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -68,11 +76,9 @@ public class QueryMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendQueryMessage_validInput_returnQueryResponse() throws Exception {
         /* ARRANGE */
-        final var response = Optional.of("Some query result.");
-
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
-        Mockito.doReturn(response).when(messageService).sendQueryMessage(Mockito.any(),
-                Mockito.any());
+        Mockito.doReturn(getResponse("Some query result.")).when(messageService)
+                .sendQueryMessage(Mockito.any(), Mockito.any());
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/query")
@@ -81,24 +87,6 @@ public class QueryMessageControllerTest {
 
         /* ASSERT */
         assertEquals("Some query result.", result.getResponse().getContentAsString());
-    }
-
-    @Test
-    @WithMockUser("ADMIN")
-    public void sendQueryMessage_mockConnectionTimeout_returnBadGateway() throws Exception {
-        /* ARRANGE */
-        final var response = Optional.empty();
-
-        Mockito.doReturn(token).when(connectorService).getCurrentDat();
-        Mockito.doReturn(response).when(messageService).sendQueryMessage(Mockito.any(),
-                Mockito.any());
-
-        /* ACT */
-        final var result = mockMvc.perform(post("/api/ids/query")
-                .param("recipient", brokerUrl).content("SOME QUERY")).andReturn();
-
-        /* ASSERT */
-        assertEquals(502, result.getResponse().getStatus());
     }
 
     @Test
@@ -158,9 +146,9 @@ public class QueryMessageControllerTest {
                 .param("recipient", brokerUrl).content("SOME QUERY")).andReturn();
 
         /* ASSERT */
-        assertEquals(500, result.getResponse().getStatus());
-        assertEquals("Failed to read the ids response message.",
-                result.getResponse().getContentAsString());
+        assertEquals(502, result.getResponse().getStatus());
+        final var msg = ErrorMessages.INVALID_MESSAGE.toString();
+        assertEquals(msg, result.getResponse().getContentAsString());
     }
 
     @Test
@@ -187,10 +175,8 @@ public class QueryMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendSearchMessage_validSearchTerm_returnResponse() throws Exception {
         /* ARRANGE */
-        final var response = Optional.of("Some search result.");
-
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
-        Mockito.doReturn(response).when(messageService).sendFullTextSearchMessage(
+        Mockito.doReturn(getResponse("Some search result.")).when(messageService).sendFullTextSearchMessage(
                 Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt());
 
         /* ACT */
@@ -200,25 +186,6 @@ public class QueryMessageControllerTest {
 
         /* ASSERT */
         assertEquals("Some search result.", result.getResponse().getContentAsString());
-    }
-
-    @Test
-    @WithMockUser("ADMIN")
-    public void sendSearchMessage_validSearchTerm_returnBadGateway() throws Exception {
-        /* ARRANGE */
-        final var response = Optional.empty();
-
-        Mockito.doReturn(token).when(connectorService).getCurrentDat();
-        Mockito.doReturn(response).when(messageService).sendFullTextSearchMessage(
-                Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt());
-
-        /* ACT */
-        final var result = mockMvc.perform(post("/api/ids/search")
-                .param("recipient", brokerUrl)
-                .content("SOME SEARCH TERM")).andReturn();
-
-        /* ASSERT */
-        assertEquals(502, result.getResponse().getStatus());
     }
 
     @Test
@@ -249,9 +216,9 @@ public class QueryMessageControllerTest {
                 .param("recipient", brokerUrl).content("SOME SEARCH TERM")).andReturn();
 
         /* ASSERT */
-        assertEquals(500, result.getResponse().getStatus());
-        assertEquals("Failed to read the ids response message.",
-                result.getResponse().getContentAsString());
+        assertEquals(502, result.getResponse().getStatus());
+        final var msg = ErrorMessages.INVALID_MESSAGE.toString();
+        assertEquals(msg, result.getResponse().getContentAsString());
     }
 
     @Test
@@ -268,5 +235,25 @@ public class QueryMessageControllerTest {
 
         /* ASSERT */
         assertEquals(504, result.getResponse().getStatus());
+    }
+
+    @SneakyThrows
+    private Optional<MessageContainer<?>> getResponse(final String result) {
+        final var calendar = new GregorianCalendar();
+        calendar.setTime(new Date());
+        final var xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
+        final var connectorId = URI.create("https://connector");
+        final var modelVersion = "4.0.0";
+        final var token = new DynamicAttributeTokenBuilder()
+                ._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build();
+        final var message = new MessageProcessedNotificationMessageBuilder()
+                ._securityToken_(token)
+                ._modelVersion_(modelVersion)
+                ._issuerConnector_(connectorId)
+                ._correlationMessage_(URI.create("https://message"))
+                ._senderAgent_(connectorId)
+                ._issued_(xmlCalendar)
+                .build();
+        return Optional.of(new MessageContainer<>(message, result));
     }
 }
