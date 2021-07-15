@@ -195,10 +195,10 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
                                      final String apiKey, final String apiKeyValue) {
         final var newData = new RemoteData();
         newData.setAccessUrl(accessUrl);
-        if(username != null && password != null) {
+        if (username != null && password != null) {
             newData.addAuthentification(new BasicAuth(username, password));
         }
-        if(apiKey != null && apiKeyValue != null) {
+        if (apiKey != null && apiKeyValue != null) {
             newData.addAuthentification(new ApiKey(apiKey, apiKeyValue));
         }
 

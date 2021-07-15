@@ -27,7 +27,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import org.springframework.stereotype.Service;
 
@@ -240,12 +239,13 @@ public class HttpService {
      */
     public HttpArgs toArgs(final QueryInput input, final List<AuthType> auth) {
         final var args = toArgs(input);
-        for(AuthType el : auth) {
-            if(el instanceof BasicAuth) {
-                if(args.getAuth() == null || (args.getAuth().getFirst() == null && args.getAuth().getSecond() == null)) {
+        for (AuthType el : auth) {
+            if (el instanceof BasicAuth) {
+                if (args.getAuth() == null || (args.getAuth().getFirst() == null
+                        && args.getAuth().getSecond() == null)) {
                     args.setAuth(el.addAuth());
                 }
-            } else if(el instanceof ApiKey) {
+            } else if (el instanceof ApiKey) {
                 args.getHeaders().put(el.addAuth().getFirst(), el.addAuth().getSecond());
             }
         }

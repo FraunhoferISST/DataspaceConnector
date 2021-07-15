@@ -16,34 +16,39 @@
 package io.dataspaceconnector.model.auth;
 
 import kotlin.Pair;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.AccessLevel;
+import lombok.NonNull;
 import okhttp3.Credentials;
 
 import javax.persistence.Entity;
 
 /**
- * Entity used for containing Basic Auth information in the context of AuthTypes
+ * Entity used for containing Basic Auth information in the context of AuthTypes.
  */
 @Entity
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @AllArgsConstructor
 @NoArgsConstructor
-public class BasicAuth extends AuthType{
+public class BasicAuth extends AuthType {
 
     /**
-     * The username that is to be used for Basic Auth
+     * The username that is to be used for Basic Auth.
      */
     @NonNull
     private String username;
     /**
-     * The password that is to be used for Basic Auth
+     * The password that is to be used for Basic Auth.
      */
     @NonNull
     private String password;
 
     /**
-     * Generates the HTTP header information for the HTTP Basic Auth
+     * Generates the HTTP header information for the HTTP Basic Auth.
      * @return a Pair containing the key and value used as HTTP header
      */
     @Override

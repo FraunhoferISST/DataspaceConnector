@@ -34,7 +34,6 @@ import io.dataspaceconnector.service.usagecontrol.VerificationResult;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.Utils;
 import kotlin.NotImplementedError;
-import kotlin.Pair;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -71,13 +70,17 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      **/
     private final @NonNull HttpService httpSvc;
 
-    private final @NonNull AuthTypeRepository authTypeRepository;
+    /**
+     * Repository for storing AuthTypes.
+     */
+    private final @NonNull AuthTypeRepository authTypeRepo;
 
     /**
      * Constructor for ArtifactService.
      *
-     * @param dataRepository The data repository.
-     * @param httpService    The HTTP service for fetching remote data.
+     * @param dataRepository     The data repository.
+     * @param httpService        The HTTP service for fetching remote data.
+     * @param authTypeRepository The AuthType repository.
      */
     @Autowired
     public ArtifactService(final @NonNull DataRepository dataRepository,
@@ -86,7 +89,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         super();
         this.dataRepo = dataRepository;
         this.httpSvc = httpService;
-        this.authTypeRepository = authTypeRepository;
+        this.authTypeRepo = authTypeRepository;
     }
 
     /**
@@ -101,9 +104,9 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         if (tmp.getData() != null) {
             if (tmp.getData().getId() == null) {
                 // The data element is new, insert
-                if(tmp.getData() instanceof RemoteData) {
+                if (tmp.getData() instanceof RemoteData) {
                     var data = (RemoteData) tmp.getData();
-                    data.getAuthentification().forEach(authTypeRepository::saveAndFlush);
+                    data.getAuthentification().forEach(authTypeRepo::saveAndFlush);
                 }
                 dataRepo.saveAndFlush(tmp.getData());
             } else {

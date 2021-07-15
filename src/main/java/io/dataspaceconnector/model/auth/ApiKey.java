@@ -16,32 +16,36 @@
 package io.dataspaceconnector.model.auth;
 
 import kotlin.Pair;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import javax.persistence.Entity;
 
 /**
- * Entity used for containing Basic Auth information in the context of AuthTypes
+ * Entity used for containing Basic Auth information in the context of AuthTypes.
  */
 @Entity
 @Getter
 @Setter
 @RequiredArgsConstructor
 @NoArgsConstructor
-public class ApiKey extends AuthType{
+public class ApiKey extends AuthType {
     /**
-     * The key associated to the ApiKey
+     * The key associated to the ApiKey.
      */
     @NonNull
     private String key;
     /**
-     * The value associated to the ApiKey
+     * The value associated to the ApiKey.
      */
     @NonNull
     private String value;
 
     /**
-     * Getter for the key and value
+     * Getter for the key and value.
      * @return the key and value of the ApiKey as a Pair
      */
     @Override

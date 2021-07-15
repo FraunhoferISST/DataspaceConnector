@@ -55,12 +55,16 @@ public class RemoteData extends Data {
     private URL accessUrl;
 
     /**
-     * List of additional authentification elements
+     * List of additional authentification elements.
      */
     @OneToMany
     private List<AuthType> authentification = new LinkedList<>();
 
-    public void addAuthentification(AuthType type) {
+    /**
+     * Add an authentification element to the authentification list.
+     * @param type the element to be added
+     */
+    public void addAuthentification(final AuthType type) {
         authentification.add(type);
     }
 }

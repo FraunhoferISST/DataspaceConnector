@@ -63,12 +63,12 @@ public class ArtifactDesc extends AbstractDescription<Artifact> {
     private String password;
 
     /**
-     * The API key name used for authentication at the data location
+     * The API key name used for authentication at the data location.
      */
     private String apiKey;
 
     /**
-     * The API key value for authentication at the data location
+     * The API key value for authentication at the data location.
      */
     private String apiKeyValue;
 

@@ -26,7 +26,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 /**
- * Superclass for containing authentification information
+ * Superclass for containing authentification information.
  */
 @Entity
 @Getter
@@ -44,7 +44,7 @@ public class AuthType {
     private Long id;
 
     /**
-     * Overridden method for extension classes which contains the information
+     * Overridden method for extension classes which contains the information.
      * @return the information to be added to the HTTP request
      */
     public Pair<String, String> addAuth() {
