@@ -238,7 +238,7 @@ public final class PetriNetSimulator {
 
         while (!lenN.isEmpty()) {
             if (log.isDebugEnabled()) {
-                log.debug("Calculating paths of length " + ++i);
+                log.debug("Calculating paths of length {}", ++i);
             }
             lenN = getPathsOfLengthNplus1(len1, lenN);
 
