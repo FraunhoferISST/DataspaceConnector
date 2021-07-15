@@ -77,7 +77,7 @@ public final class ArtifactRequestService
         final var artifactId = desc.getRequestedArtifact();
         final var contractId = desc.getTransferContract();
 
-        var message = new ArtifactRequestMessageBuilder()
+        final var message = new ArtifactRequestMessageBuilder()
                 ._issued_(IdsMessageUtils.getGregorianNow())
                 ._modelVersion_(modelVersion)
                 ._issuerConnector_(connectorId)
@@ -87,6 +87,7 @@ public final class ArtifactRequestService
                 ._recipientConnector_(Util.asList(recipient))
                 ._transferContract_(contractId)
                 .build();
+
             // Log outgoing ArtifactRequestMessages in ClearingHouse
             clearingHouseLoggingProcessor.logIDSMessage(message);
         return message;
@@ -181,7 +182,7 @@ public final class ArtifactRequestService
         }
 
         // Log response header in the Clearing House
-        var header = deserializer.getResponseMessage(response.get("header"));
+        final var header = deserializer.getResponseMessage(response.get("header"));
         clearingHouseLoggingProcessor.logIDSMessage(header);
 
         return response;
