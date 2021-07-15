@@ -42,6 +42,18 @@ public class NodeEXISTMODAL implements StateFormula {
     private TransitionFormula parameter2;
 
     /**
+     * Evaluates to true, if there is a successor place for which parameter1 holds,
+     * while parameter2 holds for the transition in between.
+     * @param parameter1 A successor place.
+     * @param parameter2 The transition to the successor place.
+     * @return Node representing the formula.
+     */
+    public static NodeEXISTMODAL nodeEXISTMODAL(final StateFormula parameter1,
+                                                  final TransitionFormula parameter2) {
+        return new NodeEXISTMODAL(parameter1, parameter2);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

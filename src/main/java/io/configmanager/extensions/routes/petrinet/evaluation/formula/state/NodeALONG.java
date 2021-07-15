@@ -34,6 +34,15 @@ public class NodeALONG implements StateFormula {
     private StateFormula parameter;
 
     /**
+     * Evaluates to true, if there exists a path, where parameter holds for every place.
+     * @param parameter Formula which needs to hold for every place.
+     * @return The node representing the formula.
+     */
+    public static NodeALONG nodeALONG(final StateFormula parameter) {
+        return new NodeALONG(parameter);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

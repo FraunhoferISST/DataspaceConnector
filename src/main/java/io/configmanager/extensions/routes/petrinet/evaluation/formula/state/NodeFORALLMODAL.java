@@ -42,6 +42,20 @@ public class NodeFORALLMODAL implements StateFormula {
      */
     private TransitionFormula parameter2;
 
+
+    /**
+     * Evaluates to true, if parameter1 evaluates to true for every following
+     * place and parameter2 evaluates to true
+     * for every transition in between.
+     * @param parameter1 Needs to evanluate to true for every following place.
+     * @param parameter2 Needs to evaluate to true for every transition.
+     * @return Node representing the formula.
+     */
+    public static NodeFORALLMODAL nodeFORALLMODAL(final StateFormula parameter1,
+                                                  final TransitionFormula parameter2) {
+        return new NodeFORALLMODAL(parameter1, parameter2);
+    }
+
     /**
      * {@inheritDoc}
      */

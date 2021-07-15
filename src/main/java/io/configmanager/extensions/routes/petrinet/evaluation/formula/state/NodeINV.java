@@ -33,6 +33,15 @@ public class NodeINV implements StateFormula {
     private StateFormula parameter;
 
     /**
+     * Evaluates to true, if parameter evaluates to true for all reachable places.
+     * @param parameter Formula which needs to hold for every reachable place.
+     * @return The node representing the formula.
+     */
+    public static NodeINV nodeINV(final StateFormula parameter) {
+        return new NodeINV(parameter);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

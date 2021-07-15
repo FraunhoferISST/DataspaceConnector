@@ -57,12 +57,19 @@ import java.util.concurrent.ThreadLocalRandom;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.FalseOperator.falseOperator;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.TrueOperator.trueOperator;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeAND.nodeAND;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeEV.nodeEV;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeEXISTMODAL.nodeEXISTMODAL;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeEXISTUNTIL.nodeEXISTUNTIL;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeExpression.nodeExpression;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeFORALLMODAL.nodeFORALLMODAL;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeFORALLNEXT.nodeFORALLNEXT;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeFORALLUNTIL.nodeFORALLUNTIL;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeINV.nodeINV;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeMODAL.nodeMODAL;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeNF.nodeNF;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeOR.nodeOR;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeALONG.nodeALONG;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodePOS.nodePOS;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.ArcExpression.arcExpression;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionAF.transitionAF;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionAND.transitionAND;
@@ -201,6 +208,39 @@ class InfomodelPetriNetBuilderTest {
             log.info("Formula 3: " + formula3.writeFormula());
             log.info("Result: " + CTLEvaluator.evaluate(formula3, graph.getInitial().getNodes().stream().filter(node -> node.getID().equals(URI.create("place://source"))).findAny().get(), allPaths));
         }
+
+        //Testing building further formulas
+        final var formula4 = nodeALONG(formula3);
+        assertEquals("ALONG", formula4.symbol());
+        assertEquals("ALONG(EXIST_UNTIL(MODAL(TrueOperator), NF()))", formula4.writeFormula());
+
+        final var formula5 = nodeEV(formula3);
+        assertEquals("EV", formula5.symbol());
+        assertEquals("EV(EXIST_UNTIL(MODAL(TrueOperator), NF()))", formula5.writeFormula());
+
+        final var formula6 = nodePOS(formula3);
+        assertEquals("POS", formula6.symbol());
+        assertEquals("POS(EXIST_UNTIL(MODAL(TrueOperator), NF()))", formula6.writeFormula());
+
+        final var formula7 = nodeINV(formula3);
+        assertEquals("INV", formula7.symbol());
+        assertEquals("INV(EXIST_UNTIL(MODAL(TrueOperator), NF()))", formula7.writeFormula());
+
+        final var formula8 = nodeFORALLUNTIL(formula3, formula3);
+        assertEquals("FORALL_UNTIL", formula8.symbol());
+        assertEquals("FORALL_UNTIL(EXIST_UNTIL(MODAL(TrueOperator), NF()), EXIST_UNTIL(MODAL(TrueOperator), NF()))", formula8.writeFormula());
+
+        final var formula9 = nodeFORALLMODAL(
+                formula3,
+                transitionNOT(falseOperator()));
+        assertEquals("FORALL_MODAL",formula9.symbol());
+        assertEquals("FORALL_MODAL(EXIST_UNTIL(MODAL(TrueOperator), NF()), NOT(falseOperator))",formula9.writeFormula());
+
+        final var formula10 = nodeEXISTMODAL(
+                formula3,
+                transitionNOT(falseOperator()));
+        assertEquals("EXIST_MODAL",formula10.symbol());
+        assertEquals("EXIST_MODAL(EXIST_UNTIL(MODAL(TrueOperator), NF()), NOT(falseOperator))",formula10.writeFormula());
     }
 
     /**
@@ -220,7 +260,7 @@ class InfomodelPetriNetBuilderTest {
             log.info(String.format("%d possible states!", graph.getSteps().size()));
         }
 
-        //get set of paths from calculated stepgraph
+        //get set of paths f7rom calculated stepgraph
         final var allPaths = PetriNetSimulator.getAllPaths(graph);
         if (log.isInfoEnabled()) {
             log.info(String.format("Found %d valid Paths!", allPaths.size()));
