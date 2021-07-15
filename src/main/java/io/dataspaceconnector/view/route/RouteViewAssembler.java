@@ -18,7 +18,6 @@ package io.dataspaceconnector.view.route;
 import io.dataspaceconnector.controller.configurations.RouteControllers;
 import io.dataspaceconnector.controller.resource.view.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
-import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.route.Route;
@@ -77,24 +76,18 @@ public class RouteViewAssembler
                 if (view.getStart() instanceof GenericEndpoint) {
                     final var end = (GenericEndpoint) view.getStart();
                     end.setType("GENERIC");
-                } else if (view.getStart() instanceof ConnectorEndpoint) {
+                } else {
                     final var end = (ConnectorEndpoint) view.getStart();
                     end.setType("CONNECTOR");
-                } else {
-                    final var end = (AppEndpoint) view.getStart();
-                    end.setType("APP");
                 }
             }
             if (view.getEnd() != null) {
                 if (view.getEnd() instanceof GenericEndpoint) {
                     final var end = (GenericEndpoint) view.getEnd();
                     end.setType("GENERIC");
-                } else if (view.getEnd() instanceof ConnectorEndpoint) {
+                } else {
                     final var end = (ConnectorEndpoint) view.getEnd();
                     end.setType("CONNECTOR");
-                } else {
-                    final var end = (AppEndpoint) view.getEnd();
-                    end.setType("APP");
                 }
             }
         }

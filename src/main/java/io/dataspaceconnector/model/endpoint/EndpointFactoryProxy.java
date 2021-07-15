@@ -26,12 +26,6 @@ import org.springframework.stereotype.Component;
 public class EndpointFactoryProxy extends EndpointFactory<Endpoint, EndpointDesc> {
 
     /**
-     * The factory for the app endpoint.
-     */
-    @Autowired
-    private AppEndpointFactory apps;
-
-    /**
      * The factory for the connector endpoint.
      */
     @Autowired
@@ -45,9 +39,7 @@ public class EndpointFactoryProxy extends EndpointFactory<Endpoint, EndpointDesc
 
     @Override
     protected final Endpoint initializeEntity(final EndpointDesc desc) {
-        if (desc instanceof AppEndpointDesc) {
-            return apps.initializeEntity((AppEndpointDesc) desc);
-        } else if (desc instanceof ConnectorEndpointDesc) {
+         if (desc instanceof ConnectorEndpointDesc) {
             return connector.initializeEntity((ConnectorEndpointDesc) desc);
         }
 
@@ -57,9 +49,7 @@ public class EndpointFactoryProxy extends EndpointFactory<Endpoint, EndpointDesc
 
     @Override
     protected final boolean updateInternal(final Endpoint endpoint, final EndpointDesc desc) {
-        if (endpoint instanceof AppEndpoint && desc instanceof AppEndpointDesc) {
-            return apps.updateInternal((AppEndpoint) endpoint, (AppEndpointDesc) desc);
-        } else if (endpoint instanceof ConnectorEndpoint && desc instanceof ConnectorEndpointDesc) {
+        if (endpoint instanceof ConnectorEndpoint && desc instanceof ConnectorEndpointDesc) {
             return connector.updateInternal((ConnectorEndpoint) endpoint,
                                             (ConnectorEndpointDesc) desc);
         }
