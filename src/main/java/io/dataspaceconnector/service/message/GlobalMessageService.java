@@ -136,7 +136,11 @@ public class GlobalMessageService {
         final var response = brokerSvc.updateResourceAtBroker(recipient, resource);
         final var msg = String.format("Successfully registered resource. "
                 + "[resourceId=(%s), url=(%s)]", resource.getId(), recipient);
-        return validateResponse(response, msg);
+        final var result =  validateResponse(response, msg);
+        if (result) {
+            updateOfferedResourceBrokerList(recipient, resource);
+        }
+        return result;
     }
 
     /**
@@ -244,6 +248,23 @@ public class GlobalMessageService {
         }
 
         return false;
+    }
+
+    /**
+     * @param recipient The uri of the recipient.
+     * @param resource The offered resource.
+     */
+    private void updateOfferedResourceBrokerList(final URI recipient,
+                                                 final Resource resource) {
+        final var brokerId = brokerService.findByLocation(recipient);
+        if (brokerId.isPresent()) {
+            linker.add(brokerId.get(), Set.of(UUIDUtils.uuidFromUri(resource.getId())));
+        } else {
+            if (log.isWarnEnabled()) {
+                log.warn("Updated Resource at Broker but Broker was not linked "
+                        + "to resource in OfferedResource-Broker-List.");
+            }
+        }
     }
 
     /**
