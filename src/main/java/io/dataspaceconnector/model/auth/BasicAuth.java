@@ -22,6 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.AccessLevel;
 import lombok.NonNull;
+import lombok.EqualsAndHashCode;
 import okhttp3.Credentials;
 
 import javax.persistence.Entity;
@@ -34,6 +35,7 @@ import javax.persistence.Entity;
 @Setter(AccessLevel.PACKAGE)
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class BasicAuth extends AuthType {
 
     /**

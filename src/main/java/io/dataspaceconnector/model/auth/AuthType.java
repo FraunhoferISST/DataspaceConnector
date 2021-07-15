@@ -17,6 +17,7 @@ package io.dataspaceconnector.model.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kotlin.Pair;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -31,6 +32,7 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @Setter
+@EqualsAndHashCode
 public class AuthType {
 
     /**

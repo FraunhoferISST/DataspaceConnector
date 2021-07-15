@@ -21,6 +21,7 @@ import lombok.Setter;
 import lombok.RequiredArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
 
@@ -32,6 +33,7 @@ import javax.persistence.Entity;
 @Setter
 @RequiredArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class ApiKey extends AuthType {
     /**
      * The key associated to the ApiKey.
