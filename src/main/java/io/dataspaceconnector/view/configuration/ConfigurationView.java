@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.view;
+package io.dataspaceconnector.view.configuration;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -23,6 +23,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dataspaceconnector.model.configuration.DeployMode;
 import io.dataspaceconnector.model.configuration.LogLevel;
 import io.dataspaceconnector.model.configuration.SecurityProfile;
+import io.dataspaceconnector.view.KeystoreView;
+import io.dataspaceconnector.view.ProxyView;
+import io.dataspaceconnector.view.TruststoreView;
 import io.dataspaceconnector.view.util.ViewConstants;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

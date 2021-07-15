@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.view;
+package io.dataspaceconnector.view.configuration;
 
 import java.util.UUID;
 
@@ -21,6 +21,9 @@ import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers.
 import io.dataspaceconnector.controller.resource.view.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.configuration.Configuration;
+import io.dataspaceconnector.view.KeystoreViewAssembler;
+import io.dataspaceconnector.view.ProxyViewAssembler;
+import io.dataspaceconnector.view.TruststoreViewAssembler;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
