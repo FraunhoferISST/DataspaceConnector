@@ -121,6 +121,11 @@ public enum ErrorMessages {
     MESSAGE_HANDLING_FAILED("Message handling or processing failed."),
 
     /**
+     * IDS message could not be sent.
+     */
+    MESSAGE_SENDING_FAILED("Message sending failed."),
+
+    /**
      * Multipart message could not be sent to recipient.
      */
     GATEWAY_TIMEOUT("Gateway timeout when connecting to recipient."),

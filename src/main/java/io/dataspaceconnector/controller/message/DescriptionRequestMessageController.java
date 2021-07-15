@@ -103,11 +103,13 @@ public class DescriptionRequestMessageController {
                 }
             }
         } catch (MessageException exception) {
+            // If the message could not be built.
             return ControllerUtils.respondIdsMessageFailed(exception);
         } catch (MessageResponseException | IllegalArgumentException e) {
             // If the response message is invalid or malformed.
             return ControllerUtils.respondReceivedInvalidResponse(e);
         } catch (UnexpectedResponseException e) {
+            // If the response is not as expected.
             return ControllerUtils.respondWithContent(e.getContent());
         }
     }

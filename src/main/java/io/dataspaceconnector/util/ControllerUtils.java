@@ -48,8 +48,22 @@ public final class ControllerUtils {
         if (log.isDebugEnabled()) {
             log.debug("{} [exception=({})]", msg, e.getMessage(), e);
         }
-        return new ResponseEntity<>(String.format("%s %s", msg, e.getMessage()),
-                HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(msg.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Creates a ResponseEntity with status code 500 and a message indicating that the message could
+     * not be built or sent.
+     *
+     * @param e Exception that was thrown during communication.
+     * @return ResponseEntity with status code 500.
+     */
+    public static ResponseEntity<Object> respondMessageSendingFailed(final Exception e) {
+        final var msg = ErrorMessages.MESSAGE_SENDING_FAILED;
+        if (log.isDebugEnabled()) {
+            log.debug("{} [exception=({})]", msg, e.getMessage(), e);
+        }
+        return new ResponseEntity<>(msg.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**

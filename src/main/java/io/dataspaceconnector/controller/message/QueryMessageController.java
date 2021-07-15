@@ -97,14 +97,19 @@ public class QueryMessageController {
             // Send the query message.
             response = messageService.sendQueryMessage(recipient, query);
         } catch (SocketTimeoutException exception) {
+            // If a timeout has occurred.
             return ControllerUtils.respondConnectionTimedOut(exception);
         } catch (MultipartParseException | UnknownResponseException | ShaclValidatorException
                 | DeserializeException | UnexpectedPayloadException | ClaimsException exception) {
+            // If the response was invalid.
             return ControllerUtils.respondReceivedInvalidResponse(exception);
         } catch (RejectionException ignored) {
-
-        } catch (SendMessageException | SerializeException | NoTemplateProvidedException
-                | DapsTokenManagerException | IOException exception) {
+            // If the response is a rejection message. Error is ignored.
+        } catch (SendMessageException | SerializeException | DapsTokenManagerException exception) {
+            // If the message could not be built or sent.
+            return ControllerUtils.respondMessageSendingFailed(exception);
+        } catch (NoTemplateProvidedException | IOException exception) {
+            // If any other error occurred.
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
         return messageService.validateResponse(response);
@@ -144,14 +149,19 @@ public class QueryMessageController {
             // Send the query message for full text search.
             response = messageService.sendFullTextSearchMessage(recipient, term, limit, offset);
         } catch (SocketTimeoutException exception) {
+            // If a timeout has occurred.
             return ControllerUtils.respondConnectionTimedOut(exception);
         } catch (MultipartParseException | UnknownResponseException | ShaclValidatorException
                 | DeserializeException | UnexpectedPayloadException | ClaimsException exception) {
+            // If the response was invalid.
             return ControllerUtils.respondReceivedInvalidResponse(exception);
         } catch (RejectionException ignored) {
-
-        } catch (SendMessageException | SerializeException | NoTemplateProvidedException
-                | DapsTokenManagerException | IOException exception) {
+            // If the response is a rejection message. Error is ignored.
+        } catch (SendMessageException | SerializeException | DapsTokenManagerException exception) {
+            // If the message could not be built or sent.
+            return ControllerUtils.respondMessageSendingFailed(exception);
+        } catch (NoTemplateProvidedException | IOException exception) {
+            // If any other error occurred.
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
         return messageService.validateResponse(response);
