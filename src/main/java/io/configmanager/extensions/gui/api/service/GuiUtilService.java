@@ -56,6 +56,9 @@ import java.util.Locale;
 @Service
 @Transactional
 @NoArgsConstructor
+@SuppressFBWarnings(value = "SIC_INNER_SHOULD_BE_STATIC_ANON",
+        justification = "GuiUtilService is a service-class for the GuiUtilController and too"
+                + " big to become a static inner class in GuiUtilController.")
 public class GuiUtilService {
 
     /**
@@ -202,7 +205,6 @@ public class GuiUtilService {
      * @param jsonArray json array to be sorted
      * @return sorted json array
      */
-    @SuppressFBWarnings("CRLF_INJECTION_LOGS")
     private JSONArray sortJsonArray(final JSONArray jsonArray) {
         List<JSONObject> jsonObjects = new ArrayList<>();
 
@@ -223,7 +225,9 @@ public class GuiUtilService {
                     str1 = (String) a.get(KEY_NAME);
                     str2 = (String) b.get(KEY_NAME);
                 } catch (JSONException e) {
-                    log.error(e.getMessage(), e);
+                    if (log.isErrorEnabled()) {
+                        log.error("Sorting contents of an array for the GUI failed.");
+                    }
                 }
                 return str1.compareTo(str2);
             }

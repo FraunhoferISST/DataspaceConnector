@@ -15,6 +15,7 @@
  */
 package io.configmanager.extensions.routes.camel;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.configmanager.core.OkHttpUtils;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -73,6 +74,9 @@ public class RouteHttpHelper {
      * @param xml the XML route
      * @throws IOException if the HTTP request cannot be sent or the response status code is not 2xx
      */
+    @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+            justification = "FindBugs doesn't see the response.body() != null check before"
+                    + " the line after that.")
     public void sendRouteFileToCamelApplication(final String xml) throws IOException {
         final var url = camelApplicationUrl + camelApplicationRoutesPath;
 
@@ -118,6 +122,9 @@ public class RouteHttpHelper {
      * @param routeId ID of the route to delete
      * @throws IOException if the HTTP request cannot be sent or the response status code is not 2xx
      */
+    @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+            justification = "FindBugs doesn't see the response.body() != null check before"
+                    + " the line after that.")
     public void deleteRouteAtCamelApplication(final String routeId) throws IOException {
         final var url = camelApplicationUrl + camelApplicationRoutesPath + "/" + routeId;
 

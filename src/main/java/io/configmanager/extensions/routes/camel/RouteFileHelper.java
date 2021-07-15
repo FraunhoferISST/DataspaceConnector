@@ -17,13 +17,16 @@ package io.configmanager.extensions.routes.camel;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
@@ -50,9 +53,12 @@ public class RouteFileHelper {
      * @throws IOException if the file cannot be created or written
      */
     public void writeToFile(final String fileName, final String content) throws IOException {
-        final var file = new File(filePath + File.separator +  fileName);
+        final var file = new File(filePath
+                + File.separator
+                + FilenameUtils.getName(fileName));
 
-        try (var fileWriter = new FileWriter(file);
+        try (var fileWriter = new OutputStreamWriter(new FileOutputStream(file),
+                StandardCharsets.UTF_8);
              var bufferedWriter = new BufferedWriter(fileWriter)) {
 
             if (log.isErrorEnabled() && !file.exists() && !file.createNewFile()) {
@@ -82,7 +88,7 @@ public class RouteFileHelper {
      * @throws IOException if the file cannot be deleted
      */
     public void deleteFile(final String name) throws IOException {
-        final var file = Paths.get(filePath + name);
+        final var file = Paths.get(filePath + FilenameUtils.getName(name));
         if (Files.exists(file)) {
             try {
                 Files.delete(file);

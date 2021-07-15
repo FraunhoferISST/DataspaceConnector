@@ -28,6 +28,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * Utility class for configuring Camel routes for the Dataspace Connector.
  */
@@ -61,8 +63,8 @@ public class RouteConfigurer {
      */
     public void addBasicAuthToContext(final VelocityContext velocityContext) {
         final var auth = dataSpaceConnectorApiUsername + ":" + dataSpaceConnectorApiPassword;
-        final var encodedAuth = Base64.encodeBase64(auth.getBytes());
-        final var authHeader = "Basic " + new String(encodedAuth);
+        final var encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
+        final var authHeader = "Basic " + new String(encodedAuth, StandardCharsets.UTF_8);
         velocityContext.put("connectorAuthHeader", authHeader);
     }
 

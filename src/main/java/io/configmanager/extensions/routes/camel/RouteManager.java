@@ -39,6 +39,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -181,8 +182,8 @@ public class RouteManager {
             final var username = basicAuth.getAuthUsername();
             final var password = basicAuth.getAuthPassword();
             final var auth = username + ":" + password;
-            final var encodedAuth = Base64.encodeBase64(auth.getBytes());
-            final var authHeader = "Basic " + new String(encodedAuth);
+            final var encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
+            final var authHeader = "Basic " + new String(encodedAuth, StandardCharsets.UTF_8);
             velocityContext.put("genericEndpointAuthHeader", authHeader);
         }
     }
@@ -309,7 +310,8 @@ public class RouteManager {
         InputStreamReader inputStreamReader;
 
         try {
-            inputStreamReader = new InputStreamReader(resource.getInputStream());
+            inputStreamReader = new InputStreamReader(resource.getInputStream(),
+                    StandardCharsets.UTF_8);
             velocityEngine.evaluate(velocityContext, stringWriter, "", inputStreamReader);
         } catch (Exception e) {
             final var camelRouteId = (String) velocityContext.get("routeId");
