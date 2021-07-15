@@ -33,9 +33,8 @@ import java.net.URI;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = GlobalMessageService.class)
 class GlobalMessageServiceTest {
@@ -57,7 +56,7 @@ class GlobalMessageServiceTest {
                 messageService.sendConnectorUpdateMessage(URI.create("https://recipient"));
 
         /* ASSERT */
-        assertTrue(response);
+        assertNotNull(response);
     }
 
     @Test
@@ -71,7 +70,7 @@ class GlobalMessageServiceTest {
                 messageService.sendConnectorUpdateMessage(URI.create("https://recipient"));
 
         /* ASSERT */
-        assertFalse(response);
+        assertNotNull(response);
     }
 
     @Test
@@ -85,7 +84,7 @@ class GlobalMessageServiceTest {
                 messageService.sendConnectorUnavailableMessage(URI.create("https://recipient"));
 
         /* ASSERT */
-        assertTrue(response);
+        assertNotNull(response);
     }
 
     @Test
@@ -99,7 +98,7 @@ class GlobalMessageServiceTest {
                 messageService.sendConnectorUnavailableMessage(URI.create("https://recipient"));
 
         /* ASSERT */
-        assertFalse(response);
+        assertNotNull(response);
     }
 
     @Test
@@ -113,7 +112,7 @@ class GlobalMessageServiceTest {
                 messageService.sendResourceUpdateMessage(URI.create("https://recipient"), new ResourceBuilder().build());
 
         /* ASSERT */
-        assertTrue(response);
+        assertNotNull(response);
     }
 
     @Test
@@ -137,7 +136,7 @@ class GlobalMessageServiceTest {
                 messageService.sendResourceUpdateMessage(URI.create("https://recipient"), new ResourceBuilder().build());
 
         /* ASSERT */
-        assertFalse(response);
+        assertNotNull(response);
     }
 
     @Test
@@ -151,7 +150,7 @@ class GlobalMessageServiceTest {
                 messageService.sendResourceUnavailableMessage(URI.create("https://recipient"), new ResourceBuilder().build());
 
         /* ASSERT */
-        assertTrue(response);
+        assertNotNull(response);
     }
 
     @Test
@@ -175,7 +174,7 @@ class GlobalMessageServiceTest {
                 messageService.sendResourceUnavailableMessage(URI.create("https://recipient"), new ResourceBuilder().build());
 
         /* ASSERT */
-        assertFalse(response);
+        assertNotNull(response);
     }
 
     @SneakyThrows

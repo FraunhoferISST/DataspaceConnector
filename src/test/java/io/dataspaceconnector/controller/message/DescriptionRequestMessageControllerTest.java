@@ -27,6 +27,7 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,6 +58,7 @@ public class DescriptionRequestMessageControllerTest {
     private DescriptionRequestMessageController controller;
 
     @Test
+    @SneakyThrows
     public void sendDescriptionRequestMessage_elementIdNull_returnDeserializedResponsePayload() {
         /* ARRANGE */
         final var recipient = URI.create("https://recipient.com");
@@ -83,6 +85,7 @@ public class DescriptionRequestMessageControllerTest {
     }
 
     @Test
+    @SneakyThrows
     public void sendDescriptionRequestMessage_invalidResponse_returnResponsePayloadWithCode417() {
         /* ARRANGE */
         final var recipient = URI.create("https://recipient.com");
