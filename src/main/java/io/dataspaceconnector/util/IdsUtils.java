@@ -22,7 +22,6 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
@@ -216,15 +215,18 @@ public final class IdsUtils {
      */
     @SuppressFBWarnings("IMPROPER_UNICODE")
     public static Language getLanguage(final String language) {
-        return Arrays.stream(Language.values())
-                .filter(l ->
-                        Normalizer.normalize(
-                                language.toLowerCase(Locale.ROOT),
-                                Normalizer.Form.NFC).equals(
-                                Normalizer.normalize(l.name().toLowerCase(Locale.ROOT),
-                                        Normalizer.Form.NFC)))
-                .findAny()
-                .orElse(Language.EN);
+        for (final var infomodelLanguage : Language.values()) {
+            if (Normalizer.normalize(
+                    language.toLowerCase(Locale.ROOT),
+                    Normalizer.Form.NFC).equals(
+                    Normalizer.normalize(infomodelLanguage.name()
+                                    .toLowerCase(Locale.ROOT),
+                            Normalizer.Form.NFC))) {
+                return infomodelLanguage;
+            }
+        }
+
+        return Language.EN;
     }
 
     /**
