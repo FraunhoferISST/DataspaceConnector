@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.view.datasource;
 
-import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers;
-import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.datasource.DataSource;
 import io.dataspaceconnector.model.datasource.DataSourceDesc;
 import io.dataspaceconnector.model.datasource.DataSourceFactory;
@@ -33,9 +31,6 @@ public class DataSourceViewAssemblerTest {
     public void create_ValidDataSource_returnDataSourceView() {
         /* ARRANGE */
         final var shouldLookLike = getDataSource();
-        final var link = ViewAssemblerHelper.
-                getSelfLink(shouldLookLike.getId(),
-                        ConfigmanagerControllers.DataSourceController.class);
 
         /* ACT */
         final var after = getDataSourceView();

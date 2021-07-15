@@ -15,16 +15,16 @@
  */
 package io.dataspaceconnector.controller.configurations;
 
+import javax.validation.Valid;
+import java.util.UUID;
+
 import io.dataspaceconnector.controller.resource.BaseResourceChildController;
 import io.dataspaceconnector.controller.resource.BaseResourceController;
-import io.dataspaceconnector.controller.resource.view.ArtifactView;
 import io.dataspaceconnector.controller.resource.swagger.response.ResponseCodes;
+import io.dataspaceconnector.controller.resource.view.ArtifactView;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteDesc;
-import io.dataspaceconnector.model.route.RouteFactory;
-import io.dataspaceconnector.repository.EndpointRepository;
-import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.configuration.EntityLinkerService;
 import io.dataspaceconnector.service.configuration.RouteService;
 import io.dataspaceconnector.view.route.RouteView;
@@ -32,7 +32,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,9 +41,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.util.UUID;
 
 /**
  * Controller for route management.
@@ -62,19 +58,6 @@ public final class RouteControllers {
             extends BaseResourceController<Route, RouteDesc, RouteView, RouteService> {
 
         /**
-         * The route repository.
-         */
-        private final @NonNull RouteRepository routeRepository;
-        /**
-         * The endpoint repository.
-         */
-        private final @NonNull EndpointRepository endpointRepository;
-        /**
-         * The route factory.
-         */
-        private final @NonNull RouteFactory routeFactory;
-
-        /**
          * @param routeId The id of the route.
          * @param endpointId The id of the endpoint.
          * @return response status OK, if start endpoint is created.
@@ -85,16 +68,8 @@ public final class RouteControllers {
         public ResponseEntity<String> createStartEndpoint(
                 @Valid @PathVariable(name = "id") final UUID routeId,
                 @RequestBody final UUID endpointId) {
-            final var routeTmp = routeRepository.findById(routeId).orElse(null);
-            final var endpoint = endpointRepository.findById(endpointId).orElse(null);
-            if (routeTmp != null && endpoint != null) {
-                final var updatedRoute = routeFactory.setStartEndpoint(routeTmp, endpoint);
-                routeRepository.saveAndFlush(updatedRoute);
-                return new ResponseEntity<>("Created the start endpoint for the route",
-                        HttpStatus.OK);
-            }
-            return ResponseEntity.badRequest()
-                    .body("Could not create start endpoint for the route");
+            getService().setStartEndpoint(routeId, endpointId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
         /**
@@ -106,15 +81,8 @@ public final class RouteControllers {
         @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.OK)})
         public ResponseEntity<String> deleteStartEndpoint(
                 @Valid @PathVariable(name = "id") final UUID routeId) {
-            final var routeTmp = routeRepository.findById(routeId).orElse(null);
-            if (routeTmp != null) {
-                final var updatedRoute = routeFactory.deleteStartEndpoint(routeTmp);
-                routeRepository.saveAndFlush(updatedRoute);
-                return new ResponseEntity<>("Deleted the start endpoint of the route",
-                        HttpStatus.OK);
-            }
-            return ResponseEntity.badRequest()
-                    .body("Could not delete the start endpoint of the route");
+            getService().removeStartEndpoint(routeId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
         /**
@@ -128,16 +96,8 @@ public final class RouteControllers {
         public ResponseEntity<String> createLastEndpoint(
                 @Valid @PathVariable(name = "id") final UUID routeId,
                 @RequestBody final UUID endpointId) {
-            final var routeTmp = routeRepository.findById(routeId).orElse(null);
-            final var endpoint = endpointRepository.findById(endpointId).orElse(null);
-            if (routeTmp != null && endpoint != null) {
-                final var updatedRoute = routeFactory.setLastEndpoint(routeTmp, endpoint);
-                routeRepository.saveAndFlush(updatedRoute);
-                return new ResponseEntity<>("Created the last endpoint for the route",
-                        HttpStatus.OK);
-            }
-            return ResponseEntity.badRequest()
-                    .body("Could not create last endpoint for the route");
+            getService().setLastEndpoint(routeId, endpointId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
         /**
@@ -149,15 +109,8 @@ public final class RouteControllers {
         @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.OK)})
         public ResponseEntity<String> deleteLastEndpoint(
                 @Valid @PathVariable(name = "id") final UUID routeId) {
-            final var routeTmp = routeRepository.findById(routeId).orElse(null);
-            if (routeTmp != null) {
-                final var updatedRoute = routeFactory.deleteLastEndpoint(routeTmp);
-                routeRepository.saveAndFlush(updatedRoute);
-                return new ResponseEntity<>("Deleted the last endpoint of the route",
-                        HttpStatus.OK);
-            }
-            return ResponseEntity.badRequest()
-                    .body("Could not delete the last endpoint of the route");
+            getService().removeLastEndpoint(routeId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
 
@@ -182,18 +135,4 @@ public final class RouteControllers {
             extends BaseResourceChildController<EntityLinkerService.RouteArtifactsLinker,
             Artifact, ArtifactView> {
     }
-
-//    @RestController
-//    @RequestMapping("/api/routes/{id}/endpoints/start")
-//    @Tag(name = "Route", description = "Endpoints for linking routes to the start endpoint")
-//    public static class RoutesToStartEndpoints
-//            extends BaseResourceChildController<EntityLinkerService.RouteStartEndpointLinker,
-//            Endpoint, EndpointViewProxy> { }
-//
-//    @RestController
-//    @RequestMapping("/api/routes/{id}/endpoints/end")
-//    @Tag(name = "Route", description = "Endpoints for linking routes to the last endpoint")
-//    public static class RoutesToEndpoints
-//            extends BaseResourceChildController<EntityLinkerService.RouteLastEndpointLinker,
-//            Endpoint, EndpointViewProxy> { }
 }
