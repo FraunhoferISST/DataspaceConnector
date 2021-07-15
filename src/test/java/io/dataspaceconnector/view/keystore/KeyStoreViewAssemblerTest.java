@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class KeyStoreViewAssemblerTest {
 
     @Test
-    public void create_ValidTrustStore_returnTrustStoreView(){
+    public void create_ValidKeyStore_returnKeyStoreView(){
         /* ARRANGE */
         final var shouldLookLike = getKeyStore();
 
