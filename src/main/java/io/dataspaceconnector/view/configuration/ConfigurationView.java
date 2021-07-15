@@ -25,7 +25,7 @@ import io.dataspaceconnector.model.configuration.LogLevel;
 import io.dataspaceconnector.model.configuration.SecurityProfile;
 import io.dataspaceconnector.view.keystore.KeystoreView;
 import io.dataspaceconnector.view.proxy.ProxyView;
-import io.dataspaceconnector.view.TruststoreView;
+import io.dataspaceconnector.view.truststore.TruststoreView;
 import io.dataspaceconnector.view.util.ViewConstants;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

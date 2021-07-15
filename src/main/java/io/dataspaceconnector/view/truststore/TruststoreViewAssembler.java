@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.view;
+package io.dataspaceconnector.view.truststore;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.hateoas.RepresentationModel;
+import io.dataspaceconnector.model.truststore.Truststore;
+import org.modelmapper.ModelMapper;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
 
 /**
- * View class for the trust store.
+ * View assembler for the trust store.
  */
-@Getter
-@Setter
-@EqualsAndHashCode(callSuper = true)
-public class TruststoreView extends RepresentationModel<TruststoreView> {
+public class TruststoreViewAssembler implements
+        RepresentationModelAssembler<Truststore, TruststoreView> {
 
-    /**
-     * The name of the trust store.
-     */
-    private String name;
+    @Override
+    public final TruststoreView toModel(final Truststore store) {
+        return new ModelMapper().map(store, TruststoreView.class);
+    }
 }

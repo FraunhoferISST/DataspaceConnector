@@ -23,7 +23,7 @@ import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.view.keystore.KeystoreViewAssembler;
 import io.dataspaceconnector.view.proxy.ProxyViewAssembler;
-import io.dataspaceconnector.view.TruststoreViewAssembler;
+import io.dataspaceconnector.view.truststore.TruststoreViewAssembler;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
