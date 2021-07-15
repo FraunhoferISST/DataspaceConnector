@@ -106,7 +106,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                 // The data element is new, insert
                 if (tmp.getData() instanceof RemoteData) {
                     var data = (RemoteData) tmp.getData();
-                    data.getAuthentification().forEach(authTypeRepo::saveAndFlush);
+                    data.getAuthentication().forEach(authTypeRepo::saveAndFlush);
                 }
                 dataRepo.saveAndFlush(tmp.getData());
             } else {
@@ -301,9 +301,9 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             throws IOException {
         try {
             InputStream backendData;
-            if (!data.getAuthentification().isEmpty()) {
+            if (!data.getAuthentication().isEmpty()) {
                 backendData = httpSvc.get(data.getAccessUrl(), queryInput,
-                                             data.getAuthentification())
+                                             data.getAuthentication())
                                       .getBody();
             } else {
                 backendData = httpSvc.get(data.getAccessUrl(), queryInput).getBody();

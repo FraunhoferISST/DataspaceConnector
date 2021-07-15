@@ -196,10 +196,10 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
         final var newData = new RemoteData();
         newData.setAccessUrl(accessUrl);
         if (username != null && password != null) {
-            newData.addAuthentification(new BasicAuth(username, password));
+            newData.addAuthentication(new BasicAuth(username, password));
         }
         if (apiKey != null && apiKeyValue != null) {
-            newData.addAuthentification(new ApiKey(apiKey, apiKeyValue));
+            newData.addAuthentication(new ApiKey(apiKey, apiKeyValue));
         }
 
         final var oldData = artifact.getData();

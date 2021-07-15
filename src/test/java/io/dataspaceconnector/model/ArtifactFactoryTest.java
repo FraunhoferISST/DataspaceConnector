@@ -563,7 +563,7 @@ public class ArtifactFactoryTest {
      */
 
     @Test
-    public void create_nullUsername_emptyAuthentification() throws MalformedURLException {
+    public void create_nullUsername_emptyAuthentication() throws MalformedURLException {
         /* ARRANGE */
         final var desc = new ArtifactDesc();
         desc.setAccessUrl(new URL("https://localhost:8080/"));
@@ -574,7 +574,7 @@ public class ArtifactFactoryTest {
 
         /* ASSERT */
         final var data = (RemoteData) ((ArtifactImpl) result).getData();
-        Assertions.assertTrue(data.getAuthentification().isEmpty());
+        Assertions.assertTrue(data.getAuthentication().isEmpty());
     }
 
     @Test
@@ -597,7 +597,7 @@ public class ArtifactFactoryTest {
 
         /* ASSERT */
         final var data = (RemoteData) ((ArtifactImpl) artifact).getData();
-        assertEquals(updateDesc.getUsername(), ((BasicAuth) data.getAuthentification().get(0)).getUsername());
+        assertEquals(updateDesc.getUsername(), ((BasicAuth) data.getAuthentication().get(0)).getUsername());
     }
 
     @Test
@@ -655,7 +655,7 @@ public class ArtifactFactoryTest {
 
         /* ASSERT */
         final var data = (RemoteData) ((ArtifactImpl) result).getData();
-        Assertions.assertTrue(data.getAuthentification().isEmpty());
+        Assertions.assertTrue(data.getAuthentication().isEmpty());
     }
 
     @Test
@@ -678,7 +678,7 @@ public class ArtifactFactoryTest {
 
         /* ASSERT */
         final var data = (RemoteData) ((ArtifactImpl) artifact).getData();
-        assertEquals(updateDesc.getPassword(), ((BasicAuth) data.getAuthentification().get(0)).getPassword());
+        assertEquals(updateDesc.getPassword(), ((BasicAuth) data.getAuthentication().get(0)).getPassword());
     }
 
 

@@ -27,7 +27,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 /**
- * Superclass for containing authentification information.
+ * Superclass for containing authentication information.
  */
 @Entity
 @Getter
