@@ -21,12 +21,12 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.ResourceUpdateMessage;
-import io.dataspaceconnector.exception.MessageBuilderException;
+import de.fraunhofer.ids.messaging.common.SerializeException;
+import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
+import de.fraunhofer.ids.messaging.util.InfomodelMessageBuilder;
 import io.dataspaceconnector.exception.MessageEmptyException;
 import io.dataspaceconnector.exception.MessageRequestException;
 import io.dataspaceconnector.exception.VersionNotSupportedException;
-import de.fraunhofer.ids.messaging.util.InfomodelMessageBuilder;
-import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.MultipartBody;
 import org.apache.commons.io.IOUtils;
@@ -188,18 +188,11 @@ public final class MessageUtils {
      * @param header  The ids message.
      * @param payload The message's payload.
      * @return A multipart body or error.
-     * @throws MessageBuilderException If the message could not be built.
+     * @throws SerializeException if the multipart message could not be built.
      */
     public static MultipartBody buildIdsMultipartMessage(final Message header, final Object payload)
-            throws MessageBuilderException {
-        try {
-            return InfomodelMessageBuilder.messageWithString(header, String.valueOf(payload));
-        } catch (IOException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Message could not be built. [exception=({})]", e.getMessage(), e);
-            }
-            throw new MessageBuilderException("Message could not be built.", e);
-        }
+            throws SerializeException {
+        return InfomodelMessageBuilder.messageWithString(header, String.valueOf(payload));
     }
 
     /**

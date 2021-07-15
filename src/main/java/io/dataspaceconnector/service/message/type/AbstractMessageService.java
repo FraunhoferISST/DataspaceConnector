@@ -19,11 +19,11 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.ids.messaging.common.DeserializeException;
+import de.fraunhofer.ids.messaging.common.SerializeException;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.protocol.http.IdsHttpService;
 import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
-import io.dataspaceconnector.exception.MessageBuilderException;
 import io.dataspaceconnector.exception.MessageEmptyException;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
@@ -108,12 +108,12 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
 
             // Send message and return response. TODO Log outgoing messages.
             return idsHttpService.sendAndCheckDat(body, recipient);
-        } catch (MessageBuilderException e) {
+        } catch (SerializeException e) {
+            final var msg = ErrorMessages.MESSAGE_BUILD_FAILED.toString();
             if (log.isWarnEnabled()) {
-                log.warn("Failed to build ids request message. [exception=({})]",
-                        e.getMessage(), e);
+                log.warn(msg + "[exception=({})]", e.getMessage(), e);
             }
-            throw new MessageException(ErrorMessages.MESSAGE_BUILD_FAILED.toString(), e);
+            throw new MessageException(msg, e);
         } catch (MessageResponseException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Failed to read ids response message. [exception=({})]",
