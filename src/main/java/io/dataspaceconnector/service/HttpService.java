@@ -239,14 +239,16 @@ public class HttpService {
      */
     public HttpArgs toArgs(final QueryInput input, final List<AuthType> auth) {
         final var args = toArgs(input);
-        for (AuthType el : auth) {
-            if (el instanceof BasicAuth) {
-                if (args.getAuth() == null || (args.getAuth().getFirst() == null
-                        && args.getAuth().getSecond() == null)) {
-                    args.setAuth(el.addAuth());
+        if (auth != null) {
+            for (AuthType el : auth) {
+                if (el instanceof BasicAuth) {
+                    if (args.getAuth() == null || (args.getAuth().getFirst() == null
+                            && args.getAuth().getSecond() == null)) {
+                        args.setAuth(el.addAuth());
+                    }
+                } else if (el instanceof ApiKey) {
+                    args.getHeaders().put(el.addAuth().getFirst(), el.addAuth().getSecond());
                 }
-            } else if (el instanceof ApiKey) {
-                args.getHeaders().put(el.addAuth().getFirst(), el.addAuth().getSecond());
             }
         }
         return args;
