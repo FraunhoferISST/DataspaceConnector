@@ -15,27 +15,29 @@
  */
 package io.dataspaceconnector.service;
 
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.exception.ContractException;
+import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
+import io.dataspaceconnector.exception.RdfBuilderException;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.message.type.ContractAgreementService;
 import io.dataspaceconnector.service.message.type.ContractRequestService;
-import io.dataspaceconnector.service.message.type.exceptions.InvalidResponse;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
 import io.dataspaceconnector.util.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
+
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Negotiates contracts.
@@ -44,6 +46,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ContractNegotiator {
+
     /**
      * Service for contract request message handling.
      */
@@ -66,35 +69,52 @@ public class ContractNegotiator {
 
     /**
      * Negotiates till an agreement can be reached.
+     *
      * @param recipient The provider connector.
-     * @param ruleList The rule willing to agree upon.
+     * @param ruleList  The rule willing to agree upon.
      * @return The agreement.
-     * @throws InvalidResponse The ids response message is invalid.
-     * @throws ConstraintViolationException Invalid ids.
-     * @throws IllegalArgumentException Invalid input.
-     * @throws ContractException The contract is not valid.
+     * @throws UnexpectedResponseException  the ids response message is not as expected.
+     * @throws MessageResponseException     if the response message is invalid.
+     * @throws ConstraintViolationException if contract request could not be built.
+     * @throws IllegalArgumentException     if the contract agreement is malformed.
+     * @throws ContractException            if the contract agreement is invalid.
+     * @throws PersistenceException         if contract agreement could not be stored.
+     * @throws RdfBuilderException          if contract request could not be built.
      */
     public UUID negotiate(final URI recipient, final List<Rule> ruleList)
-            throws InvalidResponse, ConstraintViolationException, IllegalArgumentException,
-            ContractException {
+            throws UnexpectedResponseException, ConstraintViolationException,
+            IllegalArgumentException, ContractException, PersistenceException,
+            MessageResponseException, MessageException, RdfBuilderException {
         final var request = contractManager.buildContractRequest(ruleList);
 
         // Send and validate contract request/response message.
-        final var agreementResponse = contractReqSvc.sendMessageAndValidate(recipient, request);
+        final var agreementResponse = contractReqSvc.sendMessage(recipient, request);
 
         // Read and process the response message.
-        final ContractAgreement agreement =
-                validateAgreementAgainstOffer(request, agreementResponse);
+        final var agreement = validateAgreementAgainstOffer(request, agreementResponse);
 
-        // Send and validate contract agreement/response message.
-        agreementSvc.sendMessageAndValidate(recipient, agreement);
+        try {
+            // Send and validate contract agreement/response message.
+            agreementSvc.sendMessage(recipient, agreement);
+        } catch (ConstraintViolationException e) {
+            // Handle malformed contract agreement as invalid response.
+            throw new MessageResponseException(e);
+        }
 
         return saveAgreement(agreement);
     }
 
+    /**
+     * Validate contract agreement against offer.
+     *
+     * @param request  The contract request.
+     * @param response The message response.
+     * @throws IllegalArgumentException if the payload could not be read.
+     * @throws ContractException        if the contract agreement is invalid.
+     */
     private ContractAgreement validateAgreementAgainstOffer(final ContractRequest request,
-                                                   final Map<String, String> response)
-            throws MessageResponseException, IllegalArgumentException, ContractException {
+                                                            final Map<String, String> response)
+            throws IllegalArgumentException, ContractException {
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
         return contractManager.validateContractAgreement(payload, request);
     }
@@ -103,7 +123,7 @@ public class ContractNegotiator {
         final var agreementId = persistenceSvc.saveContractAgreement(agreement);
         if (log.isDebugEnabled()) {
             log.debug("Policy negotiation success. Saved agreement. [agreementId=({})].",
-                      agreementId);
+                    agreementId);
         }
 
         return agreementId;

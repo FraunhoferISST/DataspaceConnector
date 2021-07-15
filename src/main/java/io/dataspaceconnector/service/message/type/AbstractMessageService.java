@@ -94,9 +94,11 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      * @param desc    Type-specific message parameter.
      * @param payload The message's payload.
      * @return The response as map.
-     * @throws MessageException If message building, sending, or processing failed.
+     * @throws MessageException         if message building, sending, or processing failed.
+     * @throws MessageResponseException if response processing failed.
      */
-    public Map<String, String> send(final D desc, final Object payload) throws MessageException {
+    public Map<String, String> send(final D desc, final Object payload) throws MessageException,
+            MessageResponseException {
         try {
             final var recipient = desc.getRecipient();
             final var header = buildMessage(desc);
@@ -108,53 +110,36 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
 
             // Send message and return response. TODO Log outgoing messages.
             return idsHttpService.sendAndCheckDat(body, recipient);
-        } catch (SerializeException e) {
-            final var msg = ErrorMessages.MESSAGE_BUILD_FAILED.toString();
+        } catch (SerializeException | ConstraintViolationException e) {
+            final var msg = ErrorMessages.MESSAGE_BUILDING_FAILED;
             if (log.isWarnEnabled()) {
                 log.warn(msg + "[exception=({})]", e.getMessage(), e);
             }
             throw new MessageException(msg, e);
-        } catch (MessageResponseException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Failed to read ids response message. [exception=({})]",
-                        e.getMessage(), e);
+        } catch (MultipartParseException | DeserializeException | ShaclValidatorException e) {
+            final var msg = ErrorMessages.INVALID_MESSAGE;
+            if (log.isDebugEnabled()) {
+                log.debug(msg + " [exception=({})]", e.getMessage(), e);
             }
-            throw new MessageException(ErrorMessages.INVALID_RESPONSE.toString(), e);
-        } catch (ConstraintViolationException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Ids message could not be built. [exception=({})]",
-                        e.getMessage(), e);
-            }
-            throw new MessageException(ErrorMessages.HEADER_BUILD_FAILED.toString(), e);
+            throw new MessageResponseException(msg, e);
         } catch (SocketTimeoutException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Gateway timeout when connecting to recipient. [exception=({})]",
-                        e.getMessage(), e);
+            final var msg = ErrorMessages.GATEWAY_TIMEOUT;
+            if (log.isDebugEnabled()) {
+                log.debug(msg + " [exception=({})]", e.getMessage(), e);
             }
-            throw new MessageException(ErrorMessages.GATEWAY_TIMEOUT.toString(), e);
+            throw new MessageException(msg, e);
         } catch (ClaimsException e) {
+            final var msg = ErrorMessages.INVALID_DAT;
             if (log.isDebugEnabled()) {
-                log.debug("Invalid DAT in incoming message. [exception=({})]",
-                        e.getMessage(), e);
+                log.debug(msg + " [exception=({})]", e.getMessage(), e);
             }
-            throw new MessageException(ErrorMessages.INVALID_RESPONSE_DAT.toString(), e);
-        } catch (MultipartParseException | DeserializeException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Response message is of invalid format. [exception=({})]",
-                        e.getMessage(), e);
-            }
-            throw new MessageException(ErrorMessages.MALFORMED_HEADER.toString(), e);
-        } catch (ShaclValidatorException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Response message is missing attributes. [exception=({})]",
-                        e.getMessage(), e);
-            }
-            throw new MessageException(ErrorMessages.MALFORMED_HEADER.toString(), e);
+            throw new MessageException(msg, e);
         } catch (IOException e) {
+            final var msg = ErrorMessages.MESSAGE_HANDLING_FAILED;
             if (log.isWarnEnabled()) {
-                log.warn("Messaging process failed. [exception=({})]", e.getMessage(), e);
+                log.warn(msg + " [exception=({})]", e.getMessage(), e);
             }
-            throw new MessageException(ErrorMessages.MESSAGE_NOT_SENT.toString(), e);
+            throw new MessageException(msg, e);
         }
     }
 
@@ -175,17 +160,12 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             final var messageType = idsMessage.getClass();
             final var allowedType = getResponseMessageType();
             return messageType.equals(allowedType);
-        } catch (MessageResponseException | IllegalArgumentException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Failed to read response header. [exception=({})]", e.getMessage(), e);
-            }
-            throw new MessageResponseException(ErrorMessages.MALFORMED_HEADER.toString(), e);
         } catch (Exception e) {
-            // NOTE: Should not be reached.
-            if (log.isWarnEnabled()) {
-                log.warn("Something else went wrong. [exception=({})]", e.getMessage());
+            final var msg = ErrorMessages.INVALID_MESSAGE;
+            if (log.isDebugEnabled()) {
+                log.debug(msg + " [exception=({})]", e.getMessage(), e);
             }
-            throw new MessageResponseException(ErrorMessages.INVALID_RESPONSE.toString(), e);
+            throw new MessageResponseException(msg, e);
         }
     }
 
@@ -195,15 +175,32 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      *
      * @param message The ids multipart message as map.
      * @return The object.
-     * @throws MessageResponseException Of the response could not be read or deserialized.
-     * @throws IllegalArgumentException If deserialization fails.
+     * @throws MessageResponseException if message processing fails.
      */
     public Map<String, Object> getResponseContent(final Map<String, String> message)
-            throws MessageResponseException, IllegalArgumentException {
-        final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
-        final var payload = MessageUtils.extractPayloadFromMultipartMessage(message);
+            throws MessageResponseException {
+        try {
+            final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
+            final var payload = MessageUtils.extractPayloadFromMultipartMessage(message);
 
-        final var idsMessage = deserializer.getResponseMessage(header);
+            final var idsMessage = deserializer.getMessage(header);
+
+            return getResponseContent(idsMessage, payload);
+        } catch (Exception e) {
+            throw new MessageResponseException(e);
+        }
+    }
+
+    /**
+     * If the response message is not of the expected type, message type, rejection reason, and the
+     * payload are returned as an object.
+     *
+     * @param idsMessage The ids message.
+     * @param payload    The message's payload.
+     * @return The object.
+     * @throws MessageResponseException if message processing fails.
+     */
+    public Map<String, Object> getResponseContent(final Message idsMessage, final Object payload) {
         final var map = new HashMap<String, Object>();
         map.put("type", idsMessage.getClass());
 

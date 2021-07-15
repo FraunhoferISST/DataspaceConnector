@@ -17,6 +17,7 @@ package io.dataspaceconnector.controller.message;
 
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
 import io.dataspaceconnector.util.ControllerUtils;
@@ -72,7 +73,8 @@ public class DescriptionRequestMessageController {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "417", description = "Expectation failed"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
+            @ApiResponse(responseCode = "500", description = "Internal server error"),
+            @ApiResponse(responseCode = "502", description = "Bad gateway")})
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     @ResponseBody
     public ResponseEntity<Object> sendMessage(
@@ -84,30 +86,29 @@ public class DescriptionRequestMessageController {
         try {
             // Send and validate description request/response message.
             final var response = descriptionReqSvc.sendMessage(recipient, elementId);
-            final var valid = descriptionReqSvc.validateResponse(response);
-            if (!valid) {
-                // If the response is not a description response message, show the response.
-                final var content = descriptionReqSvc.getResponseContent(response);
-                return ControllerUtils.respondWithMessageContent(content);
-            }
 
             // Read and process the response message.
             payload = MessageUtils.extractPayloadFromMultipartMessage(response);
             if (!Utils.isEmptyOrNull(elementId)) {
                 return new ResponseEntity<>(payload, HttpStatus.OK);
             } else {
-                // Get payload as component.
-                final var component =
-                        deserializationSvc.getInfrastructureComponent(payload);
-                return ResponseEntity.ok(component.toRdf());
+                try {
+                    // Get payload as component.
+                    final var component =
+                            deserializationSvc.getInfrastructureComponent(payload);
+                    return ResponseEntity.ok(component.toRdf());
+                } catch (IllegalArgumentException e) {
+                    // If the response is not of type base connector.
+                    return new ResponseEntity<>(payload, HttpStatus.OK);
+                }
             }
         } catch (MessageException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
-        } catch (MessageResponseException exception) {
-            return ControllerUtils.respondReceivedInvalidResponse(exception);
-        } catch (IllegalArgumentException exception) {
-            // If the response is not of type base connector.
-            return new ResponseEntity<>(payload, HttpStatus.OK);
+        } catch (MessageResponseException | IllegalArgumentException e) {
+            // If the response message is invalid or malformed.
+            return ControllerUtils.respondReceivedInvalidResponse(e);
+        } catch (UnexpectedResponseException e) {
+            return ControllerUtils.respondWithContent(e.getContent());
         }
     }
 }

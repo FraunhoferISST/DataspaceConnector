@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.service.message;
 
+import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
 import de.fraunhofer.iais.eis.QueryLanguage;
 import de.fraunhofer.iais.eis.QueryScope;
 import de.fraunhofer.iais.eis.QueryTarget;
@@ -32,8 +33,13 @@ import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
+import io.dataspaceconnector.service.message.type.NotificationService;
+import io.dataspaceconnector.util.ControllerUtils;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
@@ -53,6 +59,11 @@ public class GlobalMessageService {
      * The service for communication with an ids broker.
      */
     private final @NotNull IDSBrokerService brokerSvc;
+
+    /**
+     * Service for sending notification messages.
+     */
+    private final @NonNull NotificationService notificationSvc;
 
     /**
      * Send connector update message.
@@ -183,7 +194,7 @@ public class GlobalMessageService {
      * @param offset    The offset value.
      * @return Optional of message container providing the received ids response.
      */
-    public Optional<MessageContainer<?>> sendFullTextSearchQueryMessage(
+    public Optional<MessageContainer<?>> sendFullTextSearchMessage(
             final URI recipient, final String term, final int limit, final int offset)
             throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
             NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
@@ -191,5 +202,29 @@ public class GlobalMessageService {
             RejectionException, UnknownResponseException {
         return Optional.of(brokerSvc.fullTextSearchBroker(recipient, term, QueryScope.ALL,
                 QueryTarget.BROKER, limit, offset));
+    }
+
+    /**
+     * Validates response. Returns response entity with status code 200 if a
+     * MessageProcessedNotificationMessage has been received, responds with the message's content
+     * if not.
+     *
+     * @param response The response container.
+     * @return ResponseEntity with status code.
+     */
+    public ResponseEntity<Object> validateResponse(final Optional<MessageContainer<?>> response) {
+        if (response.isEmpty()) {
+            return ControllerUtils.respondReceivedInvalidResponse();
+        }
+
+        final var header = response.get().getUnderlyingMessage();
+        final var payload = response.get().getReceivedPayload();
+        if (header instanceof MessageProcessedNotificationMessage) {
+            return new ResponseEntity<>(payload, HttpStatus.OK);
+        }
+
+        // If response message is not of type MessageProcessedNotificationMessage.
+        final var content = notificationSvc.getResponseContent(header, payload);
+        return ControllerUtils.respondWithContent(content);
     }
 }

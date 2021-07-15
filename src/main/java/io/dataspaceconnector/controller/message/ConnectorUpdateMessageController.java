@@ -24,6 +24,7 @@ import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
 import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
 import de.fraunhofer.ids.messaging.protocol.multipart.UnknownResponseException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
+import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
@@ -37,7 +38,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,6 +49,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
+import java.util.Optional;
 
 /**
  * Controller for sending ids connector update messages.
@@ -89,41 +90,26 @@ public class ConnectorUpdateMessageController {
     public ResponseEntity<Object> sendMessage(
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient) {
+        Optional<MessageContainer<?>> response = Optional.empty();
         try {
             // Update the config model.
             connectorService.updateConfigModel();
 
             // Send the connector update message.
-            final var response = messageService.sendConnectorUpdateMessage(recipient);
-            if () {
-                return new ResponseEntity<>(HttpStatus.OK);
-            }
-
-            return ControllerUtils.respondReceivedInvalidResponse();
+            response = messageService.sendConnectorUpdateMessage(recipient);
         } catch (ConfigUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
         } catch (SocketTimeoutException exception) {
             return ControllerUtils.respondConnectionTimedOut(exception);
-        } catch (MultipartParseException exception) {
+        } catch (MultipartParseException | UnknownResponseException | ShaclValidatorException
+                | DeserializeException | UnexpectedPayloadException | ClaimsException exception) {
             return ControllerUtils.respondReceivedInvalidResponse(exception);
-        } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
+        } catch (RejectionException ignored) {
+
+        } catch (SendMessageException | SerializeException | NoTemplateProvidedException
+                | DapsTokenManagerException | IOException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
-        } catch (DeserializeException e) {
-            e.printStackTrace();
-        } catch (UnknownResponseException e) {
-            e.printStackTrace();
-        } catch (SerializeException e) {
-            e.printStackTrace();
-        } catch (NoTemplateProvidedException e) {
-            e.printStackTrace();
-        } catch (UnexpectedPayloadException e) {
-            e.printStackTrace();
-        } catch (ShaclValidatorException e) {
-            e.printStackTrace();
-        } catch (RejectionException e) {
-            e.printStackTrace();
-        } catch (SendMessageException e) {
-            e.printStackTrace();
         }
+        return messageService.validateResponse(response);
     }
 }

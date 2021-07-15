@@ -87,12 +87,18 @@ public class PolicyExecutionService {
      * Send a message to the clearing house. Allow the access only if that operation was successful.
      *
      * @param target The target object.
-     * @throws PolicyExecutionException if the access could not be successfully logged.
      */
     public void logDataAccess(final URI target) throws PolicyExecutionException {
-        final var recipient = connectorConfig.getClearingHouse();
-        if (!recipient.equals(URI.create(""))) {
-            logMessageService.sendMessage(recipient, buildLog(target).toString());
+        try {
+            final var recipient = connectorConfig.getClearingHouse();
+            if (!recipient.equals(URI.create(""))) {
+                logMessageService.sendMessage(recipient, buildLog(target).toString());
+            }
+        } catch (PolicyExecutionException | RdfBuilderException exception) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to send log message to clearing house. [exception=({})]",
+                        exception.getMessage());
+            }
         }
     }
 
@@ -113,7 +119,7 @@ public class PolicyExecutionService {
 
             notificationService.sendMessage(URI.create(recipient), logItem);
         } else if (log.isWarnEnabled()) {
-                log.warn("Reporting data access is only supported for permissions.");
+            log.warn("Reporting data access is only supported for permissions.");
         }
     }
 

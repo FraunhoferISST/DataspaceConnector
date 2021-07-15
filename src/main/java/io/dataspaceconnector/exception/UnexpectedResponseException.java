@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.message.type.exceptions;
-
-import java.util.Map;
+package io.dataspaceconnector.exception;
 
 import lombok.Getter;
+
+import java.util.Map;
 
 /**
  * Thrown when a message response is invalid.
  */
 @Getter
-public class InvalidResponse extends Exception {
+public class UnexpectedResponseException extends Exception {
 
     /**
      * Default serial version uid.
@@ -39,7 +39,7 @@ public class InvalidResponse extends Exception {
      * Create a new invalid response.
      * @param responseContent The content of the invalid response.
      */
-    public InvalidResponse(final Map<String, Object> responseContent) {
+    public UnexpectedResponseException(final Map<String, Object> responseContent) {
         super();
         this.content = responseContent;
     }
@@ -49,7 +49,7 @@ public class InvalidResponse extends Exception {
      * @param responseContent The content of the invalid response.
      * @param throwable The exception to wrap.
      */
-    public InvalidResponse(final Map<String, Object> responseContent, final Throwable throwable) {
+    public UnexpectedResponseException(final Map<String, Object> responseContent, final Throwable throwable) {
         super(throwable);
         this.content = responseContent;
     }

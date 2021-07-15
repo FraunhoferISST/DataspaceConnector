@@ -23,6 +23,7 @@ import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
 import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
 import de.fraunhofer.ids.messaging.protocol.multipart.UnknownResponseException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
+import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
@@ -48,6 +49,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
+import java.util.Optional;
 
 /**
  * Controller for sending ids query messages.
@@ -90,34 +92,22 @@ public class QueryMessageController {
                             + "WHERE {\n"
                             + "  ?subject ?predicate ?object\n"
                             + "};") @RequestBody final String query) {
+        Optional<MessageContainer<?>> response = Optional.empty();
         try {
             // Send the query message.
-            final var response = messageService.sendQueryMessage(recipient, query);
-            return response.<ResponseEntity<Object>>map(ResponseEntity::ok)
-                    .orElseGet(ControllerUtils::respondReceivedInvalidResponse);
+            response = messageService.sendQueryMessage(recipient, query);
         } catch (SocketTimeoutException exception) {
             return ControllerUtils.respondConnectionTimedOut(exception);
-        } catch (MultipartParseException exception) {
+        } catch (MultipartParseException | UnknownResponseException | ShaclValidatorException
+                | DeserializeException | UnexpectedPayloadException | ClaimsException exception) {
             return ControllerUtils.respondReceivedInvalidResponse(exception);
-        } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
+        } catch (RejectionException ignored) {
+
+        } catch (SendMessageException | SerializeException | NoTemplateProvidedException
+                | DapsTokenManagerException | IOException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
-        } catch (DeserializeException e) {
-            e.printStackTrace();
-        } catch (UnknownResponseException e) {
-            e.printStackTrace();
-        } catch (SerializeException e) {
-            e.printStackTrace();
-        } catch (NoTemplateProvidedException e) {
-            e.printStackTrace();
-        } catch (UnexpectedPayloadException e) {
-            e.printStackTrace();
-        } catch (ShaclValidatorException e) {
-            e.printStackTrace();
-        } catch (RejectionException e) {
-            e.printStackTrace();
-        } catch (SendMessageException e) {
-            e.printStackTrace();
         }
+        return messageService.validateResponse(response);
     }
 
     /**
@@ -149,34 +139,21 @@ public class QueryMessageController {
             @RequestParam(value = "offset", defaultValue = "0") final Integer offset,
             @Parameter(description = "The search term.", required = true)
             @RequestBody final String term) {
+        Optional<MessageContainer<?>> response = Optional.empty();
         try {
-            // Send the query message.
-            final var response =
-                    messageService.sendFullTextSearchQueryMessage(recipient, term, limit, offset);
-            return response.<ResponseEntity<Object>>map(ResponseEntity::ok)
-                    .orElseGet(ControllerUtils::respondReceivedInvalidResponse);
+            // Send the query message for full text search.
+            response = messageService.sendFullTextSearchMessage(recipient, term, limit, offset);
         } catch (SocketTimeoutException exception) {
             return ControllerUtils.respondConnectionTimedOut(exception);
-        } catch (MultipartParseException exception) {
+        } catch (MultipartParseException | UnknownResponseException | ShaclValidatorException
+                | DeserializeException | UnexpectedPayloadException | ClaimsException exception) {
             return ControllerUtils.respondReceivedInvalidResponse(exception);
-        } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
+        } catch (RejectionException ignored) {
+
+        } catch (SendMessageException | SerializeException | NoTemplateProvidedException
+                | DapsTokenManagerException | IOException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
-        } catch (DeserializeException e) {
-            e.printStackTrace();
-        } catch (UnknownResponseException e) {
-            e.printStackTrace();
-        } catch (SerializeException e) {
-            e.printStackTrace();
-        } catch (NoTemplateProvidedException e) {
-            e.printStackTrace();
-        } catch (UnexpectedPayloadException e) {
-            e.printStackTrace();
-        } catch (ShaclValidatorException e) {
-            e.printStackTrace();
-        } catch (RejectionException e) {
-            e.printStackTrace();
-        } catch (SendMessageException e) {
-            e.printStackTrace();
         }
+        return messageService.validateResponse(response);
     }
 }

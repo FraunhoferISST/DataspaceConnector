@@ -73,34 +73,6 @@ class ControllerUtilsTest {
     }
 
     @Test
-    public void respondDeserializationError_validException_returnValidResponseEntity() {
-        /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("Failed to update.",
-                HttpStatus.BAD_REQUEST);
-
-        /* ACT */
-        final var response = ControllerUtils.respondDeserializationError(exception);
-
-        /* ARRANGE */
-        assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
-    }
-
-    @Test
-    public void respondConfigurationNotFound_null_returnValidResponseEntity() {
-        /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("No configuration found.",
-                HttpStatus.NOT_FOUND);
-
-        /* ACT */
-        final var response = ControllerUtils.respondConfigurationNotFound();
-
-        /* ARRANGE */
-        assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
-    }
-
-    @Test
     public void respondDeserializationError_validUri_returnValidResponseEntity() {
         /* ARRANGE */
         final var resourceId = URI.create("https://requestedResource");
@@ -109,22 +81,6 @@ class ControllerUtilsTest {
 
         /* ACT */
         final var response = ControllerUtils.respondResourceNotFound(resourceId);
-
-        /* ARRANGE */
-        assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
-    }
-
-    @Test
-    public void respondResourceCouldNotBeLoaded_validUri_returnValidResponseEntity() {
-        /* ARRANGE */
-        final var resourceId = URI.create("https://requestedResource");
-        final var expectedResponse = new ResponseEntity<>(String.format("Could not load resource " +
-                        "%s.",
-                resourceId), HttpStatus.INTERNAL_SERVER_ERROR);
-
-        /* ACT */
-        final var response = ControllerUtils.respondResourceCouldNotBeLoaded(resourceId);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
@@ -148,8 +104,8 @@ class ControllerUtilsTest {
     @Test
     public void respondInvalidInput_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("Invalid input. "
-                + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        final var expectedResponse = new ResponseEntity<>("Invalid input, processing failed. "
+                + exception.getMessage(), HttpStatus.BAD_REQUEST);
 
         /* ACT */
         final var response = ControllerUtils.respondInvalidInput(exception);
@@ -167,20 +123,6 @@ class ControllerUtilsTest {
 
         /* ACT */
         final var response = ControllerUtils.respondFailedToBuildContractRequest(exception);
-
-        /* ARRANGE */
-        assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
-    }
-
-    @Test
-    public void respondConnectorNotLoaded_validException_returnValidResponseEntity() {
-        /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("Connector could not be loaded.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
-
-        /* ACT */
-        final var response = ControllerUtils.respondConnectorNotLoaded(exception);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
@@ -235,7 +177,7 @@ class ControllerUtilsTest {
         final var expectedResponse = new ResponseEntity<>(map, HttpStatus.EXPECTATION_FAILED);
 
         /* ACT */
-        final var response = ControllerUtils.respondWithMessageContent(map);
+        final var response = ControllerUtils.respondWithContent(map);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());

@@ -66,11 +66,6 @@ public enum ErrorMessages {
     VERSION_NULL("The version must be set."),
 
     /**
-     * Rule is missing a target parameter.
-     */
-    MISSING_TARGET("Missing target id in rules"),
-
-    /**
      * The passed list may not be null.
      */
     LIST_NULL("The passed list may not be null."),
@@ -108,37 +103,27 @@ public enum ErrorMessages {
     /**
      * Failed to read response message.
      */
-    INVALID_RESPONSE("Invalid ids response message."),
-
-    /**
-     * Ids message building failed.
-     */
-    HEADER_BUILD_FAILED("Ids message header could not be built."),
+    INVALID_MESSAGE("Received invalid ids message."),
 
     /**
      * Multipart message building failed.
      */
-    MESSAGE_BUILD_FAILED("Multipart message could not be built."),
+    MESSAGE_BUILDING_FAILED("Failed to build ids message."),
 
     /**
      * DAT in response ids header is invalid.
      */
-    INVALID_RESPONSE_DAT("Invalid DAT in incoming message."),
+    INVALID_DAT("Invalid DAT in incoming response message."),
 
     /**
-     * Multipart message could not be sent.
+     * IDS message could not be sent or processed.
      */
-    MESSAGE_NOT_SENT("Messaging process failed."),
+    MESSAGE_HANDLING_FAILED("Message handling or processing failed."),
 
     /**
      * Multipart message could not be sent to recipient.
      */
-    GATEWAY_TIMEOUT("Message could not be sent due to a timeout."),
-
-    /**
-     * Header of multipart message is malformed.
-     */
-    MALFORMED_HEADER("Malformed message header."),
+    GATEWAY_TIMEOUT("Gateway timeout when connecting to recipient."),
 
     /**
      * Payload of multipart message is malformed.
@@ -188,7 +173,12 @@ public enum ErrorMessages {
     /**
      * A policy restriction has been detected.
      */
-    POLICY_RESTRICTION("Policy restriction detected.");
+    POLICY_RESTRICTION("Policy restriction detected."),
+
+    /**
+     * The input could not be processed.
+     */
+    INVALID_INPUT("Invalid input, processing failed.");
 
     /**
      * Holds the enums string.

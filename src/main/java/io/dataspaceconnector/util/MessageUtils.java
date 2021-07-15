@@ -243,19 +243,19 @@ public final class MessageUtils {
     public static String getPayloadAsString(final MessagePayload payload)
             throws MessageRequestException {
         if (payload == null) {
-            throw new MessageRequestException(ErrorMessages.MISSING_PAYLOAD.toString());
+            throw new MessageRequestException(ErrorMessages.MISSING_PAYLOAD);
         }
 
         String content;
         try {
             content = MessageUtils.getStreamAsString(payload);
         } catch (IOException e) {
-            throw new MessageRequestException(ErrorMessages.MALFORMED_PAYLOAD.toString(), e);
+            throw new MessageRequestException(ErrorMessages.MALFORMED_PAYLOAD, e);
         }
 
         // If request is empty, return rejection message.
         if (content.isEmpty()) {
-            throw new MessageRequestException(ErrorMessages.MISSING_PAYLOAD.toString());
+            throw new MessageRequestException(ErrorMessages.MISSING_PAYLOAD);
         }
 
         return content;

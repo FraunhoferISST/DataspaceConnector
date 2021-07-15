@@ -190,7 +190,7 @@ public class QueryMessageControllerTest {
         final var response = Optional.of("Some search result.");
 
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
-        Mockito.doReturn(response).when(messageService).sendFullTextSearchQueryMessage(
+        Mockito.doReturn(response).when(messageService).sendFullTextSearchMessage(
                 Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt());
 
         /* ACT */
@@ -209,7 +209,7 @@ public class QueryMessageControllerTest {
         final var response = Optional.empty();
 
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
-        Mockito.doReturn(response).when(messageService).sendFullTextSearchQueryMessage(
+        Mockito.doReturn(response).when(messageService).sendFullTextSearchMessage(
                 Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt());
 
         /* ACT */
@@ -225,7 +225,7 @@ public class QueryMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendSearchMessage_throwIOException_returnIdsMessageFailed() throws Exception {
         /* ARRANGE */
-        Mockito.doThrow(IOException.class).when(messageService).sendFullTextSearchQueryMessage(
+        Mockito.doThrow(IOException.class).when(messageService).sendFullTextSearchMessage(
                 Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt());
 
         /* ACT */
@@ -241,7 +241,7 @@ public class QueryMessageControllerTest {
     public void sendSearchMessage_throwMultipartParseException_returnReceivedInvalidResponse() throws Exception {
         /* ARRANGE */
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
-        Mockito.doThrow(MultipartParseException.class).when(messageService).sendFullTextSearchQueryMessage(
+        Mockito.doThrow(MultipartParseException.class).when(messageService).sendFullTextSearchMessage(
                 Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt());
 
         /* ACT */
@@ -259,7 +259,7 @@ public class QueryMessageControllerTest {
     public void sendSearchMessage_throwSocketTimeoutException_returnConnectionTimedOut() throws Exception {
         /* ARRANGE */
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
-        Mockito.doThrow(SocketTimeoutException.class).when(messageService).sendFullTextSearchQueryMessage(
+        Mockito.doThrow(SocketTimeoutException.class).when(messageService).sendFullTextSearchMessage(
                 Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt());
 
         /* ACT */
