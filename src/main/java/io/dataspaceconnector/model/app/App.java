@@ -23,7 +23,7 @@ import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
 
-import io.dataspaceconnector.model.NamedEntity;
+import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;

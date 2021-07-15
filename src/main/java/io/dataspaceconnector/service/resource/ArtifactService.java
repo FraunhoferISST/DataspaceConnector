@@ -15,6 +15,14 @@
  */
 package io.dataspaceconnector.service.resource;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.exception.UnreachableLineException;
 import io.dataspaceconnector.model.artifact.Artifact;
@@ -30,8 +38,8 @@ import io.dataspaceconnector.service.HttpService;
 import io.dataspaceconnector.service.usagecontrol.PolicyVerifier;
 import io.dataspaceconnector.service.usagecontrol.VerificationResult;
 import io.dataspaceconnector.util.ErrorMessages;
-import io.dataspaceconnector.util.Utils;
 import io.dataspaceconnector.util.QueryInput;
+import io.dataspaceconnector.util.Utils;
 import kotlin.NotImplementedError;
 import kotlin.Pair;
 import lombok.AccessLevel;
@@ -39,17 +47,10 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Handles the basic logic for artifacts.
@@ -58,6 +59,7 @@ import java.util.UUID;
 @Service
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.NONE)
+@Transactional
 public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         implements RemoteResolver {
     /**
@@ -130,11 +132,25 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @throws IllegalArgumentException   if any of the parameters is null.
      * @throws IOException if IO errors occurr.
      */
-    @Transactional
     public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final QueryInput queryInput)
             throws PolicyRestrictionException, IOException {
+        final var agreements =
+                ((ArtifactRepository) getRepository()).findRemoteOriginAgreements(artifactId);
+        if (agreements.size() > 0) {
+            return tryToAccessDataByUsingAnyAgreement(accessVerifier, retriever, artifactId,
+                                                      queryInput, agreements);
+        }
+
+        // The artifact is not assigned to any requested resources. It must be offered if it exists.
+        return getDataFromInternalDB((ArtifactImpl) get(artifactId), queryInput);
+    }
+
+    private InputStream tryToAccessDataByUsingAnyAgreement(
+            final PolicyVerifier<Artifact> accessVerifier, final ArtifactRetriever retriever,
+            final UUID artifactId, final QueryInput queryInput, final List<URI> agreements)
+            throws IOException {
         /*
          * NOTE: Check if agreements with remoteIds are set for this artifact. If such agreements
          * exist the artifact must be assigned to a requested resource. The data access should
@@ -143,37 +159,31 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
          * and try accessing the data till one of them returns the data. If none of them returns
          * the data it means all data access has been forbidden. Do not proceed.
          */
-        final var agreements =
-                ((ArtifactRepository) getRepository()).findRemoteOriginAgreements(artifactId);
-        if (agreements.size() > 0) {
-            var policyException = new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
-            for (final var agRemoteId : agreements) {
-                try {
-                    final var info = new RetrievalInformation(agRemoteId, null, queryInput);
-                    return getData(accessVerifier, retriever, artifactId, info);
-                } catch (PolicyRestrictionException exception) {
-                    // Access denied, log it and try the next agreement.
-                    if (log.isDebugEnabled()) {
-                        log.debug("Tried to access artifact data by trying an agreement. "
-                                        + "[artifactId=({}), agreementId=({})]",
-                                artifactId, agRemoteId);
-                    }
 
-                    policyException = exception;
+        var policyException = new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
+        for (final var agRemoteId : agreements) {
+            try {
+                final var info = new RetrievalInformation(agRemoteId, null, queryInput);
+                return getData(accessVerifier, retriever, artifactId, info);
+            } catch (PolicyRestrictionException exception) {
+                // Access denied, log it and try the next agreement.
+                if (log.isDebugEnabled()) {
+                    log.debug("Tried to access artifact data by trying an agreement. "
+                                    + "[artifactId=({}), agreementId=({})]",
+                              artifactId, agRemoteId);
                 }
-            }
 
-            // All attempts on accessing data failed. Deny access with the last rejection reason.
-            if (log.isDebugEnabled()) {
-                log.debug("The requested resource is not owned by this connector."
-                        + " Access forbidden. [artifactId=({})]", artifactId);
+                policyException = exception;
             }
-
-            throw policyException;
         }
 
-        // The artifact is not assigned to any requested resources. It must be offered if it exists.
-        return getDataFromInternalDB((ArtifactImpl) get(artifactId), queryInput);
+        // All attempts on accessing data failed. Deny access with the last rejection reason.
+        if (log.isDebugEnabled()) {
+            log.debug("The requested resource is not owned by this connector."
+                    + " Access forbidden. [artifactId=({})]", artifactId);
+        }
+
+        throw policyException;
     }
 
     /**
@@ -189,15 +199,28 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @throws io.dataspaceconnector.exception.ResourceNotFoundException
      *         if the artifact does not exist.
      * @throws IllegalArgumentException   if any of the parameters is null.
-     * @throws IOException if IO errors occurr.
+     * @throws IOException if IO errors occur.
      */
-    @Transactional
     public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final RetrievalInformation information)
             throws PolicyRestrictionException, IOException {
         // Check the artifact exists and access is granted.
         final var artifact = get(artifactId);
+        verifyDataAccess(accessVerifier, artifactId, artifact);
+
+        // Make sure the data exists and is up to date.
+        if (shouldDownload(artifact, information.getForceDownload())) {
+            downloadAndUpdateData(retriever, artifactId, information, artifact);
+        }
+
+        // Artifact exists, access granted, data exists and data up to date.
+        return getDataFromInternalDB((ArtifactImpl) artifact, null);
+    }
+
+    private void verifyDataAccess(final PolicyVerifier<Artifact> accessVerifier,
+                                  final UUID artifactId,
+                                  final Artifact artifact) {
         if (accessVerifier.verify(artifact) == VerificationResult.DENIED) {
             if (log.isInfoEnabled()) {
                 log.info("Access denied. [artifactId=({})]", artifactId);
@@ -205,24 +228,17 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
 
             throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
         }
+    }
 
-        // Make sure the data exists and is up to date.
-        final var shouldDownload = shouldDownload(artifact, information.getForceDownload());
-        if (shouldDownload) {
-            /*
-                NOTE: Make this not blocking.
-             */
-            final var dataStream = retriever.retrieve(artifactId,
-                    artifact.getRemoteAddress(), information.getTransferContract(),
-                    information.getQueryInput());
-            final var persistedData = setData(artifactId, dataStream);
-            artifact.incrementAccessCounter();
-            persist(artifact);
-            return persistedData;
-        }
-
-        // Artifact exists, access granted, data exists and data up to date.
-        return getDataFromInternalDB((ArtifactImpl) artifact, null);
+    private void downloadAndUpdateData(final ArtifactRetriever retriever,
+                                       final UUID artifactId,
+                                       final RetrievalInformation information,
+                                       final Artifact artifact) throws IOException {
+        final var dataStream = retriever.retrieve(artifactId,
+                                                  artifact.getRemoteAddress(),
+                                                  information.getTransferContract(),
+                                                  information.getQueryInput());
+        setData(artifactId, dataStream);
     }
 
     /**
@@ -246,10 +262,14 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             throw new UnreachableLineException("Unknown data type.");
         }
 
-        artifact.incrementAccessCounter();
-        persist(artifact);
+        incrementAccessCounter(artifact);
 
         return rawData;
+    }
+
+    private void incrementAccessCounter(final Artifact artifact) {
+        artifact.incrementAccessCounter();
+        persist(artifact);
     }
 
     private boolean shouldDownload(final Artifact artifact, final Boolean forceDownload) {
@@ -280,21 +300,12 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param data       The data container.
      * @param queryInput The query for the backend.
      * @return The stored data.
-     * @throws IOException if IO errors occurr.
+     * @throws IOException if IO errors occur.
      */
     private InputStream getData(final RemoteData data, final QueryInput queryInput)
             throws IOException {
         try {
-            InputStream backendData;
-            if (data.getUsername() != null || data.getPassword() != null) {
-                backendData = httpSvc.get(data.getAccessUrl(), queryInput,
-                                             new Pair<>(data.getUsername(), data.getPassword()))
-                                      .getBody();
-            } else {
-                backendData = httpSvc.get(data.getAccessUrl(), queryInput).getBody();
-            }
-
-            return backendData;
+            return downloadDataFromBackend(data, queryInput);
         } catch (IOException exception) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not connect to data source. [exception=({})]",
@@ -303,6 +314,19 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
 
             throw new IOException("Could not connect to data source.", exception);
         }
+    }
+
+    private InputStream downloadDataFromBackend(final RemoteData data,
+                                                final QueryInput queryInput) throws IOException {
+        InputStream backendData;
+        if (data.getUsername() != null || data.getPassword() != null) {
+            backendData = httpSvc.get(data.getAccessUrl(), queryInput,
+                                      new Pair<>(data.getUsername(), data.getPassword()))
+                                  .getBody();
+        } else {
+            backendData = httpSvc.get(data.getAccessUrl(), queryInput).getBody();
+        }
+        return backendData;
     }
 
     /**
@@ -333,39 +357,41 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @return The data stored in the artifact.
      * @throws IOException if the data could not be stored.
      */
-    @Transactional
     public InputStream setData(final UUID artifactId, final InputStream data) throws IOException {
         final var artifact = get(artifactId);
-        final var localData = ((ArtifactImpl) artifact).getData();
-        if (localData instanceof LocalData) {
-            try {
-                /*
-                 * NOTE: The service or the factories need to implement some form of patching. But
-                 * since this is the only place where a single value is updated its enough to use a
-                 * query for this.
-                 */
-
-                // Update the internal database and return the new data.
-                final var bytes = data.readAllBytes();
-                data.close();
-                dataRepo.setLocalData(localData.getId(), bytes);
-                if (((ArtifactFactory) getFactory()).updateByteSize(artifact, bytes)) {
-                    ((ArtifactRepository) getRepository()).setArtifactData(artifactId,
-                            artifact.getCheckSum(),
-                            artifact.getByteSize());
-                }
-
-                return new ByteArrayInputStream(bytes);
-            } catch (IOException e) {
-                if (log.isErrorEnabled()) {
-                    log.error("Failed to store data. [artifactId=({}), exception=({})]",
-                            artifactId, e.getMessage(), e);
-                }
-
-                throw new IOException("Failed to store data.", e);
-            }
+        final var currentData = ((ArtifactImpl) artifact).getData();
+        if (currentData instanceof LocalData) {
+            return setLocalData(artifactId, data, artifact, (LocalData) currentData);
         } else {
             throw new NotImplementedError();
+        }
+    }
+
+    @NotNull
+    private ByteArrayInputStream setLocalData(final UUID artifactId,
+                                              final InputStream data,
+                                              final Artifact artifact,
+                                              final LocalData localData)
+            throws IOException {
+        try {
+            // Update the internal database and return the new data.
+            final var bytes = data.readAllBytes();
+            data.close();
+            dataRepo.setLocalData(localData.getId(), bytes);
+            if (((ArtifactFactory) getFactory()).updateByteSize(artifact, bytes)) {
+                ((ArtifactRepository) getRepository()).setArtifactData(artifactId,
+                                                                       artifact.getCheckSum(),
+                                                                       artifact.getByteSize());
+            }
+
+            return new ByteArrayInputStream(bytes);
+        } catch (IOException e) {
+            if (log.isErrorEnabled()) {
+                log.error("Failed to store data. [artifactId=({}), exception=({})]",
+                          artifactId, e.getMessage(), e);
+            }
+
+            throw new IOException("Failed to store data.", e);
         }
     }
 

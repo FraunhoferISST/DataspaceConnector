@@ -23,7 +23,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import io.dataspaceconnector.model.NamedEntity;
+import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.base.RemoteObject;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.util.UriConverter;

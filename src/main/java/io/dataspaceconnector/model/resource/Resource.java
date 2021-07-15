@@ -16,7 +16,7 @@
 package io.dataspaceconnector.model.resource;
 
 import io.dataspaceconnector.model.util.UriConverter;
-import io.dataspaceconnector.model.NamedEntity;
+import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;

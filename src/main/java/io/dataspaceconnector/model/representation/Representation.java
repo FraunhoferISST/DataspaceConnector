@@ -22,7 +22,7 @@ import javax.persistence.Convert;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import io.dataspaceconnector.model.NamedEntity;
+import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.resource.Resource;
 import io.dataspaceconnector.model.util.UriConverter;

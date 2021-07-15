@@ -34,7 +34,7 @@ public class TruststoreDesc extends Description {
     /**
      * The trust store.
      */
-    private URI name;
+    private URI location;
 
     /**
      * The password of the trust store.

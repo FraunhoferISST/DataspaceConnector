@@ -17,7 +17,7 @@ package io.dataspaceconnector.model.catalog;
 
 import java.util.ArrayList;
 
-import io.dataspaceconnector.model.AbstractNamedFactory;
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import org.springframework.stereotype.Component;
 
 /**

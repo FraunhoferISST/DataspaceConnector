@@ -19,7 +19,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import io.dataspaceconnector.model.AbstractNamedFactory;
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;

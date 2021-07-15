@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.model.configuration;
 
-import io.dataspaceconnector.model.AbstractNamedFactory;
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
 import io.dataspaceconnector.model.proxy.ProxyDesc;
@@ -242,13 +242,29 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     }
 
     private boolean updateKeyStore(final Configuration config, final KeystoreDesc desc) {
-        // TODO only update if keystore really changed
+        if (desc != null
+                && config.getKeystore() != null
+                && config.getKeystore().getLocation() != null
+                && config.getKeystore().getLocation().equals(desc.getLocation())
+                && config.getKeystore().getPassword() != null
+                && config.getKeystore().getPassword().equals(desc.getPassword())) {
+            return false;
+        }
+
         config.setKeystore(keystoreFactory.create(desc == null ? new KeystoreDesc() : desc));
         return true;
     }
 
     private boolean updateTrustStore(final Configuration config, final TruststoreDesc desc) {
-        // TODO only update if truststore really changed
+        if (desc != null
+                && config.getTruststore() != null
+                && config.getTruststore().getLocation() != null
+                && config.getTruststore().getLocation().equals(desc.getLocation())
+                && config.getTruststore().getPassword() != null
+                && config.getTruststore().getPassword().equals(desc.getPassword())) {
+            return false;
+        }
+
         config.setTruststore(truststoreFactory.create(desc == null ? new TruststoreDesc() : desc));
         return true;
     }

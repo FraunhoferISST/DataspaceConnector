@@ -19,7 +19,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.util.List;
 
-import io.dataspaceconnector.model.NamedEntity;
+import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import lombok.AccessLevel;

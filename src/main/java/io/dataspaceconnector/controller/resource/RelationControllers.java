@@ -45,7 +45,7 @@ import io.dataspaceconnector.controller.resource.view.ContractView;
 import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
 import io.dataspaceconnector.controller.resource.view.RepresentationView;
 import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
-import io.dataspaceconnector.view.BrokerView;
+import io.dataspaceconnector.view.broker.BrokerView;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.service.resource;
 
+import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
+
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.repository.RequestedResourcesRepository;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Handles the basic logic for requested resources.
@@ -37,7 +37,6 @@ public final class RequestedResourceService extends ResourceService<RequestedRes
      */
     @Override
     public Optional<UUID> identifyByRemoteId(final URI remoteId) {
-        final var repo = (RequestedResourcesRepository) getRepository();
-        return repo.identifyByRemoteId(remoteId);
+        return ((RequestedResourcesRepository) getRepository()).identifyByRemoteId(remoteId);
     }
 }

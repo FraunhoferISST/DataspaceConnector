@@ -19,7 +19,7 @@ import io.dataspaceconnector.controller.resource.BaseResourceController;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.service.configuration.AppService;
-import io.dataspaceconnector.view.AppView;
+import io.dataspaceconnector.view.app.AppView;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

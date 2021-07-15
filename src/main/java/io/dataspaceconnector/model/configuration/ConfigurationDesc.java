@@ -16,7 +16,7 @@
 package io.dataspaceconnector.model.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dataspaceconnector.model.NamedDescription;
+import io.dataspaceconnector.model.named.NamedDescription;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.proxy.ProxyDesc;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;

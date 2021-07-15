@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.model.app;
 
-import io.dataspaceconnector.model.AbstractNamedFactory;
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import org.springframework.stereotype.Component;
 
 /**

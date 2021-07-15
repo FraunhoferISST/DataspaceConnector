@@ -27,7 +27,7 @@ import io.dataspaceconnector.repository.EndpointRepository;
 import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.configuration.EntityLinkerService;
 import io.dataspaceconnector.service.configuration.RouteService;
-import io.dataspaceconnector.view.RouteView;
+import io.dataspaceconnector.view.route.RouteView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
