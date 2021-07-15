@@ -141,8 +141,7 @@ public class HttpService {
             final var headerCopy = args.getHeaders() == null
                     ? new HashMap<String, String>() : new HashMap<>(args.getHeaders());
             if (args.getAuth() != null) {
-                headerCopy.put("Authorization",
-                        Credentials.basic(args.getAuth().getFirst(), args.getAuth().getSecond()));
+                headerCopy.put(args.getAuth().getFirst(), args.getAuth().getSecond());
             }
 
             response = httpSvc.getWithHeaders(targetUri, headerCopy);
@@ -243,7 +242,7 @@ public class HttpService {
         final var args = toArgs(input);
         for(AuthType el : auth) {
             if(el instanceof BasicAuth) {
-                if(args.getAuth().getFirst() == null && args.getAuth().getSecond() == null) {
+                if(args.getAuth() == null || (args.getAuth().getFirst() == null && args.getAuth().getSecond() == null)) {
                     args.setAuth(el.addAuth());
                 }
             } else if(el instanceof ApiKey) {
