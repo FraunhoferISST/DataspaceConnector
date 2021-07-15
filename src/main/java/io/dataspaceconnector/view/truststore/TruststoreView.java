@@ -20,6 +20,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 
+import java.net.URI;
+
 /**
  * View class for the trust store.
  */
@@ -31,5 +33,5 @@ public class TruststoreView extends RepresentationModel<TruststoreView> {
     /**
      * The name of the trust store.
      */
-    private String location;
+    private URI location;
 }
