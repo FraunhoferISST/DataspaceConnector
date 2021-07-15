@@ -50,8 +50,8 @@ import org.springframework.transaction.TransactionManager;
 @RequiredArgsConstructor
 public class Idscp2Config {
 
-//    @Value("${}")
-//    private String keyStoreLocation;  TODO how to set path to classpath resource?
+    @Value("${idscp.keystore}")
+    private String keyStoreLocation;
 
     @Value("${configuration.keyStorePassword}")
     private String keyStorePassword;
@@ -59,8 +59,8 @@ public class Idscp2Config {
     @Value("${configuration.keyAlias}")
     private String keyStoreAlias;
 
-//    @Value("${}")
-//    private String trustStoreLocation; TODO see above
+    @Value("${idscp.truststore}")
+    private String trustStoreLocation;
 
     @Value("${configuration.trustStorePassword}")
     private String trustStorePassword;
@@ -122,7 +122,7 @@ public class Idscp2Config {
         ctx.setCertAlias("1.0.1");
 
         final var keyStoreParameters = new KeyStoreParameters();
-        keyStoreParameters.setResource("./src/main/resources/conf/cert.p12");
+        keyStoreParameters.setResource(keyStoreLocation);
         keyStoreParameters.setPassword(keyStorePassword);
 
         final var keyManagers = new KeyManagersParameters();
@@ -130,7 +130,7 @@ public class Idscp2Config {
         ctx.setKeyManagers(keyManagers);
 
         final var trustStoreParameters = new KeyStoreParameters();
-        trustStoreParameters.setResource("./src/main/resources/conf/truststore.p12");
+        trustStoreParameters.setResource(trustStoreLocation);
         trustStoreParameters.setPassword(trustStorePassword);
 
         final var trustManagers = new TrustManagersParameters();
@@ -140,6 +140,11 @@ public class Idscp2Config {
         return ctx;
     }
 
+    /**
+     * Configures the transaction policy for routes.
+     *
+     * @return the transaction policy.
+     */
     @Bean("transactionPolicy")
     public SpringTransactionPolicy springTransactionPolicy() {
         final var policy = new SpringTransactionPolicy();
