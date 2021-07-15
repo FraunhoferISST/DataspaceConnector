@@ -54,7 +54,7 @@ public class BasicAuth extends AuthType {
      * @return a Pair containing the key and value used as HTTP header
      */
     @Override
-    public Pair<String, String> addAuth() {
+    public Pair<String, String> getAuthPair() {
         return new Pair<>("Authorization", Credentials.basic(username, password));
     }
 

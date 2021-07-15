@@ -113,7 +113,7 @@ class HttpServiceTest {
         final var expected = new HttpService.HttpArgs();
         expected.setParams(params);
         expected.setHeaders(headers);
-        expected.setAuth(authType.addAuth());
+        expected.setAuth(authType.getAuthPair());
 
         /* ACT */
         final var result = service.toArgs(input, auth);

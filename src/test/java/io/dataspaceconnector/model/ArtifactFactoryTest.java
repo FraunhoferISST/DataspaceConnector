@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.model.auth.ApiKey;
 import io.dataspaceconnector.model.auth.BasicAuth;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +25,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 
 public class ArtifactFactoryTest {
@@ -507,8 +508,7 @@ public class ArtifactFactoryTest {
         factory.update(artifact, desc);
 
         /* ASSERT */
-        assertTrue(Arrays.equals(desc.getValue().getBytes(StandardCharsets.UTF_16),
-                ((LocalData) artifact.getData()).getValue()));
+        assertArrayEquals(desc.getValue().getBytes(StandardCharsets.UTF_16), ((LocalData) artifact.getData()).getValue());
     }
 
     @Test
@@ -691,6 +691,169 @@ public class ArtifactFactoryTest {
         desc.setPassword("Random Password");
 
         final var artifact = factory.create(desc);
+
+        /* ACT */
+        final var result = factory.update(artifact, desc);
+
+        /* ASSERT */
+        Assertions.assertFalse(result);
+    }
+
+    /**
+     * api key
+     */
+
+
+    @Test
+    public void update_nullApiKeyValue_emptyAuthentication() throws MalformedURLException {
+        /* ARRANGE */
+        final var desc = new ArtifactDesc();
+        desc.setAccessUrl(new URL("https://localhost:8080/"));
+        desc.setApiKeyValue(null);
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        final var data = (RemoteData) ((ArtifactImpl) result).getData();
+        Assertions.assertTrue(data.getAuthentication().isEmpty());
+    }
+
+    @Test
+    public void update_nullApiKey_emptyAuthentication() throws MalformedURLException {
+        /* ARRANGE */
+        final var desc = new ArtifactDesc();
+        desc.setAccessUrl(new URL("https://localhost:8080/"));
+        desc.setApiKey(null);
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        final var data = (RemoteData) ((ArtifactImpl) result).getData();
+        Assertions.assertTrue(data.getAuthentication().isEmpty());
+    }
+
+    @Test
+    public void update_nullApiKeyValueAndNullApiKey_emptyAuthentication() throws MalformedURLException {
+        /* ARRANGE */
+        final var desc = new ArtifactDesc();
+        desc.setAccessUrl(new URL("https://localhost:8080/"));
+        desc.setApiKey(null);
+        desc.setApiKeyValue(null);
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        final var data = (RemoteData) ((ArtifactImpl) result).getData();
+        Assertions.assertTrue(data.getAuthentication().isEmpty());
+    }
+
+    @Test
+    public void update_differentApiKey_setApiKey() throws MalformedURLException {
+        /* ARRANGE */
+        final var desc = new ArtifactDesc();
+        desc.setAccessUrl(new URL("https://localhost:8080/"));
+        desc.setApiKey("Random Key");
+        desc.setApiKeyValue("Random Value");
+
+        final var artifact = factory.create(desc);
+
+        final var updateDesc = new ArtifactDesc();
+        updateDesc.setAccessUrl(new URL("https://localhost:8080/"));
+        updateDesc.setApiKey("Different Random Key");
+        updateDesc.setApiKeyValue("Random Value");
+
+        /* ACT */
+        factory.update(artifact, updateDesc);
+
+        /* ASSERT */
+        final var data = (RemoteData) ((ArtifactImpl) artifact).getData();
+        assertEquals(updateDesc.getApiKey(), ((ApiKey) data.getAuthentication().get(0)).getKey());
+    }
+
+    @Test
+    public void update_differentApiKeyValue_setApiKeyValue() throws MalformedURLException {
+        /* ARRANGE */
+        final var desc = new ArtifactDesc();
+        desc.setAccessUrl(new URL("https://localhost:8080/"));
+        desc.setApiKey("Random Key");
+        desc.setApiKeyValue("Random Value");
+
+        final var artifact = factory.create(desc);
+
+        final var updateDesc = new ArtifactDesc();
+        updateDesc.setAccessUrl(new URL("https://localhost:8080/"));
+        updateDesc.setApiKey("Random Key");
+        updateDesc.setApiKeyValue("Different Random Value");
+
+        /* ACT */
+        factory.update(artifact, updateDesc);
+
+        /* ASSERT */
+        final var data = (RemoteData) ((ArtifactImpl) artifact).getData();
+        assertEquals(updateDesc.getApiKeyValue(), ((ApiKey) data.getAuthentication().get(0)).getValue());
+    }
+
+    @Test
+    public void update_differentApiKey_returnTrue() throws MalformedURLException {
+        /* ARRANGE */
+        final var desc = new ArtifactDesc();
+        desc.setAccessUrl(new URL("https://localhost:8080/"));
+        desc.setApiKey("Random Key");
+        desc.setApiKeyValue("Random Value");
+
+        final var artifact = factory.create(desc);
+
+        final var updateDesc = new ArtifactDesc();
+        updateDesc.setAccessUrl(new URL("https://localhost:8080/"));
+        updateDesc.setApiKey("Different Random Key");
+        updateDesc.setApiKeyValue("Random Value");
+
+        /* ACT */
+        final var result = factory.update(artifact, updateDesc);
+
+        /* ASSERT */
+        Assertions.assertTrue(result);
+    }
+
+    @Test
+    public void update_differentApiKeyValue_returnTrue() throws MalformedURLException {
+        /* ARRANGE */
+        final var desc = new ArtifactDesc();
+        desc.setAccessUrl(new URL("https://localhost:8080/"));
+        desc.setApiKey("Random Key");
+        desc.setApiKeyValue("Random Value");
+
+        final var artifact = factory.create(desc);
+
+        final var updateDesc = new ArtifactDesc();
+        updateDesc.setAccessUrl(new URL("https://localhost:8080/"));
+        updateDesc.setApiKey("Random Key");
+        updateDesc.setApiKeyValue("Different Random Value");
+
+        /* ACT */
+        final var result = factory.update(artifact, updateDesc);
+
+        /* ASSERT */
+        Assertions.assertTrue(result);
+    }
+
+    @Test
+    public void update_sameApiKeyAndValue_returnFalse() throws MalformedURLException {
+        /* ARRANGE */
+        final var desc = new ArtifactDesc();
+        desc.setAccessUrl(new URL("https://localhost:8080/"));
+        desc.setApiKey("Random Key");
+        desc.setApiKeyValue("Random Value");
+
+        final var artifact = factory.create(desc);
+
+        final var updateDesc = new ArtifactDesc();
+        updateDesc.setAccessUrl(new URL("https://localhost:8080/"));
+        updateDesc.setApiKey("Random Key");
+        updateDesc.setApiKeyValue("Random Value");
 
         /* ACT */
         final var result = factory.update(artifact, desc);

@@ -51,7 +51,7 @@ public class ApiKey extends AuthType {
      * @return the key and value of the ApiKey as a Pair
      */
     @Override
-    public Pair<String, String> addAuth() {
+    public Pair<String, String> getAuthPair() {
         return new Pair<>(key, value);
     }
 }

@@ -49,7 +49,7 @@ public class AuthType {
      * Overridden method for extension classes which contains the information.
      * @return the information to be added to the HTTP request
      */
-    public Pair<String, String> addAuth() {
+    public Pair<String, String> getAuthPair() {
         return null;
     }
 }

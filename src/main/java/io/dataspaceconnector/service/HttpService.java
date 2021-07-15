@@ -244,10 +244,11 @@ public class HttpService {
                 if (el instanceof BasicAuth) {
                     if (args.getAuth() == null || (args.getAuth().getFirst() == null
                             && args.getAuth().getSecond() == null)) {
-                        args.setAuth(el.addAuth());
+                        args.setAuth(el.getAuthPair());
                     }
                 } else if (el instanceof ApiKey) {
-                    args.getHeaders().put(el.addAuth().getFirst(), el.addAuth().getSecond());
+                    var authPair = el.getAuthPair();
+                    args.getHeaders().put(authPair.getFirst(), authPair.getSecond());
                 }
             }
         }
