@@ -13,31 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.view;
+package io.dataspaceconnector.view.proxy;
 
-import java.net.URI;
-import java.util.List;
-
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.hateoas.RepresentationModel;
+import io.dataspaceconnector.model.proxy.Proxy;
+import org.modelmapper.ModelMapper;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
 
 /**
- * The view class for the proxy.
+ * The view assembler for the proxy.
  */
-@Getter
-@Setter
-@EqualsAndHashCode(callSuper = true)
-public class ProxyView extends RepresentationModel<ProxyView> {
+public class ProxyViewAssembler  implements
+        RepresentationModelAssembler<Proxy, ProxyView> {
 
-    /**
-     * The location information.
-     */
-    private URI location;
-
-    /**
-     * The list of exclusions.
-     */
-    private List<String> exclusions;
+    @Override
+    public final ProxyView toModel(final Proxy proxy) {
+        return new ModelMapper().map(proxy, ProxyView.class);
+    }
 }
