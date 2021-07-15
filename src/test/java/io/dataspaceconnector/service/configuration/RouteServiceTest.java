@@ -22,6 +22,7 @@ import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteFactory;
 import io.dataspaceconnector.repository.EndpointRepository;
 import io.dataspaceconnector.repository.RouteRepository;
+import io.dataspaceconnector.service.resource.EndpointServiceProxy;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.mockito.ArgumentMatchers.eq;
 
-@SpringBootTest(classes = { RouteService.class, RouteRepository.class, EndpointRepository.class, RouteFactory.class })
+@SpringBootTest(classes = { RouteService.class, RouteRepository.class, EndpointRepository.class,
+        EndpointServiceProxy.class, RouteFactory.class })
 class RouteServiceTest {
 
     @MockBean
@@ -39,6 +41,9 @@ class RouteServiceTest {
 
     @MockBean
     private RouteRepository repository;
+
+    @MockBean
+    private EndpointServiceProxy endpointService;
 
     @Autowired
     private RouteService service;

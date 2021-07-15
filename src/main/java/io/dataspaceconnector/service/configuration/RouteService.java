@@ -15,10 +15,14 @@
  */
 package io.dataspaceconnector.service.configuration;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteDesc;
+import io.dataspaceconnector.model.route.RouteFactory;
 import io.dataspaceconnector.repository.EndpointRepository;
 import io.dataspaceconnector.service.resource.BaseEntityService;
+import io.dataspaceconnector.service.resource.EndpointServiceProxy;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -40,13 +44,21 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
     private final @NonNull EndpointRepository endpointRepo;
 
     /**
+     * Service for all endpoints.
+     */
+    private final @NonNull EndpointServiceProxy endpointService;
+
+    /**
      * Constructor for route service.
      * @param endpointRepository The endpoint repository.
+     * @param endpointServiceProxy The endpoint service.
      */
     @Autowired
-    public RouteService(final @NonNull EndpointRepository endpointRepository) {
+    public RouteService(final @NonNull EndpointRepository endpointRepository,
+                        final @NonNull EndpointServiceProxy endpointServiceProxy) {
         super();
         this.endpointRepo = endpointRepository;
+        this.endpointService = endpointServiceProxy;
     }
 
     @Override
@@ -58,5 +70,45 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
             endpointRepo.save(route.getEnd());
         }
         return super.persist(route);
+    }
+
+    /**
+     * Set the start point of a route.
+     * @param routeId The route id.
+     * @param endpointId The endpoint id.
+     */
+    public void setStartEndpoint(final UUID routeId, final UUID endpointId) {
+        final var routeTmp = get(routeId);
+        final var endpoint = endpointService.get(endpointId);
+        persist(((RouteFactory) getFactory()).setStartEndpoint(routeTmp, endpoint));
+    }
+
+    /**
+     * Remove the start point of a route.
+     * @param routeId The route id.
+     */
+    public void removeStartEndpoint(final UUID routeId) {
+        final var routeTmp = get(routeId);
+        persist(((RouteFactory) getFactory()).deleteStartEndpoint(routeTmp));
+    }
+
+    /**
+     * Set the last point of a route.
+     * @param routeId The route id.
+     * @param endpointId The endpoint id.
+     */
+    public void setLastEndpoint(final UUID routeId, final UUID endpointId) {
+        final var routeTmp = get(routeId);
+        final var endpoint = endpointService.get(endpointId);
+        persist(((RouteFactory) getFactory()).setLastEndpoint(routeTmp, endpoint));
+    }
+
+    /**
+     * Remove the last point of a route.
+     * @param routeId The route id.
+     */
+    public void removeLastEndpoint(final UUID routeId) {
+        final var routeTmp = get(routeId);
+        persist(((RouteFactory) getFactory()).deleteStartEndpoint(routeTmp));
     }
 }
