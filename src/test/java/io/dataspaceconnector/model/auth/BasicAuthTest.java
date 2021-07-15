@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BasicAuthTest {
 
     @Test
-    void getAuthPair_nullValue_nullComponent1() {
+    void getAuthPair_nullValue_nullValue() {
         /* ARRANGE */
         var basicAuth = new BasicAuth();
 
@@ -16,19 +16,7 @@ class BasicAuthTest {
         var result = basicAuth.getAuthPair();
 
         /* ASSERT */
-        assertNull(result.component1());
-    }
-
-    @Test
-    void getAuthPair_nullValue_nullComponent2() {
-        /* ARRANGE */
-        var basicAuth = new BasicAuth();
-
-        /* ACT */
-        var result = basicAuth.getAuthPair();
-
-        /* ASSERT */
-        assertNull(result.component2());
+        assertNull(result);
     }
 
     @Test

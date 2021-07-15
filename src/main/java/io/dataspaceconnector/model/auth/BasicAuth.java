@@ -55,7 +55,10 @@ public class BasicAuth extends AuthType {
      */
     @Override
     public Pair<String, String> getAuthPair() {
-        return new Pair<>("Authorization", Credentials.basic(username, password));
+        if (username != null && password != null) {
+            return new Pair<>("Authorization", Credentials.basic(username, password));
+        }
+        else return null;
     }
 
 }

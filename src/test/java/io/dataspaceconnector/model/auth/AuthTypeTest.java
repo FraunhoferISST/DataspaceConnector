@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AuthTypeTest {
 
     @Test
-    void getAuthPair_nullValue_nullComponent1() {
+    void getAuthPair_nullValue_nullComponent(){
         /* ARRANGE */
         var authType = new AuthType();
 
@@ -15,19 +15,6 @@ class AuthTypeTest {
         var result = authType.getAuthPair();
 
         /* ASSERT */
-        assertNull(result.component1());
+        assertNull(result);
     }
-
-    @Test
-    void getAuthPair_nullValue_nullComponent2() {
-        /* ARRANGE */
-        var authType = new AuthType();
-
-        /* ACT */
-        var result = authType.getAuthPair();
-
-        /* ASSERT */
-        assertNull(result.component2());
-    }
-
 }
