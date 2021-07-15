@@ -34,6 +34,15 @@ public class TransitionFORALLNEXT implements TransitionFormula {
     private TransitionFormula parameter;
 
     /**
+     * Evaluates to true, if all following transitions satisfy the given formula.
+     * @param formula All following transitions need to satisfy the given formula.
+     * @return Transition representing the formula.
+     */
+    public static TransitionFORALLNEXT transitionFORALLNEXT(final TransitionFormula formula) {
+        return new TransitionFORALLNEXT(formula);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

@@ -26,7 +26,7 @@ import static io.configmanager.extensions.routes.petrinet.evaluation.formula.tra
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionMODAL.transitionMODAL;
 
 /**
- * evaluates to true, if there is a successor transition for which parameter1 holds,
+ * Evaluates to true, if there is a successor transition for which parameter1 holds,
  * while parameter2 holds for the place in between.
  */
 @AllArgsConstructor
@@ -40,6 +40,18 @@ public class TransitionEXISTMODAL implements TransitionFormula {
      * Place in between transition needs to hold for this formula.
      */
     private StateFormula parameter2;
+
+    /**
+     * Evaluates to true, if there is a successor transition for which parameter1 holds,
+     * while parameter2 holds for the place in between.
+     * @param formula1 Successor transition needs to hold for this formula.
+     * @param formula2 Place in between transition needs to hold for this formula.
+     * @return Transition representing the formula.
+     */
+    public static TransitionEXISTMODAL transitionEXISTMODAL(final TransitionFormula formula1,
+                                                            final StateFormula formula2) {
+        return new TransitionEXISTMODAL(formula1, formula2);
+    }
 
     /**
      * {@inheritDoc}

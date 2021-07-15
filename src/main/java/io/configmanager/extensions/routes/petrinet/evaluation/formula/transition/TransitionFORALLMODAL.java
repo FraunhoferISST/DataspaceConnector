@@ -40,6 +40,18 @@ public class TransitionFORALLMODAL implements TransitionFormula {
      */
     private StateFormula parameter2;
 
+    /**
+     * Evaluates to true, if parameter1 evaluates to true for every following transition
+     * and parameter2 evaluates to true for every Place in between.
+     * @param formula1 This parameter has to evaluate to true for every following transition.
+     * @param formula2 Parameter2 evaluates to true for every Place in between.
+     * @return Transition representing the formula.
+     */
+    public static TransitionFORALLMODAL transitionFORALLMODAL(final TransitionFormula formula1,
+                                                              final StateFormula formula2) {
+        return new TransitionFORALLMODAL(formula1, formula2);
+    }
+
     // parameter1, must be true for all successor transitions, parameter2 must
     // be true for the states between the current transition and its successors.
     /**

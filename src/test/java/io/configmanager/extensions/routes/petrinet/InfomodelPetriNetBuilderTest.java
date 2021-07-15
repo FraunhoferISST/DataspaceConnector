@@ -74,8 +74,15 @@ import static io.configmanager.extensions.routes.petrinet.evaluation.formula.sta
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodePOS.nodePOS;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.ArcExpression.arcExpression;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionAF.transitionAF;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionALONG.transitionALONG;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionAND.transitionAND;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionEV.transitionEV;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionEXISTMODAL.transitionEXISTMODAL;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionEXISTNEXT.transitionEXISTNEXT;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionFORALLMODAL.transitionFORALLMODAL;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionFORALLNEXT.transitionFORALLNEXT;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionFORALLUNTIL.transitionFORALLUNTIL;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionINV.transitionINV;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionOR.transitionOR;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionMODAL.transitionMODAL;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionNOT.transitionNOT;
@@ -251,6 +258,34 @@ class InfomodelPetriNetBuilderTest {
         final var formula12 = nodeEXISTNEXT(formula3);
         assertEquals("EXIST_NEXT", formula12.symbol());
         assertEquals("EXIST_NEXT(EXIST_UNTIL(MODAL(TrueOperator), NF()))", formula12.writeFormula());
+
+        final var formula13 = nodeAND(nodeMODAL(transitionEXISTNEXT(falseOperator())), nodeOR(nodeNF(nodeExpression(x -> true, "testMsg")), trueOperator()));
+        assertEquals("AND", formula13.symbol());
+        assertEquals("AND(MODAL(EXIST_NEXT(falseOperator)), OR(NF(testMsg), TrueOperator))", formula13.writeFormula());
+
+        final var formula14 = nodeAND(nodeMODAL(transitionALONG(falseOperator())), nodeOR(nodeNF(nodeExpression(x -> true, "testMsg")), trueOperator()));
+        assertEquals("AND", formula14.symbol());
+        assertEquals("AND(MODAL(ALONG(falseOperator)), OR(NF(testMsg), TrueOperator))", formula14.writeFormula());
+
+        final var formula15 = nodeAND(nodeMODAL(transitionEXISTMODAL(falseOperator(), formula8)), nodeOR(nodeNF(nodeExpression(x -> true, "testMsg")), trueOperator()));
+        assertEquals("AND", formula15.symbol());
+        assertEquals("AND(MODAL(EXIST_MODAL(falseOperator, FORALL_UNTIL(EXIST_UNTIL(MODAL(TrueOperator), NF()), EXIST_UNTIL(MODAL(TrueOperator), NF())))), OR(NF(testMsg), TrueOperator))", formula15.writeFormula());
+
+        final var formula16 = nodeAND(nodeMODAL(transitionFORALLUNTIL(falseOperator(), falseOperator())), nodeOR(nodeNF(nodeExpression(x -> true, "testMsg")), trueOperator()));
+        assertEquals("AND", formula16.symbol());
+        assertEquals("AND(MODAL(FORALL_UNTIL(falseOperator, falseOperator)), OR(NF(testMsg), TrueOperator))", formula16.writeFormula());
+
+        final var formula17 = nodeAND(nodeMODAL(transitionFORALLMODAL(falseOperator(), falseOperator())), nodeOR(nodeNF(nodeExpression(x -> true, "testMsg")), trueOperator()));
+        assertEquals("AND", formula17.symbol());
+        assertEquals("AND(MODAL(FORALL_MODAL(falseOperator, falseOperator)), OR(NF(testMsg), TrueOperator))", formula17.writeFormula());
+
+        final var formula18 = nodeAND(nodeMODAL(transitionFORALLNEXT(falseOperator())), nodeOR(nodeNF(nodeExpression(x -> true, "testMsg")), trueOperator()));
+        assertEquals("AND", formula18.symbol());
+        assertEquals("AND(MODAL(FORALL_NEXT(falseOperator)), OR(NF(testMsg), TrueOperator))", formula18.writeFormula());
+
+        final var formula19 = nodeAND(nodeMODAL(transitionINV(falseOperator())), nodeOR(nodeNF(nodeExpression(x -> true, "testMsg")), trueOperator()));
+        assertEquals("AND", formula19.symbol());
+        assertEquals("AND(MODAL(INV(falseOperator)), OR(NF(testMsg), TrueOperator))", formula19.writeFormula());
     }
 
     /**

@@ -34,6 +34,15 @@ public class TransitionINV implements TransitionFormula {
     private TransitionFormula parameter;
 
     /**
+     * Evaluates to true, if parameter evaluates to true for all reachable transitions.
+     * @param formula Parameter needs to evaluate to true for all reachable transitions.
+     * @return Transition representing the formula.
+     */
+    public static TransitionINV transitionINV(final TransitionFormula formula) {
+        return new TransitionINV(formula);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

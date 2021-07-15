@@ -34,6 +34,15 @@ public class TransitionALONG implements TransitionFormula {
     private TransitionFormula parameter;
 
     /**
+     * Evaluates to true, if there exists a path, where parameter holds for every transition.
+     * @param formula Formula which needs to hold for every transition.
+     * @return Transition representing the formula.
+     */
+    public static TransitionALONG transitionALONG(final TransitionFormula formula) {
+        return new TransitionALONG(formula);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
