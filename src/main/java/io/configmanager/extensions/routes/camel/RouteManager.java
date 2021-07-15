@@ -302,7 +302,7 @@ public class RouteManager {
      * @param velocityEngine the Velocity engine required for populating the template
      * @param velocityContext the context containing the values to insert into the template
      * @return the populated template as a string
-     * @throws Exception if an error occurs while filling out the route template
+     * @throws IOException if an error occurs while filling out the route template
      */
     private StringWriter populateTemplate(final Resource resource,
                                           final VelocityEngine velocityEngine,
