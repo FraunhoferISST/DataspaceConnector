@@ -16,7 +16,7 @@
 package io.dataspaceconnector.model.configuration;
 
 import de.fraunhofer.iais.eis.ConnectorStatus;
-import io.dataspaceconnector.model.NamedEntity;
+import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.keystore.Keystore;
 import io.dataspaceconnector.model.proxy.Proxy;
 import io.dataspaceconnector.model.truststore.Truststore;

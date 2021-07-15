@@ -18,7 +18,7 @@ package io.dataspaceconnector.model.broker;
 import java.net.URI;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dataspaceconnector.model.NamedDescription;
+import io.dataspaceconnector.model.named.NamedDescription;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

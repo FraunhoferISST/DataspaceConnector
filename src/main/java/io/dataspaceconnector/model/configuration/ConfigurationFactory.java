@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.model.configuration;
 
-import io.dataspaceconnector.model.AbstractNamedFactory;
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
 import io.dataspaceconnector.model.proxy.ProxyDesc;

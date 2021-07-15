@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model;
+package io.dataspaceconnector.model.named;
 
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.util.MetadataUtils;

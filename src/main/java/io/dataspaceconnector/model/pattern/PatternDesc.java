@@ -17,7 +17,7 @@ package io.dataspaceconnector.model.pattern;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.dataspaceconnector.model.NamedDescription;
+import io.dataspaceconnector.model.named.NamedDescription;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

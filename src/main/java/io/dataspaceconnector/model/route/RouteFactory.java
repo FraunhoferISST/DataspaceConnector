@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.model.route;
 
-import io.dataspaceconnector.model.AbstractNamedFactory;
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.util.MetadataUtils;

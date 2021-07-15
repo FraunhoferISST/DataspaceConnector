@@ -13,29 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model;
+package io.dataspaceconnector.model.named;
 
-import javax.persistence.MappedSuperclass;
-
-import io.dataspaceconnector.model.base.Entity;
+import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
- * The entity class which holds additional information like title, description.
+ * Description class which holds additional information like title, description.
  */
 @Data
-@MappedSuperclass
 @EqualsAndHashCode(callSuper = true)
-public class NamedEntity extends Entity {
-    /**
-     * Serial version uid.
-     **/
-    private static final long serialVersionUID = 1L;
+@NoArgsConstructor
+public class NamedDescription extends Description {
+
     /**
      * The title of the entity.
      */
     private String title;
+
     /**
      * The description of the entity.
      */

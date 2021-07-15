@@ -17,7 +17,7 @@ package io.dataspaceconnector.model.artifact;
 
 import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
-import io.dataspaceconnector.model.AbstractNamedFactory;
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
 
 import java.net.URI;
 import java.net.URL;

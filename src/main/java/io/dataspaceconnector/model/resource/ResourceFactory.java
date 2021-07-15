@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.model.resource;
 
-import io.dataspaceconnector.model.AbstractNamedFactory;
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.util.MetadataUtils;
 
 import java.net.URI;

@@ -13,25 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model.app;
-
-import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import org.springframework.stereotype.Component;
-
 /**
- * Creates and updates an app.
+ * Contains elements for named entities.
  */
-@Component
-public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
-
-    /**
-     * Creates an app.
-     *
-     * @param desc The description of the entity.
-     * @return new app entity.
-     */
-    @Override
-    protected App initializeEntity(final AppDesc desc) {
-        return new App();
-    }
-}
+package io.dataspaceconnector.model.named;
