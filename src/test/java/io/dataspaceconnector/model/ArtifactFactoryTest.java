@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.model.auth.BasicAuth;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -562,7 +563,7 @@ public class ArtifactFactoryTest {
      */
 
     @Test
-    public void create_nullUsername_nullUsername() throws MalformedURLException {
+    public void create_nullUsername_emptyAuthentification() throws MalformedURLException {
         /* ARRANGE */
         final var desc = new ArtifactDesc();
         desc.setAccessUrl(new URL("https://localhost:8080/"));
@@ -573,8 +574,7 @@ public class ArtifactFactoryTest {
 
         /* ASSERT */
         final var data = (RemoteData) ((ArtifactImpl) result).getData();
-        //TODO fix tests
-        //assertNull(data.getUsername());
+        Assertions.assertTrue(data.getAuthentification().isEmpty());
     }
 
     @Test
@@ -583,20 +583,21 @@ public class ArtifactFactoryTest {
         final var desc = new ArtifactDesc();
         desc.setAccessUrl(new URL("https://localhost:8080/"));
         desc.setUsername("Random Username");
+        desc.setPassword("Random Password");
 
         final var artifact = factory.create(desc);
 
         final var updateDesc = new ArtifactDesc();
         updateDesc.setAccessUrl(new URL("https://localhost:8080/"));
         updateDesc.setUsername("Random Different Username");
+        updateDesc.setPassword("Random Password");
 
         /* ACT */
         factory.update(artifact, updateDesc);
 
         /* ASSERT */
         final var data = (RemoteData) ((ArtifactImpl) artifact).getData();
-        //TODO fix tests
-        //assertEquals(updateDesc.getUsername(), data.getUsername());
+        assertEquals(updateDesc.getUsername(), ((BasicAuth) data.getAuthentification().get(0)).getUsername());
     }
 
     @Test
@@ -605,12 +606,14 @@ public class ArtifactFactoryTest {
         final var desc = new ArtifactDesc();
         desc.setAccessUrl(new URL("https://localhost:8080/"));
         desc.setUsername("Random Username");
+        desc.setPassword("Random Password");
 
         final var artifact = factory.create(desc);
 
         final var updateDesc = new ArtifactDesc();
         updateDesc.setAccessUrl(new URL("https://localhost:8080/"));
         updateDesc.setUsername("Random Different Username");
+        updateDesc.setPassword("Random Password");
 
         /* ACT */
         final var result = factory.update(artifact, updateDesc);
@@ -625,6 +628,7 @@ public class ArtifactFactoryTest {
         final var desc = new ArtifactDesc();
         desc.setAccessUrl(new URL("https://localhost:8080/"));
         desc.setUsername("Random Username");
+        desc.setPassword("Random Password");
 
         final var artifact = factory.create(desc);
 
@@ -651,8 +655,7 @@ public class ArtifactFactoryTest {
 
         /* ASSERT */
         final var data = (RemoteData) ((ArtifactImpl) result).getData();
-        //TODO fix tests
-        //assertNull(data.getPassword());
+        Assertions.assertTrue(data.getAuthentification().isEmpty());
     }
 
     @Test
@@ -660,12 +663,14 @@ public class ArtifactFactoryTest {
         /* ARRANGE */
         final var desc = new ArtifactDesc();
         desc.setAccessUrl(new URL("https://localhost:8080/"));
+        desc.setUsername("Random Username");
         desc.setPassword("Random Password");
 
         final var artifact = factory.create(desc);
 
         final var updateDesc = new ArtifactDesc();
         updateDesc.setAccessUrl(new URL("https://localhost:8080/"));
+        updateDesc.setUsername("Random Username");
         updateDesc.setPassword("Random Different Password");
 
         /* ACT */
@@ -673,35 +678,16 @@ public class ArtifactFactoryTest {
 
         /* ASSERT */
         final var data = (RemoteData) ((ArtifactImpl) artifact).getData();
-        //TODO fix tests
-        //assertEquals(updateDesc.getPassword(), data.getPassword());
+        assertEquals(updateDesc.getPassword(), ((BasicAuth) data.getAuthentification().get(0)).getPassword());
     }
 
-    @Test
-    public void update_differentPassword_returnTrue() throws MalformedURLException {
-        /* ARRANGE */
-        final var desc = new ArtifactDesc();
-        desc.setAccessUrl(new URL("https://localhost:8080/"));
-        desc.setPassword("Random Password");
-
-        final var artifact = factory.create(desc);
-
-        final var updateDesc = new ArtifactDesc();
-        updateDesc.setAccessUrl(new URL("https://localhost:8080/"));
-        updateDesc.setPassword("Random Different Password");
-
-        /* ACT */
-        final var result = factory.update(artifact, updateDesc);
-
-        /* ASSERT */
-        Assertions.assertTrue(result);
-    }
 
     @Test
     public void update_samePassword_returnFalse() throws MalformedURLException {
         /* ARRANGE */
         final var desc = new ArtifactDesc();
         desc.setAccessUrl(new URL("https://localhost:8080/"));
+        desc.setUsername("Random Username");
         desc.setPassword("Random Password");
 
         final var artifact = factory.create(desc);

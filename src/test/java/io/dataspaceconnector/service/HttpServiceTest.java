@@ -16,8 +16,9 @@
 package io.dataspaceconnector.service;
 
 import io.dataspaceconnector.model.QueryInput;
+import io.dataspaceconnector.model.auth.AuthType;
+import io.dataspaceconnector.model.auth.BasicAuth;
 import kotlin.NotImplementedError;
-import kotlin.Pair;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
 import okhttp3.Request;
@@ -34,6 +35,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -99,7 +101,10 @@ class HttpServiceTest {
         /* ARRANGE */
         final var params = Map.of("A", "AV", "B", "BV");
         final var headers = Map.of("C", "CV", "D", "DV");
-        final var auth = new Pair<String, String>("X", "Y");
+        final var authType = new BasicAuth("X", "Y");
+        final var auth = new LinkedList<AuthType>();
+
+        auth.add(authType);
 
         final var input = new QueryInput();
         input.setParams(params);
@@ -108,14 +113,13 @@ class HttpServiceTest {
         final var expected = new HttpService.HttpArgs();
         expected.setParams(params);
         expected.setHeaders(headers);
-        expected.setAuth(auth);
+        expected.setAuth(authType.addAuth());
 
         /* ACT */
-      //TODO fix test
-        // final var result = service.toArgs(input, auth);
+        final var result = service.toArgs(input, auth);
 
         /* ASSERT */
-      //  assertEquals(expected, result);
+        assertEquals(expected, result);
     }
 
     @Test
