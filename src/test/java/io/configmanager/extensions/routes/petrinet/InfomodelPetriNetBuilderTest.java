@@ -59,6 +59,7 @@ import static io.configmanager.extensions.routes.petrinet.evaluation.formula.Tru
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeAND.nodeAND;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeEV.nodeEV;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeEXISTMODAL.nodeEXISTMODAL;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeEXISTNEXT.nodeEXISTNEXT;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeEXISTUNTIL.nodeEXISTUNTIL;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeExpression.nodeExpression;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeFORALLMODAL.nodeFORALLMODAL;
@@ -67,6 +68,7 @@ import static io.configmanager.extensions.routes.petrinet.evaluation.formula.sta
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeINV.nodeINV;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeMODAL.nodeMODAL;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeNF.nodeNF;
+import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeNOT.nodeNOT;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeOR.nodeOR;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodeALONG.nodeALONG;
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.state.NodePOS.nodePOS;
@@ -241,6 +243,14 @@ class InfomodelPetriNetBuilderTest {
                 transitionNOT(falseOperator()));
         assertEquals("EXIST_MODAL",formula10.symbol());
         assertEquals("EXIST_MODAL(EXIST_UNTIL(MODAL(TrueOperator), NF()), NOT(falseOperator))",formula10.writeFormula());
+
+        final var formula11 = nodeNOT(formula3);
+        assertEquals("NOT", formula11.symbol());
+        assertEquals("NOT(EXIST_UNTIL(MODAL(TrueOperator), NF()))", formula11.writeFormula());
+
+        final var formula12 = nodeEXISTNEXT(formula3);
+        assertEquals("EXIST_NEXT", formula12.symbol());
+        assertEquals("EXIST_NEXT(EXIST_UNTIL(MODAL(TrueOperator), NF()))", formula12.writeFormula());
     }
 
     /**
