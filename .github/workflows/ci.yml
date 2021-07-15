@@ -68,14 +68,14 @@ jobs:
       with:
         dockerfile: Dockerfile
         config: .hadolint.yaml
-    - name: Lint Docker and Yaml
-      uses: bridgecrewio/checkov-action@master
-      with:
-        directory: .
-        quiet: true
-        output_format: github_failed_only
-        download_external_modules: true
-        soft_fail: true
+    # - name: Lint Docker and Yaml
+    #   uses: bridgecrewio/checkov-action@master
+    #   with:
+    #     directory: .
+    #     quiet: true
+    #     output_format: github_failed_only
+    #     download_external_modules: true
+    #     soft_fail: true
 
   static-code-analysis:
     needs: [style, license, linting]
