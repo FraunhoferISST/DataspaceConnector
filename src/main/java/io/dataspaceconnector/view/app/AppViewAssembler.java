@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.view;
+package io.dataspaceconnector.view.app;
 
 import io.dataspaceconnector.controller.configurations.AppControllers.AppController;
 import io.dataspaceconnector.controller.resource.view.SelfLinking;
