@@ -24,11 +24,11 @@ import de.fraunhofer.iais.eis.DynamicAttributeToken;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
-import de.fraunhofer.ids.messaging.broker.BrokerService;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
+import io.dataspaceconnector.service.configuration.BrokerService;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -59,6 +59,7 @@ public class ConnectorUnavailableMessageControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
 
     private final String recipient = "https://someURL";
     private final DynamicAttributeToken token = new DynamicAttributeTokenBuilder()
