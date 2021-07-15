@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dataspaceconnector.model.configuration.DeployMode;
 import io.dataspaceconnector.model.configuration.LogLevel;
 import io.dataspaceconnector.model.configuration.SecurityProfile;
-import io.dataspaceconnector.view.KeystoreView;
+import io.dataspaceconnector.view.keystore.KeystoreView;
 import io.dataspaceconnector.view.ProxyView;
 import io.dataspaceconnector.view.TruststoreView;
 import io.dataspaceconnector.view.util.ViewConstants;

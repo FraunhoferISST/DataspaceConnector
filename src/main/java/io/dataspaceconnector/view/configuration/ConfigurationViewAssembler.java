@@ -21,7 +21,7 @@ import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers.
 import io.dataspaceconnector.controller.resource.view.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.configuration.Configuration;
-import io.dataspaceconnector.view.KeystoreViewAssembler;
+import io.dataspaceconnector.view.keystore.KeystoreViewAssembler;
 import io.dataspaceconnector.view.ProxyViewAssembler;
 import io.dataspaceconnector.view.TruststoreViewAssembler;
 import org.jetbrains.annotations.NotNull;
