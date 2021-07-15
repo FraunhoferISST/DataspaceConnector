@@ -23,6 +23,7 @@ import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
+import io.dataspaceconnector.util.ErrorMessages;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,24 +86,6 @@ public class QueryMessageControllerTest {
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendQueryMessage_mockConnectionTimeout_returnBadGateway() throws Exception {
-        /* ARRANGE */
-        final var response = Optional.empty();
-
-        Mockito.doReturn(token).when(connectorService).getCurrentDat();
-        Mockito.doReturn(response).when(messageService).sendQueryMessage(Mockito.any(),
-                Mockito.any());
-
-        /* ACT */
-        final var result = mockMvc.perform(post("/api/ids/query")
-                .param("recipient", brokerUrl).content("SOME QUERY")).andReturn();
-
-        /* ASSERT */
-        assertEquals(502, result.getResponse().getStatus());
-    }
-
-    @Test
-    @WithMockUser("ADMIN")
     public void sendQueryMessage_throwIOException_returnIdsMessageFailed() throws Exception {
         /* ARRANGE */
         Mockito.doThrow(IOException.class).when(messageService).sendQueryMessage(Mockito.any(),
@@ -158,9 +141,9 @@ public class QueryMessageControllerTest {
                 .param("recipient", brokerUrl).content("SOME QUERY")).andReturn();
 
         /* ASSERT */
-        assertEquals(500, result.getResponse().getStatus());
-        assertEquals("Failed to read the ids response message.",
-                result.getResponse().getContentAsString());
+        assertEquals(502, result.getResponse().getStatus());
+        final var msg = ErrorMessages.INVALID_MESSAGE.toString();
+        assertEquals(msg, result.getResponse().getContentAsString());
     }
 
     @Test
@@ -204,25 +187,6 @@ public class QueryMessageControllerTest {
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendSearchMessage_validSearchTerm_returnBadGateway() throws Exception {
-        /* ARRANGE */
-        final var response = Optional.empty();
-
-        Mockito.doReturn(token).when(connectorService).getCurrentDat();
-        Mockito.doReturn(response).when(messageService).sendFullTextSearchMessage(
-                Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt());
-
-        /* ACT */
-        final var result = mockMvc.perform(post("/api/ids/search")
-                .param("recipient", brokerUrl)
-                .content("SOME SEARCH TERM")).andReturn();
-
-        /* ASSERT */
-        assertEquals(502, result.getResponse().getStatus());
-    }
-
-    @Test
-    @WithMockUser("ADMIN")
     public void sendSearchMessage_throwIOException_returnIdsMessageFailed() throws Exception {
         /* ARRANGE */
         Mockito.doThrow(IOException.class).when(messageService).sendFullTextSearchMessage(
@@ -249,9 +213,9 @@ public class QueryMessageControllerTest {
                 .param("recipient", brokerUrl).content("SOME SEARCH TERM")).andReturn();
 
         /* ASSERT */
-        assertEquals(500, result.getResponse().getStatus());
-        assertEquals("Failed to read the ids response message.",
-                result.getResponse().getContentAsString());
+        assertEquals(502, result.getResponse().getStatus());
+        final var msg = ErrorMessages.INVALID_MESSAGE.toString();
+        assertEquals(msg, result.getResponse().getContentAsString());
     }
 
     @Test

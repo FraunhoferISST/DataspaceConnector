@@ -151,7 +151,7 @@ public final class ControllerUtils {
      * @return ResponseEntity with status code 500.
      */
     public static ResponseEntity<Object> respondFailedToStoreEntity(final Exception e) {
-        final var msg = "Failed to store entity. ";
+        final var msg = "Failed to store entity.";
         if (log.isWarnEnabled()) {
             log.warn("{} [exception=({})]", msg, e.getMessage(), e);
         }
