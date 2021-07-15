@@ -17,6 +17,7 @@ package io.dataspaceconnector.util;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.text.Normalizer;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -216,8 +217,12 @@ public final class IdsUtils {
     @SuppressFBWarnings("IMPROPER_UNICODE")
     public static Language getLanguage(final String language) {
         return Arrays.stream(Language.values())
-                .filter(l -> language.toLowerCase(Locale.ROOT).equals(
-                        l.name().toLowerCase(Locale.ROOT)))
+                .filter(l ->
+                        Normalizer.normalize(
+                                language.toLowerCase(Locale.ROOT),
+                                Normalizer.Form.NFC).equals(
+                                Normalizer.normalize(l.name().toLowerCase(Locale.ROOT),
+                                        Normalizer.Form.NFC)))
                 .findAny()
                 .orElse(Language.EN);
     }
