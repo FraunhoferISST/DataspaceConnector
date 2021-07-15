@@ -28,6 +28,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
@@ -75,10 +76,17 @@ public class ClearingHouseLoggingProcessor implements Processor {
         final var transferContractID = UUIDUtils
                 .uuidFromUri(idsMessageHeader.getTransferContract());
         final var clearingHouse = connectorConfig.getClearingHouse();
+
         if (!clearingHouse.equals(URI.create(""))) {
+
             try {
+                UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                        .fromHttpUrl(clearingHouse.toString());
+                uriBuilder.pathSegment(transferContractID.toString());
+
+                final var destination = uriBuilder.build().toUri();
                 logMessageService.sendMessage(
-                        URI.create(clearingHouse + transferContractID.toString()),
+                        destination,
                         idsMessageHeader.toRdf());
 
             } catch (PolicyExecutionException e) {

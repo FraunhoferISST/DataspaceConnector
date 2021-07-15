@@ -31,9 +31,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -75,12 +75,17 @@ public class PolicyExecutionService {
         try {
             final var clearingHouse = connectorConfig.getClearingHouse();
             if (!clearingHouse.equals(URI.create(""))) {
-                var agreementUUID = UUIDUtils.uuidFromUri(agreement.getId());
-                var recipient = new URI(clearingHouse + agreementUUID.toString());
-                logMessageService.sendMessage(recipient, IdsUtils.toRdf(agreement));
+                UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                        .fromHttpUrl(clearingHouse.toString());
+
+                // Add Agreement UUID
+                uriBuilder.pathSegment(UUIDUtils.uuidFromUri(agreement.getId()).toString());
+
+                final var destination = uriBuilder.build().toUri();
+                logMessageService.sendMessage(destination, IdsUtils.toRdf(agreement));
             }
         } catch (PolicyExecutionException | RdfBuilderException
-                | URISyntaxException | NullPointerException exception) {
+                | NullPointerException exception) {
             if (log.isWarnEnabled()) {
                 log.warn("Failed to send contract agreement to clearing house. "
                         + "[exception=({})]", exception.getMessage());
