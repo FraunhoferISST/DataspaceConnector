@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SpringBootTest
-public class ProxyViewTest {
+public class ProxyViewAssemblerTest {
 
     @Test
     public void create_ValidProxy_returnProxyView() {
@@ -42,7 +42,6 @@ public class ProxyViewTest {
         assertEquals(after.getLocation(), shouldLookLike.getLocation());
         assertFalse(after.getExclusions().isEmpty());
         assertEquals(after.getExclusions().get(0), shouldLookLike.getExclusions().get(0));
-
     }
 
     private Proxy getProxy() {

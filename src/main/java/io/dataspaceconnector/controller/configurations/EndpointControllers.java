@@ -43,7 +43,6 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -163,19 +162,6 @@ public final class EndpointControllers {
                 @RequestBody final UUID dataSourceId) throws IOException {
             genericEndpointService.setGenericEndpointDataSource(genericEndpointId, dataSourceId);
             return new ResponseEntity<>("Created DataSource", HttpStatus.OK);
-        }
-
-        /**
-         * @param genericEndpointId The id of the generic endpoint.
-         * @return response status OK, if data source is deleted from the generic endpoint.
-         */
-        @DeleteMapping("{id}/datasource")
-        @Operation(summary = "Creates start endpoint for the route")
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.OK)})
-        public ResponseEntity<String> removeDataSource(
-                @Valid @PathVariable(name = "id") final UUID genericEndpointId) throws IOException {
-            genericEndpointService.deleteGenericEndpointDataSource(genericEndpointId);
-            return new ResponseEntity<>("Deleted DataSource", HttpStatus.OK);
         }
     }
 }

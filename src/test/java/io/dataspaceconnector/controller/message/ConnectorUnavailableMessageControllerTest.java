@@ -15,6 +15,11 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import javax.xml.datatype.DatatypeFactory;
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+
 import de.fraunhofer.iais.eis.DynamicAttributeToken;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
@@ -23,6 +28,7 @@ import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
+import io.dataspaceconnector.service.configuration.BrokerService;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -32,11 +38,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-
-import javax.xml.datatype.DatatypeFactory;
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -53,8 +54,12 @@ public class ConnectorUnavailableMessageControllerTest {
     @MockBean
     private ConnectorService connectorService;
 
+    @MockBean
+    private BrokerService dataBrokerService;
+
     @Autowired
     private MockMvc mockMvc;
+
 
     private final String recipient = "https://someURL";
     private final DynamicAttributeToken token = new DynamicAttributeTokenBuilder()

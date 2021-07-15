@@ -15,7 +15,10 @@
  */
 package io.dataspaceconnector.repository;
 
+import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.broker.Broker;
+
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -39,4 +42,17 @@ public interface BrokerRepository extends BaseEntityRepository<Broker> {
             + "WHERE a.location = :location "
             + "AND a.deleted = false")
     Optional<UUID> findByLocation(URI location);
+
+
+    /**
+     * Change broker registraion state.
+     * @param location The uri of the broker.
+     * @param status The uuid of the broker.
+     */
+    @Modifying
+    @Query("UPDATE Broker a "
+            + "SET a.status = :status "
+            + "WHERE a.location = :location "
+            + "AND a.deleted = false")
+    void setRegistrationStatus(URI location, RegistrationStatus status);
 }

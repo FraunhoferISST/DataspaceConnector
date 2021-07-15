@@ -66,7 +66,10 @@ public final class BrokerControllers {
                     OfferedResource, OfferedResourceView> {
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                @ApiResponse(responseCode = "405", description = "Not allowed")
+        })
         public final PagedModel<OfferedResourceView> addResources(
                 @Valid @PathVariable(name = "id") final UUID ownerId,
                 @Valid @RequestBody final List<URI> resources) {
@@ -75,7 +78,9 @@ public final class BrokerControllers {
 
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                @ApiResponse(responseCode = "405", description = "No content")})
         public final HttpEntity<Void> replaceResources(
                 @Valid @PathVariable(name = "id") final UUID ownerId,
                 @Valid @RequestBody final List<URI> resources) {
@@ -84,7 +89,9 @@ public final class BrokerControllers {
 
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                @ApiResponse(responseCode = "405", description = "No content")})
         public final HttpEntity<Void> removeResources(
                 @Valid @PathVariable(name = "id") final UUID ownerId,
                 @Valid @RequestBody final List<URI> resources) {

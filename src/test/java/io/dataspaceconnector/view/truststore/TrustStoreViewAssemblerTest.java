@@ -26,7 +26,7 @@ import java.net.URI;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-public class TrustStoreViewTest {
+public class TrustStoreViewAssemblerTest {
 
     @Test
     public void create_ValidTrustStore_returnTrustStoreView(){
