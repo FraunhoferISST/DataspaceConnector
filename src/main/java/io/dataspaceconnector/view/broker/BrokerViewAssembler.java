@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.view;
+package io.dataspaceconnector.view.broker;
 
 import io.dataspaceconnector.controller.configurations.BrokerControllers;
 import io.dataspaceconnector.controller.configurations.BrokerControllers.BrokerToOfferedResources;

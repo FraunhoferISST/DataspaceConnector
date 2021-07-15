@@ -29,7 +29,7 @@ import io.dataspaceconnector.model.broker.BrokerDesc;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.service.configuration.BrokerService;
 import io.dataspaceconnector.service.configuration.EntityLinkerService;
-import io.dataspaceconnector.view.BrokerView;
+import io.dataspaceconnector.view.broker.BrokerView;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
