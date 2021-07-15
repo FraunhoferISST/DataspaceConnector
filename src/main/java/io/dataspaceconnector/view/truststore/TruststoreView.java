@@ -31,5 +31,5 @@ public class TruststoreView extends RepresentationModel<TruststoreView> {
     /**
      * The name of the trust store.
      */
-    private String name;
+    private String location;
 }
