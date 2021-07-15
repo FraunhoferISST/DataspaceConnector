@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.view;
-
-import java.util.UUID;
+package io.dataspaceconnector.view.endpoint;
 
 import io.dataspaceconnector.controller.configurations.EndpointControllers;
 import io.dataspaceconnector.controller.resource.view.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
-import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
+import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 /**
- * Assembles the REST resource for an connector endpoint.
+ * Assembles the REST resource for a generic endpoint.
  */
 @Component
-public class ConnectorEndpointViewAssembler implements
-        RepresentationModelAssembler<ConnectorEndpoint, ConnectorEndpointView>, SelfLinking {
+public class GenericEndpointViewAssembler
+        implements RepresentationModelAssembler<GenericEndpoint, GenericEndpointView>, SelfLinking {
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
@@ -40,11 +40,11 @@ public class ConnectorEndpointViewAssembler implements
     }
 
     @Override
-    public final ConnectorEndpointView toModel(final ConnectorEndpoint connectorEndpoint) {
+    public final GenericEndpointView toModel(final GenericEndpoint genericEndpoint) {
         final var modelMapper = new ModelMapper();
-        final var view = modelMapper.map(connectorEndpoint,
-                ConnectorEndpointView.class);
-        view.add(getSelfLink(connectorEndpoint.getId()));
+        final var view = modelMapper.map(genericEndpoint,
+                GenericEndpointView.class);
+        view.add(getSelfLink(genericEndpoint.getId()));
 
         return view;
     }

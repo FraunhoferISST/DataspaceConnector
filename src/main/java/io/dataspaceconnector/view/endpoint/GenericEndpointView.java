@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.view;
+package io.dataspaceconnector.view.endpoint;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dataspaceconnector.model.endpoint.EndpointType;
+import io.dataspaceconnector.view.DataSourceView;
 import io.dataspaceconnector.view.util.ViewConstants;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -28,18 +29,18 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 
 /**
- * A DTO for controlled exposing of connector endpoint information in API responses.
+ * A DTO for controlled exposing of generic endpoint information in API responses.
  */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @Relation(collectionRelation = "endpoints", itemRelation = "endpoint")
-public class ConnectorEndpointView extends RepresentationModel<ConnectorEndpointView> {
+public class GenericEndpointView extends RepresentationModel<GenericEndpointView> {
 
     /**
      * The endpoint type.
      */
-    private final EndpointType type = EndpointType.CONNECTOR;
+    private final EndpointType type = EndpointType.GENERIC;
 
     /**
      * The creation date.
@@ -67,4 +68,9 @@ public class ConnectorEndpointView extends RepresentationModel<ConnectorEndpoint
      * The information of the endpoint.
      */
     private String info;
+
+    /**
+     * The data source information.
+     */
+    private DataSourceView datasource;
 }

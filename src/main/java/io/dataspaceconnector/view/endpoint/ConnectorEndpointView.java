@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.view;
+package io.dataspaceconnector.view.endpoint;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.dataspaceconnector.model.endpoint.AppEndpointType;
 import io.dataspaceconnector.model.endpoint.EndpointType;
 import io.dataspaceconnector.view.util.ViewConstants;
 import lombok.EqualsAndHashCode;
@@ -29,18 +28,18 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 
 /**
- * A DTO for controlled exposing of app information in API responses.
+ * A DTO for controlled exposing of connector endpoint information in API responses.
  */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @Relation(collectionRelation = "endpoints", itemRelation = "endpoint")
-public class AppEndpointView extends RepresentationModel<AppEndpointView> {
+public class ConnectorEndpointView extends RepresentationModel<ConnectorEndpointView> {
 
     /**
      * The endpoint type.
      */
-    private final EndpointType type = EndpointType.APP;
+    private final EndpointType type = EndpointType.CONNECTOR;
 
     /**
      * The creation date.
@@ -68,29 +67,4 @@ public class AppEndpointView extends RepresentationModel<AppEndpointView> {
      * The information of the endpoint.
      */
     private String info;
-
-    /**
-     * The file name extension of the data.
-     */
-    private String mediaType;
-
-    /**
-     * The port number of the app endpoint.
-     */
-    private int appEndpointPort;
-
-    /**
-     * The protocol of the app endpoint.
-     */
-    private String appEndpointProtocol;
-
-    /**
-     * The used language.
-     */
-    private String language;
-
-    /**
-     * The type of the app endpoint.
-     */
-    private AppEndpointType appEndpointType;
 }
