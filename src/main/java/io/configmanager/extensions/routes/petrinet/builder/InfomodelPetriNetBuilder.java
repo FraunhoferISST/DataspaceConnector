@@ -196,7 +196,7 @@ public class InfomodelPetriNetBuilder {
             }
         }
 
-        if(appRoute.getHasSubRoute() != null) {
+        if (appRoute.getHasSubRoute() != null) {
             //add every SubRoute of the AppRoute to the PetriNet
             for (final var subroute : appRoute.getHasSubRoute()) {
                 addSubRouteToPetriNet(subroute, arcs, places, transitions);
