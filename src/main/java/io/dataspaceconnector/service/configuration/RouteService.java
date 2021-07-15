@@ -43,11 +43,15 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      **/
     private final @NonNull EndpointRepository endpointRepo;
 
+    /**
+     * Service for all endpoints.
+     */
     private final @NonNull EndpointServiceProxy endpointService;
 
     /**
      * Constructor for route service.
      * @param endpointRepository The endpoint repository.
+     * @param endpointServiceProxy The endpoint service.
      */
     @Autowired
     public RouteService(final @NonNull EndpointRepository endpointRepository,
