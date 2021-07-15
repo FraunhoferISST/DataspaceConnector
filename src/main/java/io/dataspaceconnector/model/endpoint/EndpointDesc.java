@@ -30,7 +30,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = AppEndpointDesc.class, name = "APP"),
         @JsonSubTypes.Type(value = ConnectorEndpointDesc.class, name = "CONNECTOR"),
         @JsonSubTypes.Type(value = GenericEndpointDesc.class, name = "GENERIC")}
 )

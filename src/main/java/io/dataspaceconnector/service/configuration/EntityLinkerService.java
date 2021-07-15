@@ -75,34 +75,4 @@ public final class EntityLinkerService {
             return owner.getOutput();
         }
     }
-//
-//    /**
-//     * Handles the relation between the route and start endpoint.
-//     */
-//    @Service
-//    @NoArgsConstructor
-//    public static class RouteStartEndpointLinker
-//            extends OwningRelationService<Route, Endpoint, RouteService,
-//            EndpointServiceProxy> {
-//
-//        @Override
-//        protected final List<Endpoint> getInternal(final Route owner) {
-//            return owner.getStart();
-//        }
-//    }
-//
-//    /**
-//     * Handles the relation between the route and last endpoint.
-//     */
-//    @Service
-//    @NoArgsConstructor
-//    public static class RouteLastEndpointLinker
-//            extends OwningRelationService<Route, Endpoint, RouteService,
-//            EndpointServiceProxy> {
-//
-//        @Override
-//        protected final List<Endpoint> getInternal(final Route owner) {
-//            return owner.getEnd();
-//        }
-//    }
 }

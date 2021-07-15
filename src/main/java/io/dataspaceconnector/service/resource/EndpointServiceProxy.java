@@ -18,14 +18,11 @@ package io.dataspaceconnector.service.resource;
 import java.util.UUID;
 
 import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.model.endpoint.AppEndpoint;
-import io.dataspaceconnector.model.endpoint.AppEndpointDesc;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpointDesc;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.repository.EndpointRepository;
-import io.dataspaceconnector.service.configuration.AppEndpointService;
 import io.dataspaceconnector.service.configuration.ConnectorEndpointService;
 import io.dataspaceconnector.service.configuration.GenericEndpointService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,12 +41,6 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
      */
     @Autowired
     private GenericEndpointService generic;
-
-    /**
-     * The app endpoint service.
-     */
-    @Autowired
-    private AppEndpointService apps;
 
     /**
      * The connector endpoint service.
@@ -72,9 +63,7 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
     @SuppressWarnings("unchecked")
     private <X extends Endpoint, Y extends EndpointDesc> EntityService<X, Y>
     getService(final Class<?> clazz) {
-        if (AppEndpointDesc.class.equals(clazz) || AppEndpoint.class.equals(clazz)) {
-            return (EntityService<X, Y>) apps;
-        } else if (ConnectorEndpointDesc.class.equals(clazz)
+        if (ConnectorEndpointDesc.class.equals(clazz)
                 || ConnectorEndpoint.class.equals(clazz)) {
             return (EntityService<X, Y>) connector;
         }
@@ -94,9 +83,6 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
 
     @Override
     public final Endpoint get(final UUID entityId) {
-        try {
-            return apps.get(entityId);
-        } catch (ResourceNotFoundException ignored) { }
 
         try {
             return connector.get(entityId);
@@ -112,8 +98,7 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
 
     @Override
     public final boolean doesExist(final UUID entityId) {
-        return apps.doesExist(entityId)
-                || connector.doesExist(entityId)
+        return   connector.doesExist(entityId)
                 || generic.doesExist(entityId);
     }
 
