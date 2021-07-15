@@ -42,7 +42,6 @@ public class ProxyViewAssemblerTest {
         assertEquals(after.getLocation(), shouldLookLike.getLocation());
         assertFalse(after.getExclusions().isEmpty());
         assertEquals(after.getExclusions().get(0), shouldLookLike.getExclusions().get(0));
-
     }
 
     private Proxy getProxy() {
