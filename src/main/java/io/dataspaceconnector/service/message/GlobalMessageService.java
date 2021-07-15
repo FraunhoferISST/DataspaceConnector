@@ -31,6 +31,7 @@ import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
 import de.fraunhofer.ids.messaging.protocol.multipart.MessageAndPayload;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
+import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.service.configuration.BrokerService;
 import io.dataspaceconnector.service.configuration.EntityLinkerService;
 import io.dataspaceconnector.util.UUIDUtils;
@@ -83,8 +84,9 @@ public class GlobalMessageService {
         final var msg = String.format("Successfully registered connector. [url=(%s)]", recipient);
         final var result = validateResponse(response, msg);
         if (result) {
-            updateBrokerRegistrationStatus(recipient);
+            brokerService.setRegistrationStatus(recipient, RegistrationStatus.REGISTERED);
         }
+
         return result;
     }
 
@@ -108,8 +110,9 @@ public class GlobalMessageService {
         final var msg = String.format("Successfully unregistered connector. [url=(%s)]", recipient);
         final var result = validateResponse(response, msg);
         if (result) {
-            updateBrokerRegistrationStatus(recipient);
+            brokerService.setRegistrationStatus(recipient, RegistrationStatus.UNREGISTERED);
         }
+
         return result;
     }
 
@@ -241,14 +244,6 @@ public class GlobalMessageService {
         }
 
         return false;
-    }
-
-    /**
-     * This method updates the registration status of the broker.
-     * @param recipient The uri of the recipient.
-     */
-    private void updateBrokerRegistrationStatus(final URI recipient) {
-        brokerService.updateRegistrationStatus(recipient);
     }
 
     /**
