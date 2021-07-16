@@ -17,6 +17,7 @@ package io.dataspaceconnector.model.route;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -55,6 +56,7 @@ public class Route extends NamedEntity {
     /**
      * The route configuration.
      */
+    @Lob
     private String configuration;
 
     /**
