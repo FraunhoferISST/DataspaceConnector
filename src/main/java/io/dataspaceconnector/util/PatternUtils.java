@@ -30,7 +30,8 @@ import io.dataspaceconnector.model.pattern.DeletionDesc;
 import io.dataspaceconnector.model.pattern.DurationDesc;
 import io.dataspaceconnector.model.pattern.IntervalDesc;
 import io.dataspaceconnector.model.pattern.NotificationDesc;
-import io.dataspaceconnector.model.pattern.RestrictionDesc;
+import io.dataspaceconnector.model.pattern.ConnectorRestrictionDesc;
+import io.dataspaceconnector.model.pattern.SecurityRestrictionDesc;
 import io.dataspaceconnector.model.pattern.UsageNumberDesc;
 
 import java.net.URI;
@@ -251,7 +252,7 @@ public final class PatternUtils {
      * @return The ids rule.
      * @throws Exception if input value is not a valid integer.
      */
-    public static Rule buildConnectorRestrictedUsageRule(final RestrictionDesc input)
+    public static Rule buildConnectorRestrictedUsageRule(final ConnectorRestrictionDesc input)
             throws Exception {
         final var id = input.getUrl();
 
@@ -267,6 +268,35 @@ public final class PatternUtils {
                         ._leftOperand_(LeftOperand.SYSTEM)
                         ._operator_(BinaryOperator.SAME_AS)
                         ._rightOperand_(new RdfResource(id, URI.create("xsd:anyURI")))
+                        .build()))
+                .build();
+    }
+
+    /**
+     * Build ids rule.
+     *
+     * @param desc Rule input.
+     * @return The ids rule.
+     * @throws Exception if input value is not a valid security profile value.
+     */
+    public static Rule buildSecurityProfileRestrictedUsageRule(final SecurityRestrictionDesc desc)
+            throws Exception {
+        final var input = desc.getProfile();
+        final var profile = ValidationUtils.getSecurityProfile(input);
+
+        if (profile.isEmpty()) {
+            throw new Exception("This is not a valid profile.");
+        }
+
+        return new PermissionBuilder()
+                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
+                ._description_(Util.asList(new TypedLiteral("security-level-restriction")))
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(new ConstraintBuilder()
+                        ._leftOperand_(LeftOperand.SECURITY_LEVEL)
+                        ._operator_(BinaryOperator.EQUALS)
+                        ._rightOperand_(new RdfResource(profile.get().toString(),
+                                URI.create("xsd:string")))
                         .build()))
                 .build();
     }

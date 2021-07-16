@@ -87,6 +87,9 @@ public final class RuleUtils {
                     } else if (leftOperand == LeftOperand.SYSTEM
                             && operator == BinaryOperator.SAME_AS) {
                         detectedPattern = PolicyPattern.CONNECTOR_RESTRICTED_USAGE;
+                    } else if (leftOperand == LeftOperand.SECURITY_LEVEL
+                        && operator == BinaryOperator.EQUALS) {
+                        detectedPattern = PolicyPattern.SECURITY_PROFILE_RESTRICTED_USAGE;
                     }
                 }
             } else {
