@@ -36,12 +36,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import javax.xml.datatype.DatatypeFactory;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = GlobalMessageService.class)
@@ -91,6 +93,36 @@ class GlobalMessageServiceTest {
         assertTrue(responseObj.getRejectionReason().isPresent());
         final var reason = responseObj.getRejectionReason().get();
         assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, reason);
+    }
+
+    @Test
+    @SneakyThrows
+    public void sendConnectorUpdateMessage_validInput_returnTrue() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient");
+        Mockito.doReturn(getMessageProcessedNotificationMessage()).when(brokerService)
+                .updateSelfDescriptionAtBroker(Mockito.any());
+
+        /* ACT */
+        final var response = messageService.sendAndValidateConnectorUpdateMessage(recipient);
+
+        /* ASSERT */
+        assertTrue(response);
+    }
+
+    @Test
+    @SneakyThrows
+    public void sendConnectorUpdateMessage_throwIOException_returnFalse() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient");
+        Mockito.doThrow(IOException.class).when(brokerService)
+                .updateSelfDescriptionAtBroker(Mockito.any());
+
+        /* ACT */
+        final var response = messageService.sendAndValidateConnectorUpdateMessage(recipient);
+
+        /* ASSERT */
+        assertFalse(response);
     }
 
     @Test
@@ -169,6 +201,38 @@ class GlobalMessageServiceTest {
         assertTrue(responseObj.getRejectionReason().isPresent());
         final var reason = responseObj.getRejectionReason().get();
         assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, reason);
+    }
+
+    @Test
+    @SneakyThrows
+    public void sendAndValidateResourceUpdateMessage_validInput_returnTrue() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient");
+        final var resource = new ResourceBuilder().build();
+        Mockito.doReturn(getMessageProcessedNotificationMessage()).when(brokerService)
+                .updateResourceAtBroker(Mockito.any(), Mockito.any());
+
+        /* ACT */
+        final var response = messageService.sendAndValidateResourceUpdateMessage(recipient, resource);
+
+        /* ASSERT */
+        assertTrue(response);
+    }
+
+    @Test
+    @SneakyThrows
+    public void sendAndValidateResourceUpdateMessage_throwIOException_returnFalse() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient");
+        final var resource = new ResourceBuilder().build();
+        Mockito.doThrow(IOException.class).when(brokerService).updateResourceAtBroker(
+                Mockito.any(), Mockito.any());
+
+        /* ACT */
+        final var response = messageService.sendAndValidateResourceUpdateMessage(recipient, resource);
+
+        /* ASSERT */
+        assertFalse(response);
     }
 
     @Test
