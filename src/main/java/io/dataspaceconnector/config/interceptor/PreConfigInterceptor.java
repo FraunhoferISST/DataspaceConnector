@@ -67,7 +67,7 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
         if (log.isDebugEnabled()) {
             log.debug(
                     "Loading configuration from {}",
-                    properties.getPath().replaceAll("[\r\n]","")
+                    properties.getPath().replaceAll("[\r\n]", "")
             );
         }
 
@@ -95,7 +95,7 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
         if (log.isInfoEnabled()) {
             log.info(
                     "Loading config from classpath: {}",
-                    properties.getPath().replaceAll("[\r\n]","")
+                    properties.getPath().replaceAll("[\r\n]", "")
             );
         }
 
@@ -110,7 +110,7 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
             if (log.isWarnEnabled()) {
                 log.warn(
                         "Could not load config from path {}",
-                        properties.getPath().replaceAll("[\r\n]","")
+                        properties.getPath().replaceAll("[\r\n]", "")
                 );
                 throw new IOException(e.getMessage(), e);
             }
@@ -124,7 +124,7 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
         if (log.isInfoEnabled()) {
             log.info(
                     "Loading config from absolute Path {}",
-                    properties.getPath().replaceAll("[\r\n]","")
+                    properties.getPath().replaceAll("[\r\n]", "")
             );
         }
         try (var fis = new FileInputStream(properties.getPath())) {
@@ -136,7 +136,7 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
             if (log.isWarnEnabled()) {
                 log.warn(
                         "Could not load config from absolute path {}",
-                        properties.getPath().replaceAll("[\r\n]","")
+                        properties.getPath().replaceAll("[\r\n]", "")
                 );
                 throw new IOException(e.getMessage(), e);
             }
