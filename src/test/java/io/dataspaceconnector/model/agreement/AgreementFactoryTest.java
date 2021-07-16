@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.model.agreement;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -356,5 +356,34 @@ class AgreementFactoryTest {
 
         /* ACT && ASSERT */
         assertThrows(IllegalArgumentException.class, () -> factory.update(agreement, null));
+    }
+
+    /**
+     * bootstrapId
+     */
+
+    @Test
+    public void create_noBootstrapId_bootStrapIdNull() {
+        /* ARRANGE */
+        // Nothing to arrange.
+
+        /* ACT */
+        final var result = factory.create(new AgreementDesc());
+
+        /* ASSERT */
+        assertNull(result.getBootstrapId());
+    }
+
+    @Test
+    public void create_hasBootstrapId_setBootStrapIdNull() {
+        /* ARRANGE */
+        final var desc = new AgreementDesc();
+        desc.setBootstrapId(URI.create("https://someURI"));
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(desc.getBootstrapId(), result.getBootstrapId());
     }
 }

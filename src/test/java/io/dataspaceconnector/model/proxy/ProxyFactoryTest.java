@@ -124,7 +124,6 @@ public class ProxyFactoryTest {
     @Test
     void update_sameAuth_willNotUpdate() {
         /* ARRANGE */
-        final var desc = new ProxyDesc();
         final var proxy = factory.create(new ProxyDesc());
 
         /* ACT */
