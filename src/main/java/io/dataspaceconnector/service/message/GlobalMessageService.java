@@ -184,10 +184,13 @@ public class GlobalMessageService {
             UnexpectedPayloadException, SerializeException, DeserializeException,
             RejectionException, UnknownResponseException {
         final var response = brokerSvc.removeResourceFromBroker(recipient, resource);
-        final var msg = String.format("Successfully unregistered resource. "
-                + "[resourceId=(%s), url=(%s)]", resource.getId(), recipient);
         final var result = checkResponse(Optional.ofNullable(response));
         if (result) {
+            if(log.isInfoEnabled()){
+                log.info(String.format("Successfully unregistered resource. "
+                        + "[resourceId=(%s), url=(%s)]", resource.getId(), recipient)
+                );
+            }
             removeBrokerFromOfferedResourceBrokerList(recipient, resource);
         }
         return Optional.ofNullable(response);
