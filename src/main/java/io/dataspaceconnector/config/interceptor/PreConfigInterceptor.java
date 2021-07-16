@@ -20,6 +20,7 @@ import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import de.fraunhofer.ids.messaging.core.config.ConfigProducerInterceptorException;
 import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
 import de.fraunhofer.ids.messaging.core.config.PreConfigProducerInterceptor;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 
 /**
@@ -60,9 +62,13 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
         }
     }
 
-    private ConfigurationModel loadConfig(final ConfigProperties properties) throws IOException {
+    private ConfigurationModel loadConfig(final ConfigProperties properties)
+            throws IOException {
         if (log.isDebugEnabled()) {
-            log.debug("Loading configuration from {}", properties.getPath());
+            log.debug(
+                    "Loading configuration from {}",
+                    properties.getPath()
+            );
         }
 
         final var config = getConfiguration(properties);
@@ -74,7 +80,8 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
         return serializer.deserialize(config, ConfigurationModel.class);
     }
 
-    private String getConfiguration(final ConfigProperties properties) throws IOException {
+    private String getConfiguration(final ConfigProperties properties)
+            throws IOException {
         if (Paths.get(properties.getPath()).isAbsolute()) {
             return getAbsolutePathConfig(properties);
         } else {
@@ -82,30 +89,58 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
         }
     }
 
-    private String getClassPathConfig(final ConfigProperties properties) throws IOException {
+    @SuppressFBWarnings("REC_CATCH_EXCEPTION")
+    private String getClassPathConfig(final ConfigProperties properties)
+            throws IOException {
         if (log.isInfoEnabled()) {
-            log.info("Loading config from classpath: {}", properties.getPath());
+            log.info(
+                    "Loading config from classpath: {}",
+                    properties.getPath()
+            );
         }
 
-        final var configurationStream = new ClassPathResource(
+        try (var configurationStream = new ClassPathResource(
                 properties.getPath()
-        ).getInputStream();
-
-        final var config = new String(configurationStream.readAllBytes());
-        configurationStream.close();
-
-        return config;
+        ).getInputStream()) {
+            return new String(
+                    configurationStream.readAllBytes(),
+                    StandardCharsets.UTF_8
+            );
+        } catch (Exception e) {
+            if (log.isWarnEnabled()) {
+                log.warn(
+                        "Could not load config from path {}",
+                        properties.getPath()
+                );
+                throw new IOException(e.getMessage(), e);
+            }
+        }
+        return "";
     }
 
-    private String getAbsolutePathConfig(final ConfigProperties properties) throws IOException {
+    @SuppressFBWarnings("REC_CATCH_EXCEPTION")
+    private String getAbsolutePathConfig(final ConfigProperties properties)
+            throws IOException {
         if (log.isInfoEnabled()) {
-            log.info("Loading config from absolute Path {}", properties.getPath());
+            log.info(
+                    "Loading config from absolute Path {}",
+                    properties.getPath()
+            );
         }
-
-        final var fis = new FileInputStream(properties.getPath());
-        final var config = new String(fis.readAllBytes());
-        fis.close();
-
-        return config;
+        try (var fis = new FileInputStream(properties.getPath())) {
+            return new String(
+                    fis.readAllBytes(),
+                    StandardCharsets.UTF_8
+            );
+        } catch (Exception e) {
+            if (log.isWarnEnabled()) {
+                log.warn(
+                        "Could not load config from absolute path {}",
+                        properties.getPath()
+                );
+                throw new IOException(e.getMessage(), e);
+            }
+        }
+        return "";
     }
 }
