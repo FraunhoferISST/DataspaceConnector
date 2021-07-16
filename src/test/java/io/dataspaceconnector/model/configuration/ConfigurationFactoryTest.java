@@ -23,7 +23,7 @@ import io.dataspaceconnector.model.truststore.TruststoreFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConfigurationFactoryTest {
 
@@ -52,6 +52,6 @@ public class ConfigurationFactoryTest {
         assertEquals(accessUrl, result.getConnectorEndpoint());
         assertEquals(DeployMode.TEST, result.getDeployMode());
         assertEquals(curator, result.getCurator());
-        assertNotNull(result.getInboundModelVersion());
+        assertTrue(result.getInboundModelVersion().isEmpty());
     }
 }

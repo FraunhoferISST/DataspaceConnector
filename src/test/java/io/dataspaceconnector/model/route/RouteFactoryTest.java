@@ -18,6 +18,7 @@ package io.dataspaceconnector.model.route;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RouteFactoryTest {
 
@@ -41,5 +42,21 @@ public class RouteFactoryTest {
         assertEquals(title, result.getTitle());
         assertEquals(description, result.getDescription());
         assertEquals(routeType, result.getRouteType());
+        assertTrue(result.getOutput().isEmpty());
+    }
+
+    @Test
+    void update_newRouteConfig_willUpdate() {
+        /* ARRANGE */
+        final var desc = new RouteDesc();
+        desc.setConfiguration("config");
+        final var route = factory.create(new RouteDesc());
+
+        /* ACT */
+        final var result = factory.update(route, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(desc.getConfiguration(), route.getConfiguration());
     }
 }

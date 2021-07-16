@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.model.route;
 
-import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import io.dataspaceconnector.model.configuration.DeployMethod;
-import io.dataspaceconnector.model.endpoint.Endpoint;
-import io.dataspaceconnector.util.MetadataUtils;
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.Objects;
+
+import io.dataspaceconnector.model.configuration.DeployMethod;
+import io.dataspaceconnector.model.endpoint.Endpoint;
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
+import io.dataspaceconnector.util.MetadataUtils;
+import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates a route.
@@ -33,7 +33,7 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
     /**
      * The default string.
      */
-    private static final String DEFAULT_CONFIGURATION = "Configuration";
+    public static final String DEFAULT_CONFIGURATION = "Configuration";
 
     /**
      * @param desc The description of the entity.
@@ -73,6 +73,7 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
             route.setRouteType(routeType);
             return true;
         }
+
         return false;
     }
 
