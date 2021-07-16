@@ -36,7 +36,7 @@ import java.nio.file.Paths;
 @Component
 @Slf4j
 @AllArgsConstructor
-public class PreConfigInterceptor implements PreConfigProducerInterceptor {
+public final class PreConfigInterceptor implements PreConfigProducerInterceptor {
 
     /**
      * Serializer for parsing configmodel from json-ld.
@@ -44,7 +44,7 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
     private final Serializer serializer;
 
     @Override
-    public ConfigurationModel perform(ConfigProperties properties)
+    public ConfigurationModel perform(final ConfigProperties properties)
             throws ConfigProducerInterceptorException {
         if (log.isInfoEnabled()) {
             log.info("Intecepting loading of configuration!");
@@ -60,7 +60,7 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
         }
     }
 
-    private ConfigurationModel loadConfig(ConfigProperties properties) throws IOException {
+    private ConfigurationModel loadConfig(final ConfigProperties properties) throws IOException {
         if (log.isDebugEnabled()) {
             log.debug("Loading configuration from {}", properties.getPath());
         }

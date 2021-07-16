@@ -102,7 +102,8 @@ public class ResourceUnavailableMessageController {
             }
 
             // Send the resource unavailable message.
-            Optional<MessageContainer<?>> response = messageService.sendResourceUnavailableMessage(recipient, resource.get());
+            Optional<MessageContainer<?>> response = messageService
+                    .sendResourceUnavailableMessage(recipient, resource.get());
 
             return messageService.validateResponse(response,
                     MessageProcessedNotificationMessageImpl.class);
