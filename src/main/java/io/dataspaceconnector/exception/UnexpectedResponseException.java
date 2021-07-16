@@ -49,7 +49,10 @@ public class UnexpectedResponseException extends Exception {
      * @param responseContent The content of the invalid response.
      * @param throwable The exception to wrap.
      */
-    public UnexpectedResponseException(final Map<String, Object> responseContent, final Throwable throwable) {
+    public UnexpectedResponseException(
+            final Map<String, Object> responseContent,
+            final Throwable throwable
+    ) {
         super(throwable);
         this.content = responseContent;
     }
