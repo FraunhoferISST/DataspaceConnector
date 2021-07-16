@@ -15,9 +15,13 @@
  */
 package io.dataspaceconnector.model.datasource;
 
+import io.dataspaceconnector.model.auth.Authentication;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DataSourceFactoryTest {
 
@@ -34,5 +38,62 @@ public class DataSourceFactoryTest {
 
         /* ASSERT */
         assertEquals(DataSourceType.DATABASE, result.getType());
+    }
+
+    @Test
+    void update_newAuth_willUpdate() {
+        /* ARRANGE */
+        final var desc = new DataSourceDesc();
+        desc.setAuthentication(new Authentication());
+        final var dataSource = factory.create(new DataSourceDesc());
+
+        /* ACT */
+        final var result = factory.update(dataSource, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(desc.getAuthentication(), dataSource.getAuthentication());
+    }
+
+    @Test
+    void update_sameAuth_willNotUpdate() {
+        /* ARRANGE */
+        final var desc = new DataSourceDesc();
+        final var dataSource = factory.create(new DataSourceDesc());
+
+        /* ACT */
+        final var result = factory.update(dataSource, new DataSourceDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+        assertNull(dataSource.getAuthentication());
+    }
+
+    @Test
+    void update_newType_willUpdate() {
+        /* ARRANGE */
+        final var desc = new DataSourceDesc();
+        desc.setType(DataSourceType.REST);
+        final var dataSource = factory.create(new DataSourceDesc());
+
+        /* ACT */
+        final var result = factory.update(dataSource, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(desc.getType(), dataSource.getType());
+    }
+
+    @Test
+    void update_sameType_willNotUpdate() {
+        /* ARRANGE */
+        final var dataSource = factory.create(new DataSourceDesc());
+
+        /* ACT */
+        final var result = factory.update(dataSource, new DataSourceDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+        assertEquals(DataSourceFactory.DEFAULT_SOURCE_TYPE, dataSource.getType());
     }
 }
