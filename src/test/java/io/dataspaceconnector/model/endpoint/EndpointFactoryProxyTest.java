@@ -63,7 +63,7 @@ class EndpointFactoryProxyTest {
     @Test
     public void update_callConnectorEndpointFactory_andWillNotUpdate() {
         /* ARRANGE */
-        final var endpoint = (ConnectorEndpoint) connectorFactory.create(new ConnectorEndpointDesc());
+        final var endpoint = connectorFactory.create(new ConnectorEndpointDesc());
         final var desc = new ConnectorEndpointDesc();
 
         /* ACT */
@@ -89,7 +89,7 @@ class EndpointFactoryProxyTest {
     @Test
     public void update_callGenericEndpointFactory_andWillNotUpdate() {
         /* ARRANGE */
-        final var endpoint = (GenericEndpoint) genericFactory.create(new GenericEndpointDesc());
+        final var endpoint = genericFactory.create(new GenericEndpointDesc());
         final var desc = new GenericEndpointDesc();
 
         /* ACT */
