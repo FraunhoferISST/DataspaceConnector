@@ -95,7 +95,6 @@ public class ResourceUpdateMessageController {
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The resource id.", required = true)
             @RequestParam("resourceId") final URI resourceId) {
-        Optional<MessageContainer<?>> response = Optional.empty();
         try {
             final var resource = connectorService.getOfferedResourceById(resourceId);
             if (resource.isEmpty()) {
@@ -103,7 +102,11 @@ public class ResourceUpdateMessageController {
             }
 
             // Send the resource update message.
-            response = messageService.sendResourceUpdateMessage(recipient, resource.get());
+            Optional<MessageContainer<?>> response = messageService
+                    .sendResourceUpdateMessage(recipient, resource.get());
+
+            return messageService.validateResponse(response,
+                    MessageProcessedNotificationMessageImpl.class);
         } catch (SocketTimeoutException exception) {
             // If a timeout has occurred.
             return ControllerUtils.respondConnectionTimedOut(exception);
@@ -120,7 +123,7 @@ public class ResourceUpdateMessageController {
             // If any other error occurred.
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
-        return messageService.validateResponse(response,
+        return messageService.validateResponse(Optional.empty(),
                 MessageProcessedNotificationMessageImpl.class);
     }
 }
