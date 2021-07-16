@@ -79,7 +79,8 @@ class ContractRequestHandlerTest {
     @Autowired
     ContractRequestHandler handler;
 
-    URI artifactId = URI.create("https://localhost:8080/api/artifacts/550e8400-e29b-11d4-a716-446655440000");
+    URI artifactId = URI.create("https://localhost:8080/api/artifacts/550e8400-e29b-11d4-a716" +
+            "-446655440000");
 
     static Date date = new Date();
 
@@ -97,13 +98,15 @@ class ContractRequestHandlerTest {
     @Test
     public void handleMessage_nullMessage_returnBadParametersResponse() {
         /* ARRANGE */
-        final var payload = new MessagePayloadInputstream(InputStream.nullInputStream(), new ObjectMapper());
+        final var payload = new MessagePayloadInputstream(InputStream.nullInputStream(),
+                new ObjectMapper());
 
         /* ACT */
         final var result = (ErrorResponse) handler.handleMessage(null, payload);
 
         /* ASSERT */
-        assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.BAD_PARAMETERS,
+                result.getRejectionMessage().getRejectionReason());
     }
 
     @SneakyThrows
@@ -119,10 +122,12 @@ class ContractRequestHandlerTest {
                 .build();
 
         /* ACT */
-        final var result = (ErrorResponse)handler.handleMessage((ContractRequestMessageImpl) message, null);
+        final var result =
+                (ErrorResponse) handler.handleMessage((ContractRequestMessageImpl) message, null);
 
         /* ASSERT */
-        assertEquals(RejectionReason.VERSION_NOT_SUPPORTED, result.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.VERSION_NOT_SUPPORTED,
+                result.getRejectionMessage().getRejectionReason());
     }
 
     @SneakyThrows
@@ -133,10 +138,12 @@ class ContractRequestHandlerTest {
         final var message = getMessage();
 
         /* ACT */
-        final var result = (ErrorResponse)handler.handleMessage((ContractRequestMessageImpl) message, null);
+        final var result =
+                (ErrorResponse) handler.handleMessage((ContractRequestMessageImpl) message, null);
 
         /* ASSERT */
-        assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.BAD_PARAMETERS,
+                result.getRejectionMessage().getRejectionReason());
     }
 
     @SneakyThrows
@@ -147,10 +154,14 @@ class ContractRequestHandlerTest {
         final var message = getMessage();
 
         /* ACT */
-        final var result = (ErrorResponse)handler.handleMessage((ContractRequestMessageImpl) message, new MessagePayloadInputstream(InputStream.nullInputStream(), new ObjectMapper()));
+        final var result =
+                (ErrorResponse) handler.handleMessage((ContractRequestMessageImpl) message,
+                        new MessagePayloadInputstream(InputStream.nullInputStream(),
+                                new ObjectMapper()));
 
         /* ASSERT */
-        assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.BAD_PARAMETERS,
+                result.getRejectionMessage().getRejectionReason());
     }
 
     @Test
@@ -160,10 +171,13 @@ class ContractRequestHandlerTest {
         final var message = getMessage();
 
         /* ACT */
-        final var result = (ErrorResponse)handler.handleMessage((ContractRequestMessageImpl) message, new MessagePayloadInputstream(null, new ObjectMapper()));
+        final var result =
+                (ErrorResponse) handler.handleMessage((ContractRequestMessageImpl) message,
+                        new MessagePayloadInputstream(null, new ObjectMapper()));
 
         /* ASSERT */
-        assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, result.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                result.getRejectionMessage().getRejectionReason());
     }
 
     @Test
@@ -173,13 +187,14 @@ class ContractRequestHandlerTest {
         final var message = getMessage();
 
         /* ACT */
-        final var result = (ErrorResponse)handler
+        final var result = (ErrorResponse) handler
                 .handleMessage((ContractRequestMessageImpl) message,
                         new MessagePayloadInputstream(
                                 new ByteArrayInputStream("".getBytes()), new ObjectMapper()));
 
         /* ASSERT */
-        assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.BAD_PARAMETERS,
+                result.getRejectionMessage().getRejectionReason());
     }
 
     @Test
@@ -191,13 +206,14 @@ class ContractRequestHandlerTest {
         final var message = getMessage();
 
         /* ACT */
-        final var result = (ErrorResponse)handler
+        final var result = (ErrorResponse) handler
                 .handleMessage((ContractRequestMessageImpl) message,
                         new MessagePayloadInputstream(
                                 new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
 
         /* ASSERT */
-        assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, result.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                result.getRejectionMessage().getRejectionReason());
     }
 
     @Test
@@ -214,11 +230,12 @@ class ContractRequestHandlerTest {
         /* ACT */
         final var result = (ErrorResponse) handler
                 .handleMessage((ContractRequestMessageImpl) message,
-                new MessagePayloadInputstream(
-                        new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
+                        new MessagePayloadInputstream(
+                                new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
 
         /* ASSERT */
-        assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.BAD_PARAMETERS,
+                result.getRejectionMessage().getRejectionReason());
     }
 
     @Test
@@ -229,7 +246,7 @@ class ContractRequestHandlerTest {
                 new ContractRequestBuilder(URI.create("https://someUri"))
                         ._permission_(Util.asList(new PermissionBuilder()
                                 ._action_(Util.asList(Action.USE))
-                                                          .build()))
+                                .build()))
                         .build();
         final var payload = new Serializer().serialize(contractRequest);
 
@@ -242,7 +259,8 @@ class ContractRequestHandlerTest {
                                 new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
 
         /* ASSERT */
-        assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.BAD_PARAMETERS,
+                result.getRejectionMessage().getRejectionReason());
     }
 
     @Test
@@ -252,9 +270,9 @@ class ContractRequestHandlerTest {
         final var contractRequest =
                 new ContractRequestBuilder(URI.create("https://someUri"))
                         ._permission_(Util.asList(new PermissionBuilder()
-                                                          ._action_(Util.asList(Action.USE))
-                                                          ._target_(URI.create("https://someUri/"))
-                                                          .build()))
+                                ._action_(Util.asList(Action.USE))
+                                ._target_(URI.create("https://someUri/"))
+                                .build()))
                         .build();
         final var payload = new Serializer().serialize(contractRequest);
 
@@ -267,33 +285,8 @@ class ContractRequestHandlerTest {
                                 new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
 
         /* ASSERT */
-        assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, result.getRejectionMessage().getRejectionReason());
-    }
-
-    @Test
-    @SneakyThrows
-    public void checkContractRequest_unknownTarget_returnNotFoundErrorResponse(){
-        /* ARRANGE */
-        final var contractRequest =
-                new ContractRequestBuilder(URI.create("https://someUri"))
-                        ._permission_(Util.asList(new PermissionBuilder()
-                                                          ._action_(Util.asList(Action.USE))
-                                                          ._target_(URI.create("https://localhost:8080/api/artifacts/550e8400-e29b-11d4-a716-446655440000"))
-                                                          .build()))
-                        .build();
-
-        final var payload = new Serializer().serialize(contractRequest);
-
-        final var message = getMessage();
-
-        /* ACT */
-        final var result = (ErrorResponse) handler
-                .handleMessage((ContractRequestMessageImpl) message,
-                        new MessagePayloadInputstream(
-                                new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
-
-        /* ASSERT */
-        assertEquals(RejectionReason.NOT_FOUND, result.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                result.getRejectionMessage().getRejectionReason());
     }
 
     @Test
@@ -303,9 +296,9 @@ class ContractRequestHandlerTest {
         final var contractRequest =
                 new ContractRequestBuilder(URI.create("https://someUri"))
                         ._permission_(Util.asList(new PermissionBuilder()
-                                                          ._action_(Util.asList(Action.USE))
-                                                          ._target_(artifactId)
-                                                          .build()))
+                                ._action_(Util.asList(Action.USE))
+                                ._target_(artifactId)
+                                .build()))
                         .build();
         final var payload = new Serializer().serialize(contractRequest);
 
@@ -330,9 +323,9 @@ class ContractRequestHandlerTest {
         final var contractRequest =
                 new ContractRequestBuilder(URI.create("https://someUri"))
                         ._permission_(Util.asList(new PermissionBuilder()
-                                                          ._action_(Util.asList(Action.USE))
-                                                          ._target_(artifactId)
-                                                          .build()))
+                                ._action_(Util.asList(Action.USE))
+                                ._target_(artifactId)
+                                .build()))
                         .build();
 
         final var payload = new Serializer().serialize(contractRequest);
@@ -362,12 +355,13 @@ class ContractRequestHandlerTest {
         final var contractRequest =
                 new ContractRequestBuilder(URI.create("https://someUri"))
                         ._permission_(Util.asList(new PermissionBuilder()
-                                                          ._action_(Util.asList(Action.USE))
-                                                          ._target_(artifactId)
-                                                          .build()))
+                                ._action_(Util.asList(Action.USE))
+                                ._target_(artifactId)
+                                .build()))
                         .build();
 
-        final var payload = new Serializer().serialize(contractRequest).replace("idsc:USE", "idsc:DONTNOW");
+        final var payload = new Serializer().serialize(contractRequest).replace("idsc:USE", "idsc" +
+                ":DONTNOW");
 
         final var issuerConnector = URI.create("https://localhost:8080");
         final var desc = new ContractDesc();
@@ -386,7 +380,8 @@ class ContractRequestHandlerTest {
                                 new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
 
         /* ASSERT */
-        assertEquals(RejectionReason.MALFORMED_MESSAGE, result.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.MALFORMED_MESSAGE,
+                result.getRejectionMessage().getRejectionReason());
     }
 
     @Test
@@ -426,7 +421,8 @@ class ContractRequestHandlerTest {
                                 new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
 
         /* ASSERT */
-        assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, result.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                result.getRejectionMessage().getRejectionReason());
     }
 
     @Test
