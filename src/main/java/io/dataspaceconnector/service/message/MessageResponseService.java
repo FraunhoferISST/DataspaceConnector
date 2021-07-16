@@ -26,7 +26,6 @@ import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
 import io.dataspaceconnector.exception.MessageEmptyException;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
-import io.dataspaceconnector.exception.SelfLinkCreationException;
 import io.dataspaceconnector.exception.VersionNotSupportedException;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.service.ids.ConnectorService;
@@ -561,25 +560,6 @@ public class MessageResponseService {
         }
         return ErrorResponse.withDefaultHeader(RejectionReason.MALFORMED_MESSAGE,
                 "Invalid rules in message payload.",
-                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
-    }
-
-    /**
-     * Handle exception when creating self links for the requested element and its children.
-     *
-     * @param exception        Exception that was thrown when the self links could not be created.
-     * @param requestedElement The requested element that could not be constructed.
-     * @return A message response.
-     */
-    public MessageResponse handleSelfLinkCreationException(
-            final SelfLinkCreationException exception, final URI requestedElement) {
-        if (log.isDebugEnabled()) {
-            log.debug("Could not construct self links for requested element and its "
-                            + "children. [exception=({}), requestedElement=({})]",
-                    exception.getMessage(), requestedElement, exception);
-        }
-        return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
-                "Internal error when constructing requested element.",
                 connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 

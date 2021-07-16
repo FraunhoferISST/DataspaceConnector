@@ -15,21 +15,26 @@
  */
 package io.dataspaceconnector.service;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.exception.InvalidResourceException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.exception.SelfLinkCreationException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
-import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;
-import io.dataspaceconnector.model.rule.ContractRule;
+import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
-import io.dataspaceconnector.util.QueryInput;
-import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.ids.builder.IdsArtifactBuilder;
 import io.dataspaceconnector.service.ids.builder.IdsCatalogBuilder;
@@ -46,18 +51,12 @@ import io.dataspaceconnector.service.resource.RuleService;
 import io.dataspaceconnector.service.usagecontrol.AllowAccessVerifier;
 import io.dataspaceconnector.service.util.EndpointUtils;
 import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.QueryInput;
 import io.dataspaceconnector.util.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * This service offers methods for finding entities by their identifying URI.
@@ -236,12 +235,6 @@ public class EntityResolver {
                 final var rule = (ContractRule) entity;
                 return rule.getValue();
             }
-        } catch (SelfLinkCreationException exception) {
-            if (log.isWarnEnabled()) {
-                log.warn("Could not create self-link. [entity=({}), exception=({})]",
-                        entity, exception.getMessage(), exception);
-            }
-            throw exception;
         } catch (Exception exception) {
             // If we do not allow requesting an object type, respond with exception.
             if (log.isWarnEnabled()) {
