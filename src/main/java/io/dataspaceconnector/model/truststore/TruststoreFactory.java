@@ -30,12 +30,12 @@ public class TruststoreFactory extends AbstractFactory<Truststore, TruststoreDes
     /**
      * The default password.
      */
-    private static final String DEFAULT_PASSWORD = "";
+    public static final String DEFAULT_PASSWORD = "";
 
     /**
      * The default location.
      */
-    private static final URI DEFAULT_LOCATION = URI.create("");
+    public static final URI DEFAULT_URI = URI.create("");
 
     @Override
     protected final Truststore initializeEntity(final TruststoreDesc desc) {
@@ -60,7 +60,7 @@ public class TruststoreFactory extends AbstractFactory<Truststore, TruststoreDes
 
     private boolean updateLocation(final Truststore truststore, final URI location) {
         final var newLocation =
-                MetadataUtils.updateUri(truststore.getLocation(), location, DEFAULT_LOCATION);
+                MetadataUtils.updateUri(truststore.getLocation(), location, DEFAULT_URI);
         newLocation.ifPresent(truststore::setLocation);
 
         return newLocation.isPresent();
