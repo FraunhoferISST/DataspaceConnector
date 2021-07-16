@@ -15,16 +15,15 @@
  */
 package io.dataspaceconnector.repository;
 
-import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.model.broker.Broker;
-
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
-
 import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
+
+import io.dataspaceconnector.model.base.RegistrationStatus;
+import io.dataspaceconnector.model.broker.Broker;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 /**
  * Repository for brokers.
@@ -45,7 +44,7 @@ public interface BrokerRepository extends BaseEntityRepository<Broker> {
 
 
     /**
-     * Change broker registraion state.
+     * Change broker registration state.
      * @param location The uri of the broker.
      * @param status The uuid of the broker.
      */
