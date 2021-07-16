@@ -47,7 +47,7 @@ public class ConnectorEndpoint extends Endpoint {
     /**
      * Default constructor.
      */
-    protected ConnectorEndpoint() {
+    public ConnectorEndpoint() {
         super();
     }
 
