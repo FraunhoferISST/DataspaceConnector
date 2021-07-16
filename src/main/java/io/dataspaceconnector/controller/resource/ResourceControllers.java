@@ -247,7 +247,9 @@ public final class ResourceControllers {
                 @RequestParam(required = false) final URI agreementUri,
                 @RequestParam(required = false) final Map<String, String> params,
                 @RequestHeader final Map<String, String> headers,
-                final HttpServletRequest request) throws IOException, UnexpectedResponseException, io.dataspaceconnector.exception.UnexpectedResponseException {
+                final HttpServletRequest request) throws IOException,
+                UnexpectedResponseException,
+                io.dataspaceconnector.exception.UnexpectedResponseException {
             headers.remove("authorization");
             headers.remove("host");
 
@@ -296,7 +298,9 @@ public final class ResourceControllers {
         public ResponseEntity<StreamingResponseBody> getData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
                 @RequestBody(required = false) final QueryInput queryInput)
-                throws IOException, UnexpectedResponseException, io.dataspaceconnector.exception.UnexpectedResponseException {
+                throws IOException,
+                UnexpectedResponseException,
+                io.dataspaceconnector.exception.UnexpectedResponseException {
             ValidationUtils.validateQueryInput(queryInput);
             final var data =
                     artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput);

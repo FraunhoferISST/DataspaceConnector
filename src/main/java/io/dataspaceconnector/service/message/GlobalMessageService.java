@@ -108,7 +108,7 @@ public class GlobalMessageService {
         final var response = brokerSvc.updateSelfDescriptionAtBroker(recipient);
         final var result = checkResponse(Optional.ofNullable(response));
         if (result) {
-            if(log.isInfoEnabled()){
+            if (log.isInfoEnabled()) {
                 log.info(String.format(
                         "Successfully registered connector. [url=(%s)]",
                         recipient
@@ -133,7 +133,7 @@ public class GlobalMessageService {
         final var response = brokerSvc.unregisterAtBroker(recipient);
         final var result = checkResponse(Optional.ofNullable(response));
         if (result) {
-            if(log.isInfoEnabled()){
+            if (log.isInfoEnabled()) {
                 log.info(String.format(
                         "Successfully unregistered connector. [url=(%s)]",
                         recipient
@@ -160,7 +160,7 @@ public class GlobalMessageService {
         final var response = brokerSvc.updateResourceAtBroker(recipient, resource);
         final var result =  checkResponse(Optional.ofNullable(response));
         if (result) {
-            if(log.isInfoEnabled()){
+            if (log.isInfoEnabled()) {
                 log.info(String.format("Successfully registered resource. "
                         + "[resourceId=(%s), url=(%s)]", resource.getId(), recipient)
                 );
@@ -186,7 +186,7 @@ public class GlobalMessageService {
         final var response = brokerSvc.removeResourceFromBroker(recipient, resource);
         final var result = checkResponse(Optional.ofNullable(response));
         if (result) {
-            if(log.isInfoEnabled()){
+            if (log.isInfoEnabled()) {
                 log.info(String.format("Successfully unregistered resource. "
                         + "[resourceId=(%s), url=(%s)]", resource.getId(), recipient)
                 );

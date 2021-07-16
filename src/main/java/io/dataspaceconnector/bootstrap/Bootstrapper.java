@@ -224,10 +224,12 @@ public class Bootstrapper {
                     if (!brokerSvc.checkResponse(resourceResponse)) {
                         return false;
                     }
-                } catch (MultipartParseException | ClaimsException | DapsTokenManagerException | IOException
-                        | URISyntaxException | NoTemplateProvidedException | ShaclValidatorException
-                        | SendMessageException | UnexpectedPayloadException | SerializeException
-                        | DeserializeException | RejectionException | UnknownResponseException e) {
+                } catch (MultipartParseException | ClaimsException | DapsTokenManagerException
+                        | IOException | URISyntaxException | NoTemplateProvidedException
+                        | ShaclValidatorException | SendMessageException
+                        | UnexpectedPayloadException | SerializeException
+                        | DeserializeException | RejectionException
+                        | UnknownResponseException e) {
                     if (log.isDebugEnabled()) {
                         log.debug("Could not register resource at broker [resourceId=({}), "
                                 + "broker=({})].", entry.getKey().toString(), broker, e);
