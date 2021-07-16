@@ -44,7 +44,8 @@ import java.util.Optional;
  * @param <T> type of message that can be processed by this handler.
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class AbstractMessageHandler<T extends Message> implements MessageAndClaimsHandler<T> {
+public abstract class AbstractMessageHandler<T extends Message>
+        implements MessageAndClaimsHandler<T> {
 
     /**
      * Template for triggering Camel routes.
