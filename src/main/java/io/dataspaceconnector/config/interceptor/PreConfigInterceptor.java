@@ -46,8 +46,6 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
      */
     private final Serializer serializer;
 
-    private final ConfigurationService configurationService;
-
     @Override
     public ConfigurationModel perform(final ConfigProperties properties)
             throws ConfigProducerInterceptorException {
