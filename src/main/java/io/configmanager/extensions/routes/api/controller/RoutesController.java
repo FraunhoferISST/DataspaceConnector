@@ -15,6 +15,9 @@
  */
 package io.configmanager.extensions.routes.api.controller;
 
+import java.util.LinkedList;
+import java.util.stream.Collectors;
+
 import io.configmanager.extensions.routes.api.RoutesApi;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NoArgsConstructor;
@@ -22,9 +25,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.LinkedList;
-import java.util.stream.Collectors;
 
 /**
  * The api class implements the AppRouteApi and offers the possibilities to manage
@@ -47,20 +47,15 @@ public class RoutesController implements RoutesApi {
     private final LinkedList<String> routeErrors = new LinkedList<>();
 
     /**
-     * This method saves occuring route errors.
+     * Adds a route error message to the temp. storage.
      *
-     * @param routeError The route error to be saved
-     * @return The response code for the API.
+     * @param routeError the error message
      */
-    @Override
-    public ResponseEntity<String> setRouteError(final String routeError) {
+    public void addRouteErrors(final String routeError) {
         if (routeErrors.size() >= MAX_ERROR_LOG) {
             routeErrors.remove(0);
         }
-
         routeErrors.add(routeError);
-
-        return ResponseEntity.ok("Saved Route-Error in ConfigManager-backend.");
     }
 
     /**

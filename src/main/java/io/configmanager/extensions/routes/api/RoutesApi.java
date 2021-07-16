@@ -20,23 +20,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * API for handling Camel route-error logs.
  */
 public interface RoutesApi {
-    /**
-     * Save route related errors.
-     * @param policy The policy.
-     * @return The response message or an error.
-     */
-    @Hidden
-    @PostMapping(value = "/route/error", produces = "application/ld+json")
-    @Operation(summary = "Save route related errors in the ConfigManager-backend")
-    @ApiResponse(responseCode = "200", description = "Saved Route-Error in ConfigManager-backend.")
-    ResponseEntity<String> setRouteError(@RequestBody String policy);
 
     /**
      * Get new route related errors.
