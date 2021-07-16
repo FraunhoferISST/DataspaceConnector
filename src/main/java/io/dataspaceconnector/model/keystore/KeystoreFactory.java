@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.model.keystore;
 
+import java.net.URI;
+
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
 
 /**
  * Factory class for the key store.
@@ -30,12 +30,12 @@ public class KeystoreFactory extends AbstractFactory<Keystore, KeystoreDesc> {
     /**
      * The default password.
      */
-    private static final String DEFAULT_PASSWORD = "";
+    public static final String DEFAULT_PASSWORD = "";
 
     /**
      * The default location.
      */
-    private static final URI DEFAULT_LOCATION = URI.create("");
+    public static final URI DEFAULT_LOCATION = URI.create("");
 
     @Override
     protected final Keystore initializeEntity(final KeystoreDesc desc) {

@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.model.keystore;
 
+import java.net.URI;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,5 +35,63 @@ class KeystoreFactoryTest {
 
         /* ASSERT */
         assertNotNull(result);
+    }
+
+    @Test
+    void update_newLocation_willUpdate() {
+        /* ARRANGE */
+        final var desc = new KeystoreDesc();
+        desc.setLocation(URI.create("https://someLocation"));
+        final var keystore = factory.create(new KeystoreDesc());
+
+        /* ACT */
+        final var result = factory.update(keystore, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(desc.getLocation(), keystore.getLocation());
+    }
+
+    @Test
+    void update_sameLocation_willNotUpdate() {
+        /* ARRANGE */
+        final var desc = new KeystoreDesc();
+        final var keystore = factory.create(new KeystoreDesc());
+
+        /* ACT */
+        final var result = factory.update(keystore, desc);
+
+        /* ASSERT */
+        assertFalse(result);
+        assertEquals(KeystoreFactory.DEFAULT_LOCATION, keystore.getLocation());
+    }
+
+    @Test
+    void update_newPassword_willUpdate() {
+        /* ARRANGE */
+        final var desc = new KeystoreDesc();
+        desc.setPassword("A wild password");
+        final var keystore = factory.create(new KeystoreDesc());
+
+        /* ACT */
+        final var result = factory.update(keystore, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(desc.getPassword(), keystore.getPassword());
+    }
+
+    @Test
+    void update_samePassword_willNotUpdate() {
+        /* ARRANGE */
+        final var desc = new KeystoreDesc();
+        final var keystore = factory.create(new KeystoreDesc());
+
+        /* ACT */
+        final var result = factory.update(keystore, desc);
+
+        /* ASSERT */
+        assertFalse(result);
+        assertEquals(KeystoreFactory.DEFAULT_PASSWORD, keystore.getPassword());
     }
 }

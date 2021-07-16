@@ -67,7 +67,7 @@ class TruststoreFactoryTest {
 
         /* ASSERT */
         assertFalse(result);
-        assertEquals(TruststoreFactory.DEFAULT_URI, truststore.getLocation());
+        assertEquals(TruststoreFactory.DEFAULT_LOCATION, truststore.getLocation());
     }
 
     @Test
