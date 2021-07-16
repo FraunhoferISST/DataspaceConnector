@@ -33,7 +33,7 @@ import java.util.Map;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "requested", itemRelation = "resource")
+@Relation(collectionRelation = "resources", itemRelation = "resource")
 public class RequestedResourceView extends RepresentationModel<RequestedResourceView> {
 
     /**
