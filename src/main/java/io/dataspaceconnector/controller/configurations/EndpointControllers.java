@@ -93,13 +93,13 @@ public class EndpointControllers
     }
 
     @Override
-    public ResponseEntity<Object> create(final EndpointDesc desc) {
+    public final ResponseEntity<Object> create(final EndpointDesc desc) {
         return respondCreated(service.create(desc));
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public PagedModel<Object> getAll(final Integer page, final Integer size) {
+    public final PagedModel<Object> getAll(final Integer page, final Integer size) {
         final var pageable = Utils.toPageRequest(page, size);
         final var entities = service.getAll(pageable);
         final PagedModel<?> model;
@@ -113,12 +113,12 @@ public class EndpointControllers
     }
 
     @Override
-    public Object get(final UUID resourceId) {
+    public final Object get(final UUID resourceId) {
         return assemblerProxy.toModel(service.get(resourceId));
     }
 
     @Override
-    public ResponseEntity<Object> update(final UUID resourceId, final EndpointDesc desc) {
+    public final ResponseEntity<Object> update(final UUID resourceId, final EndpointDesc desc) {
         final var resource = service.update(resourceId, desc);
 
         if (resource.getId().equals(resourceId)) {
@@ -130,7 +130,7 @@ public class EndpointControllers
     }
 
     @Override
-    public ResponseEntity<Void> delete(final UUID resourceId) {
+    public final ResponseEntity<Void> delete(final UUID resourceId) {
         service.delete(resourceId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -143,7 +143,7 @@ public class EndpointControllers
     @PutMapping("{id}/datasource")
     @Operation(summary = "Creates start endpoint for the route")
     @ApiResponses(value = { @ApiResponse(responseCode = ResponseCodes.OK) })
-    public ResponseEntity<String> createDataSource(
+    public final ResponseEntity<String> createDataSource(
             @Valid @PathVariable(name = "id") final UUID genericEndpointId,
             @RequestBody final UUID dataSourceId) {
         genericEndpointService.setGenericEndpointDataSource(genericEndpointId, dataSourceId);
