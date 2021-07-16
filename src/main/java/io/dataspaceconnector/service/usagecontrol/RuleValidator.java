@@ -74,10 +74,12 @@ public class RuleValidator {
      * @param rule            The ids rule.
      * @param target          The requested/accessed element.
      * @param issuerConnector The issuer connector.
+     * @param agreementId The agreement ID.
      * @throws PolicyRestrictionException If a policy restriction was detected.
      */
     public void validatePolicy(final PolicyPattern pattern, final Rule rule, final URI target,
-                        final URI issuerConnector) throws PolicyRestrictionException {
+                        final URI issuerConnector,
+                        final URI agreementId) throws PolicyRestrictionException {
         switch (pattern) {
             case PROVIDE_ACCESS:
                 break;
@@ -89,7 +91,7 @@ public class RuleValidator {
                 validateDuration(rule, target);
                 break;
             case USAGE_LOGGING:
-                executionService.logDataAccess(target);
+                executionService.logDataAccess(target, agreementId);
                 break;
             case N_TIMES_USAGE:
                 validateAccessNumber(rule, target);

@@ -64,7 +64,7 @@ public class DataProvisionVerifierTest {
 
         final var input = new VerificationInput(target, issuerConnector, agreement);
 
-        doNothing().when(ruleValidator).validatePolicy(any(), any(), any(), any());
+        doNothing().when(ruleValidator).validatePolicy(any(), any(), any(), any(), any());
 
         /* ACT */
         final var result = verifier.verify(input);
@@ -82,7 +82,7 @@ public class DataProvisionVerifierTest {
         final var input = new VerificationInput(target, issuerConnector, agreement);
 
         doThrow(PolicyRestrictionException.class)
-                .when(ruleValidator).validatePolicy(any(), any(), any(), any());
+                .when(ruleValidator).validatePolicy(any(), any(), any(), any(), any());
         when(connectorConfig.isAllowUnsupported()).thenReturn(false);
 
         /* ACT */

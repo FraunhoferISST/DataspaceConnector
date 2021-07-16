@@ -111,10 +111,11 @@ public class PolicyExecutionServiceTest {
         when(connectorService.getConnectorId()).thenReturn(connectorId);
 
         /* ACT */
-        policyExecutionService.logDataAccess(target);
+        policyExecutionService.logDataAccess(target, URI.create("https://agreement.com/api/agreements/" + agreementID));
 
         /* ASSERT */
-        verify(logMessageService, times(1)).sendMessage(eq(chUri), any());
+        verify(logMessageService, times(1))
+                .sendMessage(eq(URI.create(chUri + agreementID.toString())), any());
     }
 
     @Test

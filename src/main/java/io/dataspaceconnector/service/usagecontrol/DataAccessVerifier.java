@@ -103,7 +103,7 @@ public final class DataAccessVerifier implements PolicyVerifier<Artifact> {
                 final var pattern = RuleUtils.getPatternByRule(rule);
                 // Enforce only a set of patterns.
                 if (patterns.contains(pattern)) {
-                    ruleValidator.validatePolicy(pattern, rule, artifactId, null);
+                    ruleValidator.validatePolicy(pattern, rule, artifactId, null, null);
                 }
             }
         }

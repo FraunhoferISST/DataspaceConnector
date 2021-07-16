@@ -94,7 +94,7 @@ public class DataProvisionVerifier implements PolicyVerifier<VerificationInput> 
             final var pattern = RuleUtils.getPatternByRule(rule);
             // Enforce only a set of patterns.
             if (patterns.contains(pattern)) {
-                ruleValidator.validatePolicy(pattern, rule, target, issuerConnector);
+                ruleValidator.validatePolicy(pattern, rule, target, issuerConnector, null);
             }
         }
     }

@@ -97,12 +97,21 @@ public class PolicyExecutionService {
      * Send a message to the clearing house. Allow the access only if that operation was successful.
      *
      * @param target The target object.
+     * @param agreementId The agreement ID.
      * @throws PolicyExecutionException if the access could not be successfully logged.
      */
-    public void logDataAccess(final URI target) throws PolicyExecutionException {
-        final var recipient = connectorConfig.getClearingHouse();
-        if (!recipient.equals(URI.create(""))) {
-            logMessageService.sendMessage(recipient, buildLog(target).toString());
+    public void logDataAccess(final URI target,
+                              final URI agreementId) throws PolicyExecutionException {
+        final var clearingHouse = connectorConfig.getClearingHouse();
+        if (!clearingHouse.equals(URI.create(""))) {
+            UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                    .fromHttpUrl(clearingHouse.toString());
+
+            // Add Agreement UUID
+            uriBuilder.pathSegment(UUIDUtils.uuidFromUri(agreementId).toString());
+
+            final var destination = uriBuilder.build().toUri();
+            logMessageService.sendMessage(destination, buildLog(target).toString());
         }
     }
 
