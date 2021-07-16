@@ -15,10 +15,10 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
+import java.net.URI;
+
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.util.MetadataUtils;
-
-import java.net.URI;
 
 /**
  * Base class for creating and updating endpoints.
@@ -32,12 +32,12 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
     /**
      * The default uri.
      */
-    private static final URI DEFAULT_URI = URI.create("https://documentation");
+    public static final URI DEFAULT_URI = URI.create("https://documentation");
 
     /**
      * The default information.
      */
-    private static final String DEFAULT_INFORMATION = "information";
+    public static final String DEFAULT_INFORMATION = "information";
 
     /**
      * Update an endpoint. Implement type specific stuff here.
@@ -61,12 +61,11 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
         final var hasUpdatedLocation = updateLocation(endpoint, desc.getLocation());
         final var hasUpdatedDocs = updateDocs(endpoint, desc.getDocs());
         final var hasUpdatedInfo = updateInfo(endpoint, desc.getInfo());
-        final var hasUpdatedAdditional = updateAdditional(endpoint, endpoint.getAdditional());
 
         final var updatedInternal = updateInternal(endpoint, desc);
 
         return hasParentUpdated || hasUpdatedLocation || hasUpdatedDocs || hasUpdatedInfo
-                || hasUpdatedAdditional || updatedInternal;
+                || updatedInternal;
     }
 
     /**

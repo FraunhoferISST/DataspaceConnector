@@ -15,7 +15,8 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 
@@ -23,19 +24,18 @@ import org.springframework.stereotype.Component;
  * The endpoint factory proxy class.
  */
 @Component
+@RequiredArgsConstructor
 public class EndpointFactoryProxy extends EndpointFactory<Endpoint, EndpointDesc> {
 
     /**
      * The factory for the connector endpoint.
      */
-    @Autowired
-    private ConnectorEndpointFactory connector;
+    private final @NonNull ConnectorEndpointFactory connector;
 
     /**
      * The factory for the generic endpoint.
      */
-    @Autowired
-    private GenericEndpointFactory generic;
+    private final @NonNull GenericEndpointFactory generic;
 
     @Override
     protected final Endpoint initializeEntity(final EndpointDesc desc) {

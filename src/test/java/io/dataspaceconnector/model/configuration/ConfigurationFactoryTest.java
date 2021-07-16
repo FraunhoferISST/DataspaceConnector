@@ -15,14 +15,15 @@
  */
 package io.dataspaceconnector.model.configuration;
 
+import java.net.URI;
+
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
 import io.dataspaceconnector.model.proxy.ProxyFactory;
 import io.dataspaceconnector.model.truststore.TruststoreFactory;
 import org.junit.jupiter.api.Test;
 
-import java.net.URI;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ConfigurationFactoryTest {
 
@@ -51,5 +52,6 @@ public class ConfigurationFactoryTest {
         assertEquals(accessUrl, result.getConnectorEndpoint());
         assertEquals(DeployMode.TEST, result.getDeployMode());
         assertEquals(curator, result.getCurator());
+        assertNotNull(result.getInboundModelVersion());
     }
 }
