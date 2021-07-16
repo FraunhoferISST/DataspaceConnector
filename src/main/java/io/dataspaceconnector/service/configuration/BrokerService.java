@@ -26,12 +26,14 @@ import io.dataspaceconnector.repository.BrokerRepository;
 import io.dataspaceconnector.service.resource.BaseEntityService;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class for brokers.
  */
 @Service("ConfigurationBrokerService") //Clashes with IDS-Messaging-Services brokerService Bean
 @NoArgsConstructor
+@Transactional
 public class BrokerService extends BaseEntityService<Broker, BrokerDesc> {
 
     /**
