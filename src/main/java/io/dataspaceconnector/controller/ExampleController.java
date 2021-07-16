@@ -146,7 +146,7 @@ public class ExampleController {
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
+            @ApiResponse(responseCode = "400", description = "Internal server error")})
     @PostMapping("/validation")
     @ResponseBody
     public ResponseEntity<Object> getPolicyPattern(

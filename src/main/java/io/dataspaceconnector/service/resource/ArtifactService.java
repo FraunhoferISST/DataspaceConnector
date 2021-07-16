@@ -16,6 +16,7 @@
 package io.dataspaceconnector.service.resource;
 
 import io.dataspaceconnector.exception.PolicyRestrictionException;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.exception.UnreachableLineException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactDesc;
@@ -146,7 +147,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final QueryInput queryInput)
-            throws PolicyRestrictionException, IOException {
+            throws PolicyRestrictionException, IOException, UnexpectedResponseException {
         /*
          * NOTE: Check if agreements with remoteIds are set for this artifact. If such agreements
          * exist the artifact must be assigned to a requested resource. The data access should
@@ -207,7 +208,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final RetrievalInformation information)
-            throws PolicyRestrictionException, IOException {
+            throws PolicyRestrictionException, IOException, UnexpectedResponseException {
         // Check the artifact exists and access is granted.
         final var artifact = get(artifactId);
         if (accessVerifier.verify(artifact) == VerificationResult.DENIED) {

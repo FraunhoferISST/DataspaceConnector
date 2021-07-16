@@ -15,18 +15,18 @@
  */
 package io.dataspaceconnector.controller.resource;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
 import io.dataspaceconnector.controller.resource.tag.ResourceDescriptions;
 import io.dataspaceconnector.controller.resource.tag.ResourceNames;
+import io.dataspaceconnector.controller.resource.view.AgreementView;
+import io.dataspaceconnector.controller.resource.view.ArtifactView;
+import io.dataspaceconnector.controller.resource.view.CatalogView;
+import io.dataspaceconnector.controller.resource.view.ContractRuleView;
+import io.dataspaceconnector.controller.resource.view.ContractView;
+import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
+import io.dataspaceconnector.controller.resource.view.RepresentationView;
+import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.AgreementDesc;
 import io.dataspaceconnector.model.Artifact;
@@ -55,14 +55,6 @@ import io.dataspaceconnector.service.resource.RetrievalInformation;
 import io.dataspaceconnector.service.resource.RuleService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
 import io.dataspaceconnector.util.ValidationUtils;
-import io.dataspaceconnector.controller.resource.view.AgreementView;
-import io.dataspaceconnector.controller.resource.view.ArtifactView;
-import io.dataspaceconnector.controller.resource.view.CatalogView;
-import io.dataspaceconnector.controller.resource.view.ContractRuleView;
-import io.dataspaceconnector.controller.resource.view.ContractView;
-import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
-import io.dataspaceconnector.controller.resource.view.RepresentationView;
-import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -83,6 +75,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * This class contains all implementations of the {@link BaseResourceController}.
@@ -239,7 +240,7 @@ public final class ResourceControllers {
                 @RequestParam(required = false) final URI agreementUri,
                 @RequestParam(required = false) final Map<String, String> params,
                 @RequestHeader final Map<String, String> headers,
-                final HttpServletRequest request) throws IOException {
+                final HttpServletRequest request) throws IOException, UnexpectedResponseException {
             headers.remove("authorization");
             headers.remove("host");
 
@@ -268,7 +269,7 @@ public final class ResourceControllers {
                     ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput)
                     : artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
                     new RetrievalInformation(agreementUri, download,
-                                             queryInput));
+                            queryInput));
 
             return returnData(artifactId, data);
         }
@@ -288,7 +289,8 @@ public final class ResourceControllers {
         @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
         public ResponseEntity<StreamingResponseBody> getData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
-                @RequestBody(required = false) final QueryInput queryInput) throws IOException {
+                @RequestBody(required = false) final QueryInput queryInput)
+                throws IOException, UnexpectedResponseException {
             ValidationUtils.validateQueryInput(queryInput);
             final var data =
                     artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput);

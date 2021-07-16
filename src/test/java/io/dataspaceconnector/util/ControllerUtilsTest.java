@@ -33,8 +33,8 @@ class ControllerUtilsTest {
     @Test
     public void respondIdsMessageFailed_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("Ids message handling failed. "
-                + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        final var msg = ErrorMessages.MESSAGE_HANDLING_FAILED.toString();
+        final var expectedResponse = new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
 
         /* ACT */
         final var response = ControllerUtils.respondIdsMessageFailed(exception);
@@ -47,15 +47,15 @@ class ControllerUtilsTest {
     @Test
     public void respondReceivedInvalidResponse_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("Failed to read the ids response "
-                + "message.", HttpStatus.INTERNAL_SERVER_ERROR);
+        final var msg = ErrorMessages.INVALID_MESSAGE;
+        final var expectedResponse = new ResponseEntity<>(msg, HttpStatus.BAD_GATEWAY);
 
         /* ACT */
         final var response = ControllerUtils.respondReceivedInvalidResponse(exception);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
+        assertEquals(502, response.getStatusCodeValue());
     }
 
     @Test
@@ -73,39 +73,11 @@ class ControllerUtilsTest {
     }
 
     @Test
-    public void respondDeserializationError_validException_returnValidResponseEntity() {
-        /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("Failed to update.",
-                HttpStatus.BAD_REQUEST);
-
-        /* ACT */
-        final var response = ControllerUtils.respondDeserializationError(exception);
-
-        /* ARRANGE */
-        assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
-    }
-
-    @Test
-    public void respondConfigurationNotFound_null_returnValidResponseEntity() {
-        /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("No configuration found.",
-                HttpStatus.NOT_FOUND);
-
-        /* ACT */
-        final var response = ControllerUtils.respondConfigurationNotFound();
-
-        /* ARRANGE */
-        assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
-    }
-
-    @Test
     public void respondDeserializationError_validUri_returnValidResponseEntity() {
         /* ARRANGE */
         final var resourceId = URI.create("https://requestedResource");
-        final var expectedResponse = new ResponseEntity<>(String.format("Resource %s not found.",
-                resourceId), HttpStatus.NOT_FOUND);
+        final var expectedResponse = new ResponseEntity<>("Resource not found.",
+                HttpStatus.NOT_FOUND);
 
         /* ACT */
         final var response = ControllerUtils.respondResourceNotFound(resourceId);
@@ -116,26 +88,10 @@ class ControllerUtilsTest {
     }
 
     @Test
-    public void respondResourceCouldNotBeLoaded_validUri_returnValidResponseEntity() {
-        /* ARRANGE */
-        final var resourceId = URI.create("https://requestedResource");
-        final var expectedResponse = new ResponseEntity<>(String.format("Could not load resource " +
-                        "%s.",
-                resourceId), HttpStatus.INTERNAL_SERVER_ERROR);
-
-        /* ACT */
-        final var response = ControllerUtils.respondResourceCouldNotBeLoaded(resourceId);
-
-        /* ARRANGE */
-        assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
-    }
-
-    @Test
     public void respondPatternNotIdentified_validException_returnValidResponseEntity() {
         /* ARRANGE */
         final var expectedResponse = new ResponseEntity<>("Could not identify pattern.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.BAD_REQUEST);
 
         /* ACT */
         final var response = ControllerUtils.respondPatternNotIdentified(exception);
@@ -148,8 +104,8 @@ class ControllerUtilsTest {
     @Test
     public void respondInvalidInput_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("Invalid input. "
-                + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        final var expectedResponse = new ResponseEntity<>("Invalid input, processing failed. "
+                + exception.getMessage(), HttpStatus.BAD_REQUEST);
 
         /* ACT */
         final var response = ControllerUtils.respondInvalidInput(exception);
@@ -174,20 +130,6 @@ class ControllerUtilsTest {
     }
 
     @Test
-    public void respondConnectorNotLoaded_validException_returnValidResponseEntity() {
-        /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("Connector could not be loaded.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
-
-        /* ACT */
-        final var response = ControllerUtils.respondConnectorNotLoaded(exception);
-
-        /* ARRANGE */
-        assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
-    }
-
-    @Test
     public void respondFailedToStoreEntity_validException_returnValidResponseEntity() {
         /* ARRANGE */
         final var expectedResponse = new ResponseEntity<>("Failed to store entity. "
@@ -204,7 +146,8 @@ class ControllerUtilsTest {
     @Test
     public void respondConnectionTimedOut_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>(HttpStatus.GATEWAY_TIMEOUT);
+        final var expectedResponse = new ResponseEntity<>(ErrorMessages.GATEWAY_TIMEOUT.toString(),
+                HttpStatus.GATEWAY_TIMEOUT);
 
         /* ACT */
         final var response = ControllerUtils.respondConnectionTimedOut(exception);
@@ -217,14 +160,15 @@ class ControllerUtilsTest {
     @Test
     public void respondReceivedInvalidResponse_null_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+        final var msg = ErrorMessages.INVALID_MESSAGE;
+        final var expectedResponse = new ResponseEntity<>(msg, HttpStatus.BAD_GATEWAY);
 
         /* ACT */
         final var response = ControllerUtils.respondReceivedInvalidResponse();
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
+        assertEquals(502, response.getStatusCodeValue());
     }
 
     @Test
@@ -235,7 +179,7 @@ class ControllerUtilsTest {
         final var expectedResponse = new ResponseEntity<>(map, HttpStatus.EXPECTATION_FAILED);
 
         /* ACT */
-        final var response = ControllerUtils.respondWithMessageContent(map);
+        final var response = ControllerUtils.respondWithContent(map);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());

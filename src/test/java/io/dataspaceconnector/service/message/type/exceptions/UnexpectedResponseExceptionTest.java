@@ -17,11 +17,12 @@ package io.dataspaceconnector.service.message.type.exceptions;
 
 import java.util.HashMap;
 
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class InvalidResponseTest {
+class UnexpectedResponseExceptionTest {
 
     @Test
     public void new_content_hasContent() {
@@ -29,7 +30,7 @@ class InvalidResponseTest {
         final var content = new HashMap<String, Object>();
         content.put("Key", "Value");
 
-        final var exception = new InvalidResponse(content);
+        final var exception = new UnexpectedResponseException(content);
 
         /* ACT */
         final var result = exception.getContent();
@@ -46,7 +47,7 @@ class InvalidResponseTest {
 
         final var throwable = new RuntimeException("HELLO");
 
-        final var exception = new InvalidResponse(content, throwable);
+        final var exception = new UnexpectedResponseException(content, throwable);
 
         /* ACT */
         final var result = exception.getContent();
