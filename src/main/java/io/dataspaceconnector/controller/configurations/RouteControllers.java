@@ -55,7 +55,7 @@ public final class RouteControllers {
     @RequestMapping("/api/routes")
     @Tag(name = "Route", description = "Endpoints for CRUD operations on routes")
     @RequiredArgsConstructor
-    public static final class RouteController
+    public static class RouteController
             extends BaseResourceController<Route, RouteDesc, RouteView, RouteService> {
 
         /**

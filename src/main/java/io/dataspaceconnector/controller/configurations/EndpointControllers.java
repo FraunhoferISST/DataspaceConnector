@@ -49,110 +49,104 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Controller for management of different endpoints.
+ * Offers the endpoints for managing different endpoints.
  */
-public final class EndpointControllers {
+@RestController
+@RequestMapping("/api/endpoints")
+@RequiredArgsConstructor
+@Tag(name = "Endpoints", description = "Endpoints for CRUD operations on endpoints")
+@Getter(AccessLevel.PROTECTED)
+@Setter(AccessLevel.NONE)
+public class EndpointControllers
+        implements CRUDController<Endpoint, EndpointDesc, Object> {
 
     /**
-     * Offers the endpoints for managing different endpoints.
+     * Service for generic endpoint.
      */
-    @RestController
-    @RequestMapping("/api/endpoints")
-    @RequiredArgsConstructor
-    @Tag(name = "Endpoints", description = "Endpoints for CRUD operations on endpoints")
-    @Getter(AccessLevel.PROTECTED)
-    @Setter(AccessLevel.NONE)
-    public static final class GenericEndpointController
-            implements CRUDController<Endpoint, EndpointDesc, Object> {
+    private final @NonNull GenericEndpointService genericEndpointService;
 
-        /**
-         * Service for generic endpoint.
-         */
-        private final @NonNull GenericEndpointService genericEndpointService;
+    /**
+     * Service proxy for endpoints.
+     */
+    private final @NonNull EndpointServiceProxy service;
 
-        /**
-         * Service proxy for endpoints.
-         */
-        private final @NonNull EndpointServiceProxy service;
+    /**
+     * Assembler for pagination.
+     */
+    private final @NonNull PagedResourcesAssembler<Endpoint> pagedAssembler;
 
-        /**
-         * Assembler for pagination.
-         */
-        private final @NonNull PagedResourcesAssembler<Endpoint> pagedAssembler;
+    /**
+     * Assembler for the EndpointView.
+     */
+    private final @NonNull EndpointViewAssemblerProxy assemblerProxy;
 
-        /**
-         * Assembler for the EndpointView.
-         */
-        private final @NonNull EndpointViewAssemblerProxy assemblerProxy;
+    /**
+     * @param obj The endpoint object.
+     * @return response entity
+     */
+    private ResponseEntity<Object> respondCreated(final Endpoint obj) {
+        final RepresentationModel<?> entity = assemblerProxy.toModel(obj);
+        final var headers = new HttpHeaders();
+        headers.setLocation(entity.getRequiredLink("self").toUri());
 
-        /**
-         * @param obj The endpoint object.
-         * @return response entity
-         */
-        private ResponseEntity<Object> respondCreated(final Endpoint obj) {
-            final RepresentationModel<?> entity = assemblerProxy.toModel(obj);
-            final var headers = new HttpHeaders();
-            headers.setLocation(entity.getRequiredLink("self").toUri());
+        return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
+    }
 
-            return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
+    @Override
+    public ResponseEntity<Object> create(final EndpointDesc desc) {
+        return respondCreated(service.create(desc));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public PagedModel<Object> getAll(final Integer page, final Integer size) {
+        final var pageable = Utils.toPageRequest(page, size);
+        final var entities = service.getAll(pageable);
+        final PagedModel<?> model;
+        if (entities.hasContent()) {
+            model = pagedAssembler.toModel(entities, assemblerProxy);
+        } else {
+            model = pagedAssembler.toEmptyModel(entities, EndpointViewProxy.class);
         }
 
-        @Override
-        public ResponseEntity<Object> create(final EndpointDesc desc) {
-            return respondCreated(service.create(desc));
-        }
+        return (PagedModel<Object>) model;
+    }
 
-        @Override
-        @SuppressWarnings("unchecked")
-        public PagedModel<Object> getAll(final Integer page, final Integer size) {
-            final var pageable = Utils.toPageRequest(page, size);
-            final var entities = service.getAll(pageable);
-            final PagedModel<?> model;
-            if (entities.hasContent()) {
-                model = pagedAssembler.toModel(entities, assemblerProxy);
-            } else {
-                model = pagedAssembler.toEmptyModel(entities, EndpointViewProxy.class);
-            }
+    @Override
+    public Object get(final UUID resourceId) {
+        return assemblerProxy.toModel(service.get(resourceId));
+    }
 
-            return (PagedModel<Object>) model;
-        }
+    @Override
+    public ResponseEntity<Object> update(final UUID resourceId, final EndpointDesc desc) {
+        final var resource = service.update(resourceId, desc);
 
-        @Override
-        public Object get(final UUID resourceId) {
-            return assemblerProxy.toModel(service.get(resourceId));
-        }
-
-        @Override
-        public ResponseEntity<Object> update(final UUID resourceId, final EndpointDesc desc) {
-            final var resource = service.update(resourceId, desc);
-
-            if (resource.getId().equals(resourceId)) {
-                // The resource was not moved
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-
-            return respondCreated(resource);
-        }
-
-        @Override
-        public ResponseEntity<Void> delete(final UUID resourceId) {
-            service.delete(resourceId);
+        if (resource.getId().equals(resourceId)) {
+            // The resource was not moved
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        /**
-         * @param genericEndpointId The id of the generic endpoint.
-         * @param dataSourceId The id of the data source.
-         * @return response status OK, if data source is created at generic endpoint.
-         */
-        @PutMapping("{id}/datasource")
-        @Operation(summary = "Creates start endpoint for the route")
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.OK)})
-        public ResponseEntity<String> createDataSource(
-                @Valid @PathVariable(name = "id") final UUID genericEndpointId,
-                @RequestBody final UUID dataSourceId) {
-            genericEndpointService.setGenericEndpointDataSource(genericEndpointId, dataSourceId);
-            return new ResponseEntity<>("Created DataSource", HttpStatus.OK);
-        }
+        return respondCreated(resource);
+    }
+
+    @Override
+    public ResponseEntity<Void> delete(final UUID resourceId) {
+        service.delete(resourceId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    /**
+     * @param genericEndpointId The id of the generic endpoint.
+     * @param dataSourceId      The id of the data source.
+     * @return response status OK, if data source is created at generic endpoint.
+     */
+    @PutMapping("{id}/datasource")
+    @Operation(summary = "Creates start endpoint for the route")
+    @ApiResponses(value = { @ApiResponse(responseCode = ResponseCodes.OK) })
+    public ResponseEntity<String> createDataSource(
+            @Valid @PathVariable(name = "id") final UUID genericEndpointId,
+            @RequestBody final UUID dataSourceId) {
+        genericEndpointService.setGenericEndpointDataSource(genericEndpointId, dataSourceId);
+        return new ResponseEntity<>("Created DataSource", HttpStatus.OK);
     }
 }
