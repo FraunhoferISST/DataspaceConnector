@@ -102,17 +102,25 @@ public class PolicyExecutionService {
      */
     public void logDataAccess(final URI target,
                               final URI agreementId) throws PolicyExecutionException {
-        final var clearingHouse = connectorConfig.getClearingHouse();
-        if (!clearingHouse.equals(URI.create(""))) {
-            UriComponentsBuilder uriBuilder = UriComponentsBuilder
-                    .fromHttpUrl(clearingHouse.toString());
+        try {
+            final var clearingHouse = connectorConfig.getClearingHouse();
+            if (!clearingHouse.equals(URI.create(""))) {
+                UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                        .fromHttpUrl(clearingHouse.toString());
 
-            // Add Agreement UUID
-            uriBuilder.pathSegment(UUIDUtils.uuidFromUri(agreementId).toString());
+                // Add Agreement UUID
+                uriBuilder.pathSegment(UUIDUtils.uuidFromUri(agreementId).toString());
 
-            final var destination = uriBuilder.build().toUri();
-            logMessageService.sendMessage(destination, buildLog(target).toString());
+                final var destination = uriBuilder.build().toUri();
+                logMessageService.sendMessage(destination, buildLog(target).toString());
+            }
+        } catch (PolicyExecutionException | RdfBuilderException exception) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to send log message to clearing house. [exception=({})]",
+                        exception.getMessage());
+            }
         }
+
     }
 
     /**
@@ -132,7 +140,7 @@ public class PolicyExecutionService {
 
             notificationService.sendMessage(URI.create(recipient), logItem);
         } else if (log.isWarnEnabled()) {
-                log.warn("Reporting data access is only supported for permissions.");
+            log.warn("Reporting data access is only supported for permissions.");
         }
     }
 

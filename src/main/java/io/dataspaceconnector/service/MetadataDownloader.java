@@ -15,24 +15,25 @@
  */
 package io.dataspaceconnector.service;
 
+import io.dataspaceconnector.exception.MessageException;
+import io.dataspaceconnector.exception.MessageResponseException;
+import io.dataspaceconnector.service.message.type.DescriptionRequestService;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
 import javax.persistence.PersistenceException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-
-import io.dataspaceconnector.exception.MessageResponseException;
-import io.dataspaceconnector.service.message.type.DescriptionRequestService;
-import io.dataspaceconnector.service.message.type.exceptions.InvalidResponse;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 /**
  * Downloads metadata via IDS.
  */
 @Component
 @RequiredArgsConstructor
-public class MetaDataDownloader {
+public class MetadataDownloader {
 
     /**
      * Service for description request message handling.
@@ -46,21 +47,23 @@ public class MetaDataDownloader {
 
     /**
      * Download metadata from another connector.
+     *
      * @param recipient The recipient connector.
      * @param resources The resources.
      * @param artifacts The artifacts.
-     * @param download If autodownloading is enabled.
-     * @throws InvalidResponse The ids message is invalid.
-     * @throws PersistenceException The data could not be persisted.
-     * @throws IllegalArgumentException The input is invalid.
+     * @param download  If auto-downloading is enabled.
+     * @throws UnexpectedResponseException if the response type is not as expected.
+     * @throws MessageResponseException    if the response is invalid.
+     * @throws PersistenceException        if the data could not be persisted.
+     * @throws MessageException            if message handling failed.
      */
     public void download(final URI recipient, final List<URI> resources,
                          final List<URI> artifacts, final boolean download)
-            throws InvalidResponse, PersistenceException, MessageResponseException,
-            IllegalArgumentException {
+            throws UnexpectedResponseException, PersistenceException, MessageResponseException,
+            MessageException {
         Map<String, String> response;
         for (final var resource : resources) {
-            response = descReqSvc.sendMessageAndValidate(recipient, resource);
+            response = descReqSvc.sendMessage(recipient, resource);
             persistenceSvc.saveMetadata(response, artifacts, download, recipient);
         }
     }

@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;
@@ -27,11 +22,12 @@ import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
+import io.dataspaceconnector.exception.RdfBuilderException;
 import io.dataspaceconnector.service.ArtifactDataDownloader;
 import io.dataspaceconnector.service.ContractNegotiator;
 import io.dataspaceconnector.service.EntityUpdateService;
-import io.dataspaceconnector.service.MetaDataDownloader;
-import io.dataspaceconnector.service.message.type.exceptions.InvalidResponse;
+import io.dataspaceconnector.service.MetadataDownloader;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.resource.AgreementService;
 import io.dataspaceconnector.util.ControllerUtils;
 import io.dataspaceconnector.util.RuleUtils;
@@ -53,6 +49,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * This controller provides the endpoint for sending a contract request message and starting the
@@ -87,7 +88,7 @@ public class ContractRequestMessageController {
     /**
      * Downloads metadata.
      */
-    private final @NonNull MetaDataDownloader metaDataDownloader;
+    private final @NonNull MetadataDownloader metadataDownloader;
 
     /**
      * Downloads artifact's data.
@@ -97,11 +98,11 @@ public class ContractRequestMessageController {
     /**
      * Starts a contract, metadata, and data exchange with an external connector.
      *
-     * @param recipient    The recipient.
+     * @param recipient The recipient.
      * @param resources List of requested resources by IDs.
      * @param artifacts List of requested artifacts by IDs.
-     * @param download     Download data directly after successful contract and description request.
-     * @param ruleList     List of rules that should be used within a contract request.
+     * @param download  download data directly after successful contract and description request.
+     * @param ruleList  List of rules that should be used within a contract request.
      * @return The response entity.
      */
     @PostMapping("/contract")
@@ -109,9 +110,11 @@ public class ContractRequestMessageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "417", description = "Expectation failed"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
+            @ApiResponse(responseCode = "500", description = "Internal server error"),
+            @ApiResponse(responseCode = "502", description = "Bad gateway")})
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     @ResponseBody
     public ResponseEntity<Object> sendMessage(
@@ -125,37 +128,48 @@ public class ContractRequestMessageController {
                     + "download data of an artifact.")
             @RequestParam("download") final boolean download,
             @Parameter(description = "List of ids rules with an artifact id as target.")
-            @RequestBody final List<Rule> ruleList) throws InvalidResponse {
+            @RequestBody final List<Rule> ruleList) throws UnexpectedResponseException {
         try {
+            // Validates user input.
             RuleUtils.validateRuleTarget(ruleList);
 
+            // Initiate contract negotiation.
             final var agreementId = negotiator.negotiate(recipient, ruleList);
 
-            downloadMetaData(recipient, resources, artifacts, download, agreementId);
+            // Download metadata.
+            downloadMetadata(recipient, resources, artifacts, download, agreementId);
 
+            // Download data, if requested.
             if (download) {
                 artifactDataDownloader.download(recipient, artifacts, agreementId);
             }
 
             return respondWithCreatedAgreement(agreementId);
         } catch (InvalidInputException exception) {
+            // If the input rules are malformed.
             return ControllerUtils.respondInvalidInput(exception);
-        } catch (ConstraintViolationException exception) {
+        } catch (ConstraintViolationException | RdfBuilderException exception) {
+            // If contract request could not be built.
             return ControllerUtils.respondFailedToBuildContractRequest(exception);
         } catch (PersistenceException exception) {
+            // If metadata, data, or contract agreement could not be stored.
             return ControllerUtils.respondFailedToStoreEntity(exception);
         } catch (MessageException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
-        } catch (MessageResponseException | IllegalArgumentException | ContractException e) {
+        } catch (MessageResponseException | IllegalArgumentException e) {
+            // If the response message is invalid or malformed.
             return ControllerUtils.respondReceivedInvalidResponse(e);
+        } catch (ContractException e) {
+            // If the contract agreement is invalid.
+            return ControllerUtils.respondNegotiationAborted();
         }
-
     }
 
-    private void downloadMetaData(final URI recipient, final List<URI> resources,
+    private void downloadMetadata(final URI recipient, final List<URI> resources,
                                   final List<URI> artifacts, final boolean download,
-                                  final UUID agreementId) throws InvalidResponse {
-        metaDataDownloader.download(recipient, resources, artifacts, download);
+                                  final UUID agreementId) throws PersistenceException,
+            MessageResponseException, MessageException, UnexpectedResponseException {
+        metadataDownloader.download(recipient, resources, artifacts, download);
         updateService.linkArtifactToAgreement(artifacts, agreementId);
     }
 

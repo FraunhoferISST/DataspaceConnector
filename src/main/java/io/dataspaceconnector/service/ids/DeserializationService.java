@@ -23,7 +23,6 @@ import de.fraunhofer.iais.eis.InfrastructureComponent;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
-import de.fraunhofer.iais.eis.ResponseMessage;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.ids.messaging.util.SerializerProvider;
 import lombok.NonNull;
@@ -100,27 +99,6 @@ public class DeserializationService {
                 log.debug("Could not deserialize resource. [exception=({})]", e.getMessage(), e);
             }
             throw new IllegalArgumentException("Could not deserialize input.", e);
-        }
-    }
-
-    /**
-     * Returns the ids header of an http multipart response if the header is of type
-     * ResponseMessage.
-     *
-     * @param response An ids response message.
-     * @return The response message.
-     * @throws IllegalArgumentException If deserialization fails.
-     */
-    public ResponseMessage getResponseMessage(final String response)
-            throws IllegalArgumentException {
-        try {
-            return serializerProvider.getSerializer().deserialize(response, ResponseMessage.class);
-        } catch (IOException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Could not deserialize response message. [exception=({})]",
-                        e.getMessage(), e);
-            }
-            throw new IllegalArgumentException("Could not deserialize response message.", e);
         }
     }
 
