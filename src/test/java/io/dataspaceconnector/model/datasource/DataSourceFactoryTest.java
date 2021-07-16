@@ -58,7 +58,6 @@ public class DataSourceFactoryTest {
     @Test
     void update_sameAuth_willNotUpdate() {
         /* ARRANGE */
-        final var desc = new DataSourceDesc();
         final var dataSource = factory.create(new DataSourceDesc());
 
         /* ACT */
