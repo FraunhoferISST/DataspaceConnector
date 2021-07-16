@@ -27,7 +27,6 @@ import javax.xml.bind.Unmarshaller;
 import de.fraunhofer.iais.eis.AppEndpoint;
 import de.fraunhofer.iais.eis.AppEndpointType;
 import de.fraunhofer.iais.eis.AppRoute;
-import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.iais.eis.ConnectorEndpoint;
 import de.fraunhofer.iais.eis.Endpoint;
 import de.fraunhofer.iais.eis.GenericEndpoint;
@@ -81,13 +80,10 @@ public class RouteManager {
      * Creates a Camel XML route from a given app route. The generated XML route is then added to
      * the application's Camel context for execution.
      *
-     * @param configurationModel config model the app route belongs to; contains key- and truststore
-     *                           information
      * @param appRoute the app route to create a Camel route for
      * @throws RouteCreationException if the Camel route cannot be created or deployed
      */
-    public void createAndDeployXMLRoute(final ConfigurationModel configurationModel,
-                                        final AppRoute appRoute) throws RouteCreationException {
+    public void createAndDeployXMLRoute(final AppRoute appRoute) throws RouteCreationException {
         final var velocityContext = new VelocityContext();
 
         //create ID for Camel route
@@ -325,15 +321,15 @@ public class RouteManager {
     }
 
     /**
-     * Deletes all Camel routes associated with app routes from a given config model by calling
+     * Deletes all Camel routes associated with app routes in a given list by calling
      * {@link RouteManager#deleteRoute(AppRoute)}.
      *
-     * @param configurationModel the config model
+     * @param appRoutes the list of app routes to be deleted.
      * @throws RouteDeletionException if any of the Camel routes cannot be deleted
      */
-    public void deleteRouteFiles(final ConfigurationModel configurationModel)
+    public void deleteRouteFiles(final List<AppRoute> appRoutes)
             throws RouteDeletionException {
-        for (final var appRoute: configurationModel.getAppRoute()) {
+        for (final var appRoute: appRoutes) {
             deleteRoute(appRoute);
         }
     }
