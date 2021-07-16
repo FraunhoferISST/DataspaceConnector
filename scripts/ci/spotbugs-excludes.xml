@@ -36,4 +36,8 @@
         <!-- Too many warnings, needs too be evaluated some time. -->
         <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
+    <Match>
+        <!-- Does not work with IDS Messaging Service, too many false positives -->
+        <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+    </Match>
 </FindBugsFilter>
