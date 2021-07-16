@@ -47,8 +47,6 @@ class ControllerUtilsTest {
     @Test
     public void respondReceivedInvalidResponse_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var msg = ErrorMessages.INVALID_MESSAGE;
-        final var expectedResponse = new ResponseEntity<>(msg, HttpStatus.BAD_GATEWAY);
 
         /* ACT */
         final var response = ControllerUtils.respondReceivedInvalidResponse(exception);
@@ -160,8 +158,6 @@ class ControllerUtilsTest {
     @Test
     public void respondReceivedInvalidResponse_null_returnValidResponseEntity() {
         /* ARRANGE */
-        final var msg = ErrorMessages.INVALID_MESSAGE;
-        final var expectedResponse = new ResponseEntity<>(msg, HttpStatus.BAD_GATEWAY);
 
         /* ACT */
         final var response = ControllerUtils.respondReceivedInvalidResponse();

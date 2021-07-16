@@ -27,7 +27,6 @@ import de.fraunhofer.ids.messaging.util.InfomodelMessageBuilder;
 import io.dataspaceconnector.exception.MessageEmptyException;
 import io.dataspaceconnector.exception.MessageRequestException;
 import io.dataspaceconnector.exception.VersionNotSupportedException;
-import lombok.extern.log4j.Log4j2;
 import okhttp3.MultipartBody;
 import org.apache.commons.io.IOUtils;
 
@@ -40,7 +39,6 @@ import java.util.Map;
 /**
  * Class providing util methods for message utility.
  */
-@Log4j2
 public final class MessageUtils {
 
     /**

@@ -20,8 +20,6 @@ import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.KeyType;
 import de.fraunhofer.iais.eis.PublicKeyBuilder;
-import de.fraunhofer.iais.eis.RejectionMessage;
-import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
@@ -136,13 +134,5 @@ public class DescriptionRequestMessageControllerTest {
                         ._accessURL_(URI.create("/api/ids/data"))
                         .build())
                 .build();
-    }
-
-    private Map<String, Object> getResponseContent(final String payload) {
-        final var map = new HashMap<String, Object>();
-        map.put("type", RejectionMessage.class);
-        map.put("reason", RejectionReason.INTERNAL_RECIPIENT_ERROR);
-        map.put("payload", payload);
-        return map;
     }
 }
