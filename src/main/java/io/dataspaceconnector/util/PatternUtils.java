@@ -282,7 +282,7 @@ public final class PatternUtils {
     public static Rule buildSecurityProfileRestrictedUsageRule(final SecurityRestrictionDesc desc)
             throws Exception {
         final var input = desc.getProfile();
-        final var profile = ValidationUtils.getSecurityProfile(input);
+        final var profile = IdsUtils.getSecurityProfile(input);
 
         if (profile.isEmpty()) {
             throw new Exception("This is not a valid profile.");

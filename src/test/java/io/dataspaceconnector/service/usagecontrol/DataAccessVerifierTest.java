@@ -74,7 +74,7 @@ public class DataAccessVerifierTest {
         final var agreement = getContractAgreement();
 
         when(entityResolver.getContractAgreementsByTarget(any())).thenReturn(List.of(agreement));
-        doNothing().when(ruleValidator).validatePolicy(any(), any(), any(), any());
+        doNothing().when(ruleValidator).validatePolicy(any(), any(), any(), any(), any());
 
         /* ACT */
         final var result = verifier.verify(artifact);
@@ -91,7 +91,7 @@ public class DataAccessVerifierTest {
 
         when(entityResolver.getContractAgreementsByTarget(any())).thenReturn(List.of(agreement));
         doThrow(PolicyRestrictionException.class)
-                .when(ruleValidator).validatePolicy(any(), any(), any(), any());
+                .when(ruleValidator).validatePolicy(any(), any(), any(), any(), any());
         when(connectorConfig.isAllowUnsupported()).thenReturn(false);
 
         /* ACT */

@@ -182,6 +182,17 @@ public final class RuleUtils {
     }
 
     /**
+     * Gets the security profile value.
+     *
+     * @param rule The ids rule.
+     * @return The security profile value.
+     */
+    public static String getSecurityProfile(final Rule rule) throws NullPointerException {
+        final var constraint = rule.getConstraint().get(0);
+        return ((ConstraintImpl) constraint).getRightOperand().getValue();
+    }
+
+    /**
      * Gets the allowed number of accesses defined in a policy.
      *
      * @param rule the policy rule object.

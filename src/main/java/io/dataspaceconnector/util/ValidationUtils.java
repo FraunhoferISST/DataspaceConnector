@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.util;
 
-import de.fraunhofer.iais.eis.SecurityProfile;
 import io.dataspaceconnector.model.QueryInput;
 
 import java.net.MalformedURLException;
@@ -25,7 +24,6 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * This class provides methods to validate values.
@@ -151,28 +149,6 @@ public final class ValidationUtils {
             return false;
         } catch (IllegalArgumentException | MalformedURLException e) {
             return true;
-        }
-    }
-
-    /**
-     * Get security profile from string.
-     *
-     * @param input The input value.
-     * @return A security profile, if the value matches the provided enums.
-     */
-    public static Optional<SecurityProfile> getSecurityProfile(final String input) {
-        switch (input) {
-            case "idsc:BASE_SECURITY_PROFILE":
-            case "BASE_SECURITY_PROFILE":
-                return Optional.of(SecurityProfile.BASE_SECURITY_PROFILE);
-            case "idsc:TRUST_SECURITY_PROFILE":
-            case "TRUST_SECURITY_PROFILE":
-                return Optional.of(SecurityProfile.TRUST_SECURITY_PROFILE);
-            case "idsc:TRUST_PLUS_SECURITY_PROFILE":
-            case "TRUST_PLUS_SECURITY_PROFILE":
-                return Optional.of(SecurityProfile.TRUST_PLUS_SECURITY_PROFILE);
-            default:
-                return Optional.empty();
         }
     }
 }
