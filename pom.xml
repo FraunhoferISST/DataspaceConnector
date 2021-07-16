@@ -699,8 +699,8 @@
 					<verbose>false</verbose>
 					<threads>2</threads>
 					<timestampedReports>false</timestampedReports>
-					<coverageThreshold>95</coverageThreshold>
-					<mutationThreshold>80</mutationThreshold>
+					<coverageThreshold>98</coverageThreshold>
+					<mutationThreshold>77</mutationThreshold>
 				</configuration>
 			</plugin>
 			<plugin>
