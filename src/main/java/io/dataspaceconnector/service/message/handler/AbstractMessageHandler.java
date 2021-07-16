@@ -17,7 +17,7 @@ package io.dataspaceconnector.service.message.handler;
 
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionReason;
-import de.fraunhofer.ids.messaging.handler.message.MessageHandler;
+import de.fraunhofer.ids.messaging.handler.message.MessageAndClaimsHandler;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
@@ -25,6 +25,8 @@ import de.fraunhofer.ids.messaging.response.MessageResponse;
 import io.dataspaceconnector.camel.dto.Request;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.service.ids.ConnectorService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Superclass for all message handlers, that contains the logic for processing an incoming request
@@ -41,7 +44,7 @@ import java.util.Objects;
  * @param <T> type of message that can be processed by this handler.
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class AbstractMessageHandler<T extends Message> implements MessageHandler<T> {
+public abstract class AbstractMessageHandler<T extends Message> implements MessageAndClaimsHandler<T> {
 
     /**
      * Template for triggering Camel routes.
@@ -64,14 +67,17 @@ public abstract class AbstractMessageHandler<T extends Message> implements Messa
      *
      * @param message The request message.
      * @param payload The message payload.
+     * @param claims  The jwt claims.
      * @return The response message.
      * @throws RuntimeException If the response body failed to be build.
      */
     public MessageResponse handleMessage(final T message,
-                                         final MessagePayload payload) throws RuntimeException {
+                                         final MessagePayload payload,
+                                         final Optional<Jws<Claims>> claims)
+            throws RuntimeException {
         final var result = template.send(getHandlerRouteDirect(),
                 ExchangeBuilder.anExchange(context)
-                        .withBody(new Request<>(message, payload))
+                        .withBody(new Request<>(message, payload, claims))
                         .build());
 
         final var response = result.getIn().getBody(Response.class);

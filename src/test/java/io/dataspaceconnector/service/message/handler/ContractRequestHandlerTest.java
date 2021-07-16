@@ -15,19 +15,6 @@
  */
 package io.dataspaceconnector.service.message.handler;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.UUID;
-import javax.persistence.PersistenceException;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -63,6 +50,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
+import javax.persistence.PersistenceException;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -93,6 +93,7 @@ class ContractRequestHandlerTest {
         xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
     }
 
+    @SneakyThrows
     @Test
     public void handleMessage_nullMessage_returnBadParametersResponse() {
         /* ARRANGE */
@@ -105,6 +106,7 @@ class ContractRequestHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
     public void handleMessage_unsupportedMessage_returnUnsupportedVersionRejectionMessage() {
         /* ARRANGE */
@@ -123,6 +125,7 @@ class ContractRequestHandlerTest {
         assertEquals(RejectionReason.VERSION_NOT_SUPPORTED, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
     public void handleMessage_nullPayload_returnBadRequestErrorResponse() throws
             DatatypeConfigurationException {
@@ -136,6 +139,7 @@ class ContractRequestHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
     public void handleMessage_emptyPayload_returnBadRequestErrorResponse() throws
             DatatypeConfigurationException {

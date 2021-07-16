@@ -15,13 +15,6 @@
  */
  package io.dataspaceconnector.service.message.handler;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
@@ -51,6 +44,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
+import javax.xml.datatype.DatatypeFactory;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
  @SpringBootTest
@@ -68,9 +67,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
      @Autowired
      DescriptionRequestHandler handler;
 
+     @SneakyThrows
      @Test
-     public void handleMessage_validSelfDescriptionMsg_returnSelfDescription()
-             throws DatatypeConfigurationException {
+     public void handleMessage_validSelfDescriptionMsg_returnSelfDescription() {
          /* ARRANGE */
          final var connector = new BaseConnectorBuilder()
                                        ._resourceCatalog_(new ArrayList<>())
@@ -137,9 +136,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
                  result.getHeader().getTransferContract());
      }
 
+     @SneakyThrows
      @Test
-     public void handleMessage_validResourceDescriptionMsgKnownId_returnResourceDescription()
-             throws DatatypeConfigurationException {
+     public void handleMessage_validResourceDescriptionMsgKnownId_returnResourceDescription() {
          /* ARRANGE */
          final var artifact = new ArtifactFactory().create(new ArtifactDesc());
 
@@ -199,6 +198,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
                  result.getHeader().getTransferContract());
      }
 
+     @SneakyThrows
      @Test
      public void handleMessage_nullMessage_returnBadParametersRejectionMessage() {
          /* ARRANGE */
@@ -212,9 +212,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
                  RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
      }
 
+     @SneakyThrows
      @Test
-     public void handleMessage_unsupportedMessage_returnUnsupportedVersionRejectionMessage()
-             throws DatatypeConfigurationException {
+     public void handleMessage_unsupportedMessage_returnUnsupportedVersionRejectionMessage() {
          /* ARRANGE */
          final var calendar = new GregorianCalendar();
          calendar.setTime(new Date());
@@ -242,9 +242,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
                  result.getRejectionMessage().getRejectionReason());
      }
 
+     @SneakyThrows
      @Test
-     public void handleMessage_validResourceDescriptionMsgUnknownId_returnNotFoundRejectionReason()
-             throws DatatypeConfigurationException {
+     public void handleMessage_validResourceDescriptionMsgUnknownId_returnNotFoundRejectionReason() {
          /* ARRANGE */
          final var calendar = new GregorianCalendar();
          calendar.setTime(new Date());
