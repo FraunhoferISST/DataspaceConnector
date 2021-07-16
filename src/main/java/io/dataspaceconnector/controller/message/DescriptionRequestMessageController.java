@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import java.net.URI;
+
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
@@ -30,6 +32,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,8 +41,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
 
 /**
  * Controller for sending description request messages.
@@ -82,26 +83,13 @@ public class DescriptionRequestMessageController {
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The id of the requested resource.")
             @RequestParam(value = "elementId", required = false) final URI elementId) {
-        String payload;
         try {
             // Send and validate description request/response message.
             final var response = descriptionReqSvc.sendMessage(recipient, elementId);
 
             // Read and process the response message.
-            payload = MessageUtils.extractPayloadFromMultipartMessage(response);
-            if (!Utils.isEmptyOrNull(elementId)) {
-                return new ResponseEntity<>(payload, HttpStatus.OK);
-            } else {
-                try {
-                    // Get payload as component.
-                    final var component =
-                            deserializationSvc.getInfrastructureComponent(payload);
-                    return ResponseEntity.ok(component.toRdf());
-                } catch (IllegalArgumentException e) {
-                    // If the response is not of type base connector.
-                    return new ResponseEntity<>(payload, HttpStatus.OK);
-                }
-            }
+            final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
+            return new ResponseEntity<>(convertToAnswer(elementId, payload), HttpStatus.OK);
         } catch (MessageException exception) {
             // If the message could not be built.
             return ControllerUtils.respondIdsMessageFailed(exception);
@@ -111,6 +99,21 @@ public class DescriptionRequestMessageController {
         } catch (UnexpectedResponseException e) {
             // If the response is not as expected.
             return ControllerUtils.respondWithContent(e.getContent());
+        }
+    }
+
+    private String convertToAnswer(final URI elementId, final String payload) {
+        return Utils.isEmptyOrNull(elementId) ? unwrapResponse(payload) : payload;
+    }
+
+    @NotNull
+    private String unwrapResponse(final String payload) {
+        try {
+            // Get payload as component.
+            return deserializationSvc.getInfrastructureComponent(payload).toRdf();
+        } catch (IllegalArgumentException ignored) {
+            // If the response is not of type base connector.
+            return payload;
         }
     }
 }
