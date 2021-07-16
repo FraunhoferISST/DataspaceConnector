@@ -44,7 +44,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -144,13 +143,13 @@ public class EndpointControllers implements CRUDController<Endpoint, EndpointDes
      * @param dataSourceId      The id of the data source.
      * @return response status OK, if data source is created at generic endpoint.
      */
-    @PutMapping("{id}/datasource")
+    @PutMapping("{id}/datasource/{dataSourceId}")
     @Operation(summary = "Creates start endpoint for the route")
-    @ApiResponses(value = { @ApiResponse(responseCode = ResponseCodes.OK) })
-    public final ResponseEntity<String> createDataSource(
+    @ApiResponses(value = { @ApiResponse(responseCode = ResponseCodes.NO_CONTENT) })
+    public final ResponseEntity<Void> linkDataSource(
             @Valid @PathVariable(name = "id") final UUID genericEndpointId,
-            @RequestBody final UUID dataSourceId) {
+            @Valid @PathVariable(name = "dataSourceId") final UUID dataSourceId) {
         genericEndpointService.setGenericEndpointDataSource(genericEndpointId, dataSourceId);
-        return new ResponseEntity<>("Created DataSource", HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

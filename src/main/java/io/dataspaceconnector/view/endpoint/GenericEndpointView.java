@@ -15,18 +15,17 @@
  */
 package io.dataspaceconnector.view.endpoint;
 
+import java.net.URI;
+import java.time.ZonedDateTime;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dataspaceconnector.model.endpoint.EndpointType;
-import io.dataspaceconnector.view.datasource.DataSourceView;
 import io.dataspaceconnector.view.util.ViewConstants;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
-
-import java.net.URI;
-import java.time.ZonedDateTime;
 
 /**
  * A DTO for controlled exposing of generic endpoint information in API responses.
@@ -68,9 +67,4 @@ public class GenericEndpointView extends RepresentationModel<GenericEndpointView
      * The information of the endpoint.
      */
     private String info;
-
-    /**
-     * The data source information.
-     */
-    private DataSourceView datasource;
 }
