@@ -17,6 +17,7 @@ package io.dataspaceconnector.service.configuration;
 
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
+import io.dataspaceconnector.model.configuration.ConfigurationFactory;
 import io.dataspaceconnector.repository.ConfigurationRepository;
 import io.dataspaceconnector.service.resource.BaseEntityService;
 import lombok.AccessLevel;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,6 +45,16 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
      */
     public List<UUID> findSelected() {
         return ((ConfigurationRepository) getRepository()).findBySelectedTrue();
+    }
+
+    public void swapSelected(final UUID newSelected) {
+        var repo = (ConfigurationRepository) getRepository();
+        var selectedId = repo.findBySelectedTrue();
+        if(selectedId.size() > 0){
+            if(newSelected.equals(selectedId.get(0))) return;
+            repo.deselectCurrent();
+        }
+        repo.selectById(newSelected);
     }
 
 }

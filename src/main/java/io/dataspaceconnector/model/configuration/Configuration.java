@@ -16,6 +16,9 @@
 package io.dataspaceconnector.model.configuration;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
 
@@ -31,8 +34,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 
 /**
  * The configuration describes the configuration of a connector.
@@ -78,7 +80,8 @@ public class Configuration extends NamedEntity {
     /**
      * The list of inbound model version.
      */
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<String> inboundModelVersion;
 
     /**
@@ -113,19 +116,19 @@ public class Configuration extends NamedEntity {
     /**
      * The proxy configuration.
      */
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Proxy proxy;
 
     /**
      * The trust store.
      */
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Truststore truststore;
 
     /**
      * The key store.
      */
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Keystore keystore;
 
     /**

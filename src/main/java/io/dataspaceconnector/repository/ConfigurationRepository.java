@@ -15,10 +15,13 @@
  */
 package io.dataspaceconnector.repository;
 
+import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.configuration.Configuration;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,4 +42,25 @@ public interface ConfigurationRepository extends BaseEntityRepository<Configurat
             + "AND a.deleted = false")
     List<UUID> findBySelectedTrue();
 
+    /**
+     * Deselect current configuration.
+     */
+    @Modifying
+    @Query("UPDATE Configuration a "
+            + "SET a.selected = NULL "
+            + "WHERE a.selected IS NOT NULL "
+            + "AND a.deleted = false")
+    void deselectCurrent();
+
+    /**
+     * Select new configuration.
+     *
+     * @param uuid uuid to select
+     */
+    @Modifying
+    @Query("UPDATE Configuration a "
+            + "SET a.selected = 'SELECTED' "
+            + "WHERE a.id = :uuid "
+            + "AND a.deleted = false")
+    void selectById(UUID uuid);
 }

@@ -15,11 +15,8 @@
  */
 package io.dataspaceconnector.model.proxy;
 
+import javax.persistence.*;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.ElementCollection;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
@@ -35,8 +32,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 
 import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
@@ -73,7 +69,7 @@ public class Proxy extends Entity implements RemoteService {
     /**
      * The authentication information for the proxy.
      */
-    @OneToOne(cascade = { CascadeType.ALL })
+    @OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
     @JsonInclude
     @ToString.Exclude
     private Authentication authentication;

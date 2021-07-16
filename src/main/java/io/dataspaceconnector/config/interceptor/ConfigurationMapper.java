@@ -24,6 +24,8 @@ import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.proxy.ProxyDesc;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -35,11 +37,15 @@ import java.util.stream.Collectors;
  */
 @AllArgsConstructor
 @Component
+@Slf4j
 public class ConfigurationMapper {
 
     public static ConfigurationModel buildInfomodelConfig(Configuration configuration){
         //TODO unmapped: configuration.getVersion()
         //TODO: keystore/truststore don't have alias fields
+        if(configuration.getProxy() != null){
+            Hibernate.initialize(configuration.getProxy().getExclusions());
+        }
         return new ConfigurationModelBuilder()
                 ._connectorProxy_(buildInfomodelProxy(configuration.getProxy()))
                 ._connectorDeployMode_(buildInfomodelDeployMode(configuration.getDeployMode()))
