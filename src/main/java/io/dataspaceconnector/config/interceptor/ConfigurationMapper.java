@@ -179,7 +179,7 @@ public class ConfigurationMapper {
 
     public static ConfigurationDesc buildConfigDesc(ConfigurationModel configurationModel){
         var description = new ConfigurationDesc();
-        description.setSelected(true);
+        description.setSelected(CurrentConfig.SELECTED);
         description.setDeployMode(
                 configurationModel
                         .getConnectorDeployMode() == ConnectorDeployMode.TEST_DEPLOYMENT ?

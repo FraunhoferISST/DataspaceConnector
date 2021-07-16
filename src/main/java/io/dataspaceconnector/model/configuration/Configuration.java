@@ -15,17 +15,12 @@
  */
 package io.dataspaceconnector.model.configuration;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Convert;
-import javax.persistence.ElementCollection;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.net.URI;
 import java.util.List;
 
 import de.fraunhofer.iais.eis.ConnectorStatus;
+import io.dataspaceconnector.config.interceptor.CurrentConfig;
 import io.dataspaceconnector.model.keystore.Keystore;
 import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.proxy.Proxy;
@@ -136,5 +131,7 @@ public class Configuration extends NamedEntity {
     /**
      * Marks selected configuration.
      */
-    private boolean selected;
+    @Column(unique = true)
+    @Enumerated(EnumType.STRING)
+    private CurrentConfig selected;
 }

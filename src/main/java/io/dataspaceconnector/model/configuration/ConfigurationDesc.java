@@ -16,6 +16,7 @@
 package io.dataspaceconnector.model.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dataspaceconnector.config.interceptor.CurrentConfig;
 import io.dataspaceconnector.model.named.NamedDescription;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.proxy.ProxyDesc;
@@ -100,5 +101,5 @@ public class ConfigurationDesc extends NamedDescription {
     /**
      * Marks selected configuration.
      */
-    private boolean selected;
+    private CurrentConfig selected;
 }
