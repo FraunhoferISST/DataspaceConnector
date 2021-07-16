@@ -68,6 +68,10 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
      * @return True, if route deploy method is updated.
      */
     private boolean updateRouteDeployMethod(final Route route, final DeployMethod deployMethod) {
+        if (route.getDeploy() != null && route.getDeploy() == deployMethod) {
+            return false;
+        }
+
         route.setDeploy(Objects.requireNonNullElse(deployMethod, DeployMethod.NONE));
         return true;
     }
