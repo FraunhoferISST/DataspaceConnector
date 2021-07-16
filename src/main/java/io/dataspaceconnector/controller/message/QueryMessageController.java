@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import de.fraunhofer.iais.eis.ResultMessageImpl;
 import de.fraunhofer.ids.messaging.common.DeserializeException;
 import de.fraunhofer.ids.messaging.common.SerializeException;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
@@ -113,7 +114,7 @@ public class QueryMessageController {
             // If any other error occurred.
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
-        return messageService.validateResponse(response);
+        return messageService.validateResponse(response, ResultMessageImpl.class);
     }
 
     /**
@@ -165,6 +166,6 @@ public class QueryMessageController {
             // If any other error occurred.
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
-        return messageService.validateResponse(response);
+        return messageService.validateResponse(response, ResultMessageImpl.class);
     }
 }

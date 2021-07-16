@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
 import de.fraunhofer.ids.messaging.common.DeserializeException;
 import de.fraunhofer.ids.messaging.common.SerializeException;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
@@ -117,6 +118,7 @@ public class ConnectorUnavailableMessageController {
             // If any other error occurred.
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
-        return messageService.validateResponse(response);
+        return messageService.validateResponse(response,
+                MessageProcessedNotificationMessageImpl.class);
     }
 }

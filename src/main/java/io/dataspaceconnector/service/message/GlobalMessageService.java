@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.service.message;
 
-import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
 import de.fraunhofer.iais.eis.QueryLanguage;
 import de.fraunhofer.iais.eis.QueryScope;
 import de.fraunhofer.iais.eis.QueryTarget;
@@ -210,16 +209,18 @@ public class GlobalMessageService {
      * if not.
      *
      * @param response The response container.
+     * @param msgType  Expected message type.
      * @return ResponseEntity with status code.
      */
-    public ResponseEntity<Object> validateResponse(final Optional<MessageContainer<?>> response) {
+    public ResponseEntity<Object> validateResponse(final Optional<MessageContainer<?>> response,
+                                                   final Class<?> msgType) {
         if (response.isEmpty()) {
             return ControllerUtils.respondReceivedInvalidResponse();
         }
 
         final var header = response.get().getUnderlyingMessage();
         final var payload = response.get().getReceivedPayload();
-        if (header instanceof MessageProcessedNotificationMessageImpl) {
+        if (header.getClass().equals(msgType)) {
             return new ResponseEntity<>(payload, HttpStatus.OK);
         }
 

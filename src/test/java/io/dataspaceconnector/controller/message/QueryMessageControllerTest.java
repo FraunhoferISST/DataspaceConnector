@@ -18,6 +18,7 @@ package io.dataspaceconnector.controller.message;
 import de.fraunhofer.iais.eis.DynamicAttributeToken;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
+import de.fraunhofer.iais.eis.ResultMessageImpl;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
@@ -85,7 +86,8 @@ public class QueryMessageControllerTest {
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(container).when(messageService)
                 .sendQueryMessage(Mockito.any(), Mockito.any());
-        Mockito.doReturn(response).when(messageService).validateResponse(container);
+        Mockito.doReturn(response).when(messageService).validateResponse(container,
+                ResultMessageImpl.class);
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/query")
@@ -187,7 +189,8 @@ public class QueryMessageControllerTest {
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(getResponse(payload)).when(messageService).sendFullTextSearchMessage(
                 Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt());
-        Mockito.doReturn(response).when(messageService).validateResponse(container);
+        Mockito.doReturn(response).when(messageService).validateResponse(container,
+                ResultMessageImpl.class);
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/search")
