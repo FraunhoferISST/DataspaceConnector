@@ -50,10 +50,10 @@ public class ConfigurationSwapController {
      * @param toSelect newly selected configuration
      * @return OK, when configuration was swapped
      */
+    @Tag(name = "Configurationswap", description = "Endpoint for changing the current configuration")
     @GetMapping(value = "/swapconfig/{id}",
             produces = {"text/plain"})
     @Operation(summary = "Swap current selected configuration.")
-    @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "400", description = "Failed to deserialize."),
