@@ -67,7 +67,7 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
         if (log.isDebugEnabled()) {
             log.debug(
                     "Loading configuration from {}",
-                    properties.getPath().replaceAll("[\r\n]","")
+                    properties.getPath().replaceAll("[\r\n]", "")
             );
         }
 
@@ -80,6 +80,10 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
         return serializer.deserialize(config, ConfigurationModel.class);
     }
 
+    @SuppressFBWarnings(
+            value = "PATH_TRAVERSAL_IN",
+            justification = "path of config json should be specified by user"
+    )
     private String getConfiguration(final ConfigProperties properties)
             throws IOException {
         if (Paths.get(properties.getPath()).isAbsolute()) {
@@ -89,13 +93,20 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
         }
     }
 
-    @SuppressFBWarnings("REC_CATCH_EXCEPTION")
+    @SuppressFBWarnings(
+            value = {
+                    "PATH_TRAVERSAL_IN",
+                    "REC_CATCH_EXCEPTION",
+                    "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"
+            },
+            justification = "path of config json should be specified by user"
+    )
     private String getClassPathConfig(final ConfigProperties properties)
             throws IOException {
         if (log.isInfoEnabled()) {
             log.info(
                     "Loading config from classpath: {}",
-                    properties.getPath().replaceAll("[\r\n]","")
+                    properties.getPath().replaceAll("[\r\n]", "")
             );
         }
 
@@ -110,7 +121,7 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
             if (log.isWarnEnabled()) {
                 log.warn(
                         "Could not load config from path {}",
-                        properties.getPath().replaceAll("[\r\n]","")
+                        properties.getPath().replaceAll("[\r\n]", "")
                 );
                 throw new IOException(e.getMessage(), e);
             }
@@ -118,13 +129,16 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
         return "";
     }
 
-    @SuppressFBWarnings("REC_CATCH_EXCEPTION")
+    @SuppressFBWarnings(
+            value = {"PATH_TRAVERSAL_IN", "REC_CATCH_EXCEPTION"},
+            justification = "path of config json should be specified by user"
+    )
     private String getAbsolutePathConfig(final ConfigProperties properties)
             throws IOException {
         if (log.isInfoEnabled()) {
             log.info(
                     "Loading config from absolute Path {}",
-                    properties.getPath().replaceAll("[\r\n]","")
+                    properties.getPath().replaceAll("[\r\n]", "")
             );
         }
         try (var fis = new FileInputStream(properties.getPath())) {
@@ -136,7 +150,7 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
             if (log.isWarnEnabled()) {
                 log.warn(
                         "Could not load config from absolute path {}",
-                        properties.getPath().replaceAll("[\r\n]","")
+                        properties.getPath().replaceAll("[\r\n]", "")
                 );
                 throw new IOException(e.getMessage(), e);
             }
