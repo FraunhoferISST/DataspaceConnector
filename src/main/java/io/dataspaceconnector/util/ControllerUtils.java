@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.util;
 
+import java.net.URI;
+import java.util.Map;
+
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.net.URI;
-import java.util.Map;
 
 /**
  * Contains utility methods for creating ResponseEntities with different status codes and custom
@@ -198,8 +198,9 @@ public final class ControllerUtils {
     public static ResponseEntity<Object> respondReceivedInvalidResponse() {
         final var msg = ErrorMessages.INVALID_MESSAGE;
         if (log.isDebugEnabled()) {
-            log.debug(msg.toString());
+            log.debug("{}", msg.toString());
         }
+
         return new ResponseEntity<>(msg.toString(), HttpStatus.BAD_GATEWAY);
     }
 
