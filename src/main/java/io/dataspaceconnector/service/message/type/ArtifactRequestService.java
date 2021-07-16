@@ -31,6 +31,7 @@ import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.MessageUtils;
 import io.dataspaceconnector.util.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -162,8 +163,9 @@ public final class ArtifactRequestService
         }
 
         // Log response header in the Clearing House
-        final var header = deserializer.getResponseMessage(response.get("header"));
-        clearingHouseLoggingProcessor.logIDSMessage(header);
+        final var header = MessageUtils.extractHeaderFromMultipartMessage(response);
+        final var idsMessage = deserializer.getMessage(header);
+        clearingHouseLoggingProcessor.logIDSMessage(idsMessage);
 
         return response;
     }
