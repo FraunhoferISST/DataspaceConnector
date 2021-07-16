@@ -72,7 +72,7 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
                                 final URI transferContract, final QueryInput queryInput)
             throws PolicyRestrictionException {
         final var artifact = artifactService.get(artifactId);
-        Map<String, String> response = null;
+        Map<String, String> response;
         try {
             response = artifactReqSvc.sendMessage(recipient,
                     artifact.getRemoteId(), transferContract, queryInput);
