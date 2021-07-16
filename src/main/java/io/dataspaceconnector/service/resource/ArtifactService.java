@@ -15,16 +15,7 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import io.dataspaceconnector.exception.PolicyRestrictionException;
-import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.exception.UnreachableLineException;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
@@ -52,6 +43,14 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Handles the basic logic for artifacts.
@@ -136,7 +135,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final QueryInput queryInput)
-            throws PolicyRestrictionException, IOException, UnexpectedResponseException {
+            throws PolicyRestrictionException, IOException {
         final var agreements =
                 ((ArtifactRepository) getRepository()).findRemoteOriginAgreements(artifactId);
         if (agreements.size() > 0) {
@@ -151,7 +150,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private InputStream tryToAccessDataByUsingAnyAgreement(
             final PolicyVerifier<Artifact> accessVerifier, final ArtifactRetriever retriever,
             final UUID artifactId, final QueryInput queryInput, final List<URI> agreements)
-            throws IOException, UnexpectedResponseException {
+            throws IOException {
         /*
          * NOTE: Check if agreements with remoteIds are set for this artifact. If such agreements
          * exist the artifact must be assigned to a requested resource. The data access should
@@ -205,7 +204,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final RetrievalInformation information)
-            throws PolicyRestrictionException, IOException, UnexpectedResponseException {
+            throws PolicyRestrictionException, IOException {
         // Check the artifact exists and access is granted.
         final var artifact = get(artifactId);
         verifyDataAccess(accessVerifier, artifactId, artifact);
@@ -235,7 +234,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                                        final UUID artifactId,
                                        final RetrievalInformation information,
                                        final Artifact artifact)
-                                       throws IOException, UnexpectedResponseException {
+                                       throws IOException {
         final var dataStream = retriever.retrieve(artifactId,
                                                   artifact.getRemoteAddress(),
                                                   information.getTransferContract(),

@@ -15,18 +15,6 @@
  */
 package io.dataspaceconnector.util;
 
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.text.Normalizer;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
-
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.Catalog;
@@ -37,10 +25,24 @@ import de.fraunhofer.iais.eis.Language;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
+import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.exception.RdfBuilderException;
 import lombok.SneakyThrows;
+
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.text.Normalizer;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.TimeZone;
 
 /**
  *
@@ -258,5 +260,30 @@ public final class IdsUtils {
         final var calendar = GregorianCalendar.from(date);
         calendar.setTimeZone(TimeZone.getTimeZone(ZoneId.ofOffset("", ZoneOffset.UTC)));
         return DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
+    }
+
+    /**
+     * Get security profile from string.
+     *
+     * @param input The input value.
+     * @return A security profile, if the value matches the provided enums.
+     */
+    public static Optional<SecurityProfile> getSecurityProfile(final String input) {
+        switch (input) {
+            case "idsc:BASE_SECURITY_PROFILE":
+            case "BASE_SECURITY_PROFILE":
+            case "idsc:BASE_CONNECTOR_SECURITY_PROFILE":
+                return Optional.of(SecurityProfile.BASE_SECURITY_PROFILE);
+            case "idsc:TRUST_SECURITY_PROFILE":
+            case "TRUST_SECURITY_PROFILE":
+            case "idsc:TRUST_CONNECTOR_SECURITY_PROFILE":
+                return Optional.of(SecurityProfile.TRUST_SECURITY_PROFILE);
+            case "idsc:TRUST_PLUS_SECURITY_PROFILE":
+            case "TRUST_PLUS_SECURITY_PROFILE":
+            case "idsc:TRUST_PLUS_CONNECTOR_SECURITY_PROFILE":
+                return Optional.of(SecurityProfile.TRUST_PLUS_SECURITY_PROFILE);
+            default:
+                return Optional.empty();
+        }
     }
 }

@@ -85,6 +85,9 @@ public final class RuleUtils {
                     } else if (leftOperand == LeftOperand.SYSTEM
                             && operator == BinaryOperator.SAME_AS) {
                         detectedPattern = PolicyPattern.CONNECTOR_RESTRICTED_USAGE;
+                    } else if (leftOperand == LeftOperand.SECURITY_LEVEL
+                        && operator == BinaryOperator.EQUALS) {
+                        detectedPattern = PolicyPattern.SECURITY_PROFILE_RESTRICTED_USAGE;
                     }
                 }
             } else {
@@ -172,6 +175,17 @@ public final class RuleUtils {
      * @return The endpoint value.
      */
     public static String getEndpoint(final Rule rule) throws NullPointerException {
+        final var constraint = rule.getConstraint().get(0);
+        return ((ConstraintImpl) constraint).getRightOperand().getValue();
+    }
+
+    /**
+     * Gets the security profile value.
+     *
+     * @param rule The ids rule.
+     * @return The security profile value.
+     */
+    public static String getSecurityProfile(final Rule rule) throws NullPointerException {
         final var constraint = rule.getConstraint().get(0);
         return ((ConstraintImpl) constraint).getRightOperand().getValue();
     }

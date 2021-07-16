@@ -247,9 +247,7 @@ public final class ResourceControllers {
                 @RequestParam(required = false) final URI agreementUri,
                 @RequestParam(required = false) final Map<String, String> params,
                 @RequestHeader final Map<String, String> headers,
-                final HttpServletRequest request) throws IOException,
-                UnexpectedResponseException,
-                io.dataspaceconnector.exception.UnexpectedResponseException {
+                final HttpServletRequest request) throws IOException {
             headers.remove("authorization");
             headers.remove("host");
 

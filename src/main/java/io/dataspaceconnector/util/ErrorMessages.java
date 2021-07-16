@@ -170,6 +170,11 @@ public enum ErrorMessages {
     DATA_ACCESS_INVALID_CONSUMER("Data access by invalid consumer connector."),
 
     /**
+     * Data has been accessed with invalid security profile.
+     */
+    DATA_ACCESS_INVALID_SECURITY_PROFILE("Data access with invalid security profile"),
+
+    /**
      * Application's base URL was retrieved without request context present.
      */
     NO_REQUEST_CONTEXT("No request context present for extracting base URL."),
@@ -187,7 +192,13 @@ public enum ErrorMessages {
     /**
      * The input could not be processed.
      */
-    INVALID_INPUT("Invalid input, processing failed.");
+    INVALID_INPUT("Invalid input, processing failed."),
+
+    /**
+     * The security profile claim is not present.
+     */
+    MISSING_SECURITY_PROFILE_CLAIM("The DAT of the issuer connector is missing attributes. "
+            + "Cannot enforce security restricted policy. Access denied.");
 
     /**
      * Holds the enums string.

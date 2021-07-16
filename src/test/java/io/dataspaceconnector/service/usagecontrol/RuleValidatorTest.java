@@ -17,18 +17,22 @@ package io.dataspaceconnector.service.usagecontrol;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.ConstraintBuilder;
 import de.fraunhofer.iais.eis.LeftOperand;
 import de.fraunhofer.iais.eis.PermissionBuilder;
+import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.EntityDependencyResolver;
 import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.PatternUtils;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -207,5 +211,22 @@ class RuleValidatorTest {
         /* ACT && ASSERT */
         final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy(PolicyPattern.CONNECTOR_RESTRICTED_USAGE, rule, target, recipient));
         assertEquals(ErrorMessages.DATA_ACCESS_INVALID_CONSUMER.toString(), result.getMessage());
+    }
+
+    @SneakyThrows
+    @Test
+    public void validateSecurityProfile_matchingInput_throwNothing() {
+        /* ARRANGE */
+        final var profile = SecurityProfile.BASE_SECURITY_PROFILE;
+        final var desc = new SecurityRestrictionDesc();
+        desc.setProfile("idsc:BASE_SECURITY_PROFILE");
+        final var rule = PatternUtils.buildSecurityProfileRestrictedUsageRule(desc);
+
+        final var target = URI.create("https://target");
+        final var issuer = URI.create("https://issuer");
+
+        /* ACT & ASSERT */
+        assertDoesNotThrow(() -> validator.validatePolicy(
+                PolicyPattern.SECURITY_PROFILE_RESTRICTED_USAGE, rule, target, issuer, Optional.of(profile)));
     }
 }
