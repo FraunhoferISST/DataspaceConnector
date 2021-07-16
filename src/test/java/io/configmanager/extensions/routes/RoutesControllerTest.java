@@ -15,19 +15,20 @@
  */
 package io.configmanager.extensions.routes;
 
+import java.util.List;
+
 import io.configmanager.extensions.routes.api.RoutesApi;
 import io.configmanager.extensions.routes.api.controller.RoutesController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -40,22 +41,27 @@ class RoutesControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private RoutesController routesController;
+
     @Test
     void unauthorizedGetRouteErrors() throws Exception {
         mockMvc.perform(get("/api/configmanager/route/error")).andExpect(status().isUnauthorized()).andReturn();
     }
 
     @Test
-    @WithMockUser("ADMIN")
     void setRouteErrors() throws Exception {
-        mockMvc.perform(
-                post("/api/configmanager/route/error")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("route error")
-                        .with(csrf())
-                        .param("body", "test"))
-                .andExpect(status().isOk())
-                .andReturn();
+        var routeErrors = (List<String>) ReflectionTestUtils
+                .getField(routesController, "routeErrors");
+        final var messageCountBefore =  routeErrors.size();
+
+        routesController.addRouteErrors("Route error message");
+
+        routeErrors = (List<String>) ReflectionTestUtils
+                .getField(routesController, "routeErrors");
+        final var messageCountAfter = routeErrors.size();
+
+        assertEquals(messageCountBefore + 1, messageCountAfter);
     }
 
     @Test
