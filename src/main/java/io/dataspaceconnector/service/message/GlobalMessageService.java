@@ -109,10 +109,10 @@ public class GlobalMessageService {
         final var result = checkResponse(Optional.ofNullable(response));
         if (result) {
             if (log.isInfoEnabled()) {
-                log.info(String.format(
-                        "Successfully registered connector. [url=(%s)]",
+                log.info(
+                        "Successfully registered connector. [url=({}})]",
                         recipient
-                ));
+                );
             }
             brokerService.setRegistrationStatus(recipient, RegistrationStatus.REGISTERED);
         }
@@ -134,10 +134,10 @@ public class GlobalMessageService {
         final var result = checkResponse(Optional.ofNullable(response));
         if (result) {
             if (log.isInfoEnabled()) {
-                log.info(String.format(
-                        "Successfully unregistered connector. [url=(%s)]",
+                log.info(
+                        "Successfully unregistered connector. [url=({}})]",
                         recipient
-                ));
+                );
             }
             brokerService.setRegistrationStatus(recipient, RegistrationStatus.UNREGISTERED);
         }
@@ -161,8 +161,8 @@ public class GlobalMessageService {
         final var result =  checkResponse(Optional.ofNullable(response));
         if (result) {
             if (log.isInfoEnabled()) {
-                log.info(String.format("Successfully registered resource. "
-                        + "[resourceId=(%s), url=(%s)]", resource.getId(), recipient)
+                log.info("Successfully registered resource. "
+                        + "[resourceId=({}}), url=({}})]", resource.getId(), recipient
                 );
             }
             updateOfferedResourceBrokerList(recipient, resource);
@@ -187,8 +187,8 @@ public class GlobalMessageService {
         final var result = checkResponse(Optional.ofNullable(response));
         if (result) {
             if (log.isInfoEnabled()) {
-                log.info(String.format("Successfully unregistered resource. "
-                        + "[resourceId=(%s), url=(%s)]", resource.getId(), recipient)
+                log.info("Successfully unregistered resource. "
+                        + "[resourceId=({}}), url=({}})]", resource.getId(), recipient
                 );
             }
             removeBrokerFromOfferedResourceBrokerList(recipient, resource);
