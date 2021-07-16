@@ -32,7 +32,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -106,7 +105,6 @@ public class DescriptionRequestMessageController {
         return Utils.isEmptyOrNull(elementId) ? unwrapResponse(payload) : payload;
     }
 
-    @NotNull
     private String unwrapResponse(final String payload) {
         try {
             // Get payload as component.

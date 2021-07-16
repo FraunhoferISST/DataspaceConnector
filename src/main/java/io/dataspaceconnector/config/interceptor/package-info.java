@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Core classes for the ConfigManager, e.g. tools to connect to other components via HTTP.
+ * Interceptors for modifying the configuration at startup.
  */
-package io.configmanager.core;
+package io.dataspaceconnector.config.interceptor;

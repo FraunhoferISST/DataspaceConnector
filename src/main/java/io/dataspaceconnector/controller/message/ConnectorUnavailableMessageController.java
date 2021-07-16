@@ -92,13 +92,16 @@ public class ConnectorUnavailableMessageController {
     public ResponseEntity<Object> sendMessage(
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient) {
-        Optional<MessageContainer<?>> response = Optional.empty();
         try {
             // Update the config model.
             connectorService.updateConfigModel();
 
             // Send the connector unavailable message.
-            response = messageService.sendConnectorUnavailableMessage(recipient);
+            Optional<MessageContainer<?>> response = messageService
+                    .sendConnectorUnavailableMessage(recipient);
+
+            return messageService.validateResponse(response,
+                    MessageProcessedNotificationMessageImpl.class);
         } catch (ConfigUpdateException exception) {
             // If the configuration could not be updated.
             return ControllerUtils.respondConfigurationUpdateError(exception);
@@ -118,7 +121,7 @@ public class ConnectorUnavailableMessageController {
             // If any other error occurred.
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
-        return messageService.validateResponse(response,
+        return messageService.validateResponse(Optional.empty(),
                 MessageProcessedNotificationMessageImpl.class);
     }
 }

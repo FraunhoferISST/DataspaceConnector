@@ -21,6 +21,7 @@ import java.util.UUID;
 import io.dataspaceconnector.controller.resource.BaseResourceChildController;
 import io.dataspaceconnector.controller.resource.BaseResourceController;
 import io.dataspaceconnector.controller.resource.swagger.response.ResponseCodes;
+import io.dataspaceconnector.controller.resource.swagger.response.ResponseDescriptions;
 import io.dataspaceconnector.controller.resource.view.ArtifactView;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.route.Route;
@@ -64,7 +65,10 @@ public final class RouteControllers {
          */
         @PutMapping("{id}/endpoint/start")
         @Operation(summary = "Creates start endpoint for the route")
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.OK)})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.NO_CONTENT,
+                description = ResponseDescriptions.NO_CONTENT),
+                @ApiResponse(responseCode = ResponseCodes.UNAUTHORIZED,
+                        description = ResponseDescriptions.UNAUTHORIZED)})
         public ResponseEntity<String> createStartEndpoint(
                 @Valid @PathVariable(name = "id") final UUID routeId,
                 @RequestBody final UUID endpointId) {
@@ -78,7 +82,10 @@ public final class RouteControllers {
          */
         @DeleteMapping("{id}/endpoint/start")
         @Operation(summary = "Deletes the start endpoint of the route")
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.OK)})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.NO_CONTENT,
+                description = ResponseDescriptions.NO_CONTENT),
+                @ApiResponse(responseCode = ResponseCodes.UNAUTHORIZED,
+                        description = ResponseDescriptions.UNAUTHORIZED)})
         public ResponseEntity<String> deleteStartEndpoint(
                 @Valid @PathVariable(name = "id") final UUID routeId) {
             getService().removeStartEndpoint(routeId);
@@ -92,7 +99,10 @@ public final class RouteControllers {
          */
         @PutMapping("{id}/endpoint/end")
         @Operation(summary = "Creates last endpoint for the route")
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.OK)})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.NO_CONTENT,
+                description = ResponseDescriptions.NO_CONTENT),
+                @ApiResponse(responseCode = ResponseCodes.UNAUTHORIZED,
+                        description = ResponseDescriptions.UNAUTHORIZED)})
         public ResponseEntity<String> createLastEndpoint(
                 @Valid @PathVariable(name = "id") final UUID routeId,
                 @RequestBody final UUID endpointId) {
@@ -106,7 +116,10 @@ public final class RouteControllers {
          */
         @DeleteMapping("{id}/endpoint/end")
         @Operation(summary = "Deletes the start endpoint of the route")
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.OK)})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.NO_CONTENT,
+                description = ResponseDescriptions.NO_CONTENT),
+                @ApiResponse(responseCode = ResponseCodes.UNAUTHORIZED,
+                        description = ResponseDescriptions.UNAUTHORIZED)})
         public ResponseEntity<String> deleteLastEndpoint(
                 @Valid @PathVariable(name = "id") final UUID routeId) {
             getService().removeLastEndpoint(routeId);
