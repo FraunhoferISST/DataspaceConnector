@@ -15,6 +15,15 @@
  */
 package io.configmanager.extensions.routes.camel;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import javax.xml.bind.Unmarshaller;
+
 import de.fraunhofer.iais.eis.AppEndpoint;
 import de.fraunhofer.iais.eis.AppEndpointType;
 import de.fraunhofer.iais.eis.AppRoute;
@@ -27,28 +36,25 @@ import io.configmanager.extensions.routes.camel.dto.RouteStepEndpoint;
 import io.configmanager.extensions.routes.camel.exceptions.NoSuitableTemplateException;
 import io.configmanager.extensions.routes.camel.exceptions.RouteCreationException;
 import io.configmanager.extensions.routes.camel.exceptions.RouteDeletionException;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.RoutesDefinition;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Component for creating Camel routes from AppRoutes.
  */
 @Log4j2
 @Component
+@RequiredArgsConstructor
 public class RouteManager {
     /**
      * Setting on how to handle routing errors.
@@ -57,40 +63,23 @@ public class RouteManager {
     private String camelErrorHandlerRef;
 
     /**
-     * Helper for deploying and deleting Camel routes via HTTP.
-     */
-    private final RouteHttpHelper routeHttpHelper;
-
-    /**
-     * Helper for deploying and deleting Camel routes in the file system.
-     */
-    private final RouteFileHelper routeFileHelper;
-
-    /**
      * Helper for configuring Camel routes for the Dataspace Connector.
      */
-    private final RouteConfigurer routeConfigurer;
+    private final @NonNull RouteConfigurer routeConfigurer;
 
     /**
-     * Constructor of RouteManager.
-     * @param pRouteHttpHelper Helper for deploying and deleting Camel routes via HTTP.
-     * @param pRouteFileHelper Helper for deploying and deleting Camel routes in the file system.
-     * @param pRouteConfigurer Helper for configuring Camel routes for the Dataspace Connector.
+     * Unmarshaller for reading route definitions from XML.
      */
-    @Autowired
-    public RouteManager(final RouteHttpHelper pRouteHttpHelper,
-                        final RouteFileHelper pRouteFileHelper,
-                        final RouteConfigurer pRouteConfigurer) {
-        this.routeHttpHelper = pRouteHttpHelper;
-        this.routeFileHelper = pRouteFileHelper;
-        this.routeConfigurer = pRouteConfigurer;
-    }
+    private final @NonNull Unmarshaller unmarshaller;
 
     /**
-     * Creates a Camel XML route from a given app route.
-     * The generated XML route will be sent to the Camel application.
-     * Both the Camel application and the directory are
-     * specified in application.properties.
+     * The Camel context for deploying routes.
+     */
+    private final @NonNull DefaultCamelContext camelContext;
+
+    /**
+     * Creates a Camel XML route from a given app route. The generated XML route is then added to
+     * the application's Camel context for execution.
      *
      * @param configurationModel config model the app route belongs to; contains key- and truststore
      *                           information
@@ -171,6 +160,7 @@ public class RouteManager {
     /**
      * Creates and adds the basic authentication header for calling a generic endpoint to a Velocity
      * context, if basic authentication is defined for the given endpoint.
+     *
      * @param velocityContext the Velocity context
      * @param genericEndpoint the generic endpoint
      */
@@ -251,8 +241,8 @@ public class RouteManager {
      * Creates and deploys a Camel route for the Dataspace Connector. First, Dataspace Connector
      * specific configuration is added to the Velocity Context, which should already contain
      * general route information. Then, the correct route template for the given AppRoute object
-     * is chosen from the Dataspace Connector templates. Last, the generated XML route is sent to
-     * the Camel application defined in application.properties.
+     * is chosen from the Dataspace Connector templates. Last, the generated XML route is added to
+     * the Camel context.
      *
      * @param appRoute the AppRoute object
      * @param velocityContext the Velocity context
@@ -282,8 +272,11 @@ public class RouteManager {
             //populate route template with properties from velocity context to create route
             final var writer = populateTemplate(template, velocityEngine, velocityContext);
 
-            //send the generated route (XML) to Camel via HTTP
-            routeHttpHelper.sendRouteFileToCamelApplication(writer.toString());
+            final var inputStream = new ByteArrayInputStream(writer.toString()
+                    .getBytes(StandardCharsets.UTF_8));
+            final var routes = (RoutesDefinition) unmarshaller.unmarshal(inputStream);
+            camelContext.addRouteDefinitions(routes.getRoutes());
+
         } else {
             if (log.isWarnEnabled()) {
                 log.warn("Template is null. Unable to create XML route file for AppRoute"
@@ -346,8 +339,8 @@ public class RouteManager {
     }
 
     /**
-     * Deletes the Camel route for a given {@link AppRoute}.
-     * The route is deleted at the Camel application.
+     * Deletes the Camel route for a given {@link AppRoute}. The route is stopped at and removed
+     * from the Camel application.
      *
      * @param appRoute the AppRoute
      * @throws RouteDeletionException if the Camel route cannot be deleted
@@ -356,7 +349,11 @@ public class RouteManager {
         final var camelRouteId = getCamelRouteId(appRoute);
 
         try {
-            routeHttpHelper.deleteRouteAtCamelApplication(camelRouteId);
+            camelContext.stopRoute(camelRouteId);
+            if (!camelContext.removeRoute(camelRouteId)) {
+                throw new IllegalStateException("Could not remove route because route was not "
+                        + "stopped.");
+            }
         } catch (Exception e) {
             throw new RouteDeletionException("Error deleting Camel route for AppRoute with ID '"
                     + appRoute.getId() + "'", e);
@@ -365,7 +362,7 @@ public class RouteManager {
     }
 
     /**
-     * Generated the ID of the Camel route for a given {@link AppRoute}. The Camel route ID consists
+     * Generates the ID of the Camel route for a given {@link AppRoute}. The Camel route ID consists
      * of the String 'app-route_' followed by the UUID from the AppRoute's ID.
      *
      * @param appRoute the AppRoute
