@@ -21,7 +21,6 @@ import de.fraunhofer.ids.messaging.core.config.ConfigProducerInterceptorExceptio
 import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
 import de.fraunhofer.ids.messaging.core.config.PreConfigProducerInterceptor;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.dataspaceconnector.service.configuration.ConfigurationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
