@@ -94,10 +94,10 @@ public class QueryMessageController {
                             + "WHERE {\n"
                             + "  ?subject ?predicate ?object\n"
                             + "};") @RequestBody final String query) {
-        Optional<MessageContainer<?>> response = Optional.empty();
         try {
             // Send the query message.
-            response = messageService.sendQueryMessage(recipient, query);
+            Optional<MessageContainer<?>> response = messageService.sendQueryMessage(recipient, query);
+            return messageService.validateResponse(response, ResultMessageImpl.class);
         } catch (SocketTimeoutException exception) {
             // If a timeout has occurred.
             return ControllerUtils.respondConnectionTimedOut(exception);
@@ -114,7 +114,7 @@ public class QueryMessageController {
             // If any other error occurred.
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
-        return messageService.validateResponse(response, ResultMessageImpl.class);
+        return messageService.validateResponse(Optional.empty(), ResultMessageImpl.class);
     }
 
     /**
@@ -146,10 +146,11 @@ public class QueryMessageController {
             @RequestParam(value = "offset", defaultValue = "0") final Integer offset,
             @Parameter(description = "The search term.", required = true)
             @RequestBody final String term) {
-        Optional<MessageContainer<?>> response = Optional.empty();
         try {
             // Send the query message for full text search.
-            response = messageService.sendFullTextSearchMessage(recipient, term, limit, offset);
+            Optional<MessageContainer<?>> response = messageService
+                    .sendFullTextSearchMessage(recipient, term, limit, offset);
+            return messageService.validateResponse(response, ResultMessageImpl.class);
         } catch (SocketTimeoutException exception) {
             // If a timeout has occurred.
             return ControllerUtils.respondConnectionTimedOut(exception);
@@ -166,6 +167,6 @@ public class QueryMessageController {
             // If any other error occurred.
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
-        return messageService.validateResponse(response, ResultMessageImpl.class);
+        return messageService.validateResponse(Optional.empty(), ResultMessageImpl.class);
     }
 }

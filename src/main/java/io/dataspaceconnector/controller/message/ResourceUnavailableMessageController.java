@@ -95,7 +95,6 @@ public class ResourceUnavailableMessageController {
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The resource id.", required = true)
             @RequestParam("resourceId") final URI resourceId) {
-        Optional<MessageContainer<?>> response = Optional.empty();
         try {
             final var resource = connectorService.getOfferedResourceById(resourceId);
             if (resource.isEmpty()) {
@@ -103,7 +102,10 @@ public class ResourceUnavailableMessageController {
             }
 
             // Send the resource unavailable message.
-            response = messageService.sendResourceUnavailableMessage(recipient, resource.get());
+            Optional<MessageContainer<?>> response = messageService.sendResourceUnavailableMessage(recipient, resource.get());
+
+            return messageService.validateResponse(response,
+                    MessageProcessedNotificationMessageImpl.class);
         } catch (SocketTimeoutException exception) {
             // If a timeout has occurred.
             return ControllerUtils.respondConnectionTimedOut(exception);
@@ -120,7 +122,7 @@ public class ResourceUnavailableMessageController {
             // If any other error occurred.
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
-        return messageService.validateResponse(response,
+        return messageService.validateResponse(Optional.empty(),
                 MessageProcessedNotificationMessageImpl.class);
     }
 }

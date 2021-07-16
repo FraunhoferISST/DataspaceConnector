@@ -92,13 +92,15 @@ public class ConnectorUpdateMessageController {
     public ResponseEntity<Object> sendMessage(
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient) {
-        Optional<MessageContainer<?>> response = Optional.empty();
         try {
             // Update the config model.
             connectorService.updateConfigModel();
 
             // Send the connector update message.
-            response = messageService.sendConnectorUpdateMessage(recipient);
+            Optional<MessageContainer<?>> response = messageService.sendConnectorUpdateMessage(recipient);
+
+            return messageService.validateResponse(response,
+                    MessageProcessedNotificationMessageImpl.class);
         } catch (ConfigUpdateException exception) {
             // If the configuration could not be updated.
             return ControllerUtils.respondConfigurationUpdateError(exception);
@@ -118,7 +120,7 @@ public class ConnectorUpdateMessageController {
             // If any other error occurred.
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
-        return messageService.validateResponse(response,
+        return messageService.validateResponse(Optional.empty(),
                 MessageProcessedNotificationMessageImpl.class);
     }
 }
