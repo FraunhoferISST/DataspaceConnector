@@ -21,6 +21,7 @@ import de.fraunhofer.ids.messaging.core.config.ConfigProducerInterceptorExceptio
 import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
 import de.fraunhofer.ids.messaging.core.config.PreConfigProducerInterceptor;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.dataspaceconnector.service.configuration.ConfigurationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -44,6 +45,8 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
      * Serializer for parsing configmodel from json-ld.
      */
     private final Serializer serializer;
+
+    private final ConfigurationService configurationService;
 
     @Override
     public ConfigurationModel perform(final ConfigProperties properties)
@@ -80,6 +83,10 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
         return serializer.deserialize(config, ConfigurationModel.class);
     }
 
+    @SuppressFBWarnings(
+            value = "PATH_TRAVERSAL_IN",
+            justification = "path of config json should be specified by user"
+    )
     private String getConfiguration(final ConfigProperties properties)
             throws IOException {
         if (Paths.get(properties.getPath()).isAbsolute()) {
@@ -89,7 +96,14 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
         }
     }
 
-    @SuppressFBWarnings("REC_CATCH_EXCEPTION")
+    @SuppressFBWarnings(
+            value = {
+                    "PATH_TRAVERSAL_IN",
+                    "REC_CATCH_EXCEPTION",
+                    "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"
+            },
+            justification = "path of config json should be specified by user"
+    )
     private String getClassPathConfig(final ConfigProperties properties)
             throws IOException {
         if (log.isInfoEnabled()) {
@@ -118,7 +132,10 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
         return "";
     }
 
-    @SuppressFBWarnings("REC_CATCH_EXCEPTION")
+    @SuppressFBWarnings(
+            value = {"PATH_TRAVERSAL_IN", "REC_CATCH_EXCEPTION"},
+            justification = "path of config json should be specified by user"
+    )
     private String getAbsolutePathConfig(final ConfigProperties properties)
             throws IOException {
         if (log.isInfoEnabled()) {
