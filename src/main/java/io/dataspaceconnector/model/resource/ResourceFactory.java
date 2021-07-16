@@ -94,7 +94,6 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
      */
     @Override
     public boolean update(final T resource, final D desc) {
-        // TODO Fix me (parent call)
         final var hasParentUpdated = super.update(resource, desc);
         final var hasUpdatedKeywords = updateKeywords(resource, desc.getKeywords());
         final var hasUpdatedPublisher = updatePublisher(resource, desc.getPublisher());

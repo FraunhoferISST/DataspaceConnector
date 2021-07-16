@@ -15,27 +15,30 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.KeyType;
 import de.fraunhofer.iais.eis.PublicKeyBuilder;
-import de.fraunhofer.iais.eis.RejectionMessage;
-import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.exception.MessageException;
+import io.dataspaceconnector.exception.MessageResponseException;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -57,6 +60,7 @@ public class DescriptionRequestMessageControllerTest {
     private DescriptionRequestMessageController controller;
 
     @Test
+    @SneakyThrows
     public void sendDescriptionRequestMessage_elementIdNull_returnDeserializedResponsePayload() {
         /* ARRANGE */
         final var recipient = URI.create("https://recipient.com");
@@ -69,8 +73,7 @@ public class DescriptionRequestMessageControllerTest {
         when(deserializationService.getInfrastructureComponent(any())).thenReturn(connector);
 
         /* ACT */
-        final var result = controller
-                .sendMessage(recipient, null);
+        final var result = controller.sendMessage(recipient, null);
 
         /* ASSERT */
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -83,26 +86,75 @@ public class DescriptionRequestMessageControllerTest {
     }
 
     @Test
-    public void sendDescriptionRequestMessage_invalidResponse_returnResponsePayloadWithCode417() {
+    @SneakyThrows
+    public void sendDescriptionRequestMessage_elementIdNull_returnDeserializedResponsePayloadButCannotIdentityPayload() {
         /* ARRANGE */
         final var recipient = URI.create("https://recipient.com");
-        final var responsePayload = "some payload";
+        final var responsePayload = "{ This is not an infrastructure component. }";
         final var response = getResponse(responsePayload);
-        final var responseContent = getResponseContent(responsePayload);
 
         when(messageService.sendMessage(any(), any())).thenReturn(response);
-        when(messageService.validateResponse(any())).thenReturn(false);
-        when(messageService.getResponseContent(any())).thenReturn(responseContent);
+        when(messageService.validateResponse(any())).thenReturn(true);
+        Mockito.doThrow(IllegalArgumentException.class).when(deserializationService).getInfrastructureComponent(any());
 
         /* ACT */
-        final var result = controller
-                .sendMessage(recipient, null);
+        final var result = controller.sendMessage(recipient, null);
+
+        /* ASSERT */
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertNotNull(result.getBody());
+        assertEquals(responsePayload, result.getBody().toString());
+
+        verify(messageService, times(1)).sendMessage(recipient, null);
+        verify(deserializationService, times(1))
+                .getInfrastructureComponent(responsePayload);
+    }
+
+    @Test
+    @SneakyThrows
+    public void sendDescriptionRequestMessage_messageException_respondWithIdsFailed() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient.com");
+
+        when(messageService.sendMessage(any(), any())).thenThrow(MessageException.class);
+
+        /* ACT */
+        final var result = controller.sendMessage(recipient, null);
+
+        /* ASSERT */
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+    }
+
+    @Test
+    @SneakyThrows
+    public void sendDescriptionRequestMessage_messageException_respondWithInvalidResponse() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient.com");
+
+        when(messageService.sendMessage(any(), any())).thenThrow(MessageResponseException.class);
+
+        /* ACT */
+        final var result = controller.sendMessage(recipient, null);
+
+        /* ASSERT */
+        assertEquals(HttpStatus.BAD_GATEWAY, result.getStatusCode());
+    }
+
+    @Test
+    @SneakyThrows
+    public void sendDescriptionRequestMessage_messageException_respondWithUnexpectedResponse() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient.com");
+
+        when(messageService.sendMessage(any(), any())).thenThrow(UnexpectedResponseException.class);
+
+        /* ACT */
+        final var result = controller.sendMessage(recipient, null);
 
         /* ASSERT */
         assertEquals(HttpStatus.EXPECTATION_FAILED, result.getStatusCode());
-        assertNotNull(result.getBody());
-        assertEquals(responseContent.toString(), result.getBody().toString());
     }
+
 
     /**************************************************************************
      * Utilities.
@@ -135,13 +187,5 @@ public class DescriptionRequestMessageControllerTest {
                         ._accessURL_(URI.create("/api/ids/data"))
                         .build())
                 .build();
-    }
-
-    private Map<String, Object> getResponseContent(final String payload) {
-        final var map = new HashMap<String, Object>();
-        map.put("type", RejectionMessage.class);
-        map.put("reason", RejectionReason.INTERNAL_RECIPIENT_ERROR);
-        map.put("payload", payload);
-        return map;
     }
 }

@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.artifact.LocalData;
@@ -64,7 +65,7 @@ public class RestrictedArtifactServiceTest {
     private ArtifactService service;
 
     @Test
-    public void getData_restrictedData_allowAccessAndDownloadDataAndReturnData() throws IOException {
+    public void getData_restrictedData_allowAccessAndDownloadDataAndReturnData() throws IOException, UnexpectedResponseException {
         /* ARRANGE */
         final var verifier = new AllowAccessVerifier();
         final var artifactId = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");

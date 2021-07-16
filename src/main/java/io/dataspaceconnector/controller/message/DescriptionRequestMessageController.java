@@ -15,8 +15,11 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import java.net.URI;
+
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
 import io.dataspaceconnector.util.ControllerUtils;
@@ -29,6 +32,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,8 +41,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
 
 /**
  * Controller for sending description request messages.
@@ -72,7 +74,8 @@ public class DescriptionRequestMessageController {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "417", description = "Expectation failed"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
+            @ApiResponse(responseCode = "500", description = "Internal server error"),
+            @ApiResponse(responseCode = "502", description = "Bad gateway")})
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     @ResponseBody
     public ResponseEntity<Object> sendMessage(
@@ -80,34 +83,37 @@ public class DescriptionRequestMessageController {
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The id of the requested resource.")
             @RequestParam(value = "elementId", required = false) final URI elementId) {
-        String payload = null;
         try {
             // Send and validate description request/response message.
             final var response = descriptionReqSvc.sendMessage(recipient, elementId);
-            final var valid = descriptionReqSvc.validateResponse(response);
-            if (!valid) {
-                // If the response is not a description response message, show the response.
-                final var content = descriptionReqSvc.getResponseContent(response);
-                return ControllerUtils.respondWithMessageContent(content);
-            }
 
             // Read and process the response message.
-            payload = MessageUtils.extractPayloadFromMultipartMessage(response);
-            if (!Utils.isEmptyOrNull(elementId)) {
-                return new ResponseEntity<>(payload, HttpStatus.OK);
-            } else {
-                // Get payload as component.
-                final var component =
-                        deserializationSvc.getInfrastructureComponent(payload);
-                return ResponseEntity.ok(component.toRdf());
-            }
+            final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
+            return new ResponseEntity<>(convertToAnswer(elementId, payload), HttpStatus.OK);
         } catch (MessageException exception) {
+            // If the message could not be built.
             return ControllerUtils.respondIdsMessageFailed(exception);
-        } catch (MessageResponseException exception) {
-            return ControllerUtils.respondReceivedInvalidResponse(exception);
-        } catch (IllegalArgumentException exception) {
+        } catch (MessageResponseException | IllegalArgumentException e) {
+            // If the response message is invalid or malformed.
+            return ControllerUtils.respondReceivedInvalidResponse(e);
+        } catch (UnexpectedResponseException e) {
+            // If the response is not as expected.
+            return ControllerUtils.respondWithContent(e.getContent());
+        }
+    }
+
+    private String convertToAnswer(final URI elementId, final String payload) {
+        return Utils.isEmptyOrNull(elementId) ? unwrapResponse(payload) : payload;
+    }
+
+    @NotNull
+    private String unwrapResponse(final String payload) {
+        try {
+            // Get payload as component.
+            return deserializationSvc.getInfrastructureComponent(payload).toRdf();
+        } catch (IllegalArgumentException ignored) {
             // If the response is not of type base connector.
-            return new ResponseEntity<>(payload, HttpStatus.OK);
+            return payload;
         }
     }
 }

@@ -15,7 +15,6 @@
 
         <!-- the response could not be built -->
         <onException>
-            <exception>io.dataspaceconnector.exception.MessageBuilderException</exception>
             <exception>java.io.IOException</exception>
             <exception>de.fraunhofer.iais.eis.util.ConstraintViolationException</exception>
             <to uri="direct:handleResponseMessageBuilderException"/>

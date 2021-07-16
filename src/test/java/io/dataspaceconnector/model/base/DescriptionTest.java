@@ -33,6 +33,7 @@ public class DescriptionTest {
 
         /* ASSERT */
         assertNull(result.getAdditional());
+        assertNull(result.getBootstrapId());
     }
 
     @Test
@@ -48,7 +49,7 @@ public class DescriptionTest {
 
         /* ASSERT */
         assertEquals(1, result.getAdditional().size());
-        assertTrue(result.getAdditional().keySet().contains(key));
+        assertTrue(result.getAdditional().containsKey(key));
         assertEquals(value, result.getAdditional().get(key));
     }
 

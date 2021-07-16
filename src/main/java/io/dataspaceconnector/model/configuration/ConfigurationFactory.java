@@ -149,7 +149,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     private boolean updateSecurityProfile(final Configuration config,
                                           final SecurityProfile securityProfile) {
         final var tmp = securityProfile == null ? DEFAULT_SECURITY_PROFILE : securityProfile;
-        if (config.getSecurityProfile() != null && config.getSecurityProfile().equals(tmp)) {
+        if (tmp.equals(config.getSecurityProfile())) {
             return false;
         }
 
@@ -208,7 +208,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
      */
     private boolean updateCurator(final Configuration config, final URI curator) {
         final var newUri =
-                MetadataUtils.updateUri(config.getMaintainer(), curator,
+                MetadataUtils.updateUri(config.getCurator(), curator,
                         DEFAULT_CURATOR);
         newUri.ifPresent(config::setCurator);
 
@@ -245,37 +245,29 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     }
 
     private boolean updateKeyStore(final Configuration config, final KeystoreDesc desc) {
-        if (desc != null
-                && config.getKeystore() != null
-                && config.getKeystore().getLocation() != null
-                && config.getKeystore().getLocation().equals(desc.getLocation())
-                && config.getKeystore().getPassword() != null
-                && config.getKeystore().getPassword().equals(desc.getPassword())) {
+        final var tmp = keystoreFactory.create(desc == null ? new KeystoreDesc() : desc);
+        if (tmp.equals(config.getKeystore())) {
             return false;
         }
 
-        config.setKeystore(keystoreFactory.create(desc == null ? new KeystoreDesc() : desc));
+        config.setKeystore(tmp);
         return true;
     }
 
     private boolean updateTrustStore(final Configuration config, final TruststoreDesc desc) {
-        if (desc != null
-                && config.getTruststore() != null
-                && config.getTruststore().getLocation() != null
-                && config.getTruststore().getLocation().equals(desc.getLocation())
-                && config.getTruststore().getPassword() != null
-                && config.getTruststore().getPassword().equals(desc.getPassword())) {
+        final var tmp = truststoreFactory.create(desc == null ? new TruststoreDesc() : desc);
+        if (tmp.equals(config.getTruststore())) {
             return false;
         }
 
-        config.setTruststore(truststoreFactory.create(desc == null ? new TruststoreDesc() : desc));
+        config.setTruststore(tmp);
         return true;
     }
 
     private boolean updateDeployMode(final Configuration config,
                                      final DeployMode deployMode) {
         final var tmp = deployMode == null ? DEFAULT_DEPLOY_MODE : deployMode;
-        if (config.getDeployMode() != null && config.getDeployMode().equals(tmp)) {
+        if (tmp.equals(config.getDeployMode())) {
             return false;
         }
 
@@ -285,7 +277,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
 
     private boolean updateLogLevel(final Configuration config, final LogLevel logLevel) {
         final var tmp = logLevel == null ? DEFAULT_LOG_LEVEL : logLevel;
-        if (config.getLogLevel() != null && config.getLogLevel().equals(tmp)) {
+        if (tmp.equals(config.getLogLevel())) {
             return false;
         }
 

@@ -305,7 +305,7 @@ public final class RuleUtils {
         for (final var rule : ruleList) {
             final var target = rule.getTarget();
             if (target == null || target.toString().isBlank()) {
-                throw new InvalidInputException(ErrorMessages.MISSING_TARGET.toString());
+                throw new InvalidInputException("Missing target id in rules.");
             }
         }
     }

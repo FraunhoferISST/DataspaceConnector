@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.exception;
 
+import io.dataspaceconnector.util.ErrorMessages;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,14 +24,14 @@ public class MessageExceptionTest {
     @Test
     public void constructor_someMsgAndsSomeException_holdsMsgAndException() {
         /* ARRANGE */
-        final var msg = "Some msg";
+        final var msg = ErrorMessages.GATEWAY_TIMEOUT;
         final var someError = new RuntimeException("WELL?");
 
         /* ACT */
         final var exception = new MessageException(msg, someError);
 
         /* ASSERT */
-        assertEquals(msg, exception.getMessage());
+        assertEquals(msg.toString(), exception.getMessage());
         assertEquals(someError, exception.getCause());
     }
 }
