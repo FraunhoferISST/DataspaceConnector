@@ -21,7 +21,6 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.Set;
 
-import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.QueryLanguage;
 import de.fraunhofer.iais.eis.QueryScope;
 import de.fraunhofer.iais.eis.QueryTarget;
@@ -109,7 +108,12 @@ public class GlobalMessageService {
         final var response = brokerSvc.updateSelfDescriptionAtBroker(recipient);
         final var result = checkResponse(Optional.ofNullable(response));
         if (result) {
-            final var msg = String.format("Successfully registered connector. [url=(%s)]", recipient);
+            if(log.isInfoEnabled()){
+                log.info(String.format(
+                        "Successfully registered connector. [url=(%s)]",
+                        recipient
+                ));
+            }
             brokerService.setRegistrationStatus(recipient, RegistrationStatus.REGISTERED);
         }
         return Optional.ofNullable(response);
@@ -129,7 +133,12 @@ public class GlobalMessageService {
         final var response = brokerSvc.unregisterAtBroker(recipient);
         final var result = checkResponse(Optional.ofNullable(response));
         if (result) {
-            final var msg = String.format("Successfully unregistered connector. [url=(%s)]", recipient);
+            if(log.isInfoEnabled()){
+                log.info(String.format(
+                        "Successfully unregistered connector. [url=(%s)]",
+                        recipient
+                ));
+            }
             brokerService.setRegistrationStatus(recipient, RegistrationStatus.UNREGISTERED);
         }
         return Optional.ofNullable(response);
@@ -148,11 +157,14 @@ public class GlobalMessageService {
             NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
             UnexpectedPayloadException, SerializeException, DeserializeException,
             RejectionException, UnknownResponseException {
-        final var response =brokerSvc.updateResourceAtBroker(recipient, resource);
+        final var response = brokerSvc.updateResourceAtBroker(recipient, resource);
         final var result =  checkResponse(Optional.ofNullable(response));
         if (result) {
-            final var msg = String.format("Successfully registered resource. "
-                    + "[resourceId=(%s), url=(%s)]", resource.getId(), recipient);
+            if(log.isInfoEnabled()){
+                log.info(String.format("Successfully registered resource. "
+                        + "[resourceId=(%s), url=(%s)]", resource.getId(), recipient)
+                );
+            }
             updateOfferedResourceBrokerList(recipient, resource);
         }
         return Optional.ofNullable(response);
