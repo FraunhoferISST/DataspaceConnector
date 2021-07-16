@@ -132,4 +132,9 @@ public class Configuration extends NamedEntity {
      */
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Keystore keystore;
+
+    /**
+     * Marks selected configuration.
+     */
+    private boolean selected;
 }

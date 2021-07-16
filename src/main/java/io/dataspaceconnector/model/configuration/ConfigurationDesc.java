@@ -96,4 +96,9 @@ public class ConfigurationDesc extends NamedDescription {
      * The keystore settings.
      */
     private KeystoreDesc keystoreSettings;
+
+    /**
+     * Marks selected configuration.
+     */
+    private boolean selected;
 }

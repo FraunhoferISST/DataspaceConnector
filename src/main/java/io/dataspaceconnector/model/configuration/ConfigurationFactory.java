@@ -113,6 +113,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
         final var hasUpdatedConnectorEndpoint = updateConnectorEndpoint(config,
                 desc.getConnectorEndpoint());
         final var hasUpdatedVersion = updateVersion(config, desc.getVersion());
+        final var hasUpdatedSelected = updateSelected(config, desc.isSelected());
         final var hasUpdatedCurator = updateCurator(config, desc.getCurator());
         final var hasUpdatedMaintainer = updateMaintainer(config, desc.getMaintainer());
         final var hasUpdatedInboundModelVersions = updateInboundModelVersion(config,
@@ -138,7 +139,8 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
                 || hasUpdatedDeployMode
                 || hasUpdatedTrustStore
                 || hasUpdatedKeyStore
-                || hasUpdatedProxy;
+                || hasUpdatedProxy
+                || hasUpdatedSelected;
     }
 
     /**
@@ -227,6 +229,12 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
         newVersion.ifPresent(config::setVersion);
 
         return newVersion.isPresent();
+    }
+
+    private boolean updateSelected(final Configuration config, final boolean selected) {
+        var changed = config.isSelected() != selected;
+        config.setSelected(selected);
+        return changed;
     }
 
     /**

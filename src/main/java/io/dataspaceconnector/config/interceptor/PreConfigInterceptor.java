@@ -21,6 +21,7 @@ import de.fraunhofer.ids.messaging.core.config.ConfigProducerInterceptorExceptio
 import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
 import de.fraunhofer.ids.messaging.core.config.PreConfigProducerInterceptor;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.dataspaceconnector.service.configuration.ConfigurationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -30,6 +31,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+
+import static io.dataspaceconnector.config.interceptor.ConfigurationMapper.buildConfigDesc;
+import static io.dataspaceconnector.config.interceptor.ConfigurationMapper.buildInfomodelConfig;
 
 /**
  * Intercepts {@link de.fraunhofer.ids.messaging.core.config.ConfigProducer}
@@ -44,6 +48,7 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
      * Serializer for parsing configmodel from json-ld.
      */
     private final Serializer serializer;
+    private final ConfigurationService configurationService;
 
     @Override
     public ConfigurationModel perform(final ConfigProperties properties)
@@ -51,14 +56,32 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
         if (log.isInfoEnabled()) {
             log.info("Intecepting loading of configuration!");
         }
-        try {
-            //TODO check if configmodel is already saved in db,
-            // then load from there instead of config file.
-            var config = loadConfig(properties);
-            config.setProperty("preInterceptor", true);
-            return config;
-        } catch (IOException e) {
-            throw new ConfigProducerInterceptorException(e.getMessage());
+        var configList = configurationService.findSelected();
+        if(!configList.isEmpty()){
+            //there are configurations written in the DB
+            if(configList.size() > 1){
+                throw new ConfigProducerInterceptorException(
+                        String.format(
+                                "There are configurations in the DB," +
+                                        " but %d are marked as selected!",
+                                configList.size()
+                        )
+                );
+            } else {
+                var selectedConfig = configurationService.get(configList.get(0));
+                return buildInfomodelConfig(selectedConfig);
+            }
+        } else {
+            //no config in DB, load from json
+            try {
+                //TODO check if configmodel is already saved in db,
+                // then load from there instead of config file.
+                var config = loadConfig(properties);
+                config.setProperty("preInterceptor", true);
+                return config;
+            } catch (IOException e) {
+                throw new ConfigProducerInterceptorException(e.getMessage());
+            }
         }
     }
 
@@ -77,7 +100,13 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
             log.info("Importing configuration from file");
         }
 
-        return serializer.deserialize(config, ConfigurationModel.class);
+        var infomodelConfig = serializer.deserialize(
+                config,
+                ConfigurationModel.class
+        );
+        var dscConfig = buildConfigDesc(infomodelConfig);
+        configurationService.create(dscConfig);
+        return infomodelConfig;
     }
 
     @SuppressFBWarnings(
@@ -157,4 +186,5 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
         }
         return "";
     }
+
 }

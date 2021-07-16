@@ -16,11 +16,27 @@
 package io.dataspaceconnector.repository;
 
 import io.dataspaceconnector.model.configuration.Configuration;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Repository for the configuration.
  */
 @Repository
 public interface ConfigurationRepository extends BaseEntityRepository<Configuration> {
+
+    /**
+     * Get all selected configurations.
+     *
+     * @return UUIDs of Configurations that are marked as selected.
+     */
+    @Query("SELECT a.id "
+            + "FROM #{#entityName} a "
+            + "WHERE a.selected = true "
+            + "AND a.deleted = false")
+    List<UUID> findBySelectedTrue();
+
 }

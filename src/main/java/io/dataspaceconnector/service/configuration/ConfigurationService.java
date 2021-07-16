@@ -17,12 +17,16 @@ package io.dataspaceconnector.service.configuration;
 
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
+import io.dataspaceconnector.repository.ConfigurationRepository;
 import io.dataspaceconnector.service.resource.BaseEntityService;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Service class for the configuration.
@@ -31,4 +35,14 @@ import org.springframework.stereotype.Service;
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.NONE)
 @RequiredArgsConstructor
-public class ConfigurationService extends BaseEntityService<Configuration, ConfigurationDesc> { }
+public class ConfigurationService extends BaseEntityService<Configuration, ConfigurationDesc> {
+
+    /**
+     * Get all selected Configurations.
+     * @return List of configurations with selected = true.
+     */
+    public List<UUID> findSelected() {
+        return ((ConfigurationRepository) getRepository()).findBySelectedTrue();
+    }
+
+}

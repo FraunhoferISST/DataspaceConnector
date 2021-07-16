@@ -34,7 +34,7 @@ import org.hibernate.annotations.Where;
  */
 @Entity
 @Getter
-@Setter(AccessLevel.PACKAGE)
+@Setter
 @RequiredArgsConstructor
 @SQLDelete(sql = "UPDATE authentication SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
