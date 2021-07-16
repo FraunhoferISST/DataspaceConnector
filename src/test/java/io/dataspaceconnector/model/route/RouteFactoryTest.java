@@ -30,10 +30,8 @@ public class RouteFactoryTest {
         /* ARRANGE */
         final var title = "MyRoute";
         final var description = "MyDesc";
-        final var routeType = RouteType.ROUTE;
         desc.setTitle(title);
         desc.setDescription(description);
-        desc.setRouteType(routeType);
 
         /* ACT */
         final var result = factory.create(desc);
@@ -41,7 +39,6 @@ public class RouteFactoryTest {
         /* ASSERT */
         assertEquals(title, result.getTitle());
         assertEquals(description, result.getDescription());
-        assertEquals(routeType, result.getRouteType());
         assertTrue(result.getOutput().isEmpty());
     }
 

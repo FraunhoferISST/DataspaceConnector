@@ -21,7 +21,6 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.endpoint.Endpoint;
-import io.dataspaceconnector.model.route.RouteType;
 import io.dataspaceconnector.view.util.ViewConstants;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -69,11 +68,6 @@ public class RouteView extends RepresentationModel<RouteView> {
      * The deploy method of the route.
      */
     private DeployMethod deploy;
-
-    /**
-     * The route type of the route.
-     */
-    private RouteType routeType;
 
     /**
      * The start endpoint of the route.

@@ -36,9 +36,4 @@ public class RouteDesc extends NamedDescription {
      * The deploy method of the route.
      */
     private DeployMethod deploy = DeployMethod.NONE;
-
-    /**
-     * The route type of the route.
-     */
-    private RouteType routeType;
 }
