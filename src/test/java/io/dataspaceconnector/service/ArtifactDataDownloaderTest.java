@@ -22,9 +22,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
-import io.dataspaceconnector.service.message.type.exceptions.InvalidResponse;
 import io.dataspaceconnector.service.resource.AgreementService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -51,7 +51,7 @@ class ArtifactDataDownloaderTest {
     private ArtifactDataDownloader downloader;
 
     @Test
-    public void download_validInput_downloadData() throws InvalidResponse, IOException {
+    public void download_validInput_downloadData() throws IOException, UnexpectedResponseException {
         /* ARRANGE */
         final var recipient = URI.create("");
         final var artifacts = Arrays.asList(URI.create("https://artifact1"));
@@ -64,7 +64,7 @@ class ArtifactDataDownloaderTest {
         ReflectionTestUtils.setField(agreement, "remoteId", URI.create("https//remoteId"));
 
         Mockito.when(agreementService.get(eq(agreementId))).thenReturn(agreement);
-        Mockito.when(artifactReqSvc.sendMessageAndValidate(eq(recipient), eq(artifacts.get(0)), eq(agreement.getRemoteId()))).thenReturn(response);
+        Mockito.when(artifactReqSvc.sendMessage(eq(recipient), eq(artifacts.get(0)), eq(agreement.getRemoteId()))).thenReturn(response);
 
         /* ACT */
         downloader.download(recipient, artifacts, agreementId);
@@ -74,7 +74,7 @@ class ArtifactDataDownloaderTest {
     }
 
     @Test
-    public void download_validInputButStorageFails_shouldFail() throws InvalidResponse, IOException {
+    public void download_validInputButStorageFails_shouldFail() throws IOException, UnexpectedResponseException {
         /* ARRANGE */
         final var recipient = URI.create("");
         final var artifacts = Arrays.asList(URI.create("https://artifact1"));
@@ -87,7 +87,7 @@ class ArtifactDataDownloaderTest {
         ReflectionTestUtils.setField(agreement, "remoteId", URI.create("https//remoteId"));
 
         Mockito.when(agreementService.get(eq(agreementId))).thenReturn(agreement);
-        Mockito.when(artifactReqSvc.sendMessageAndValidate(eq(recipient), eq(artifacts.get(0)), eq(agreement.getRemoteId()))).thenReturn(response);
+        Mockito.when(artifactReqSvc.sendMessage(eq(recipient), eq(artifacts.get(0)), eq(agreement.getRemoteId()))).thenReturn(response);
         Mockito.doThrow(IOException.class).when(persistenceSvc).saveData(eq(response), eq(artifacts.get(0)));
 
         /* ACT && ASSERT */

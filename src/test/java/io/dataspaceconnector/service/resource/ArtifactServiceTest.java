@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.exception.UnreachableLineException;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
@@ -218,7 +219,7 @@ class ArtifactServiceTest {
     }
 
     @Test
-    public void getData_knownArtifactIdNullQuery_returnLocalData() throws IOException {
+    public void getData_knownArtifactIdNullQuery_returnLocalData() throws IOException, UnexpectedResponseException {
         /* ARRANGE */
         ArtifactImpl localArtifact = getLocalArtifact();
 

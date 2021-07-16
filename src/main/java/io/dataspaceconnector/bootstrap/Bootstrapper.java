@@ -17,10 +17,18 @@ package io.dataspaceconnector.bootstrap;
 
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
+import de.fraunhofer.ids.messaging.common.DeserializeException;
+import de.fraunhofer.ids.messaging.common.SerializeException;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
+import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
+import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
+import de.fraunhofer.ids.messaging.protocol.multipart.UnknownResponseException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
+import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
+import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
+import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import io.dataspaceconnector.bootstrap.util.BootstrapUtils;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
@@ -204,16 +212,22 @@ public class Bootstrapper {
                 try {
                     if (!knownBrokers.contains(broker.toString())) {
                         knownBrokers.add(broker.toString());
-                        if (!brokerSvc.sendConnectorUpdateMessage(broker.toURI())) {
+                        var connectorResponse = brokerSvc
+                                .sendConnectorUpdateMessage(broker.toURI());
+                        if (!brokerSvc.checkResponse(connectorResponse)) {
                             return false;
                         }
                     }
 
-                    if (!brokerSvc.sendResourceUpdateMessage(broker.toURI(), entry.getValue())) {
+                    var resourceResponse = brokerSvc
+                            .sendResourceUpdateMessage(broker.toURI(), entry.getValue());
+                    if (!brokerSvc.checkResponse(resourceResponse)) {
                         return false;
                     }
-                } catch (MultipartParseException |  ClaimsException | DapsTokenManagerException
-                 | IOException | URISyntaxException e) {
+                } catch (MultipartParseException | ClaimsException | DapsTokenManagerException | IOException
+                        | URISyntaxException | NoTemplateProvidedException | ShaclValidatorException
+                        | SendMessageException | UnexpectedPayloadException | SerializeException
+                        | DeserializeException | RejectionException | UnknownResponseException e) {
                     if (log.isDebugEnabled()) {
                         log.debug("Could not register resource at broker [resourceId=({}), "
                                 + "broker=({})].", entry.getKey().toString(), broker, e);

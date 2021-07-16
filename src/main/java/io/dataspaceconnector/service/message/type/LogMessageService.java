@@ -21,6 +21,7 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.exception.MessageException;
+import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.PolicyExecutionException;
 import io.dataspaceconnector.model.message.LogMessageDesc;
 import io.dataspaceconnector.util.ErrorMessages;
@@ -84,7 +85,7 @@ public final class LogMessageService extends AbstractMessageService<LogMessageDe
                 }
                 throw new PolicyExecutionException("Log message has no valid response.");
             }
-        } catch (MessageException e) {
+        } catch (MessageException | MessageResponseException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Failed to send log message. [exception=({})]", e.getMessage(), e);
             }

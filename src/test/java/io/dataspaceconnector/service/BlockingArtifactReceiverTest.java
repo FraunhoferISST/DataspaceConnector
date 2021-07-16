@@ -90,6 +90,7 @@ public class BlockingArtifactReceiverTest {
     }
 
     @Test
+    @SneakyThrows
     public void retrieve_noValidResponse_throwPolicyRestrictionException() {
         /* ARRANGE */
         final var artifactId = UUID.randomUUID();

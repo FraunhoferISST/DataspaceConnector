@@ -25,8 +25,8 @@ import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
-import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
 import io.dataspaceconnector.service.configuration.BrokerService;
+import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -144,7 +144,7 @@ public class ConnectorUpdateMessageControllerTest {
                 ._securityToken_(token)
                 .build();
 
-        final var response = new MessageProcessedNotificationMAP(message);
+        final var response = new MessageContainer<>(message, "EMPTY");
 
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(response).when(brokerService).updateSelfDescriptionAtBroker(Mockito.eq(URI.create(recipient)));
@@ -154,7 +154,7 @@ public class ConnectorUpdateMessageControllerTest {
                 .param("recipient", recipient)).andReturn();
 
         /* ASSERT */
-        assertEquals("", result.getResponse().getContentAsString());
+        assertEquals("EMPTY", result.getResponse().getContentAsString());
         assertEquals(200, result.getResponse().getStatus());
     }
 }
