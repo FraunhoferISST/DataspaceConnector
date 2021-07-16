@@ -57,8 +57,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Endpoints", description = "Endpoints for CRUD operations on endpoints")
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.NONE)
-public class EndpointControllers
-        implements CRUDController<Endpoint, EndpointDesc, Object> {
+public class EndpointControllers implements CRUDController<Endpoint, EndpointDesc, Object> {
 
     /**
      * Service for generic endpoint.
@@ -92,14 +91,16 @@ public class EndpointControllers
         return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
     }
 
+    /** {@inheritDoc} */
     @Override
-    public final ResponseEntity<Object> create(final EndpointDesc desc) {
+    public ResponseEntity<Object> create(final EndpointDesc desc) {
         return respondCreated(service.create(desc));
     }
 
+    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
-    public final PagedModel<Object> getAll(final Integer page, final Integer size) {
+    public PagedModel<Object> getAll(final Integer page, final Integer size) {
         final var pageable = Utils.toPageRequest(page, size);
         final var entities = service.getAll(pageable);
         final PagedModel<?> model;
@@ -112,13 +113,15 @@ public class EndpointControllers
         return (PagedModel<Object>) model;
     }
 
+    /** {@inheritDoc} */
     @Override
     public final Object get(final UUID resourceId) {
         return assemblerProxy.toModel(service.get(resourceId));
     }
 
+    /** {@inheritDoc} */
     @Override
-    public final ResponseEntity<Object> update(final UUID resourceId, final EndpointDesc desc) {
+    public ResponseEntity<Object> update(final UUID resourceId, final EndpointDesc desc) {
         final var resource = service.update(resourceId, desc);
 
         if (resource.getId().equals(resourceId)) {
@@ -129,8 +132,9 @@ public class EndpointControllers
         return respondCreated(resource);
     }
 
+    /** {@inheritDoc} */
     @Override
-    public final ResponseEntity<Void> delete(final UUID resourceId) {
+    public ResponseEntity<Void> delete(final UUID resourceId) {
         service.delete(resourceId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
