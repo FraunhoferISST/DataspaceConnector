@@ -97,7 +97,8 @@ public class ConnectorUpdateMessageController {
             connectorService.updateConfigModel();
 
             // Send the connector update message.
-            Optional<MessageContainer<?>> response = messageService.sendConnectorUpdateMessage(recipient);
+            Optional<MessageContainer<?>> response = messageService
+                    .sendConnectorUpdateMessage(recipient);
 
             return messageService.validateResponse(response,
                     MessageProcessedNotificationMessageImpl.class);

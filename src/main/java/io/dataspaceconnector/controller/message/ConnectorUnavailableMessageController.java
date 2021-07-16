@@ -97,7 +97,8 @@ public class ConnectorUnavailableMessageController {
             connectorService.updateConfigModel();
 
             // Send the connector unavailable message.
-            Optional<MessageContainer<?>> response = messageService.sendConnectorUnavailableMessage(recipient);
+            Optional<MessageContainer<?>> response = messageService
+                    .sendConnectorUnavailableMessage(recipient);
 
             return messageService.validateResponse(response,
                     MessageProcessedNotificationMessageImpl.class);

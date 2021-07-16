@@ -96,7 +96,8 @@ public class QueryMessageController {
                             + "};") @RequestBody final String query) {
         try {
             // Send the query message.
-            Optional<MessageContainer<?>> response = messageService.sendQueryMessage(recipient, query);
+            Optional<MessageContainer<?>> response = messageService
+                    .sendQueryMessage(recipient, query);
             return messageService.validateResponse(response, ResultMessageImpl.class);
         } catch (SocketTimeoutException exception) {
             // If a timeout has occurred.
