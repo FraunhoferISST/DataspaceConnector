@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.exceptionhandler;
 
-import io.dataspaceconnector.service.message.type.exceptions.InvalidResponse;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.util.ControllerUtils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.annotation.Order;
@@ -24,20 +24,20 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
- * Global exception handler for {@link InvalidResponse}.
+ * Global exception handler for {@link UnexpectedResponseException}.
  */
 @Log4j2
 @ControllerAdvice
 @Order
-public final class InvalidResponseExceptionHandler {
+public final class UnexpectedResponseExceptionHandler {
     /**
-     * Handle runtime exceptions with response code 500.
+     * Handle runtime exceptions with response code 417.
      *
      * @param exception The thrown exception.
-     * @return Response entity with code 500.
+     * @return Response entity with code 417.
      */
-    @ExceptionHandler(InvalidResponse.class)
-    public ResponseEntity<Object> handleAnyException(final InvalidResponse exception) {
-        return ControllerUtils.respondWithMessageContent(exception.getContent());
+    @ExceptionHandler(UnexpectedResponseException.class)
+    public ResponseEntity<Object> handleAnyException(final UnexpectedResponseException exception) {
+        return ControllerUtils.respondWithContent(exception.getContent());
     }
 }
