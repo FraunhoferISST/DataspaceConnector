@@ -293,9 +293,14 @@ public class RuleValidator {
             throw new PolicyRestrictionException(ErrorMessages.MISSING_SECURITY_PROFILE_CLAIM);
         }
 
-        final var allowedProfile = RuleUtils.getSecurityProfile(rule);
-        final var securityProfile = profile.get();
-        if (!allowedProfile.equals(securityProfile.toString())) {
+        try {
+            final var allowedProfile = RuleUtils.getSecurityProfile(rule);
+            final var securityProfile = profile.get();
+            if (!allowedProfile.equals(securityProfile.toString())) {
+                throw new PolicyRestrictionException(
+                        ErrorMessages.DATA_ACCESS_INVALID_SECURITY_PROFILE);
+            }
+        } catch (Exception e) {
             throw new PolicyRestrictionException(
                     ErrorMessages.DATA_ACCESS_INVALID_SECURITY_PROFILE);
         }
