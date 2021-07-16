@@ -34,7 +34,8 @@ public interface ArtifactRetriever {
      * @param transferContract The contract authorizing the data transfer.
      * @return The artifact's data.
      */
-    InputStream retrieve(UUID artifactId, URI recipient, URI transferContract) throws UnexpectedResponseException;
+    InputStream retrieve(UUID artifactId, URI recipient, URI transferContract)
+            throws UnexpectedResponseException;
 
     /**
      * Perform an artifact request for a given artifact with query parameters.

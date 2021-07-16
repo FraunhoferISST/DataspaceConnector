@@ -111,6 +111,8 @@ public class ContractNegotiator {
      * @param response The message response.
      * @throws IllegalArgumentException if the payload could not be read.
      * @throws ContractException        if the contract agreement is invalid.
+     *
+     * @return true, if contract agreement can be validated.
      */
     private ContractAgreement validateAgreementAgainstOffer(final ContractRequest request,
                                                             final Map<String, String> response)
