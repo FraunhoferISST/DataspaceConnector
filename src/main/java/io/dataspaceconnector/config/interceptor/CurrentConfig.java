@@ -21,7 +21,7 @@ package io.dataspaceconnector.config.interceptor;
 public enum CurrentConfig {
 
     /**
-     * marks selected configuration
+     * Marks selected configuration.
      */
     SELECTED
 }

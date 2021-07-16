@@ -48,6 +48,9 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
      * Serializer for parsing configmodel from json-ld.
      */
     private final Serializer serializer;
+    /**
+     * ConfigurationService, to read and write current configurations from/to DB.
+     */
     private final ConfigurationService configurationService;
 
     @Override
@@ -57,13 +60,13 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
             log.info("Intecepting loading of configuration!");
         }
         var configList = configurationService.findSelected();
-        if(!configList.isEmpty()){
+        if (!configList.isEmpty()) {
             //there are configurations written in the DB
-            if(configList.size() > 1){
+            if (configList.size() > 1) {
                 throw new ConfigProducerInterceptorException(
                         String.format(
-                                "There are configurations in the DB," +
-                                        " but %d are marked as selected!",
+                                "There are configurations in the DB,"
+                                        + " but %d are marked as selected!",
                                 configList.size()
                         )
                 );
