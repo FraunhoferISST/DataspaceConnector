@@ -15,6 +15,11 @@
  */
 package io.dataspaceconnector.controller.resource;
 
+import javax.validation.ConstraintViolationException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
@@ -27,11 +32,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-
-import javax.validation.ConstraintViolationException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -161,20 +161,25 @@ public class MainControllerTest {
         final var result = mockMvc.perform(get("/api")).andExpect(status().isOk()).andReturn();
 
         assertEquals("{\"_links\":{\"self\":{\"href\":\"http://localhost/api\"},"
-                + "\"agreements\":{\"href\":\"http://localhost/api/agreements{?page,size}\","
-                + "\"templated\":true},"
-                + "\"artifacts\":{\"href\":\"http://localhost/api/artifacts{?page,size}\","
-                + "\"templated\":true},\"catalogs\":{\"href\":\"http://localhost/api"
-                + "/catalogs{?page,size}\",\"templated\":true},"
-                + "\"contracts\":{\"href\":\"http://localhost/api/contracts{?page,size}\","
-                + "\"templated\":true},"
-                + "\"offers\":{\"href\":\"http://localhost/api/offers{?page,size}\","
-                + "\"templated\":true},\"representations\":{\"href\":\"http://localhost/api"
-                + "/representations{?page,size}\",\"templated\":true},"
-                + "\"requests\":{\"href\":\"http://localhost/api/requests{?page,size}\","
-                + "\"templated\":true},"
-                + "\"rules\":{\"href\":\"http://localhost/api/rules{?page,size}\","
-                + "\"templated\":true}}}", result.getResponse().getContentAsString());
+                     + "\"agreements\":{\"href\":\"http://localhost/api/agreements{?page,size}\","
+                     + "\"templated\":true},\"artifacts\":{\"href\":\"http://localhost/api"
+                     + "/artifacts{?page,size}\",\"templated\":true},"
+                     + "\"brokers\":{\"href\":\"http://localhost/api/brokers{?page,size}\","
+                     + "\"templated\":true},\"catalogs\":{\"href\":\"http://localhost/api"
+                     + "/catalogs{?page,size}\",\"templated\":true},"
+                     + "\"contracts\":{\"href\":\"http://localhost/api/contracts{?page,size}\","
+                     + "\"templated\":true},\"datasources\":{\"href\":\"http://localhost/api"
+                     + "/datasources{?page,size}\",\"templated\":true},"
+                     + "\"endpoints\":{\"href\":\"http://localhost/api/endpoints{?page,size}\","
+                     + "\"templated\":true},\"offers\":{\"href\":\"http://localhost/api/offers"
+                     + "{?page,size}\",\"templated\":true},"
+                     + "\"representations\":{\"href\":\"http://localhost/api/representations"
+                     + "{?page,size}\",\"templated\":true},"
+                     + "\"routes\":{\"href\":\"http://localhost/api/routes{?page,size}\","
+                     + "\"templated\":true},\"requests\":{\"href\":\"http://localhost/api"
+                     + "/requests{?page,size}\",\"templated\":true},"
+                     + "\"rules\":{\"href\":\"http://localhost/api/rules{?page,size}\","
+                     + "\"templated\":true}}}", result.getResponse().getContentAsString());
         assertEquals("application/hal+json", result.getResponse().getContentType());
     }
 }
