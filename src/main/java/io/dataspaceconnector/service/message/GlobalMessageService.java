@@ -224,7 +224,7 @@ public class GlobalMessageService {
             return new ResponseEntity<>(payload, HttpStatus.OK);
         }
 
-        // If response message is not of type MessageProcessedNotificationMessage.
+        // If response message is not of predefined type.
         final var content = notificationSvc.getResponseContent(header, payload);
         return ControllerUtils.respondWithContent(content);
     }

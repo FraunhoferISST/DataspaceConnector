@@ -16,19 +16,28 @@
 package io.dataspaceconnector.service.message.type;
 
 import de.fraunhofer.iais.eis.ArtifactRequestMessage;
+import de.fraunhofer.iais.eis.ArtifactResponseMessage;
+import de.fraunhofer.iais.eis.ArtifactResponseMessageBuilder;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
+import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.ids.messaging.protocol.http.IdsHttpService;
+import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.ids.DeserializationService;
-import de.fraunhofer.ids.messaging.protocol.http.IdsHttpService;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import javax.xml.datatype.DatatypeFactory;
 import java.net.URI;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -84,5 +93,41 @@ class ArtifactRequestServiceTest {
         assertEquals(connectorId, result.getIssuerConnector());
         assertEquals(modelVersion, result.getModelVersion());
         assertEquals(token, result.getSecurityToken());
+    }
+
+    @Test
+    public void validateResponse_invalidResponseMessage_throwsMessageResponseException() {
+        /* ARRANGE */
+        final var header = getResponseMessage().toRdf();
+        final var payload = "EMPTY";
+        final var map = new HashMap<String, String>(){{
+            put("header", header);
+            put("payload", payload);
+        }};
+
+        /* ACT & ASSERT */
+        assertThrows(MessageResponseException.class, () -> requestService.validateResponse(map));
+    }
+
+    @SneakyThrows
+    public ArtifactResponseMessage getResponseMessage() {
+        final var calendar = new GregorianCalendar();
+        calendar.setTime(new Date());
+        final var xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
+        final var connectorId = URI.create("https://connector");
+        final var modelVersion = "4.0.0";
+        final var token = new DynamicAttributeTokenBuilder()
+                ._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build();
+        final var uri = URI.create("https://object");
+        return new ArtifactResponseMessageBuilder()
+                ._securityToken_(token)
+                ._correlationMessage_(uri)
+                ._issued_(xmlCalendar)
+                ._issuerConnector_(connectorId)
+                ._modelVersion_(modelVersion)
+                ._senderAgent_(connectorId)
+                ._recipientConnector_(Util.asList(uri))
+                ._transferContract_(uri)
+                .build();
     }
 }
