@@ -344,17 +344,18 @@ public class RouteManager {
     public void deleteRoute(final AppRoute appRoute) throws RouteDeletionException {
         final var camelRouteId = getCamelRouteId(appRoute);
 
-        try {
-            camelContext.stopRoute(camelRouteId);
-            if (!camelContext.removeRoute(camelRouteId)) {
-                throw new IllegalStateException("Could not remove route because route was not "
-                        + "stopped.");
+        if (camelContext.getRoute(camelRouteId) != null) {
+            try {
+                camelContext.stopRoute(camelRouteId);
+                if (!camelContext.removeRoute(camelRouteId)) {
+                    throw new IllegalStateException("Could not remove route because route was not "
+                            + "stopped.");
+                }
+            } catch (Exception e) {
+                throw new RouteDeletionException("Error deleting Camel route for AppRoute with ID '"
+                        + appRoute.getId() + "'", e);
             }
-        } catch (Exception e) {
-            throw new RouteDeletionException("Error deleting Camel route for AppRoute with ID '"
-                    + appRoute.getId() + "'", e);
         }
-
     }
 
     /**

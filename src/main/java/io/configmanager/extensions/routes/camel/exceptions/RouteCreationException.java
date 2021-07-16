@@ -18,7 +18,7 @@ package io.configmanager.extensions.routes.camel.exceptions;
 /**
  * Thrown to indicate that an error occurred during creation or deployment of a Camel route.
  */
-public class RouteCreationException extends Exception {
+public class RouteCreationException extends RuntimeException {
     private static final long serialVersionUID = 42L;
 
     /**
