@@ -27,16 +27,29 @@ import de.fraunhofer.iais.eis.QueryScope;
 import de.fraunhofer.iais.eis.QueryTarget;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
+import de.fraunhofer.ids.messaging.common.DeserializeException;
+import de.fraunhofer.ids.messaging.common.SerializeException;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
-import de.fraunhofer.ids.messaging.protocol.multipart.MessageAndPayload;
+import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
+import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
+import de.fraunhofer.ids.messaging.protocol.multipart.UnknownResponseException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.service.configuration.BrokerService;
 import io.dataspaceconnector.service.configuration.EntityLinkerService;
 import io.dataspaceconnector.util.UUIDUtils;
+import de.fraunhofer.ids.messaging.requests.MessageContainer;
+import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
+import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
+import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
+import io.dataspaceconnector.service.message.type.NotificationService;
+import io.dataspaceconnector.util.ControllerUtils;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 /**
@@ -62,6 +75,25 @@ public class GlobalMessageService {
      */
     private final @NotNull BrokerService brokerService;
 
+
+    /**
+     * Service for sending notification messages.
+     */
+    private final @NonNull NotificationService notificationSvc;
+
+    /**
+     * Send connector update message.
+     *
+     * @param recipient The recipient.
+     * @return Optional of message container providing the received ids response.
+     */
+    public Optional<MessageContainer<?>> sendConnectorUpdateMessage(final URI recipient)
+            throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
+            NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
+            UnexpectedPayloadException, SerializeException, DeserializeException,
+            RejectionException, UnknownResponseException {
+        return Optional.of(brokerSvc.updateSelfDescriptionAtBroker(recipient));
+    }
 
     /**
      * Send connector update message and validate received response.
@@ -92,28 +124,38 @@ public class GlobalMessageService {
 
     /**
      * Send connector unavailable message and validate received response.
+     *
      * @param recipient The recipient.
-     * @return True if the message was successfully processed by the recipient, false if not.
-     * @throws MultipartParseException   If response could not be parsed to header and payload.
-     * @throws ClaimsException           Exception that gets thrown, if errors occur while
-     *                                   validating a DAT token.
-     * @throws DapsTokenManagerException DAPS Token can not be acquired.
-     * @throws IOException               Any other problems in establishing a connection
-     *                                   to the target.
+     * @return Optional of message container providing the received ids response.
      */
-    public boolean sendConnectorUnavailableMessage(final URI recipient) throws
-            MultipartParseException,
-            ClaimsException,
-            DapsTokenManagerException,
-            IOException {
+    public Optional<MessageContainer<?>> sendConnectorUnavailableMessage(final URI recipient)
+            throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
+            NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
+            UnexpectedPayloadException, SerializeException, DeserializeException,
+            RejectionException, UnknownResponseException {
         final var response = brokerSvc.unregisterAtBroker(recipient);
         final var msg = String.format("Successfully unregistered connector. [url=(%s)]", recipient);
         final var result = validateResponse(response, msg);
         if (result) {
             brokerService.setRegistrationStatus(recipient, RegistrationStatus.UNREGISTERED);
         }
+        return Optional.of(response);
+    }
 
-        return result;
+    /**
+     * Send resource update message.
+     *
+     * @param recipient The recipient.
+     * @param resource  The ids resource that should be updated.
+     * @return Optional of message container providing the received ids response.
+     */
+    public Optional<MessageContainer<?>> sendResourceUpdateMessage(final URI recipient,
+                                                                   final Resource resource)
+            throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
+            NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
+            UnexpectedPayloadException, SerializeException, DeserializeException,
+            RejectionException, UnknownResponseException {
+        return Optional.of(brokerSvc.updateResourceAtBroker(recipient, resource));
     }
 
     /**
@@ -121,14 +163,9 @@ public class GlobalMessageService {
      * @param recipient The recipient.
      * @param resource  The ids resource that should be updated.
      * @return True if the message was successfully processed by the recipient, false if not.
-     * @throws MultipartParseException   If response could not be parsed to header and payload.
-     * @throws ClaimsException           Exception that gets thrown, if errors occur while
-     *                                   validating a DAT token.
-     * @throws DapsTokenManagerException DAPS Token can not be acquired.
-     * @throws IOException               Any other problems in establishing a connection
-     *                                   to the target.
      */
-    public boolean sendResourceUpdateMessage(final URI recipient, final Resource resource) throws
+    public boolean sendAndValidateResourceUpdateMessage(final URI recipient,
+                                                        final Resource resource)  throws
             MultipartParseException,
             ClaimsException,
             DapsTokenManagerException,
@@ -145,22 +182,17 @@ public class GlobalMessageService {
 
     /**
      * Send resource unavailable message and validate received response.
+     *
      * @param recipient The recipient.
      * @param resource  The ids resource that should be updated.
      * @return True if the message was successfully processed by the recipient, false if not.
-     * @throws MultipartParseException   If response could not be parsed to header and payload.
-     * @throws ClaimsException           Exception that gets thrown, if errors occur while
-     *                                   validating a DAT token.
-     * @throws DapsTokenManagerException DAPS Token can not be acquired.
-     * @throws IOException               Any other problems in establishing a connection
-     *                                   to the target.
      */
-    public boolean sendResourceUnavailableMessage(final URI recipient,
-                                                  final Resource resource) throws
-            MultipartParseException,
-            ClaimsException,
-            DapsTokenManagerException,
-            IOException {
+    public Optional<MessageContainer<?>> sendResourceUnavailableMessage(final URI recipient,
+                                                                        final Resource resource)
+            throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
+            NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
+            UnexpectedPayloadException, SerializeException, DeserializeException,
+            RejectionException, UnknownResponseException {
         final var response = brokerSvc.removeResourceFromBroker(recipient, resource);
         final var msg = String.format("Successfully unregistered resource. "
                 + "[resourceId=(%s), url=(%s)]", resource.getId(), recipient);
@@ -168,34 +200,27 @@ public class GlobalMessageService {
         if (result) {
             removeBrokerFromOfferedResourceBrokerList(recipient, resource);
         }
-        return result;
+        return Optional.of(response);
     }
 
     /**
      * Send query message and validate received response.
      * @param recipient The recipient.
      * @param query     The query statement.
-     * @return True if the message was successfully processed by the recipient, false if not.
-     * @throws MultipartParseException   If response could not be parsed to header and payload.
-     * @throws ClaimsException           Exception that gets thrown, if errors occur while
-     *                                   validating a DAT token.
-     * @throws DapsTokenManagerException DAPS Token can not be acquired.
-     * @throws IOException               Any other problems in establishing a connection
-     *                                   to the target.
+     * @return Optional of message container providing the received ids response.
      */
-    public Optional<String> sendQueryMessage(final URI recipient, final String query) throws
-            MultipartParseException,
-            ClaimsException,
-            DapsTokenManagerException,
-            IOException {
+    public Optional<MessageContainer<?>> sendQueryMessage(final URI recipient, final String query)
+            throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
+            NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
+            UnexpectedPayloadException, SerializeException, DeserializeException,
+            RejectionException, UnknownResponseException {
         final var response = brokerSvc.queryBroker(recipient, query,
                 QueryLanguage.SPARQL, QueryScope.ALL, QueryTarget.BROKER);
         final var msg = String.format("Successfully processed query. [url=(%s)]", recipient);
         if (validateResponse(response, msg)) {
             return response.getPayload();
         }
-
-        return Optional.empty();
+        return Optional.of(response);
     }
 
     /**
@@ -204,22 +229,14 @@ public class GlobalMessageService {
      * @param term      The search term.
      * @param limit     The limit value.
      * @param offset    The offset value.
-     * @return True if the message was successfully processed by the recipient, false if not.
-     * @throws MultipartParseException   If response could not be parsed to header and payload.
-     * @throws ClaimsException           Exception that gets thrown, if errors occur
-     *                                   while validating a DAT token.
-     * @throws DapsTokenManagerException DAPS Token can not be acquired.
-     * @throws IOException               Any other problems in establishing a connection
-     *                                   to the target.
+     * @return Optional of message container providing the received ids response.
      */
-    public Optional<String> sendFullTextSearchQueryMessage(final URI recipient,
-                                                           final String term,
-                                                           final int limit,
-                                                           final int offset) throws
-            MultipartParseException,
-            ClaimsException,
-            DapsTokenManagerException,
-            IOException {
+    public Optional<MessageContainer<?>> sendFullTextSearchMessage(
+            final URI recipient, final String term, final int limit, final int offset)
+            throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
+            NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
+            UnexpectedPayloadException, SerializeException, DeserializeException,
+            RejectionException, UnknownResponseException {
         final var response = brokerSvc.fullTextSearchBroker(recipient, term,
                 QueryScope.ALL, QueryTarget.BROKER, limit, offset);
 
@@ -229,25 +246,34 @@ public class GlobalMessageService {
             return response.getPayload();
         }
 
-        return Optional.empty();
+        return Optional.of(response);
     }
 
     /**
      * Check if a request was successfully processed by the recipient.
-     * @param response The response map.
-     * @param logMsg   The log message.
-     * @return true if the recipient successfully processed the message, false otherwise.
+     * Validates response. Returns response entity with status code 200 if a
+     * MessageProcessedNotificationMessage has been received, responds with the message's content
+     * if not.
+     *
+     * @param response The response container.
+     * @param msgType  Expected message type.
+     * @return ResponseEntity with status code.
      */
-    private boolean validateResponse(final MessageAndPayload<? extends Message, ?> response,
-                                     final String logMsg) {
-        if (response != null) {
-            if (log.isInfoEnabled()) {
-                log.info("{}", logMsg);
-            }
-            return true;
+    public ResponseEntity<Object> validateResponse(final Optional<MessageContainer<?>> response,
+                                                   final Class<?> msgType) {
+        if (response.isEmpty()) {
+            return ControllerUtils.respondReceivedInvalidResponse();
         }
 
-        return false;
+        final var header = response.get().getUnderlyingMessage();
+        final var payload = response.get().getReceivedPayload();
+        if (header.getClass().equals(msgType)) {
+            return new ResponseEntity<>(payload, HttpStatus.OK);
+        }
+
+        // If response message is not of type MessageProcessedNotificationMessage.
+        final var content = notificationSvc.getResponseContent(header, payload);
+        return ControllerUtils.respondWithContent(content);
     }
 
     /**

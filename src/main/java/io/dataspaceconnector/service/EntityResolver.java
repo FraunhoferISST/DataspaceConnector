@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.exception.InvalidResourceException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
@@ -57,6 +50,13 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * This service offers methods for finding entities by their identifying URI.
@@ -266,7 +266,8 @@ public class EntityResolver {
      * @throws IOException if the data cannot be received.
      */
     public InputStream getDataByArtifactId(final URI requestedArtifact,
-                                           final QueryInput queryInput) throws IOException {
+                                           final QueryInput queryInput)
+            throws IOException, UnexpectedResponseException {
         final var endpoint = EndpointUtils.getUUIDFromPath(requestedArtifact);
         return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint, queryInput);
     }

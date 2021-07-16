@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exception;
+package io.dataspaceconnector.model;
 
 /**
- * Thrown to indicate that the message could not be build.
+ * The base factory for factory classes.
+ * This class creates and updates an entity by using a supplied description.
+ * @param <T> The type of the entity.
+ * @param <D> The type of the description.
  */
-public class MessageBuilderException extends MessageResponseException {
+public interface AbstractFactory<T extends AbstractEntity, D extends AbstractDescription<T>> {
     /**
-     * Default serial version uid.
+     * Create a new entity.
+     * @param desc The description of the entity.
+     * @return The new entity.
      */
-    private static final long serialVersionUID = 1L;
-
+    T create(D desc);
     /**
-     * Construct a MessageBuilderException with the specified detail message and cause.
-     *
-     * @param msg   The detail message.
-     * @param cause The cause.
+     * Update an entity.
+     * @param entity The entity to be updated.
+     * @param desc The description of the new entity.
+     * @return true if changes where performed.
      */
-    public MessageBuilderException(final String msg, final Throwable cause) {
-        super(msg, cause);
-    }
+    boolean update(T entity, D desc);
 }
