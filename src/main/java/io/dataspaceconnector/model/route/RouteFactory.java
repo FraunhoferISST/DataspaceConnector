@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.model.route;
 
-import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import io.dataspaceconnector.model.configuration.DeployMethod;
-import io.dataspaceconnector.model.endpoint.Endpoint;
-import io.dataspaceconnector.util.MetadataUtils;
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.Objects;
+
+import io.dataspaceconnector.model.configuration.DeployMethod;
+import io.dataspaceconnector.model.endpoint.Endpoint;
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
+import io.dataspaceconnector.util.MetadataUtils;
+import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates a route.
@@ -33,7 +33,7 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
     /**
      * The default string.
      */
-    private static final String DEFAULT_CONFIGURATION = "Configuration";
+    public static final String DEFAULT_CONFIGURATION = "Configuration";
 
     /**
      * @param desc The description of the entity.
@@ -58,22 +58,8 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
                 desc.getConfiguration());
         final var hasUpdatedDeployMethod = updateRouteDeployMethod(route,
                 desc.getDeploy());
-        final var hasUpdatedRouteType = updateRouteType(route, desc.getRouteType());
 
-        return hasUpdatedRouteConfig || hasUpdatedDeployMethod || hasUpdatedRouteType;
-    }
-
-    /**
-     * @param route     The route.
-     * @param routeType The route type.
-     * @return True, if route type is updated.
-     */
-    private boolean updateRouteType(final Route route, final RouteType routeType) {
-        if (routeType != null) {
-            route.setRouteType(routeType);
-            return true;
-        }
-        return false;
+        return hasUpdatedRouteConfig || hasUpdatedDeployMethod;
     }
 
     /**
@@ -82,6 +68,10 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
      * @return True, if route deploy method is updated.
      */
     private boolean updateRouteDeployMethod(final Route route, final DeployMethod deployMethod) {
+        if (route.getDeploy() != null && route.getDeploy() == deployMethod) {
+            return false;
+        }
+
         route.setDeploy(Objects.requireNonNullElse(deployMethod, DeployMethod.NONE));
         return true;
     }

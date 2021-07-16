@@ -15,13 +15,16 @@
  */
 package io.dataspaceconnector.model.proxy;
 
-import org.junit.jupiter.api.Test;
-
 import java.net.URI;
 import java.util.List;
 
+import io.dataspaceconnector.model.auth.Authentication;
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ProxyFactoryTest {
 
@@ -43,5 +46,92 @@ public class ProxyFactoryTest {
         assertEquals(location, result.getLocation());
         assertFalse(result.getExclusions().isEmpty());
         assertEquals(exclusion, result.getExclusions().get(0));
+    }
+
+    @Test
+    void update_newLocation_willUpdate() {
+        /* ARRANGE */
+        final var desc = new ProxyDesc();
+        desc.setLocation(URI.create("https://someLocation"));
+        final var proxy = factory.create(new ProxyDesc());
+
+        /* ACT */
+        final var result = factory.update(proxy, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(desc.getLocation(), proxy.getLocation());
+    }
+
+    @Test
+    void update_sameLocation_willNotUpdate() {
+        /* ARRANGE */
+        final var desc = new ProxyDesc();
+        final var proxy = factory.create(new ProxyDesc());
+
+        /* ACT */
+        final var result = factory.update(proxy, desc);
+
+        /* ASSERT */
+        assertFalse(result);
+        assertEquals(ProxyFactory.DEFAULT_LOCATION, proxy.getLocation());
+    }
+
+    @Test
+    void update_newExclusionList_willUpdate() {
+        /* ARRANGE */
+        final var desc = new ProxyDesc();
+        desc.setExclusions(List.of("exclusion"));
+        final var proxy = factory.create(new ProxyDesc());
+
+        /* ACT */
+        final var result = factory.update(proxy, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(desc.getExclusions(), proxy.getExclusions());
+    }
+
+    @Test
+    void update_sameExclusionList_willNotUpdate() {
+        /* ARRANGE */
+        final var desc = new ProxyDesc();
+        final var proxy = factory.create(new ProxyDesc());
+
+        /* ACT */
+        final var result = factory.update(proxy, desc);
+
+        /* ASSERT */
+        assertFalse(result);
+        assertTrue(proxy.getExclusions().isEmpty());
+    }
+
+    @Test
+    void update_newAuth_willUpdate() {
+        /* ARRANGE */
+        final var desc = new ProxyDesc();
+        desc.setAuthentication(new Authentication());
+        final var proxy = factory.create(new ProxyDesc());
+
+        /* ACT */
+        final var result = factory.update(proxy, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(desc.getAuthentication(), proxy.getAuthentication());
+    }
+
+    @Test
+    void update_sameAuth_willNotUpdate() {
+        /* ARRANGE */
+        final var desc = new ProxyDesc();
+        final var proxy = factory.create(new ProxyDesc());
+
+        /* ACT */
+        final var result = factory.update(proxy, new ProxyDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+        assertNull(proxy.getAuthentication());
     }
 }

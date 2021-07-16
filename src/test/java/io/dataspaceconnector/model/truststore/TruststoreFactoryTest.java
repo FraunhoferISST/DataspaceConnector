@@ -15,9 +15,14 @@
  */
 package io.dataspaceconnector.model.truststore;
 
+import java.net.URI;
+
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TruststoreFactoryTest {
 
@@ -34,5 +39,63 @@ class TruststoreFactoryTest {
 
         /* ASSERT */
         assertNotNull(result);
+    }
+
+    @Test
+    void update_newLocation_willUpdate() {
+        /* ARRANGE */
+        final var desc = new TruststoreDesc();
+        desc.setLocation(URI.create("https://someLocation"));
+        final var truststore = factory.create(new TruststoreDesc());
+
+        /* ACT */
+        final var result = factory.update(truststore, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(desc.getLocation(), truststore.getLocation());
+    }
+
+    @Test
+    void update_sameLocation_willNotUpdate() {
+        /* ARRANGE */
+        final var desc = new TruststoreDesc();
+        final var truststore = factory.create(new TruststoreDesc());
+
+        /* ACT */
+        final var result = factory.update(truststore, desc);
+
+        /* ASSERT */
+        assertFalse(result);
+        assertEquals(TruststoreFactory.DEFAULT_LOCATION, truststore.getLocation());
+    }
+
+    @Test
+    void update_newPassword_willUpdate() {
+        /* ARRANGE */
+        final var desc = new TruststoreDesc();
+        desc.setPassword("A wild password");
+        final var truststore = factory.create(new TruststoreDesc());
+
+        /* ACT */
+        final var result = factory.update(truststore, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(desc.getPassword(), truststore.getPassword());
+    }
+
+    @Test
+    void update_samePassword_willNotUpdate() {
+        /* ARRANGE */
+        final var desc = new TruststoreDesc();
+        final var truststore = factory.create(new TruststoreDesc());
+
+        /* ACT */
+        final var result = factory.update(truststore, desc);
+
+        /* ASSERT */
+        assertFalse(result);
+        assertEquals(TruststoreFactory.DEFAULT_PASSWORD, truststore.getPassword());
     }
 }

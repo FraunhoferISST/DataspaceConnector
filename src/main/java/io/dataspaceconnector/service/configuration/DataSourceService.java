@@ -17,18 +17,11 @@ package io.dataspaceconnector.service.configuration;
 
 import io.dataspaceconnector.model.datasource.DataSource;
 import io.dataspaceconnector.model.datasource.DataSourceDesc;
-import io.dataspaceconnector.model.datasource.DataSourceFactory;
-import io.dataspaceconnector.repository.DataSourceRepository;
 import io.dataspaceconnector.service.resource.BaseEntityService;
-import io.dataspaceconnector.util.ErrorMessages;
-import io.dataspaceconnector.util.Utils;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 /**
  * Service class for data sources.
@@ -37,25 +30,4 @@ import java.util.UUID;
 @Getter(AccessLevel.PACKAGE)
 @RequiredArgsConstructor
 public class DataSourceService extends BaseEntityService<DataSource, DataSourceDesc> {
-
-    /**
-     * The data source repository.
-     */
-    private final @NonNull DataSourceRepository dataSourceRepository;
-
-    /**
-     * The data source factory.
-     */
-    private final @NonNull DataSourceFactory dataSourceFactory;
-
-    @Override
-    public final void delete(final UUID entityId) {
-        Utils.requireNonNull(entityId, ErrorMessages.ENTITYID_NULL);
-        var dataSource = dataSourceRepository.getById(entityId);
-
-        if (dataSource.getAuthentication() != null) {
-            dataSourceFactory.removeAuthentication(dataSource);
-        }
-        dataSourceRepository.delete(dataSource);
-    }
 }

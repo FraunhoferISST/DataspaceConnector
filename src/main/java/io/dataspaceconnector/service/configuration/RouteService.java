@@ -78,9 +78,8 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      * @param endpointId The endpoint id.
      */
     public void setStartEndpoint(final UUID routeId, final UUID endpointId) {
-        final var routeTmp = get(routeId);
-        final var endpoint = endpointService.get(endpointId);
-        persist(((RouteFactory) getFactory()).setStartEndpoint(routeTmp, endpoint));
+        persist(((RouteFactory) getFactory()).setStartEndpoint(get(routeId),
+                                                               endpointService.get(endpointId)));
     }
 
     /**
@@ -88,8 +87,7 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      * @param routeId The route id.
      */
     public void removeStartEndpoint(final UUID routeId) {
-        final var routeTmp = get(routeId);
-        persist(((RouteFactory) getFactory()).deleteStartEndpoint(routeTmp));
+        persist(((RouteFactory) getFactory()).deleteStartEndpoint(get(routeId)));
     }
 
     /**
@@ -98,9 +96,8 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      * @param endpointId The endpoint id.
      */
     public void setLastEndpoint(final UUID routeId, final UUID endpointId) {
-        final var routeTmp = get(routeId);
-        final var endpoint = endpointService.get(endpointId);
-        persist(((RouteFactory) getFactory()).setLastEndpoint(routeTmp, endpoint));
+        persist(((RouteFactory) getFactory()).setLastEndpoint(get(routeId),
+                                                              endpointService.get(endpointId)));
     }
 
     /**
@@ -108,7 +105,6 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      * @param routeId The route id.
      */
     public void removeLastEndpoint(final UUID routeId) {
-        final var routeTmp = get(routeId);
-        persist(((RouteFactory) getFactory()).deleteStartEndpoint(routeTmp));
+        persist(((RouteFactory) getFactory()).deleteLastEndpoint(get(routeId)));
     }
 }

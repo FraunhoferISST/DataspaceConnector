@@ -19,7 +19,6 @@ import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteDesc;
 import io.dataspaceconnector.model.route.RouteFactory;
-import io.dataspaceconnector.model.route.RouteType;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -38,7 +37,6 @@ public class RouteViewAssemblerTest {
         final var after = getRouteView();
 
         /* ASSERT */
-        assertEquals(after.getRouteType(), shouldLookLike.getRouteType());
         assertEquals(after.getDescription(), shouldLookLike.getDescription());
         assertEquals(after.getTitle(), shouldLookLike.getTitle());
         assertEquals(after.getDeploy(), shouldLookLike.getDeploy());
@@ -53,7 +51,6 @@ public class RouteViewAssemblerTest {
 
     private RouteDesc getRouteDesc() {
         final var desc = new RouteDesc();
-        desc.setRouteType(RouteType.ROUTE);
         desc.setDescription("Route Desc");
         desc.setTitle("My Route");
         desc.setDeploy(DeployMethod.CAMEL);

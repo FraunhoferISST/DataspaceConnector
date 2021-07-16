@@ -19,8 +19,6 @@ import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
-
 /**
  * Creates and updates data sources.
  */
@@ -30,7 +28,7 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
     /**
      * The default data source type.
      */
-    private static final DataSourceType DEFAULT_SOURCE_TYPE = DataSourceType.DATABASE;
+    public static final DataSourceType DEFAULT_SOURCE_TYPE = DataSourceType.DATABASE;
 
     /**
      * @param desc The description of the entity.
@@ -63,7 +61,12 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
      */
     private boolean updateDataSourceType(final DataSource dataSource,
                                          final DataSourceType dataSourceType) {
-        dataSource.setType(Objects.requireNonNullElse(dataSourceType, DEFAULT_SOURCE_TYPE));
+        final var tmp = dataSourceType == null ? DEFAULT_SOURCE_TYPE : dataSourceType;
+        if (dataSource.getType() != null && dataSource.getType().equals(tmp)) {
+            return false;
+        }
+
+        dataSource.setType(tmp);
         return true;
     }
 
@@ -78,20 +81,11 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
             return false;
         }
 
-        if (dataSource.getAuthentication() != null && authentication == null) {
-            dataSource.setAuthentication(null);
-            return true;
+        if (dataSource.getAuthentication() != null && !dataSource.getAuthentication().equals(authentication)) {
+            return false;
         }
 
         dataSource.setAuthentication(authentication);
         return true;
-    }
-
-    /**
-     * Removes the authentication from the data source.
-     * @param dataSource The data source
-     */
-    public void removeAuthentication(final DataSource dataSource) {
-        dataSource.setAuthentication(null);
     }
 }

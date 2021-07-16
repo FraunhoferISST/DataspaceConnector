@@ -64,12 +64,6 @@ public class Route extends NamedEntity {
     private DeployMethod deploy;
 
     /**
-     * The route type of the route.
-     */
-    @Enumerated(EnumType.STRING)
-    private RouteType routeType;
-
-    /**
      * List of subroutes.
      */
     @OneToMany

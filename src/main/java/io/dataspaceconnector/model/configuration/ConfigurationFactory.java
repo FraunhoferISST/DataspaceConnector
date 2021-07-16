@@ -15,9 +15,13 @@
  */
 package io.dataspaceconnector.model.configuration;
 
-import io.dataspaceconnector.model.named.AbstractNamedFactory;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.model.proxy.ProxyDesc;
 import io.dataspaceconnector.model.proxy.ProxyFactory;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
@@ -26,11 +30,6 @@ import io.dataspaceconnector.util.MetadataUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Creates and updates a configuration.
@@ -67,28 +66,33 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     /**
      * Default connector endpoint.
      */
-    private static final URI DEFAULT_CONNECTOR_ENDPOINT =
+    public static final URI DEFAULT_CONNECTOR_ENDPOINT =
             URI.create("https://localhost:8080/api/ids/data");
 
     /**
      * The default version.
      */
-    private static final String DEFAULT_VERSION = "6.0.0";
+    public static final String DEFAULT_VERSION = "6.0.0";
 
     /**
      * The default outbound model version.
      */
-    private static final String DEFAULT_OUTBOUND_VERSION = "4.1.0";
+    public static final String DEFAULT_OUTBOUND_VERSION = "4.1.0";
 
     /**
      * The default maintainer.
      */
-    private static final URI DEFAULT_MAINTAINER = URI.create("https://www.isst.fraunhofer.de/");
+    public static final URI DEFAULT_MAINTAINER = URI.create("https://www.isst.fraunhofer.de/");
 
     /**
      * The default curator.
      */
-    private static final URI DEFAULT_CURATOR = URI.create("https://www.isst.fraunhofer.de/");
+    public static final URI DEFAULT_CURATOR = URI.create("https://www.isst.fraunhofer.de/");
+
+    /**
+     * The default security profile.
+     */
+    public static final SecurityProfile DEFAULT_SECURITY_PROFILE = SecurityProfile.BASE_SECURITY;
 
     /**
      * @param desc The description of the entity.
@@ -96,12 +100,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
      */
     @Override
     protected Configuration initializeEntity(final ConfigurationDesc desc) {
-        final var config = new Configuration();
-        config.setLogLevel(DEFAULT_LOG_LEVEL);
-        config.setDeployMode(DEFAULT_DEPLOY_MODE);
-        config.setInboundModelVersion(new ArrayList<>());
-
-        return config;
+        return new Configuration();
     }
 
     /**
@@ -149,8 +148,12 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
      */
     private boolean updateSecurityProfile(final Configuration config,
                                           final SecurityProfile securityProfile) {
-        config.setSecurityProfile(Objects.requireNonNullElse(securityProfile,
-                SecurityProfile.BASE_SECURITY));
+        final var tmp = securityProfile == null ? DEFAULT_SECURITY_PROFILE : securityProfile;
+        if (config.getSecurityProfile() != null && config.getSecurityProfile().equals(tmp)) {
+            return false;
+        }
+
+        config.setSecurityProfile(tmp);
         return true;
     }
 
@@ -272,7 +275,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     private boolean updateDeployMode(final Configuration config,
                                      final DeployMode deployMode) {
         final var tmp = deployMode == null ? DEFAULT_DEPLOY_MODE : deployMode;
-        if (config.getDeployMode().equals(tmp)) {
+        if (config.getDeployMode() != null && config.getDeployMode().equals(tmp)) {
             return false;
         }
 
@@ -282,7 +285,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
 
     private boolean updateLogLevel(final Configuration config, final LogLevel logLevel) {
         final var tmp = logLevel == null ? DEFAULT_LOG_LEVEL : logLevel;
-        if (config.getLogLevel().equals(tmp)) {
+        if (config.getLogLevel() != null && config.getLogLevel().equals(tmp)) {
             return false;
         }
 

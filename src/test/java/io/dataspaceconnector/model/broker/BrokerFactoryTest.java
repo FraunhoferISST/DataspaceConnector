@@ -15,10 +15,14 @@
  */
 package io.dataspaceconnector.model.broker;
 
+import java.net.URI;
+
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BrokerFactoryTest {
 
@@ -38,5 +42,64 @@ public class BrokerFactoryTest {
         /* ASSERT */
         assertEquals(title, result.getTitle());
         assertEquals(RegistrationStatus.UNREGISTERED, result.getStatus());
+        assertTrue(result.getOfferedResources().isEmpty());
+    }
+
+    @Test
+    void update_newLocation_willUpdate() {
+        /* ARRANGE */
+        final var desc = new BrokerDesc();
+        desc.setLocation(URI.create("https://someLocation"));
+        final var broker = factory.create(new BrokerDesc());
+
+        /* ACT */
+        final var result = factory.update(broker, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(desc.getLocation(), broker.getLocation());
+    }
+
+    @Test
+    void update_sameLocation_willNotUpdate() {
+        /* ARRANGE */
+        final var desc = new BrokerDesc();
+        final var broker = factory.create(new BrokerDesc());
+
+        /* ACT */
+        final var result = factory.update(broker, desc);
+
+        /* ASSERT */
+        assertFalse(result);
+        assertEquals(BrokerFactory.DEFAULT_URI, broker.getLocation());
+    }
+
+    @Test
+    void update_newRegistrationStatus_willUpdate() {
+        /* ARRANGE */
+        final var desc = new BrokerDesc();
+        desc.setStatus(RegistrationStatus.REGISTERED);
+        final var broker = factory.create(new BrokerDesc());
+
+        /* ACT */
+        final var result = factory.update(broker, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(desc.getStatus(), broker.getStatus());
+    }
+
+    @Test
+    void update_sameRegistrationStatus_willNotUpdate() {
+        /* ARRANGE */
+        final var desc = new BrokerDesc();
+        final var broker = factory.create(new BrokerDesc());
+
+        /* ACT */
+        final var result = factory.update(broker, desc);
+
+        /* ASSERT */
+        assertFalse(result);
+        assertEquals(RegistrationStatus.UNREGISTERED, broker.getStatus());
     }
 }

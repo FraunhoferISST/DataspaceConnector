@@ -15,9 +15,14 @@
  */
 package io.dataspaceconnector.model.route;
 
+import io.dataspaceconnector.model.configuration.DeployMethod;
+import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RouteFactoryTest {
 
@@ -25,14 +30,12 @@ public class RouteFactoryTest {
     final RouteFactory factory = new RouteFactory();
 
     @Test
-    void create_validDesc_returnNew() {
+    public void create_validDesc_returnNew() {
         /* ARRANGE */
         final var title = "MyRoute";
         final var description = "MyDesc";
-        final var routeType = RouteType.ROUTE;
         desc.setTitle(title);
         desc.setDescription(description);
-        desc.setRouteType(routeType);
 
         /* ACT */
         final var result = factory.create(desc);
@@ -40,6 +43,97 @@ public class RouteFactoryTest {
         /* ASSERT */
         assertEquals(title, result.getTitle());
         assertEquals(description, result.getDescription());
-        assertEquals(routeType, result.getRouteType());
+        assertTrue(result.getOutput().isEmpty());
+    }
+
+    @Test
+    public void update_newRouteConfig_willUpdate() {
+        /* ARRANGE */
+        final var desc = new RouteDesc();
+        desc.setConfiguration("config");
+        final var route = factory.create(new RouteDesc());
+
+        /* ACT */
+        final var result = factory.update(route, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(desc.getConfiguration(), route.getConfiguration());
+    }
+
+    @Test
+    public void update_sameRouteConfig_willNotUpdate() {
+        /* ARRANGE */
+        final var desc = new RouteDesc();
+        final var route = factory.create(new RouteDesc());
+
+        /* ACT */
+        final var result = factory.update(route, desc);
+
+        /* ASSERT */
+        assertFalse(result);
+        assertEquals(RouteFactory.DEFAULT_CONFIGURATION, route.getConfiguration());
+    }
+
+
+    @Test
+    public void update_newDeployMethod_willUpdate() {
+        /* ARRANGE */
+        final var desc = new RouteDesc();
+        desc.setDeploy(DeployMethod.CAMEL);
+        final var route = factory.create(new RouteDesc());
+
+        /* ACT */
+        final var result = factory.update(route, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(desc.getDeploy(), route.getDeploy());
+    }
+
+    @Test
+    public void update_sameDeployMethod_willNotUpdate() {
+        /* ARRANGE */
+        final var desc = new RouteDesc();
+        final var route = factory.create(new RouteDesc());
+
+        /* ACT */
+        final var result = factory.update(route, desc);
+
+        /* ASSERT */
+        assertFalse(result);
+        assertEquals(DeployMethod.NONE, route.getDeploy());
+    }
+
+    @Test
+    public void setStartEndpoint_setValue_willUpdate() {
+        final var route = new Route();
+        final var endpoint = new GenericEndpoint();
+
+        assertEquals(endpoint, factory.setStartEndpoint(route, endpoint).getStart());
+    }
+
+    @Test
+    public void removeStartEndpoint_willRemove() {
+        final var route = new Route();
+        route.setStart(new GenericEndpoint());
+
+        assertNull(factory.deleteStartEndpoint(route).getStart());
+    }
+
+    @Test
+    public void setLastEndpoint_setValue_willUpdate() {
+        final var route = new Route();
+        final var endpoint = new GenericEndpoint();
+
+        assertEquals(endpoint, factory.setLastEndpoint(route, endpoint).getEnd());
+    }
+
+    @Test
+    public void removeLastEndpoint_willRemove() {
+        final var route = new Route();
+        route.setEnd(new GenericEndpoint());
+
+        assertNull(factory.deleteLastEndpoint(route).getEnd());
     }
 }

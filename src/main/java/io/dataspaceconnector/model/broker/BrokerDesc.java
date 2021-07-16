@@ -39,5 +39,5 @@ public class BrokerDesc extends NamedDescription {
      * The status of registration.
      */
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private RegistrationStatus status;
+    private RegistrationStatus status = RegistrationStatus.UNREGISTERED;
 }

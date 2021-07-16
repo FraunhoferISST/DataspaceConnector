@@ -33,7 +33,7 @@ public class BrokerFactory extends AbstractNamedFactory<Broker, BrokerDesc> {
     /**
      * Default access url.
      */
-    private static final URI DEFAULT_URI = URI.create("https://broker.com");
+    public static final URI DEFAULT_URI = URI.create("https://broker.com");
 
     /**
      * @param desc The description of the entity.
@@ -65,7 +65,11 @@ public class BrokerFactory extends AbstractNamedFactory<Broker, BrokerDesc> {
      * @param status The registration status of the broker.
      * @return True, if broker is updated.
      */
-    public boolean updateRegistrationStatus(final Broker broker, final RegistrationStatus status) {
+    private boolean updateRegistrationStatus(final Broker broker, final RegistrationStatus status) {
+        if (broker.getStatus() != null && broker.getStatus() == status) {
+            return false;
+        }
+
         broker.setStatus(Objects.requireNonNullElse(status, RegistrationStatus.UNREGISTERED));
         return true;
     }

@@ -54,12 +54,12 @@ public class DataSource extends Entity {
     /**
      * The authentication for the data source.
      */
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Authentication authentication;
 
     /**
      * The type of the data source.
      */
     @Enumerated(EnumType.STRING)
-    private DataSourceType type;
+    private DataSourceType type = DataSourceType.DATABASE;
 }
