@@ -15,6 +15,7 @@
  */
 package io.configmanager.extensions.gui.api;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,7 @@ public interface GuiUtilApi {
      * @param enumName Selection of the domain of the requested data, e.g. language.
      * @return The response message or an error.
      */
+    @Hidden
     @GetMapping(value = "/enum/{enumName}")
     @Operation(summary = "Get the specific enum")
     @ApiResponse(responseCode = "200", description = "Successfully get the enums")

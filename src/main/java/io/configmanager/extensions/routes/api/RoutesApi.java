@@ -15,6 +15,7 @@
  */
 package io.configmanager.extensions.routes.api;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,7 @@ public interface RoutesApi {
      * @param policy The policy.
      * @return The response message or an error.
      */
+    @Hidden
     @PostMapping(value = "/route/error", produces = "application/ld+json")
     @Operation(summary = "Save route related errors in the ConfigManager-backend")
     @ApiResponse(responseCode = "200", description = "Saved Route-Error in ConfigManager-backend.")
@@ -40,6 +42,7 @@ public interface RoutesApi {
      * Get new route related errors.
      * @return The response message or an error.
      */
+    @Hidden
     @GetMapping(value = "/route/error", produces = "application/ld+json")
     @Operation(summary = "Get new route related errors")
     @ApiResponse(responseCode = "200", description = "Loaded and returned cached Route-Errors.")
