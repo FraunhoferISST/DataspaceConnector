@@ -16,6 +16,7 @@
 package io.dataspaceconnector.service;
 
 import io.dataspaceconnector.exception.PolicyRestrictionException;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
 import io.dataspaceconnector.service.resource.ArtifactService;
 import io.dataspaceconnector.util.ErrorMessages;
@@ -56,7 +57,7 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
      */
     @Override
     public InputStream retrieve(final UUID artifactId, final URI recipient,
-                                final URI transferContract) {
+                                final URI transferContract) throws UnexpectedResponseException {
         return retrieve(artifactId, recipient, transferContract, null);
     }
 
@@ -66,7 +67,7 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
     @Override
     public InputStream retrieve(final UUID artifactId, final URI recipient,
                                 final URI transferContract, final QueryInput queryInput)
-            throws PolicyRestrictionException {
+            throws PolicyRestrictionException, UnexpectedResponseException {
         final var artifact = artifactService.get(artifactId);
         final var response = artifactReqSvc.sendMessage(recipient,
                 artifact.getRemoteId(), transferContract, queryInput);

@@ -51,21 +51,10 @@ public abstract class AbstractFactory<T extends Entity, D extends Description> {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var entity = initializeEntity(desc);
-        initializeBootstrapId(entity, desc);
 
         update(entity, desc);
 
         return entity;
-    }
-
-    /**
-     * @param entity The entity.
-     * @param desc The description of the entity.
-     */
-    private void initializeBootstrapId(final T entity, final D desc) {
-        if (desc.getBootstrapId() != null) {
-            entity.setBootstrapId(desc.getBootstrapId());
-        }
     }
 
     /**

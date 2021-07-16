@@ -15,9 +15,19 @@
  */
 package io.dataspaceconnector.model.configuration;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.net.URI;
+import java.util.List;
+
 import de.fraunhofer.iais.eis.ConnectorStatus;
-import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.keystore.Keystore;
+import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.proxy.Proxy;
 import io.dataspaceconnector.model.truststore.Truststore;
 import io.dataspaceconnector.model.util.UriConverter;
@@ -28,16 +38,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Convert;
-import javax.persistence.ElementCollection;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import java.net.URI;
-import java.util.List;
 
 /**
  * The configuration describes the configuration of a connector.
@@ -118,18 +118,18 @@ public class Configuration extends NamedEntity {
     /**
      * The proxy configuration.
      */
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Proxy proxy;
 
     /**
      * The trust store.
      */
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Truststore truststore;
 
     /**
      * The key store.
      */
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Keystore keystore;
 }

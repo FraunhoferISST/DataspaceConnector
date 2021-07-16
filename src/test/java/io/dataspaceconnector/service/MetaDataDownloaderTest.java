@@ -19,8 +19,8 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
-import io.dataspaceconnector.service.message.type.exceptions.InvalidResponse;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.mockito.ArgumentMatchers.eq;
 
-@SpringBootTest(classes = { MetaDataDownloader.class })
+@SpringBootTest(classes = { MetadataDownloader.class })
 class MetaDataDownloaderTest {
 
     @MockBean
@@ -39,10 +39,10 @@ class MetaDataDownloaderTest {
     private EntityPersistenceService persistenceSvc;
 
     @Autowired
-    MetaDataDownloader downloader;
+    MetadataDownloader downloader;
 
     @Test
-    void download_validInput_isSuccessfull() throws InvalidResponse {
+    void download_validInput_isSuccessfull() throws UnexpectedResponseException {
         /* ARRANGE */
         final var response = new HashMap<String, String>();
         response.put("Hi", "Bye");
@@ -52,7 +52,7 @@ class MetaDataDownloaderTest {
         final var artifactList = Arrays.asList(URI.create("https://artifact1"));
         final var download = false;
 
-        Mockito.when(descReqSvc.sendMessageAndValidate(eq(recipient), eq(resourceList.get(0))))
+        Mockito.when(descReqSvc.sendMessage(eq(recipient), eq(resourceList.get(0))))
                .thenReturn(response);
 
         /* ACT */

@@ -34,7 +34,6 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.exception.ContractException;
-import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.service.EntityResolver;
@@ -120,13 +119,12 @@ public class ContractManager {
      * @param payload The message's payload (agreement as string).
      * @param request The contract request that was sent.
      * @return The ids contract agreement.
-     * @throws MessageResponseException If the response could not be processed.
-     * @throws IllegalArgumentException If deserialization fails.
-     * @throws ContractException        If the contract's content is invalid.
+     * @throws IllegalArgumentException if deserialization fails.
+     * @throws ContractException        if the contract's content is invalid.
      */
     public ContractAgreement validateContractAgreement(
-            final String payload, final ContractRequest request) throws MessageResponseException,
-            IllegalArgumentException, ContractException {
+            final String payload, final ContractRequest request) throws IllegalArgumentException,
+            ContractException {
         final var agreement = deserializationService.getContractAgreement(payload);
 
         ContractUtils.validateRuleAssigner(agreement);

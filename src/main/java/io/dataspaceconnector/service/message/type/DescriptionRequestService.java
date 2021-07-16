@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.service.message.type;
 
-import java.net.URI;
-import java.util.Map;
-
 import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DescriptionResponseMessageImpl;
 import de.fraunhofer.iais.eis.Message;
@@ -27,10 +24,13 @@ import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.model.message.DescriptionRequestMessageDesc;
-import io.dataspaceconnector.service.message.type.exceptions.InvalidResponse;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.Utils;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.util.Map;
 
 /**
  * Message service for ids description request messages.
@@ -73,16 +73,28 @@ public final class DescriptionRequestService
     }
 
     /**
-     * Build and send a description request message.
+     * Build and send a description request message and then validate the response.
      *
      * @param recipient The recipient.
      * @param elementId The requested element.
      * @return The response map.
-     * @throws MessageException If message handling failed.
+     * @throws MessageException            if message handling failed.
+     * @throws MessageResponseException    if the response could not be processed.
+     * @throws UnexpectedResponseException if the response is not as expected.
      */
     public Map<String, String> sendMessage(final URI recipient, final URI elementId)
-            throws MessageException {
-        return send(new DescriptionRequestMessageDesc(recipient, elementId), "");
+            throws MessageException, MessageResponseException, UnexpectedResponseException {
+        final var desc = new DescriptionRequestMessageDesc(recipient, elementId);
+        final var response = send(desc, "");
+        try {
+            if (!validateResponse(response)) {
+                throw new UnexpectedResponseException(getResponseContent(response));
+            }
+        } catch (MessageResponseException e) {
+            throw new UnexpectedResponseException(getResponseContent(response), e);
+        }
+
+        return response;
     }
 
     /**
@@ -95,28 +107,5 @@ public final class DescriptionRequestService
     public boolean validateResponse(final Map<String, String> response)
             throws MessageResponseException {
         return isValidResponseType(response);
-    }
-
-    /**
-     * Build and send a description request message and then validate the response.
-     * @param recipient The recipient.
-     * @param elementId The requested element.
-     * @return The response map.
-     * @throws InvalidResponse if the response is not valid.
-     * @throws MessageException if message handling failed.
-     */
-    public Map<String, String> sendMessageAndValidate(final URI recipient,
-                                                      final URI elementId)
-            throws InvalidResponse, MessageException {
-        final var response = sendMessage(recipient, elementId);
-        try {
-            if (!validateResponse(response)) {
-                throw new InvalidResponse(getResponseContent(response));
-            }
-        } catch (MessageResponseException e) {
-            throw new InvalidResponse(getResponseContent(response), e);
-        }
-
-        return response;
     }
 }

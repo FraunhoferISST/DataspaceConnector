@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import io.dataspaceconnector.exception.PolicyRestrictionException;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.exception.UnreachableLineException;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
@@ -135,7 +136,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final QueryInput queryInput)
-            throws PolicyRestrictionException, IOException {
+            throws PolicyRestrictionException, IOException, UnexpectedResponseException {
         final var agreements =
                 ((ArtifactRepository) getRepository()).findRemoteOriginAgreements(artifactId);
         if (agreements.size() > 0) {
@@ -150,7 +151,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private InputStream tryToAccessDataByUsingAnyAgreement(
             final PolicyVerifier<Artifact> accessVerifier, final ArtifactRetriever retriever,
             final UUID artifactId, final QueryInput queryInput, final List<URI> agreements)
-            throws IOException {
+            throws IOException, UnexpectedResponseException {
         /*
          * NOTE: Check if agreements with remoteIds are set for this artifact. If such agreements
          * exist the artifact must be assigned to a requested resource. The data access should
@@ -204,7 +205,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final RetrievalInformation information)
-            throws PolicyRestrictionException, IOException {
+            throws PolicyRestrictionException, IOException, UnexpectedResponseException {
         // Check the artifact exists and access is granted.
         final var artifact = get(artifactId);
         verifyDataAccess(accessVerifier, artifactId, artifact);
@@ -233,7 +234,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private void downloadAndUpdateData(final ArtifactRetriever retriever,
                                        final UUID artifactId,
                                        final RetrievalInformation information,
-                                       final Artifact artifact) throws IOException {
+                                       final Artifact artifact)
+                                       throws IOException, UnexpectedResponseException {
         final var dataStream = retriever.retrieve(artifactId,
                                                   artifact.getRemoteAddress(),
                                                   information.getTransferContract(),

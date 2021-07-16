@@ -28,9 +28,9 @@ import de.fraunhofer.iais.eis.ContractAgreementBuilder;
 import de.fraunhofer.iais.eis.ContractRequestBuilder;
 import de.fraunhofer.iais.eis.PermissionBuilder;
 import de.fraunhofer.iais.eis.Rule;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.message.type.ContractAgreementService;
 import io.dataspaceconnector.service.message.type.ContractRequestService;
-import io.dataspaceconnector.service.message.type.exceptions.InvalidResponse;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -62,7 +62,7 @@ class ContractNegotiatorTest {
     @Test
     @SuppressWarnings("unchecked")
     public void negotiate_validInput_producesAgreement()
-            throws InvalidResponse, DatatypeConfigurationException {
+            throws DatatypeConfigurationException, UnexpectedResponseException {
         /* ARRANGE */
         final var ruleList = (List<Rule>) (List<?>) Arrays.asList(new PermissionBuilder()
                                                                           ._action_(List.of(Action.NOTIFY))
@@ -76,7 +76,7 @@ class ContractNegotiatorTest {
 
         final var response = new HashMap<String, String>();
         response.put("payload", "Bye");
-        Mockito.when(contractReqSvc.sendMessageAndValidate(eq(recipient), eq(request))).thenReturn(response);
+        Mockito.when(contractReqSvc.sendMessage(eq(recipient), eq(request))).thenReturn(response);
 
         final var agreement = new ContractAgreementBuilder()
                 ._contractStart_(DatatypeFactory.newInstance()
@@ -91,7 +91,7 @@ class ContractNegotiatorTest {
         final var result = negotiator.negotiate(recipient, ruleList);
 
         /* ASSERT */
-        Mockito.verify(agreementSvc, Mockito.atLeastOnce()).sendMessageAndValidate(eq(recipient), eq(agreement));
+        Mockito.verify(agreementSvc, Mockito.atLeastOnce()).sendMessage(eq(recipient), eq(agreement));
         assertEquals(agreementId, result);
     }
 }

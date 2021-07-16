@@ -17,14 +17,19 @@ package io.dataspaceconnector.service.message;
 
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
+import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
+import de.fraunhofer.iais.eis.RejectionMessageBuilder;
+import de.fraunhofer.iais.eis.RejectionMessageImpl;
+import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
-import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
 import io.dataspaceconnector.model.broker.BrokerFactory;
 import io.dataspaceconnector.repository.BrokerRepository;
 import io.dataspaceconnector.service.configuration.BrokerService;
 import io.dataspaceconnector.service.configuration.EntityLinkerService;
+import de.fraunhofer.ids.messaging.requests.MessageContainer;
+import io.dataspaceconnector.service.message.type.NotificationService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -37,8 +42,7 @@ import java.net.URI;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = GlobalMessageService.class)
@@ -59,6 +63,9 @@ class GlobalMessageServiceTest {
     @MockBean
     private BrokerService dscBrokerService;
 
+    @MockBean
+    private NotificationService notificationSvc;
+
     @Autowired
     GlobalMessageService messageService;
 
@@ -73,21 +80,30 @@ class GlobalMessageServiceTest {
                 messageService.sendConnectorUpdateMessage(URI.create("https://recipient"));
 
         /* ASSERT */
-        assertTrue(response);
+        assertTrue(response.isPresent());
+        final var responseObj = response.get();
+        assertEquals(MessageProcessedNotificationMessageImpl.class,
+                responseObj.getUnderlyingMessage().getClass());
     }
 
     @Test
     @SneakyThrows
     public void sendConnectorUpdateMessage_validInputInvalidResponse_returnFalse() {
         /* ARRANGE */
-        Mockito.doReturn(null).when(brokerService).updateSelfDescriptionAtBroker(Mockito.any());
+        Mockito.doReturn(getRejection()).when(brokerService).updateSelfDescriptionAtBroker(Mockito.any());
 
         /* ACT */
         final var response =
                 messageService.sendConnectorUpdateMessage(URI.create("https://recipient"));
 
         /* ASSERT */
-        assertFalse(response);
+        assertTrue(response.isPresent());
+        final var responseObj = response.get();
+        assertEquals(RejectionMessageImpl.class,
+                responseObj.getUnderlyingMessage().getClass());
+        assertTrue(responseObj.getRejectionReason().isPresent());
+        final var reason = responseObj.getRejectionReason().get();
+        assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, reason);
     }
 
     @Test
@@ -101,59 +117,71 @@ class GlobalMessageServiceTest {
                 messageService.sendConnectorUnavailableMessage(URI.create("https://recipient"));
 
         /* ASSERT */
-        assertTrue(response);
+        assertTrue(response.isPresent());
+        final var responseObj = response.get();
+        assertEquals(MessageProcessedNotificationMessageImpl.class,
+                responseObj.getUnderlyingMessage().getClass());
     }
 
     @Test
     @SneakyThrows
     public void sendConnectorUnavailableMessage_validInputInvalidResponse_returnFalse() {
         /* ARRANGE */
-        Mockito.doReturn(null).when(brokerService).unregisterAtBroker(Mockito.any());
+        Mockito.doReturn(getRejection()).when(brokerService).unregisterAtBroker(Mockito.any());
 
         /* ACT */
         final var response =
                 messageService.sendConnectorUnavailableMessage(URI.create("https://recipient"));
 
         /* ASSERT */
-        assertFalse(response);
+        assertTrue(response.isPresent());
+        final var responseObj = response.get();
+        assertEquals(RejectionMessageImpl.class,
+                responseObj.getUnderlyingMessage().getClass());
+        assertTrue(responseObj.getRejectionReason().isPresent());
+        final var reason = responseObj.getRejectionReason().get();
+        assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, reason);
     }
 
     @Test
     @SneakyThrows
     public void sendResourceUpdateMessage_validInputValidResponse_returnTrue() {
         /* ARRANGE */
-        Mockito.doReturn(getResponse()).when(brokerService).updateResourceAtBroker(Mockito.any(), Mockito.any());
+        Mockito.doReturn(getResponse()).when(brokerService).updateResourceAtBroker(Mockito.any(),
+                Mockito.any());
 
         /* ACT */
         final var response =
-                messageService.sendResourceUpdateMessage(URI.create("https://recipient"), new ResourceBuilder().build());
+                messageService.sendResourceUpdateMessage(URI.create("https://recipient"),
+                        new ResourceBuilder().build());
 
         /* ASSERT */
-        assertTrue(response);
+        assertTrue(response.isPresent());
+        final var responseObj = response.get();
+        assertEquals(MessageProcessedNotificationMessageImpl.class,
+                responseObj.getUnderlyingMessage().getClass());
     }
 
     @Test
     @SneakyThrows
-    public void sendResourceUpdateMessage_invalidInput_throwNullPointerException() {
+    public void sendResourceUpdateMessage_validInputInvalidResponse_returnRejection() {
         /* ARRANGE */
-        Mockito.doReturn(getResponse()).when(brokerService).updateResourceAtBroker(Mockito.any(), Mockito.any());
-
-        /* ACT & ASSERT */
-        assertThrows(NullPointerException.class, () -> messageService.sendResourceUpdateMessage(URI.create("https://recipient"), null));
-    }
-
-    @Test
-    @SneakyThrows
-    public void sendResourceUpdateMessage_validInputInvalidResponse_returnFalse() {
-        /* ARRANGE */
-        Mockito.doReturn(null).when(brokerService).updateResourceAtBroker(Mockito.any(), Mockito.any());
+        Mockito.doReturn(getRejection()).when(brokerService).updateResourceAtBroker(Mockito.any(),
+                Mockito.any());
 
         /* ACT */
         final var response =
-                messageService.sendResourceUpdateMessage(URI.create("https://recipient"), new ResourceBuilder().build());
+                messageService.sendResourceUpdateMessage(URI.create("https://recipient"),
+                        new ResourceBuilder().build());
 
         /* ASSERT */
-        assertFalse(response);
+        assertTrue(response.isPresent());
+        final var responseObj = response.get();
+        assertEquals(RejectionMessageImpl.class,
+                responseObj.getUnderlyingMessage().getClass());
+        assertTrue(responseObj.getRejectionReason().isPresent());
+        final var reason = responseObj.getRejectionReason().get();
+        assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, reason);
     }
 
     @Test
@@ -164,38 +192,40 @@ class GlobalMessageServiceTest {
 
         /* ACT */
         final var response =
-                messageService.sendResourceUnavailableMessage(URI.create("https://recipient"), new ResourceBuilder().build());
+                messageService.sendResourceUnavailableMessage(URI.create("https://recipient"),
+                        new ResourceBuilder().build());
 
         /* ASSERT */
-        assertTrue(response);
-    }
-
-    @Test
-    @SneakyThrows
-    public void sendResourceUnavailableMessage_invalidInput_throwNullPointerException() {
-        /* ARRANGE */
-        Mockito.doReturn(getResponse()).when(brokerService).removeResourceFromBroker(Mockito.any(), Mockito.any());
-
-        /* ACT & ASSERT */
-        assertThrows(NullPointerException.class, () -> messageService.sendResourceUnavailableMessage(URI.create("https://recipient"), null));
+        assertTrue(response.isPresent());
+        final var responseObj = response.get();
+        assertEquals(MessageProcessedNotificationMessageImpl.class,
+                responseObj.getUnderlyingMessage().getClass());
     }
 
     @Test
     @SneakyThrows
     public void sendResourceUnavailableMessage_validInputInvalidResponse_returnFalse() {
         /* ARRANGE */
-        Mockito.doReturn(null).when(brokerService).removeResourceFromBroker(Mockito.any(), Mockito.any());
+        Mockito.doReturn(getRejection()).when(brokerService).removeResourceFromBroker(Mockito.any(),
+                Mockito.any());
 
         /* ACT */
         final var response =
-                messageService.sendResourceUnavailableMessage(URI.create("https://recipient"), new ResourceBuilder().build());
+                messageService.sendResourceUnavailableMessage(URI.create("https://recipient"),
+                        new ResourceBuilder().build());
 
         /* ASSERT */
-        assertFalse(response);
+        assertTrue(response.isPresent());
+        final var responseObj = response.get();
+        assertEquals(RejectionMessageImpl.class,
+                responseObj.getUnderlyingMessage().getClass());
+        assertTrue(responseObj.getRejectionReason().isPresent());
+        final var reason = responseObj.getRejectionReason().get();
+        assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, reason);
     }
 
     @SneakyThrows
-    private MessageProcessedNotificationMAP getResponse() {
+    private MessageContainer<?> getResponse() {
         final var calendar = new GregorianCalendar();
         calendar.setTime(new Date());
         final var xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
@@ -203,14 +233,35 @@ class GlobalMessageServiceTest {
         final var modelVersion = "4.0.0";
         final var token = new DynamicAttributeTokenBuilder()
                 ._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build();
-        return new MessageProcessedNotificationMAP(
-                new MessageProcessedNotificationMessageBuilder()
-                        ._securityToken_(token)
-                        ._modelVersion_(modelVersion)
-                        ._issuerConnector_(connectorId)
-                        ._correlationMessage_(URI.create("https://message"))
-                        ._senderAgent_(connectorId)
-                        ._issued_(xmlCalendar)
-                        .build());
+        final var message = new MessageProcessedNotificationMessageBuilder()
+                ._securityToken_(token)
+                ._modelVersion_(modelVersion)
+                ._issuerConnector_(connectorId)
+                ._correlationMessage_(URI.create("https://message"))
+                ._senderAgent_(connectorId)
+                ._issued_(xmlCalendar)
+                .build();
+        return new MessageContainer<>(message, "EMPTY");
+    }
+
+    @SneakyThrows
+    private MessageContainer<?> getRejection() {
+        final var calendar = new GregorianCalendar();
+        calendar.setTime(new Date());
+        final var xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
+        final var connectorId = URI.create("https://connector");
+        final var modelVersion = "4.0.0";
+        final var token = new DynamicAttributeTokenBuilder()
+                ._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build();
+        final var message = new RejectionMessageBuilder()
+                ._securityToken_(token)
+                ._modelVersion_(modelVersion)
+                ._issuerConnector_(connectorId)
+                ._correlationMessage_(URI.create("https://message"))
+                ._senderAgent_(connectorId)
+                ._issued_(xmlCalendar)
+                ._rejectionReason_(RejectionReason.INTERNAL_RECIPIENT_ERROR)
+                .build();
+        return new MessageContainer<>(message, "EMPTY");
     }
 }

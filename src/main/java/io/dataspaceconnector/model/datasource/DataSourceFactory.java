@@ -81,7 +81,8 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
             return false;
         }
 
-        if (dataSource.getAuthentication() != null && !dataSource.getAuthentication().equals(authentication)) {
+        if (dataSource.getAuthentication() != null
+            && !dataSource.getAuthentication().equals(authentication)) {
             return false;
         }
 
