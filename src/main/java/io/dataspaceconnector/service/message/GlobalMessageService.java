@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.service.message;
 
-import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
+import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
 import de.fraunhofer.iais.eis.QueryLanguage;
 import de.fraunhofer.iais.eis.QueryScope;
 import de.fraunhofer.iais.eis.QueryTarget;
@@ -219,7 +219,7 @@ public class GlobalMessageService {
 
         final var header = response.get().getUnderlyingMessage();
         final var payload = response.get().getReceivedPayload();
-        if (header instanceof MessageProcessedNotificationMessage) {
+        if (header instanceof MessageProcessedNotificationMessageImpl) {
             return new ResponseEntity<>(payload, HttpStatus.OK);
         }
 

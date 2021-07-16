@@ -33,6 +33,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -45,6 +47,7 @@ import java.util.GregorianCalendar;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -76,17 +79,20 @@ public class QueryMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendQueryMessage_validInput_returnQueryResponse() throws Exception {
         /* ARRANGE */
+        final var payload = "Some query result.";
+        final var response = new ResponseEntity<>(payload, HttpStatus.OK);
+        final var container = getResponse(payload);
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
-        Mockito.doReturn(getResponse("Some query result.")).when(messageService)
+        Mockito.doReturn(container).when(messageService)
                 .sendQueryMessage(Mockito.any(), Mockito.any());
+        Mockito.doReturn(response).when(messageService).validateResponse(container);
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/query")
-                .param("recipient", brokerUrl).content("SOME QUERY"))
-                .andExpect(status().isOk()).andReturn();
+                .param("recipient", brokerUrl).content("SOME QUERY")).andReturn();
 
         /* ASSERT */
-        assertEquals("Some query result.", result.getResponse().getContentAsString());
+        assertEquals(payload, result.getResponse().getContentAsString());
     }
 
     @Test
@@ -175,9 +181,13 @@ public class QueryMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendSearchMessage_validSearchTerm_returnResponse() throws Exception {
         /* ARRANGE */
+        final var payload = "Some search result.";
+        final var response = new ResponseEntity<>(payload, HttpStatus.OK);
+        final var container = getResponse(payload);
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
-        Mockito.doReturn(getResponse("Some search result.")).when(messageService).sendFullTextSearchMessage(
+        Mockito.doReturn(getResponse(payload)).when(messageService).sendFullTextSearchMessage(
                 Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt());
+        Mockito.doReturn(response).when(messageService).validateResponse(container);
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/search")
@@ -185,7 +195,8 @@ public class QueryMessageControllerTest {
                 .param("offset", "0").content("SOME SEARCH TERM")).andReturn();
 
         /* ASSERT */
-        assertEquals("Some search result.", result.getResponse().getContentAsString());
+        assertNotNull(result);
+        assertEquals(200, result.getResponse().getStatus());
     }
 
     @Test
