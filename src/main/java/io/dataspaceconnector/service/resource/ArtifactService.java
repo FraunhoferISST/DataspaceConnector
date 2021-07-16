@@ -234,7 +234,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private void downloadAndUpdateData(final ArtifactRetriever retriever,
                                        final UUID artifactId,
                                        final RetrievalInformation information,
-                                       final Artifact artifact) throws IOException, UnexpectedResponseException {
+                                       final Artifact artifact)
+                                       throws IOException, UnexpectedResponseException {
         final var dataStream = retriever.retrieve(artifactId,
                                                   artifact.getRemoteAddress(),
                                                   information.getTransferContract(),

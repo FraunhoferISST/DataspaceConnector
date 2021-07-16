@@ -64,6 +64,9 @@ public class Authentication implements Serializable {
      */
     private String password;
 
+    /**
+     * If the authentication has been deleted.
+     */
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     private boolean deleted;
