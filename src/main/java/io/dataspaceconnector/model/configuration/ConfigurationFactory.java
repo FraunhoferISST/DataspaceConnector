@@ -19,6 +19,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.dataspaceconnector.config.interceptor.CurrentConfig;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
@@ -113,7 +114,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
         final var hasUpdatedConnectorEndpoint = updateConnectorEndpoint(config,
                 desc.getConnectorEndpoint());
         final var hasUpdatedVersion = updateVersion(config, desc.getVersion());
-        final var hasUpdatedSelected = updateSelected(config, desc.isSelected());
+        final var hasUpdatedSelected = updateSelected(config, desc.getSelected());
         final var hasUpdatedCurator = updateCurator(config, desc.getCurator());
         final var hasUpdatedMaintainer = updateMaintainer(config, desc.getMaintainer());
         final var hasUpdatedInboundModelVersions = updateInboundModelVersion(config,
@@ -231,8 +232,8 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
         return newVersion.isPresent();
     }
 
-    private boolean updateSelected(final Configuration config, final boolean selected) {
-        var changed = config.isSelected() != selected;
+    private boolean updateSelected(final Configuration config, final CurrentConfig selected) {
+        var changed = config.getSelected() != selected;
         config.setSelected(selected);
         return changed;
     }

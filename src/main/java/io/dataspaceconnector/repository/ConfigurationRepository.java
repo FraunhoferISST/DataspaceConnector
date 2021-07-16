@@ -35,7 +35,7 @@ public interface ConfigurationRepository extends BaseEntityRepository<Configurat
      */
     @Query("SELECT a.id "
             + "FROM #{#entityName} a "
-            + "WHERE a.selected = true "
+            + "WHERE a.selected IS NOT NULL "
             + "AND a.deleted = false")
     List<UUID> findBySelectedTrue();
 
