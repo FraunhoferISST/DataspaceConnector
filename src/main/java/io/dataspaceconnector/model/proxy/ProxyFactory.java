@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.model.proxy;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
 import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Factory class for the proxy.
@@ -33,14 +33,11 @@ public class ProxyFactory extends AbstractFactory<Proxy, ProxyDesc> {
     /**
      * The default location.
      */
-    private static final URI DEFAULT_LOCATION = URI.create("");
+    public static final URI DEFAULT_LOCATION = URI.create("");
 
     @Override
     protected final Proxy initializeEntity(final ProxyDesc desc) {
-        final var proxy = new Proxy();
-        proxy.setExclusions(new ArrayList<>());
-
-        return proxy;
+        return new Proxy();
     }
 
     @Override
@@ -66,9 +63,8 @@ public class ProxyFactory extends AbstractFactory<Proxy, ProxyDesc> {
             return false;
         }
 
-        if (proxy.getAuthentication() != null && authentication == null) {
-            proxy.setAuthentication(null);
-            return true;
+        if (proxy.getAuthentication() != null && !proxy.getAuthentication().equals(authentication)) {
+            return false;
         }
 
         proxy.setAuthentication(authentication);
