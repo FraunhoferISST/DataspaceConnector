@@ -26,7 +26,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -40,8 +44,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ConfigurationSwapController {
 
+    /**
+     * Configuration Container, to overwrite selected configuration.
+     */
     private final @NonNull ConfigContainer configContainer;
 
+    /**
+     * Configuration Service, to read and set current config in DB.
+     */
     private final @NonNull ConfigurationService configurationService;
 
     /**
@@ -50,7 +60,10 @@ public class ConfigurationSwapController {
      * @param toSelect newly selected configuration
      * @return OK, when configuration was swapped
      */
-    @Tag(name = "Configurationswap", description = "Endpoint for changing the current configuration")
+    @Tag(
+            name = "Configurationswap",
+            description = "Endpoint for changing the current configuration"
+    )
     @GetMapping(value = "/swapconfig/{id}",
             produces = {"text/plain"})
     @Operation(summary = "Swap current selected configuration.")
@@ -68,7 +81,7 @@ public class ConfigurationSwapController {
         try {
             configurationService.swapSelected(toSelect);
             var selectedIDs = configurationService.findSelected();
-            if(selectedIDs.isEmpty()){
+            if (selectedIDs.isEmpty()) {
                 return ResponseEntity.internalServerError().body(
                         "Could not set selected Configuration!"
                 );
