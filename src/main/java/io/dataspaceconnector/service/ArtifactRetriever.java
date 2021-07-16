@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.service;
 
-import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.QueryInput;
 
 import java.io.InputStream;
@@ -34,8 +33,7 @@ public interface ArtifactRetriever {
      * @param transferContract The contract authorizing the data transfer.
      * @return The artifact's data.
      */
-    InputStream retrieve(UUID artifactId, URI recipient, URI transferContract)
-            throws UnexpectedResponseException;
+    InputStream retrieve(UUID artifactId, URI recipient, URI transferContract);
 
     /**
      * Perform an artifact request for a given artifact with query parameters.
@@ -47,5 +45,5 @@ public interface ArtifactRetriever {
      * @return The artifact's data.
      */
     InputStream retrieve(UUID artifactId, URI recipient, URI transferContract,
-                         QueryInput queryInput) throws UnexpectedResponseException;
+                         QueryInput queryInput);
 }
