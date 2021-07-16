@@ -28,6 +28,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,15 +51,18 @@ class RoutesControllerTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void setRouteErrors() throws Exception {
         var routeErrors = (List<String>) ReflectionTestUtils
                 .getField(routesController, "routeErrors");
+        assertNotNull(routeErrors);
         final var messageCountBefore =  routeErrors.size();
 
         routesController.addRouteErrors("Route error message");
 
         routeErrors = (List<String>) ReflectionTestUtils
                 .getField(routesController, "routeErrors");
+        assertNotNull(routeErrors);
         final var messageCountAfter = routeErrors.size();
 
         assertEquals(messageCountBefore + 1, messageCountAfter);
