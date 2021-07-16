@@ -16,7 +16,6 @@
 package io.dataspaceconnector.service;
 
 import io.dataspaceconnector.exception.UnexpectedResponseException;
-import io.dataspaceconnector.model.QueryInput;
 
 import java.io.InputStream;
 import java.net.URI;

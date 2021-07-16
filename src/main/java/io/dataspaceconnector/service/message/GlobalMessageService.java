@@ -82,20 +82,6 @@ public class GlobalMessageService {
     private final @NonNull NotificationService notificationSvc;
 
     /**
-     * Send connector update message.
-     *
-     * @param recipient The recipient.
-     * @return Optional of message container providing the received ids response.
-     */
-    public Optional<MessageContainer<?>> sendConnectorUpdateMessage(final URI recipient)
-            throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
-            NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
-            UnexpectedPayloadException, SerializeException, DeserializeException,
-            RejectionException, UnknownResponseException {
-        return Optional.of(brokerSvc.updateSelfDescriptionAtBroker(recipient));
-    }
-
-    /**
      * Send connector update message and validate received response.
      *
      * @param recipient The recipient.
@@ -107,19 +93,26 @@ public class GlobalMessageService {
      * @throws IOException               Any other problems in establishing a connection
      *                                   to the target.
      */
-    public boolean sendConnectorUpdateMessage(final URI recipient) throws
+    public Optional<MessageContainer<?>>  sendConnectorUpdateMessage(final URI recipient) throws
             MultipartParseException,
             ClaimsException,
             DapsTokenManagerException,
-            IOException {
+            IOException,
+            ShaclValidatorException,
+            SerializeException,
+            RejectionException,
+            UnknownResponseException,
+            SendMessageException,
+            NoTemplateProvidedException,
+            UnexpectedPayloadException,
+            DeserializeException {
         final var response = brokerSvc.updateSelfDescriptionAtBroker(recipient);
-        final var msg = String.format("Successfully registered connector. [url=(%s)]", recipient);
-        final var result = validateResponse(response, msg);
+        final var result = checkResponse(Optional.ofNullable(response));
         if (result) {
+            final var msg = String.format("Successfully registered connector. [url=(%s)]", recipient);
             brokerService.setRegistrationStatus(recipient, RegistrationStatus.REGISTERED);
         }
-
-        return result;
+        return Optional.ofNullable(response);
     }
 
     /**
@@ -134,12 +127,12 @@ public class GlobalMessageService {
             UnexpectedPayloadException, SerializeException, DeserializeException,
             RejectionException, UnknownResponseException {
         final var response = brokerSvc.unregisterAtBroker(recipient);
-        final var msg = String.format("Successfully unregistered connector. [url=(%s)]", recipient);
-        final var result = validateResponse(response, msg);
+        final var result = checkResponse(Optional.ofNullable(response));
         if (result) {
+            final var msg = String.format("Successfully unregistered connector. [url=(%s)]", recipient);
             brokerService.setRegistrationStatus(recipient, RegistrationStatus.UNREGISTERED);
         }
-        return Optional.of(response);
+        return Optional.ofNullable(response);
     }
 
     /**
@@ -155,29 +148,14 @@ public class GlobalMessageService {
             NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
             UnexpectedPayloadException, SerializeException, DeserializeException,
             RejectionException, UnknownResponseException {
-        return Optional.of(brokerSvc.updateResourceAtBroker(recipient, resource));
-    }
-
-    /**
-     * Send resource update message and validate received response.
-     * @param recipient The recipient.
-     * @param resource  The ids resource that should be updated.
-     * @return True if the message was successfully processed by the recipient, false if not.
-     */
-    public boolean sendAndValidateResourceUpdateMessage(final URI recipient,
-                                                        final Resource resource)  throws
-            MultipartParseException,
-            ClaimsException,
-            DapsTokenManagerException,
-            IOException {
-        final var response = brokerSvc.updateResourceAtBroker(recipient, resource);
-        final var msg = String.format("Successfully registered resource. "
-                + "[resourceId=(%s), url=(%s)]", resource.getId(), recipient);
-        final var result =  validateResponse(response, msg);
+        final var response =brokerSvc.updateResourceAtBroker(recipient, resource);
+        final var result =  checkResponse(Optional.ofNullable(response));
         if (result) {
+            final var msg = String.format("Successfully registered resource. "
+                    + "[resourceId=(%s), url=(%s)]", resource.getId(), recipient);
             updateOfferedResourceBrokerList(recipient, resource);
         }
-        return result;
+        return Optional.ofNullable(response);
     }
 
     /**
@@ -196,11 +174,11 @@ public class GlobalMessageService {
         final var response = brokerSvc.removeResourceFromBroker(recipient, resource);
         final var msg = String.format("Successfully unregistered resource. "
                 + "[resourceId=(%s), url=(%s)]", resource.getId(), recipient);
-        final var result = validateResponse(response, msg);
+        final var result = checkResponse(Optional.ofNullable(response));
         if (result) {
             removeBrokerFromOfferedResourceBrokerList(recipient, resource);
         }
-        return Optional.of(response);
+        return Optional.ofNullable(response);
     }
 
     /**
@@ -216,10 +194,6 @@ public class GlobalMessageService {
             RejectionException, UnknownResponseException {
         final var response = brokerSvc.queryBroker(recipient, query,
                 QueryLanguage.SPARQL, QueryScope.ALL, QueryTarget.BROKER);
-        final var msg = String.format("Successfully processed query. [url=(%s)]", recipient);
-        if (validateResponse(response, msg)) {
-            return response.getPayload();
-        }
         return Optional.of(response);
     }
 
@@ -239,13 +213,6 @@ public class GlobalMessageService {
             RejectionException, UnknownResponseException {
         final var response = brokerSvc.fullTextSearchBroker(recipient, term,
                 QueryScope.ALL, QueryTarget.BROKER, limit, offset);
-
-        final var msg = String.format("Successfully processed full text search. [url=(%s)]",
-                recipient);
-        if (validateResponse(response, msg)) {
-            return response.getPayload();
-        }
-
         return Optional.of(response);
     }
 
@@ -274,6 +241,19 @@ public class GlobalMessageService {
         // If response message is not of type MessageProcessedNotificationMessage.
         final var content = notificationSvc.getResponseContent(header, payload);
         return ControllerUtils.respondWithContent(content);
+    }
+
+    /**
+     * @param response The response container.
+     * @return true, if response is successful.
+     */
+    public boolean checkResponse(final Optional<MessageContainer<?>> response) {
+        if (response.isEmpty()) {
+            return false;
+        }
+        final var resp = response.get();
+        return !resp.isRejection() && resp.getUnderlyingMessage() != null;
+        // If response message is empty of rejection.
     }
 
     /**
