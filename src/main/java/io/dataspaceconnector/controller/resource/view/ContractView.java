@@ -32,7 +32,7 @@ import org.springframework.hateoas.server.core.Relation;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "contract", itemRelation = "contract")
+@Relation(collectionRelation = "contracts", itemRelation = "contract")
 public class ContractView  extends RepresentationModel<ContractView> {
     /**
      * The creation date.

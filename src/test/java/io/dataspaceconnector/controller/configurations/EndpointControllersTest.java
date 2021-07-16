@@ -46,7 +46,7 @@ class EndpointControllersTest {
     private EndpointServiceProxy service;
 
     @Autowired
-    private EndpointControllers.GenericEndpointController controller;
+    private EndpointControllers controller;
 
     @Test
     public void create_validInput_returnNewEndpoint() {

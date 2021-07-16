@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.view.endpoint;
 
+import java.net.URI;
+
 import io.dataspaceconnector.controller.configurations.EndpointControllers;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
@@ -22,8 +24,6 @@ import io.dataspaceconnector.model.endpoint.ConnectorEndpointDesc;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpointFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -37,8 +37,7 @@ public class ConnectorEndpointViewAssemblerTest {
         /* ARRANGE */
         final var shouldLookLike = getConnectorEndpoint();
         final var link = ViewAssemblerHelper.
-                getSelfLink(shouldLookLike.getId(),
-                        EndpointControllers.GenericEndpointController.class);
+                getSelfLink(shouldLookLike.getId(), EndpointControllers.class);
 
         /* ACT */
         final var after = getConnectorEndpointView();
