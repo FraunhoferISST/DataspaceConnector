@@ -32,6 +32,8 @@ import io.dataspaceconnector.camel.exception.MissingPayloadException;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.util.ContractUtils;
 import io.dataspaceconnector.util.MessageUtils;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.Exchange;
@@ -40,6 +42,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -81,7 +84,7 @@ public abstract class IdsTransformer<I, O> implements Processor {
 @Component("ContractDeserializer")
 @RequiredArgsConstructor
 class ContractRequestTransformer extends IdsTransformer<
-        RouteMsg<ContractRequestMessageImpl, MessagePayload>,
+        Request<ContractRequestMessageImpl, MessagePayload, Optional<Jws<Claims>>>,
         RouteMsg<ContractRequestMessageImpl, ContractRequest>> {
 
     /**
@@ -98,10 +101,11 @@ class ContractRequestTransformer extends IdsTransformer<
      */
     @Override
     protected RouteMsg<ContractRequestMessageImpl, ContractRequest> processInternal(
-            final RouteMsg<ContractRequestMessageImpl, MessagePayload> msg) throws Exception {
+            final Request<ContractRequestMessageImpl, MessagePayload, Optional<Jws<Claims>>> msg)
+            throws Exception {
         final var contract = deserializationService
                 .getContractRequest(MessageUtils.getPayloadAsString(msg.getBody()));
-        return new Request<>(msg.getHeader(), contract);
+        return new Request<>(msg.getHeader(), contract, msg.getClaims());
     }
 
 }
@@ -113,7 +117,7 @@ class ContractRequestTransformer extends IdsTransformer<
 @Component("ResourceDeserializer")
 @RequiredArgsConstructor
 class ResourceTransformer extends IdsTransformer<
-        RouteMsg<ResourceUpdateMessageImpl, MessagePayload>,
+        Request<ResourceUpdateMessageImpl, MessagePayload, Optional<Jws<Claims>>>,
         RouteMsg<ResourceUpdateMessageImpl, Resource>> {
 
     /**
@@ -130,7 +134,8 @@ class ResourceTransformer extends IdsTransformer<
      */
     @Override
     protected RouteMsg<ResourceUpdateMessageImpl, Resource> processInternal(
-            final RouteMsg<ResourceUpdateMessageImpl, MessagePayload> msg) throws Exception {
+            final Request<ResourceUpdateMessageImpl, MessagePayload, Optional<Jws<Claims>>> msg)
+            throws Exception {
 
         final String payloadString;
         try {
@@ -150,7 +155,7 @@ class ResourceTransformer extends IdsTransformer<
             throw new DeserializationException("Deserialization failed.", e);
         }
 
-        return new Request<>(msg.getHeader(), resource);
+        return new Request<>(msg.getHeader(), resource, msg.getClaims());
     }
 
 }
@@ -162,7 +167,7 @@ class ResourceTransformer extends IdsTransformer<
 @Component("AgreementDeserializer")
 @RequiredArgsConstructor
 class ContractAgreementTransformer extends IdsTransformer<
-        RouteMsg<ContractAgreementMessageImpl, MessagePayload>,
+        Request<ContractAgreementMessageImpl, MessagePayload, Optional<Jws<Claims>>>,
         RouteMsg<ContractAgreementMessageImpl, ContractAgreement>> {
 
     /**
@@ -179,10 +184,11 @@ class ContractAgreementTransformer extends IdsTransformer<
      */
     @Override
     protected RouteMsg<ContractAgreementMessageImpl, ContractAgreement> processInternal(
-            final RouteMsg<ContractAgreementMessageImpl, MessagePayload> msg) throws Exception {
+            final Request<ContractAgreementMessageImpl, MessagePayload, Optional<Jws<Claims>>> msg)
+            throws Exception {
         final var agreement = deserializationService
                 .getContractAgreement(MessageUtils.getPayloadAsString(msg.getBody()));
-        return new Request<>(msg.getHeader(), agreement);
+        return new Request<>(msg.getHeader(), agreement, msg.getClaims());
     }
 
 }
@@ -193,7 +199,7 @@ class ContractAgreementTransformer extends IdsTransformer<
  */
 @Component("ContractRuleListTransformer")
 class ContractRuleListTransformer extends IdsTransformer<
-        RouteMsg<ContractRequestMessageImpl, ContractRequest>,
+        Request<ContractRequestMessageImpl, ContractRequest, Optional<Jws<Claims>>>,
         RouteMsg<ContractRequestMessageImpl, ContractRuleListContainer>> {
 
     /**
@@ -206,10 +212,12 @@ class ContractRuleListTransformer extends IdsTransformer<
      */
     @Override
     protected RouteMsg<ContractRequestMessageImpl, ContractRuleListContainer> processInternal(
-            final RouteMsg<ContractRequestMessageImpl, ContractRequest> msg) throws Exception {
+            final Request<ContractRequestMessageImpl, ContractRequest, Optional<Jws<Claims>>> msg)
+            throws Exception {
         final var request = msg.getBody();
         final var rules = ContractUtils.extractRulesFromContract(request);
-        return new Request<>(msg.getHeader(), new ContractRuleListContainer(request, rules));
+        return new Request<>(msg.getHeader(), new ContractRuleListContainer(request, rules),
+                msg.getClaims());
     }
 
 }
@@ -221,7 +229,7 @@ class ContractRuleListTransformer extends IdsTransformer<
  */
 @Component("ContractTargetRuleMapTransformer")
 class ContractTargetRuleMapTransformer extends IdsTransformer<
-        RouteMsg<ContractRequestMessageImpl, ContractRuleListContainer>,
+        Request<ContractRequestMessageImpl, ContractRuleListContainer, Optional<Jws<Claims>>>,
         RouteMsg<ContractRequestMessageImpl, ContractTargetRuleMapContainer>> {
 
     /**
@@ -235,12 +243,12 @@ class ContractTargetRuleMapTransformer extends IdsTransformer<
      */
     @Override
     protected RouteMsg<ContractRequestMessageImpl, ContractTargetRuleMapContainer> processInternal(
-            final RouteMsg<ContractRequestMessageImpl, ContractRuleListContainer> msg)
-            throws Exception {
+            final Request<ContractRequestMessageImpl, ContractRuleListContainer,
+                    Optional<Jws<Claims>>> msg) throws Exception {
         final var targetRuleMap = ContractUtils.getTargetRuleMap(msg.getBody().getRules());
         final var container = new ContractTargetRuleMapContainer(msg.getBody().getContractRequest(),
                 targetRuleMap);
-        return new Request<>(msg.getHeader(), container);
+        return new Request<>(msg.getHeader(), container, msg.getClaims());
     }
 
 }
@@ -251,7 +259,7 @@ class ContractTargetRuleMapTransformer extends IdsTransformer<
  */
 @Component("PayloadStreamReader")
 class PayloadStreamReader extends IdsTransformer<
-        RouteMsg<? extends Message, MessagePayload>,
+        Request<? extends Message, MessagePayload, Optional<Jws<Claims>>>,
         RouteMsg<? extends Message, String>> {
 
     /**
@@ -262,8 +270,8 @@ class PayloadStreamReader extends IdsTransformer<
      * @throws Exception if transformation fails.
      */
     @Override
-    protected RouteMsg<? extends Message, String> processInternal(final RouteMsg<? extends Message,
-            MessagePayload> msg) throws Exception {
+    protected RouteMsg<? extends Message, String> processInternal(final Request<? extends Message,
+            MessagePayload, Optional<Jws<Claims>>> msg) throws Exception {
         final var inputStream = msg.getBody().getUnderlyingInputStream();
 
         // Reset the stream so it can be read again.
@@ -280,6 +288,6 @@ class PayloadStreamReader extends IdsTransformer<
             payload = "Payload could not be read from request.";
         }
 
-        return new Request<>(msg.getHeader(), payload);
+        return new Request<>(msg.getHeader(), payload, msg.getClaims());
     }
 }
