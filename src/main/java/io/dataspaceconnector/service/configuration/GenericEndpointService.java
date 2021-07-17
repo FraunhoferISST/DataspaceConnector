@@ -17,9 +17,12 @@ package io.dataspaceconnector.service.configuration;
 
 import java.util.UUID;
 
+import io.configmanager.extensions.routes.camel.RouteManager;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpointDesc;
 import io.dataspaceconnector.model.endpoint.GenericEndpointFactory;
+import io.dataspaceconnector.repository.RouteRepository;
+import io.dataspaceconnector.service.ids.builder.IdsAppRouteBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -42,13 +45,38 @@ public class GenericEndpointService
     private final @NonNull DataSourceService dataSourceSvc;
 
     /**
+     * Service for managing routes.
+     */
+    private final @NonNull RouteRepository routeRepo;
+
+    /**
+     * Service for managing Camel routes.
+     */
+    private final @NonNull RouteManager routeManager;
+
+    /**
+     * Service for creating IDS AppRoutes from routes.
+     */
+    private final @NonNull IdsAppRouteBuilder appRouteBuilder;
+
+    /**
      * Constructor for injection.
+     *
      * @param dataSourceService The data source repository.
+     * @param routeRepository the service for managing routes.
+     * @param camelRouteManager the Camel route manager.
+     * @param idsAppRouteBuilder the AppRoute builder.
      */
     @Autowired
-    public GenericEndpointService(final @NonNull DataSourceService dataSourceService) {
+    public GenericEndpointService(final @NonNull DataSourceService dataSourceService,
+                                  final @NonNull RouteRepository routeRepository,
+                                  final @NonNull RouteManager camelRouteManager,
+                                  final @NonNull IdsAppRouteBuilder idsAppRouteBuilder) {
         super();
         this.dataSourceSvc = dataSourceService;
+        this.routeRepo = routeRepository;
+        this.routeManager = camelRouteManager;
+        this.appRouteBuilder = idsAppRouteBuilder;
     }
 
     /**
@@ -61,5 +89,23 @@ public class GenericEndpointService
         final var updated = ((GenericEndpointFactory) getFactory())
                 .setDataSourceToGenericEndpoint(get(endpointId), dataSourceSvc.get(dataSourceId));
         persist(updated);
+    }
+
+    /**
+     * Persists a generic endpoint. If an already existing endpoint is updated, the Camel routes
+     * for all routes referencing the endpoint are recreated.
+     *
+     * @param endpoint the endpoint to persist.
+     * @return the persisted endpoint.
+     */
+    @Override
+    protected final GenericEndpoint persist(final GenericEndpoint endpoint) {
+        if (endpoint.getId() != null) {
+            final var affectedRoutes = routeRepo.findTopLevelRoutesByEndpoint(endpoint.getId());
+            affectedRoutes.forEach(r -> routeManager
+                    .createAndDeployXMLRoute(appRouteBuilder.create(r)));
+        }
+
+        return super.persist(endpoint);
     }
 }
