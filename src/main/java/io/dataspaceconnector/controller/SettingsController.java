@@ -15,16 +15,7 @@
  */
 package io.dataspaceconnector.controller;
 
-import javax.validation.Valid;
-import java.util.UUID;
-
-import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
-import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.controller.configuration.ConfigManagerControllers;
-import io.dataspaceconnector.service.configuration.ConfigurationService;
-import io.dataspaceconnector.util.ControllerUtils;
-import io.dataspaceconnector.view.configuration.ConfigurationView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -37,7 +28,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -50,86 +40,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/configuration")
 @RequiredArgsConstructor
-public class ConfigurationController {
-
-    /**
-     * The current connector configuration.
-     */
-    private final @NonNull ConfigContainer configContainer;
+public class SettingsController {
 
     /**
      * The current policy configuration.
      */
     private final @NonNull ConnectorConfiguration connectorConfig;
-
-    /**
-     * Configuration Service, to read and set current config in DB.
-     */
-    private final @NonNull ConfigurationService configurationService;
-
-    /**
-     * The controller for all configurations.
-     */
-    private final @NonNull ConfigManagerControllers.ConfigurationController configurationController;
-
-    /**
-     * Update the connector's current configuration.
-     *
-     * @param toSelect The new configuration.
-     * @return Ok or error response.
-     */
-    @PutMapping(value = "/{id}", consumes = {"*/*"})
-    @Operation(summary = "Update current configuration.")
-    @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "400", description = "Failed to deserialize."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "415", description = "Wrong media type."),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
-    @ResponseBody
-    public ResponseEntity<Object> setConfiguration(@Valid @PathVariable(name = "id")
-                                                       final UUID toSelect) {
-        try {
-            configurationService.swapActiveConfig(toSelect);
-        } catch (ConfigUpdateException exception) {
-            return ControllerUtils.respondConfigurationUpdateError(exception);
-        }
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    /**
-     * Return the connector's current configuration.
-     *
-     * @return The configuration object or an error.
-     */
-    @GetMapping(value = "/", produces = "application/hal+json")
-    @Operation(summary = "Get current configuration.")
-    @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @ResponseBody
-    public ConfigurationView getConfiguration() {
-            return configurationController.get(configurationService.getActiveConfig().getId());
-    }
-
-    /**
-     * Return the connector's current configuration.
-     *
-     * @return The configuration object or an error.
-     */
-    @GetMapping(value = "/", produces = "application/ld+json")
-    @Operation(summary = "Get current configuration.")
-    @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @ResponseBody
-    public ResponseEntity<Object> getIdsConfiguration() {
-        return ResponseEntity.ok(configContainer.getConfigurationModel().toRdf());
-    }
 
     /**
      * Turns contract negotiation on or off (at runtime).
