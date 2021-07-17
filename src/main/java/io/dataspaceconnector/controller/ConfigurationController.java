@@ -21,8 +21,10 @@ import java.util.UUID;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.controller.configuration.ConfigManagerControllers;
 import io.dataspaceconnector.service.configuration.ConfigurationService;
 import io.dataspaceconnector.util.ControllerUtils;
+import io.dataspaceconnector.view.configuration.ConfigurationView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -30,6 +32,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -71,9 +74,7 @@ public class ConfigurationController {
      * @param toSelect The new configuration.
      * @return Ok or error response.
      */
-    @PutMapping(value = "/configuration/{id}",
-            consumes = {"*/*"},
-            produces = {"application/ld+json"})
+    @PutMapping(value = "/configuration/{id}", consumes = {"*/*"})
     @Operation(summary = "Update current configuration.")
     @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
     @ApiResponses(value = {
@@ -90,7 +91,27 @@ public class ConfigurationController {
         } catch (ConfigUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
         }
-        return getConfiguration();
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Autowired
+    ConfigManagerControllers.ConfigurationController configurationController;
+
+    /**
+     * Return the connector's current configuration.
+     *
+     * @return The configuration object or an error.
+     */
+    @GetMapping(value = "/configuration", produces = "application/hal+json")
+    @Operation(summary = "Get current configuration.")
+    @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")})
+    @ResponseBody
+    public ConfigurationView getConfiguration() {
+            return configurationController.get(configurationService.getActiveConfig().getId());
     }
 
     /**
@@ -98,15 +119,15 @@ public class ConfigurationController {
      *
      * @return The configuration object or an error.
      */
-    @GetMapping(value = "/configuration", produces = "application/json")
+    @GetMapping(value = "/configuration", produces = "application/ld+json")
     @Operation(summary = "Get current configuration.")
     @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @ResponseBody
-    public ResponseEntity<Object> getConfiguration() {
-            return ResponseEntity.ok(configContainer.getConfigurationModel().toRdf());
+    public ResponseEntity<Object> getIdsConfiguration() {
+        return ResponseEntity.ok(configContainer.getConfigurationModel().toRdf());
     }
 
     /**
