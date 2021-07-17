@@ -15,12 +15,19 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
+import java.net.URI;
+import java.time.Duration;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.rule.ContractRule;
-import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.EntityDependencyResolver;
 import io.dataspaceconnector.util.ErrorMessage;
@@ -30,14 +37,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.time.Duration;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This class provides policy pattern recognition and calls the {@link
@@ -68,11 +67,6 @@ public class RuleValidator {
      * Service for deserialization.
      */
     private final @NonNull DeserializationService deserializationService;
-
-    /**
-     * Service for handling connector information and configuration.
-     */
-    private final @NonNull ConnectorService connectorService;
 
     /**
      * Validates the data access for a given rule.
