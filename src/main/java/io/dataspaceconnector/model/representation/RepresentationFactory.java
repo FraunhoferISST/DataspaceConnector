@@ -94,8 +94,8 @@ public class RepresentationFactory
     }
 
     private boolean updateLanguage(final Representation representation, final String language) {
-        final var newLanguage = MetadataUtils.updateString(representation.getLanguage(), language
-                , DEFAULT_LANGUAGE);
+        final var newLanguage = MetadataUtils.updateString(
+                representation.getLanguage(), language, DEFAULT_LANGUAGE);
         newLanguage.ifPresent(representation::setLanguage);
 
         return newLanguage.isPresent();
