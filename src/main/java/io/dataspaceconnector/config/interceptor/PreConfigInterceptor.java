@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.ids.messaging.core.config.ConfigProducerInterceptorException;
 import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
+import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import de.fraunhofer.ids.messaging.core.config.PreConfigProducerInterceptor;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.service.configuration.ConfigurationService;
@@ -84,12 +85,13 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
             final var config = loadConfig(properties);
             config.setProperty("preInterceptor", true);
             return config;
-        } catch (IOException e) {
+        } catch (IOException | ConfigUpdateException e) {
             throw new ConfigProducerInterceptorException(e.getMessage());
         }
     }
 
-    private ConfigurationModel loadConfig(final ConfigProperties properties) throws IOException {
+    private ConfigurationModel loadConfig(final ConfigProperties properties)
+            throws IOException, ConfigUpdateException {
         if (log.isDebugEnabled()) {
             log.debug("Loading configuration. [path=({})] ",
                     properties.getPath().replaceAll("[\r\n]", ""));
@@ -102,8 +104,8 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
         }
 
         final var configModel = deserializationSvc.getConfigurationModel(config);
-        final var dscConfig = MappingUtils.fromIdsConfig(configModel);
-        configurationSvc.create(dscConfig);
+        final var dscConfig = configurationSvc.create(MappingUtils.fromIdsConfig(configModel));
+        configurationSvc.swapActiveConfig(dscConfig.getId());
         return configModel;
     }
 
