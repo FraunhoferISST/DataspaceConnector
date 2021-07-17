@@ -34,7 +34,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Date;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -156,7 +157,7 @@ public class PolicyExecutionService {
         final var output = new HashMap<String, Object>();
         output.put("target", target);
         output.put("issuerConnector", id);
-        output.put("accessed", new Date());
+        output.put("accessed", ZonedDateTime.now(ZoneOffset.UTC));
 
         return output;
     }
