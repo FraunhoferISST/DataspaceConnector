@@ -15,6 +15,13 @@
  */
 package io.dataspaceconnector.service.message;
 
+import javax.xml.datatype.DatatypeFactory;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Optional;
+
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
@@ -26,11 +33,11 @@ import de.fraunhofer.iais.eis.ResultMessageBuilder;
 import de.fraunhofer.iais.eis.ResultMessageImpl;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
+import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import io.dataspaceconnector.model.broker.BrokerFactory;
 import io.dataspaceconnector.repository.BrokerRepository;
 import io.dataspaceconnector.service.configuration.BrokerService;
 import io.dataspaceconnector.service.configuration.EntityLinkerService;
-import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import io.dataspaceconnector.service.message.type.NotificationService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -38,13 +45,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import javax.xml.datatype.DatatypeFactory;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -117,7 +117,7 @@ class GlobalMessageServiceTest {
         /* ARRANGE */
         final var recipient = URI.create("https://recipient");
         Mockito.doReturn(getMessageProcessedNotificationMessage()).when(brokerService)
-                .updateSelfDescriptionAtBroker(Mockito.any());
+                .unregisterAtBroker(Mockito.any());
 
         /* ACT */
         final var response = messageService.sendConnectorUnavailableMessage(recipient);
@@ -233,22 +233,6 @@ class GlobalMessageServiceTest {
 
         /* ASSERT */
         assertTrue(response.isPresent());
-    }
-
-    @Test
-    @SneakyThrows
-    public void sendAndValidateResourceUpdateMessage_throwIOException_returnFalse() {
-        /* ARRANGE */
-        final var recipient = URI.create("https://recipient");
-        final var resource = new ResourceBuilder().build();
-        Mockito.doThrow(IOException.class).when(brokerService).updateResourceAtBroker(
-                Mockito.any(), Mockito.any());
-
-        /* ACT */
-        final var response = messageService.sendResourceUpdateMessage(recipient, resource);
-
-        /* ASSERT */
-        assertFalse(response.isPresent());
     }
 
     @Test
