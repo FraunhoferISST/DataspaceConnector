@@ -13,12 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.util;
-
-public enum CommunicationProtocol {
-
-    MULTIPART,
-
-    IDSCP_V2;
-
-}
+/**
+ * Contains all processors used in the Camel routes for the controllers.
+ */
+package io.dataspaceconnector.camel.processors.controller;
