@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.service.message.type;
 
+import java.net.URI;
+import java.util.Map;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageBuilder;
@@ -23,13 +26,13 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
-import io.dataspaceconnector.camel.ClearingHouseLoggingProcessor;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
 import io.dataspaceconnector.service.ids.DeserializationService;
+import io.dataspaceconnector.service.usagecontrol.ClearingHouseService;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.MessageUtils;
 import io.dataspaceconnector.util.Utils;
@@ -37,9 +40,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.Map;
 
 /**
  * Message service for ids artifact request messages.
@@ -58,7 +58,7 @@ public final class ArtifactRequestService
     /**
      * Clearing House logging utility.
      */
-    private final @NonNull ClearingHouseLoggingProcessor clearingHouseLoggingProcessor;
+    private final @NonNull ClearingHouseService clearingHouseService;
 
     /**
      * @throws IllegalArgumentException     if desc is null.
@@ -90,7 +90,7 @@ public final class ArtifactRequestService
                 .build();
 
             // Log outgoing ArtifactRequestMessages in ClearingHouse
-            clearingHouseLoggingProcessor.logIDSMessage(message);
+        clearingHouseService.logIdsMessage(message);
         return message;
     }
 
@@ -165,7 +165,7 @@ public final class ArtifactRequestService
         // Log response header in the Clearing House
         final var header = MessageUtils.extractHeaderFromMultipartMessage(response);
         final var idsMessage = deserializer.getMessage(header);
-        clearingHouseLoggingProcessor.logIDSMessage(idsMessage);
+        clearingHouseService.logIdsMessage(idsMessage);
 
         return response;
     }

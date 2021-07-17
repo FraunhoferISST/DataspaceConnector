@@ -18,35 +18,23 @@ import de.fraunhofer.iais.eis.Message;
 import io.dataspaceconnector.camel.dto.Request;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.dto.RouteMsg;
-import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.exception.PolicyExecutionException;
-import io.dataspaceconnector.service.message.type.LogMessageService;
-import io.dataspaceconnector.util.UUIDUtils;
+import io.dataspaceconnector.service.usagecontrol.ClearingHouseService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
 
 /**
  * Logs IDS messages in the Clearing House.
  */
 @Component("ClearingHouseLoggingProcessor")
-@Log4j2
 @RequiredArgsConstructor
 public class ClearingHouseLoggingProcessor implements Processor {
     /**
      * Service for ids log messages.
      */
-    private final @NonNull LogMessageService logMessageService;
-    /**
-     * Service for configuring policy settings.
-     */
-    private final @NonNull ConnectorConfiguration connectorConfig;
+    private final @NonNull ClearingHouseService clearingHouseService;
 
     /**
      * Processes the input. Extract the request/response IDS message,
@@ -57,43 +45,11 @@ public class ClearingHouseLoggingProcessor implements Processor {
      */
     @Override
     public void process(final Exchange exchange) throws Exception {
-        RouteMsg msg = exchange.getIn().getBody(Request.class);
+        RouteMsg<?, ?> msg = exchange.getIn().getBody(Request.class);
         if (msg == null) {
             msg = exchange.getIn().getBody(Response.class);
         }
-        var idsMessageHeader = (Message) msg.getHeader();
-        logIDSMessage(idsMessageHeader);
-    }
 
-    /**
-     *
-     * Creates a LogMessage with the IDS message as payload, then sends to the Clearing House.
-     *
-     * @param idsMessageHeader the input.
-     */
-    public void logIDSMessage(final Message idsMessageHeader) {
-
-        final var transferContractID = UUIDUtils
-                .uuidFromUri(idsMessageHeader.getTransferContract());
-        final var clearingHouse = connectorConfig.getClearingHouse();
-
-        if (!clearingHouse.equals(URI.create(""))) {
-
-            try {
-                UriComponentsBuilder uriBuilder = UriComponentsBuilder
-                        .fromHttpUrl(clearingHouse.toString());
-                uriBuilder.pathSegment(transferContractID.toString());
-
-                final var destination = uriBuilder.build().toUri();
-                logMessageService.sendMessage(
-                        destination,
-                        idsMessageHeader.toRdf());
-
-            } catch (PolicyExecutionException e) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Unable to send log message");
-                }
-            }
-        }
+        clearingHouseService.logIdsMessage((Message) msg.getHeader());
     }
 }

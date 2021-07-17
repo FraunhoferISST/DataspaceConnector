@@ -3,6 +3,7 @@ package io.dataspaceconnector.service.usagecontrol;
 import java.net.URI;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.Message;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.PolicyExecutionException;
 import io.dataspaceconnector.exception.RdfBuilderException;
@@ -72,6 +73,27 @@ public class ClearingHouseService {
             if (log.isWarnEnabled()) {
                 log.warn("Failed to send log message to clearing house. [exception=({})]",
                          exception.getMessage());
+            }
+        }
+    }
+
+    /**
+     *
+     * Creates a LogMessage with the IDS message as payload, then sends to the Clearing House.
+     *
+     * @param idsMessageHeader the input.
+     */
+    public void logIdsMessage(final Message idsMessageHeader) {
+        final var transferContractID = UUIDUtils.uuidFromUri(idsMessageHeader.getTransferContract());
+        if (isClearingHouseEnabled()) {
+            try {
+                final var clearingHouseAddress = buildClearingHouseDestination(URI.create(transferContractID.toString()));
+                logMessageService.sendMessage(clearingHouseAddress, idsMessageHeader.toRdf());
+            } catch (PolicyExecutionException exception) {
+                if (log.isWarnEnabled()) {
+                    log.warn("Failed to send log message to clearing house. [exception=({})]",
+                             exception.getMessage());
+                }
             }
         }
     }
