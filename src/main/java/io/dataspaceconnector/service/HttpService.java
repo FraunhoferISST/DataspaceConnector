@@ -15,10 +15,15 @@
  */
 package io.dataspaceconnector.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import io.dataspaceconnector.model.QueryInput;
-import io.dataspaceconnector.model.auth.ApiKey;
-import io.dataspaceconnector.model.auth.AuthType;
-import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.Utils;
 import kotlin.NotImplementedError;
@@ -29,14 +34,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import okhttp3.HttpUrl;
 import org.springframework.stereotype.Service;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This class builds up http or httpS endpoint connections and sends GET requests.
@@ -87,6 +84,18 @@ public class HttpService {
          * Authentication information. Will overwrite entry in headers.
          */
         private Pair<String, String> auth;
+    }
+
+
+    /**
+     * Authentication for a http request.
+     */
+    public interface Authentication {
+        /**
+         * Add the authentication to the http args.
+         * @param args The http args.
+         */
+        void setAuth(HttpArgs args);
     }
 
 
@@ -179,8 +188,8 @@ public class HttpService {
      * @return The response.
      * @throws IOException if the request failed.
      */
-    public Response get(final URL target, final QueryInput input, final List<AuthType> auth)
-            throws IOException {
+    public Response get(final URL target, final QueryInput input,
+                        final List<? extends Authentication> auth) throws IOException {
         final var url = (input == null) ? buildTargetUrl(target, null)
                 : buildTargetUrl(target, input.getOptional());
         return this.get(url, toArgs(input, auth));
@@ -237,19 +246,11 @@ public class HttpService {
      * @param auth  The authentication information.
      * @return The http request arguments.
      */
-    public HttpArgs toArgs(final QueryInput input, final List<AuthType> auth) {
+    public HttpArgs toArgs(final QueryInput input, final List<? extends Authentication> auth) {
         final var args = toArgs(input);
         if (auth != null) {
-            for (AuthType el : auth) {
-                if (el instanceof BasicAuth) {
-                    if (args.getAuth() == null || (args.getAuth().getFirst() == null
-                            && args.getAuth().getSecond() == null)) {
-                        args.setAuth(el.getAuthPair());
-                    }
-                } else if (el instanceof ApiKey) {
-                    var authPair = el.getAuthPair();
-                    args.getHeaders().put(authPair.getFirst(), authPair.getSecond());
-                }
+            for (final var x : auth) {
+                x.setAuth(args);
             }
         }
         return args;

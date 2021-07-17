@@ -15,6 +15,14 @@
  */
 package io.dataspaceconnector.service.resource;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.exception.UnreachableLineException;
 import io.dataspaceconnector.model.Artifact;
@@ -25,7 +33,7 @@ import io.dataspaceconnector.model.LocalData;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.model.RemoteData;
 import io.dataspaceconnector.repository.ArtifactRepository;
-import io.dataspaceconnector.repository.AuthTypeRepository;
+import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.ArtifactRetriever;
 import io.dataspaceconnector.service.HttpService;
@@ -42,14 +50,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Handles the basic logic for artifacts.
@@ -73,23 +73,23 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     /**
      * Repository for storing AuthTypes.
      */
-    private final @NonNull AuthTypeRepository authTypeRepo;
+    private final @NonNull AuthenticationRepository authRepo;
 
     /**
      * Constructor for ArtifactService.
      *
      * @param dataRepository     The data repository.
      * @param httpService        The HTTP service for fetching remote data.
-     * @param authTypeRepository The AuthType repository.
+     * @param authenticationRepository The AuthType repository.
      */
     @Autowired
     public ArtifactService(final @NonNull DataRepository dataRepository,
                            final @NonNull HttpService httpService,
-                           final @NonNull AuthTypeRepository authTypeRepository) {
+                           final @NonNull AuthenticationRepository authenticationRepository) {
         super();
         this.dataRepo = dataRepository;
         this.httpSvc = httpService;
-        this.authTypeRepo = authTypeRepository;
+        this.authRepo = authenticationRepository;
     }
 
     /**
@@ -106,7 +106,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                 // The data element is new, insert
                 if (tmp.getData() instanceof RemoteData) {
                     var data = (RemoteData) tmp.getData();
-                    data.getAuthentication().forEach(authTypeRepo::saveAndFlush);
+                    data.getAuthentication().forEach(authRepo::saveAndFlush);
                 }
                 dataRepo.saveAndFlush(tmp.getData());
             } else {

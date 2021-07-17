@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model.auth;
 
+import io.dataspaceconnector.service.HttpService;
 import okhttp3.Credentials;
 import org.junit.jupiter.api.Test;
 
@@ -25,13 +26,13 @@ class BasicAuthTest {
     @Test
     void getAuthPair_nullValue_nullValue() {
         /* ARRANGE */
-        var basicAuth = new BasicAuth();
 
         /* ACT */
-        var result = basicAuth.getAuthPair();
+        var basicAuth = new BasicAuth();
 
         /* ASSERT */
-        assertNull(result);
+        assertNull(basicAuth.getUsername());
+        assertNull(basicAuth.getPassword());
     }
 
     @Test
@@ -41,11 +42,13 @@ class BasicAuthTest {
         var password = "pw";
         var basicAuth = new BasicAuth(username, password);
 
+        final var args = new HttpService.HttpArgs();
+
         /* ACT */
-        var result = basicAuth.getAuthPair();
+        basicAuth.setAuth(args);
 
         /* ASSERT */
-        assertEquals("Authorization", result.component1());
+        assertEquals("Authorization", args.getAuth().component1());
     }
 
     @Test
@@ -56,11 +59,12 @@ class BasicAuthTest {
         var basicAuth = new BasicAuth(username, password);
 
         var expected = Credentials.basic(username, password);
+        final var args = new HttpService.HttpArgs();
 
         /* ACT */
-        var result = basicAuth.getAuthPair();
+        basicAuth.setAuth(args);
 
         /* ASSERT */
-        assertEquals(expected, result.component2());
+        assertEquals(expected, args.getAuth().component2());
     }
 }

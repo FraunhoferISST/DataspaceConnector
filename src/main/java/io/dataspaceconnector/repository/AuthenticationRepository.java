@@ -15,14 +15,13 @@
  */
 package io.dataspaceconnector.repository;
 
-import io.dataspaceconnector.model.auth.AuthType;
+import io.dataspaceconnector.model.auth.Authentication;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * The repository containing all objects of type {@link AuthType}.
+ * The repository containing all objects of type {@link Authentication}.
  */
 @Repository
-public interface AuthTypeRepository extends JpaRepository<AuthType, Long> {
-
+public interface AuthenticationRepository extends JpaRepository<Authentication, Long> {
 }

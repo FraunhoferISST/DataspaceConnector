@@ -15,17 +15,19 @@
  */
 package io.dataspaceconnector.model.auth;
 
-import kotlin.Pair;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.AccessLevel;
-import lombok.NonNull;
-import lombok.EqualsAndHashCode;
-import okhttp3.Credentials;
-
 import javax.persistence.Entity;
+
+import io.dataspaceconnector.service.HttpService.HttpArgs;
+import kotlin.Pair;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
+
+import okhttp3.Credentials;
 
 /**
  * Entity used for containing Basic Auth information in the context of AuthTypes.
@@ -36,30 +38,19 @@ import javax.persistence.Entity;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class BasicAuth extends AuthType {
+public class BasicAuth extends Authentication {
+    /** The username that is to be used for Basic Auth. */
+    @NonNull private String username;
 
-    /**
-     * The username that is to be used for Basic Auth.
-     */
-    @NonNull
-    private String username;
-    /**
-     * The password that is to be used for Basic Auth.
-     */
-    @NonNull
-    private String password;
+    /** The password that is to be used for Basic Auth. */
+    @NonNull private String password;
 
-    /**
-     * Generates the HTTP header information for the HTTP Basic Auth.
-     * @return a Pair containing the key and value used as HTTP header
-     */
+    /** {@inheritDoc} */
     @Override
-    public Pair<String, String> getAuthPair() {
-        if (username != null && password != null) {
-            return new Pair<>("Authorization", Credentials.basic(username, password));
-        } else {
-            return null;
+    public void setAuth(final HttpArgs args) {
+        if (args.getAuth() == null
+            || (args.getAuth().getFirst() == null && args.getAuth().getSecond() == null)) {
+            args.setAuth(new Pair<>("Authorization", Credentials.basic(username, password)));
         }
     }
-
 }

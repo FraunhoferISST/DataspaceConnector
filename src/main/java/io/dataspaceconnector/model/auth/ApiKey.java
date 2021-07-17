@@ -15,15 +15,17 @@
  */
 package io.dataspaceconnector.model.auth;
 
-import kotlin.Pair;
+import javax.persistence.Entity;
+
+import java.util.HashMap;
+
+import io.dataspaceconnector.service.HttpService.HttpArgs;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.RequiredArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.EqualsAndHashCode;
-
-import javax.persistence.Entity;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 /**
  * Entity used for containing Basic Auth information in the context of AuthTypes.
@@ -34,24 +36,20 @@ import javax.persistence.Entity;
 @RequiredArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class ApiKey extends AuthType {
-    /**
-     * The key associated to the ApiKey.
-     */
-    @NonNull
-    private String key;
-    /**
-     * The value associated to the ApiKey.
-     */
-    @NonNull
-    private String value;
+public class ApiKey extends Authentication {
+    /** The key associated to the ApiKey. */
+    @NonNull private String key;
 
-    /**
-     * Getter for the key and value.
-     * @return the key and value of the ApiKey as a Pair
-     */
+    /** The value associated to the ApiKey. */
+    @NonNull private String value;
+
+    /** {@inheritDoc} */
     @Override
-    public Pair<String, String> getAuthPair() {
-        return new Pair<>(key, value);
+    public void setAuth(final HttpArgs args) {
+        if (args.getHeaders() == null) {
+           args.setHeaders(new HashMap<>());
+        }
+
+        args.getHeaders().put(key, value);
     }
 }

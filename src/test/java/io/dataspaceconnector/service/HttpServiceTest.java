@@ -15,8 +15,14 @@
  */
 package io.dataspaceconnector.service;
 
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Map;
+
 import io.dataspaceconnector.model.QueryInput;
-import io.dataspaceconnector.model.auth.AuthType;
+import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.auth.BasicAuth;
 import kotlin.NotImplementedError;
 import okhttp3.MediaType;
@@ -30,13 +36,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -102,7 +101,7 @@ class HttpServiceTest {
         final var params = Map.of("A", "AV", "B", "BV");
         final var headers = Map.of("C", "CV", "D", "DV");
         final var authType = new BasicAuth("X", "Y");
-        final var auth = new LinkedList<AuthType>();
+        final var auth = new ArrayList<Authentication>();
 
         auth.add(authType);
 
@@ -113,7 +112,7 @@ class HttpServiceTest {
         final var expected = new HttpService.HttpArgs();
         expected.setParams(params);
         expected.setHeaders(headers);
-        expected.setAuth(authType.getAuthPair());
+        authType.setAuth(expected);
 
         /* ACT */
         final var result = service.toArgs(input, auth);
@@ -123,7 +122,7 @@ class HttpServiceTest {
     }
 
     @Test
-    public void request_get_equalsToGetMethod() throws IOException, URISyntaxException {
+    public void request_get_equalsToGetMethod() throws IOException {
         /* ARRANGE */
         final var target = new URL("https://someTarget");
         final var args = new HttpService.HttpArgs();

@@ -24,7 +24,7 @@ import io.dataspaceconnector.model.LocalData;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.model.RemoteData;
 import io.dataspaceconnector.repository.ArtifactRepository;
-import io.dataspaceconnector.repository.AuthTypeRepository;
+import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.HttpService;
 import lombok.SneakyThrows;
@@ -45,7 +45,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {ArtifactService.class, ArtifactFactory.class, ArtifactRepository.class,
-        DataRepository.class, AuthTypeRepository.class, HttpService.class})
+        DataRepository.class, AuthenticationRepository.class, HttpService.class})
 class ArtifactServiceTest {
 
     @MockBean
@@ -55,7 +55,7 @@ class ArtifactServiceTest {
     private DataRepository dataRepository;
 
     @MockBean
-    private AuthTypeRepository authTypeRepository;
+    private AuthenticationRepository authenticationRepository;
 
     @MockBean
     private HttpService httpService;
