@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.view.endpoint;
 
-import io.dataspaceconnector.controller.configuration.EndpointControllers;
+import io.dataspaceconnector.controller.configuration.EndpointController;
 import io.dataspaceconnector.controller.resource.view.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
@@ -35,7 +35,7 @@ public class GenericEndpointViewAssembler
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, EndpointControllers.class);
+        return ViewAssemblerHelper.getSelfLink(entityId, EndpointController.class);
     }
 
     @Override

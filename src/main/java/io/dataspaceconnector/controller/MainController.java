@@ -16,8 +16,8 @@
 package io.dataspaceconnector.controller;
 
 import io.dataspaceconnector.controller.configuration.BrokerControllers;
-import io.dataspaceconnector.controller.configuration.ConfigManagerControllers;
-import io.dataspaceconnector.controller.configuration.EndpointControllers;
+import io.dataspaceconnector.controller.configuration.DataSourceController;
+import io.dataspaceconnector.controller.configuration.EndpointController;
 import io.dataspaceconnector.controller.configuration.RouteControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
 import io.dataspaceconnector.service.ids.ConnectorService;
@@ -41,7 +41,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * This class provides endpoints for basic connector services.
  */
 @RestController
-@Tag(name = "Connector", description = "Endpoints for connector information and configuration")
+@Tag(name = "Connector", description = "Endpoints for connector information")
 @RequiredArgsConstructor
 public class MainController {
 
@@ -105,9 +105,9 @@ public class MainController {
                 .getAll(null, null)).withRel("catalogs"));
         model.add(linkTo(methodOn(ResourceControllers.ContractController.class)
                 .getAll(null, null)).withRel("contracts"));
-        model.add(linkTo(methodOn(ConfigManagerControllers.DataSourceController.class)
+        model.add(linkTo(methodOn(DataSourceController.class)
                 .getAll(null, null)).withRel("datasources"));
-        model.add(linkTo(methodOn(EndpointControllers.class)
+        model.add(linkTo(methodOn(EndpointController.class)
                 .getAll(null, null)).withRel("endpoints"));
         model.add(linkTo(methodOn(ResourceControllers.OfferedResourceController.class)
                 .getAll(null, null)).withRel("offers"));

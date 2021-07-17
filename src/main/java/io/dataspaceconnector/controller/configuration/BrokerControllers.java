@@ -18,6 +18,8 @@ package io.dataspaceconnector.controller.configuration;
 import io.dataspaceconnector.controller.resource.BaseResourceChildController;
 import io.dataspaceconnector.controller.resource.BaseResourceController;
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
+import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
+import io.dataspaceconnector.controller.resource.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.broker.BrokerDesc;
@@ -51,7 +53,7 @@ public final class BrokerControllers {
      */
     @RestController
     @RequestMapping("/api/brokers")
-    @Tag(name = "Broker", description = "Endpoints for CRUD operations on broker")
+    @Tag(name = ResourceName.BROKERS, description = ResourceDescription.BROKERS)
     public static class BrokerController extends BaseResourceController<Broker, BrokerDesc,
             BrokerView, BrokerService> {
     }
@@ -61,13 +63,14 @@ public final class BrokerControllers {
      */
     @RestController
     @RequestMapping("/api/brokers/{id}/offers")
-    @Tag(name = "Broker", description = "Endpoints for linking broker to offered resources")
+    @Tag(name = ResourceName.BROKERS, description = ResourceDescription.BROKERS)
     public static class BrokerToOfferedResources extends
             BaseResourceChildController<EntityLinkerService.BrokerOfferedResourcesLinker,
                     OfferedResource, OfferedResourceView> {
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "401", description = "Unauthorized"),
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "401", description = "Unauthorized"),
                 @ApiResponse(responseCode = "405", description = "Not allowed")})
         public final PagedModel<OfferedResourceView> addResources(
                 @Valid @PathVariable(name = "id") final UUID ownerId,
@@ -77,7 +80,8 @@ public final class BrokerControllers {
 
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "401", description = "Unauthorized"),
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "401", description = "Unauthorized"),
                 @ApiResponse(responseCode = "405", description = "No content")})
         public final HttpEntity<Void> replaceResources(
                 @Valid @PathVariable(name = "id") final UUID ownerId,
@@ -87,7 +91,8 @@ public final class BrokerControllers {
 
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "401", description = "Unauthorized"),
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "401", description = "Unauthorized"),
                 @ApiResponse(responseCode = "405", description = "No content")})
         public final HttpEntity<Void> removeResources(
                 @Valid @PathVariable(name = "id") final UUID ownerId,

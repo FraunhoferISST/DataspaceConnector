@@ -60,6 +60,31 @@ public final class ResourceName {
      */
     public static final String ARTIFACTS = "Artifacts";
 
+    /**
+     * Tag name for brokers.
+     */
+    public static final String BROKERS = "Brokers";
+
+    /**
+     * Tag name for configurations.
+     */
+    public static final String CONFIGURATIONS = "Configurations";
+
+    /**
+     * Tag name for data sources/sinks.
+     */
+    public static final String DATA_SOURCES = "Data Sources/Sinks";
+
+    /**
+     * Tag name for endpoints.
+     */
+    public static final String ENDPOINTS = "Endpoints";
+
+    /**
+     * Tag name for routes.
+     */
+    public static final String ROUTES = "Routes";
+
     private ResourceName() {
         // Nothing to do here.
     }

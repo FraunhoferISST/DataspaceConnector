@@ -19,6 +19,8 @@ import io.dataspaceconnector.controller.resource.BaseResourceChildController;
 import io.dataspaceconnector.controller.resource.BaseResourceController;
 import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
 import io.dataspaceconnector.controller.resource.swagger.response.ResponseDescription;
+import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
+import io.dataspaceconnector.controller.resource.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.ArtifactView;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.route.Route;
@@ -53,7 +55,7 @@ public final class RouteControllers {
      */
     @RestController
     @RequestMapping("/api/routes")
-    @Tag(name = "Route", description = "Endpoints for CRUD operations on routes")
+    @Tag(name = ResourceName.ROUTES, description = ResourceDescription.ROUTES)
     @RequiredArgsConstructor
     public static class RouteController extends BaseResourceController<Route, RouteDesc, RouteView,
             RouteService> {
@@ -136,7 +138,7 @@ public final class RouteControllers {
      */
     @RestController
     @RequestMapping("/api/routes/{id}/steps")
-    @Tag(name = "Route", description = "Endpoints for linking routes to steps")
+    @Tag(name = ResourceName.ROUTES, description = ResourceDescription.ROUTES)
     public static class RoutesToSteps extends BaseResourceChildController<
             EntityLinkerService.RouteStepsLinker, Route, RouteView> {
     }
@@ -146,7 +148,7 @@ public final class RouteControllers {
      */
     @RestController
     @RequestMapping("/api/routes/{id}/outputs")
-    @Tag(name = "Route", description = "Endpoints for linking routes to offered resources")
+    @Tag(name = ResourceName.ROUTES, description = ResourceDescription.ROUTES)
     public static class RoutesToArtifacts extends BaseResourceChildController<
             EntityLinkerService.RouteArtifactsLinker, Artifact, ArtifactView> {
     }

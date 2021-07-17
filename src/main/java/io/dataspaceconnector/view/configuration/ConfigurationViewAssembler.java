@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.view.configuration;
 
-import io.dataspaceconnector.controller.configuration.ConfigManagerControllers.ConfigurationController;
+import io.dataspaceconnector.controller.configuration.ConfigurationController;
 import io.dataspaceconnector.controller.resource.view.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.configuration.Configuration;

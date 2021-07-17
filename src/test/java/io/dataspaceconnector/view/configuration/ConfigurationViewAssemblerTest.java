@@ -15,10 +15,7 @@
  */
 package io.dataspaceconnector.view.configuration;
 
-import java.net.URI;
-import java.util.ArrayList;
-
-import io.dataspaceconnector.controller.configuration.ConfigManagerControllers;
+import io.dataspaceconnector.controller.configuration.ConfigurationController;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
@@ -35,6 +32,9 @@ import io.dataspaceconnector.model.truststore.TruststoreFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.net.URI;
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -46,7 +46,7 @@ public class ConfigurationViewAssemblerTest {
         /* ARRANGE */
         final var shouldLookLike = getConfiguration();
         final var link = ViewAssemblerHelper.
-                getSelfLink(shouldLookLike.getId(), ConfigManagerControllers.ConfigurationController.class);
+                getSelfLink(shouldLookLike.getId(), ConfigurationController.class);
 
         /* ACT */
         final var after = getConfigurationView();

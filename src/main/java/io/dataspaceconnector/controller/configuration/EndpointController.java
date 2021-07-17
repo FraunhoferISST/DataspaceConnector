@@ -17,6 +17,8 @@ package io.dataspaceconnector.controller.configuration;
 
 import io.dataspaceconnector.controller.base.CRUDController;
 import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
+import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
+import io.dataspaceconnector.controller.resource.tag.ResourceName;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.service.configuration.GenericEndpointService;
@@ -53,10 +55,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/endpoints")
 @RequiredArgsConstructor
-@Tag(name = "Endpoints", description = "Endpoints for CRUD operations on endpoints")
+@Tag(name = ResourceName.ENDPOINTS, description = ResourceDescription.ENDPOINTS)
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.NONE)
-public class EndpointControllers implements CRUDController<Endpoint, EndpointDesc, Object> {
+public class EndpointController implements CRUDController<Endpoint, EndpointDesc, Object> {
 
     /**
      * Service for generic endpoint.

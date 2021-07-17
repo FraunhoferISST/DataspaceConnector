@@ -15,11 +15,7 @@
  */
 package io.dataspaceconnector.controller.configurations;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import io.dataspaceconnector.controller.configuration.EndpointControllers;
+import io.dataspaceconnector.controller.configuration.EndpointController;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
@@ -34,11 +30,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 
 @SpringBootTest
-class EndpointControllersTest {
+class EndpointControllerTest {
 
     @MockBean
     private GenericEndpointService genericEndpointService;
@@ -47,7 +47,7 @@ class EndpointControllersTest {
     private EndpointServiceProxy service;
 
     @Autowired
-    private EndpointControllers controller;
+    private EndpointController controller;
 
     @Test
     public void create_validInput_returnNewEndpoint() {
