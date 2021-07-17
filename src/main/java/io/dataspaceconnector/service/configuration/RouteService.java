@@ -93,9 +93,11 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
             endpointRepo.save(route.getEnd());
         }
 
-        var repo = (RouteRepository) getRepository();
-        if (repo.findAllTopLevelRoutes().contains(route)) {
-            routeManager.createAndDeployXMLRoute(appRouteBuilder.create(route));
+        if (route.getStart() != null && route.getEnd() != null) {
+            var repo = (RouteRepository) getRepository();
+            if (repo.findAllTopLevelRoutes().contains(route)) {
+                routeManager.createAndDeployXMLRoute(appRouteBuilder.create(route));
+            }
         }
 
         return super.persist(route);
