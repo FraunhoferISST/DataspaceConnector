@@ -32,7 +32,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -69,6 +68,11 @@ public class ConfigurationController {
     private final @NonNull ConfigurationService configurationService;
 
     /**
+     * The controller for all configurations.
+     */
+    private final @NonNull ConfigManagerControllers.ConfigurationController configurationController;
+
+    /**
      * Update the connector's current configuration.
      *
      * @param toSelect The new configuration.
@@ -94,9 +98,6 @@ public class ConfigurationController {
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-    @Autowired
-    ConfigManagerControllers.ConfigurationController configurationController;
 
     /**
      * Return the connector's current configuration.

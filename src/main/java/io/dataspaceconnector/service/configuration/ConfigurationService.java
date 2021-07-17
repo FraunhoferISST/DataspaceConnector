@@ -101,7 +101,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
         reload(newConfig);
     }
 
-    private void swapActiveConfigInDb(UUID newConfig) {
+    private void swapActiveConfigInDb(final UUID newConfig) {
         final var repo = (ConfigurationRepository) getRepository();
         repo.unsetActive();
         repo.setActive(newConfig);
