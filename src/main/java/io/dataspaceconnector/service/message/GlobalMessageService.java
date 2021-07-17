@@ -72,6 +72,9 @@ public class GlobalMessageService {
      */
     private final @NonNull NotificationService notificationSvc;
 
+    /**
+     * Service for handling broker communication.
+     */
     private final @NonNull BrokerCommunication brokerCommunication;
 
     /**
