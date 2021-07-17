@@ -16,7 +16,11 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
-@Service
+
+/**
+ * Service for communication with the clearing house.
+ */
+ @Service
 @RequiredArgsConstructor
 @Log4j2
 public class ClearingHouseService {
@@ -84,10 +88,12 @@ public class ClearingHouseService {
      * @param idsMessageHeader the input.
      */
     public void logIdsMessage(final Message idsMessageHeader) {
-        final var transferContractID = UUIDUtils.uuidFromUri(idsMessageHeader.getTransferContract());
+        final var transferContractID =
+            UUIDUtils.uuidFromUri(idsMessageHeader.getTransferContract());
         if (isClearingHouseEnabled()) {
             try {
-                final var clearingHouseAddress = buildClearingHouseDestination(URI.create(transferContractID.toString()));
+                final var clearingHouseAddress =
+                     buildClearingHouseDestination(URI.create(transferContractID.toString()));
                 logMessageService.sendMessage(clearingHouseAddress, idsMessageHeader.toRdf());
             } catch (PolicyExecutionException exception) {
                 if (log.isWarnEnabled()) {

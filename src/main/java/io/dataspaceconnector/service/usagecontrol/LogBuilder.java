@@ -10,6 +10,10 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+
+/**
+ * Builds log messages for ids communication.
+ */
 @Component
 @RequiredArgsConstructor
 public class LogBuilder {
@@ -24,7 +28,7 @@ public class LogBuilder {
      * @param target The accessed element.
      * @return The log line.
      */
-    String buildLog(final URI target) {
+    public String buildLog(final URI target) {
         final var id = connectorService.getConnectorId();
 
         final var output = new HashMap<String, Object>();
