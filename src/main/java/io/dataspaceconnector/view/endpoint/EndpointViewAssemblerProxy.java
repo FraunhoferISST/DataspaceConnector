@@ -44,8 +44,9 @@ public class EndpointViewAssemblerProxy
 
     /**
      * Converts an endpoint object into an app-/connector- or generic-endpoint.
-     * @param endpoint
-     * @return
+     *
+     * @param endpoint The endpoint.
+     * @return The endpoint of a specific type.
      */
     @Override
     public RepresentationModel<?> toModel(final Endpoint endpoint) {

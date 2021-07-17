@@ -15,12 +15,6 @@
  */
 package io.dataspaceconnector.model.proxy;
 
-import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Table;
-import java.net.URI;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.base.Entity;
@@ -32,7 +26,18 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.net.URI;
+import java.util.List;
 
 import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
@@ -48,6 +53,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Setter(AccessLevel.PACKAGE)
 @RequiredArgsConstructor
 public class Proxy extends Entity implements RemoteService {
+
     /**
      * Serial version uid.
      **/

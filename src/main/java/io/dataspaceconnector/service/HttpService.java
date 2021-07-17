@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.QueryInput;
 import io.dataspaceconnector.util.Utils;
 import kotlin.NotImplementedError;
@@ -114,8 +114,8 @@ public class HttpService {
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     public Response get(final URL target, final HttpArgs args) throws IOException {
-        Utils.requireNonNull(target, ErrorMessages.URI_NULL);
-        Utils.requireNonNull(args, ErrorMessages.HTTP_ARGS_NULL);
+        Utils.requireNonNull(target, ErrorMessage.URI_NULL);
+        Utils.requireNonNull(args, ErrorMessage.HTTP_ARGS_NULL);
 
         final var urlBuilder = createUrlBuilder(target);
 

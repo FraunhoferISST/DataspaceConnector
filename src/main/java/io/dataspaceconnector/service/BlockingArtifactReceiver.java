@@ -21,7 +21,7 @@ import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
 import io.dataspaceconnector.service.resource.ArtifactService;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.MessageUtils;
 import io.dataspaceconnector.util.QueryInput;
 import lombok.NonNull;
@@ -85,7 +85,7 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
             if (content.containsKey("reason")) {
                 final var reason = content.get("reason");
                 if (reason.equals(RejectionReason.NOT_AUTHORIZED)) {
-                    throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
+                    throw new PolicyRestrictionException(ErrorMessage.POLICY_RESTRICTION);
                 }
             }
 

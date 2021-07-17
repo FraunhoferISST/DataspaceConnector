@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Enumeration for data source type.
  */
 public enum DataSourceType {
+
     /**
      * The database.
      */

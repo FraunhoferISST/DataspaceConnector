@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.service.ids.builder;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import de.fraunhofer.iais.eis.ContractOffer;
 import de.fraunhofer.iais.eis.ContractOfferBuilder;
 import de.fraunhofer.iais.eis.Duty;
@@ -34,8 +31,11 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
- * Converts DSC contracts to ids contract offers.
+ * Converts dsc contracts to ids contract offers.
  */
 @Component
 @RequiredArgsConstructor

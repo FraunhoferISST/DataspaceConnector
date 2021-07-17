@@ -33,14 +33,17 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ProxyDesc extends Description {
+
     /**
      * The location information.
      */
     private URI location;
+
     /**
      * The list of exclusions.
      */
     private List<String> exclusions;
+
     /**
      * The authentication information.
      */

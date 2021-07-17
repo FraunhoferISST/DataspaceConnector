@@ -20,7 +20,7 @@ import io.dataspaceconnector.service.ids.DeserializationService;
 import org.springframework.stereotype.Component;
 
 /**
- * Converts DSC rule to ids prohibition.
+ * Converts dsc rule to ids prohibition.
  */
 @Component
 public class IdsProhibitionBuilder extends IdsRuleBuilder<Prohibition> {

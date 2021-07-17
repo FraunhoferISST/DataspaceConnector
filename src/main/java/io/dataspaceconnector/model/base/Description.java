@@ -15,19 +15,20 @@
  */
 package io.dataspaceconnector.model.base;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The base class for all descriptions.
  */
 @Data
 public class Description {
+
     /**
      * The overflow for all elements that cannot be mapped.
      */
@@ -38,7 +39,8 @@ public class Description {
      * Add a value to the overflow field.
      * If the key already exists it will be overwritten.
      * Null for either key or values will be ignored.
-     * @param key The key.
+     *
+     * @param key   The key.
      * @param value The value.
      */
     @JsonAnySetter

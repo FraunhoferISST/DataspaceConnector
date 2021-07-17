@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.service.configuration;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpointDesc;
 import io.dataspaceconnector.model.endpoint.GenericEndpointFactory;
@@ -26,6 +24,8 @@ import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 /**
  * Service class for generic endpoints.
@@ -43,17 +43,19 @@ public class GenericEndpointService
 
     /**
      * Constructor for injection.
-     * @param dataSourceService The data source repository.
+     *
+     * @param service The data source repository.
      */
     @Autowired
-    public GenericEndpointService(final @NonNull DataSourceService dataSourceService) {
+    public GenericEndpointService(final @NonNull DataSourceService service) {
         super();
-        this.dataSourceSvc = dataSourceService;
+        this.dataSourceSvc = service;
     }
 
     /**
      * This method allows to modify the generic endpoint and set a data source.
-     * @param endpointId The id of the generic endpoint.
+     *
+     * @param endpointId   The id of the generic endpoint.
      * @param dataSourceId The new data source of the generic endpoint.
      */
     public void setGenericEndpointDataSource(final UUID endpointId,

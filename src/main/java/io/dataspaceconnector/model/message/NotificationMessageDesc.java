@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.model.message;
 
-import java.net.URI;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import java.net.URI;
 
 /**
  * Class for all description request message parameters.
@@ -28,6 +28,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class NotificationMessageDesc extends MessageDesc {
+
     /**
      * All args constructor.
      *

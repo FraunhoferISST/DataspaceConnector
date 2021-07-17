@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.model.truststore;
 
-import java.net.URI;
-
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
 
 /**
  * Factory class for the trust store.
@@ -37,11 +37,17 @@ public class TruststoreFactory extends AbstractFactory<Truststore, TruststoreDes
      */
     public static final URI DEFAULT_LOCATION = URI.create("");
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected final Truststore initializeEntity(final TruststoreDesc desc) {
         return new Truststore();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final boolean updateInternal(final Truststore truststore, final TruststoreDesc desc) {
         final var hasUpdatedLocation = updateLocation(truststore, desc.getLocation());

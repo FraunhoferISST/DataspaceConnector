@@ -17,14 +17,25 @@ package io.dataspaceconnector.util;
 
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Catalog;
+import de.fraunhofer.iais.eis.ConfigurationModel;
+import de.fraunhofer.iais.eis.ConnectorDeployMode;
 import de.fraunhofer.iais.eis.ConnectorEndpoint;
 import de.fraunhofer.iais.eis.Contract;
+import de.fraunhofer.iais.eis.Proxy;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
+import io.dataspaceconnector.config.interceptor.CurrentConfig;
+import io.dataspaceconnector.model.auth.Authentication;
+import io.dataspaceconnector.model.configuration.ConfigurationDesc;
+import io.dataspaceconnector.model.configuration.DeployMode;
+import io.dataspaceconnector.model.configuration.SecurityProfile;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
+import io.dataspaceconnector.model.configuration.LogLevel;
 import io.dataspaceconnector.model.contract.ContractDesc;
+import io.dataspaceconnector.model.keystore.KeystoreDesc;
+import io.dataspaceconnector.model.proxy.ProxyDesc;
 import io.dataspaceconnector.model.representation.RepresentationDesc;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
@@ -36,6 +47,7 @@ import io.dataspaceconnector.model.template.ContractTemplate;
 import io.dataspaceconnector.model.template.RepresentationTemplate;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
+import io.dataspaceconnector.model.truststore.TruststoreDesc;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -45,6 +57,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Maps ids resources to internal resources.
@@ -66,7 +79,7 @@ public final class MappingUtils {
      * @throws IllegalArgumentException if the passed resource is null.
      */
     public static CatalogTemplate fromIdsCatalog(final Catalog catalog) {
-        Utils.requireNonNull(catalog, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(catalog, ErrorMessage.ENTITY_NULL);
 
         final var additional = new HashMap<String, String>();
         if (catalog.getProperties() != null) {
@@ -83,7 +96,7 @@ public final class MappingUtils {
     }
 
     private static Map<String, String> buildAdditionalForResource(final Resource resource) {
-        Utils.requireNonNull(resource, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(resource, ErrorMessage.ENTITY_NULL);
 
         final var additional = propertiesToAdditional(resource.getProperties());
 
@@ -226,7 +239,7 @@ public final class MappingUtils {
      */
     public static ResourceTemplate<OfferedResourceDesc> fromIdsOfferedResource(
             final Resource resource) {
-        Utils.requireNonNull(resource, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(resource, ErrorMessage.ENTITY_NULL);
 
         final var desc = new OfferedResourceDesc();
         fillResourceDesc(desc, resource);
@@ -242,7 +255,7 @@ public final class MappingUtils {
      * @throws IllegalArgumentException if the passed resource is null.
      */
     public static ResourceTemplate<RequestedResourceDesc> fromIdsResource(final Resource resource) {
-        Utils.requireNonNull(resource, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(resource, ErrorMessage.ENTITY_NULL);
 
         final var desc = new RequestedResourceDesc();
         desc.setRemoteId(resource.getId());
@@ -274,7 +287,7 @@ public final class MappingUtils {
      */
     public static RepresentationTemplate fromIdsRepresentation(
             final Representation representation) {
-        Utils.requireNonNull(representation, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(representation, ErrorMessage.ENTITY_NULL);
 
         final var created = representation.getCreated();
         final var representationId = representation.getId();
@@ -328,7 +341,7 @@ public final class MappingUtils {
      */
     public static ArtifactTemplate fromIdsArtifact(final Artifact artifact,
                                                    final boolean download, final URI remoteUrl) {
-        Utils.requireNonNull(artifact, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(artifact, ErrorMessage.ENTITY_NULL);
 
         final var artifactId = artifact.getId();
         final var byteSize = artifact.getByteSize();
@@ -377,7 +390,7 @@ public final class MappingUtils {
      * @throws IllegalArgumentException if the passed contract is null.
      */
     public static ContractTemplate fromIdsContract(final Contract contract) {
-        Utils.requireNonNull(contract, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(contract, ErrorMessage.ENTITY_NULL);
 
         final var consumer = contract.getConsumer();
         final var date = contract.getContractDate();
@@ -423,12 +436,12 @@ public final class MappingUtils {
      *
      * @param rule The ids rule.
      * @return The rule template.
-     * @throws IllegalArgumentException                             if the rule is null.
+     * @throws IllegalArgumentException                            if the rule is null.
      * @throws io.dataspaceconnector.exception.RdfBuilderException if the rule cannot be
-     * converted to string.
+     *                                                             converted to string.
      */
     public static RuleTemplate fromIdsRule(final Rule rule) {
-        Utils.requireNonNull(rule, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(rule, ErrorMessage.ENTITY_NULL);
 
         final var value = IdsUtils.toRdf(rule);
         final var desc = new ContractRuleDesc();
@@ -494,5 +507,94 @@ public final class MappingUtils {
         }
 
         return output;
+    }
+
+    /**
+     * Get dsc log level from ids log level.
+     *
+     * @param logLevel The ids log level.
+     * @return The internal log level.
+     */
+    public static LogLevel fromIdsLogLevel(final de.fraunhofer.iais.eis.LogLevel logLevel) {
+        switch (logLevel) {
+            // TODO infomodel has less log levels than DSC, info will get lost
+            case MINIMAL_LOGGING:
+                return LogLevel.WARN;
+            case DEBUG_LEVEL_LOGGING:
+                return LogLevel.DEBUG;
+            default:
+                return LogLevel.OFF;
+        }
+    }
+
+    /**
+     * Get dsc security profile from ids security profile.
+     *
+     * @param securityProfile The ids security profile.
+     * @return The internal security profile.
+     */
+    public static SecurityProfile fromIdsSecurityProfile(
+            final de.fraunhofer.iais.eis.SecurityProfile securityProfile) {
+        switch (securityProfile) {
+            case TRUST_SECURITY_PROFILE:
+                return SecurityProfile.TRUST_SECURITY;
+            case TRUST_PLUS_SECURITY_PROFILE:
+                return SecurityProfile.
+                        TRUST_PLUS_SECURITY;
+            default:
+                return SecurityProfile.BASE_SECURITY;
+        }
+    }
+
+    /**
+     * Build internal configuration desc from ids configModel.
+     *
+     * @param configModel The ids configuration model.
+     * @return The internal configuration desc.
+     */
+    public static ConfigurationDesc buildConfigDesc(final ConfigurationModel configModel) {
+        final var description = new ConfigurationDesc();
+        description.setSelected(CurrentConfig.SELECTED);
+        description.setDeployMode(fromIdsDeployMode(configModel.getConnectorDeployMode()));
+        description.setCurator(configModel.getConnectorDescription().getCurator());
+        description.setConnectorEndpoint(
+                configModel.getConnectorDescription().getHasDefaultEndpoint().getAccessURL());
+        description.setInboundModelVersion(
+                configModel.getConnectorDescription().getInboundModelVersion());
+        description.setOutboundModelVersion(
+                configModel.getConnectorDescription().getOutboundModelVersion());
+        description.setKeystoreSettings(new KeystoreDesc(
+                configModel.getKeyStore(),
+                configModel.getKeyStorePassword()));
+        description.setLogLevel(fromIdsLogLevel(configModel.getConfigurationModelLogLevel()));
+        description.setMaintainer(configModel.getConnectorDescription().getMaintainer());
+        description.setProxySettings(fromIdsProxy(configModel.getConnectorProxy()));
+        description.setSecurityProfile(
+                fromIdsSecurityProfile(configModel.getConnectorDescription().getSecurityProfile()));
+        description.setTruststoreSettings(new TruststoreDesc(
+                configModel.getTrustStore(), configModel.getTrustStorePassword()));
+        //description.setVersion(null);
+        return description;
+    }
+
+    private static DeployMode fromIdsDeployMode(final ConnectorDeployMode deployMode) {
+        return deployMode == ConnectorDeployMode.TEST_DEPLOYMENT ? DeployMode.TEST
+                : DeployMode.PRODUCTIVE;
+    }
+
+    private static ProxyDesc fromIdsProxy(final List<Proxy> proxyList) {
+        if (proxyList == null || proxyList.isEmpty()) {
+            return null;
+        }
+
+        final var proxy = proxyList.get(0);
+        final var auth = proxy.getProxyAuthentication();
+        final var dscAuth = new Authentication();
+        dscAuth.setUsername(auth.getAuthUsername());
+        dscAuth.setPassword(auth.getAuthPassword());
+        return new ProxyDesc(proxy.getProxyURI(), proxy.getNoProxy()
+                .stream()
+                .map(URI::toString)
+                .collect(Collectors.toList()), dscAuth);
     }
 }

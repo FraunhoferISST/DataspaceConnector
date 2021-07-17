@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.model.named;
 
-import javax.persistence.MappedSuperclass;
-
 import io.dataspaceconnector.model.base.Entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import javax.persistence.MappedSuperclass;
 
 /**
  * The entity class which holds additional information like title, description.
@@ -28,6 +28,7 @@ import lombok.EqualsAndHashCode;
 @MappedSuperclass
 @EqualsAndHashCode(callSuper = true)
 public class NamedEntity extends Entity {
+
     /**
      * Serial version uid.
      **/

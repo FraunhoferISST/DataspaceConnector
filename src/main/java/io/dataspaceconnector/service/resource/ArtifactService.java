@@ -29,7 +29,7 @@ import io.dataspaceconnector.service.ArtifactRetriever;
 import io.dataspaceconnector.service.HttpService;
 import io.dataspaceconnector.service.usagecontrol.PolicyVerifier;
 import io.dataspaceconnector.service.usagecontrol.VerificationResult;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.QueryInput;
 import io.dataspaceconnector.util.Utils;
 import kotlin.NotImplementedError;
@@ -160,7 +160,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
          * the data it means all data access has been forbidden. Do not proceed.
          */
 
-        var policyException = new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
+        var policyException = new PolicyRestrictionException(ErrorMessage.POLICY_RESTRICTION);
         for (final var agRemoteId : agreements) {
             try {
                 final var info = new RetrievalInformation(agRemoteId, null, queryInput);
@@ -226,7 +226,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                 log.info("Access denied. [artifactId=({})]", artifactId);
             }
 
-            throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
+            throw new PolicyRestrictionException(ErrorMessage.POLICY_RESTRICTION);
         }
     }
 
@@ -337,7 +337,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @return list of all artifacts referenced in the agreement
      */
     public List<Artifact> getAllByAgreement(final UUID agreementId) {
-        Utils.requireNonNull(agreementId, ErrorMessages.ENTITYID_NULL);
+        Utils.requireNonNull(agreementId, ErrorMessage.ENTITYID_NULL);
         return ((ArtifactRepository) getRepository()).findAllByAgreement(agreementId);
     }
 

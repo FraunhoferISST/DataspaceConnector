@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.model.configuration;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
 import io.dataspaceconnector.config.interceptor.CurrentConfig;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
@@ -31,6 +27,10 @@ import io.dataspaceconnector.util.MetadataUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Creates and updates a configuration.
@@ -145,7 +145,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     }
 
     /**
-     * @param config The configuration.
+     * @param config          The configuration.
      * @param securityProfile The new security profile.
      * @return True, if security profile is updated.
      */
@@ -161,7 +161,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     }
 
     /**
-     * @param config The configuration.
+     * @param config               The configuration.
      * @param outboundModelVersion The outbound model version.
      * @return True, if outbound model version is updated.
      */
@@ -176,7 +176,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     }
 
     /**
-     * @param config The configuration.
+     * @param config              The configuration.
      * @param inboundModelVersion The new inbound model version list.
      * @return True, if list is updated.
      */
@@ -191,7 +191,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     }
 
     /**
-     * @param config The configuration.
+     * @param config     The configuration.
      * @param maintainer The new maintainer.
      * @return True, if maintainer is updated.
      */
@@ -205,7 +205,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     }
 
     /**
-     * @param config The configuration.
+     * @param config  The configuration.
      * @param curator The new curator.
      * @return True, if curator is updated.
      */
@@ -219,7 +219,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     }
 
     /**
-     * @param config The configuration.
+     * @param config  The configuration.
      * @param version The updated project version.
      * @return True, if version is updated.
      */
@@ -239,7 +239,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     }
 
     /**
-     * @param config The configuration
+     * @param config            The configuration
      * @param connectorEndpoint The new connector endpoint.
      * @return True, if connector endpoint is updated.
      */

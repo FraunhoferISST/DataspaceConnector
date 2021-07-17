@@ -15,12 +15,6 @@
  */
 package io.dataspaceconnector.service.message;
 
-import javax.validation.constraints.NotNull;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Optional;
-import java.util.Set;
-
 import de.fraunhofer.iais.eis.QueryLanguage;
 import de.fraunhofer.iais.eis.QueryScope;
 import de.fraunhofer.iais.eis.QueryTarget;
@@ -34,22 +28,28 @@ import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
 import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
 import de.fraunhofer.ids.messaging.protocol.multipart.UnknownResponseException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
-import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.service.configuration.BrokerService;
-import io.dataspaceconnector.service.configuration.EntityLinkerService;
-import io.dataspaceconnector.util.UUIDUtils;
 import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
+import io.dataspaceconnector.model.base.RegistrationStatus;
+import io.dataspaceconnector.service.configuration.BrokerService;
+import io.dataspaceconnector.service.configuration.EntityLinkerService;
 import io.dataspaceconnector.service.message.type.NotificationService;
 import io.dataspaceconnector.util.ControllerUtils;
+import io.dataspaceconnector.util.UUIDUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service for sending ids messages.
@@ -92,7 +92,7 @@ public class GlobalMessageService {
      * @throws IOException               Any other problems in establishing a connection
      *                                   to the target.
      */
-    public Optional<MessageContainer<?>>  sendConnectorUpdateMessage(final URI recipient) throws
+    public Optional<MessageContainer<?>> sendConnectorUpdateMessage(final URI recipient) throws
             MultipartParseException,
             ClaimsException,
             DapsTokenManagerException,
@@ -109,10 +109,7 @@ public class GlobalMessageService {
         final var result = checkResponse(Optional.ofNullable(response));
         if (result) {
             if (log.isInfoEnabled()) {
-                log.info(
-                        "Successfully registered connector. [url=({}})]",
-                        recipient
-                );
+                log.info("Successfully registered connector. [url=({}})]", recipient);
             }
             brokerService.setRegistrationStatus(recipient, RegistrationStatus.REGISTERED);
         }

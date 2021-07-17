@@ -21,8 +21,8 @@ import org.springframework.stereotype.Component;
  * Creates and updates connector endpoints.
  */
 @Component
-public class ConnectorEndpointFactory
-        extends EndpointFactory<ConnectorEndpoint, ConnectorEndpointDesc> {
+public class ConnectorEndpointFactory extends EndpointFactory<ConnectorEndpoint,
+        ConnectorEndpointDesc> {
 
     /**
      * @param desc The description passed to the factory.

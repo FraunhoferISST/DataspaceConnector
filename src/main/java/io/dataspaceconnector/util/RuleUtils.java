@@ -334,7 +334,7 @@ public final class RuleUtils {
     public static void validateRuleContent(final Contract oldContract,
                                            final Contract newContract) throws ContractException {
         if (oldContract == null || newContract == null) {
-            throw new ContractException(ErrorMessages.EMPTY_CONTRACT.toString());
+            throw new ContractException(ErrorMessage.EMPTY_CONTRACT.toString());
         }
 
         if (!comparePermissions(oldContract.getPermission(), newContract.getPermission())) {

@@ -25,6 +25,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @NoArgsConstructor
-public class ConnectorEndpointService
-        extends EndpointService<ConnectorEndpoint, ConnectorEndpointDesc> {
+public class ConnectorEndpointService extends EndpointService<ConnectorEndpoint,
+        ConnectorEndpointDesc> {
 }

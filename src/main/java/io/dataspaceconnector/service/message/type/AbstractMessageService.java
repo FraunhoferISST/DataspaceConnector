@@ -31,7 +31,7 @@ import io.dataspaceconnector.exception.VersionNotSupportedException;
 import io.dataspaceconnector.model.message.MessageDesc;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.MessageUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -111,31 +111,31 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             // Send message and return response. TODO Log outgoing messages.
             return idsHttpService.sendAndCheckDat(body, recipient);
         } catch (SerializeException | ConstraintViolationException e) {
-            final var msg = ErrorMessages.MESSAGE_BUILDING_FAILED;
+            final var msg = ErrorMessage.MESSAGE_BUILDING_FAILED;
             if (log.isWarnEnabled()) {
                 log.warn(msg + "[exception=({})]", e.getMessage(), e);
             }
             throw new MessageException(msg, e);
         } catch (MultipartParseException | DeserializeException | ShaclValidatorException e) {
-            final var msg = ErrorMessages.INVALID_MESSAGE;
+            final var msg = ErrorMessage.INVALID_MESSAGE;
             if (log.isDebugEnabled()) {
                 log.debug(msg + " [exception=({})]", e.getMessage(), e);
             }
             throw new MessageResponseException(msg, e);
         } catch (SocketTimeoutException e) {
-            final var msg = ErrorMessages.GATEWAY_TIMEOUT;
+            final var msg = ErrorMessage.GATEWAY_TIMEOUT;
             if (log.isDebugEnabled()) {
                 log.debug(msg + " [exception=({})]", e.getMessage(), e);
             }
             throw new MessageException(msg, e);
         } catch (ClaimsException e) {
-            final var msg = ErrorMessages.INVALID_DAT;
+            final var msg = ErrorMessage.INVALID_DAT;
             if (log.isDebugEnabled()) {
                 log.debug(msg + " [exception=({})]", e.getMessage(), e);
             }
             throw new MessageException(msg, e);
         } catch (IOException e) {
-            final var msg = ErrorMessages.MESSAGE_HANDLING_FAILED;
+            final var msg = ErrorMessage.MESSAGE_HANDLING_FAILED;
             if (log.isWarnEnabled()) {
                 log.warn(msg + " [exception=({})]", e.getMessage(), e);
             }
@@ -161,7 +161,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             final var allowedType = getResponseMessageType();
             return messageType.equals(allowedType);
         } catch (Exception e) {
-            final var msg = ErrorMessages.INVALID_MESSAGE;
+            final var msg = ErrorMessage.INVALID_MESSAGE;
             if (log.isDebugEnabled()) {
                 log.debug(msg + " [exception=({})]", e.getMessage(), e);
             }

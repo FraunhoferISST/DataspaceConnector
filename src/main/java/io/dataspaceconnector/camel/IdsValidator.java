@@ -44,7 +44,7 @@ import io.dataspaceconnector.service.usagecontrol.DataProvisionVerifier;
 import io.dataspaceconnector.service.usagecontrol.VerificationInput;
 import io.dataspaceconnector.service.usagecontrol.VerificationResult;
 import io.dataspaceconnector.util.ContractUtils;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.IdsUtils;
 import io.dataspaceconnector.util.MessageUtils;
 import io.jsonwebtoken.Claims;
@@ -183,7 +183,7 @@ class PolicyValidator extends IdsValidator<Request<ArtifactRequestMessageImpl, M
         final var profile = extractSecurityProfile(msg.getClaims());
         final var input = new VerificationInput(requestedArtifact, issuer, agreement, profile);
         if (accessVerifier.verify(input) == VerificationResult.DENIED) {
-            throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
+            throw new PolicyRestrictionException(ErrorMessage.POLICY_RESTRICTION);
         }
     }
 

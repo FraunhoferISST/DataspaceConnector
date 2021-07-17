@@ -63,7 +63,7 @@ public final class Utils {
      * @return The passed object.
      * @throws IllegalArgumentException if the passed object is null.
      */
-    public static <T> T requireNonNull(final T obj, final ErrorMessages message) {
+    public static <T> T requireNonNull(final T obj, final ErrorMessage message) {
         if (obj == null) {
             throw new IllegalArgumentException(message.toString());
         }
@@ -92,8 +92,8 @@ public final class Utils {
      * @return The new page.
      */
     public static <T> Page<T> toPage(final List<T> list, final Pageable pageable) {
-        Utils.requireNonNull(list, ErrorMessages.LIST_NULL);
-        Utils.requireNonNull(pageable, ErrorMessages.PAGEABLE_NULL);
+        Utils.requireNonNull(list, ErrorMessage.LIST_NULL);
+        Utils.requireNonNull(pageable, ErrorMessage.PAGEABLE_NULL);
 
         if (pageable.equals(Pageable.unpaged())) {
             // All elements should be returned.

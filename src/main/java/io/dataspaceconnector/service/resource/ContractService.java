@@ -18,7 +18,7 @@ package io.dataspaceconnector.service.resource;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.contract.ContractDesc;
 import io.dataspaceconnector.repository.ContractRepository;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.Utils;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class ContractService extends BaseEntityService<Contract, ContractDesc> {
      * @return list of contracts applicable for the artifact
      */
     public List<Contract> getAllByArtifactId(final UUID artifactId) {
-        Utils.requireNonNull(artifactId, ErrorMessages.ENTITYID_NULL);
+        Utils.requireNonNull(artifactId, ErrorMessage.ENTITYID_NULL);
         return ((ContractRepository) getRepository()).findAllByArtifactId(artifactId);
     }
 

@@ -119,7 +119,7 @@ public final class SelfLinkHelper {
             return getSelfLink((Agreement) entity);
         }
 
-        throw new UnreachableLineException(ErrorMessages.UNKNOWN_TYPE);
+        throw new UnreachableLineException(ErrorMessage.UNKNOWN_TYPE);
     }
 
     /**
@@ -137,7 +137,7 @@ public final class SelfLinkHelper {
         try {
             return describer.getSelfLink(entity.getId()).toUri();
         } catch (IllegalStateException exception) {
-            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
+            throw new ResourceNotFoundException(ErrorMessage.EMTPY_ENTITY.toString(), exception);
         }
     }
 

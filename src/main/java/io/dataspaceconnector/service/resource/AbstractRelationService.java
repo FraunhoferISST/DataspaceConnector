@@ -22,7 +22,7 @@ import java.util.function.Function;
 
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.base.Entity;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.Utils;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -71,8 +71,8 @@ public abstract class AbstractRelationService<K extends Entity, W extends Entity
      */
     @Override
     public Page<W> get(final UUID ownerId, final Pageable pageable) {
-        Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
-        Utils.requireNonNull(pageable, ErrorMessages.PAGEABLE_NULL);
+        Utils.requireNonNull(ownerId, ErrorMessage.ENTITYID_NULL);
+        Utils.requireNonNull(pageable, ErrorMessage.PAGEABLE_NULL);
 
         final var owner = oneService.get(ownerId);
         return getInternal(owner, pageable);
@@ -103,8 +103,8 @@ public abstract class AbstractRelationService<K extends Entity, W extends Entity
      */
     @Override
     public void add(final UUID ownerId, final Set<UUID> entities) {
-        Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
-        Utils.requireNonNull(entities, ErrorMessages.ENTITYSET_NULL);
+        Utils.requireNonNull(ownerId, ErrorMessage.ENTITYID_NULL);
+        Utils.requireNonNull(entities, ErrorMessage.ENTITYSET_NULL);
 
         if (entities.isEmpty()) {
             // Prevent read call to database for the owner.
@@ -121,8 +121,8 @@ public abstract class AbstractRelationService<K extends Entity, W extends Entity
      */
     @Override
     public void remove(final UUID ownerId, final Set<UUID> entities) {
-        Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
-        Utils.requireNonNull(entities, ErrorMessages.ENTITYSET_NULL);
+        Utils.requireNonNull(ownerId, ErrorMessage.ENTITYID_NULL);
+        Utils.requireNonNull(entities, ErrorMessage.ENTITYSET_NULL);
 
         if (entities.isEmpty()) {
             // Prevent read call to database for the owner.
@@ -139,8 +139,8 @@ public abstract class AbstractRelationService<K extends Entity, W extends Entity
      */
     @Override
     public void replace(final UUID ownerId, final Set<UUID> entities) {
-        Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
-        Utils.requireNonNull(entities, ErrorMessages.ENTITYSET_NULL);
+        Utils.requireNonNull(ownerId, ErrorMessage.ENTITYID_NULL);
+        Utils.requireNonNull(entities, ErrorMessage.ENTITYSET_NULL);
         throwIfEntityDoesNotExist(entities);
 
         replaceInternal(ownerId, entities);

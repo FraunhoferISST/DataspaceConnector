@@ -48,6 +48,7 @@ public final class ArtifactFactory extends AbstractNamedFactory<Artifact, Artifa
 
     /**
      * Create a new artifact.
+     *
      * @param desc The description of the new artifact.
      * @return The new artifact.
      * @throws IllegalArgumentException if desc is null.
@@ -69,7 +70,7 @@ public final class ArtifactFactory extends AbstractNamedFactory<Artifact, Artifa
         final var hasUpdatedData = updateData(artifact, desc);
 
         return hasUpdatedRemoteId || hasUpdatedRemoteAddress || hasUpdatedAutoDownload
-               || hasUpdatedData;
+                || hasUpdatedData;
     }
 
     private boolean updateRemoteId(final Artifact artifact, final URI remoteId) {
@@ -101,7 +102,7 @@ public final class ArtifactFactory extends AbstractNamedFactory<Artifact, Artifa
         boolean hasChanged;
         if (isRemoteData(desc)) {
             hasChanged = updateRemoteData((ArtifactImpl) artifact, desc.getAccessUrl(),
-                                          desc.getUsername(), desc.getPassword());
+                    desc.getUsername(), desc.getPassword());
         } else {
             hasChanged = updateLocalData((ArtifactImpl) artifact, desc.getValue());
         }
@@ -158,9 +159,10 @@ public final class ArtifactFactory extends AbstractNamedFactory<Artifact, Artifa
     /**
      * Update the byte and checksum of an artifact. This will not update
      * the actual data.
+     *
      * @param artifact The artifact which byte and checksum needs to be
-     *                recalculated.
-     * @param bytes The data.
+     *                 recalculated.
+     * @param bytes    The data.
      * @return true if the artifact has been modified.
      */
     public boolean updateByteSize(final Artifact artifact, final byte[] bytes) {

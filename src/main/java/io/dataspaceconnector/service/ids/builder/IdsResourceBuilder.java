@@ -27,14 +27,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
- * Converts DSC resource to ids resource.
+ * Converts dsc resource to ids resource.
  *
  * @param <T> The resource type.
  */
 @Component
 @RequiredArgsConstructor
-public final class IdsResourceBuilder<T extends Resource>
-        extends AbstractIdsBuilder<T, de.fraunhofer.iais.eis.Resource> {
+public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBuilder<T,
+        de.fraunhofer.iais.eis.Resource> {
 
     /**
      * The builder for ids representation.

@@ -19,14 +19,17 @@ package io.dataspaceconnector.model.endpoint;
  * The endpoint types.
  */
 public enum EndpointType {
+
     /**
      * Endpoint type is APP.
      */
     APP,
+
     /**
      * Endpoint type is CONNECTOR.
      */
     CONNECTOR,
+
     /**
      * Endpoint type is GENERIC.
      */

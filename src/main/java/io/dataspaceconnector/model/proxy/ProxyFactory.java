@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.model.proxy;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
 import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Factory class for the proxy.
@@ -50,9 +50,8 @@ public class ProxyFactory extends AbstractFactory<Proxy, ProxyDesc> {
     }
 
     private boolean updateExclusions(final Proxy proxy, final List<String> exclusions) {
-        final var newExclusionList =
-                MetadataUtils.updateStringList(proxy.getExclusions(), exclusions,
-                        new ArrayList<>());
+        final var newExclusionList = MetadataUtils.updateStringList(proxy.getExclusions(),
+                exclusions, new ArrayList<>());
         newExclusionList.ifPresent(proxy::setExclusions);
 
         return newExclusionList.isPresent();
@@ -64,7 +63,7 @@ public class ProxyFactory extends AbstractFactory<Proxy, ProxyDesc> {
         }
 
         if (proxy.getAuthentication() != null
-            && !proxy.getAuthentication().equals(authentication)) {
+                && !proxy.getAuthentication().equals(authentication)) {
             return false;
         }
 
@@ -73,8 +72,8 @@ public class ProxyFactory extends AbstractFactory<Proxy, ProxyDesc> {
     }
 
     private boolean updateLocation(final Proxy proxy, final URI location) {
-        final var newLocation =
-                MetadataUtils.updateUri(proxy.getLocation(), location, DEFAULT_LOCATION);
+        final var newLocation = MetadataUtils.updateUri(proxy.getLocation(), location,
+                DEFAULT_LOCATION);
         newLocation.ifPresent(proxy::setLocation);
 
         return newLocation.isPresent();

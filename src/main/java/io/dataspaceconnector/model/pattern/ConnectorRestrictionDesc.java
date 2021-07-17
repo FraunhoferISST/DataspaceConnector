@@ -31,6 +31,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ConnectorRestrictionDesc extends PatternDesc {
+
     /**
      * The connector id.
      */

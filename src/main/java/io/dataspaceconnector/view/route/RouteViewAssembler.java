@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.view.route;
 
-import io.dataspaceconnector.controller.configurations.RouteControllers;
+import io.dataspaceconnector.controller.configuration.RouteControllers;
 import io.dataspaceconnector.controller.resource.view.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;

@@ -20,6 +20,7 @@ import io.dataspaceconnector.util.MetadataUtils;
 
 /**
  * Abstract factory class which holds additional information like title, description.
+ *
  * @param <T> The type of the entity.
  * @param <D> The type of the description.
  */
@@ -38,12 +39,13 @@ public abstract class AbstractNamedFactory<T extends NamedEntity, D extends Name
 
     /**
      * Updates an entity with a new given description.
+     *
      * @param entity The entity.
-     * @param desc The description of the entity.
+     * @param desc   The description of the entity.
      * @return If updating the entity was successful.
      */
     @Override
-    public boolean update(final T entity, final D desc)  {
+    public boolean update(final T entity, final D desc) {
         final var hasParentUpdated = super.update(entity, desc);
         final var hasTitleUpdated = updateTitle(entity, desc.getTitle());
         final var hasDescUpdated = updateDescription(entity, desc.getDescription());
@@ -58,9 +60,8 @@ public abstract class AbstractNamedFactory<T extends NamedEntity, D extends Name
     }
 
     private boolean updateDescription(final T entity, final String description) {
-        final var newDescription =
-                MetadataUtils.updateString(entity.getDescription(), description,
-                                           DEFAULT_DESCRIPTION);
+        final var newDescription = MetadataUtils.updateString(entity.getDescription(), description,
+                DEFAULT_DESCRIPTION);
         newDescription.ifPresent(entity::setDescription);
 
         return newDescription.isPresent();

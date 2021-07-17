@@ -15,9 +15,7 @@
  */
 package io.dataspaceconnector.view.configuration;
 
-import java.util.UUID;
-
-import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers.ConfigurationController;
+import io.dataspaceconnector.controller.configuration.ConfigManagerControllers.ConfigurationController;
 import io.dataspaceconnector.controller.resource.view.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.configuration.Configuration;
@@ -29,6 +27,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 /**
  * Assembles the REST resource for a configuration.

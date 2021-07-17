@@ -53,7 +53,7 @@ public final class ContractUtils {
      * @throws IllegalArgumentException If the message is null.
      */
     public static List<Rule> extractRulesFromContract(final Contract contract) {
-        Utils.requireNonNull(contract, ErrorMessages.CONTRACT_NULL);
+        Utils.requireNonNull(contract, ErrorMessage.CONTRACT_NULL);
         final var permissionList = contract.getPermission();
         final var ruleList = permissionList == null ? new ArrayList<Rule>()
                 : new ArrayList<Rule>(permissionList);
@@ -82,7 +82,7 @@ public final class ContractUtils {
      */
     public static List<? extends Rule> getRulesForTargetId(final Contract contract,
                                                            final URI element) {
-        Utils.requireNonNull(contract, ErrorMessages.CONTRACT_NULL);
+        Utils.requireNonNull(contract, ErrorMessage.CONTRACT_NULL);
         final var rules = new ArrayList<Rule>();
 
         if (contract.getPermission() != null) {
@@ -157,8 +157,8 @@ public final class ContractUtils {
     removeContractsWithInvalidConsumer(
             final List<io.dataspaceconnector.model.contract.Contract> contracts,
             final URI issuerConnector) {
-        Utils.requireNonNull(contracts, ErrorMessages.LIST_NULL);
-        Utils.requireNonNull(issuerConnector, ErrorMessages.URI_NULL);
+        Utils.requireNonNull(contracts, ErrorMessage.LIST_NULL);
+        Utils.requireNonNull(issuerConnector, ErrorMessage.URI_NULL);
 
         return contracts.parallelStream()
                 .filter(x -> x.getConsumer().equals(issuerConnector) || x.getConsumer()

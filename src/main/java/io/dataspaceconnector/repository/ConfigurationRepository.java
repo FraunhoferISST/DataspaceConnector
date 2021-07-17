@@ -15,13 +15,11 @@
  */
 package io.dataspaceconnector.repository;
 
-import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.configuration.Configuration;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 

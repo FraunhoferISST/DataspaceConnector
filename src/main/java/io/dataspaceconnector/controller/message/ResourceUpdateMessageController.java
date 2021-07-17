@@ -24,7 +24,6 @@ import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
 import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
 import de.fraunhofer.ids.messaging.protocol.multipart.UnknownResponseException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
-import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
@@ -102,9 +101,8 @@ public class ResourceUpdateMessageController {
             }
 
             // Send the resource update message.
-            Optional<MessageContainer<?>> response = messageService
-                    .sendResourceUpdateMessage(recipient, resource.get());
-
+            final var response = messageService.sendResourceUpdateMessage(recipient,
+                    resource.get());
             return messageService.validateResponse(response,
                     MessageProcessedNotificationMessageImpl.class);
         } catch (SocketTimeoutException exception) {

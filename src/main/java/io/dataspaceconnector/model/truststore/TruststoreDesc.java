@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.model.truststore;
 
-import java.net.URI;
-
 import io.dataspaceconnector.model.base.Description;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import java.net.URI;
 
 /**
  * This class describes trust stores properties.
@@ -31,6 +31,7 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class TruststoreDesc extends Description {
+
     /**
      * The trust store.
      */

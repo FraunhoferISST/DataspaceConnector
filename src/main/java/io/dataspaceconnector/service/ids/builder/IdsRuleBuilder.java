@@ -23,7 +23,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 /**
- * The base class for constructing an ids rule from a DSC rule.
+ * The base class for constructing an ids rule from a dsc rule.
  *
  * @param <T> The ids rule type.
  */

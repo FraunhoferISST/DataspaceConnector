@@ -24,7 +24,6 @@ import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
 import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
 import de.fraunhofer.ids.messaging.protocol.multipart.UnknownResponseException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
-import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
@@ -96,8 +95,7 @@ public class QueryMessageController {
                             + "};") @RequestBody final String query) {
         try {
             // Send the query message.
-            Optional<MessageContainer<?>> response = messageService
-                    .sendQueryMessage(recipient, query);
+            final var response = messageService.sendQueryMessage(recipient, query);
             return messageService.validateResponse(response, ResultMessageImpl.class);
         } catch (SocketTimeoutException exception) {
             // If a timeout has occurred.
@@ -149,8 +147,8 @@ public class QueryMessageController {
             @RequestBody final String term) {
         try {
             // Send the query message for full text search.
-            Optional<MessageContainer<?>> response = messageService
-                    .sendFullTextSearchMessage(recipient, term, limit, offset);
+            final var response = messageService.sendFullTextSearchMessage(recipient, term, limit,
+                    offset);
             return messageService.validateResponse(response, ResultMessageImpl.class);
         } catch (SocketTimeoutException exception) {
             // If a timeout has occurred.

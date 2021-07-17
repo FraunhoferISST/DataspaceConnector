@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.model.agreement;
 
-import java.net.URI;
-import java.util.ArrayList;
-
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.ArrayList;
 
 /**
  * Creates and updates a contract.
@@ -40,6 +40,7 @@ public class AgreementFactory extends AbstractFactory<Agreement, AgreementDesc> 
 
     /**
      * Create a new contract.
+     *
      * @param desc The description of the new contract.
      * @return The new contract.
      * @throws IllegalArgumentException if the description is null.

@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.service.configuration;
 
-import java.net.URI;
-import java.util.Optional;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.broker.BrokerDesc;
@@ -28,16 +24,21 @@ import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
+
 /**
  * Service class for brokers.
  */
-@Service("ConfigurationBrokerService") //Clashes with IDS-Messaging-Services brokerService Bean
+@Service("ConfigurationBrokerService") // Clashes with IDS-Messaging-Services brokerService Bean
 @NoArgsConstructor
 @Transactional
 public class BrokerService extends BaseEntityService<Broker, BrokerDesc> {
 
     /**
      * Finds a broker by the uri.
+     *
      * @param location The uri of the broker.
      * @return The uuid of the broker.
      */
@@ -47,8 +48,9 @@ public class BrokerService extends BaseEntityService<Broker, BrokerDesc> {
 
     /**
      * This method updates the registration status of the broker.
+     *
      * @param location The uri of the broker.
-     * @param status The registration status
+     * @param status   The registration status
      */
     public void setRegistrationStatus(final URI location, final RegistrationStatus status) {
         ((BrokerRepository) getRepository()).setRegistrationStatus(location, status);

@@ -50,5 +50,6 @@ public class VerificationInput {
     /**
      * The security profile.
      */
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private Optional<SecurityProfile> securityProfile;
 }

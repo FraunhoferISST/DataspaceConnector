@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.view.datasource;
 
-import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers.DataSourceController;
+import io.dataspaceconnector.controller.configuration.ConfigManagerControllers.DataSourceController;
 import io.dataspaceconnector.controller.resource.view.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.datasource.DataSource;

@@ -22,10 +22,12 @@ import lombok.Data;
  */
 @Data
 public class AuthenticationDesc {
+
     /**
      * The username for the authentication.
      */
     private String username;
+
     /**
      * The password for the authentication.
      */

@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.model.auth;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -28,6 +23,11 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.io.Serializable;
 
 /**
  * The authentication is used for authorizing for example by the proxy or the data source.
@@ -39,6 +39,7 @@ import org.hibernate.annotations.Where;
 @SQLDelete(sql = "UPDATE authentication SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
 public class Authentication implements Serializable {
+
     /**
      * Serial version uid.
      **/
