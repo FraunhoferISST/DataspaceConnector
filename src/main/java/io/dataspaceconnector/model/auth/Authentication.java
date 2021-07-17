@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Base element for all authentication types.
+ */
 @Entity
 @Getter
 @Setter
