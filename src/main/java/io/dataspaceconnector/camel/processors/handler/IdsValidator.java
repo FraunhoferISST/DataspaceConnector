@@ -15,6 +15,11 @@
  */
 package io.dataspaceconnector.camel.processors.handler;
 
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
@@ -55,11 +60,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 /**
  * Superclass for Camel processors that validate either header or payload of an incoming message.
  *
@@ -68,7 +68,7 @@ import java.util.Optional;
 public abstract class IdsValidator<I> implements Processor {
 
     /**
-     * Override of the the {@link Processor}'s process method. Calls the implementing class's
+     * Override of the {@link Processor}'s process method. Calls the implementing class's
      * processInternal method.
      *
      * @param exchange the input.

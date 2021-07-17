@@ -74,7 +74,7 @@ import org.springframework.util.Base64Utils;
 public abstract class IdsProcessor<I> implements Processor {
 
     /**
-     * Override of the the {@link Processor}'s process method. Calls the implementing class's
+     * Override of the {@link Processor}'s process method. Calls the implementing class's
      * processInternal method and sets the result as the {@link Exchange}'s body.
      *
      * @param exchange the input.

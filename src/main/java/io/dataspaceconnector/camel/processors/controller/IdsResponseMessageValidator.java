@@ -30,26 +30,61 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
 
+/**
+ * Superclass for all processors that validate a received response message.
+ */
 public abstract class IdsResponseMessageValidator implements Processor {
 
+    /**
+     * Name of the header part.
+     */
     protected final String HEADER_NAME = "header";
+
+    /**
+     * Name of the payload part.
+     */
     protected final String PAYLOAD_NAME = "payload";
 
+    /**
+     * Override of the {@link Processor}'s process method. Calls the implementing class's
+     * processInternal method with the {@link Exchange}'s body as parameter.
+     *
+     * @param exchange the exchange.
+     * @throws Exception if validation fails.
+     */
     @Override
     public void process(final Exchange exchange) throws Exception {
         processInternal(exchange.getIn().getBody(Response.class));
     }
 
+    /**
+     * Validates the response DTO. To be implemented by sub classes.
+     *
+     * @param response the response DTO.
+     * @throws Exception if validation fails.
+     */
     protected abstract void processInternal(Response response) throws Exception;
 
 }
 
+/**
+ * Validates the response to a DescriptionRequestMessage.
+ */
 @Component("DescriptionResponseValidator")
 @RequiredArgsConstructor
 class DescriptionResponseValidator extends IdsResponseMessageValidator {
 
+    /**
+     * Service for DescriptionRequestMessage handling.
+     */
     private final @NonNull DescriptionRequestService descReqSvc;
 
+    /**
+     * Validates the response to a DescriptionRequestMessage.
+     *
+     * @param response the response DTO.
+     * @throws MessageResponseException if the received response is not valid.
+     */
     @Override
     protected void processInternal(final Response response) throws MessageResponseException {
         final var map = new HashMap<String, String>();
@@ -65,12 +100,24 @@ class DescriptionResponseValidator extends IdsResponseMessageValidator {
     }
 }
 
+/**
+ * Validates the response to a ContractRequestMessage.
+ */
 @Component("ContractResponseValidator")
 @RequiredArgsConstructor
 class ContractResponseValidator extends IdsResponseMessageValidator {
 
+    /**
+     * Service for ContractRequestMessage handling.
+     */
     private final @NonNull ContractRequestService contractReqSvc;
 
+    /**
+     * Validates the response to a ContractRequestMessage.
+     *
+     * @param response the response DTO.
+     * @throws MessageResponseException if the received response is not valid.
+     */
     @Override
     protected void processInternal(final Response response) throws MessageResponseException {
         final var map = new HashMap<String, String>();
@@ -86,12 +133,24 @@ class ContractResponseValidator extends IdsResponseMessageValidator {
 
 }
 
+/**
+ * Validates the response to a ContractAgreementMessage.
+ */
 @Component("ContractAgreementResponseValidator")
 @RequiredArgsConstructor
 class ContractAgreementResponseValidator extends IdsResponseMessageValidator {
 
+    /**
+     * Service for ContractAgreementMessage handling.
+     */
     private final @NonNull ContractAgreementService agreementSvc;
 
+    /**
+     * Validates the response to a ContractAgreementMessage.
+     *
+     * @param response the response DTO.
+     * @throws MessageResponseException if the received response is not valid.
+     */
     @Override
     protected void processInternal(final Response response) throws MessageResponseException {
         final var map = new HashMap<String, String>();
@@ -107,15 +166,24 @@ class ContractAgreementResponseValidator extends IdsResponseMessageValidator {
 
 }
 
+/**
+ * Validates the response to an ArtifactRequestMessage.
+ */
 @Component("ArtifactResponseValidator")
 @RequiredArgsConstructor
 class ArtifactResponseValidator extends IdsResponseMessageValidator {
 
     /**
-     * Service for artifact request message handling.
+     * Service for ArtifactRequestMessage handling.
      */
     private final @NonNull ArtifactRequestService artifactReqSvc;
 
+    /**
+     * Validates the response to an ArtifactRequestMessage.
+     *
+     * @param response the response DTO.
+     * @throws MessageResponseException if the received response is not valid.
+     */
     @Override
     protected void processInternal(final Response response) throws MessageResponseException {
         final var map = new HashMap<String, String>();

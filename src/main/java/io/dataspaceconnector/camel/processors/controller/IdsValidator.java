@@ -28,23 +28,49 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
 
+/**
+ * Superclass for all processors that perform validation.
+ */
 public abstract class IdsValidator implements Processor {
 
+    /**
+     * Override of the {@link Processor}'s process method. Calls the implementing class's
+     * processInternal method with the {@link Exchange}.
+     *
+     * @param exchange the exchange.
+     * @throws Exception if validation fails.
+     */
     @Override
     public void process(final Exchange exchange) throws Exception {
         processInternal(exchange);
     }
 
+    /**
+     * Performs validation. To be implemented by sub classes.
+     *
+     * @param exchange the exchange.
+     */
     protected abstract void processInternal(Exchange exchange);
 
 }
 
+/**
+ * Compares a received contract agreement to the initial contract request.
+ */
 @Component("ContractAgreementValidator")
 @RequiredArgsConstructor
 class ContractAgreementValidator extends IdsValidator {
 
+    /**
+     * Service for managing contracts.
+     */
     private final @NonNull ContractManager contractManager;
 
+    /**
+     * Compares the contract agreement to the contract request.
+     *
+     * @param exchange the exchange.
+     */
     @Override
     protected void processInternal(final Exchange exchange) {
         final var contractRequest = exchange
@@ -59,9 +85,17 @@ class ContractAgreementValidator extends IdsValidator {
 
 }
 
+/**
+ * Validates the list of rules given as user input for sending a contract request.
+ */
 @Component("RuleListInputValidator")
 class RuleListInputValidator extends IdsValidator {
 
+    /**
+     * Check if every rule in the list of rules contains a target.
+     *
+     * @param exchange the exchange.
+     */
     @Override
     protected void processInternal(final Exchange exchange) {
         final var ruleList = (List<Rule>) exchange.getProperty("ruleList", List.class);

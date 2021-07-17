@@ -30,17 +30,38 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
 
+/**
+ * Superclass for all processors that perform helper tasks that do not fit in with any of the other
+ * processor types.
+ */
 public abstract class IdsHelperProcessor implements Processor {
 
+    /**
+     * Override of the {@link Processor}'s process method. Calls the implementing class's
+     * processInternal method with the {@link Exchange}.
+     *
+     * @param exchange the exchange.
+     * @throws Exception if any error occurs.
+     */
     @Override
     public void process(final Exchange exchange) throws Exception {
         processInternal(exchange);
     }
 
+    /**
+     * Performs the helper task. To be implemented by sub classes.
+     *
+     * @param exchange the exchange.
+     * @throws Exception if any error occurs.
+     */
     protected abstract void processInternal(Exchange exchange) throws Exception;
 
 }
 
+/**
+ * Finds the resource required for sending a ResourceUpdate- or ResourceUnavailableMessage and
+ * sets it as the exchange's body.
+ */
 @Component("ResourceFinder")
 @RequiredArgsConstructor
 class ResourceFinder extends IdsHelperProcessor {
@@ -50,8 +71,15 @@ class ResourceFinder extends IdsHelperProcessor {
      */
     private final @NonNull ConnectorService connectorService;
 
+    /**
+     * Finds the resource with the ID from the exchange properties and sets it as the exchange's
+     * body.
+     *
+     * @param exchange the exchange.
+     * @throws ResourceNotFoundException if no resource with the given ID exists.
+     */
     @Override
-    protected void processInternal(final Exchange exchange) {
+    protected void processInternal(final Exchange exchange) throws ResourceNotFoundException {
         final var resourceId = exchange.getProperty("resourceId", URI.class);
         final var resource = connectorService.getOfferedResourceById(resourceId);
 
@@ -63,6 +91,10 @@ class ResourceFinder extends IdsHelperProcessor {
     }
 }
 
+/**
+ * Updates the connector configuration in preparation for sending a ConnectorUpdate- or
+ * ConnectorUnavailableMessage.
+ */
 @Component("ConfigurationUpdater")
 @RequiredArgsConstructor
 class ConfigurationUpdater extends IdsHelperProcessor {
@@ -72,6 +104,12 @@ class ConfigurationUpdater extends IdsHelperProcessor {
      */
     private final @NonNull ConnectorService connectorService;
 
+    /**
+     * Updates the connector configuration.
+     *
+     * @param exchange the exchange.
+     * @throws ConfigUpdateException if updating the configuration fails.
+     */
     @Override
     protected void processInternal(final Exchange exchange) throws ConfigUpdateException {
         // Update the config model.
@@ -80,10 +118,21 @@ class ConfigurationUpdater extends IdsHelperProcessor {
 
 }
 
+/**
+ * Processes an InvalidResponseException occurred during an artifact request to throw a
+ * PolicyRestrictionException.
+ */
 @Component("PolicyRestrictionProcessor")
 @Log4j2
 class PolicyRestrictionProcessor extends IdsHelperProcessor {
 
+    /**
+     * Throws a PolicyRestrictionException, if the exception that occurred in the route is an
+     * InvalidResponseException.
+     *
+     * @param exchange the exchange.
+     * @throws Exception a PolicyRestrictionException.
+     */
     @Override
     protected void processInternal(final Exchange exchange) throws Exception {
         final var exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);

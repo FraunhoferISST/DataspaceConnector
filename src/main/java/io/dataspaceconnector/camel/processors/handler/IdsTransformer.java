@@ -15,6 +15,11 @@
  */
 package io.dataspaceconnector.camel.processors.handler;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -40,11 +45,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 /**
  * Superclass for Camel processors that transform an incoming message's payload, e.g. by
  * deserialization.
@@ -55,7 +55,7 @@ import java.util.stream.Collectors;
 public abstract class IdsTransformer<I, O> implements Processor {
 
     /**
-     * Override of the the {@link Processor}'s process method. Calls the implementing class's
+     * Override of the {@link Processor}'s process method. Calls the implementing class's
      * processInternal method and sets the result as the {@link Exchange}'s body.
      *
      * @param exchange the input.

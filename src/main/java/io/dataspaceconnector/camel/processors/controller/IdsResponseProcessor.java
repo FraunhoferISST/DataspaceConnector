@@ -31,17 +31,36 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
 
+/**
+ * Superclass for all processors that process a response received after sending a request.
+ */
 public abstract class IdsResponseProcessor implements Processor {
 
+    /**
+     * Override of the {@link Processor}'s process method. Calls the implementing class's
+     * processInternal method with the {@link Exchange}.
+     *
+     * @param exchange the exchange.
+     * @throws Exception if building the message or payload fails.
+     */
     @Override
     public void process(final Exchange exchange) throws Exception {
         processInternal(exchange);
     }
 
+    /**
+     * Processes the response. To be implemented by sub classes.
+     *
+     * @param exchange the exchange.
+     * @throws Exception if processing the response fails.
+     */
     protected abstract void processInternal(Exchange exchange) throws Exception;
 
 }
 
+/**
+ * Persists a contract agreement received as the response to a ContractRequestMessage.
+ */
 @Component("ContractAgreementPersistenceProcessor")
 @RequiredArgsConstructor
 class ContractAgreementPersistenceProcessor extends IdsResponseProcessor {
@@ -51,6 +70,11 @@ class ContractAgreementPersistenceProcessor extends IdsResponseProcessor {
      */
     private final @NonNull EntityPersistenceService persistenceSvc;
 
+    /**
+     * Persists the contract agreement.
+     *
+     * @param exchange the exchange.
+     */
     @Override
     protected void processInternal(final Exchange exchange) {
         final var agreement = exchange.getProperty("contractAgreement", ContractAgreement.class);
@@ -60,6 +84,9 @@ class ContractAgreementPersistenceProcessor extends IdsResponseProcessor {
 
 }
 
+/**
+ * Persists the metadata received as the response to a DescriptionRequestMessage.
+ */
 @Component("MetadataPersistenceProcessor")
 @RequiredArgsConstructor
 class MetadataPersistenceProcessor extends IdsResponseProcessor {
@@ -69,6 +96,10 @@ class MetadataPersistenceProcessor extends IdsResponseProcessor {
      */
     private final @NonNull EntityPersistenceService persistenceSvc;
 
+    /**
+     * Persists the metadata.
+     * @param exchange the exchange.
+     */
     @Override
     protected void processInternal(final Exchange exchange) {
         final var response = exchange.getIn().getBody(Response.class);
@@ -85,6 +116,9 @@ class MetadataPersistenceProcessor extends IdsResponseProcessor {
 
 }
 
+/**
+ * Persists the data received as the response to an ArtifactRequestMessage.
+ */
 @Component("DataPersistenceProcessor")
 @RequiredArgsConstructor
 class DataPersistenceProcessor extends IdsResponseProcessor {
@@ -94,6 +128,12 @@ class DataPersistenceProcessor extends IdsResponseProcessor {
      */
     private final @NonNull EntityPersistenceService persistenceSvc;
 
+    /**
+     * Persists the data.
+     *
+     * @param exchange the exchange.
+     * @throws IOException if persisting the data fails.
+     */
     @Override
     protected void processInternal(final Exchange exchange) throws IOException {
         final var response = exchange.getIn().getBody(Response.class);
@@ -111,6 +151,10 @@ class DataPersistenceProcessor extends IdsResponseProcessor {
 
 }
 
+/**
+ * Links the contract agreement received as the response to a ContractRequestMessage to the
+ * artifacts created from the metadata received as the response to a DescriptionRequestMessage.
+ */
 @Component("AgreementToArtifactsLinker")
 @RequiredArgsConstructor
 class AgreementToArtifactsLinker extends IdsResponseProcessor {
@@ -120,8 +164,14 @@ class AgreementToArtifactsLinker extends IdsResponseProcessor {
      */
     private final @NonNull EntityUpdateService updateService;
 
+    /**
+     * Links the contract agreement to the artifacts.
+     *
+     * @param exchange the exchange.
+     * @throws Exception if linking the agreement to the artifacts fails.
+     */
     @Override
-    protected void processInternal(Exchange exchange) throws Exception {
+    protected void processInternal(final Exchange exchange) throws Exception {
         final var agreementId = exchange.getProperty("agreementId", UUID.class);
         final var artifacts = (List<URI>) exchange.getProperty("artifacts", List.class);
 

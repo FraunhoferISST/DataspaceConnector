@@ -59,25 +59,59 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
 
+/**
+ * Superclass for all processors that build IDS messages and their payload according to input
+ * parameters stored as Exchange properties.
+ *
+ * @param <H> the type of IDS message.
+ * @param <B> the type of payload.
+ */
 public abstract class IdsMessageBuilder<H extends Message, B> implements Processor {
 
+    /**
+     * Override of the {@link Processor}'s process method. Calls the implementing class's
+     * processInternal method and sets the result as the {@link Exchange}'s body.
+     *
+     * @param exchange the exchange.
+     * @throws Exception if building the message or payload fails.
+     */
     @Override
     public void process(final Exchange exchange) throws Exception {
         final var request = processInternal(exchange);
         exchange.getIn().setBody(request);
     }
 
+    /**
+     * Creates a request DTO with the desired message type as header and the appropriate payload.
+     * To be implemented by sub classes.
+     *
+     * @param exchange the exchange.
+     * @return the {@link Request}
+     */
     protected abstract Request<H, B, Optional<Jws<Claims>>> processInternal(Exchange exchange);
 
 }
 
+/**
+ * Builds a ContractAgreementMessage and creates a request DTO with header and payload.
+ */
 @Component("ContractAgreementMessageBuilder")
 @RequiredArgsConstructor
 class ContractAgreementMessageBuilder extends
         IdsMessageBuilder<ContractAgreementMessageImpl, ContractAgreement> {
 
+    /**
+     * The service for managing agreements.
+     */
     private final @NonNull ContractAgreementService agreementSvc;
 
+    /**
+     * Builds a ContractAgreementMessage and creates a Request with the message as header and
+     * the contract agreement from the exchange properties as payload.
+     *
+     * @param exchange the exchange.
+     * @return the {@link Request}.
+     */
     @Override
     protected Request<ContractAgreementMessageImpl, ContractAgreement, Optional<Jws<Claims>>>
     processInternal(final Exchange exchange) {
@@ -93,6 +127,9 @@ class ContractAgreementMessageBuilder extends
 
 }
 
+/**
+ * Builds a DescriptionRequestMessage and creates a request DTO with header and payload.
+ */
 @Component("DescriptionRequestMessageBuilder")
 @RequiredArgsConstructor
 class DescriptionRequestMessageBuilder extends
@@ -103,6 +140,13 @@ class DescriptionRequestMessageBuilder extends
      */
     private final @NonNull DescriptionRequestService descReqSvc;
 
+    /**
+     * Builds a DescriptionRequestMessage according to the exchange properties and creates a Request
+     * with the message as header and an empty payload.
+     *
+     * @param exchange the exchange.
+     * @return the {@link Request}.
+     */
     @Override
     protected Request<DescriptionRequestMessageImpl, String, Optional<Jws<Claims>>> processInternal(
             final Exchange exchange) {
@@ -123,6 +167,9 @@ class DescriptionRequestMessageBuilder extends
     }
 }
 
+/**
+ * Builds an ArtifactRequestMessage and creates a request DTO with header and payload.
+ */
 @Component("ArtifactRequestMessageBuilder")
 @RequiredArgsConstructor
 class ArtifactRequestMessageBuilder extends IdsMessageBuilder<ArtifactRequestMessageImpl, String> {
@@ -132,6 +179,13 @@ class ArtifactRequestMessageBuilder extends IdsMessageBuilder<ArtifactRequestMes
      */
     private final @NonNull ArtifactRequestService artifactReqSvc;
 
+    /**
+     * Builds an ArtifactRequestMessage according to the exchange properties and creates a Request
+     * with the message as header and an empty payload.
+     *
+     * @param exchange the exchange.
+     * @return the {@link Request}.
+     */
     @Override
     protected Request<ArtifactRequestMessageImpl, String, Optional<Jws<Claims>>> processInternal(
             final Exchange exchange) {
@@ -153,6 +207,9 @@ class ArtifactRequestMessageBuilder extends IdsMessageBuilder<ArtifactRequestMes
 
 }
 
+/**
+ * Builds a ContractRequestMessage and creates a request DTO with header and payload.
+ */
 @Component("ContractRequestMessageBuilder")
 @RequiredArgsConstructor
 class ContractRequestMessageBuilder extends IdsMessageBuilder<ContractRequestMessageImpl, ContractRequest> {
@@ -167,6 +224,13 @@ class ContractRequestMessageBuilder extends IdsMessageBuilder<ContractRequestMes
      */
     private final @NonNull ContractRequestService contractReqSvc;
 
+    /**
+     * Builds a ContractRequestMessage and a contract request according to the exchange properties
+     * and creates a Request with the message as header and the contract request as payload.
+     *
+     * @param exchange the exchange.
+     * @return the {@link Request}.
+     */
     @Override
     protected Request<ContractRequestMessageImpl, ContractRequest, Optional<Jws<Claims>>>
     processInternal(final Exchange exchange) {
@@ -184,12 +248,25 @@ class ContractRequestMessageBuilder extends IdsMessageBuilder<ContractRequestMes
 
 }
 
+/**
+ * Builds a ResourceUpdateMessage and creates a request DTO with header and payload.
+ */
 @Component("ResourceUpdateMessageBuilder")
 @RequiredArgsConstructor
 class ResourceUpdateMessageBuilder extends IdsMessageBuilder<ResourceUpdateMessageImpl, Resource> {
 
+    /**
+     * Service for the current connector configuration.
+     */
     private final @NonNull ConnectorService connectorService;
 
+    /**
+     * Builds a ResourceUpdateMessage according to the exchange properties and creates a Request
+     * with the message as header and the resource from the exchange body.
+     *
+     * @param exchange the exchange.
+     * @return the {@link Request}.
+     */
     @Override
     protected Request<ResourceUpdateMessageImpl, Resource, Optional<Jws<Claims>>> processInternal(
             final Exchange exchange) {
@@ -216,12 +293,25 @@ class ResourceUpdateMessageBuilder extends IdsMessageBuilder<ResourceUpdateMessa
 
 }
 
+/**
+ * Builds a ResourceUnavailableMessage and creates a request DTO with header and payload.
+ */
 @Component("ResourceUnavailableMessageBuilder")
 @RequiredArgsConstructor
 class ResourceUnavailableMessageBuilder extends IdsMessageBuilder<ResourceUnavailableMessageImpl, Resource> {
 
+    /**
+     * Service for the current connector configuration.
+     */
     private final @NonNull ConnectorService connectorService;
 
+    /**
+     * Builds a ResourceUnavailableMessage according to the exchange properties and creates a
+     * Request with the message as header and the resource from the exchange body.
+     *
+     * @param exchange the exchange.
+     * @return the {@link Request}.
+     */
     @Override
     protected Request<ResourceUnavailableMessageImpl, Resource, Optional<Jws<Claims>>>
     processInternal(final Exchange exchange) {
@@ -248,6 +338,9 @@ class ResourceUnavailableMessageBuilder extends IdsMessageBuilder<ResourceUnavai
 
 }
 
+/**
+ * Builds a ConnectorUpdateMessage and creates a request DTO with header and payload.
+ */
 @Component("ConnectorUpdateMessageBuilder")
 @RequiredArgsConstructor
 class ConnectorUpdateMessageBuilder extends IdsMessageBuilder<ConnectorUpdateMessageImpl, Connector> {
@@ -257,6 +350,13 @@ class ConnectorUpdateMessageBuilder extends IdsMessageBuilder<ConnectorUpdateMes
      */
     private final @NonNull ConnectorService connectorService;
 
+    /**
+     * Builds a ConnectorUpdateMessage according to the exchange properties as well as the connector
+     * object and creates a Request with the message as header and the connector as payload.
+     *
+     * @param exchange the exchange.
+     * @return the {@link Request}.
+     */
     @Override
     protected Request<ConnectorUpdateMessageImpl, Connector, Optional<Jws<Claims>>> processInternal(
             final Exchange exchange) {
@@ -281,6 +381,9 @@ class ConnectorUpdateMessageBuilder extends IdsMessageBuilder<ConnectorUpdateMes
 
 }
 
+/**
+ * Builds a ConnectorUnavailableMessage and creates a request DTO with header and payload.
+ */
 @Component("ConnectorUnavailableMessageBuilder")
 @RequiredArgsConstructor
 class ConnectorUnavailableMessageBuilder extends IdsMessageBuilder<ConnectorUnavailableMessageImpl, Connector> {
@@ -290,6 +393,14 @@ class ConnectorUnavailableMessageBuilder extends IdsMessageBuilder<ConnectorUnav
      */
     private final @NonNull ConnectorService connectorService;
 
+    /**
+     * Builds a ConnectorUnavailableMessage according to the exchange properties as well as the
+     * connector object and creates a Request with the message as header and the connector as
+     * payload.
+     *
+     * @param exchange the exchange.
+     * @return the {@link Request}.
+     */
     @Override
     protected Request<ConnectorUnavailableMessageImpl, Connector, Optional<Jws<Claims>>>
     processInternal(final Exchange exchange) {
@@ -314,6 +425,9 @@ class ConnectorUnavailableMessageBuilder extends IdsMessageBuilder<ConnectorUnav
 
 }
 
+/**
+ * Builds a QueryMessage and creates a request DTO with header and payload.
+ */
 @Component("QueryMessageBuilder")
 @RequiredArgsConstructor
 class QueryMessageBuilder extends IdsMessageBuilder<QueryMessageImpl, String> {
@@ -323,6 +437,13 @@ class QueryMessageBuilder extends IdsMessageBuilder<QueryMessageImpl, String> {
      */
     private final @NonNull ConnectorService connectorService;
 
+    /**
+     * Builds a QueryMessage according to the exchange properties and creates a Request with the
+     * message as header and a query from the exchange properties as payload.
+     *
+     * @param exchange the exchange.
+     * @return the {@link Request}.
+     */
     @Override
     protected Request<QueryMessageImpl, String, Optional<Jws<Claims>>> processInternal(
             final Exchange exchange) {
