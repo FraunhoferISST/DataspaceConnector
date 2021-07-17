@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
+import java.net.URI;
+import java.util.UUID;
+
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.ConstraintBuilder;
@@ -39,9 +42,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.net.URI;
-import java.util.UUID;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -50,7 +50,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {PolicyExecutionService.class})
+@SpringBootTest(classes = {PolicyExecutionService.class, ClearingHouseService.class, LogBuilder.class})
 public class PolicyExecutionServiceTest {
 
     @MockBean
