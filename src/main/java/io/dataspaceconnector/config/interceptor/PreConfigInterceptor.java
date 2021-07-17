@@ -80,11 +80,7 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
     private ConfigurationModel loadConfigFromFile(final ConfigProperties properties)
             throws ConfigProducerInterceptorException {
         try {
-            // TODO check if configModel is already saved in db, then load from there instead
-            //  of config file.
-            final var config = loadConfig(properties);
-            config.setProperty("preInterceptor", true);
-            return config;
+            return loadConfig(properties);
         } catch (IOException | ConfigUpdateException e) {
             throw new ConfigProducerInterceptorException(e.getMessage());
         }

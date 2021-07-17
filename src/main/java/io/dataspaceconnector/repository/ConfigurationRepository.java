@@ -36,7 +36,7 @@ public interface ConfigurationRepository extends BaseEntityRepository<Configurat
      */
     @Query("SELECT a "
             + "FROM #{#entityName} a "
-            + "WHERE a.selected IS NOT NULL "
+            + "WHERE a.active = true "
             + "AND a.deleted = false")
     Optional<Configuration> findActive();
 
@@ -45,8 +45,8 @@ public interface ConfigurationRepository extends BaseEntityRepository<Configurat
      */
     @Modifying
     @Query("UPDATE Configuration a "
-            + "SET a.active = true "
-            + "WHERE a.active = false "
+            + "SET a.active = NULL "
+            + "WHERE a.active = true "
             + "AND a.deleted = false")
     void unsetActive();
 

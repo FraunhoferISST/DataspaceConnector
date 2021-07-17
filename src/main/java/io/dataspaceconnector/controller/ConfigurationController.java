@@ -72,7 +72,7 @@ public class ConfigurationController {
      * @return Ok or error response.
      */
     @PutMapping(value = "/configuration/{id}",
-            consumes = {"application/json", "application/ld+json"},
+            consumes = {"*/*"},
             produces = {"application/ld+json"})
     @Operation(summary = "Update current configuration.")
     @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
@@ -103,16 +103,10 @@ public class ConfigurationController {
     @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "404", description = "Not found")})
+            @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @ResponseBody
     public ResponseEntity<Object> getConfiguration() {
-        final var config = configContainer.getConfigurationModel();
-        if (config == null) {
-            return new ResponseEntity<>("No configuration found.", HttpStatus.NOT_FOUND);
-        } else {
-            return ResponseEntity.ok(config.toRdf());
-        }
+            return ResponseEntity.ok(configContainer.getConfigurationModel().toRdf());
     }
 
     /**

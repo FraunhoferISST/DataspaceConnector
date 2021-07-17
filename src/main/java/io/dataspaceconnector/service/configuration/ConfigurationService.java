@@ -31,6 +31,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class for the configuration.
@@ -39,12 +40,13 @@ import org.springframework.stereotype.Service;
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.NONE)
 @RequiredArgsConstructor
+@Transactional
 public class ConfigurationService extends BaseEntityService<Configuration, ConfigurationDesc> {
 
     /**
      * The current connector configuration.
      */
-    private final @NonNull ConfigContainer configContainer;
+    private ConfigContainer configContainer;
 
     /**
      * Builds the ids config.
@@ -76,7 +78,17 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
      * @param newConfig Id of the new active configuration.
      */
     public void swapActiveConfig(final UUID newConfig) throws ConfigUpdateException {
-        var activeConfig = getActiveConfig();
+        var activeConfig = findActiveConfig();
+
+        if (activeConfig.isPresent()) {
+            replaceActiveConfig(newConfig, activeConfig.get());
+        } else {
+            ((ConfigurationRepository) getRepository()).setActive(newConfig);
+        }
+    }
+
+    private void replaceActiveConfig(final UUID newConfig, final Configuration activeConfig)
+            throws ConfigUpdateException {
         if (activeConfig.getId().equals(newConfig)) {
             return;
         }
@@ -85,7 +97,9 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
         repo.unsetActive();
         repo.setActive(newConfig);
 
-        final var configuration = configBuilder.create(getActiveConfig());
-        configContainer.updateConfiguration(configuration);
+        if (configContainer != null) {
+            final var configuration = configBuilder.create(getActiveConfig());
+            configContainer.updateConfiguration(configuration);
+        }
     }
 }
