@@ -84,7 +84,7 @@ class RuleValidatorTest {
         final var target = URI.create("https://target");
 
         /* ACT && ASSERT */
-        assertDoesNotThrow(() -> validator.validatePolicy( PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient));
+        assertDoesNotThrow(() -> validator.validatePolicy( PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient, Optional.empty()));
     }
 
     @Test
@@ -107,7 +107,7 @@ class RuleValidatorTest {
         final var target = URI.create("https://target");
 
         /* ACT && ASSERT */
-        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy( PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient));
+        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy( PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient, Optional.empty()));
         assertEquals(ErrorMessage.DATA_ACCESS_INVALID_INTERVAL.toString(), result.getMessage());
     }
 
@@ -131,7 +131,7 @@ class RuleValidatorTest {
         final var target = URI.create("https://target");
 
         /* ACT && ASSERT */
-        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy( PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient));
+        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy( PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient, Optional.empty()));
         assertEquals(ErrorMessage.DATA_ACCESS_INVALID_INTERVAL.toString(), result.getMessage());
     }
 
@@ -152,7 +152,7 @@ class RuleValidatorTest {
         Mockito.when(informationService.getAccessNumber(eq(target))).thenReturn(0L);
 
         /* ACT && ASSERT */
-        assertDoesNotThrow(() -> validator.validatePolicy( PolicyPattern.N_TIMES_USAGE, rule, target, recipient));
+        assertDoesNotThrow(() -> validator.validatePolicy( PolicyPattern.N_TIMES_USAGE, rule, target, recipient, Optional.empty()));
     }
 
     @Test
@@ -172,7 +172,7 @@ class RuleValidatorTest {
         Mockito.when(informationService.getAccessNumber(eq(target))).thenReturn(6L);
 
         /* ACT && ASSERT */
-        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy(PolicyPattern.N_TIMES_USAGE, rule, target, recipient));
+        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy(PolicyPattern.N_TIMES_USAGE, rule, target, recipient, Optional.empty()));
         assertEquals(ErrorMessage.DATA_ACCESS_NUMBER_REACHED.toString(), result.getMessage());
     }
 
@@ -191,7 +191,7 @@ class RuleValidatorTest {
         final var target = URI.create("https://target");
 
         /* ACT && ASSERT */
-        assertDoesNotThrow(() -> validator.validatePolicy( PolicyPattern.CONNECTOR_RESTRICTED_USAGE, rule, target, recipient));
+        assertDoesNotThrow(() -> validator.validatePolicy( PolicyPattern.CONNECTOR_RESTRICTED_USAGE, rule, target, recipient, Optional.empty()));
     }
 
     @Test
@@ -210,7 +210,7 @@ class RuleValidatorTest {
         final var target = URI.create("https://target");
 
         /* ACT && ASSERT */
-        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy(PolicyPattern.CONNECTOR_RESTRICTED_USAGE, rule, target, recipient));
+        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy(PolicyPattern.CONNECTOR_RESTRICTED_USAGE, rule, target, recipient, Optional.empty()));
         assertEquals(ErrorMessage.DATA_ACCESS_INVALID_CONSUMER.toString(), result.getMessage());
     }
 
