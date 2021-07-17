@@ -19,9 +19,17 @@ import io.dataspaceconnector.exception.ResourceNotFoundException;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Builds the route for sending a resource unavailable message over IDSCP_v2.
+ */
 @Component
 public class ResourceUnavailableControllerRoute extends RouteBuilder {
 
+    /**
+     * Configures the route.
+     *
+     * @throws Exception if any error occurs.
+     */
     @Override
     public void configure() throws Exception {
         onException(ResourceNotFoundException.class)

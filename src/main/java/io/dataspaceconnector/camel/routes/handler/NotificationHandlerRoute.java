@@ -19,9 +19,17 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Builds the route for handling a NotificationMessage.
+ */
 @Component
 public class NotificationHandlerRoute extends RouteBuilder {
 
+    /**
+     * Configures the route.
+     *
+     * @throws Exception if any error occurs.
+     */
     @Override
     public void configure() throws Exception {
         onException(IllegalStateException.class, ConstraintViolationException.class)

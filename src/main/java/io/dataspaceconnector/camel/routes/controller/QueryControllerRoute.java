@@ -18,9 +18,17 @@ package io.dataspaceconnector.camel.routes.controller;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Builds the route for sending a query message over IDSCP_v2.
+ */
 @Component
 public class QueryControllerRoute extends RouteBuilder {
 
+    /**
+     * Configures the route.
+     *
+     * @throws Exception if any error occurs.
+     */
     @Override
     public void configure() throws Exception {
         from("direct:querySender")

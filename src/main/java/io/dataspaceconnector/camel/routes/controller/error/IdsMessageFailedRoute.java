@@ -19,9 +19,17 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Builds the route for handling failed IDS messages.
+ */
 @Component
 public class IdsMessageFailedRoute extends RouteBuilder {
 
+    /**
+     * Configures the route.
+     *
+     * @throws Exception if any error occurs.
+     */
     @Override
     public void configure() throws Exception {
         from("direct:handleIdsMessageFailed")

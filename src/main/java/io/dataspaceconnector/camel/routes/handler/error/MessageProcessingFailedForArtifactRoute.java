@@ -19,9 +19,17 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Builds the route for handling MessageProcessingFailedExceptions during the artifact request.
+ */
 @Component
 public class MessageProcessingFailedForArtifactRoute extends RouteBuilder {
 
+    /**
+     * Configures the route.
+     *
+     * @throws Exception if any error occurs.
+     */
     @Override
     public void configure() throws Exception {
         from("direct:handleMessageProcessingFailedForArtifact")

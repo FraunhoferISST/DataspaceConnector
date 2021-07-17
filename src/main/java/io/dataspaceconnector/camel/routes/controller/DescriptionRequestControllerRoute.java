@@ -21,9 +21,17 @@ import io.dataspaceconnector.exception.MessageResponseException;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Builds the route for sending a description request over IDSCP_v2.
+ */
 @Component
 public class DescriptionRequestControllerRoute extends RouteBuilder {
 
+    /**
+     * Configures the route.
+     *
+     * @throws Exception if any error occurs.
+     */
     @Override
     public void configure() throws Exception {
         onException(MessageException.class)

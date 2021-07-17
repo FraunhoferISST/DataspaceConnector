@@ -20,9 +20,17 @@ import io.dataspaceconnector.exception.VersionNotSupportedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Builds the route for validating the header of an incoming IDS message.
+ */
 @Component
 public class IdsValidationRoute extends RouteBuilder {
 
+    /**
+     * Configures the route.
+     *
+     * @throws Exception if any error occurs.
+     */
     @Override
     public void configure() throws Exception {
         onException(VersionNotSupportedException.class)

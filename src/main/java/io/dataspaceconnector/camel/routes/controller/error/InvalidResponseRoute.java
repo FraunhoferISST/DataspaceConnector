@@ -19,17 +19,25 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Builds the route for handling invalid responses.
+ */
 @Component
 public class InvalidResponseRoute extends RouteBuilder {
 
+    /**
+     * Configures the route.
+     *
+     * @throws Exception if any error occurs.
+     */
     @Override
     public void configure() throws Exception {
-        from("direct:handleInvalidResponseException")
-                .routeId("invalidResponse")
+        from("direct:handleReceivedInvalidResponse")
+                .routeId("receivedInvalidResponse")
                 .log(LoggingLevel.DEBUG,
-                        "Error route for handling invalid response called.")
+                        "Error route for handling received invalid response called.")
                 .to("bean:io.dataspaceconnector.util.ControllerUtils?"
-                        + "method=respondWithMessageContent(${exception.getResponse()})");
+                        + "method=respondReceivedInvalidResponse(${exception})");
     }
 
 }

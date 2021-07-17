@@ -19,9 +19,17 @@ import io.dataspaceconnector.camel.exception.InvalidResponseException;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Builds the route for requesting an artifact over IDSCPv2.
+ */
 @Component
 public class ArtifactRequestControllerRoute extends RouteBuilder {
 
+    /**
+     * Configures the route.
+     *
+     * @throws Exception if any error occurs.
+     */
     @Override
     public void configure() throws Exception {
         onException(InvalidResponseException.class)

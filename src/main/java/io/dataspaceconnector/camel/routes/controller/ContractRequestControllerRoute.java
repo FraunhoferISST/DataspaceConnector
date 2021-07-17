@@ -29,9 +29,18 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Builds the route for sending a contract request, a description request and an optional artifact
+ * request over IDSCP_v2.
+ */
 @Component
 public class ContractRequestControllerRoute extends RouteBuilder {
 
+    /**
+     * Configures the route.
+     *
+     * @throws Exception if any error occurs.
+     */
     @Override
     public void configure() throws Exception {
         onException(InvalidInputException.class)

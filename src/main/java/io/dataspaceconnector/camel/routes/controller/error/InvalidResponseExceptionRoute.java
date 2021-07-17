@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.camel.routes.handler.error;
+package io.dataspaceconnector.camel.routes.controller.error;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
 /**
- * Builds the route for handling malformed rules.
+ * Builds the route for handling InvalidResponseExceptions.
  */
 @Component
-public class MalformedRulesRoute extends RouteBuilder {
+public class InvalidResponseExceptionRoute extends RouteBuilder {
 
     /**
      * Configures the route.
@@ -32,15 +32,12 @@ public class MalformedRulesRoute extends RouteBuilder {
      */
     @Override
     public void configure() throws Exception {
-        from("direct:handleMalformedRules")
-                .routeId("malformedRules")
+        from("direct:handleInvalidResponseException")
+                .routeId("invalidResponse")
                 .log(LoggingLevel.DEBUG,
-                        "Error route for handling malformed rules called.")
-                .to("bean:messageResponseService?method=handleMalformedRules("
-                        + "${exception.cause}, "
-                        + "${body.getBody().getContractRequest().toRdf()}, "
-                        + "${body.getHeader().getIssuerConnector()}, "
-                        + "${body.getHeader().getId()})");
+                        "Error route for handling invalid response called.")
+                .to("bean:io.dataspaceconnector.util.ControllerUtils?"
+                        + "method=respondWithMessageContent(${exception.getResponse()})");
     }
 
 }

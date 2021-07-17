@@ -18,9 +18,19 @@ package io.dataspaceconnector.camel.routes.handler;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Builds the route for receiving IDSCP_v2 messages. Incoming messages are parsed to
+ * {@link io.dataspaceconnector.camel.dto.RouteMsg} DTOs and delegated to the appropriate message
+ * handler route.
+ */
 @Component
 public class IdscpServerRoute extends RouteBuilder {
 
+    /**
+     * Configures the route.
+     *
+     * @throws Exception if any error occurs.
+     */
     @Override
     public void configure() throws Exception {
         from("idscp2server://0.0.0.0:29292?sslContextParameters=#serverSslContext&useIdsMessages=true")

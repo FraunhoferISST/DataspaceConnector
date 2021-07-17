@@ -23,9 +23,17 @@ import io.dataspaceconnector.exception.InvalidInputException;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Builds the route for handling an ArtifactRequestMessage.
+ */
 @Component
 public class ArtifactRequestHandlerRoute extends RouteBuilder {
 
+    /**
+     * Configures the route.
+     *
+     * @throws Exception if any error occurs.
+     */
     @Override
     public void configure() throws Exception {
         onException(NoRequestedArtifactException.class)

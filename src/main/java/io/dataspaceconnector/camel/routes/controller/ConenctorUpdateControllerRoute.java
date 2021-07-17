@@ -19,9 +19,17 @@ import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Builds the route for sending a connector update over IDSCP_v2.
+ */
 @Component
 public class ConenctorUpdateControllerRoute extends RouteBuilder {
 
+    /**
+     * Configures the route.
+     *
+     * @throws Exception if any error occurs.
+     */
     @Override
     public void configure() throws Exception {
         onException(ConfigUpdateException.class)

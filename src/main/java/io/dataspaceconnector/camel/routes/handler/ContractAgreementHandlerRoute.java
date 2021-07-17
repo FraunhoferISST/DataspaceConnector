@@ -22,9 +22,17 @@ import io.dataspaceconnector.exception.ResourceNotFoundException;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Builds the route for handling a ContractAgreementMessage.
+ */
 @Component
 public class ContractAgreementHandlerRoute extends RouteBuilder {
 
+    /**
+     * Configures the route.
+     *
+     * @throws Exception if any error occurs.
+     */
     @Override
     public void configure() throws Exception {
         onException(MessageRequestException.class)
