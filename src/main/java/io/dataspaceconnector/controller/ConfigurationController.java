@@ -48,7 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
  * This class provides endpoints for connector configurations via a connected config manager.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/configuration")
 @RequiredArgsConstructor
 public class ConfigurationController {
 
@@ -78,7 +78,7 @@ public class ConfigurationController {
      * @param toSelect The new configuration.
      * @return Ok or error response.
      */
-    @PutMapping(value = "/configuration/{id}", consumes = {"*/*"})
+    @PutMapping(value = "/{id}", consumes = {"*/*"})
     @Operation(summary = "Update current configuration.")
     @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
     @ApiResponses(value = {
@@ -104,7 +104,7 @@ public class ConfigurationController {
      *
      * @return The configuration object or an error.
      */
-    @GetMapping(value = "/configuration", produces = "application/hal+json")
+    @GetMapping(value = "/", produces = "application/hal+json")
     @Operation(summary = "Get current configuration.")
     @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
     @ApiResponses(value = {
@@ -120,7 +120,7 @@ public class ConfigurationController {
      *
      * @return The configuration object or an error.
      */
-    @GetMapping(value = "/configuration", produces = "application/ld+json")
+    @GetMapping(value = "/", produces = "application/ld+json")
     @Operation(summary = "Get current configuration.")
     @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
     @ApiResponses(value = {
@@ -137,7 +137,7 @@ public class ConfigurationController {
      * @param status The desired state.
      * @return Http ok or error response.
      */
-    @PutMapping(value = "/configuration/negotiation", produces = "application/json")
+    @PutMapping(value = "/negotiation", produces = "application/json")
     @Operation(summary = "Set contract negotiation status")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok"),
@@ -154,7 +154,7 @@ public class ConfigurationController {
      *
      * @return Http ok or error response.
      */
-    @GetMapping(value = "/configuration/negotiation", produces = "application/json")
+    @GetMapping(value = "/negotiation", produces = "application/json")
     @Operation(summary = "Get contract negotiation status")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok"),
@@ -176,7 +176,7 @@ public class ConfigurationController {
      * @param status The desired state.
      * @return Http ok or error response.
      */
-    @PutMapping(value = "/configuration/pattern", produces = "application/json")
+    @PutMapping(value = "/pattern", produces = "application/json")
     @Operation(summary = "Allow unsupported patterns", description = "Allow "
             + "requesting data without policy enforcement if an unsupported pattern is recognized.")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
@@ -194,7 +194,7 @@ public class ConfigurationController {
      *
      * @return Http ok or error response.
      */
-    @GetMapping(value = "/configuration/pattern", produces = "application/json")
+    @GetMapping(value = "/pattern", produces = "application/json")
     @Operation(summary = "Get pattern validation status",
             description = "Return if unsupported patterns are ignored when requesting data.")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
