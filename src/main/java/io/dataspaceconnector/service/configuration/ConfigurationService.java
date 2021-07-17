@@ -15,18 +15,22 @@
  */
 package io.dataspaceconnector.service.configuration;
 
+import java.util.Optional;
+import java.util.UUID;
+
+import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
+import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import io.dataspaceconnector.config.interceptor.ConfigurationMapper;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
 import io.dataspaceconnector.repository.ConfigurationRepository;
 import io.dataspaceconnector.service.resource.BaseEntityService;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Service class for the configuration.
@@ -38,29 +42,45 @@ import java.util.UUID;
 public class ConfigurationService extends BaseEntityService<Configuration, ConfigurationDesc> {
 
     /**
-     * Get all selected configurations.
-     *
-     * @return List of configurations with selected = true.
+     * The current connector configuration.
      */
-    public List<UUID> findSelected() {
-        return ((ConfigurationRepository) getRepository()).findBySelectedTrue();
+    private final @NonNull ConfigContainer configContainer;
+
+    /**
+     * Try too find the active configuration.
+     *
+     * @return The active configuration if it exists.
+     */
+    public Optional<Configuration> findActiveConfig() {
+        return ((ConfigurationRepository) getRepository()).findActive();
     }
 
     /**
-     * Mark a new configuration as selected.
-     *
-     * @param newSelected UUID of the configuration to mark as selected
+     * Get the active configuration.
+     * @return The active configuration.
      */
-    public void swapSelected(final UUID newSelected) {
-        var repo = (ConfigurationRepository) getRepository();
-        var selectedId = repo.findBySelectedTrue();
-        if (selectedId.size() > 0) {
-            if (newSelected.equals(selectedId.get(0))) {
-                return;
-            }
-            repo.deselectCurrent();
-        }
-        repo.selectById(newSelected);
+    public Configuration getActiveConfig() {
+        final var config = findActiveConfig();
+        assert config.isPresent();
+        return config.get();
     }
 
+    /**
+     * Mark a new configuration as active.
+     *
+     * @param newConfig Id of the new active configuration.
+     */
+    public void swapActiveConfig(final UUID newConfig) throws ConfigUpdateException {
+        var activeConfig = getActiveConfig();
+        if (activeConfig.getId().equals(newConfig)) {
+            return;
+        }
+
+        final var repo = (ConfigurationRepository) getRepository();
+        repo.unsetActive();
+        repo.setActive(newConfig);
+
+        final var configuration = ConfigurationMapper.buildInfomodelConfig(getActiveConfig());
+        configContainer.updateConfiguration(configuration);
+    }
 }

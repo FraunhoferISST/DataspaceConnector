@@ -15,6 +15,11 @@
  */
 package io.dataspaceconnector.config.interceptor;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.ids.messaging.core.config.ConfigProducerInterceptorException;
 import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
@@ -28,11 +33,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 
 /**
  * Intercepts {@link de.fraunhofer.ids.messaging.core.config.ConfigProducer} and changes how the
@@ -61,32 +61,31 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
     @Override
     public ConfigurationModel perform(final ConfigProperties properties)
             throws ConfigProducerInterceptorException {
-        if (log.isInfoEnabled()) {
-            log.info("Intecepting loading of configuration!");
-        }
-
-        final var configList = configurationSvc.findSelected();
-        if (!configList.isEmpty()) {
-            // There are configurations stored in the DB.
-            final var size = configList.size();
-            if (size > 1) {
-                throw new ConfigProducerInterceptorException(String.format("There are "
-                        + "configurations in the DB but %d are marked as selected!", size));
-            } else {
-                final var selectedConfig = configurationSvc.get(configList.get(0));
-                return configModelBuilder.create(selectedConfig);
-            }
+        if (doesStoredConfigExits()) {
+            return loadConfigFromDb();
         } else {
-            // No config in DB, load from json.
-            try {
-                // TODO check if configModel is already saved in db, then load from there instead
-                //  of config file.
-                final var config = loadConfig(properties);
-                config.setProperty("preInterceptor", true);
-                return config;
-            } catch (IOException e) {
-                throw new ConfigProducerInterceptorException(e.getMessage());
-            }
+            return loadConfigFromFile(properties);
+        }
+    }
+
+    private boolean doesStoredConfigExits() {
+        return configurationSvc.findActiveConfig().isPresent();
+    }
+
+    private ConfigurationModel loadConfigFromDb() {
+        return configModelBuilder.create(configurationSvc.findActiveConfig().get());
+    }
+
+    private ConfigurationModel loadConfigFromFile(final ConfigProperties properties)
+            throws ConfigProducerInterceptorException {
+        try {
+            // TODO check if configModel is already saved in db, then load from there instead
+            //  of config file.
+            final var config = loadConfig(properties);
+            config.setProperty("preInterceptor", true);
+            return config;
+        } catch (IOException e) {
+            throw new ConfigProducerInterceptorException(e.getMessage());
         }
     }
 

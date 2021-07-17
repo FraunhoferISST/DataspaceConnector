@@ -15,17 +15,16 @@
  */
 package io.dataspaceconnector.model.configuration;
 
+import java.net.URI;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dataspaceconnector.config.interceptor.CurrentConfig;
-import io.dataspaceconnector.model.named.NamedDescription;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
+import io.dataspaceconnector.model.named.NamedDescription;
 import io.dataspaceconnector.model.proxy.ProxyDesc;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.net.URI;
-import java.util.List;
 
 /**
  * Describing the configuration's properties.
@@ -96,10 +95,4 @@ public class ConfigurationDesc extends NamedDescription {
      * The keystore settings.
      */
     private KeystoreDesc keystoreSettings;
-
-    /**
-     * Marks selected configuration.
-     */
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private CurrentConfig selected;
 }

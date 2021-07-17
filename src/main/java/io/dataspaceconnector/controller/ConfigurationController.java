@@ -21,7 +21,6 @@ import java.util.UUID;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.config.interceptor.ConfigurationMapper;
 import io.dataspaceconnector.service.configuration.ConfigurationService;
 import io.dataspaceconnector.util.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -87,16 +86,7 @@ public class ConfigurationController {
     public ResponseEntity<Object> setConfiguration(@Valid @PathVariable(name = "id")
                                                        final UUID toSelect) {
         try {
-            configurationService.swapSelected(toSelect);
-            var selectedIDs = configurationService.findSelected();
-            if (selectedIDs.isEmpty()) {
-                return ResponseEntity.internalServerError().body(
-                        "Could not set selected Configuration!"
-                );
-            }
-            var selected = configurationService.get(selectedIDs.get(0));
-            var configuration = ConfigurationMapper.buildInfomodelConfig(selected);
-            configContainer.updateConfiguration(configuration);
+            configurationService.swapActiveConfig(toSelect);
         } catch (ConfigUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
         }

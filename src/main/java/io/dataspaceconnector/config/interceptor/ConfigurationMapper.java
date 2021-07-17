@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.config.interceptor;
 
+import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.BasicAuthentication;
 import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
@@ -38,10 +42,6 @@ import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.proxy.ProxyDesc;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
 import org.hibernate.Hibernate;
-
-import java.net.URI;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Mapper to translate between infomodel and dsc configurations.
@@ -277,7 +277,6 @@ public final class ConfigurationMapper {
                     configurationModel.getConnectorDescription().getDescription().get(0).getValue()
             );
         }
-        description.setSelected(CurrentConfig.SELECTED);
         description.setDeployMode(
                 configurationModel
                         .getConnectorDeployMode() == ConnectorDeployMode.TEST_DEPLOYMENT
@@ -321,7 +320,6 @@ public final class ConfigurationMapper {
                         configurationModel.getTrustStorePassword()
                 )
         );
-        //description.setVersion(null);
         return description;
     }
 

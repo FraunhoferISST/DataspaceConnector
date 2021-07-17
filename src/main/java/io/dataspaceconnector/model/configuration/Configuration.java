@@ -28,7 +28,6 @@ import java.net.URI;
 import java.util.List;
 
 import de.fraunhofer.iais.eis.ConnectorStatus;
-import io.dataspaceconnector.config.interceptor.CurrentConfig;
 import io.dataspaceconnector.model.keystore.Keystore;
 import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.proxy.Proxy;
@@ -140,9 +139,8 @@ public class Configuration extends NamedEntity {
     private Keystore keystore;
 
     /**
-     * Marks selected configuration.
+     * Weather this config is the active one.
      */
     @Column(unique = true)
-    @Enumerated(EnumType.STRING)
-    private CurrentConfig selected;
+    private boolean active;
 }
