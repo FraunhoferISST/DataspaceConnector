@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.model;
 
-import io.dataspaceconnector.model.auth.ApiKey;
-import io.dataspaceconnector.model.auth.BasicAuth;
-import io.dataspaceconnector.util.ErrorMessages;
-import io.dataspaceconnector.util.MetadataUtils;
-import io.dataspaceconnector.util.Utils;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -30,6 +23,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.zip.CRC32C;
+
+import io.dataspaceconnector.model.auth.ApiKey;
+import io.dataspaceconnector.model.auth.BasicAuth;
+import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.util.Utils;
+import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates an artifact.
@@ -194,6 +194,7 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
                                      final String username, final String password,
                                      final String apiKey, final String apiKeyValue) {
         final var newData = new RemoteData();
+        newData.setAuthentication(new ArrayList<>());
         newData.setAccessUrl(accessUrl);
         if (username != null && password != null) {
             newData.addAuthentication(new BasicAuth(username, password));

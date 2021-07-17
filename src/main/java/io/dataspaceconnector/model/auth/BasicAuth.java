@@ -37,7 +37,7 @@ import okhttp3.Credentials;
 @Setter(AccessLevel.PACKAGE)
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class BasicAuth extends Authentication {
     /** The username that is to be used for Basic Auth. */
     @NonNull private String username;

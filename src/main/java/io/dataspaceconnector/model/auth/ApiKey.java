@@ -35,7 +35,7 @@ import lombok.Setter;
 @Setter
 @RequiredArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class ApiKey extends Authentication {
     /** The key associated to the ApiKey. */
     @NonNull private String key;
