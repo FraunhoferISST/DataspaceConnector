@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import io.dataspaceconnector.exception.PolicyRestrictionException;
+import io.dataspaceconnector.exception.DataRetrievalException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactImpl;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
@@ -33,6 +34,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.Base64Utils;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -98,7 +103,8 @@ public class BlockingArtifactReceiverTest {
     }
 
     @Test
-    public void retrieve_noValidResponse_throwPolicyRestrictionException() {
+    @SneakyThrows
+    public void retrieve_noValidResponse_throwDataRetrievalException() {
         /* ARRANGE */
         final var artifactId = UUID.randomUUID();
         final var recipient = URI.create("https://recipient.com");
@@ -112,12 +118,12 @@ public class BlockingArtifactReceiverTest {
 
         when(artifactService.get(artifactId)).thenReturn(artifact);
         when(messageService.sendMessage(recipient, artifact.getRemoteId(), transferContract,
-                null)).thenReturn(response);
+                null)).thenThrow(DataRetrievalException.class);
         when(messageService.validateResponse(response)).thenReturn(false);
         when(messageService.getResponseContent(response)).thenReturn(new HashMap<>());
 
         /* ACT && ASSERT */
-        assertThrows(PolicyRestrictionException.class, () -> blockingArtifactReceiver
+        assertThrows(DataRetrievalException.class, () -> blockingArtifactReceiver
                 .retrieve(artifactId, recipient, transferContract, null));
     }
 

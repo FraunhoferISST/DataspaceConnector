@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.exceptionhandler;
 
-import io.dataspaceconnector.exception.PolicyRestrictionException;
+import io.dataspaceconnector.exception.DataRetrievalException;
 import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONObject;
 import org.springframework.core.annotation.Order;
@@ -27,23 +27,23 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
- * Controller for handling {@link PolicyRestrictionException}.
+ * Controller for handling {@link DataRetrievalException}.
  */
 @ControllerAdvice
 @Log4j2
 @Order(1)
-public final class PolicyRestrictionExceptionHandler {
+public final class DataRetrievalExceptionHandler {
     /**
-     * Handle {@link PolicyRestrictionException}.
+     * Handle {@link DataRetrievalException}.
      *
      * @param exception The thrown exception.
-     * @return Response entity with code 403.
+     * @return Response entity with code 417.
      */
-    @ExceptionHandler(PolicyRestrictionException.class)
-    public ResponseEntity<JSONObject> handlePolicyRestrictionException(
-            final PolicyRestrictionException exception) {
+    @ExceptionHandler(DataRetrievalException.class)
+    public ResponseEntity<JSONObject> handleDataRetrievalException(
+            final DataRetrievalException exception) {
         if (log.isDebugEnabled()) {
-            log.debug("Policy restriction detected. [exception=({})]", exception == null
+            log.debug("Failed to retrieve data. [exception=({})]", exception == null
                     ? "" : exception.getMessage(), exception);
         }
 
@@ -51,8 +51,9 @@ public final class PolicyRestrictionExceptionHandler {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         final var body = new JSONObject();
-        body.put("message", "A policy restriction has been detected.");
+        body.put("message", "Failed to retrieve data.");
+        body.put("details", exception == null ? "" : exception.getMessage());
 
-        return new ResponseEntity<>(body, headers, HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(body, headers, HttpStatus.EXPECTATION_FAILED);
     }
 }

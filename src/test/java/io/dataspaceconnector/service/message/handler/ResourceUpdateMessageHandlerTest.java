@@ -15,16 +15,6 @@
  */
 package io.dataspaceconnector.service.message.handler;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
@@ -50,6 +40,16 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -63,6 +63,7 @@ class ResourceUpdateMessageHandlerTest {
     @Autowired
     ResourceUpdateMessageHandler handler;
 
+    @SneakyThrows
     @Test
     public void handleMessage_nullMessage_returnBadRequest() {
         /* ARRANGE */
@@ -75,6 +76,7 @@ class ResourceUpdateMessageHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
     public void handleMessage_invalidVersion_returnVersionNotSupported() {
         /* ARRANGE */
@@ -87,6 +89,7 @@ class ResourceUpdateMessageHandlerTest {
         assertEquals(RejectionReason.VERSION_NOT_SUPPORTED, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
     public void handleMessage_missingAffectedResource_returnBadRequestResponseMessage() {
         /* ARRANGE */
@@ -108,6 +111,7 @@ class ResourceUpdateMessageHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
     public void handleMessage_nullPayload_returnBadRequestResponseMessage() {
         /* ARRANGE */
@@ -120,6 +124,7 @@ class ResourceUpdateMessageHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
     public void handleMessage_illPayload_returnBadRequestResponseMessage() {
         /* ARRANGE */
@@ -132,6 +137,7 @@ class ResourceUpdateMessageHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
     public void handleMessage_emptyPayload_returnBadRequestResponseMessage() {
         /* ARRANGE */
@@ -145,6 +151,7 @@ class ResourceUpdateMessageHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
     public void handleMessage_notIdsInPayload_returnInternalRecipientErrorResponseError() {
         /* ARRANGE */
@@ -161,6 +168,7 @@ class ResourceUpdateMessageHandlerTest {
         assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
     public void handleMessage_affectedResourceNotInPayload_returnBadRequestErrorResponseError()
             throws IOException {
@@ -179,6 +187,7 @@ class ResourceUpdateMessageHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
     public void handleMessage_failToUpdateResource_returnMessageProcessNotification() throws IOException {
         /* ARRANGE */
@@ -199,6 +208,7 @@ class ResourceUpdateMessageHandlerTest {
     }
 
 
+    @SneakyThrows
     @Test
     public void handleMessage_validUpdate_returnMessageProcessNotification() throws IOException {
         /* ARRANGE */

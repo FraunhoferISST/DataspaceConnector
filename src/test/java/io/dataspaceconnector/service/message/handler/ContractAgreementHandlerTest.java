@@ -15,17 +15,6 @@
  */
 package io.dataspaceconnector.service.message.handler;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -54,6 +43,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -79,6 +78,7 @@ class ContractAgreementHandlerTest {
     @Value("${clearing.house.url}")
     private URI chUri;
 
+    @SneakyThrows
     @Test
     public void handleMessage_nullMessage_returnBadParametersResponse() {
         /* ARRANGE */
@@ -91,9 +91,9 @@ class ContractAgreementHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
-    public void handleMessage_unsupportedMessage_returnUnsupportedVersionRejectionMessage() throws
-            DatatypeConfigurationException {
+    public void handleMessage_unsupportedMessage_returnUnsupportedVersionRejectionMessage() {
         /* ARRANGE */
         final var message = new ContractAgreementMessageBuilder()
                 ._senderAgent_(URI.create("https://localhost:8080"))
@@ -112,9 +112,9 @@ class ContractAgreementHandlerTest {
     }
 
 
+    @SneakyThrows
     @Test
-    public void handleMessage_nullPayload_returnBadRequestErrorResponse() throws
-            DatatypeConfigurationException {
+    public void handleMessage_nullPayload_returnBadRequestErrorResponse() {
         /* ARRANGE */
         final var message = new ContractAgreementMessageBuilder()
                 ._senderAgent_(URI.create("https://localhost:8080"))
@@ -132,9 +132,9 @@ class ContractAgreementHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
-    public void handleMessage_emptyPayload_returnBadRequestErrorResponse() throws
-            DatatypeConfigurationException {
+    public void handleMessage_emptyPayload_returnBadRequestErrorResponse()  {
         /* ARRANGE */
         final var message = new ContractAgreementMessageBuilder()
                 ._senderAgent_(URI.create("https://localhost:8080"))
@@ -152,6 +152,7 @@ class ContractAgreementHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
     public void handleMessage_agreementsDoNotMatch_returnBadParametersResponse() {
         final var message = new ContractAgreementMessageBuilder()
@@ -181,6 +182,7 @@ class ContractAgreementHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
     public void handleMessage_updatingAgreementFails_returnBadParametersResponse() {
         /* ARRANGE */
@@ -211,6 +213,7 @@ class ContractAgreementHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
     public void handleMessage_validAgreement_returnMessageProcessedNotificationMessageAndLogToCH() {
         /* ARRANGE */

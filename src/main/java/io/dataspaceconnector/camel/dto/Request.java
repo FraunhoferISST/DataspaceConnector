@@ -27,10 +27,11 @@ import lombok.Data;
  *
  * @param <H> the header type.
  * @param <B> the body/payload type.
+ * @param <C> the jwt claims.
  */
 @Data
 @AllArgsConstructor
-public class Request<H extends Message, B> implements RouteMsg<H, B> {
+public class Request<H extends Message, B, C> implements RouteMsg<H, B> {
     /**
      * The header.
      */
@@ -40,4 +41,9 @@ public class Request<H extends Message, B> implements RouteMsg<H, B> {
      * The body/payload.
      */
     private final B body;
+
+    /**
+     * The jwt claims.
+     */
+    private final C claims;
 }

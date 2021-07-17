@@ -22,6 +22,7 @@ import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
 import io.dataspaceconnector.util.ControllerUtils;
@@ -89,7 +90,8 @@ public class DescriptionRequestMessageController {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "417", description = "Expectation failed"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
+            @ApiResponse(responseCode = "500", description = "Internal server error"),
+            @ApiResponse(responseCode = "502", description = "Bad gateway")})
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     @ResponseBody
     public ResponseEntity<Object> sendMessage(
@@ -99,56 +101,59 @@ public class DescriptionRequestMessageController {
             @RequestParam(value = "elementId", required = false) final URI elementId,
             @Parameter(description = "The protocol to use for IDS communication.")
             @RequestParam("protocol") final CommunicationProtocol protocol) {
-        String payload = null;
-        try {
-            if (CommunicationProtocol.IDSCP_V2.equals(protocol)) {
-                final var result = template.send("direct:descriptionRequestSender",
-                        ExchangeBuilder.anExchange(context)
-                                .withProperty("recipient", recipient)
-                                .withProperty("elementId", elementId)
-                                .build());
+        String payload;
+        if (CommunicationProtocol.IDSCP_V2.equals(protocol)) {
+            final var result = template.send("direct:descriptionRequestSender",
+                    ExchangeBuilder.anExchange(context)
+                            .withProperty("recipient", recipient)
+                            .withProperty("elementId", elementId)
+                            .build());
 
-                final var response = result.getIn().getBody(Response.class);
-                if (response != null) {
-                    payload = response.getBody();
-                } else {
-                    final var responseEntity = result.getIn().getBody(ResponseEntity.class);
-                    return Objects.requireNonNullElseGet(responseEntity,
-                            () -> new ResponseEntity<Object>("An internal server error occurred.",
-                                    HttpStatus.INTERNAL_SERVER_ERROR));
-                }
+            final var response = result.getIn().getBody(Response.class);
+            if (response != null) {
+                payload = response.getBody();
             } else {
-                try {
-                    // Send and validate description request/response message.
-                    final var response = descriptionReqSvc.sendMessage(recipient, elementId);
-                    final var valid = descriptionReqSvc.validateResponse(response);
-                    if (!valid) {
-                        // If the response is not a description response message, show the response.
-                        final var content = descriptionReqSvc.getResponseContent(response);
-                        return ControllerUtils.respondWithMessageContent(content);
-                    }
-
-                    // Read the response message.
-                    payload = MessageUtils.extractPayloadFromMultipartMessage(response);
-                } catch (MessageException exception) {
-                    return ControllerUtils.respondIdsMessageFailed(exception);
-                } catch (MessageResponseException exception) {
-                    return ControllerUtils.respondReceivedInvalidResponse(exception);
-                }
+                final var responseEntity = result.getIn().getBody(ResponseEntity.class);
+                return Objects.requireNonNullElseGet(responseEntity,
+                        () -> new ResponseEntity<Object>("An internal server error occurred.",
+                                HttpStatus.INTERNAL_SERVER_ERROR));
             }
+        } else {
+            try {
+                // Send and validate description request/response message.
+                final var response = descriptionReqSvc.sendMessage(recipient, elementId);
 
-            // Process the response message.
-            if (!Utils.isEmptyOrNull(elementId)) {
-                return new ResponseEntity<>(payload, HttpStatus.OK);
-            } else {
+                // Read and process the response message.
+                payload = MessageUtils.extractPayloadFromMultipartMessage(response);
+
+                // Read the response message.
+                payload = MessageUtils.extractPayloadFromMultipartMessage(response);
+            } catch (MessageException exception) {
+                // If the message could not be built.
+                return ControllerUtils.respondIdsMessageFailed(exception);
+            } catch (MessageResponseException | IllegalArgumentException e) {
+                // If the response message is invalid or malformed.
+                return ControllerUtils.respondReceivedInvalidResponse(e);
+            } catch (UnexpectedResponseException e) {
+                // If the response is not as expected.
+                return ControllerUtils.respondWithContent(e.getContent());
+            }
+        }
+
+        // Process the response message.
+        if (!Utils.isEmptyOrNull(elementId)) {
+            return new ResponseEntity<>(payload, HttpStatus.OK);
+        } else {
+            try {
                 // Get payload as component.
                 final var component =
                         deserializationSvc.getInfrastructureComponent(payload);
                 return ResponseEntity.ok(component.toRdf());
+            } catch (IllegalArgumentException e) {
+                // If the response is not of type base connector.
+                return new ResponseEntity<>(payload, HttpStatus.OK);
             }
-        } catch (IllegalArgumentException exception) {
-            // If the response is not of type base connector.
-            return new ResponseEntity<>(payload, HttpStatus.OK);
         }
+
     }
 }

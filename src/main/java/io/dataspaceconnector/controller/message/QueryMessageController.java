@@ -15,16 +15,21 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.util.Objects;
-
+import de.fraunhofer.iais.eis.ResultMessageImpl;
+import de.fraunhofer.ids.messaging.common.DeserializeException;
+import de.fraunhofer.ids.messaging.common.SerializeException;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
+import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
+import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
+import de.fraunhofer.ids.messaging.protocol.multipart.UnknownResponseException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.controller.util.CommunicationProtocol;
+import de.fraunhofer.ids.messaging.requests.MessageContainer;
+import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
+import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
+import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.util.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,6 +52,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.util.Optional;
 
 /**
  * Controller for sending ids query messages.
@@ -86,6 +96,7 @@ public class QueryMessageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "417", description = "Expectation failed"),
             @ApiResponse(responseCode = "500", description = "Internal server error"),
             @ApiResponse(responseCode = "502", description = "Bad gateway"),
             @ApiResponse(responseCode = "504", description = "Gateway timeout")})
@@ -119,18 +130,28 @@ public class QueryMessageController {
                                 HttpStatus.INTERNAL_SERVER_ERROR));
             }
         } else {
+            Optional<MessageContainer<?>> response = Optional.empty();
             try {
                 // Send the query message.
-                final var response = messageService.sendQueryMessage(recipient, query);
-                return response.<ResponseEntity<Object>>map(ResponseEntity::ok)
-                        .orElseGet(ControllerUtils::respondReceivedInvalidResponse);
+                response = messageService.sendQueryMessage(recipient, query);
             } catch (SocketTimeoutException exception) {
+                // If a timeout has occurred.
                 return ControllerUtils.respondConnectionTimedOut(exception);
-            } catch (MultipartParseException exception) {
+            } catch (MultipartParseException | UnknownResponseException | ShaclValidatorException
+                    | DeserializeException | UnexpectedPayloadException | ClaimsException exception) {
+                // If the response was invalid.
                 return ControllerUtils.respondReceivedInvalidResponse(exception);
-            } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
+            } catch (RejectionException ignored) {
+                // If the response is a rejection message. Error is ignored.
+            } catch (SendMessageException | SerializeException | DapsTokenManagerException exception) {
+                // If the message could not be built or sent.
+                return ControllerUtils.respondMessageSendingFailed(exception);
+            } catch (NoTemplateProvidedException | IOException exception) {
+                // If any other error occurred.
                 return ControllerUtils.respondIdsMessageFailed(exception);
             }
+
+            return messageService.validateResponse(response, ResultMessageImpl.class);
         }
     }
 
@@ -184,19 +205,28 @@ public class QueryMessageController {
                                 HttpStatus.INTERNAL_SERVER_ERROR));
             }
         } else {
+            Optional<MessageContainer<?>> response = Optional.empty();
             try {
-                // Send the query message.
-                final var response =
-                        messageService.sendFullTextSearchQueryMessage(recipient, term, limit, offset);
-                return response.<ResponseEntity<Object>>map(ResponseEntity::ok)
-                        .orElseGet(ControllerUtils::respondReceivedInvalidResponse);
+                // Send the query message for full text search.
+                response = messageService.sendFullTextSearchMessage(recipient, term, limit, offset);
             } catch (SocketTimeoutException exception) {
+                // If a timeout has occurred.
                 return ControllerUtils.respondConnectionTimedOut(exception);
-            } catch (MultipartParseException exception) {
+            } catch (MultipartParseException | UnknownResponseException | ShaclValidatorException
+                    | DeserializeException | UnexpectedPayloadException | ClaimsException exception) {
+                // If the response was invalid.
                 return ControllerUtils.respondReceivedInvalidResponse(exception);
-            } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
+            } catch (RejectionException ignored) {
+                // If the response is a rejection message. Error is ignored.
+            } catch (SendMessageException | SerializeException | DapsTokenManagerException exception) {
+                // If the message could not be built or sent.
+                return ControllerUtils.respondMessageSendingFailed(exception);
+            } catch (NoTemplateProvidedException | IOException exception) {
+                // If any other error occurred.
                 return ControllerUtils.respondIdsMessageFailed(exception);
             }
+
+            return messageService.validateResponse(response, ResultMessageImpl.class);
         }
     }
 }

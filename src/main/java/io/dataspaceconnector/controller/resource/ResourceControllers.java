@@ -15,15 +15,6 @@
  */
 package io.dataspaceconnector.controller.resource;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
 import io.dataspaceconnector.controller.resource.tag.ResourceDescriptions;
 import io.dataspaceconnector.controller.resource.tag.ResourceNames;
@@ -36,6 +27,7 @@ import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
 import io.dataspaceconnector.controller.resource.view.RepresentationView;
 import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
 import io.dataspaceconnector.controller.util.CommunicationProtocol;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.AgreementDesc;
 import io.dataspaceconnector.model.Artifact;
@@ -84,6 +76,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * This class contains all implementations of the {@link BaseResourceController}.
@@ -293,7 +294,8 @@ public final class ResourceControllers {
         public ResponseEntity<StreamingResponseBody> getData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
                 @RequestParam(required = false) final CommunicationProtocol protocol,
-                @RequestBody(required = false) final QueryInput queryInput) throws IOException {
+                @RequestBody(required = false) final QueryInput queryInput)
+                throws IOException, UnexpectedResponseException {
             ValidationUtils.validateQueryInput(queryInput);
             final var data =
                     artifactSvc.getData(accessVerifier, dataReceiver, artifactId, protocol, queryInput);

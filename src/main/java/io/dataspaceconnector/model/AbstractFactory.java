@@ -28,7 +28,6 @@ public interface AbstractFactory<T extends AbstractEntity, D extends AbstractDes
      * @return The new entity.
      */
     T create(D desc);
-
     /**
      * Update an entity.
      * @param entity The entity to be updated.

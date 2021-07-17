@@ -63,5 +63,10 @@ public enum PolicyPattern {
     /**
      * Restrict the data usage to specific connectors.
      */
-    CONNECTOR_RESTRICTED_USAGE
+    CONNECTOR_RESTRICTED_USAGE,
+
+    /**
+     * Restrict the data usage to specific security profile.
+     */
+    SECURITY_PROFILE_RESTRICTED_USAGE
 }

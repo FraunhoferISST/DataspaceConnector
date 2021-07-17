@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.camel.processors.handler;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
@@ -26,9 +22,9 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
 import de.fraunhofer.iais.eis.Rule;
+import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
 import io.dataspaceconnector.camel.dto.Request;
-import io.dataspaceconnector.camel.dto.RouteMsg;
 import io.dataspaceconnector.camel.dto.payload.ContractRuleListContainer;
 import io.dataspaceconnector.camel.dto.payload.ContractTargetRuleMapContainer;
 import io.dataspaceconnector.camel.exception.ContractListEmptyException;
@@ -49,13 +45,20 @@ import io.dataspaceconnector.service.usagecontrol.VerificationInput;
 import io.dataspaceconnector.service.usagecontrol.VerificationResult;
 import io.dataspaceconnector.util.ContractUtils;
 import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.IdsUtils;
 import io.dataspaceconnector.util.MessageUtils;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Superclass for Camel processors that validate either header or payload of an incoming message.
@@ -89,10 +92,9 @@ public abstract class IdsValidator<I> implements Processor {
 /**
  * Validates that the correct resource ID was used in a ResourceUpdateMessage.
  */
-@Log4j2
 @Component("CorrectAffectedResourceValidator")
-class CorrectAffectedResourceValidator extends IdsValidator<
-        RouteMsg<ResourceUpdateMessageImpl, Resource>> {
+class CorrectAffectedResourceValidator extends IdsValidator<Request<ResourceUpdateMessageImpl,
+        Resource, Optional<Jws<Claims>>>> {
 
     /**
      * Checks whether the resource ID given in a ResourceUpdateMessage matches the resource ID in
@@ -102,8 +104,8 @@ class CorrectAffectedResourceValidator extends IdsValidator<
      * @throws Exception if the IDs do not match.
      */
     @Override
-    protected void processInternal(final RouteMsg<ResourceUpdateMessageImpl, Resource> msg)
-            throws Exception {
+    protected void processInternal(final Request<ResourceUpdateMessageImpl, Resource,
+            Optional<Jws<Claims>>> msg) throws Exception {
         final var affected = MessageUtils.extractAffectedResource(msg.getHeader());
         if (!msg.getBody().getId().equals(affected)) {
             throw new InvalidAffectedResourceException("Resource in message payload does not "
@@ -117,10 +119,9 @@ class CorrectAffectedResourceValidator extends IdsValidator<
  * Validates that the resource ID given in the header of a ResourceUpdateMessage is not null or
  * empty.
  */
-@Log4j2
 @Component("AffectedResourceValidator")
-class AffectedResourceValidator extends IdsValidator<
-        RouteMsg<ResourceUpdateMessageImpl, MessagePayload>> {
+class AffectedResourceValidator extends IdsValidator<Request<ResourceUpdateMessageImpl,
+        MessagePayload, Optional<Jws<Claims>>>> {
 
     /**
      * Checks whether the resource ID given in a ResourceUpdateMessage is null or empty.
@@ -129,8 +130,8 @@ class AffectedResourceValidator extends IdsValidator<
      * @throws Exception if the ID is null or empty.
      */
     @Override
-    protected void processInternal(final RouteMsg<ResourceUpdateMessageImpl,
-            MessagePayload> message) throws Exception {
+    protected void processInternal(final Request<ResourceUpdateMessageImpl,
+            MessagePayload, Optional<Jws<Claims>>> message) throws Exception {
         final var affected = MessageUtils.extractAffectedResource(message.getHeader());
 
         if (affected == null || affected.toString().isEmpty()) {
@@ -144,10 +145,10 @@ class AffectedResourceValidator extends IdsValidator<
  * Validates the contract used in an ArtifactRequestMessage and checks whether data provision
  * is allowed.
  */
-@Log4j2
 @Component("PolicyValidator")
 @RequiredArgsConstructor
-class PolicyValidator extends IdsValidator<RouteMsg<ArtifactRequestMessageImpl, MessagePayload>> {
+class PolicyValidator extends IdsValidator<Request<ArtifactRequestMessageImpl, MessagePayload,
+        Optional<Jws<Claims>>>> {
 
     /**
      * Service for contract processing.
@@ -167,8 +168,8 @@ class PolicyValidator extends IdsValidator<RouteMsg<ArtifactRequestMessageImpl, 
      * @throws Exception if the contract is null or empty or if data provision is denied.
      */
     @Override
-    protected void processInternal(final RouteMsg<ArtifactRequestMessageImpl, MessagePayload> msg)
-            throws Exception {
+    protected void processInternal(final Request<ArtifactRequestMessageImpl, MessagePayload,
+            Optional<Jws<Claims>>> msg) throws Exception {
         final var transferContract = MessageUtils.extractTransferContract(msg.getHeader());
         final var requestedArtifact = MessageUtils.extractRequestedArtifact(msg.getHeader());
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
@@ -179,10 +180,25 @@ class PolicyValidator extends IdsValidator<RouteMsg<ArtifactRequestMessageImpl, 
 
         final var agreement = contractManager.validateTransferContract(
                 transferContract, requestedArtifact, issuer);
-        final var input = new VerificationInput(requestedArtifact, issuer, agreement);
+        final var profile = extractSecurityProfile(msg.getClaims());
+        final var input = new VerificationInput(requestedArtifact, issuer, agreement, profile);
         if (accessVerifier.verify(input) == VerificationResult.DENIED) {
             throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
         }
+    }
+
+    private Optional<SecurityProfile> extractSecurityProfile(final Optional<Jws<Claims>> claims) {
+        if (claims.isEmpty()) {
+            return Optional.empty();
+        }
+
+        final var value = claims.get().getBody().get("securityProfile");
+        final var profile = IdsUtils.getSecurityProfile(value.toString());
+        if (profile.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return profile;
     }
 
 }
@@ -190,10 +206,9 @@ class PolicyValidator extends IdsValidator<RouteMsg<ArtifactRequestMessageImpl, 
 /**
  * Validates the requested artifact given in an ArtifactRequestMessage.
  */
-@Log4j2
 @Component("RequestedArtifactValidator")
-class RequestedArtifactValidator extends IdsValidator<
-        RouteMsg<ArtifactRequestMessageImpl, MessagePayload>> {
+class RequestedArtifactValidator extends IdsValidator<Request<ArtifactRequestMessageImpl,
+        MessagePayload, Optional<Jws<Claims>>>> {
 
     /**
      * Checks whether the requested artifact given in an ArtifactRequestMessage is null or empty.
@@ -202,8 +217,8 @@ class RequestedArtifactValidator extends IdsValidator<
      * @throws Exception if the requested artifact is null or empty.
      */
     @Override
-    protected void processInternal(final RouteMsg<ArtifactRequestMessageImpl, MessagePayload> msg)
-            throws Exception {
+    protected void processInternal(final Request<ArtifactRequestMessageImpl, MessagePayload,
+            Optional<Jws<Claims>>> msg) throws Exception {
         final var requestedArtifact = MessageUtils.extractRequestedArtifact(msg.getHeader());
         if (requestedArtifact == null || requestedArtifact.toString().equals("")) {
             throw new NoRequestedArtifactException("Requested artifact is missing.");
@@ -216,10 +231,10 @@ class RequestedArtifactValidator extends IdsValidator<
  * Validates any incoming message by checking whether the message is empty and whether it references
  * an Infomodel version supported by this connector.
  */
-@Log4j2
 @RequiredArgsConstructor
 @Component("MessageHeaderValidator")
-class MessageHeaderValidator extends IdsValidator<RouteMsg<? extends Message, ?>> {
+class MessageHeaderValidator extends IdsValidator<Request<? extends Message, ?,
+        Optional<Jws<Claims>>>> {
 
     /**
      * Service for handling response messages.
@@ -234,7 +249,8 @@ class MessageHeaderValidator extends IdsValidator<RouteMsg<? extends Message, ?>
      * @throws Exception if the message is empty or references an unsupported Infomodel version.
      */
     @Override
-    protected void processInternal(final RouteMsg<? extends Message, ?> msg) throws Exception {
+    protected void processInternal(final Request<? extends Message, ?, Optional<Jws<Claims>>> msg)
+            throws Exception {
         messageService.validateIncomingMessage(msg.getHeader());
     }
 }
@@ -243,8 +259,8 @@ class MessageHeaderValidator extends IdsValidator<RouteMsg<? extends Message, ?>
  * Validates the rules from a contract request.
  */
 @Component("RuleListValidator")
-class RuleListValidator extends
-        IdsValidator<RouteMsg<ContractRequestMessageImpl, ContractRuleListContainer>> {
+class RuleListValidator extends IdsValidator<Request<ContractRequestMessageImpl,
+        ContractRuleListContainer, Optional<Jws<Claims>>>> {
 
     /**
      * Checks whether the list of rules from a contract request is empty.
@@ -253,8 +269,8 @@ class RuleListValidator extends
      * @throws Exception if the list of rules is empty.
      */
     @Override
-    protected void processInternal(final RouteMsg<ContractRequestMessageImpl,
-            ContractRuleListContainer> msg) throws Exception {
+    protected void processInternal(final Request<ContractRequestMessageImpl,
+            ContractRuleListContainer, Optional<Jws<Claims>>> msg) throws Exception {
         if (msg.getBody().getRules().isEmpty()) {
             throw new MissingRulesException(msg.getBody().getContractRequest(),
                     "Rule list is empty.");
@@ -268,8 +284,8 @@ class RuleListValidator extends
  * rules.
  */
 @Component("TargetRuleMapValidator")
-class TargetRuleMapValidator extends
-        IdsValidator<RouteMsg<ContractRequestMessageImpl, ContractTargetRuleMapContainer>> {
+class TargetRuleMapValidator extends IdsValidator<Request<ContractRequestMessageImpl,
+        ContractTargetRuleMapContainer, Optional<Jws<Claims>>>> {
 
     /**
      * Validates the target rule map for a contract request, that links target artifacts to a
@@ -279,8 +295,8 @@ class TargetRuleMapValidator extends
      * @throws Exception if the target is missing for any rules.
      */
     @Override
-    protected void processInternal(final RouteMsg<ContractRequestMessageImpl,
-            ContractTargetRuleMapContainer> msg) throws Exception {
+    protected void processInternal(final Request<ContractRequestMessageImpl,
+            ContractTargetRuleMapContainer, Optional<Jws<Claims>>> msg) throws Exception {
         if (msg.getBody().getTargetRuleMap().containsKey(null)) {
             throw new MissingTargetInRuleException(msg.getBody().getContractRequest(),
                     "Rule is missing a target.");
@@ -295,8 +311,8 @@ class TargetRuleMapValidator extends
  */
 @Component("RuleValidator")
 @RequiredArgsConstructor
-class RuleValidator extends
-        IdsValidator<RouteMsg<ContractRequestMessageImpl, ContractTargetRuleMapContainer>> {
+class RuleValidator extends IdsValidator<Request<ContractRequestMessageImpl,
+        ContractTargetRuleMapContainer, Optional<Jws<Claims>>>> {
 
     /**
      * Service for resolving entities.
@@ -316,8 +332,8 @@ class RuleValidator extends
      * @throws Exception if there are no contract offers for the artifact or the rules do not match.
      */
     @Override
-    protected void processInternal(final RouteMsg<ContractRequestMessageImpl,
-            ContractTargetRuleMapContainer> msg) throws Exception {
+    protected void processInternal(final Request<ContractRequestMessageImpl,
+            ContractTargetRuleMapContainer, Optional<Jws<Claims>>> msg) throws Exception {
         final var targetRuleMap = msg.getBody().getTargetRuleMap();
         final var request = msg.getBody().getContractRequest();
         final var messageId = MessageUtils.extractMessageId(msg.getHeader());

@@ -15,22 +15,22 @@
  */
 package io.dataspaceconnector.exception;
 
-import org.junit.jupiter.api.Test;
+/**
+ * Thrown if data could not be loaded.
+ */
+public class DataRetrievalException extends RuntimeException {
 
-import static org.junit.jupiter.api.Assertions.*;
+    /**
+     * Default serial version uid.
+     */
+    private static final long serialVersionUID = 1L;
 
-public class MessageBuilderExceptionTest {
-    @Test
-    public void constructor_someMsgAndsSomeException_holdsMsgAndException() {
-        /* ARRANGE */
-        final var msg = "Some msg";
-        final var someError = new RuntimeException("WELL?");
-
-        /* ACT */
-        final var exception = new MessageBuilderException(msg, someError);
-
-        /* ASSERT */
-        assertEquals(msg, exception.getMessage());
-        assertEquals(someError, exception.getCause());
+    /**
+     * Construct a DataRetrievalException with the specified detail message and cause.
+     *
+     * @param msg The detail message.
+     */
+    public DataRetrievalException(final String msg) {
+        super(msg);
     }
 }

@@ -33,7 +33,6 @@
 
         <!-- the response cannot be built -->
         <onException>
-            <exception>io.dataspaceconnector.exception.MessageBuilderException</exception>
             <exception>de.fraunhofer.iais.eis.util.ConstraintViolationException</exception>
             <to uri="direct:handleResponseMessageBuilderException"/>
         </onException>

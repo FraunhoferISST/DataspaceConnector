@@ -26,9 +26,10 @@ import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
-import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
+import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.util.ErrorMessages;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,7 +155,7 @@ public class ConnectorUnavailableMessageControllerTest {
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_throwMultipartParseException_throws500() throws Exception {
+    public void sendConnectorUpdateMessage_throwMultipartParseException_throws502() throws Exception {
         /* ARRANGE */
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doThrow(MultipartParseException.class).when(brokerService).unregisterAtBroker(Mockito.eq(URI.create(recipient)));
@@ -166,9 +167,9 @@ public class ConnectorUnavailableMessageControllerTest {
                 .andReturn();
 
         /* ASSERT */
-        assertEquals(500, result.getResponse().getStatus());
-        assertEquals("Failed to read the ids response message.",
-                result.getResponse().getContentAsString());
+        assertEquals(502, result.getResponse().getStatus());
+        final var msg = ErrorMessages.INVALID_MESSAGE.toString();
+        assertEquals(msg, result.getResponse().getContentAsString());
     }
 
     @Test
@@ -185,7 +186,7 @@ public class ConnectorUnavailableMessageControllerTest {
                 ._securityToken_(token)
                 .build();
 
-        final var response = new MessageProcessedNotificationMAP(message);
+        final var response = new MessageContainer<>(message, "EMPTY");
 
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(response).when(brokerService).unregisterAtBroker(Mockito.eq(URI.create(recipient)));
@@ -197,7 +198,7 @@ public class ConnectorUnavailableMessageControllerTest {
                 .andReturn();
 
         /* ASSERT */
-        assertEquals("", result.getResponse().getContentAsString());
+        assertEquals("EMPTY", result.getResponse().getContentAsString());
         assertEquals(200, result.getResponse().getStatus());
     }
 }

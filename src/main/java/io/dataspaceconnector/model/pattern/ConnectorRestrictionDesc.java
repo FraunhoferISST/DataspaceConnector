@@ -13,24 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exception;
+package io.dataspaceconnector.model.pattern;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
- * Thrown to indicate that the message could not be build.
+ * Class for inputs of a policy pattern that describes the restriction of data usage to a
+ * specific connector.
  */
-public class MessageBuilderException extends MessageResponseException {
+@Schema(example = "{\n"
+        + "\t\"type\": \"CONNECTOR_RESTRICTED_USAGE\",\n"
+        + "\t\"url\": \"https://localhost:8080\"\n"
+        + "}")
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class ConnectorRestrictionDesc extends PatternDesc {
     /**
-     * Default serial version uid.
+     * The connector id.
      */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Construct a MessageBuilderException with the specified detail message and cause.
-     *
-     * @param msg   The detail message.
-     * @param cause The cause.
-     */
-    public MessageBuilderException(final String msg, final Throwable cause) {
-        super(msg, cause);
-    }
+    @JsonProperty("url")
+    private String url;
 }

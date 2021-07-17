@@ -15,17 +15,22 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.util.Objects;
-
+import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
+import de.fraunhofer.ids.messaging.common.DeserializeException;
+import de.fraunhofer.ids.messaging.common.SerializeException;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
+import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
+import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
+import de.fraunhofer.ids.messaging.protocol.multipart.UnknownResponseException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.controller.util.CommunicationProtocol;
+import de.fraunhofer.ids.messaging.requests.MessageContainer;
+import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
+import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
+import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.util.ControllerUtils;
@@ -47,6 +52,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.util.Optional;
+import java.util.Objects;
 
 /**
  * Controller for sending ids connector update messages.
@@ -90,6 +101,7 @@ public class ConnectorUpdateMessageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "417", description = "Expectation failed"),
             @ApiResponse(responseCode = "500", description = "Internal server error"),
             @ApiResponse(responseCode = "502", description = "Bad gateway"),
             @ApiResponse(responseCode = "504", description = "Gateway timeout")})
@@ -116,25 +128,35 @@ public class ConnectorUpdateMessageController {
                                 HttpStatus.INTERNAL_SERVER_ERROR));
             }
         } else {
+            Optional<MessageContainer<?>> response = Optional.empty();
             try {
                 // Update the config model.
                 connectorService.updateConfigModel();
 
                 // Send the connector update message.
-                if (messageService.sendConnectorUpdateMessage(recipient)) {
-                    return new ResponseEntity<>(HttpStatus.OK);
-                }
-
-                return ControllerUtils.respondReceivedInvalidResponse();
+                response = messageService.sendConnectorUpdateMessage(recipient);
             } catch (ConfigUpdateException exception) {
+                // If the configuration could not be updated.
                 return ControllerUtils.respondConfigurationUpdateError(exception);
             } catch (SocketTimeoutException exception) {
+                // If a timeout has occurred.
                 return ControllerUtils.respondConnectionTimedOut(exception);
-            } catch (MultipartParseException exception) {
+            } catch (MultipartParseException | UnknownResponseException | ShaclValidatorException
+                    | DeserializeException | UnexpectedPayloadException | ClaimsException exception) {
+                // If the response was invalid.
                 return ControllerUtils.respondReceivedInvalidResponse(exception);
-            } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
+            } catch (RejectionException ignored) {
+                // If the response is a rejection message. Error is ignored.
+            } catch (SendMessageException | SerializeException | DapsTokenManagerException exception) {
+                // If the message could not be built or sent.
+                return ControllerUtils.respondMessageSendingFailed(exception);
+            } catch (NoTemplateProvidedException | IOException exception) {
+                // If any other error occurred.
                 return ControllerUtils.respondIdsMessageFailed(exception);
             }
+
+            return messageService.validateResponse(response,
+                    MessageProcessedNotificationMessageImpl.class);
         }
     }
 }

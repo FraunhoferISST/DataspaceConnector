@@ -15,11 +15,10 @@
  */
 package io.dataspaceconnector.bootstrap;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-
+import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
+import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
+import de.fraunhofer.iais.eis.TokenFormat;
+import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.OfferedResourceDesc;
@@ -37,6 +36,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import javax.xml.datatype.DatatypeFactory;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -78,7 +87,7 @@ public class BootstrapperTest {
     @Test
     public void bootstrap_files_registerCatalogs() {
         /* ARRANGE */
-        Mockito.doReturn(true).when(messageService).sendConnectorUpdateMessage(Mockito.any());
+        Mockito.doReturn(getResponse()).when(messageService).sendConnectorUpdateMessage(Mockito.any());
 
         Mockito.doAnswer(x -> Utils.toPage(catalogList, Pageable.unpaged()))
                .when(catalogService)
@@ -119,5 +128,25 @@ public class BootstrapperTest {
         ReflectionTestUtils.setField(output, "id", catalogTwoId);
         ReflectionTestUtils.setField(output, "additional", new HashMap<String, String>());
         return output;
+    }
+
+    @SneakyThrows
+    private Optional<MessageContainer<?>> getResponse() {
+        final var calendar = new GregorianCalendar();
+        calendar.setTime(new Date());
+        final var xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
+        final var connectorId = URI.create("https://connector");
+        final var modelVersion = "4.0.0";
+        final var token = new DynamicAttributeTokenBuilder()
+                ._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build();
+        final var message = new MessageProcessedNotificationMessageBuilder()
+                ._securityToken_(token)
+                ._modelVersion_(modelVersion)
+                ._issuerConnector_(connectorId)
+                ._correlationMessage_(URI.create("https://message"))
+                ._senderAgent_(connectorId)
+                ._issued_(xmlCalendar)
+                .build();
+        return Optional.of(new MessageContainer<>(message, "EMPTY"));
     }
 }

@@ -24,6 +24,7 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.message.ContractAgreementMessageDesc;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.IdsUtils;
@@ -74,20 +75,35 @@ public final class ContractAgreementService
     }
 
     /**
-     * Build and send a contract agreement message.
+     * Build and send a contract agreement message and then validate the response.
      *
      * @param recipient The recipient.
      * @param agreement The contract agreement.
      * @return The response map.
-     * @throws MessageException         if message handling failed.
-     * @throws IllegalArgumentException if contract agreement is null.
+     * @throws MessageException             if message handling failed.
+     * @throws MessageResponseException     if the response could not be processed.
+     * @throws UnexpectedResponseException  if the response is not as expected.
+     * @throws IllegalArgumentException     if contract agreement is null.
+     * @throws ConstraintViolationException if contract agreement is malformed.
      */
     public Map<String, String> sendMessage(final URI recipient, final ContractAgreement agreement)
-            throws MessageException, ConstraintViolationException {
+            throws MessageException, MessageResponseException, UnexpectedResponseException,
+            ConstraintViolationException {
         Utils.requireNonNull(agreement, ErrorMessages.ENTITY_NULL);
 
         final var contractRdf = IdsUtils.toRdf(agreement);
-        return send(new ContractAgreementMessageDesc(recipient, agreement.getId()), contractRdf);
+        final var desc = new ContractAgreementMessageDesc(recipient, agreement.getId());
+        final var response = send(desc, contractRdf);
+
+        try {
+            if (!validateResponse(response)) {
+                throw new UnexpectedResponseException(getResponseContent(response));
+            }
+        } catch (MessageResponseException e) {
+            throw new UnexpectedResponseException(getResponseContent(response), e);
+        }
+
+        return response;
     }
 
     /**

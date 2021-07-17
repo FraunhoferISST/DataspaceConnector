@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file.
 - Add Camel error handler for propagating errors in routes to the Configuration Manager.
 
 ### Changed
-- Replace IDS Connector Framework v5.0.4 by IDS Messaging Services v4.1.1.4.
+- Replace IDS Connector Framework v5.0.4 by IDS Messaging Services v2.0.0.
 - Edit response codes and response content for the following endpoints: `/ids/connector/unavailable`,
   `/ids/connector/update`, `/ids/resource/unavailable`, `/ids/resource/update`, `/ids/query`.
 - Move implementation for sending IDS query, connector, and resource messages to
@@ -23,6 +23,9 @@ All notable changes to this project will be documented in this file.
 - Refactor message handlers using Camel routes.
 - Increase postgres version to 42.2.23.
 - Increase jackson version to 2.12.4.
+- Increase camel version from 3.10.0 to 3.11.0.
+- Increase equalsverifier from 3.6.1 to 3.7.0.
+- Increase spotbugs from 4.2.3 to 4.3.0.
 
 ## [5.2.1] - 2021-07-02
 
