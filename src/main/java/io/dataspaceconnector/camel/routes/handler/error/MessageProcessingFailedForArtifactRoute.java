@@ -13,7 +13,7 @@ public class MessageProcessingFailedForArtifactRoute extends RouteBuilder {
                 .routeId("messageProcessingFailedForArtifact")
                 .log(LoggingLevel.DEBUG,
                         "Error route for handling failed message processing called.")
-                .to("bean:messageResponseService?method=handleMessageProcessingFailed("
+                .to("bean:messageResponseService?method=handleMessageProcessingFailedForArtifact("
                         + "${exception}, "
                         + "${body.getHeader().getRequestedArtifact()}, "
                         + "${body.getHeader().getTransferContract()}, "

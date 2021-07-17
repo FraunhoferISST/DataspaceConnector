@@ -15,7 +15,7 @@ public class MessageProcessingFailedForAgreementRoute extends RouteBuilder {
                         "Error route for handling failed message processing called.")
                 .to("bean:messageResponseService?method=handleMessageProcessingFailed("
                         + "${exception}, "
-                        + "${body.getBody().toRdf(), "
+                        + "${body.getBody().toRdf()}, "
                         + "${body.getHeader().getIssuerConnector()}, "
                         + "${body.getHeader().getId()})");
     }

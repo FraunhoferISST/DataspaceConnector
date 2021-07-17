@@ -298,11 +298,11 @@ public class MessageResponseService {
      * @param messageId         The id of the incoming message.
      * @return A message response.
      */
-    public MessageResponse handleMessageProcessingFailed(final Exception exception,
-                                                         final URI requestedArtifact,
-                                                         final URI transferContract,
-                                                         final URI issuerConnector,
-                                                         final URI messageId) {
+    public MessageResponse handleMessageProcessingFailedForArtifact(final Exception exception,
+                                                                    final URI requestedArtifact,
+                                                                    final URI transferContract,
+                                                                    final URI issuerConnector,
+                                                                    final URI messageId) {
         if (log.isWarnEnabled()) {
             log.warn("Could not process request message. [exception=({}), artifact=({}), "
                             + "contract=({}), issuer=({}), messageId=({})]", exception.getMessage(),

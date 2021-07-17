@@ -17,6 +17,7 @@ package io.dataspaceconnector.camel.processors.controller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.Connector;
@@ -50,6 +51,8 @@ import io.dataspaceconnector.service.message.type.ContractAgreementService;
 import io.dataspaceconnector.service.message.type.ContractRequestService;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.Exchange;
@@ -64,7 +67,7 @@ public abstract class IdsMessageBuilder<H extends Message, B> implements Process
         exchange.getIn().setBody(request);
     }
 
-    protected abstract Request<H, B> processInternal(Exchange exchange);
+    protected abstract Request<H, B, Optional<Jws<Claims>>> processInternal(Exchange exchange);
 
 }
 
@@ -76,7 +79,8 @@ class ContractAgreementMessageBuilder extends
     private final @NonNull ContractAgreementService agreementSvc;
 
     @Override
-    protected Request<ContractAgreementMessageImpl, ContractAgreement> processInternal(final Exchange exchange) {
+    protected Request<ContractAgreementMessageImpl, ContractAgreement, Optional<Jws<Claims>>>
+    processInternal(final Exchange exchange) {
         final var agreement = exchange
                 .getProperty("contractAgreement", ContractAgreement.class);
         final var recipient = exchange.getProperty("recipient", URI.class);
@@ -84,7 +88,7 @@ class ContractAgreementMessageBuilder extends
         final var message = (ContractAgreementMessageImpl) agreementSvc
                 .buildMessage(new ContractAgreementMessageDesc(recipient, agreement.getId()));
 
-        return new Request<>(message, agreement);
+        return new Request<>(message, agreement, Optional.empty());
     }
 
 }
@@ -100,7 +104,8 @@ class DescriptionRequestMessageBuilder extends
     private final @NonNull DescriptionRequestService descReqSvc;
 
     @Override
-    protected Request<DescriptionRequestMessageImpl, String> processInternal(final Exchange exchange) {
+    protected Request<DescriptionRequestMessageImpl, String, Optional<Jws<Claims>>> processInternal(
+            final Exchange exchange) {
         final var recipient = exchange.getProperty("recipient", URI.class);
 
         var elementId = exchange.getProperty("elementId", URI.class);
@@ -114,7 +119,7 @@ class DescriptionRequestMessageBuilder extends
         final var message = (DescriptionRequestMessageImpl) descReqSvc
                 .buildMessage(new DescriptionRequestMessageDesc(recipient, elementId));
 
-        return new Request<>(message, "");
+        return new Request<>(message, "", Optional.empty());
     }
 }
 
@@ -128,7 +133,8 @@ class ArtifactRequestMessageBuilder extends IdsMessageBuilder<ArtifactRequestMes
     private final @NonNull ArtifactRequestService artifactReqSvc;
 
     @Override
-    protected Request<ArtifactRequestMessageImpl, String> processInternal(final Exchange exchange) {
+    protected Request<ArtifactRequestMessageImpl, String, Optional<Jws<Claims>>> processInternal(
+            final Exchange exchange) {
         final var recipient = exchange.getProperty("recipient", URI.class);
         final var agreementId = exchange.getProperty("transferContract", URI.class);
 
@@ -142,7 +148,7 @@ class ArtifactRequestMessageBuilder extends IdsMessageBuilder<ArtifactRequestMes
         final var message = (ArtifactRequestMessageImpl) artifactReqSvc
                 .buildMessage(new ArtifactRequestMessageDesc(recipient, artifactId, agreementId));
 
-        return new Request<>(message, "");
+        return new Request<>(message, "", Optional.empty());
     }
 
 }
@@ -162,8 +168,8 @@ class ContractRequestMessageBuilder extends IdsMessageBuilder<ContractRequestMes
     private final @NonNull ContractRequestService contractReqSvc;
 
     @Override
-    protected Request<ContractRequestMessageImpl, ContractRequest> processInternal(
-            final Exchange exchange) {
+    protected Request<ContractRequestMessageImpl, ContractRequest, Optional<Jws<Claims>>>
+    processInternal(final Exchange exchange) {
         final var ruleList = (List<Rule>) exchange.getProperty("ruleList", List.class);
         final var recipient = exchange.getProperty("recipient", URI.class);
 
@@ -173,7 +179,7 @@ class ContractRequestMessageBuilder extends IdsMessageBuilder<ContractRequestMes
         final var message = (ContractRequestMessageImpl) contractReqSvc
                 .buildMessage(new ContractRequestMessageDesc(recipient, request.getId()));
 
-        return new Request<>(message, request);
+        return new Request<>(message, request, Optional.empty());
     }
 
 }
@@ -185,7 +191,8 @@ class ResourceUpdateMessageBuilder extends IdsMessageBuilder<ResourceUpdateMessa
     private final @NonNull ConnectorService connectorService;
 
     @Override
-    protected Request<ResourceUpdateMessageImpl, Resource> processInternal(final Exchange exchange) {
+    protected Request<ResourceUpdateMessageImpl, Resource, Optional<Jws<Claims>>> processInternal(
+            final Exchange exchange) {
         final var resource = exchange.getIn().getBody(Resource.class);
 
         final var connectorId = connectorService.getConnectorId();
@@ -204,7 +211,7 @@ class ResourceUpdateMessageBuilder extends IdsMessageBuilder<ResourceUpdateMessa
                 ._affectedResource_(resourceId)
                 .build();
 
-        return new Request<>((ResourceUpdateMessageImpl) message, resource);
+        return new Request<>((ResourceUpdateMessageImpl) message, resource, Optional.empty());
     }
 
 }
@@ -216,7 +223,8 @@ class ResourceUnavailableMessageBuilder extends IdsMessageBuilder<ResourceUnavai
     private final @NonNull ConnectorService connectorService;
 
     @Override
-    protected Request<ResourceUnavailableMessageImpl, Resource> processInternal(Exchange exchange) {
+    protected Request<ResourceUnavailableMessageImpl, Resource, Optional<Jws<Claims>>>
+    processInternal(final Exchange exchange) {
         final var resource = exchange.getIn().getBody(Resource.class);
 
         final var connectorId = connectorService.getConnectorId();
@@ -235,7 +243,7 @@ class ResourceUnavailableMessageBuilder extends IdsMessageBuilder<ResourceUnavai
                 ._affectedResource_(resourceId)
                 .build();
 
-        return new Request<>((ResourceUnavailableMessageImpl) message, resource);
+        return new Request<>((ResourceUnavailableMessageImpl) message, resource, Optional.empty());
     }
 
 }
@@ -250,7 +258,8 @@ class ConnectorUpdateMessageBuilder extends IdsMessageBuilder<ConnectorUpdateMes
     private final @NonNull ConnectorService connectorService;
 
     @Override
-    protected Request<ConnectorUpdateMessageImpl, Connector> processInternal(final Exchange exchange) {
+    protected Request<ConnectorUpdateMessageImpl, Connector, Optional<Jws<Claims>>> processInternal(
+            final Exchange exchange) {
         final var modelVersion = connectorService.getOutboundModelVersion();
         final var token = connectorService.getCurrentDat();
         final var connector = connectorService.getConnectorWithoutResources();
@@ -267,7 +276,7 @@ class ConnectorUpdateMessageBuilder extends IdsMessageBuilder<ConnectorUpdateMes
                 ._affectedConnector_(connectorId)
                 .build();
 
-        return new Request<>((ConnectorUpdateMessageImpl) message, connector);
+        return new Request<>((ConnectorUpdateMessageImpl) message, connector, Optional.empty());
     }
 
 }
@@ -282,7 +291,8 @@ class ConnectorUnavailableMessageBuilder extends IdsMessageBuilder<ConnectorUnav
     private final @NonNull ConnectorService connectorService;
 
     @Override
-    protected Request<ConnectorUnavailableMessageImpl, Connector> processInternal(final Exchange exchange) {
+    protected Request<ConnectorUnavailableMessageImpl, Connector, Optional<Jws<Claims>>>
+    processInternal(final Exchange exchange) {
         final var modelVersion = connectorService.getOutboundModelVersion();
         final var token = connectorService.getCurrentDat();
         final var connector = connectorService.getConnectorWithoutResources();
@@ -299,7 +309,7 @@ class ConnectorUnavailableMessageBuilder extends IdsMessageBuilder<ConnectorUnav
                 ._affectedConnector_(connectorId)
                 .build();
 
-        return new Request<>((ConnectorUnavailableMessageImpl) message, connector);
+        return new Request<>((ConnectorUnavailableMessageImpl) message, connector, Optional.empty());
     }
 
 }
@@ -314,7 +324,8 @@ class QueryMessageBuilder extends IdsMessageBuilder<QueryMessageImpl, String> {
     private final @NonNull ConnectorService connectorService;
 
     @Override
-    protected Request<QueryMessageImpl, String> processInternal(Exchange exchange) {
+    protected Request<QueryMessageImpl, String, Optional<Jws<Claims>>> processInternal(
+            final Exchange exchange) {
         final var modelVersion = connectorService.getOutboundModelVersion();
         final var token = connectorService.getCurrentDat();
         final var connector = connectorService.getConnectorWithoutResources();
@@ -344,7 +355,7 @@ class QueryMessageBuilder extends IdsMessageBuilder<QueryMessageImpl, String> {
             payload = String.format(FullTextQueryTemplate.FULL_TEXT_QUERY, searchTerm, limit, offset);
         }
 
-        return new Request<>((QueryMessageImpl) message, payload);
+        return new Request<>((QueryMessageImpl) message, payload, Optional.empty());
     }
 
 }

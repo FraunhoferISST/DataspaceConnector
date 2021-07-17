@@ -15,10 +15,8 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import javax.persistence.PersistenceException;
@@ -28,17 +26,16 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;
 import io.dataspaceconnector.controller.util.CommunicationProtocol;
-import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;
 import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.RdfBuilderException;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.ArtifactDataDownloader;
 import io.dataspaceconnector.service.ContractNegotiator;
 import io.dataspaceconnector.service.EntityUpdateService;
 import io.dataspaceconnector.service.MetadataDownloader;
-import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.resource.AgreementService;
 import io.dataspaceconnector.util.ControllerUtils;
 import io.dataspaceconnector.util.RuleUtils;
@@ -150,7 +147,7 @@ public class ContractRequestMessageController {
             @Parameter(description = "The protocol to use for IDS communication.")
             @RequestParam("protocol") final CommunicationProtocol protocol,
             @Parameter(description = "List of ids rules with an artifact id as target.")
-            @RequestBody final List<Rule> ruleList) {
+            @RequestBody final List<Rule> ruleList) throws UnexpectedResponseException {
         if (CommunicationProtocol.IDSCP_V2.equals(protocol)) {
             UUID agreementId;
             final var result = template.send("direct:contractRequestSender",

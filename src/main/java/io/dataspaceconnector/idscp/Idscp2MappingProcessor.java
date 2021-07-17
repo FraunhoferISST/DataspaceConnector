@@ -17,6 +17,7 @@ package io.dataspaceconnector.idscp;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.Connector;
@@ -148,7 +149,7 @@ class IncomingMessageParser extends Idscp2MappingProcessor {
         final var header = in.getHeader(IDSCP2_HEADER, de.fraunhofer.iais.eis.Message.class);
         final var payloadStream = new ByteArrayInputStream(in.getBody(byte[].class));
         final var payload = new MessagePayloadInputstream(payloadStream, new ObjectMapper());
-        in.setBody(new Request(header, payload));
+        in.setBody(new Request(header, payload, Optional.empty()));
     }
 
 }

@@ -5,7 +5,6 @@ import java.io.IOException;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.camel.exception.NoRequestedArtifactException;
 import io.dataspaceconnector.exception.InvalidInputException;
-import io.dataspaceconnector.exception.MessageBuilderException;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +17,7 @@ public class ArtifactRequestHandlerRoute extends RouteBuilder {
                 .to("direct:handleNoRequestedArtifactException");
         onException(InvalidInputException.class)
                 .to("direct:handleInvalidQueryInputException");
-        onException(MessageBuilderException.class, IOException.class,
-                ConstraintViolationException.class)
+        onException(IOException.class, ConstraintViolationException.class)
                 .to("direct:handleResponseMessageBuilderException");
         onException(Exception.class)
                 .to("direct:handleDataRetrievalError");
