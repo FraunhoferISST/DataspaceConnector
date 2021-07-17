@@ -24,6 +24,7 @@ import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteDesc;
 import io.dataspaceconnector.model.route.RouteFactory;
 import io.dataspaceconnector.repository.EndpointRepository;
+import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.ids.builder.IdsAppRouteBuilder;
 import io.dataspaceconnector.service.resource.BaseEntityService;
 import io.dataspaceconnector.service.resource.EndpointServiceProxy;
@@ -69,7 +70,7 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      * @param endpointRepository The endpoint repository.
      * @param endpointServiceProxy The endpoint service.
      * @param camelRouteManager the Camel route manager.
-     * @param idsAppRouteBuilder  the AppRoute builder.
+     * @param idsAppRouteBuilder the AppRoute builder.
      */
     @Autowired
     public RouteService(final @NonNull EndpointRepository endpointRepository,
@@ -92,7 +93,10 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
             endpointRepo.save(route.getEnd());
         }
 
-        routeManager.createAndDeployXMLRoute(appRouteBuilder.create(route));
+        var repo = (RouteRepository) getRepository();
+        if (repo.findAllTopLevelRoutes().contains(route)) {
+            routeManager.createAndDeployXMLRoute(appRouteBuilder.create(route));
+        }
 
         return super.persist(route);
     }
