@@ -15,18 +15,27 @@
  */
 package io.dataspaceconnector.service.message.type;
 
+import javax.xml.datatype.DatatypeFactory;
+import java.net.URI;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+
 import de.fraunhofer.iais.eis.ArtifactRequestMessage;
 import de.fraunhofer.iais.eis.ArtifactResponseMessage;
 import de.fraunhofer.iais.eis.ArtifactResponseMessageBuilder;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
-import io.dataspaceconnector.camel.ClearingHouseLoggingProcessor;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.protocol.http.IdsHttpService;
+import io.dataspaceconnector.camel.ClearingHouseLoggingProcessor;
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.ids.DeserializationService;
+import io.dataspaceconnector.service.usagecontrol.ClearingHouseService;
+import io.dataspaceconnector.service.usagecontrol.LogBuilder;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -34,16 +43,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import javax.xml.datatype.DatatypeFactory;
-import java.net.URI;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest(classes = {ArtifactRequestService.class})
+@SpringBootTest(classes = {ArtifactRequestService.class, ClearingHouseService.class,
+        ConnectorConfiguration.class, LogMessageService.class, LogBuilder.class })
 class ArtifactRequestServiceTest {
 
     @MockBean
@@ -75,8 +79,8 @@ class ArtifactRequestServiceTest {
         /* ARRANGE */
         final var desc = new ArtifactRequestMessageDesc();
         desc.setRecipient(URI.create("https://recipient"));
-        desc.setRequestedArtifact(URI.create("https://artifact"));
-        desc.setTransferContract(URI.create("https://transferContract"));
+        desc.setRequestedArtifact(URI.create("https://artifact/550e8400-e29b-11d4-a716-446655440000"));
+        desc.setTransferContract(URI.create("https://transferContract/550e8400-e29b-11d4-a716-446655449999"));
 
         final var connectorId = URI.create("https://connector");
         final var modelVersion = "4.0.0";
