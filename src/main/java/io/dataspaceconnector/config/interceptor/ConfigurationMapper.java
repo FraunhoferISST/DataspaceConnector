@@ -28,6 +28,8 @@ import de.fraunhofer.iais.eis.LogLevel;
 import de.fraunhofer.iais.eis.Proxy;
 import de.fraunhofer.iais.eis.ProxyBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
+import de.fraunhofer.iais.eis.util.TypedLiteral;
+import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
@@ -239,6 +241,10 @@ public final class ConfigurationMapper {
      */
     private static Connector buildInfomodelConnector(final Configuration configuration) {
         return new BaseConnectorBuilder()
+                ._title_(Util.asList(
+                        new TypedLiteral(configuration.getTitle())))
+                ._description_(Util.asList(
+                        new TypedLiteral(configuration.getDescription())))
                 ._curator_(configuration.getCurator())
                 ._maintainer_(configuration.getMaintainer())
                 ._securityProfile_(
@@ -262,6 +268,15 @@ public final class ConfigurationMapper {
      */
     public static ConfigurationDesc buildConfigDesc(final ConfigurationModel configurationModel) {
         var description = new ConfigurationDesc();
+        if (!configurationModel.getConnectorDescription().getTitle().isEmpty()) {
+            description.setTitle(
+                    configurationModel.getConnectorDescription().getTitle().get(0).getValue());
+        }
+        if (!configurationModel.getConnectorDescription().getDescription().isEmpty()) {
+            description.setDescription(
+                    configurationModel.getConnectorDescription().getDescription().get(0).getValue()
+            );
+        }
         description.setSelected(CurrentConfig.SELECTED);
         description.setDeployMode(
                 configurationModel
