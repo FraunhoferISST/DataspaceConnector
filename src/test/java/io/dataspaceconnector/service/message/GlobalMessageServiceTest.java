@@ -120,10 +120,10 @@ class GlobalMessageServiceTest {
                 .updateSelfDescriptionAtBroker(Mockito.any());
 
         /* ACT */
-        final var response = messageService.sendAndValidateConnectorUpdateMessage(recipient);
+        final var response = messageService.sendConnectorUnavailableMessage(recipient);
 
         /* ASSERT */
-        assertTrue(response);
+        assertTrue(response.isPresent());
     }
 
     @Test
@@ -135,10 +135,10 @@ class GlobalMessageServiceTest {
                 .updateSelfDescriptionAtBroker(Mockito.any());
 
         /* ACT */
-        final var response = messageService.sendAndValidateConnectorUpdateMessage(recipient);
+        final var response = messageService.sendConnectorUnavailableMessage(recipient);
 
         /* ASSERT */
-        assertFalse(response);
+        assertFalse(response.isPresent());
     }
 
     @Test
@@ -229,10 +229,10 @@ class GlobalMessageServiceTest {
                 .updateResourceAtBroker(Mockito.any(), Mockito.any());
 
         /* ACT */
-        final var response = messageService.sendAndValidateResourceUpdateMessage(recipient, resource);
+        final var response = messageService.sendResourceUpdateMessage(recipient, resource);
 
         /* ASSERT */
-        assertTrue(response);
+        assertTrue(response.isPresent());
     }
 
     @Test
@@ -245,10 +245,10 @@ class GlobalMessageServiceTest {
                 Mockito.any(), Mockito.any());
 
         /* ACT */
-        final var response = messageService.sendAndValidateResourceUpdateMessage(recipient, resource);
+        final var response = messageService.sendResourceUpdateMessage(recipient, resource);
 
         /* ASSERT */
-        assertFalse(response);
+        assertFalse(response.isPresent());
     }
 
     @Test
