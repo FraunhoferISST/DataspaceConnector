@@ -17,7 +17,6 @@ package io.dataspaceconnector.service.configuration;
 
 import java.util.UUID;
 
-import io.configmanager.extensions.routes.camel.RouteManager;
 import io.configmanager.extensions.routes.camel.exceptions.RouteCreationException;
 import io.configmanager.extensions.routes.camel.exceptions.RouteDeletionException;
 import io.dataspaceconnector.model.route.Route;
@@ -25,7 +24,7 @@ import io.dataspaceconnector.model.route.RouteDesc;
 import io.dataspaceconnector.model.route.RouteFactory;
 import io.dataspaceconnector.repository.EndpointRepository;
 import io.dataspaceconnector.repository.RouteRepository;
-import io.dataspaceconnector.service.ids.builder.IdsAppRouteBuilder;
+import io.dataspaceconnector.service.configuration.util.RouteHelper;
 import io.dataspaceconnector.service.resource.BaseEntityService;
 import io.dataspaceconnector.service.resource.EndpointServiceProxy;
 import io.dataspaceconnector.util.ErrorMessages;
@@ -56,32 +55,24 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
     private final @NonNull EndpointServiceProxy endpointService;
 
     /**
-     * Service for managing Camel routes.
+     * Helper class for deploying and deleting Camel routes.
      */
-    private final @NonNull RouteManager routeManager;
-
-    /**
-     * Service for creating IDS AppRoutes from routes.
-     */
-    private final @NonNull IdsAppRouteBuilder appRouteBuilder;
+    private final @NonNull RouteHelper routeHelper;
 
     /**
      * Constructor for route service.
      * @param endpointRepository The endpoint repository.
      * @param endpointServiceProxy The endpoint service.
-     * @param camelRouteManager the Camel route manager.
-     * @param idsAppRouteBuilder the AppRoute builder.
+     * @param camelRouteHelper The helper class for Camel routes.
      */
     @Autowired
     public RouteService(final @NonNull EndpointRepository endpointRepository,
                         final @NonNull EndpointServiceProxy endpointServiceProxy,
-                        final @NonNull RouteManager camelRouteManager,
-                        final @NonNull IdsAppRouteBuilder idsAppRouteBuilder) {
+                        final @NonNull RouteHelper camelRouteHelper) {
         super();
         this.endpointRepo = endpointRepository;
         this.endpointService = endpointServiceProxy;
-        this.routeManager = camelRouteManager;
-        this.appRouteBuilder = idsAppRouteBuilder;
+        this.routeHelper = camelRouteHelper;
     }
 
     @Override
@@ -93,11 +84,9 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
             endpointRepo.save(route.getEnd());
         }
 
-        if (route.getStart() != null && route.getEnd() != null) {
-            var repo = (RouteRepository) getRepository();
-            if (repo.findAllTopLevelRoutes().contains(route)) {
-                routeManager.createAndDeployXMLRoute(appRouteBuilder.create(route));
-            }
+        var repo = (RouteRepository) getRepository();
+        if (repo.findAllTopLevelRoutes().contains(route)) {
+            routeHelper.deploy(route);
         }
 
         return super.persist(route);
@@ -151,7 +140,7 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
         Utils.requireNonNull(routeId, ErrorMessages.ENTITYID_NULL);
 
         final var route = get(routeId);
-        routeManager.deleteRoute(appRouteBuilder.create(route));
+        routeHelper.delete(route);
 
         super.delete(routeId);
     }

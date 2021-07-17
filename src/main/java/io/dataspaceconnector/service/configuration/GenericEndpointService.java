@@ -17,12 +17,11 @@ package io.dataspaceconnector.service.configuration;
 
 import java.util.UUID;
 
-import io.configmanager.extensions.routes.camel.RouteManager;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpointDesc;
 import io.dataspaceconnector.model.endpoint.GenericEndpointFactory;
 import io.dataspaceconnector.repository.RouteRepository;
-import io.dataspaceconnector.service.ids.builder.IdsAppRouteBuilder;
+import io.dataspaceconnector.service.configuration.util.RouteHelper;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -50,33 +49,25 @@ public class GenericEndpointService
     private final @NonNull RouteRepository routeRepo;
 
     /**
-     * Service for managing Camel routes.
+     * Helper class for deploying and deleting Camel routes.
      */
-    private final @NonNull RouteManager routeManager;
-
-    /**
-     * Service for creating IDS AppRoutes from routes.
-     */
-    private final @NonNull IdsAppRouteBuilder appRouteBuilder;
+    private final @NonNull RouteHelper routeHelper;
 
     /**
      * Constructor for injection.
      *
      * @param dataSourceService The data source repository.
      * @param routeRepository the service for managing routes.
-     * @param camelRouteManager the Camel route manager.
-     * @param idsAppRouteBuilder the AppRoute builder.
+     * @param camelRouteHelper The helper class for Camel routes.
      */
     @Autowired
     public GenericEndpointService(final @NonNull DataSourceService dataSourceService,
                                   final @NonNull RouteRepository routeRepository,
-                                  final @NonNull RouteManager camelRouteManager,
-                                  final @NonNull IdsAppRouteBuilder idsAppRouteBuilder) {
+                                  final @NonNull RouteHelper camelRouteHelper) {
         super();
         this.dataSourceSvc = dataSourceService;
         this.routeRepo = routeRepository;
-        this.routeManager = camelRouteManager;
-        this.appRouteBuilder = idsAppRouteBuilder;
+        this.routeHelper = camelRouteHelper;
     }
 
     /**
@@ -102,8 +93,7 @@ public class GenericEndpointService
     protected final GenericEndpoint persist(final GenericEndpoint endpoint) {
         if (endpoint.getId() != null) {
             final var affectedRoutes = routeRepo.findTopLevelRoutesByEndpoint(endpoint.getId());
-            affectedRoutes.forEach(r -> routeManager
-                    .createAndDeployXMLRoute(appRouteBuilder.create(r)));
+            affectedRoutes.forEach(routeHelper::deploy);
         }
 
         return super.persist(endpoint);
