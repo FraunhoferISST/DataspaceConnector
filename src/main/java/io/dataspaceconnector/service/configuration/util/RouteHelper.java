@@ -18,6 +18,7 @@ package io.dataspaceconnector.service.configuration.util;
 import io.configmanager.extensions.routes.camel.RouteManager;
 import io.configmanager.extensions.routes.camel.exceptions.RouteCreationException;
 import io.configmanager.extensions.routes.camel.exceptions.RouteDeletionException;
+import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.service.ids.builder.IdsAppRouteBuilder;
 import lombok.NonNull;
@@ -43,14 +44,15 @@ public class RouteHelper {
 
     /**
      * Tries to deploy a Camel route from a route object. Maps the route to an Infomodel
-     * {@link de.fraunhofer.iais.eis.AppRoute} and calls the {@link RouteManager} only if start
-     * and end of the route are defined.
+     * {@link de.fraunhofer.iais.eis.AppRoute} and calls the {@link RouteManager}. Creates Camel
+     * routes only if the route deploy method is CAMEL and start and end of the route are defined.
      *
      * @param route the route.
      * @throws RouteCreationException if the Camel route cannot be created or deployed.
      */
     public void deploy(final Route route) throws RouteCreationException {
-        if (route.getStart() != null && route.getEnd() != null) {
+        if (DeployMethod.CAMEL.equals(route.getDeploy())
+                && route.getStart() != null && route.getEnd() != null) {
             routeManager.createAndDeployXMLRoute(appRouteBuilder.create(route));
         }
     }
