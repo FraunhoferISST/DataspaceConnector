@@ -18,7 +18,7 @@ package io.dataspaceconnector.model.auth;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.Inheritance;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.dataspaceconnector.service.HttpService;
@@ -34,7 +34,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @NoArgsConstructor
-@MappedSuperclass
+@Inheritance
 public abstract class Authentication implements HttpService.Authentication {
     /** The primary key. */
     @Id
