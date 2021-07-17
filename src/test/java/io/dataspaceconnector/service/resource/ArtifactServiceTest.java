@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,6 +36,8 @@ import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.artifact.Data;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.model.artifact.RemoteData;
+import io.dataspaceconnector.model.auth.Authentication;
+import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
@@ -45,6 +49,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -448,29 +453,17 @@ class ArtifactServiceTest {
     @SneakyThrows
     private RemoteData getRemoteData() {
         final var remoteData = new RemoteData();
-
-        Field accessUrlField = remoteData.getClass().getDeclaredField("accessUrl");
-        accessUrlField.setAccessible(true);
-        accessUrlField.set(remoteData, new URL("http://some-url.com"));
-
+        ReflectionTestUtils.setField(remoteData, "authentication", new ArrayList<Authentication>());
+        ReflectionTestUtils.setField(remoteData, "accessUrl",  new URL("http://some-url.com"));
         return remoteData;
     }
 
     @SneakyThrows
     private RemoteData getRemoteDataWithBasicAuth() {
         final var remoteData = new RemoteData();
-
-        Field accessUrlField = remoteData.getClass().getDeclaredField("accessUrl");
-        accessUrlField.setAccessible(true);
-        accessUrlField.set(remoteData, new URL("http://some-url.com"));
-
-        Field usernameField = remoteData.getClass().getDeclaredField("username");
-        usernameField.setAccessible(true);
-        usernameField.set(remoteData, "username");
-
-        Field passwordField = remoteData.getClass().getDeclaredField("password");
-        passwordField.setAccessible(true);
-        passwordField.set(remoteData, "password");
+        ReflectionTestUtils.setField(remoteData, "authentication", List
+                .of(new BasicAuth("username", "password")));
+        ReflectionTestUtils.setField(remoteData, "accessUrl",  new URL("http://some-url.com"));
 
         return remoteData;
     }
