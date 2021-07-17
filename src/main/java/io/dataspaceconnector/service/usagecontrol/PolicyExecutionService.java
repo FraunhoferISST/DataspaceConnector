@@ -15,29 +15,18 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
+import java.net.URI;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Rule;
-import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.PolicyExecutionException;
-import io.dataspaceconnector.exception.RdfBuilderException;
-import io.dataspaceconnector.service.ids.ConnectorService;
-import io.dataspaceconnector.service.message.type.LogMessageService;
 import io.dataspaceconnector.service.message.type.NotificationService;
-import io.dataspaceconnector.util.IdsUtils;
 import io.dataspaceconnector.util.RuleUtils;
-import io.dataspaceconnector.util.UUIDUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Executes policy conditions. Refers to the ids policy enforcement point (PEP).
@@ -48,24 +37,19 @@ import java.util.Map;
 public class PolicyExecutionService {
 
     /**
-     * Service for configuring policy settings.
-     */
-    private final @NonNull ConnectorConfiguration connectorConfig;
-
-    /**
-     * Service for the current connector configuration.
-     */
-    private final @NonNull ConnectorService connectorService;
-
-    /**
      * Service for ids notification messages.
      */
     private final @NonNull NotificationService notificationService;
 
     /**
-     * Service for ids log messages.
+     * Service for sending messages to the clearing house.
      */
-    private final @NonNull LogMessageService logMessageService;
+    private final @NonNull ClearingHouseService clearingHouseService;
+
+    /**
+     * Service for building log messages.
+     */
+    private final @NonNull LogBuilder logBuilder;
 
     /**
      * Send contract agreement to clearing house.
@@ -73,25 +57,7 @@ public class PolicyExecutionService {
      * @param agreement The ids contract agreement.
      */
     public void sendAgreement(final ContractAgreement agreement) {
-        try {
-            final var clearingHouse = connectorConfig.getClearingHouse();
-            if (!clearingHouse.equals(URI.create(""))) {
-                UriComponentsBuilder uriBuilder = UriComponentsBuilder
-                        .fromHttpUrl(clearingHouse.toString());
-
-                // Add Agreement UUID
-                uriBuilder.pathSegment(UUIDUtils.uuidFromUri(agreement.getId()).toString());
-
-                final var destination = uriBuilder.build().toUri();
-                logMessageService.sendMessage(destination, IdsUtils.toRdf(agreement));
-            }
-        } catch (PolicyExecutionException | RdfBuilderException
-                | NullPointerException exception) {
-            if (log.isWarnEnabled()) {
-                log.warn("Failed to send contract agreement to clearing house. "
-                        + "[exception=({})]", exception.getMessage());
-            }
-        }
+        clearingHouseService.sendAgreement(agreement);
     }
 
     /**
@@ -103,25 +69,7 @@ public class PolicyExecutionService {
      */
     public void logDataAccess(final URI target,
                               final URI agreementId) throws PolicyExecutionException {
-        try {
-            final var clearingHouse = connectorConfig.getClearingHouse();
-            if (!clearingHouse.equals(URI.create(""))) {
-                UriComponentsBuilder uriBuilder = UriComponentsBuilder
-                        .fromHttpUrl(clearingHouse.toString());
-
-                // Add Agreement UUID
-                uriBuilder.pathSegment(UUIDUtils.uuidFromUri(agreementId).toString());
-
-                final var destination = uriBuilder.build().toUri();
-                logMessageService.sendMessage(destination, buildLog(target).toString());
-            }
-        } catch (PolicyExecutionException | RdfBuilderException exception) {
-            if (log.isWarnEnabled()) {
-                log.warn("Failed to send log message to clearing house. [exception=({})]",
-                        exception.getMessage());
-            }
-        }
-
+        clearingHouseService.logDataAccess(target, agreementId);
     }
 
     /**
@@ -137,28 +85,9 @@ public class PolicyExecutionService {
             final var postDuty = ((Permission) rule).getPostDuty().get(0);
             final var recipient = RuleUtils.getEndpoint(postDuty);
 
-            final var logItem = buildLog(element).toString();
-
-            notificationService.sendMessage(URI.create(recipient), logItem);
+            notificationService.sendMessage(URI.create(recipient), logBuilder.buildLog(element));
         } else if (log.isWarnEnabled()) {
             log.warn("Reporting data access is only supported for permissions.");
         }
-    }
-
-    /**
-     * Build a log information object.
-     *
-     * @param target The accessed element.
-     * @return The log line.
-     */
-    private Map<String, Object> buildLog(final URI target) {
-        final var id = connectorService.getConnectorId();
-
-        final var output = new HashMap<String, Object>();
-        output.put("target", target);
-        output.put("issuerConnector", id);
-        output.put("accessed", ZonedDateTime.now(ZoneOffset.UTC));
-
-        return output;
     }
 }
