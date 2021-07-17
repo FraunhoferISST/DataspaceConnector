@@ -34,10 +34,9 @@ import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.service.configuration.BrokerService;
-import io.dataspaceconnector.service.configuration.EntityLinkerService;
+import io.dataspaceconnector.service.message.processing.BrokerCommunication;
 import io.dataspaceconnector.service.message.type.NotificationService;
 import io.dataspaceconnector.util.ControllerUtils;
-import io.dataspaceconnector.util.UUIDUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -49,7 +48,6 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Service for sending ids messages.
@@ -65,25 +63,21 @@ public class GlobalMessageService {
     private final @NotNull IDSBrokerService brokerSvc;
 
     /**
-     * Service for relation between broker and offered resources.
-     */
-    private final @NotNull EntityLinkerService.BrokerOfferedResourcesLinker linker;
-
-    /**
      * Service for the broker.
      */
     private final @NotNull BrokerService brokerService;
-
 
     /**
      * Service for sending notification messages.
      */
     private final @NonNull NotificationService notificationSvc;
 
+    private final @NonNull BrokerCommunication brokerCommunication;
+
     /**
      * Send connector update message and validate received response.
      *
-     * @param recipient The recipient.
+     * @param input The recipient or a broker id.
      * @return True if the message was successfully processed by the recipient, false if not.
      * @throws MultipartParseException     if the response could not be parsed to header & payload.
      * @throws ClaimsException             if an errors occur while validating a DAT from response.
@@ -98,26 +92,31 @@ public class GlobalMessageService {
      * @throws UnexpectedPayloadException  if payload could not be processed.
      * @throws DeserializeException        if serializing an incoming response message fails.
      */
-    public Optional<MessageContainer<?>> sendConnectorUpdateMessage(final URI recipient)
+    public Optional<MessageContainer<?>> sendConnectorUpdateMessage(final URI input)
             throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
             NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
             UnexpectedPayloadException, SerializeException, DeserializeException,
             RejectionException, UnknownResponseException {
-        final var response = brokerSvc.updateSelfDescriptionAtBroker(recipient);
+        // Check if input was a broker id or an url.
+        final var address = brokerCommunication.checkInput(input);
+        final var response = brokerSvc.updateSelfDescriptionAtBroker(address);
+
+        // Validate response.
         final var result = checkResponse(Optional.ofNullable(response));
         if (result) {
             if (log.isInfoEnabled()) {
-                log.info("Successfully registered connector. [url=({}})]", recipient);
+                log.info("Successfully updated connector. [url=({}})]", input);
             }
-            brokerService.setRegistrationStatus(recipient, RegistrationStatus.REGISTERED);
+            brokerService.setRegistrationStatus(input, RegistrationStatus.REGISTERED);
         }
+
         return Optional.ofNullable(response);
     }
 
     /**
      * Send connector unavailable message and validate received response.
      *
-     * @param recipient The recipient.
+     * @param input The recipient or a broker id.
      * @return Optional of message container providing the received ids response.
      * @throws MultipartParseException     if the response could not be parsed to header & payload.
      * @throws ClaimsException             if an errors occur while validating a DAT from response.
@@ -132,21 +131,22 @@ public class GlobalMessageService {
      * @throws UnexpectedPayloadException  if payload could not be processed.
      * @throws DeserializeException        if serializing an incoming response message fails.
      */
-    public Optional<MessageContainer<?>> sendConnectorUnavailableMessage(final URI recipient)
+    public Optional<MessageContainer<?>> sendConnectorUnavailableMessage(final URI input)
             throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
             NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
             UnexpectedPayloadException, SerializeException, DeserializeException,
             RejectionException, UnknownResponseException {
-        final var response = brokerSvc.unregisterAtBroker(recipient);
+        // Check if input was a broker id or an url.
+        final var address = brokerCommunication.checkInput(input);
+        final var response = brokerSvc.unregisterAtBroker(address);
+
+        // Validate response.
         final var result = checkResponse(Optional.ofNullable(response));
         if (result) {
             if (log.isInfoEnabled()) {
-                log.info(
-                        "Successfully unregistered connector. [url=({}})]",
-                        recipient
-                );
+                log.info("Successfully unregistered connector. [url=({}})]", input);
             }
-            brokerService.setRegistrationStatus(recipient, RegistrationStatus.UNREGISTERED);
+            brokerService.setRegistrationStatus(input, RegistrationStatus.UNREGISTERED);
         }
         return Optional.ofNullable(response);
     }
@@ -154,8 +154,8 @@ public class GlobalMessageService {
     /**
      * Send resource update message.
      *
-     * @param recipient The recipient.
-     * @param resource  The ids resource that should be updated.
+     * @param input    The recipient or a broker id.
+     * @param resource The ids resource that should be updated.
      * @return Optional of message container providing the received ids response.
      * @throws MultipartParseException     if the response could not be parsed to header & payload.
      * @throws ClaimsException             if an errors occur while validating a DAT from response.
@@ -170,21 +170,25 @@ public class GlobalMessageService {
      * @throws UnexpectedPayloadException  if payload could not be processed.
      * @throws DeserializeException        if serializing an incoming response message fails.
      */
-    public Optional<MessageContainer<?>> sendResourceUpdateMessage(final URI recipient,
+    public Optional<MessageContainer<?>> sendResourceUpdateMessage(final URI input,
                                                                    final Resource resource)
             throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
             NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
             UnexpectedPayloadException, SerializeException, DeserializeException,
             RejectionException, UnknownResponseException {
-        final var response = brokerSvc.updateResourceAtBroker(recipient, resource);
+        // Check if input was a broker id or an url.
+        final var address = brokerCommunication.checkInput(input);
+        final var response = brokerSvc.updateResourceAtBroker(address, resource);
+
+        // Validate response.
         final var result = checkResponse(Optional.ofNullable(response));
         if (result) {
             if (log.isInfoEnabled()) {
-                log.info("Successfully registered resource. "
-                        + "[resourceId=({}}), url=({}})]", resource.getId(), recipient
-                );
+                log.info("Successfully updated resource. [resourceId=({}}), url=({}})]",
+                        resource.getId(), input);
             }
-            updateOfferedResourceBrokerList(recipient, resource);
+            // TODO Does this causes errors on subscription update?
+            brokerCommunication.updateOfferedResourceBrokerList(input, resource);
         }
         return Optional.ofNullable(response);
     }
@@ -192,8 +196,8 @@ public class GlobalMessageService {
     /**
      * Send resource unavailable message and validate received response.
      *
-     * @param recipient The recipient.
-     * @param resource  The ids resource that should be updated.
+     * @param input    The recipient or a broker id.
+     * @param resource The ids resource that should be updated.
      * @return True if the message was successfully processed by the recipient, false if not.
      * @throws MultipartParseException     if the response could not be parsed to header & payload.
      * @throws ClaimsException             if an errors occur while validating a DAT from response.
@@ -208,21 +212,24 @@ public class GlobalMessageService {
      * @throws UnexpectedPayloadException  if payload could not be processed.
      * @throws DeserializeException        if serializing an incoming response message fails.
      */
-    public Optional<MessageContainer<?>> sendResourceUnavailableMessage(final URI recipient,
+    public Optional<MessageContainer<?>> sendResourceUnavailableMessage(final URI input,
                                                                         final Resource resource)
             throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
             NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
             UnexpectedPayloadException, SerializeException, DeserializeException,
             RejectionException, UnknownResponseException {
-        final var response = brokerSvc.removeResourceFromBroker(recipient, resource);
+        // Check if input was a broker id or an url.
+        final var address = brokerCommunication.checkInput(input);
+        final var response = brokerSvc.removeResourceFromBroker(address, resource);
+
+        // Validate response.
         final var result = checkResponse(Optional.ofNullable(response));
         if (result) {
             if (log.isInfoEnabled()) {
-                log.info("Successfully unregistered resource. "
-                        + "[resourceId=({}}), url=({}})]", resource.getId(), recipient
-                );
+                log.info("Successfully unregistered resource. [resourceId=({}}), url=({}})]",
+                        resource.getId(), input);
             }
-            removeBrokerFromOfferedResourceBrokerList(recipient, resource);
+            brokerCommunication.removeBrokerFromOfferedResourceBrokerList(input, resource);
         }
         return Optional.ofNullable(response);
     }
@@ -230,8 +237,8 @@ public class GlobalMessageService {
     /**
      * Send query message and validate received response.
      *
-     * @param recipient The recipient.
-     * @param query     The query statement.
+     * @param input The recipient or a broker id.
+     * @param query The query statement.
      * @return Optional of message container providing the received ids response.
      * @throws MultipartParseException     if the response could not be parsed to header & payload.
      * @throws ClaimsException             if an errors occur while validating a DAT from response.
@@ -246,23 +253,27 @@ public class GlobalMessageService {
      * @throws UnexpectedPayloadException  if payload could not be processed.
      * @throws DeserializeException        if serializing an incoming response message fails.
      */
-    public Optional<MessageContainer<?>> sendQueryMessage(final URI recipient, final String query)
+    public Optional<MessageContainer<?>> sendQueryMessage(final URI input, final String query)
             throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
             NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
             UnexpectedPayloadException, SerializeException, DeserializeException,
             RejectionException, UnknownResponseException {
-        final var response = brokerSvc.queryBroker(recipient, query,
+        // Check if input was a broker id or an url.
+        final var address = brokerCommunication.checkInput(input);
+        final var response = brokerSvc.queryBroker(address, query,
                 QueryLanguage.SPARQL, QueryScope.ALL, QueryTarget.BROKER);
+
+
         return Optional.of(response);
     }
 
     /**
      * Send query message and validate received response.
      *
-     * @param recipient The recipient.
-     * @param term      The search term.
-     * @param limit     The limit value.
-     * @param offset    The offset value.
+     * @param input  The recipient or a broker id.
+     * @param term   The search term.
+     * @param limit  The limit value.
+     * @param offset The offset value.
      * @return Optional of message container providing the received ids response.
      * @throws MultipartParseException     if the response could not be parsed to header & payload.
      * @throws ClaimsException             if an errors occur while validating a DAT from response.
@@ -278,21 +289,22 @@ public class GlobalMessageService {
      * @throws DeserializeException        if serializing an incoming response message fails.
      */
     public Optional<MessageContainer<?>> sendFullTextSearchMessage(
-            final URI recipient, final String term, final int limit, final int offset)
+            final URI input, final String term, final int limit, final int offset)
             throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
             NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
             UnexpectedPayloadException, SerializeException, DeserializeException,
             RejectionException, UnknownResponseException {
-        final var response = brokerSvc.fullTextSearchBroker(recipient, term,
+        // Check if input was a broker id or an url.
+        final var address = brokerCommunication.checkInput(input);
+        final var response = brokerSvc.fullTextSearchBroker(address, term,
                 QueryScope.ALL, QueryTarget.BROKER, limit, offset);
         return Optional.of(response);
     }
 
     /**
-     * Check if a request was successfully processed by the recipient.
-     * Validates response. Returns response entity with status code 200 if a
-     * MessageProcessedNotificationMessage has been received, responds with the message's content
-     * if not.
+     * Check if a request was successfully processed by the recipient. Validates response.
+     * Returns response entity with status code 200 if a MessageProcessedNotificationMessage has
+     * been received, responds with the message's content if not.
      *
      * @param response The response container.
      * @param msgType  Expected message type.
@@ -326,39 +338,5 @@ public class GlobalMessageService {
         final var resp = response.get();
         return !resp.isRejection() && resp.getUnderlyingMessage() != null;
         // If response message is empty of rejection.
-    }
-
-    /**
-     * @param recipient The uri of the recipient.
-     * @param resource  The offered resource.
-     */
-    private void updateOfferedResourceBrokerList(final URI recipient,
-                                                 final Resource resource) {
-        final var brokerId = brokerService.findByLocation(recipient);
-        if (brokerId.isPresent()) {
-            linker.add(brokerId.get(), Set.of(UUIDUtils.uuidFromUri(resource.getId())));
-        } else {
-            if (log.isWarnEnabled()) {
-                log.warn("Updated Resource at Broker but Broker was not linked "
-                        + "to resource in OfferedResource-Broker-List.");
-            }
-        }
-    }
-
-    /**
-     * @param recipient The uri of the recipient.
-     * @param resource  The offered resource.
-     */
-    private void removeBrokerFromOfferedResourceBrokerList(final URI recipient,
-                                                           final Resource resource) {
-        final var brokerId = brokerService.findByLocation(recipient);
-        if (brokerId.isPresent()) {
-            linker.remove(brokerId.get(), Set.of(UUIDUtils.uuidFromUri(resource.getId())));
-        } else {
-            if (log.isWarnEnabled()) {
-                log.warn("Removed Resource from Broker but Broker was not linked "
-                        + "to resource in OfferedResource-Broker-List.");
-            }
-        }
     }
 }
