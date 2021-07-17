@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.model.auth;
 
-import javax.persistence.Entity;
-
 import io.dataspaceconnector.service.HttpService.HttpArgs;
 import kotlin.Pair;
 import lombok.AccessLevel;
@@ -26,8 +24,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-
 import okhttp3.Credentials;
+
+import javax.persistence.Entity;
 
 /**
  * Entity used for containing Basic Auth information in the context of AuthTypes.
@@ -39,17 +38,26 @@ import okhttp3.Credentials;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class BasicAuth extends Authentication {
-    /** The username that is to be used for Basic Auth. */
-    @NonNull private String username;
 
-    /** The password that is to be used for Basic Auth. */
-    @NonNull private String password;
+    /**
+     * The username that is to be used for Basic Auth.
+     */
+    @NonNull
+    private String username;
 
-    /** {@inheritDoc} */
+    /**
+     * The password that is to be used for Basic Auth.
+     */
+    @NonNull
+    private String password;
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setAuth(final HttpArgs args) {
         if (args.getAuth() == null
-            || (args.getAuth().getFirst() == null && args.getAuth().getSecond() == null)) {
+                || (args.getAuth().getFirst() == null && args.getAuth().getSecond() == null)) {
             args.setAuth(new Pair<>("Authorization", Credentials.basic(username, password)));
         }
     }

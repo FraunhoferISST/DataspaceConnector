@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.model.auth;
 
-import javax.persistence.Entity;
-
-import java.util.HashMap;
-
 import io.dataspaceconnector.service.HttpService.HttpArgs;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,6 +22,9 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.Entity;
+import java.util.HashMap;
 
 /**
  * Entity used for containing Basic Auth information in the context of AuthTypes.
@@ -37,17 +36,26 @@ import lombok.Setter;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class ApiKey extends Authentication {
-    /** The key associated to the ApiKey. */
-    @NonNull private String key;
 
-    /** The value associated to the ApiKey. */
-    @NonNull private String value;
+    /**
+     * The key associated to the ApiKey.
+     */
+    @NonNull
+    private String key;
 
-    /** {@inheritDoc} */
+    /**
+     * The value associated to the ApiKey.
+     */
+    @NonNull
+    private String value;
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setAuth(final HttpArgs args) {
         if (args.getHeaders() == null) {
-           args.setHeaders(new HashMap<>());
+            args.setHeaders(new HashMap<>());
         }
 
         args.getHeaders().put(key, value);

@@ -15,14 +15,6 @@
  */
 package io.dataspaceconnector.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.Utils;
@@ -34,6 +26,14 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import okhttp3.HttpUrl;
 import org.springframework.stereotype.Service;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class builds up http or httpS endpoint connections and sends GET requests.
@@ -239,8 +239,7 @@ public class HttpService {
     }
 
     /**
-     * Create http request parameters from query inputs and
-     * authentication information.
+     * Create http request parameters from query inputs and authentication information.
      *
      * @param input The query inputs.
      * @param auth  The authentication information.
