@@ -13,25 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.config;
+package io.dataspaceconnector.repository;
 
-import org.junit.jupiter.api.Test;
+import io.dataspaceconnector.model.auth.Authentication;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import io.dataspaceconnector.config.util.UsageControlFramework;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-class UsageControlFrameworkTest {
-
-    @Test
-    public void toString_nothing_returnValidOutput() {
-        /* ARRANGE */
-        final var input = UsageControlFramework.INTERNAL;
-
-        /* ACT */
-        final var inputAsString = input.toString();
-
-        /* ASSERT */
-        assertEquals("INTERNAL", inputAsString);
-    }
+/**
+ * The repository containing all objects of type {@link Authentication}.
+ */
+@Repository
+public interface AuthenticationRepository extends JpaRepository<Authentication, Long> {
 }

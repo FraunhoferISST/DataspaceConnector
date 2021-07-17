@@ -28,7 +28,7 @@ import de.fraunhofer.iais.eis.LogLevel;
 import de.fraunhofer.iais.eis.Proxy;
 import de.fraunhofer.iais.eis.ProxyBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
-import io.dataspaceconnector.model.auth.Authentication;
+import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
 import io.dataspaceconnector.model.configuration.DeployMode;
@@ -113,16 +113,14 @@ public final class ConfigurationMapper {
         }
         var proxy = proxyList.get(0);
         var auth = proxy.getProxyAuthentication();
-        var dscAuth = new Authentication();
-        dscAuth.setUsername(auth.getAuthUsername());
-        dscAuth.setPassword(auth.getAuthPassword());
         return new io.dataspaceconnector.model.proxy.ProxyDesc(
-                proxy.getProxyURI(),
-                proxy.getNoProxy()
+                        proxy.getProxyURI(),
+                        proxy.getNoProxy()
                         .stream()
                         .map(URI::toString)
                         .collect(Collectors.toList()),
-                dscAuth);
+                new BasicAuth(auth.getAuthUsername(), auth.getAuthPassword()));
+
     }
 
     /**
@@ -174,7 +172,7 @@ public final class ConfigurationMapper {
      * @param authentication DSC Authentication object
      * @return Infomodel BasicAuthentication
      */
-    private static BasicAuthentication buildInfomodelAuth(final Authentication authentication) {
+    private static BasicAuthentication buildInfomodelAuth(final BasicAuth authentication) {
         //TODO auth from DSC has ID field, not available in Infomodel
         return new BasicAuthenticationBuilder()
                 ._authPassword_(authentication.getPassword())

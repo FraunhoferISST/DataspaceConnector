@@ -17,7 +17,7 @@ package io.dataspaceconnector.view.endpoint;
 
 import java.net.URI;
 
-import io.dataspaceconnector.controller.configurations.EndpointControllers;
+import io.dataspaceconnector.controller.configuration.EndpointControllers;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpointDesc;

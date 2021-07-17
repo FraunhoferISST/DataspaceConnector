@@ -10,6 +10,8 @@ All notable changes to this project will be documented in this file.
 - Integrate Camel-Spring-Boot version 3.10.0.
 - Provide REST endpoints for adding and removing Camel routes and Spring beans at runtime.
 - Add Camel error handler for propagating errors in routes to the Configuration Manager.
+- Allow artifacts pointing to backend systems to be created with both BasicAuth and API key
+  authentication.
 
 ### Changed
 - Replace IDS Connector Framework v5.0.4 by IDS Messaging Services v2.0.0.

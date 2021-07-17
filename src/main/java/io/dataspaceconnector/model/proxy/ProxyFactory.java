@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.model.proxy;
 
-import io.dataspaceconnector.model.auth.Authentication;
+import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
@@ -57,7 +57,7 @@ public class ProxyFactory extends AbstractFactory<Proxy, ProxyDesc> {
         return newExclusionList.isPresent();
     }
 
-    private boolean updateAuthentication(final Proxy proxy, final Authentication authentication) {
+    private boolean updateAuthentication(final Proxy proxy, final BasicAuth authentication) {
         if (proxy.getAuthentication() == null && authentication == null) {
             return false;
         }

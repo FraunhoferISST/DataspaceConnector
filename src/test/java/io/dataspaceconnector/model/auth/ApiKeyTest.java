@@ -13,25 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exception;
+package io.dataspaceconnector.model.auth;
 
-import io.dataspaceconnector.util.ErrorMessage;
+import io.dataspaceconnector.service.HttpService;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MessageExceptionTest {
+class ApiKeyTest {
+
     @Test
-    public void constructor_someMsgAndsSomeException_holdsMsgAndException() {
+    void getAuthPair_validContent_setHeader() {
         /* ARRANGE */
-        final var msg = ErrorMessage.GATEWAY_TIMEOUT;
-        final var someError = new RuntimeException("WELL?");
+        var key = "key";
+        var value = "value";
+        var apiKey = new ApiKey(key, value);
+        final var args = new HttpService.HttpArgs();
 
         /* ACT */
-        final var exception = new MessageException(msg, someError);
+        apiKey.setAuth(args);
 
         /* ASSERT */
-        assertEquals(msg.toString(), exception.getMessage());
-        assertEquals(someError, exception.getCause());
+        assertTrue(args.getHeaders().containsKey(key));
+        assertEquals(value, args.getHeaders().get(key));
     }
 }

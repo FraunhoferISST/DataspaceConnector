@@ -31,9 +31,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * This class builds up http or httpS endpoint connections and sends GET requests.
@@ -88,6 +89,18 @@ public class HttpService {
 
 
     /**
+     * Authentication for a http request.
+     */
+    public interface Authentication {
+        /**
+         * Add the authentication to the http args.
+         * @param args The http args.
+         */
+        void setAuth(HttpArgs args);
+    }
+
+
+    /**
      * The response to a http request.
      */
     @Data
@@ -137,8 +150,7 @@ public class HttpService {
             final var headerCopy = args.getHeaders() == null
                     ? new HashMap<String, String>() : new HashMap<>(args.getHeaders());
             if (args.getAuth() != null) {
-                headerCopy.put("Authorization",
-                        Credentials.basic(args.getAuth().getFirst(), args.getAuth().getSecond()));
+                headerCopy.put(args.getAuth().getFirst(), args.getAuth().getSecond());
             }
 
             response = httpSvc.getWithHeaders(targetUri, headerCopy);
@@ -186,8 +198,8 @@ public class HttpService {
      * @return The response.
      * @throws IOException if the request failed.
      */
-    public Response get(final URL target, final QueryInput input, final Pair<String, String> auth)
-            throws IOException {
+    public Response get(final URL target, final QueryInput input,
+                        final List<? extends Authentication> auth) throws IOException {
         final var url = (input == null) ? buildTargetUrl(target, null)
                 : buildTargetUrl(target, input.getOptional());
         return this.get(url, toArgs(input, auth));
@@ -250,17 +262,19 @@ public class HttpService {
     }
 
     /**
-     * Create http request parameters from query inputs and
-     * authentication information.
+     * Create http request parameters from query inputs and authentication information.
      *
      * @param input The query inputs.
      * @param auth  The authentication information.
      * @return The http request arguments.
      */
-    public HttpArgs toArgs(final QueryInput input, final Pair<String, String> auth) {
+    public HttpArgs toArgs(final QueryInput input, final List<? extends Authentication> auth) {
         final var args = toArgs(input);
-        args.setAuth(auth);
-
+        if (auth != null) {
+            for (final var x : auth) {
+                x.setAuth(args);
+            }
+        }
         return args;
     }
 }

@@ -28,9 +28,10 @@ import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
+import io.dataspaceconnector.model.pattern.SecurityRestrictionDesc;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.EntityDependencyResolver;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.PatternUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -107,7 +108,7 @@ class RuleValidatorTest {
 
         /* ACT && ASSERT */
         final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy( PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient));
-        assertEquals(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL.toString(), result.getMessage());
+        assertEquals(ErrorMessage.DATA_ACCESS_INVALID_INTERVAL.toString(), result.getMessage());
     }
 
     @Test
@@ -131,7 +132,7 @@ class RuleValidatorTest {
 
         /* ACT && ASSERT */
         final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy( PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient));
-        assertEquals(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL.toString(), result.getMessage());
+        assertEquals(ErrorMessage.DATA_ACCESS_INVALID_INTERVAL.toString(), result.getMessage());
     }
 
     @Test
@@ -172,7 +173,7 @@ class RuleValidatorTest {
 
         /* ACT && ASSERT */
         final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy(PolicyPattern.N_TIMES_USAGE, rule, target, recipient));
-        assertEquals(ErrorMessages.DATA_ACCESS_NUMBER_REACHED.toString(), result.getMessage());
+        assertEquals(ErrorMessage.DATA_ACCESS_NUMBER_REACHED.toString(), result.getMessage());
     }
 
     @Test
@@ -210,7 +211,7 @@ class RuleValidatorTest {
 
         /* ACT && ASSERT */
         final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy(PolicyPattern.CONNECTOR_RESTRICTED_USAGE, rule, target, recipient));
-        assertEquals(ErrorMessages.DATA_ACCESS_INVALID_CONSUMER.toString(), result.getMessage());
+        assertEquals(ErrorMessage.DATA_ACCESS_INVALID_CONSUMER.toString(), result.getMessage());
     }
 
     @SneakyThrows

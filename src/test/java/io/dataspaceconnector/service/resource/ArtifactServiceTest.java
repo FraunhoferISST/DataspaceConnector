@@ -35,10 +35,10 @@ import io.dataspaceconnector.model.artifact.Data;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.model.artifact.RemoteData;
 import io.dataspaceconnector.repository.ArtifactRepository;
+import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.HttpService;
 import io.dataspaceconnector.util.QueryInput;
-import kotlin.Pair;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
@@ -56,7 +56,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {ArtifactService.class, ArtifactFactory.class, ArtifactRepository.class,
-        DataRepository.class, HttpService.class})
+        DataRepository.class, AuthenticationRepository.class, HttpService.class})
 class ArtifactServiceTest {
 
     @MockBean
@@ -64,6 +64,9 @@ class ArtifactServiceTest {
 
     @MockBean
     private DataRepository dataRepository;
+
+    @MockBean
+    private AuthenticationRepository authenticationRepository;
 
     @MockBean
     private HttpService httpService;
@@ -267,16 +270,14 @@ class ArtifactServiceTest {
         final var remoteData = "I am data from a remote source.".getBytes(StandardCharsets.UTF_8);
         ArtifactImpl remoteArtifact = getRemoteArtifact(getRemoteDataWithBasicAuth());
         URL url = ((RemoteData) remoteArtifact.getData()).getAccessUrl();
-        String username = ((RemoteData) remoteArtifact.getData()).getUsername();
-        String password = ((RemoteData) remoteArtifact.getData()).getPassword();
+        final var auth = ((RemoteData) remoteArtifact.getData()).getAuthentication();
 
         final var response = new HttpService.Response();
         response.setBody(new ByteArrayInputStream(remoteData));
 
         when(artifactRepository.findById(remoteArtifact.getId()))
                 .thenReturn(Optional.of(remoteArtifact));
-        when(httpService.get(url, null, new Pair<>(username, password)))
-                .thenReturn(response);
+        when(httpService.get(url, null, auth)).thenReturn(response);
 
         /* ACT */
         final var data = service.getData(null,

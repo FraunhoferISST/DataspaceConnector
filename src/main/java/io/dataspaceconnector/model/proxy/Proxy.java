@@ -16,7 +16,7 @@
 package io.dataspaceconnector.model.proxy;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.dataspaceconnector.model.auth.Authentication;
+import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.base.RemoteService;
 import io.dataspaceconnector.model.util.UriConverter;
@@ -78,5 +78,5 @@ public class Proxy extends Entity implements RemoteService {
     @OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
     @JsonInclude
     @ToString.Exclude
-    private Authentication authentication;
+    private BasicAuth authentication;
 }

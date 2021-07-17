@@ -15,35 +15,49 @@
  */
 package io.dataspaceconnector.model.auth;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.dataspaceconnector.service.HttpService.HttpArgs;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import io.dataspaceconnector.service.HttpService;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
+import java.util.HashMap;
 
 /**
- * Base element for all authentication types.
+ * Entity used for containing Basic Auth information in the context of AuthTypes.
  */
 @Entity
 @Getter
 @Setter
+@RequiredArgsConstructor
 @NoArgsConstructor
-@Inheritance
-public abstract class Authentication implements HttpService.Authentication {
+@EqualsAndHashCode(callSuper = false)
+public class ApiKey extends Authentication {
 
     /**
-     * The primary key.
+     * The key associated to the ApiKey.
      */
-    @Id
-    @GeneratedValue
-    @JsonIgnore
-    @ToString.Exclude
-    @SuppressWarnings("PMD.ShortVariable")
-    private Long id;
+    @NonNull
+    private String key;
+
+    /**
+     * The value associated to the ApiKey.
+     */
+    @NonNull
+    private String value;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setAuth(final HttpArgs args) {
+        if (args.getHeaders() == null) {
+            args.setHeaders(new HashMap<>());
+        }
+
+        args.getHeaders().put(key, value);
+    }
 }

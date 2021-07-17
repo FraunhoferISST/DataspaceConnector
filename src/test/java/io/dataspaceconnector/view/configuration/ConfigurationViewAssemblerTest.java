@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.view.configuration;
 
-import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers;
+import io.dataspaceconnector.controller.ConfigurationController;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
@@ -46,8 +46,7 @@ public class ConfigurationViewAssemblerTest {
         /* ARRANGE */
         final var shouldLookLike = getConfiguration();
         final var link = ViewAssemblerHelper.
-                getSelfLink(shouldLookLike.getId(),
-                        ConfigmanagerControllers.ConfigurationController.class);
+                getSelfLink(shouldLookLike.getId(), ConfigurationController.class);
 
         /* ACT */
         final var after = getConfigurationView();

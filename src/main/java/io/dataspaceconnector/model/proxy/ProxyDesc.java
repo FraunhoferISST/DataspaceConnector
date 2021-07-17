@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.model.proxy;
 
-import io.dataspaceconnector.model.auth.Authentication;
+import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.base.Description;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -47,5 +47,5 @@ public class ProxyDesc extends Description {
     /**
      * The authentication information.
      */
-    private Authentication authentication;
+    private BasicAuth authentication;
 }

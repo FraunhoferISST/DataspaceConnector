@@ -24,7 +24,7 @@ import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import io.dataspaceconnector.service.ids.ConnectorService;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,7 +135,7 @@ public class ResourceUpdateMessageControllerTest {
                 .andReturn();
 
         /* ASSERT */
-        final var msg = ErrorMessages.MESSAGE_HANDLING_FAILED.toString();
+        final var msg = ErrorMessage.MESSAGE_HANDLING_FAILED.toString();
         assertEquals(msg, result.getResponse().getContentAsString());
     }
 
@@ -155,7 +155,7 @@ public class ResourceUpdateMessageControllerTest {
                 .andReturn();
 
         /* ASSERT */
-        final var msg = ErrorMessages.MESSAGE_HANDLING_FAILED.toString();
+        final var msg = ErrorMessage.MESSAGE_HANDLING_FAILED.toString();
         assertEquals(msg, result.getResponse().getContentAsString());
     }
 

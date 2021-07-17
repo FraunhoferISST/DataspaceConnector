@@ -16,14 +16,16 @@
 package io.dataspaceconnector.service;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import io.dataspaceconnector.util.QueryInput;
+import java.util.ArrayList;
+
+import io.dataspaceconnector.model.auth.Authentication;
+import io.dataspaceconnector.model.auth.BasicAuth;
 import kotlin.NotImplementedError;
-import kotlin.Pair;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
 import okhttp3.Request;
@@ -99,7 +101,10 @@ class HttpServiceTest {
         /* ARRANGE */
         final var params = Map.of("A", "AV", "B", "BV");
         final var headers = Map.of("C", "CV", "D", "DV");
-        final var auth = new Pair<String, String>("X", "Y");
+        final var authType = new BasicAuth("X", "Y");
+        final var auth = new ArrayList<Authentication>();
+
+        auth.add(authType);
 
         final var input = new QueryInput();
         input.setParams(params);
@@ -108,7 +113,7 @@ class HttpServiceTest {
         final var expected = new HttpService.HttpArgs();
         expected.setParams(params);
         expected.setHeaders(headers);
-        expected.setAuth(auth);
+        authType.setAuth(expected);
 
         /* ACT */
         final var result = service.toArgs(input, auth);
@@ -118,7 +123,7 @@ class HttpServiceTest {
     }
 
     @Test
-    public void request_get_equalsToGetMethod() throws IOException, URISyntaxException {
+    public void request_get_equalsToGetMethod() throws IOException {
         /* ARRANGE */
         final var target = new URL("https://someTarget");
         final var args = new HttpService.HttpArgs();

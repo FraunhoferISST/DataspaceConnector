@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.exception;
 
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +24,7 @@ public class RdfBuilderExceptionTest {
     @Test
     public void constructor_someMsg_holdsMsg() {
         /* ARRANGE */
-        final var msg = ErrorMessages.CONTRACT_NULL;
+        final var msg = ErrorMessage.CONTRACT_NULL;
 
         /* ACT */
         final var exception = new RdfBuilderException(msg);

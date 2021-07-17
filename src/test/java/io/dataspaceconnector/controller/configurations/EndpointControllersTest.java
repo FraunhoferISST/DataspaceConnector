@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import io.dataspaceconnector.controller.configuration.EndpointControllers;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;

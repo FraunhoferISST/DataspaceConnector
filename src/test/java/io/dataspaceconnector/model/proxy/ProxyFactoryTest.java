@@ -18,7 +18,8 @@ package io.dataspaceconnector.model.proxy;
 import java.net.URI;
 import java.util.List;
 
-import io.dataspaceconnector.model.auth.Authentication;
+import io.dataspaceconnector.model.auth.BasicAuth;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -110,7 +111,7 @@ public class ProxyFactoryTest {
     void update_newAuth_willUpdate() {
         /* ARRANGE */
         final var desc = new ProxyDesc();
-        desc.setAuthentication(new Authentication());
+        desc.setAuthentication(new BasicAuth());
         final var proxy = factory.create(new ProxyDesc());
 
         /* ACT */

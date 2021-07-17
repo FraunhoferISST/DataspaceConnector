@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.view.broker;
 
-import io.dataspaceconnector.controller.configurations.BrokerControllers;
+import io.dataspaceconnector.controller.configuration.BrokerControllers;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.broker.Broker;

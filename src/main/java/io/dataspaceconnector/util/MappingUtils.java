@@ -26,7 +26,7 @@ import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.config.interceptor.CurrentConfig;
-import io.dataspaceconnector.model.auth.Authentication;
+import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
 import io.dataspaceconnector.model.configuration.DeployMode;
 import io.dataspaceconnector.model.configuration.SecurityProfile;
@@ -589,12 +589,10 @@ public final class MappingUtils {
 
         final var proxy = proxyList.get(0);
         final var auth = proxy.getProxyAuthentication();
-        final var dscAuth = new Authentication();
-        dscAuth.setUsername(auth.getAuthUsername());
-        dscAuth.setPassword(auth.getAuthPassword());
         return new ProxyDesc(proxy.getProxyURI(), proxy.getNoProxy()
                 .stream()
                 .map(URI::toString)
-                .collect(Collectors.toList()), dscAuth);
+                .collect(Collectors.toList()),
+                new BasicAuth(auth.getAuthUsername(), auth.getAuthPassword()));
     }
 }

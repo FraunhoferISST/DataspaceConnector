@@ -15,6 +15,14 @@
  */
 package io.dataspaceconnector.service.resource;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.exception.UnreachableLineException;
 import io.dataspaceconnector.model.artifact.Artifact;
@@ -24,6 +32,7 @@ import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.model.artifact.RemoteData;
 import io.dataspaceconnector.repository.ArtifactRepository;
+import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.ArtifactRetriever;
 import io.dataspaceconnector.service.HttpService;
@@ -33,7 +42,6 @@ import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.QueryInput;
 import io.dataspaceconnector.util.Utils;
 import kotlin.NotImplementedError;
-import kotlin.Pair;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -43,14 +51,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Handles the basic logic for artifacts.
@@ -73,17 +73,25 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private final @NonNull HttpService httpSvc;
 
     /**
+     * Repository for storing AuthTypes.
+     */
+    private final @NonNull AuthenticationRepository authRepo;
+
+    /**
      * Constructor for ArtifactService.
      *
-     * @param dataRepository The data repository.
-     * @param httpService    The HTTP service for fetching remote data.
+     * @param dataRepository     The data repository.
+     * @param httpService        The HTTP service for fetching remote data.
+     * @param authenticationRepository The AuthType repository.
      */
     @Autowired
     public ArtifactService(final @NonNull DataRepository dataRepository,
-                           final @NonNull HttpService httpService) {
+                           final @NonNull HttpService httpService,
+                           final @NonNull AuthenticationRepository authenticationRepository) {
         super();
         this.dataRepo = dataRepository;
         this.httpSvc = httpService;
+        this.authRepo = authenticationRepository;
     }
 
     /**
@@ -98,6 +106,10 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         if (tmp.getData() != null) {
             if (tmp.getData().getId() == null) {
                 // The data element is new, insert
+                if (tmp.getData() instanceof RemoteData) {
+                    var data = (RemoteData) tmp.getData();
+                    data.getAuthentication().forEach(authRepo::saveAndFlush);
+                }
                 dataRepo.saveAndFlush(tmp.getData());
             } else {
                 // The data element exists already, check if an update is
@@ -320,9 +332,9 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private InputStream downloadDataFromBackend(final RemoteData data,
                                                 final QueryInput queryInput) throws IOException {
         InputStream backendData;
-        if (data.getUsername() != null || data.getPassword() != null) {
+        if (!data.getAuthentication().isEmpty()) {
             backendData = httpSvc.get(data.getAccessUrl(), queryInput,
-                                      new Pair<>(data.getUsername(), data.getPassword()))
+                                         data.getAuthentication())
                                   .getBody();
         } else {
             backendData = httpSvc.get(data.getAccessUrl(), queryInput).getBody();

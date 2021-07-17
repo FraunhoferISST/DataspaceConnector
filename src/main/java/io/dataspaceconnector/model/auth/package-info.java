@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * This contains the authentication models.
+ * Contains model classes for backend authentication.
  */
 package io.dataspaceconnector.model.auth;
