@@ -467,6 +467,7 @@
 				<includes>
 					<include>conf/**/*.*</include>
 					<include>camel/**</include>
+					<include>camel-templates/**/*.vm</include>
 					<include>log4j2.xml</include>
 					<include>application.properties</include>
 					<include>banner.txt</include>
