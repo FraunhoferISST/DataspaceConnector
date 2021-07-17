@@ -290,7 +290,7 @@ public class RuleValidator {
                 throw new PolicyRestrictionException(
                         ErrorMessage.DATA_ACCESS_INVALID_SECURITY_PROFILE);
             }
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             throw new PolicyRestrictionException(
                     ErrorMessage.DATA_ACCESS_INVALID_SECURITY_PROFILE);
         }
