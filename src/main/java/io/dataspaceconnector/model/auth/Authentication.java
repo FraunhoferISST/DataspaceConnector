@@ -15,17 +15,17 @@
  */
 package io.dataspaceconnector.model.auth;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.dataspaceconnector.service.HttpService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
 
 /**
  * Base element for all authentication types.
@@ -36,7 +36,10 @@ import lombok.ToString;
 @NoArgsConstructor
 @Inheritance
 public abstract class Authentication implements HttpService.Authentication {
-    /** The primary key. */
+
+    /**
+     * The primary key.
+     */
     @Id
     @GeneratedValue
     @JsonIgnore
