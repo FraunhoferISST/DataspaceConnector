@@ -15,6 +15,16 @@
  */
 package io.dataspaceconnector.util;
 
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.ConfigurationModel;
@@ -25,14 +35,13 @@ import de.fraunhofer.iais.eis.Proxy;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
-import io.dataspaceconnector.config.interceptor.CurrentConfig;
+import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.auth.BasicAuth;
+import io.dataspaceconnector.model.catalog.CatalogDesc;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
 import io.dataspaceconnector.model.configuration.DeployMode;
-import io.dataspaceconnector.model.configuration.SecurityProfile;
-import io.dataspaceconnector.model.artifact.ArtifactDesc;
-import io.dataspaceconnector.model.catalog.CatalogDesc;
 import io.dataspaceconnector.model.configuration.LogLevel;
+import io.dataspaceconnector.model.configuration.SecurityProfile;
 import io.dataspaceconnector.model.contract.ContractDesc;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.proxy.ProxyDesc;
@@ -48,16 +57,6 @@ import io.dataspaceconnector.model.template.RepresentationTemplate;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
-
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * Maps ids resources to internal resources.
@@ -552,9 +551,8 @@ public final class MappingUtils {
      * @param configModel The ids configuration model.
      * @return The internal configuration desc.
      */
-    public static ConfigurationDesc buildConfigDesc(final ConfigurationModel configModel) {
+    public static ConfigurationDesc fromIdsConfig(final ConfigurationModel configModel) {
         final var description = new ConfigurationDesc();
-        description.setSelected(CurrentConfig.SELECTED);
         description.setDeployMode(fromIdsDeployMode(configModel.getConnectorDeployMode()));
         description.setCurator(configModel.getConnectorDescription().getCurator());
         description.setConnectorEndpoint(
@@ -573,7 +571,6 @@ public final class MappingUtils {
                 fromIdsSecurityProfile(configModel.getConnectorDescription().getSecurityProfile()));
         description.setTruststoreSettings(new TruststoreDesc(
                 configModel.getTrustStore(), configModel.getTrustStorePassword()));
-        //description.setVersion(null);
         return description;
     }
 

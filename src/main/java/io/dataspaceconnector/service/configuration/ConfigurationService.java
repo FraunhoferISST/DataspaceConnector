@@ -20,10 +20,10 @@ import java.util.UUID;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
-import io.dataspaceconnector.config.interceptor.ConfigurationMapper;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
 import io.dataspaceconnector.repository.ConfigurationRepository;
+import io.dataspaceconnector.service.ids.builder.IdsConfigModelBuilder;
 import io.dataspaceconnector.service.resource.BaseEntityService;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -45,6 +45,11 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
      * The current connector configuration.
      */
     private final @NonNull ConfigContainer configContainer;
+
+    /**
+     * Builds the ids config.
+     */
+    private final @NonNull IdsConfigModelBuilder configBuilder;
 
     /**
      * Try too find the active configuration.
@@ -80,7 +85,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
         repo.unsetActive();
         repo.setActive(newConfig);
 
-        final var configuration = ConfigurationMapper.buildInfomodelConfig(getActiveConfig());
+        final var configuration = configBuilder.create(getActiveConfig());
         configContainer.updateConfiguration(configuration);
     }
 }
