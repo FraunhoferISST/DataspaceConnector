@@ -15,16 +15,6 @@
  */
 package io.dataspaceconnector.util;
 
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.ConfigurationModel;
@@ -57,6 +47,16 @@ import io.dataspaceconnector.model.template.RepresentationTemplate;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
+
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Maps ids resources to internal resources.
@@ -538,8 +538,7 @@ public final class MappingUtils {
             case TRUST_SECURITY_PROFILE:
                 return SecurityProfile.TRUST_SECURITY;
             case TRUST_PLUS_SECURITY_PROFILE:
-                return SecurityProfile.
-                        TRUST_PLUS_SECURITY;
+                return SecurityProfile.TRUST_PLUS_SECURITY;
             default:
                 return SecurityProfile.BASE_SECURITY;
         }

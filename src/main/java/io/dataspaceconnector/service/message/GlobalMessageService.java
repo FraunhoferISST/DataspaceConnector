@@ -85,26 +85,24 @@ public class GlobalMessageService {
      *
      * @param recipient The recipient.
      * @return True if the message was successfully processed by the recipient, false if not.
-     * @throws MultipartParseException   If response could not be parsed to header and payload.
-     * @throws ClaimsException           Exception that gets thrown, if errors occur while
-     *                                   validating a DAT token.
-     * @throws DapsTokenManagerException DAPS Token can not be acquired.
-     * @throws IOException               Any other problems in establishing a connection
-     *                                   to the target.
+     * @throws MultipartParseException     if the response could not be parsed to header & payload.
+     * @throws ClaimsException             if an errors occur while validating a DAT from response.
+     * @throws DapsTokenManagerException   if the DAT for building the message cannot be acquired.
+     * @throws IOException                 if any other problem in establishing a connection occurs.
+     * @throws ShaclValidatorException     if received header did not pass SHACL validation.
+     * @throws SerializeException          if serializing an outgoing message fails.
+     * @throws RejectionException          if the response is a rejection message.
+     * @throws UnknownResponseException    if response header cannot be cast to known message type.
+     * @throws SendMessageException        if recipient could not be reached.
+     * @throws NoTemplateProvidedException if not matching template for message building was found.
+     * @throws UnexpectedPayloadException  if payload could not be processed.
+     * @throws DeserializeException        if serializing an incoming response message fails.
      */
-    public Optional<MessageContainer<?>> sendConnectorUpdateMessage(final URI recipient) throws
-            MultipartParseException,
-            ClaimsException,
-            DapsTokenManagerException,
-            IOException,
-            ShaclValidatorException,
-            SerializeException,
-            RejectionException,
-            UnknownResponseException,
-            SendMessageException,
-            NoTemplateProvidedException,
-            UnexpectedPayloadException,
-            DeserializeException {
+    public Optional<MessageContainer<?>> sendConnectorUpdateMessage(final URI recipient)
+            throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
+            NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
+            UnexpectedPayloadException, SerializeException, DeserializeException,
+            RejectionException, UnknownResponseException {
         final var response = brokerSvc.updateSelfDescriptionAtBroker(recipient);
         final var result = checkResponse(Optional.ofNullable(response));
         if (result) {
@@ -121,6 +119,18 @@ public class GlobalMessageService {
      *
      * @param recipient The recipient.
      * @return Optional of message container providing the received ids response.
+     * @throws MultipartParseException     if the response could not be parsed to header & payload.
+     * @throws ClaimsException             if an errors occur while validating a DAT from response.
+     * @throws DapsTokenManagerException   if the DAT for building the message cannot be acquired.
+     * @throws IOException                 if any other problem in establishing a connection occurs.
+     * @throws ShaclValidatorException     if received header did not pass SHACL validation.
+     * @throws SerializeException          if serializing an outgoing message fails.
+     * @throws RejectionException          if the response is a rejection message.
+     * @throws UnknownResponseException    if response header cannot be cast to known message type.
+     * @throws SendMessageException        if recipient could not be reached.
+     * @throws NoTemplateProvidedException if not matching template for message building was found.
+     * @throws UnexpectedPayloadException  if payload could not be processed.
+     * @throws DeserializeException        if serializing an incoming response message fails.
      */
     public Optional<MessageContainer<?>> sendConnectorUnavailableMessage(final URI recipient)
             throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
@@ -147,6 +157,18 @@ public class GlobalMessageService {
      * @param recipient The recipient.
      * @param resource  The ids resource that should be updated.
      * @return Optional of message container providing the received ids response.
+     * @throws MultipartParseException     if the response could not be parsed to header & payload.
+     * @throws ClaimsException             if an errors occur while validating a DAT from response.
+     * @throws DapsTokenManagerException   if the DAT for building the message cannot be acquired.
+     * @throws IOException                 if any other problem in establishing a connection occurs.
+     * @throws ShaclValidatorException     if received header did not pass SHACL validation.
+     * @throws SerializeException          if serializing an outgoing message fails.
+     * @throws RejectionException          if the response is a rejection message.
+     * @throws UnknownResponseException    if response header cannot be cast to known message type.
+     * @throws SendMessageException        if recipient could not be reached.
+     * @throws NoTemplateProvidedException if not matching template for message building was found.
+     * @throws UnexpectedPayloadException  if payload could not be processed.
+     * @throws DeserializeException        if serializing an incoming response message fails.
      */
     public Optional<MessageContainer<?>> sendResourceUpdateMessage(final URI recipient,
                                                                    final Resource resource)
@@ -155,7 +177,7 @@ public class GlobalMessageService {
             UnexpectedPayloadException, SerializeException, DeserializeException,
             RejectionException, UnknownResponseException {
         final var response = brokerSvc.updateResourceAtBroker(recipient, resource);
-        final var result =  checkResponse(Optional.ofNullable(response));
+        final var result = checkResponse(Optional.ofNullable(response));
         if (result) {
             if (log.isInfoEnabled()) {
                 log.info("Successfully registered resource. "
@@ -173,6 +195,18 @@ public class GlobalMessageService {
      * @param recipient The recipient.
      * @param resource  The ids resource that should be updated.
      * @return True if the message was successfully processed by the recipient, false if not.
+     * @throws MultipartParseException     if the response could not be parsed to header & payload.
+     * @throws ClaimsException             if an errors occur while validating a DAT from response.
+     * @throws DapsTokenManagerException   if the DAT for building the message cannot be acquired.
+     * @throws IOException                 if any other problem in establishing a connection occurs.
+     * @throws ShaclValidatorException     if received header did not pass SHACL validation.
+     * @throws SerializeException          if serializing an outgoing message fails.
+     * @throws RejectionException          if the response is a rejection message.
+     * @throws UnknownResponseException    if response header cannot be cast to known message type.
+     * @throws SendMessageException        if recipient could not be reached.
+     * @throws NoTemplateProvidedException if not matching template for message building was found.
+     * @throws UnexpectedPayloadException  if payload could not be processed.
+     * @throws DeserializeException        if serializing an incoming response message fails.
      */
     public Optional<MessageContainer<?>> sendResourceUnavailableMessage(final URI recipient,
                                                                         final Resource resource)
@@ -195,9 +229,22 @@ public class GlobalMessageService {
 
     /**
      * Send query message and validate received response.
+     *
      * @param recipient The recipient.
      * @param query     The query statement.
      * @return Optional of message container providing the received ids response.
+     * @throws MultipartParseException     if the response could not be parsed to header & payload.
+     * @throws ClaimsException             if an errors occur while validating a DAT from response.
+     * @throws DapsTokenManagerException   if the DAT for building the message cannot be acquired.
+     * @throws IOException                 if any other problem in establishing a connection occurs.
+     * @throws ShaclValidatorException     if received header did not pass SHACL validation.
+     * @throws SerializeException          if serializing an outgoing message fails.
+     * @throws RejectionException          if the response is a rejection message.
+     * @throws UnknownResponseException    if response header cannot be cast to known message type.
+     * @throws SendMessageException        if recipient could not be reached.
+     * @throws NoTemplateProvidedException if not matching template for message building was found.
+     * @throws UnexpectedPayloadException  if payload could not be processed.
+     * @throws DeserializeException        if serializing an incoming response message fails.
      */
     public Optional<MessageContainer<?>> sendQueryMessage(final URI recipient, final String query)
             throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
@@ -211,11 +258,24 @@ public class GlobalMessageService {
 
     /**
      * Send query message and validate received response.
+     *
      * @param recipient The recipient.
      * @param term      The search term.
      * @param limit     The limit value.
      * @param offset    The offset value.
      * @return Optional of message container providing the received ids response.
+     * @throws MultipartParseException     if the response could not be parsed to header & payload.
+     * @throws ClaimsException             if an errors occur while validating a DAT from response.
+     * @throws DapsTokenManagerException   if the DAT for building the message cannot be acquired.
+     * @throws IOException                 if any other problem in establishing a connection occurs.
+     * @throws ShaclValidatorException     if received header did not pass SHACL validation.
+     * @throws SerializeException          if serializing an outgoing message fails.
+     * @throws RejectionException          if the response is a rejection message.
+     * @throws UnknownResponseException    if response header cannot be cast to known message type.
+     * @throws SendMessageException        if recipient could not be reached.
+     * @throws NoTemplateProvidedException if not matching template for message building was found.
+     * @throws UnexpectedPayloadException  if payload could not be processed.
+     * @throws DeserializeException        if serializing an incoming response message fails.
      */
     public Optional<MessageContainer<?>> sendFullTextSearchMessage(
             final URI recipient, final String term, final int limit, final int offset)
@@ -270,7 +330,7 @@ public class GlobalMessageService {
 
     /**
      * @param recipient The uri of the recipient.
-     * @param resource The offered resource.
+     * @param resource  The offered resource.
      */
     private void updateOfferedResourceBrokerList(final URI recipient,
                                                  final Resource resource) {

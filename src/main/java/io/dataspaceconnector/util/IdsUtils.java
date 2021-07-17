@@ -321,11 +321,10 @@ public final class IdsUtils {
             case INFO:
             case WARN:
             case ERROR:
+            case TRACE:
                 return LogLevel.MINIMAL_LOGGING;
             case DEBUG:
                 return LogLevel.DEBUG_LEVEL_LOGGING;
-            case TRACE:
-                return LogLevel.MINIMAL_LOGGING;
             default:
                 return LogLevel.NO_LOGGING;
         }
