@@ -22,6 +22,8 @@ import lombok.ToString;
 import io.dataspaceconnector.service.HttpService;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -35,7 +37,12 @@ import javax.persistence.Inheritance;
 @Setter
 @NoArgsConstructor
 @Inheritance
-public abstract class Authentication implements HttpService.Authentication {
+public abstract class Authentication implements HttpService.Authentication, Serializable {
+
+    /**
+     * Serial version uid.
+     **/
+    private static final long serialVersionUID = 1L;
 
     /**
      * The primary key.

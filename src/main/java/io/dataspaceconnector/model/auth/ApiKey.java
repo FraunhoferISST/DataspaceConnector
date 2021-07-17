@@ -38,6 +38,11 @@ import java.util.HashMap;
 public class ApiKey extends Authentication {
 
     /**
+     * Serial version uid.
+     **/
+    private static final long serialVersionUID = 1L;
+
+    /**
      * The key associated to the ApiKey.
      */
     @NonNull

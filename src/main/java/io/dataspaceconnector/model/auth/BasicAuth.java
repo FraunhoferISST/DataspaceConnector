@@ -40,6 +40,11 @@ import javax.persistence.Entity;
 public class BasicAuth extends Authentication {
 
     /**
+     * Serial version uid.
+     **/
+    private static final long serialVersionUID = 1L;
+
+    /**
      * The username that is to be used for Basic Auth.
      */
     @NonNull
