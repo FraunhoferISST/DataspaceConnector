@@ -22,6 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class ResponseDescriptionsTest {
     @Test
     public void constructor_is_hidden() {
-        assertThrows(UnsupportedOperationException.class, ResponseDescriptions::new);
+        assertThrows(UnsupportedOperationException.class, ResponseDescription::new);
     }
 }
