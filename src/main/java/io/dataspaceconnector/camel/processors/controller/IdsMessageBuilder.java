@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.camel.processors.outgoing;
+package io.dataspaceconnector.camel.processors.controller;
 
 import java.net.URI;
 import java.util.List;
@@ -186,7 +186,7 @@ class ResourceUpdateMessageBuilder extends IdsMessageBuilder<ResourceUpdateMessa
 
     @Override
     protected Request<ResourceUpdateMessageImpl, Resource> processInternal(final Exchange exchange) {
-        final var resource = exchange.getIn().getBody(de.fraunhofer.iais.eis.Resource.class);
+        final var resource = exchange.getIn().getBody(Resource.class);
 
         final var connectorId = connectorService.getConnectorId();
         final var modelVersion = connectorService.getOutboundModelVersion();
@@ -217,7 +217,7 @@ class ResourceUnavailableMessageBuilder extends IdsMessageBuilder<ResourceUnavai
 
     @Override
     protected Request<ResourceUnavailableMessageImpl, Resource> processInternal(Exchange exchange) {
-        final var resource = exchange.getIn().getBody(de.fraunhofer.iais.eis.Resource.class);
+        final var resource = exchange.getIn().getBody(Resource.class);
 
         final var connectorId = connectorService.getConnectorId();
         final var modelVersion = connectorService.getOutboundModelVersion();

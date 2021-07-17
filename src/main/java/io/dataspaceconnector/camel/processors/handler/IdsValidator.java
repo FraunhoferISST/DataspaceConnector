@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.camel.processors.incoming;
+package io.dataspaceconnector.camel.processors.handler;
+
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -52,10 +56,6 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Superclass for Camel processors that validate either header or payload of an incoming message.

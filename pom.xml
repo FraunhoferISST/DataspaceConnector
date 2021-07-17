@@ -462,7 +462,6 @@
 				<filtering>true</filtering>
 				<includes>
 					<include>conf/**/*.*</include>
-					<include>camel/**</include>
 					<include>log4j2.xml</include>
 					<include>application.properties</include>
 					<include>banner.txt</include>
