@@ -30,6 +30,9 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,12 +44,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Setter(AccessLevel.NONE)
 @RequiredArgsConstructor
 @Transactional
+@Log4j2
 public class ConfigurationService extends BaseEntityService<Configuration, ConfigurationDesc> {
 
     /**
-     * The current connector configuration.
+     * The current context.
      */
-    private ConfigContainer configContainer;
+    private final @NonNull ApplicationContext context;
 
     /**
      * Builds the ids config.
@@ -93,13 +97,32 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
             return;
         }
 
+        swapActiveConfigInDb(newConfig);
+        reload(newConfig);
+    }
+
+    private void swapActiveConfigInDb(UUID newConfig) {
         final var repo = (ConfigurationRepository) getRepository();
         repo.unsetActive();
         repo.setActive(newConfig);
+    }
 
-        if (configContainer != null) {
+    private void reload(final UUID newConfig) throws ConfigUpdateException {
+        final var configContainer = findConfigContainer();
+        if (configContainer.isPresent()) {
             final var configuration = configBuilder.create(getActiveConfig());
-            configContainer.updateConfiguration(configuration);
+            configContainer.get().updateConfiguration(configuration);
+            if (log.isInfoEnabled()) {
+               log.info("Changing configuration profile [id=({})]", newConfig);
+            }
         }
+    }
+
+    private Optional<ConfigContainer> findConfigContainer() {
+        try {
+            return Optional.of(context.getBean(ConfigContainer.class));
+        } catch (NoSuchBeanDefinitionException ignored) { }
+
+        return Optional.empty();
     }
 }
