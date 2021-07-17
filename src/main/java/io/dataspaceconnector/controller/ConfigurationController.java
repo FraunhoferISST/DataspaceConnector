@@ -15,10 +15,14 @@
  */
 package io.dataspaceconnector.controller;
 
+import javax.validation.Valid;
+import java.util.UUID;
+
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.service.ids.DeserializationService;
+import io.dataspaceconnector.config.interceptor.ConfigurationMapper;
+import io.dataspaceconnector.service.configuration.ConfigurationService;
 import io.dataspaceconnector.util.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -32,8 +36,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -58,17 +62,18 @@ public class ConfigurationController {
     private final @NonNull ConnectorConfiguration connectorConfig;
 
     /**
-     * Service for deserializing ids objects.
+     * Configuration Service, to read and set current config in DB.
      */
-    private final @NonNull DeserializationService idsService;
+    private final @NonNull ConfigurationService configurationService;
 
     /**
      * Update the connector's current configuration.
      *
-     * @param configuration The new configuration.
+     * @param toSelect The new configuration.
      * @return Ok or error response.
      */
-    @PutMapping(value = "/configuration", consumes = {"application/json", "application/ld+json"},
+    @PutMapping(value = "/configuration/{id}",
+            consumes = {"application/json", "application/ld+json"},
             produces = {"application/ld+json"})
     @Operation(summary = "Update current configuration.")
     @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
@@ -79,19 +84,23 @@ public class ConfigurationController {
             @ApiResponse(responseCode = "415", description = "Wrong media type."),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @ResponseBody
-    public ResponseEntity<Object> updateConfiguration(@RequestBody final String configuration) {
+    public ResponseEntity<Object> setConfiguration(@Valid @PathVariable(name = "id")
+                                                       final UUID toSelect) {
         try {
-            // Deserialize input.
-            final var config = idsService.getConfigurationModel(configuration);
-
-            // Update configuration of connector.
-            configContainer.updateConfiguration(config);
-            return getConfiguration();
+            configurationService.swapSelected(toSelect);
+            var selectedIDs = configurationService.findSelected();
+            if (selectedIDs.isEmpty()) {
+                return ResponseEntity.internalServerError().body(
+                        "Could not set selected Configuration!"
+                );
+            }
+            var selected = configurationService.get(selectedIDs.get(0));
+            var configuration = ConfigurationMapper.buildInfomodelConfig(selected);
+            configContainer.updateConfiguration(configuration);
         } catch (ConfigUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
-        } catch (IllegalArgumentException exception) {
-            return ControllerUtils.respondInvalidInput(exception);
         }
+        return getConfiguration();
     }
 
     /**
