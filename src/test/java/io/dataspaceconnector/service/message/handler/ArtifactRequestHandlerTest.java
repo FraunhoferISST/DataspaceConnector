@@ -24,12 +24,12 @@ import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.camel.ClearingHouseLoggingProcessor;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import java.io.InputStream;
 import java.net.URI;
@@ -47,6 +47,7 @@ class ArtifactRequestHandlerTest {
     @Autowired
     ArtifactRequestHandler handler;
 
+    @SneakyThrows
     @Test
     public void handleMessage_nullMessage_returnBadParametersResponse() {
         /* ARRANGE */
@@ -59,9 +60,9 @@ class ArtifactRequestHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
-    public void handleMessage_unsupportedMessage_returnUnsupportedVersionRejectionMessage() throws
-            DatatypeConfigurationException {
+    public void handleMessage_unsupportedMessage_returnUnsupportedVersionRejectionMessage() {
         /* ARRANGE */
         final var calendar = new GregorianCalendar();
         calendar.setTime(new Date());
@@ -84,9 +85,9 @@ class ArtifactRequestHandlerTest {
         assertEquals(RejectionReason.VERSION_NOT_SUPPORTED, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
-    public void handleMessage_nullPayload_returnBadRequestErrorResponse() throws
-            DatatypeConfigurationException {
+    public void handleMessage_nullPayload_returnBadRequestErrorResponse() {
         /* ARRANGE */
         final var calendar = new GregorianCalendar();
         calendar.setTime(new Date());
@@ -109,9 +110,9 @@ class ArtifactRequestHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
-    public void handleMessage_emptyPayload_returnBadRequestErrorResponse() throws
-            DatatypeConfigurationException {
+    public void handleMessage_emptyPayload_returnBadRequestErrorResponse() {
         /* ARRANGE */
         final var calendar = new GregorianCalendar();
         calendar.setTime(new Date());

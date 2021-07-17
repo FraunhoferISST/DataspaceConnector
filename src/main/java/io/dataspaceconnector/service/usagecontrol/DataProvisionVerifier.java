@@ -15,11 +15,8 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.SecurityProfile;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.util.ContractUtils;
@@ -28,6 +25,11 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * A {@link PolicyVerifier} implementation that checks whether data provision should be allowed.
@@ -53,19 +55,22 @@ public class DataProvisionVerifier implements PolicyVerifier<VerificationInput> 
      * @param target          The requested element.
      * @param issuerConnector The issuer connector.
      * @param agreement       The ids contract agreement.
+     * @param profile         The security profile.
      * @throws PolicyRestrictionException If a policy restriction has been detected.
      */
-    public void checkPolicy(final URI target,
-                            final URI issuerConnector,
-                            final ContractAgreement agreement) throws PolicyRestrictionException {
+    public void checkPolicy(final URI target, final URI issuerConnector,
+                            final ContractAgreement agreement,
+                            final Optional<SecurityProfile> profile)
+            throws PolicyRestrictionException {
         final var patternsToCheck = Arrays.asList(
                 PolicyPattern.PROVIDE_ACCESS,
                 PolicyPattern.PROHIBIT_ACCESS,
                 PolicyPattern.USAGE_DURING_INTERVAL,
                 PolicyPattern.USAGE_UNTIL_DELETION,
-                PolicyPattern.CONNECTOR_RESTRICTED_USAGE);
+                PolicyPattern.CONNECTOR_RESTRICTED_USAGE,
+                PolicyPattern.SECURITY_PROFILE_RESTRICTED_USAGE);
         try {
-            checkForAccess(patternsToCheck, target, issuerConnector, agreement);
+            checkForAccess(patternsToCheck, target, issuerConnector, agreement, profile);
         } catch (PolicyRestrictionException exception) {
             // Unknown patterns cause an exception. Ignore if unsupported patterns are allowed.
             if (!connectorConfig.isAllowUnsupported()) {
@@ -81,11 +86,13 @@ public class DataProvisionVerifier implements PolicyVerifier<VerificationInput> 
      * @param target          The requested element.
      * @param issuerConnector The issuer connector.
      * @param agreement       The ids contract agreement.
+     * @param profile         The security profile.
      * @throws PolicyRestrictionException If a policy restriction has been detected.
      */
     public void checkForAccess(final List<PolicyPattern> patterns,
                                final URI target, final URI issuerConnector,
-                               final ContractAgreement agreement)
+                               final ContractAgreement agreement,
+                               final Optional<SecurityProfile> profile)
             throws PolicyRestrictionException {
         final var rules = ContractUtils.getRulesForTargetId(agreement, target);
 
@@ -94,7 +101,7 @@ public class DataProvisionVerifier implements PolicyVerifier<VerificationInput> 
             final var pattern = RuleUtils.getPatternByRule(rule);
             // Enforce only a set of patterns.
             if (patterns.contains(pattern)) {
-                ruleValidator.validatePolicy(pattern, rule, target, issuerConnector, null);
+                ruleValidator.validatePolicy(pattern, rule, target, issuerConnector, profile);
             }
         }
     }
@@ -105,7 +112,8 @@ public class DataProvisionVerifier implements PolicyVerifier<VerificationInput> 
     @Override
     public VerificationResult verify(final VerificationInput input) {
         try {
-            this.checkPolicy(input.getTarget(), input.getIssuerConnector(), input.getAgreement());
+            this.checkPolicy(input.getTarget(), input.getIssuerConnector(), input.getAgreement(),
+                    input.getSecurityProfile());
             return VerificationResult.ALLOWED;
         } catch (PolicyRestrictionException exception) {
             if (log.isDebugEnabled()) {

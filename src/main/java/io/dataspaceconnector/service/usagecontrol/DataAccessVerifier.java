@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.PolicyExecutionException;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
@@ -31,6 +27,11 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * A {@link PolicyVerifier} implementation that checks whether data access should be allowed.
@@ -88,8 +89,8 @@ public final class DataAccessVerifier implements PolicyVerifier<Artifact> {
      * @param patterns   List of patterns that should be enforced.
      * @param artifactId The requested artifact.
      * @param remoteId   The remote id of the requested artifact.
-     * @throws io.dataspaceconnector.exception.UnsupportedPatternException
-     *         If no suitable pattern could be found.
+     * @throws io.dataspaceconnector.exception.UnsupportedPatternException If no suitable pattern
+     * could be found.
      */
     public void checkForAccess(final List<PolicyPattern> patterns, final URI artifactId,
                                final URI remoteId) {
@@ -103,7 +104,7 @@ public final class DataAccessVerifier implements PolicyVerifier<Artifact> {
                 final var pattern = RuleUtils.getPatternByRule(rule);
                 // Enforce only a set of patterns.
                 if (patterns.contains(pattern)) {
-                    ruleValidator.validatePolicy(pattern, rule, artifactId, null, null);
+                    ruleValidator.validatePolicy(pattern, rule, artifactId, null, Optional.empty());
                 }
             }
         }
