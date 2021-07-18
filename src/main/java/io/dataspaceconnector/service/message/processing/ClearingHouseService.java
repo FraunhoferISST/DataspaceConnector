@@ -67,7 +67,8 @@ public class ClearingHouseService {
     public void logIdsMessage(final Message idsMessage) {
         if (isClearingHouseEnabled()) {
             try {
-                final var transferContractId = UUIDUtils.uuidFromUri(idsMessage.getTransferContract());
+                final var transferContractId =
+                                    UUIDUtils.uuidFromUri(idsMessage.getTransferContract());
                 final var url = buildDestination(URI.create(transferContractId.toString()));
                 logMessageSvc.sendMessage(url, idsMessage.toRdf());
             } catch (Exception exception) {
