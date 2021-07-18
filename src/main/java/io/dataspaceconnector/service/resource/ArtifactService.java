@@ -81,8 +81,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     /**
      * Constructor for ArtifactService.
      *
-     * @param dataRepository     The data repository.
-     * @param httpService        The HTTP service for fetching remote data.
+     * @param dataRepository           The data repository.
+     * @param httpService              The HTTP service for fetching remote data.
      * @param authenticationRepository The AuthType repository.
      */
     @Autowired
@@ -139,11 +139,13 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param artifactId     The id of the artifact.
      * @param queryInput     The query for the backend.
      * @return The artifacts data.
-     * @throws PolicyRestrictionException if the data access has been denied.
-     * @throws io.dataspaceconnector.exception.ResourceNotFoundException
-     *         if the artifact does not exist.
-     * @throws IllegalArgumentException   if any of the parameters is null.
-     * @throws IOException if IO errors occurr.
+     * @throws PolicyRestrictionException                                if the data access has
+     * been denied.
+     * @throws io.dataspaceconnector.exception.ResourceNotFoundException if the artifact does not
+     * exist.
+     * @throws IllegalArgumentException                                  if any of the parameters
+     * is null.
+     * @throws IOException                                               if IO errors occurr.
      */
     @Transactional
     public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
@@ -154,7 +156,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                 ((ArtifactRepository) getRepository()).findRemoteOriginAgreements(artifactId);
         if (agreements.size() > 0) {
             return tryToAccessDataByUsingAnyAgreement(accessVerifier, retriever, artifactId,
-                                                      queryInput, agreements);
+                    queryInput, agreements);
         }
 
         // The artifact is not assigned to any requested resources. It must be offered if it exists.
@@ -162,9 +164,9 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     }
 
     private InputStream tryToAccessDataByUsingAnyAgreement(
-            final PolicyVerifier<AccessVerificationInput> accessVerifier, final ArtifactRetriever retriever,
-            final UUID artifactId, final QueryInput queryInput, final List<URI> agreements)
-            throws IOException {
+            final PolicyVerifier<AccessVerificationInput> accessVerifier,
+            final ArtifactRetriever retriever, final UUID artifactId, final QueryInput queryInput,
+            final List<URI> agreements) throws IOException {
         /*
          * NOTE: Check if agreements with remoteIds are set for this artifact. If such agreements
          * exist the artifact must be assigned to a requested resource. The data access should
@@ -184,7 +186,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                 if (log.isDebugEnabled()) {
                     log.debug("Tried to access artifact data by trying an agreement. "
                                     + "[artifactId=({}), agreementId=({})]",
-                              artifactId, agRemoteId);
+                            artifactId, agRemoteId);
                 }
 
                 policyException = exception;
@@ -209,11 +211,13 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param artifactId     The id of the artifact.
      * @param information    Information for pulling the data from a remote source.
      * @return The artifact's data.
-     * @throws PolicyRestrictionException if the data access has been denied.
-     * @throws io.dataspaceconnector.exception.ResourceNotFoundException
-     *         if the artifact does not exist.
-     * @throws IllegalArgumentException   if any of the parameters is null.
-     * @throws IOException if IO errors occur.
+     * @throws PolicyRestrictionException                                if the data access has
+     * been denied.
+     * @throws io.dataspaceconnector.exception.ResourceNotFoundException if the artifact does not
+     * exist.
+     * @throws IllegalArgumentException                                  if any of the parameters
+     * is null.
+     * @throws IOException                                               if IO errors occur.
      */
     @Transactional
     public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
@@ -250,11 +254,11 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                                        final UUID artifactId,
                                        final RetrievalInformation information,
                                        final Artifact artifact)
-                                       throws IOException {
+            throws IOException {
         final var dataStream = retriever.retrieve(artifactId,
-                                                  artifact.getRemoteAddress(),
-                                                  information.getTransferContract(),
-                                                  information.getQueryInput());
+                artifact.getRemoteAddress(),
+                information.getTransferContract(),
+                information.getQueryInput());
         setData(artifactId, dataStream);
     }
 
@@ -338,8 +342,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         InputStream backendData;
         if (!data.getAuthentication().isEmpty()) {
             backendData = httpSvc.get(data.getAccessUrl(), queryInput,
-                                         data.getAuthentication())
-                                  .getBody();
+                    data.getAuthentication())
+                    .getBody();
         } else {
             backendData = httpSvc.get(data.getAccessUrl(), queryInput).getBody();
         }
@@ -397,15 +401,15 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             dataRepo.setLocalData(localData.getId(), bytes);
             if (((ArtifactFactory) getFactory()).updateByteSize(artifact, bytes)) {
                 ((ArtifactRepository) getRepository()).setArtifactData(artifactId,
-                                                                       artifact.getCheckSum(),
-                                                                       artifact.getByteSize());
+                        artifact.getCheckSum(),
+                        artifact.getByteSize());
             }
 
             return new ByteArrayInputStream(bytes);
         } catch (IOException e) {
             if (log.isErrorEnabled()) {
                 log.error("Failed to store data. [artifactId=({}), exception=({})]",
-                          artifactId, e.getMessage(), e);
+                        artifactId, e.getMessage(), e);
             }
 
             throw new IOException("Failed to store data.", e);
