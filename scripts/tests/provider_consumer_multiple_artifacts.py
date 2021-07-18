@@ -196,16 +196,18 @@ add_rule_to_contract(contract2, count_rule)
 
 provider = "https://localhost:8080/api/ids/data"
 
-def descriptionRequest(recipient, elementId):
+def descriptionRequest(recipient, elementId, protocol):
     params = {}
     if recipient is not None:
         params['recipient'] = recipient
     if elementId is not None:
         params['elementId'] = elementId
+    if protocol is not None:
+        params['protocol'] = protocol
 
     return s.post("https://localhost:8081/api/ids/description", params=params)
 
-def contractRequest(recipient, resourceId, artifactId, download, contract):
+def contractRequest(recipient, resourceId, artifactId, download, protocol, contract):
     params = {}
     if recipient is not None:
         params['recipient'] = recipient
@@ -215,10 +217,12 @@ def contractRequest(recipient, resourceId, artifactId, download, contract):
         params['artifactIds'] = artifactId
     if download is not None:
         params['download'] = download
+    if protocol is not None:
+        params['protocol'] = protocol
 
     return s.post("https://localhost:8081/api/ids/contract", params=params, json=contract)
 
-response = descriptionRequest(provider, catalog)
+response = descriptionRequest(provider, catalog, "MULTIPART")
 catalogResponse = json.loads(response.text)
 
 obj = catalogResponse['ids:offeredResource'][0]
@@ -229,7 +233,7 @@ representation = obj['ids:representation'][0]
 artifact = representation['ids:instance'][0]
 artifactId1 = artifact['@id']
 
-response = descriptionRequest(provider, contractId)
+response = descriptionRequest(provider, contractId, "MULTIPART")
 contract1Response = json.loads(response.text)
 
 obj = catalogResponse['ids:offeredResource'][1]
@@ -240,7 +244,7 @@ representation = obj['ids:representation'][0]
 artifact = representation['ids:instance'][0]
 artifactId2 = artifact['@id']
 
-response = descriptionRequest(provider, contractId)
+response = descriptionRequest(provider, contractId, "MULTIPART")
 contract2Response = json.loads(response.text)
 
 notify = contract1Response['ids:permission'][0]
@@ -253,5 +257,5 @@ count['ids:target'] = artifactId2
 body = [notify, count]
 resources = [resourceId1, resourceId2]
 artifacts = [artifactId1, artifactId2]
-response = contractRequest(provider, resources, artifacts, True, body)
+response = contractRequest(provider, resources, artifacts, True, "MULTIPART", body)
 pprint.pprint(str(response.content))

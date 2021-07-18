@@ -109,16 +109,18 @@ add_rule_to_contract(contract, use_rule)
 
 provider = "https://localhost:8080/api/ids/data"
 
-def descriptionRequest(recipient, elementId):
+def descriptionRequest(recipient, elementId, protocol):
     params = {}
     if recipient is not None:
         params['recipient'] = recipient
     if elementId is not None:
         params['elementId'] = elementId
+    if protocol is not None:
+        params['protocol'] = protocol
 
     return s.post("https://localhost:8081/api/ids/description", params=params)
 
-def contractRequest(recipient, resourceId, artifactId, download, contract):
+def contractRequest(recipient, resourceId, artifactId, download, protocol, contract):
     params = {}
     if recipient is not None:
         params['recipient'] = recipient
@@ -128,10 +130,12 @@ def contractRequest(recipient, resourceId, artifactId, download, contract):
         params['artifactIds'] = artifactId
     if download is not None:
         params['download'] = download
+    if protocol is not None:
+        params['protocol'] = protocol
 
     return s.post("https://localhost:8081/api/ids/contract", params=params, json=[contract])
 
-response = descriptionRequest(provider, catalog)
+response = descriptionRequest(provider, catalog, "MULTIPART")
 catalogResponse = json.loads(response.text)
 
 obj = catalogResponse['ids:offeredResource'][0]
@@ -145,11 +149,11 @@ artifact = representation['ids:instance'][0]
 artifactId = artifact['@id']
 pprint.pprint(artifactId)
 
-response = descriptionRequest(provider, contractId)
+response = descriptionRequest(provider, contractId, "MULTIPART")
 contractResponse = json.loads(response.text)
 
 obj = contractResponse['ids:permission'][0]
 obj['ids:target'] = artifactId
 
-response = contractRequest(provider, resourceId, artifactId, True, obj)
+response = contractRequest(provider, resourceId, artifactId, True, "MULTIPART", obj)
 pprint.pprint(str(response.content))
