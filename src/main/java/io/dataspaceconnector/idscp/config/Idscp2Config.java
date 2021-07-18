@@ -16,22 +16,12 @@
 package io.dataspaceconnector.idscp.config;
 
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import javax.annotation.PostConstruct;
 
 import de.fhg.aisec.ids.camel.idscp2.Utils;
 import de.fhg.aisec.ids.camel.idscp2.processors.IdsMessageTypeExtractionProcessor;
-import de.fraunhofer.iais.eis.Action;
-import de.fraunhofer.iais.eis.ContractRequestBuilder;
-import de.fraunhofer.iais.eis.ContractRequestMessageBuilder;
-import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
-import de.fraunhofer.iais.eis.PermissionBuilder;
-import de.fraunhofer.iais.eis.TokenFormat;
-import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.camel.Processor;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
@@ -50,21 +40,39 @@ import org.springframework.transaction.TransactionManager;
 @RequiredArgsConstructor
 public class Idscp2Config {
 
+    /**
+     * Location of the keystore containing the IDS certificate.
+     */
     @Value("${idscp.keystore}")
     private String keyStoreLocation;
 
+    /**
+     * Password of the keystore containing the IDS certificate.
+     */
     @Value("${configuration.keyStorePassword}")
     private String keyStorePassword;
 
+    /**
+     * Alias of the IDS certificate in the keystore.
+     */
     @Value("${configuration.keyAlias}")
     private String keyStoreAlias;
 
+    /**
+     * Location of the truststore to use.
+     */
     @Value("${idscp.truststore}")
     private String trustStoreLocation;
 
+    /**
+     * Password of the truststore to use.
+     */
     @Value("${configuration.trustStorePassword}")
     private String trustStorePassword;
 
+    /**
+     * Transaction manager required for creating a transaction policy for Camel routes.
+     */
     private final @NonNull TransactionManager transactionManager;
 
     /**
@@ -75,39 +83,6 @@ public class Idscp2Config {
     @Bean("TypeExtractionProcessor")
     public IdsMessageTypeExtractionProcessor idsMessageTypeExtractionProcessor() {
         return new IdsMessageTypeExtractionProcessor();
-    }
-
-    /**
-     * Processor that creates a ContractRequestMessage in a Camel route.
-     *
-     * @return the processor.
-     */
-    @Bean("ContractRequestCreationProcessor")
-    public Processor contractRequestCreationProcessor() {
-        return exchange -> {
-            final var in = exchange.getIn();
-
-            final var message = new ContractRequestMessageBuilder()
-                    ._issued_(IdsMessageUtils.getGregorianNow())
-                    ._modelVersion_("4.1.0")
-                    ._issuerConnector_(URI.create("https://some-connector.com"))
-                    ._senderAgent_(URI.create("https://some-connector.com"))
-                    ._securityToken_(new DynamicAttributeTokenBuilder()
-                            ._tokenFormat_(TokenFormat.JWT)
-                            ._tokenValue_("DAT")
-                            .build())
-                    ._recipientConnector_(Util.asList(URI.create("https://some-connector.com")))
-                    .build();
-            in.setHeader("idscp2-header", message);
-
-            final var contractRequest = new ContractRequestBuilder(URI.create("https://some-contract-request.com"))
-                    ._permission_(Util.asList(new PermissionBuilder()
-                            ._action_(Util.asList(Action.USE))
-                            ._target_(URI.create("https://some-artifact.com"))
-                            .build()))
-                    .build();
-            in.setBody(contractRequest.toRdf().getBytes(StandardCharsets.UTF_8));
-        };
     }
 
     /**
