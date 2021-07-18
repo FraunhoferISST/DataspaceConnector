@@ -552,6 +552,15 @@ public final class MappingUtils {
      */
     public static ConfigurationDesc fromIdsConfig(final ConfigurationModel configModel) {
         final var description = new ConfigurationDesc();
+        if (!configModel.getConnectorDescription().getTitle().isEmpty()) {
+            description.setTitle(
+                    configModel.getConnectorDescription().getTitle().get(0).getValue());
+        }
+        if (!configModel.getConnectorDescription().getDescription().isEmpty()) {
+            description.setDescription(
+                    configModel.getConnectorDescription().getDescription().get(0).getValue()
+            );
+        }
         description.setDeployMode(fromIdsDeployMode(configModel.getConnectorDeployMode()));
         description.setCurator(configModel.getConnectorDescription().getCurator());
         description.setConnectorEndpoint(

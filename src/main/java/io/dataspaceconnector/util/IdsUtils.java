@@ -35,6 +35,7 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
+import de.fraunhofer.iais.eis.util.Util;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.exception.RdfBuilderException;
 import io.dataspaceconnector.model.configuration.Configuration;
@@ -361,6 +362,10 @@ public final class IdsUtils {
      */
     public static Connector getConnectorFromConfiguration(final Configuration config) {
         return new BaseConnectorBuilder()
+                ._title_(Util.asList(
+                        new TypedLiteral(config.getTitle())))
+                ._description_(Util.asList(
+                        new TypedLiteral(config.getDescription())))
                 ._curator_(config.getCurator())
                 ._maintainer_(config.getMaintainer())
                 ._securityProfile_(getSecurityProfile(config.getSecurityProfile()))
