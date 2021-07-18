@@ -17,6 +17,7 @@ package io.dataspaceconnector.camel.route.handler;
 
 import io.dataspaceconnector.camel.util.ParameterUtils;
 import org.apache.camel.builder.RouteBuilder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Component;
  * handler route.
  */
 @Component
+@ConditionalOnProperty(name = "idscp.enabled", havingValue = "true")
 public class IdscpServerRoute extends RouteBuilder {
 
     /**
