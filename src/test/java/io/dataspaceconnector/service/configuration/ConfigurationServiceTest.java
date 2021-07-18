@@ -15,19 +15,16 @@
  */
 package io.dataspaceconnector.service.configuration;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import de.fraunhofer.ids.messaging.core.config.ConfigProducer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import io.dataspaceconnector.model.configuration.ConfigurationDesc;
 import io.dataspaceconnector.repository.ConfigurationRepository;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
-import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class ConfigurationServiceTest {
@@ -45,14 +42,12 @@ class ConfigurationServiceTest {
     public void swapActiveConfig_hasActiveConfig_willSetPassedConfigAsActiveAndTheOldOneAsInActive()
             throws ConfigUpdateException {
         /* ARRANGE */
-        final var configId = UUID.randomUUID();
-        Mockito.doReturn(Optional.empty()).when(repo).findActive();
+        final var config = service.create(new ConfigurationDesc());
 
         /* ACT */
-        service.swapActiveConfig(configId);
+        service.swapActiveConfig(config.getId());
 
         /* ASSERT */
-        Mockito.verify(repo, Mockito.atLeastOnce()).setActive(eq(configId));
-        Mockito.verify(repo, Mockito.atLeastOnce()).unsetActive();
+        assertEquals(config.getId(), service.getActiveConfig().getId());
     }
 }
