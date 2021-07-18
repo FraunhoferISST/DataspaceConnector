@@ -15,14 +15,6 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.exception.UnreachableLineException;
 import io.dataspaceconnector.model.artifact.Artifact;
@@ -36,6 +28,7 @@ import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.ArtifactRetriever;
 import io.dataspaceconnector.service.HttpService;
+import io.dataspaceconnector.service.usagecontrol.AccessVerificationInput;
 import io.dataspaceconnector.service.usagecontrol.PolicyVerifier;
 import io.dataspaceconnector.service.usagecontrol.VerificationResult;
 import io.dataspaceconnector.util.ErrorMessage;
@@ -51,6 +44,14 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Handles the basic logic for artifacts.
@@ -144,7 +145,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @throws IllegalArgumentException   if any of the parameters is null.
      * @throws IOException if IO errors occurr.
      */
-    public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
+    @Transactional
+    public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final QueryInput queryInput)
             throws PolicyRestrictionException, IOException {
@@ -160,7 +162,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     }
 
     private InputStream tryToAccessDataByUsingAnyAgreement(
-            final PolicyVerifier<Artifact> accessVerifier, final ArtifactRetriever retriever,
+            final PolicyVerifier<AccessVerificationInput> accessVerifier, final ArtifactRetriever retriever,
             final UUID artifactId, final QueryInput queryInput, final List<URI> agreements)
             throws IOException {
         /*
@@ -213,13 +215,15 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @throws IllegalArgumentException   if any of the parameters is null.
      * @throws IOException if IO errors occur.
      */
-    public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
+    @Transactional
+    public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final RetrievalInformation information)
             throws PolicyRestrictionException, IOException {
         // Check the artifact exists and access is granted.
         final var artifact = get(artifactId);
-        verifyDataAccess(accessVerifier, artifactId, artifact);
+        verifyDataAccess(accessVerifier,
+                new AccessVerificationInput(information.getTransferContract(), artifact));
 
         // Make sure the data exists and is up to date.
         if (shouldDownload(artifact, information.getForceDownload())) {
@@ -230,12 +234,12 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         return getDataFromInternalDB((ArtifactImpl) artifact, null);
     }
 
-    private void verifyDataAccess(final PolicyVerifier<Artifact> accessVerifier,
-                                  final UUID artifactId,
-                                  final Artifact artifact) {
-        if (accessVerifier.verify(artifact) == VerificationResult.DENIED) {
+    private void verifyDataAccess(final PolicyVerifier<AccessVerificationInput> accessVerifier,
+                                  final AccessVerificationInput verificationInput) {
+        if (accessVerifier.verify(verificationInput) == VerificationResult.DENIED) {
             if (log.isInfoEnabled()) {
-                log.info("Access denied. [artifactId=({})]", artifactId);
+                log.info("Access denied. [artifactId=({})]",
+                        verificationInput.getArtifact().getId());
             }
 
             throw new PolicyRestrictionException(ErrorMessage.POLICY_RESTRICTION);

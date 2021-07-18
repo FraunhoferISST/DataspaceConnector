@@ -13,7 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.dataspaceconnector.service.usagecontrol;
+
+import io.dataspaceconnector.model.artifact.Artifact;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
+import java.net.URI;
+
 /**
- * Services for IDS participant communication, e.g. IDS Broker, App Store, Clearing House etc.
+ * A DTO for information required to decide if data provision should be allowed.
  */
-package io.dataspaceconnector.service.message.processing;
+@AllArgsConstructor
+@Data
+@RequiredArgsConstructor
+public class AccessVerificationInput {
+
+    /**
+     * The id of the transfer contract (agreement).
+     */
+    private URI agreementId;
+
+    /**
+     * The artifact.
+     */
+    private Artifact artifact;
+}

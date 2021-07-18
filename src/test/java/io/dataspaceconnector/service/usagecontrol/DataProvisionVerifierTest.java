@@ -65,9 +65,9 @@ public class DataProvisionVerifierTest {
         final var issuerConnector = URI.create("https://issuer.com");
         final var profile = Optional.of(SecurityProfile.BASE_SECURITY_PROFILE);
 
-        final var input = new VerificationInput(target, issuerConnector, agreement, profile);
+        final var input = new ProvisionVerificationInput(target, issuerConnector, agreement, profile);
 
-        doNothing().when(ruleValidator).validatePolicy(any(), any(), any(), any(), any());
+        doNothing().when(ruleValidator).validatePolicy(any(), any(), any(), any(), any(), any());
 
         /* ACT */
         final var result = verifier.verify(input);
@@ -83,10 +83,10 @@ public class DataProvisionVerifierTest {
         final var issuerConnector = URI.create("https://issuer.com");
         final var profile = Optional.of(SecurityProfile.BASE_SECURITY_PROFILE);
 
-        final var input = new VerificationInput(target, issuerConnector, agreement, profile);
+        final var input = new ProvisionVerificationInput(target, issuerConnector, agreement, profile);
 
         doThrow(PolicyRestrictionException.class)
-                .when(ruleValidator).validatePolicy(any(), any(), any(), any(), any());
+                .when(ruleValidator).validatePolicy(any(), any(), any(), any(), any(), any());
         when(connectorConfig.isAllowUnsupported()).thenReturn(false);
 
         /* ACT */
