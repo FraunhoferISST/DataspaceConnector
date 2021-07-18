@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.camel.route.controller;
 
+import java.net.SocketTimeoutException;
+
 import io.dataspaceconnector.camel.exception.InvalidResponseException;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
@@ -40,6 +42,8 @@ public class DescriptionRequestControllerRoute extends RouteBuilder {
                 .to("direct:handleMessageResponseException");
         onException(InvalidResponseException.class)
                 .to("direct:handleInvalidResponseException");
+        onException(SocketTimeoutException.class)
+                .to("direct:handleSocketTimeout");
 
         from("direct:descriptionRequestSender")
                 .routeId("descriptionRequestSender")

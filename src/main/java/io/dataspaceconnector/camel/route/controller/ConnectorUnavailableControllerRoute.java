@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.camel.route.controller;
 
+import java.net.SocketTimeoutException;
+
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.camel.util.ParameterUtils;
 import org.apache.camel.builder.RouteBuilder;
@@ -35,6 +37,8 @@ public class ConnectorUnavailableControllerRoute extends RouteBuilder {
     public void configure() throws Exception {
         onException(ConfigUpdateException.class)
                 .to("direct:handleConfigUpdateException");
+        onException(SocketTimeoutException.class)
+                .to("direct:handleSocketTimeout");
 
         from("direct:connectorUnavailableSender")
                 .routeId("connectorUnavailableSender")

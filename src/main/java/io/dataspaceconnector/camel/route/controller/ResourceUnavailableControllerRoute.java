@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.camel.route.controller;
 
+import java.net.SocketTimeoutException;
+
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
@@ -34,6 +36,8 @@ public class ResourceUnavailableControllerRoute extends RouteBuilder {
     public void configure() throws Exception {
         onException(ResourceNotFoundException.class)
                 .to("direct:handleResourceNotFoundForController");
+        onException(SocketTimeoutException.class)
+                .to("direct:handleSocketTimeout");
 
         from("direct:resourceUnavailableSender")
                 .routeId("resourceUnavailableSender")

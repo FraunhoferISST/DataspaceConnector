@@ -16,6 +16,7 @@
 package io.dataspaceconnector.camel.route.controller;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import javax.persistence.PersistenceException;
 
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -62,6 +63,8 @@ public class ContractRequestControllerRoute extends RouteBuilder {
                 .log(LoggingLevel.DEBUG, "Could not save data for artifact. "
                         + "[artifact=(${exchangeProperty.currentArtifact}), "
                         + "exception=(${exception.message})]");
+        onException(SocketTimeoutException.class)
+                .to("direct:handleSocketTimeout");
 
         from("direct:contractRequestSender")
                 .routeId("contractRequestSender")

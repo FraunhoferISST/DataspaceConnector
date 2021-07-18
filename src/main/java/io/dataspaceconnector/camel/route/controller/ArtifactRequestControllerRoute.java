@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.camel.route.controller;
 
+import java.net.SocketTimeoutException;
+
 import io.dataspaceconnector.camel.exception.InvalidResponseException;
 import io.dataspaceconnector.camel.util.ParameterUtils;
 import org.apache.camel.builder.RouteBuilder;
@@ -35,6 +37,8 @@ public class ArtifactRequestControllerRoute extends RouteBuilder {
     public void configure() throws Exception {
         onException(InvalidResponseException.class)
                 .process("PolicyRestrictionProcessor");
+        onException(SocketTimeoutException.class)
+                .to("direct:handleSocketTimeout");
 
         from("direct:artifactRequestSender")
                 .routeId("artifactRequestSender")

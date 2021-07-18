@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.camel.route.controller;
+package io.dataspaceconnector.camel.route.controller.error;
 
-import java.net.SocketTimeoutException;
-
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
 /**
- * Builds the route for sending a query message over IDSCP_v2.
+ * Builds the route for handling SocketTimeoutExceptions.
  */
 @Component
-public class QueryControllerRoute extends RouteBuilder {
+public class SocketTimeoutRoute extends RouteBuilder {
 
     /**
      * Configures the route.
@@ -33,17 +32,11 @@ public class QueryControllerRoute extends RouteBuilder {
      */
     @Override
     public void configure() throws Exception {
-        onException(SocketTimeoutException.class)
-                .to("direct:handleSocketTimeout");
-
-        from("direct:querySender")
-                .routeId("querySender")
-                .process("QueryMessageBuilder")
-                .process("QueryPreparer")
-                .toD("idscp2client://${exchangeProperty.recipient}?"
-                        + "awaitResponse=true&sslContextParameters=#serverSslContext"
-                        + "&useIdsMessages=true")
-                .process("ResponseToDtoConverter");
+        from("direct:handleSocketTimeout")
+                .routeId("socketTimeout")
+                .log(LoggingLevel.DEBUG,
+                        "Error route for handling socket timeout called.")
+                .to("bean:io.dataspaceconnector.util.ControllerUtils?"
+                        + "method=respondConnectionTimedOut(${exeption})");
     }
-
 }
