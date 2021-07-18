@@ -15,11 +15,9 @@
  */
 package io.dataspaceconnector.camel.processors.controller;
 
-import java.util.HashMap;
-
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.exception.InvalidResponseException;
-import io.dataspaceconnector.camel.util.ParameterUtils;
+import io.dataspaceconnector.camel.util.ProcessorUtils;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
 import io.dataspaceconnector.service.message.type.ContractAgreementService;
@@ -86,9 +84,7 @@ class DescriptionResponseValidator extends IdsResponseMessageValidator {
      */
     @Override
     protected void processInternal(final Response response) throws MessageResponseException {
-        final var map = new HashMap<String, String>();
-        map.put(ParameterUtils.HEADER_PART_NAME, response.getHeader().toRdf());
-        map.put(ParameterUtils.PAYLOAD_PART_NAME, response.getBody());
+        final var map = ProcessorUtils.getResponseMap(response);
 
         if (!descReqSvc.validateResponse(map)) {
             // If the response is not a description response message, show the response.
@@ -119,9 +115,7 @@ class ContractResponseValidator extends IdsResponseMessageValidator {
      */
     @Override
     protected void processInternal(final Response response) throws MessageResponseException {
-        final var map = new HashMap<String, String>();
-        map.put(ParameterUtils.HEADER_PART_NAME, response.getHeader().toRdf());
-        map.put(ParameterUtils.PAYLOAD_PART_NAME, response.getBody());
+        final var map = ProcessorUtils.getResponseMap(response);
 
         if (!contractReqSvc.validateResponse(map)) {
             // If the response is not a description response message, show the response.
@@ -152,9 +146,7 @@ class ContractAgreementResponseValidator extends IdsResponseMessageValidator {
      */
     @Override
     protected void processInternal(final Response response) throws MessageResponseException {
-        final var map = new HashMap<String, String>();
-        map.put(ParameterUtils.HEADER_PART_NAME, response.getHeader().toRdf());
-        map.put(ParameterUtils.PAYLOAD_PART_NAME, response.getBody());
+        final var map = ProcessorUtils.getResponseMap(response);
 
         if (!agreementSvc.validateResponse(map)) {
             // If the response is not a description response message, show the response.
@@ -185,9 +177,7 @@ class ArtifactResponseValidator extends IdsResponseMessageValidator {
      */
     @Override
     protected void processInternal(final Response response) throws MessageResponseException {
-        final var map = new HashMap<String, String>();
-        map.put(ParameterUtils.HEADER_PART_NAME, response.getHeader().toRdf());
-        map.put(ParameterUtils.PAYLOAD_PART_NAME, response.getBody());
+        final var map = ProcessorUtils.getResponseMap(response);
 
         if (!artifactReqSvc.validateResponse(map)) {
             // If the response is not a description response message, show the response.

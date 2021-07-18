@@ -17,13 +17,13 @@ package io.dataspaceconnector.camel.processors.controller;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.util.ParameterUtils;
+import io.dataspaceconnector.camel.util.ProcessorUtils;
 import io.dataspaceconnector.service.EntityPersistenceService;
 import io.dataspaceconnector.service.EntityUpdateService;
 import lombok.NonNull;
@@ -105,9 +105,7 @@ class MetadataPersistenceProcessor extends IdsResponseProcessor {
     @Override
     protected void processInternal(final Exchange exchange) {
         final var response = exchange.getIn().getBody(Response.class);
-        final var map = new HashMap<String, String>();
-        map.put(ParameterUtils.HEADER_PART_NAME, response.getHeader().toRdf());
-        map.put(ParameterUtils.PAYLOAD_PART_NAME, response.getBody());
+        final var map = ProcessorUtils.getResponseMap(response);
 
         final var artifacts = (List<URI>) exchange
                 .getProperty(ParameterUtils.ARTIFACTS_PARAM, List.class);
@@ -140,9 +138,7 @@ class DataPersistenceProcessor extends IdsResponseProcessor {
     @Override
     protected void processInternal(final Exchange exchange) throws IOException {
         final var response = exchange.getIn().getBody(Response.class);
-        final var map = new HashMap<String, String>();
-        map.put(ParameterUtils.HEADER_PART_NAME, response.getHeader().toRdf());
-        map.put(ParameterUtils.PAYLOAD_PART_NAME, response.getBody());
+        final var map = ProcessorUtils.getResponseMap(response);
 
         final var artifactId = exchange.getProperty(Exchange.LOOP_INDEX, URI.class);
 

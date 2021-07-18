@@ -34,6 +34,7 @@ import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractOffer;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.Language;
+import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
@@ -225,6 +226,25 @@ public final class IdsUtils {
             var rdf = rule.toRdf();
             if (rdf == null || rdf.isEmpty()) {
                 rdf = SERIALIZER.serialize(rule);
+            }
+            return rdf;
+        } catch (Exception exception) {
+            throw new RdfBuilderException(ErrorMessages.RDF_FAILED);
+        }
+    }
+
+    /**
+     * Get rdf string from instance of type {@link Message}.
+     *
+     * @param message The ids message.
+     * @return The ids message as rdf string.
+     * @throws RdfBuilderException If the response could not be extracted.
+     */
+    public static String toRdf(final Message message) throws RdfBuilderException {
+        try {
+            var rdf = message.toRdf();
+            if (rdf == null || rdf.isEmpty()) {
+                rdf = SERIALIZER.serialize(message);
             }
             return rdf;
         } catch (Exception exception) {
