@@ -58,7 +58,7 @@ public final class IdsUtils {
     /**
      * Serializer for Infomodel objects.
      */
-    private static final Serializer serializer = new Serializer();
+    private static final Serializer SERIALIZER = new Serializer();
 
     /**
      * Get rdf string from instance of type {@link BaseConnector}.
@@ -71,7 +71,7 @@ public final class IdsUtils {
         try {
             var rdf = baseConnector.toRdf();
             if (rdf == null || rdf.isEmpty()) {
-                rdf = serializer.serialize(baseConnector);
+                rdf = SERIALIZER.serialize(baseConnector);
             }
             return rdf;
         } catch (Exception exception) {
@@ -90,7 +90,7 @@ public final class IdsUtils {
         try {
             var rdf = resource.toRdf();
             if (rdf == null || rdf.isEmpty()) {
-                rdf = serializer.serialize(resource);
+                rdf = SERIALIZER.serialize(resource);
             }
             return rdf;
         } catch (Exception exception) {
@@ -110,7 +110,7 @@ public final class IdsUtils {
         try {
             var rdf = artifact.toRdf();
             if (rdf == null || rdf.isEmpty()) {
-                rdf = serializer.serialize(artifact);
+                rdf = SERIALIZER.serialize(artifact);
             }
             return rdf;
         } catch (Exception exception) {
@@ -129,7 +129,7 @@ public final class IdsUtils {
         try {
             var rdf = representation.toRdf();
             if (rdf == null || rdf.isEmpty()) {
-                rdf = serializer.serialize(representation);
+                rdf = SERIALIZER.serialize(representation);
             }
             return rdf;
         } catch (Exception exception) {
@@ -148,7 +148,7 @@ public final class IdsUtils {
         try {
             var rdf = catalog.toRdf();
             if (rdf == null || rdf.isEmpty()) {
-                rdf = serializer.serialize(catalog);
+                rdf = SERIALIZER.serialize(catalog);
             }
             return rdf;
         } catch (Exception exception) {
@@ -167,7 +167,7 @@ public final class IdsUtils {
         try {
             var rdf = request.toRdf();
             if (rdf == null || rdf.isEmpty()) {
-                rdf = serializer.serialize(request);
+                rdf = SERIALIZER.serialize(request);
             }
             return rdf;
         } catch (Exception exception) {
@@ -186,7 +186,7 @@ public final class IdsUtils {
         try {
             var rdf = offer.toRdf();
             if (rdf == null || rdf.isEmpty()) {
-                rdf = serializer.serialize(offer);
+                rdf = SERIALIZER.serialize(offer);
             }
             return rdf;
         } catch (Exception exception) {
@@ -205,7 +205,7 @@ public final class IdsUtils {
         try {
             var rdf = agreement.toRdf();
             if (rdf == null || rdf.isEmpty()) {
-                rdf = serializer.serialize(agreement);
+                rdf = SERIALIZER.serialize(agreement);
             }
             return rdf;
         } catch (Exception exception) {
@@ -224,7 +224,7 @@ public final class IdsUtils {
         try {
             var rdf = rule.toRdf();
             if (rdf == null || rdf.isEmpty()) {
-                rdf = serializer.serialize(rule);
+                rdf = SERIALIZER.serialize(rule);
             }
             return rdf;
         } catch (Exception exception) {
