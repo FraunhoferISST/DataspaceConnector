@@ -248,7 +248,8 @@ public final class SelfLinkHelper {
      * @return The self-link of the subscription.
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
-    public static URI getSelfLink(final Subscription subscription) throws ResourceNotFoundException {
+    public static URI getSelfLink(final Subscription subscription)
+            throws ResourceNotFoundException {
         return getSelfLink(subscription, SUBSCRIPTION_ASSEMBLER);
     }
 }

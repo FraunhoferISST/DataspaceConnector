@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.model;
 
-import java.net.URI;
-import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-
 import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;

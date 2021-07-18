@@ -24,7 +24,6 @@ import lombok.SneakyThrows;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.hateoas.server.reactive.WebFluxLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -69,7 +68,7 @@ public class ArtifactViewAssembler
         view.add(agreementLink);
 
         final var subscriptionLink =
-                linkTo(WebFluxLinkBuilder.methodOn(RelationControllers.ArtifactsToSubscriptions.class)
+                linkTo(methodOn(RelationControllers.ArtifactsToSubscriptions.class)
                         .getResource(artifact.getId(), null, null))
                         .withRel("subscriptions");
         view.add(subscriptionLink);

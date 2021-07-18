@@ -167,7 +167,8 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
      * @throws ResourceNotFoundException       if the resource could not be found.
      */
     private void linkSubscriptionToEntityById(final URI target, final Subscription subscription)
-            throws SubscriptionProcessingException, ResourceNotFoundException, IllegalArgumentException {
+            throws SubscriptionProcessingException, ResourceNotFoundException,
+            IllegalArgumentException {
         // Check if target exists.
         final var entity = entityResolver.getEntityById(target);
         if (entity.isEmpty()) {

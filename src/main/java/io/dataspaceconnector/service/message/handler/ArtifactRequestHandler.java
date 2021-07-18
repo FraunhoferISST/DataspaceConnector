@@ -19,7 +19,6 @@ package io.dataspaceconnector.service.message.handler;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.ids.messaging.handler.message.SupportedMessageType;
 import io.dataspaceconnector.service.ids.ConnectorService;
-import lombok.extern.log4j.Log4j2;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.springframework.stereotype.Component;

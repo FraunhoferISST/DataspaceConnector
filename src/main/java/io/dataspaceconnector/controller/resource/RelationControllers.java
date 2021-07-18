@@ -316,14 +316,13 @@ public final class RelationControllers {
     }
 
     /**
-     * Offers the endpoints for managing the relations between requested resources and subscriptions.
+     * Offers the endpoints for managing relations between requested resources and subscriptions.
      */
     @RestController
     @RequestMapping("/api/requests/{id}/subscriptions")
     @Tag(name = ResourceNames.REQUESTS, description = ResourceDescriptions.REQUESTS)
-    public static class RequestedResourcesToSubscriptions
-            extends BaseResourceChildController<RelationServices.RequestedResourceSubscriptionLinker,
-            Subscription, SubscriptionView> {
+    public static class RequestedResourcesToSubscriptions extends BaseResourceChildController<
+            RelationServices.RequestedResourceSubscriptionLinker, Subscription, SubscriptionView> {
         @Override
         @Hidden
         @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})

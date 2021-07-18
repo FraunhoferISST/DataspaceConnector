@@ -40,7 +40,8 @@ import java.util.Map;
  */
 @Log4j2
 @Service
-public final class SubscriptionRequestService extends AbstractMessageService<SubscriptionMessageDesc> {
+public final class SubscriptionRequestService
+        extends AbstractMessageService<SubscriptionMessageDesc> {
 
     /**
      * @throws IllegalArgumentException     if desc is null.
@@ -48,7 +49,8 @@ public final class SubscriptionRequestService extends AbstractMessageService<Sub
      *                                      when building the message.
      */
     @Override
-    public Message buildMessage(final SubscriptionMessageDesc desc) throws ConstraintViolationException {
+    public Message buildMessage(final SubscriptionMessageDesc desc)
+            throws ConstraintViolationException {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var connectorId = getConnectorService().getConnectorId();
