@@ -28,9 +28,10 @@ import io.dataspaceconnector.service.BlockingArtifactReceiver;
 import io.dataspaceconnector.service.ids.builder.IdsResourceBuilder;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.service.resource.ArtifactService;
-import io.dataspaceconnector.service.resource.RequestedResourceService;
+import io.dataspaceconnector.service.resource.SubscriptionService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
 import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.SelfLinkHelper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -53,11 +54,6 @@ import java.util.stream.Collectors;
 public class SubscriberNotificationService {
 
     /**
-     * The service for managing requested resources.
-     */
-    private final @NonNull RequestedResourceService resourceSvc;
-
-    /**
      * Service for sending ids messages.
      */
     private final @NonNull GlobalMessageService messageSvc;
@@ -78,9 +74,26 @@ public class SubscriberNotificationService {
     private final @NonNull DataAccessVerifier accessVerifier;
 
     /**
+     * Service for handling subscriptions.
+     */
+    private final @NonNull SubscriptionService subscriptionSvc;
+
+    /**
      * Service for mapping dsc resource to ids resource.
      */
     private final @NonNull IdsResourceBuilder<OfferedResource> resourceBuilder;
+
+    /**
+     * Notify subscribers on database update event.
+     *
+     * @param entity The updated entity.
+     */
+    public void notifyOnUpdate(final AbstractEntity entity) {
+        final var uri = SelfLinkHelper.getSelfLink(entity);
+        final var subscriptions = subscriptionSvc.getByTarget(uri);
+
+        notifyAll(subscriptions, uri, entity);
+    }
 
     /**
      * Notifies all backend systems and ids participants that subscribed for updates to an entity

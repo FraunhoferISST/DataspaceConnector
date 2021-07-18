@@ -17,7 +17,6 @@ package io.dataspaceconnector.service.resource;
 
 import io.dataspaceconnector.camel.exception.SubscriptionProcessingException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.model.AbstractFactory;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.Representation;
@@ -45,12 +44,6 @@ import java.util.Set;
 @Service
 @NoArgsConstructor
 public class SubscriptionService extends BaseEntityService<Subscription, SubscriptionDesc> {
-
-    /**
-     * Factory handling subscription changes.
-     */
-    @Autowired
-    private AbstractFactory<Subscription, SubscriptionDesc> factory;
 
     /**
      * Service for linking artifacts and subscriptions.
@@ -90,7 +83,7 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
     public Subscription create(final SubscriptionDesc desc) {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        final var subscription = persist(factory.create(desc));
+        final var subscription = persist(getFactory().create(desc));
         final var target = subscription.getTarget();
 
         linkSubscriptionToEntityById(target, subscription);
