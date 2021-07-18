@@ -1,7 +1,6 @@
 package io.dataspaceconnector.controller;
 
 import io.dataspaceconnector.controller.util.ControllerUtils;
-import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.message.subscription.SubscriberNotificationService;
 import io.dataspaceconnector.service.resource.SubscriptionService;
@@ -46,6 +45,12 @@ public class NotificationController {
      */
     private final @NonNull SubscriberNotificationService subscriberNotificationSvc;
 
+    /**
+     * Notify all subscribers to a given element.
+     *
+     * @param elementId The entity id.
+     * @return The response entity.
+     */
     @GetMapping("/notify")
     @Operation(summary = "Notify all subscribers", description = "Can be used to manually notify "
             + "all subscribers about a resource offer, representation, or artifact update.")
@@ -53,9 +58,7 @@ public class NotificationController {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "404", description = "Not found"),
-            @ApiResponse(responseCode = "500", description = "Internal server error"),
-            @ApiResponse(responseCode = "502", description = "Bad gateway"),
-            @ApiResponse(responseCode = "504", description = "Gateway timeout")})
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @ResponseBody
     public ResponseEntity<Object> sendMessage(
             @Parameter(description = "The element id.", required = true)
@@ -63,7 +66,7 @@ public class NotificationController {
         try {
             final var entity = entityResolver.getEntityById(elementId);
             if (entity.isEmpty()) {
-                throw new ResourceNotFoundException(String.format("%s", elementId));
+                return ControllerUtils.respondResourceNotFound(elementId);
             }
 
             final var subscriptions = subscriptionSvc.getByTarget(elementId);
@@ -71,11 +74,14 @@ public class NotificationController {
                 return ControllerUtils.respondNoSubscriptionsFound(elementId);
             }
 
-            // TODO
+            // Notify all subscribers.
             subscriberNotificationSvc.notifySubscribers(subscriptions, elementId, entity.get());
+            subscriberNotificationSvc.notifyIdsSubscribers(subscriptions, entity.get());
+
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception exception) {
-            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+            return new ResponseEntity<>("Notification of subscribers failed.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

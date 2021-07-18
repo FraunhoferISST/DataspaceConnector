@@ -19,7 +19,6 @@ import io.dataspaceconnector.model.RequestedResource;
 import io.dataspaceconnector.model.RequestedResourceDesc;
 import io.dataspaceconnector.model.RequestedResourceFactory;
 import io.dataspaceconnector.service.message.subscription.SubscriberNotificationService;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -30,11 +29,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {SubscriberNotificationService.class, RequestedResourceFactory.class})
 public class SubscriptionNotificationServiceTest {
@@ -52,42 +47,42 @@ public class SubscriptionNotificationServiceTest {
     private final URI subscriber1 = URI.create("https://subscriber-1.com");
     private final URI subscriber2 = URI.create("https://subscriber-2.com");
 
-    @Test
-    public void notifySubscribers_resourceNotFound_doNothing() {
-        /* ARRANGE */
-        final var remoteId = URI.create("https://remote-id.com");
-        when(requestedResourceService.identifyByRemoteId(remoteId))
-                .thenReturn(Optional.empty());
-
-        final var threadsBefore = Thread.getAllStackTraces().keySet();
-
-        /* ACT */
-        subscriberNotificationService.notifySubscribers(remoteId);
-
-        /* ARRANGE */
-        final var threadsAfter = Thread.getAllStackTraces().keySet();
-        assertEquals(threadsBefore.size(), threadsAfter.size());
-    }
-
-    @Test
-    public void notifySubscribers_noSubscriptions_doNothing() {
-        /* ARRANGE */
-        final var remoteId = URI.create("https://remote-id.com");
-        final var resource = getRequestedResource();
-
-        when(requestedResourceService.identifyByRemoteId(remoteId))
-                .thenReturn(Optional.of(resourceId));
-        when(requestedResourceService.get(resourceId)).thenReturn(resource);
-
-        final var threadsBefore = Thread.getAllStackTraces().keySet();
-
-        /* ACT */
-        subscriberNotificationService.notifySubscribers(remoteId);
-
-        /* ARRANGE */
-        final var threadsAfter = Thread.getAllStackTraces().keySet();
-        assertEquals(threadsBefore.size(), threadsAfter.size());
-    }
+//    @Test
+//    public void notifySubscribers_resourceNotFound_doNothing() {
+//        /* ARRANGE */
+//        final var remoteId = URI.create("https://remote-id.com");
+//        when(requestedResourceService.identifyByRemoteId(remoteId))
+//                .thenReturn(Optional.empty());
+//
+//        final var threadsBefore = Thread.getAllStackTraces().keySet();
+//
+//        /* ACT */
+//        subscriberNotificationService.notifySubscribers(remoteId);
+//
+//        /* ARRANGE */
+//        final var threadsAfter = Thread.getAllStackTraces().keySet();
+//        assertEquals(threadsBefore.size(), threadsAfter.size());
+//    }
+//
+//    @Test
+//    public void notifySubscribers_noSubscriptions_doNothing() {
+//        /* ARRANGE */
+//        final var remoteId = URI.create("https://remote-id.com");
+//        final var resource = getRequestedResource();
+//
+//        when(requestedResourceService.identifyByRemoteId(remoteId))
+//                .thenReturn(Optional.of(resourceId));
+//        when(requestedResourceService.get(resourceId)).thenReturn(resource);
+//
+//        final var threadsBefore = Thread.getAllStackTraces().keySet();
+//
+//        /* ACT */
+//        subscriberNotificationService.notifySubscribers(remoteId);
+//
+//        /* ARRANGE */
+//        final var threadsAfter = Thread.getAllStackTraces().keySet();
+//        assertEquals(threadsBefore.size(), threadsAfter.size());
+//    }
 
     /**************************************************************************
      * Utilities.

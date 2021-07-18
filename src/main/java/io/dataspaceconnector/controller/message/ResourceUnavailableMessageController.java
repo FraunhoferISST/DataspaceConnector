@@ -28,10 +28,9 @@ import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
-import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
-import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -100,7 +99,7 @@ public class ResourceUnavailableMessageController {
         try {
             final var resource = connectorService.getOfferedResourceById(resourceId);
             if (resource.isEmpty()) {
-                throw new ResourceNotFoundException(String.format("%s", resourceId));
+                return ControllerUtils.respondResourceNotFound(resourceId);
             }
 
             // Send the resource unavailable message.

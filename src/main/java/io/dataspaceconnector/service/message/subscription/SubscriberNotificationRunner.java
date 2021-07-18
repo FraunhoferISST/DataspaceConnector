@@ -84,6 +84,7 @@ public class SubscriberNotificationRunner implements Runnable {
     /**
      * Sends the given notification to the given URL as the body of a POST request. If the response
      * has a status code 5xx, the request is retried 5 times with a delay of 5 seconds each.
+     * Header params contain target id and event, the body contains the data.
      *
      * @param uri the recipient
      * @return a {@link Mono} with the response body as string

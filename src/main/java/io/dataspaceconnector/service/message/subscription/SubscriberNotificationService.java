@@ -20,13 +20,17 @@ import io.dataspaceconnector.controller.util.Event;
 import io.dataspaceconnector.controller.util.Notification;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.model.Artifact;
+import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.QueryInput;
+import io.dataspaceconnector.model.Representation;
 import io.dataspaceconnector.model.Subscription;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
+import io.dataspaceconnector.service.ids.builder.IdsResourceBuilder;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.service.resource.ArtifactService;
 import io.dataspaceconnector.service.resource.RequestedResourceService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
+import io.dataspaceconnector.util.ErrorMessages;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -74,78 +78,119 @@ public class SubscriberNotificationService {
     private final @NonNull DataAccessVerifier accessVerifier;
 
     /**
-     * Notifies all backend systems subscribed for updates to a requested resource using a
+     * Service for mapping dsc resource to ids resource.
+     */
+    private final @NonNull IdsResourceBuilder<OfferedResource> resourceBuilder;
+
+    /**
+     * Notifies all backend systems subscribed for updates to an entity using a
      * {@link SubscriberNotificationRunner}. The backends are notified in parallel and
      * asynchronously. If a request to one of the subscribed URLs results in a status code 5xx,
      * the request is retried 5 times with a delay of 5 seconds each.
      *
-     * @param remoteId the remote ID of the requested resource that was updated.
+     * @param subscriptions List of subscriptions for a certain target.
+     * @param target        The target of the subscriptions.
+     * @param entity        The target entity of the subscriptions.
      */
-    public void notifySubscribers(final URI remoteId) {
-        final var resourceId = resourceSvc.identifyByRemoteId(remoteId);
-        if (resourceId.isEmpty()) {
-            if (log.isErrorEnabled()) {
-                log.error("Could not notify backends about updated resource with remote ID {}: "
-                        + "Resource not found.", remoteId);
-            }
-            return;
-        }
-
-        final var resource = resourceSvc.get(resourceId.get());
-        final var subscribers = (resource.getSubscriptions() != null
-                ? new ArrayList<>(resource.getSubscriptions()) : new ArrayList<Subscription>())
-                .stream()
+    public void notifySubscribers(final List<Subscription> subscriptions, final URI target,
+                                  final AbstractEntity entity) {
+        // Get list of non-ids subscribers.
+        final var recipients = subscriptions.stream()
+                .filter(subscription -> !subscription.isIdsProtocol() && !subscription.isPushData())
                 .map(Subscription::getUrl)
                 .collect(Collectors.toList());
 
-//        if (!subscribers.isEmpty()) {
-//            new Thread(new SubscriberNotificationRunner(resource.getId(), subscribers)).start();
-//        }
-    }
-
-    // TODO
-    public void notifySubscribers(final List<Subscription> subscriptions, final URI target,
-                                  final AbstractEntity entity) {
-        final var data = retrieveDataByArtifact(entity);
-
-        // Get list of non-ids subscribers.
-        final var recipients = subscriptions.stream()
-                .filter(subscription -> !subscription.isIdsProtocol())
+        // Get list of non-ids subscribers with isPushData == true.
+        final var recipientsWithData = subscriptions.stream()
+                .filter(subscription -> !subscription.isIdsProtocol() && subscription.isPushData())
                 .map(Subscription::getUrl)
                 .collect(Collectors.toList());
 
         // Update non-ids subscribers.
         final var notification = new Notification(new Date(), target, Event.UPDATED);
         if (!recipients.isEmpty()) {
-            new Thread(new SubscriberNotificationRunner(notification, recipients, data)).start();
+            new Thread(new SubscriberNotificationRunner(notification, recipients, null)).start();
         }
+        if (!recipientsWithData.isEmpty()) {
+            new Thread(new SubscriberNotificationRunner(notification, recipients,
+                    retrieveDataByArtifact(entity))).start();
+        }
+    }
 
+    /**
+     * Notifies all backend systems subscribed for updates to an entity using a
+     * {@link SubscriberNotificationRunner}. The backends are notified in parallel and
+     * asynchronously. If a request to one of the subscribed URLs results in a status code 5xx,
+     * the request is retried 5 times with a delay of 5 seconds each.
+     *
+     * @param subscriptions List of subscriptions for a certain target.
+     * @param entity        The target entity of the subscriptions.
+     */
+    public void notifyIdsSubscribers(final List<Subscription> subscriptions,
+                                     final AbstractEntity entity) {
         final var idsRecipients = subscriptions.stream()
                 .filter(Subscription::isIdsProtocol)
                 .map(Subscription::getUrl)
                 .collect(Collectors.toList());
 
-        Resource resource = null;
+        final var resources = getIdsResourcesFromEntity(entity);
+
+        // Iterate over all recipients and send ids resource update messages.
         for (final var recipient : idsRecipients) {
-            try {
-                final var update = messageSvc.sendResourceUpdateMessage(recipient, resource);
-                if (update) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Successfully sent update message. [url=({})]", recipient);
+            // Send update message for every found resource.
+            for (final var resource : resources) {
+                try {
+                    if (messageSvc.sendAndValidateResourceUpdateMessage(recipient, resource)) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Successfully sent update message. [url=({})]", recipient);
+                        }
                     } else {
                         if (log.isDebugEnabled()) {
-                            log.debug("Failed to send update message. [url=({})]", recipient);
+                            log.debug("{} [url=({})]", ErrorMessages.UPDATE_MESSAGE_FAILED,
+                                    recipient);
                         }
                     }
+                } catch (Exception e) {
+                    if (log.isWarnEnabled()) {
+                        log.debug("{} [url=({}), exception=({})]",
+                                ErrorMessages.UPDATE_MESSAGE_FAILED, recipient, e.getMessage());
+                    }
                 }
-            } catch (Exception exception) {
-                if (log.isWarnEnabled()) {
-                    log.debug("Failed to send update message. [url=({}), exception=({})]",
-                            recipient, exception.getMessage());
+            }
+
+        }
+    }
+
+    // TODO refactor to recursive method calls
+    private List<Resource> getIdsResourcesFromEntity(final AbstractEntity entity) {
+        var updatedResources = new ArrayList<Resource>();
+        if (entity instanceof OfferedResource) {
+            updatedResources.add(resourceBuilder.create((OfferedResource) entity));
+        } else if (entity instanceof Representation) {
+            // Get all resources linked to given representation.
+            final var resources = ((Representation) entity).getResources();
+            for (final var resource : resources) {
+                // Don't add requested resources to that list as ids participants should only know
+                // about offered resources.
+                if (resource instanceof OfferedResource) {
+                    updatedResources.add(resourceBuilder.create((OfferedResource) resource));
+                }
+            }
+        } else if (entity instanceof Artifact) {
+            // Get all representations linked to given representation.
+            final var representations = ((Artifact) entity).getRepresentations();
+            for (final var representation : representations) {
+                final var resources = representation.getResources();
+                for (final var resource : resources) {
+                    // Don't add requested resources to that list as ids participants should only
+                    // know about offered resources.
+                    if (resource instanceof OfferedResource) {
+                        updatedResources.add(resourceBuilder.create((OfferedResource) resource));
+                    }
                 }
             }
         }
-
+        return updatedResources;
     }
 
     /**
