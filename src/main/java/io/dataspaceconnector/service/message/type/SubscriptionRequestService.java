@@ -23,7 +23,7 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
-import io.dataspaceconnector.model.Subscription;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.message.SubscriptionMessageDesc;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.Utils;
@@ -78,34 +78,28 @@ public final class SubscriptionRequestService extends AbstractMessageService<Sub
     /**
      * Send a request message. Allow the access only if that operation was successful.
      *
-     * @param recipient    The message's recipient.
-     * @param subscription The subscription object containing all relevant information.
-     * @return The response map.
-     * @throws MessageException         if message handling failed.
-     * @throws IllegalArgumentException if contract agreement is null.
-     */
-    public Map<String, String> sendMessage(final URI recipient, final Subscription subscription)
-            throws MessageException, ConstraintViolationException {
-        Utils.requireNonNull(subscription, ErrorMessages.ENTITY_NULL);
-
-        final var target = subscription.getTarget();
-        return send(new SubscriptionMessageDesc(recipient, target), subscription);
-    }
-
-    /**
-     * Send a request message. Allow the access only if that operation was successful.
-     *
      * @param recipient The message's recipient.
      * @param target    The target element id.
+     * @param payload   The message's payload.
      * @return The response map.
-     * @throws MessageException         if message handling failed.
-     * @throws IllegalArgumentException if contract agreement is null.
+     * @throws MessageException            if message handling failed.
+     * @throws MessageResponseException    if the response could not be processed.
+     * @throws UnexpectedResponseException if the response is not as expected.
      */
-    public Map<String, String> sendMessage(final URI recipient, final URI target)
-            throws MessageException, ConstraintViolationException {
-        Utils.requireNonNull(target, ErrorMessages.ENTITYID_NULL);
+    public Map<String, String> sendMessage(final URI recipient, final URI target,
+                                           final Object payload)
+            throws MessageException, MessageResponseException, UnexpectedResponseException {
+        final var desc = new SubscriptionMessageDesc(recipient, target);
+        final var response = send(desc, payload);
+        try {
+            if (!validateResponse(response)) {
+                throw new UnexpectedResponseException(getResponseContent(response));
+            }
+        } catch (MessageResponseException e) {
+            throw new UnexpectedResponseException(getResponseContent(response), e);
+        }
 
-        return send(new SubscriptionMessageDesc(recipient, target), null);
+        return response;
     }
 
     /**

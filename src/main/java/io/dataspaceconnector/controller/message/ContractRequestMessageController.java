@@ -18,20 +18,18 @@ package io.dataspaceconnector.controller.message;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;
+import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.RdfBuilderException;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.ArtifactDataDownloader;
 import io.dataspaceconnector.service.ContractNegotiator;
 import io.dataspaceconnector.service.EntityUpdateService;
 import io.dataspaceconnector.service.MetadataDownloader;
-import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.resource.AgreementService;
-import io.dataspaceconnector.service.usagecontrol.ContractManager;
-import io.dataspaceconnector.controller.util.ControllerUtils;
-import io.dataspaceconnector.util.MessageUtils;
 import io.dataspaceconnector.util.RuleUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -130,7 +128,7 @@ public class ContractRequestMessageController {
                     + "download data of an artifact.")
             @RequestParam("download") final boolean download,
             @Parameter(description = "List of ids rules with an artifact id as target.")
-            @RequestBody final List<Rule> ruleList) throws UnexpectedResponseException {
+            @RequestBody final List<Rule> ruleList) {
         try {
             // Validates user input.
             RuleUtils.validateRuleTarget(ruleList);
@@ -164,6 +162,9 @@ public class ContractRequestMessageController {
         } catch (ContractException e) {
             // If the contract agreement is invalid.
             return ControllerUtils.respondNegotiationAborted();
+        } catch (UnexpectedResponseException e) {
+            // If the response is not as expected.
+            return ControllerUtils.respondWithContent(e.getContent());
         }
     }
 

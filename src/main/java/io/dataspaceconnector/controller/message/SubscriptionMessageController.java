@@ -18,6 +18,7 @@ package io.dataspaceconnector.controller.message;
 import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.Subscription;
 import io.dataspaceconnector.service.message.type.SubscriptionRequestService;
 import io.dataspaceconnector.util.MessageUtils;
@@ -66,7 +67,8 @@ public class SubscriptionMessageController {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "417", description = "Expectation failed"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
+            @ApiResponse(responseCode = "500", description = "Internal server error"),
+            @ApiResponse(responseCode = "502", description = "Bad gateway")})
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     @ResponseBody
     public ResponseEntity<Object> subscribe(
@@ -76,21 +78,20 @@ public class SubscriptionMessageController {
             @RequestBody final Subscription subscription) {
         try {
             // Send and validate request/response message.
-            final var response = subscriptionReqSvc.sendMessage(recipient, subscription);
-            final var valid = subscriptionReqSvc.validateResponse(response);
-            if (!valid) {
-                // If the response is not a description response message, show the response.
-                final var content = subscriptionReqSvc.getResponseContent(response);
-                return ControllerUtils.respondWithMessageContent(content);
-            }
+            final var response = subscriptionReqSvc.sendMessage(recipient,
+                    subscription.getTarget(), subscription);
 
             // Read and process the response message.
-            final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
-            return ResponseEntity.ok(payload);
+            return ResponseEntity.ok(MessageUtils.extractPayloadFromMultipartMessage(response));
         } catch (MessageException exception) {
+            // If the message could not be built.
             return ControllerUtils.respondIdsMessageFailed(exception);
-        } catch (MessageResponseException exception) {
-            return ControllerUtils.respondReceivedInvalidResponse(exception);
+        } catch (MessageResponseException | IllegalArgumentException e) {
+            // If the response message is invalid or malformed.
+            return ControllerUtils.respondReceivedInvalidResponse(e);
+        } catch (UnexpectedResponseException e) {
+            // If the response is not as expected.
+            return ControllerUtils.respondWithContent(e.getContent());
         }
     }
 
@@ -117,21 +118,19 @@ public class SubscriptionMessageController {
             @RequestParam("elementId") final URI elementId) {
         try {
             // Send and validate request/response message.
-            final var response = subscriptionReqSvc.sendMessage(recipient, elementId);
-            final var valid = subscriptionReqSvc.validateResponse(response);
-            if (!valid) {
-                // If the response is not a description response message, show the response.
-                final var content = subscriptionReqSvc.getResponseContent(response);
-                return ControllerUtils.respondWithMessageContent(content);
-            }
+            final var response = subscriptionReqSvc.sendMessage(recipient, elementId, null);
 
             // Read and process the response message.
-            final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
-            return ResponseEntity.ok(payload);
+            return ResponseEntity.ok(MessageUtils.extractPayloadFromMultipartMessage(response));
         } catch (MessageException exception) {
+            // If the message could not be built.
             return ControllerUtils.respondIdsMessageFailed(exception);
-        } catch (MessageResponseException exception) {
-            return ControllerUtils.respondReceivedInvalidResponse(exception);
+        } catch (MessageResponseException | IllegalArgumentException e) {
+            // If the response message is invalid or malformed.
+            return ControllerUtils.respondReceivedInvalidResponse(e);
+        } catch (UnexpectedResponseException e) {
+            // If the response is not as expected.
+            return ControllerUtils.respondWithContent(e.getContent());
         }
     }
 }
