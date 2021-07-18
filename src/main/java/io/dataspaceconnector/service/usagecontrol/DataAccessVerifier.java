@@ -63,7 +63,8 @@ public final class DataAccessVerifier implements PolicyVerifier<AccessVerificati
      * @param agreementId The id of the transfer contract (agreement).
      * @throws PolicyRestrictionException If a policy restriction has been detected.
      */
-    public void checkPolicy(final Artifact target, final URI agreementId) throws PolicyRestrictionException {
+    public void checkPolicy(final Artifact target, final URI agreementId) throws
+            PolicyRestrictionException {
         final var patternsToCheck = Arrays.asList(
                 PolicyPattern.PROVIDE_ACCESS,
                 PolicyPattern.USAGE_DURING_INTERVAL,

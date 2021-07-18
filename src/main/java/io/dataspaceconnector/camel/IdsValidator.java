@@ -181,7 +181,8 @@ class PolicyValidator extends IdsValidator<Request<ArtifactRequestMessageImpl, M
         final var agreement = contractManager.validateTransferContract(
                 transferContract, requestedArtifact, issuer);
         final var profile = extractSecurityProfile(msg.getClaims());
-        final var input = new ProvisionVerificationInput(requestedArtifact, issuer, agreement, profile);
+        final var input = new ProvisionVerificationInput(requestedArtifact, issuer, agreement,
+                profile);
         if (accessVerifier.verify(input) == VerificationResult.DENIED) {
             throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
         }
