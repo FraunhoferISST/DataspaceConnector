@@ -29,6 +29,7 @@ import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
@@ -52,6 +53,9 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = {DescriptionRequestMessageController.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class DescriptionRequestMessageControllerTest {
+
+    @MockBean
+    private IdscpServerRoute idscpServerRoute;
 
     @MockBean
     private DescriptionRequestService messageService;

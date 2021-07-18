@@ -40,6 +40,7 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
+import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.EntityUpdateService;
@@ -62,6 +63,9 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(properties = {"clearing.house.url=https://ch-ids.aisec.fraunhofer.de/logs/messages/"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class ContractAgreementHandlerTest {
+
+    @MockBean
+    private IdscpServerRoute idscpServerRoute;
 
     @Autowired
     ContractAgreementHandler handler;
