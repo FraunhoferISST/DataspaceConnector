@@ -82,7 +82,8 @@ public class GlobalMessageService {
      *
      * @param input The recipient or a broker id.
      * @return True if the message was successfully processed by the recipient, false if not.
-     * @throws MultipartParseException     if the response could not be parsed to header and payload.
+     * @throws MultipartParseException     if the response could not be parsed to header
+     *                                     and payload.
      * @throws ClaimsException             if an errors occur while validating a DAT from response.
      * @throws DapsTokenManagerException   if the DAT for building the message cannot be acquired.
      * @throws IOException                 if any other problem in establishing a connection occurs.
@@ -121,7 +122,8 @@ public class GlobalMessageService {
      *
      * @param input The recipient or a broker id.
      * @return Optional of message container providing the received ids response.
-     * @throws MultipartParseException     if the response could not be parsed to header and payload.
+     * @throws MultipartParseException     if the response could not be parsed to header
+     *                                     and payload.
      * @throws ClaimsException             if an errors occur while validating a DAT from response.
      * @throws DapsTokenManagerException   if the DAT for building the message cannot be acquired.
      * @throws IOException                 if any other problem in establishing a connection occurs.
@@ -160,7 +162,8 @@ public class GlobalMessageService {
      * @param input    The recipient or a broker id.
      * @param resource The ids resource that should be updated.
      * @return Optional of message container providing the received ids response.
-     * @throws MultipartParseException     if the response could not be parsed to header and payload.
+     * @throws MultipartParseException     if the response could not be parsed to header
+     *                                     and payload.
      * @throws ClaimsException             if an errors occur while validating a DAT from response.
      * @throws DapsTokenManagerException   if the DAT for building the message cannot be acquired.
      * @throws IOException                 if any other problem in establishing a connection occurs.
@@ -202,7 +205,8 @@ public class GlobalMessageService {
      * @param input    The recipient or a broker id.
      * @param resource The ids resource that should be updated.
      * @return True if the message was successfully processed by the recipient, false if not.
-     * @throws MultipartParseException     if the response could not be parsed to header and payload.
+     * @throws MultipartParseException     if the response could not be parsed to header
+     *                                     and payload.
      * @throws ClaimsException             if an errors occur while validating a DAT from response.
      * @throws DapsTokenManagerException   if the DAT for building the message cannot be acquired.
      * @throws IOException                 if any other problem in establishing a connection occurs.
@@ -243,7 +247,8 @@ public class GlobalMessageService {
      * @param input The recipient or a broker id.
      * @param query The query statement.
      * @return Optional of message container providing the received ids response.
-     * @throws MultipartParseException     if the response could not be parsed to header and payload.
+     * @throws MultipartParseException     if the response could not be parsed to header
+     *                                     and payload.
      * @throws ClaimsException             if an errors occur while validating a DAT from response.
      * @throws DapsTokenManagerException   if the DAT for building the message cannot be acquired.
      * @throws IOException                 if any other problem in establishing a connection occurs.
@@ -278,7 +283,8 @@ public class GlobalMessageService {
      * @param limit  The limit value.
      * @param offset The offset value.
      * @return Optional of message container providing the received ids response.
-     * @throws MultipartParseException     if the response could not be parsed to header and payload.
+     * @throws MultipartParseException     if the response could not be parsed to header
+     *                                     and payload.
      * @throws ClaimsException             if an errors occur while validating a DAT from response.
      * @throws DapsTokenManagerException   if the DAT for building the message cannot be acquired.
      * @throws IOException                 if any other problem in establishing a connection occurs.
