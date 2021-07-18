@@ -27,7 +27,6 @@ import java.net.URI;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest(classes = RuleValidator.class)
 public class RuleValidatorTest {
@@ -49,10 +48,11 @@ public class RuleValidatorTest {
 
         final var target = URI.create("https://target");
         final var issuer = URI.create("https://issuer");
+        final var agreementId = URI.create("https://agreementId");
 
         /* ACT & ASSERT */
         assertDoesNotThrow(() -> ruleValidator.validatePolicy(
                 PolicyPattern.SECURITY_PROFILE_RESTRICTED_USAGE, rule, target, issuer,
-                Optional.of(profile), any()));
+                Optional.of(profile), agreementId));
     }
 }
