@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -28,6 +24,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * This is the main application class. The application is started and an openApi bean for the
@@ -45,6 +45,7 @@ public class ConnectorApplication {
 
     /**
      * The main method.
+     *
      * @param args List of arguments.
      */
     public static void main(final String[] args) {
@@ -62,25 +63,25 @@ public class ConnectorApplication {
     public OpenAPI customOpenAPI() throws IOException {
         final var properties = new Properties();
         try (InputStream inputStream = Thread.currentThread().getContextClassLoader()
-                                             .getResourceAsStream("application.properties")) {
+                .getResourceAsStream("application.properties")) {
             // This function may crash (e.g. ill-formatted file). Let it bubble up.
             properties.load(inputStream);
         }
 
         return new OpenAPI()
-            .components(new Components())
-            .info(new Info()
-                .title(properties.getProperty("title"))
-                .description(properties.getProperty("project_desc"))
-                .version(properties.getProperty("version"))
-                .contact(new Contact()
-                    .name(properties.getProperty("organization_name"))
-                    .url(properties.getProperty("contact_url"))
-                    .email(properties.getProperty("contact_email"))
-                )
-                .license(new License()
-                    .name(properties.getProperty("license"))
-                    .url(properties.getProperty("license_url")))
-            );
+                .components(new Components())
+                .info(new Info()
+                        .title(properties.getProperty("title"))
+                        .description(properties.getProperty("project_desc"))
+                        .version(properties.getProperty("version"))
+                        .contact(new Contact()
+                                .name(properties.getProperty("organization_name"))
+                                .url(properties.getProperty("contact_url"))
+                                .email(properties.getProperty("contact_email"))
+                        )
+                        .license(new License()
+                                .name(properties.getProperty("license"))
+                                .url(properties.getProperty("license_url")))
+                );
     }
 }

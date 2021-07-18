@@ -28,12 +28,12 @@ import java.net.URI;
 import java.util.Collections;
 
 /**
- * Converts DSC representation to ids representation.
+ * Converts dsc representation to ids representation.
  */
 @Component
 @RequiredArgsConstructor
-public final class IdsRepresentationBuilder
-        extends AbstractIdsBuilder<Representation, de.fraunhofer.iais.eis.Representation> {
+public final class IdsRepresentationBuilder extends AbstractIdsBuilder<Representation,
+        de.fraunhofer.iais.eis.Representation> {
 
     /**
      * The builder for ids artifacts.

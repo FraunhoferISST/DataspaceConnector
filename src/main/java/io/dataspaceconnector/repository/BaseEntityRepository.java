@@ -23,6 +23,7 @@ import java.util.UUID;
 
 /**
  * The base repository for all entities of type {@link Entity}.
+ *
  * @param <T> The entity type.
  */
 @NoRepositoryBean

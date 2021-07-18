@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.configurations;
-
-import javax.validation.Valid;
-import java.util.UUID;
+package io.dataspaceconnector.controller.configuration;
 
 import io.dataspaceconnector.controller.base.CRUDController;
-import io.dataspaceconnector.controller.resource.swagger.response.ResponseCodes;
+import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
+import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
+import io.dataspaceconnector.controller.resource.tag.ResourceName;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.service.configuration.GenericEndpointService;
@@ -44,9 +43,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.util.UUID;
 
 /**
  * Offers the endpoints for managing different endpoints.
@@ -54,10 +55,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/endpoints")
 @RequiredArgsConstructor
-@Tag(name = "Endpoints", description = "Endpoints for CRUD operations on endpoints")
+@Tag(name = ResourceName.ENDPOINTS, description = ResourceDescription.ENDPOINTS)
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.NONE)
-public class EndpointControllers implements CRUDController<Endpoint, EndpointDesc, Object> {
+public class EndpointController implements CRUDController<Endpoint, EndpointDesc, Object> {
 
     /**
      * Service for generic endpoint.
@@ -91,13 +92,17 @@ public class EndpointControllers implements CRUDController<Endpoint, EndpointDes
         return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ResponseEntity<Object> create(final EndpointDesc desc) {
         return respondCreated(service.create(desc));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SuppressWarnings("unchecked")
     public PagedModel<Object> getAll(final Integer page, final Integer size) {
@@ -113,26 +118,32 @@ public class EndpointControllers implements CRUDController<Endpoint, EndpointDes
         return (PagedModel<Object>) model;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final Object get(final UUID resourceId) {
         return assemblerProxy.toModel(service.get(resourceId));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ResponseEntity<Object> update(final UUID resourceId, final EndpointDesc desc) {
         final var resource = service.update(resourceId, desc);
 
         if (resource.getId().equals(resourceId)) {
-            // The resource was not moved
+            // The resource was not moved.
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
         return respondCreated(resource);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ResponseEntity<Void> delete(final UUID resourceId) {
         service.delete(resourceId);
@@ -144,13 +155,13 @@ public class EndpointControllers implements CRUDController<Endpoint, EndpointDes
      * @param dataSourceId      The id of the data source.
      * @return response status OK, if data source is created at generic endpoint.
      */
-    @PutMapping("{id}/datasource")
+    @PutMapping("{id}/datasource/{dataSourceId}")
     @Operation(summary = "Creates start endpoint for the route")
-    @ApiResponses(value = { @ApiResponse(responseCode = ResponseCodes.OK) })
-    public final ResponseEntity<String> createDataSource(
+    @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.NO_CONTENT)})
+    public final ResponseEntity<Void> linkDataSource(
             @Valid @PathVariable(name = "id") final UUID genericEndpointId,
-            @RequestBody final UUID dataSourceId) {
+            @Valid @PathVariable(name = "dataSourceId") final UUID dataSourceId) {
         genericEndpointService.setGenericEndpointDataSource(genericEndpointId, dataSourceId);
-        return new ResponseEntity<>("Created DataSource", HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

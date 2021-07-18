@@ -24,7 +24,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import io.dataspaceconnector.exception.PolicyRestrictionException;
-import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.exception.UnreachableLineException;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
@@ -33,16 +32,16 @@ import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.model.artifact.RemoteData;
 import io.dataspaceconnector.repository.ArtifactRepository;
+import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.ArtifactRetriever;
 import io.dataspaceconnector.service.HttpService;
 import io.dataspaceconnector.service.usagecontrol.PolicyVerifier;
 import io.dataspaceconnector.service.usagecontrol.VerificationResult;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.QueryInput;
 import io.dataspaceconnector.util.Utils;
 import kotlin.NotImplementedError;
-import kotlin.Pair;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -74,17 +73,25 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private final @NonNull HttpService httpSvc;
 
     /**
+     * Repository for storing AuthTypes.
+     */
+    private final @NonNull AuthenticationRepository authRepo;
+
+    /**
      * Constructor for ArtifactService.
      *
-     * @param dataRepository The data repository.
-     * @param httpService    The HTTP service for fetching remote data.
+     * @param dataRepository     The data repository.
+     * @param httpService        The HTTP service for fetching remote data.
+     * @param authenticationRepository The AuthType repository.
      */
     @Autowired
     public ArtifactService(final @NonNull DataRepository dataRepository,
-                           final @NonNull HttpService httpService) {
+                           final @NonNull HttpService httpService,
+                           final @NonNull AuthenticationRepository authenticationRepository) {
         super();
         this.dataRepo = dataRepository;
         this.httpSvc = httpService;
+        this.authRepo = authenticationRepository;
     }
 
     /**
@@ -99,6 +106,10 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         if (tmp.getData() != null) {
             if (tmp.getData().getId() == null) {
                 // The data element is new, insert
+                if (tmp.getData() instanceof RemoteData) {
+                    var data = (RemoteData) tmp.getData();
+                    data.getAuthentication().forEach(authRepo::saveAndFlush);
+                }
                 dataRepo.saveAndFlush(tmp.getData());
             } else {
                 // The data element exists already, check if an update is
@@ -136,7 +147,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final QueryInput queryInput)
-            throws PolicyRestrictionException, IOException, UnexpectedResponseException {
+            throws PolicyRestrictionException, IOException {
         final var agreements =
                 ((ArtifactRepository) getRepository()).findRemoteOriginAgreements(artifactId);
         if (agreements.size() > 0) {
@@ -151,7 +162,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private InputStream tryToAccessDataByUsingAnyAgreement(
             final PolicyVerifier<Artifact> accessVerifier, final ArtifactRetriever retriever,
             final UUID artifactId, final QueryInput queryInput, final List<URI> agreements)
-            throws IOException, UnexpectedResponseException {
+            throws IOException {
         /*
          * NOTE: Check if agreements with remoteIds are set for this artifact. If such agreements
          * exist the artifact must be assigned to a requested resource. The data access should
@@ -161,7 +172,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
          * the data it means all data access has been forbidden. Do not proceed.
          */
 
-        var policyException = new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
+        var policyException = new PolicyRestrictionException(ErrorMessage.POLICY_RESTRICTION);
         for (final var agRemoteId : agreements) {
             try {
                 final var info = new RetrievalInformation(agRemoteId, null, queryInput);
@@ -205,7 +216,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final RetrievalInformation information)
-            throws PolicyRestrictionException, IOException, UnexpectedResponseException {
+            throws PolicyRestrictionException, IOException {
         // Check the artifact exists and access is granted.
         final var artifact = get(artifactId);
         verifyDataAccess(accessVerifier, artifactId, artifact);
@@ -227,7 +238,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                 log.info("Access denied. [artifactId=({})]", artifactId);
             }
 
-            throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
+            throw new PolicyRestrictionException(ErrorMessage.POLICY_RESTRICTION);
         }
     }
 
@@ -235,7 +246,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                                        final UUID artifactId,
                                        final RetrievalInformation information,
                                        final Artifact artifact)
-                                       throws IOException, UnexpectedResponseException {
+                                       throws IOException {
         final var dataStream = retriever.retrieve(artifactId,
                                                   artifact.getRemoteAddress(),
                                                   information.getTransferContract(),
@@ -321,9 +332,9 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private InputStream downloadDataFromBackend(final RemoteData data,
                                                 final QueryInput queryInput) throws IOException {
         InputStream backendData;
-        if (data.getUsername() != null || data.getPassword() != null) {
+        if (!data.getAuthentication().isEmpty()) {
             backendData = httpSvc.get(data.getAccessUrl(), queryInput,
-                                      new Pair<>(data.getUsername(), data.getPassword()))
+                                         data.getAuthentication())
                                   .getBody();
         } else {
             backendData = httpSvc.get(data.getAccessUrl(), queryInput).getBody();
@@ -338,7 +349,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @return list of all artifacts referenced in the agreement
      */
     public List<Artifact> getAllByAgreement(final UUID agreementId) {
-        Utils.requireNonNull(agreementId, ErrorMessages.ENTITYID_NULL);
+        Utils.requireNonNull(agreementId, ErrorMessage.ENTITYID_NULL);
         return ((ArtifactRepository) getRepository()).findAllByAgreement(agreementId);
     }
 

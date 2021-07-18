@@ -16,33 +16,36 @@
 package io.dataspaceconnector.controller.resource.swagger.response;
 
 /**
- * This class holds information about response codes.
+ * This class holds descriptions for the responses.
  */
-public class ResponseCodes {
-
-    protected ResponseCodes() {
+public class ResponseDescription {
+    protected ResponseDescription() {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Response code is OK.
+     * Description is Ok.
      */
     @SuppressWarnings("PMD.ShortVariable")
-    public static final String OK = "200";
+    public static final String OK = "Ok";
+
     /**
-     * Response code is CREATED.
+     * Description is Created.
      */
-    public static final String CREATED = "201";
+    public static final String CREATED = "Created";
+
     /**
-     * Response code is NO_CONTENT.
+     * Description is No Content.
      */
-    public static final String NO_CONTENT = "204";
+    public static final String NO_CONTENT = "No Content";
+
     /**
      * Response code is UNAUTHORIZED.
      */
-    public static final String UNAUTHORIZED = "401";
+    public static final String UNAUTHORIZED = "Unauthorized";
+
     /**
-     * Response code is METHOD_NOT_ALLOWED.
+     * Description is Not Allowed.
      */
-    public static final String METHOD_NOT_ALLOWED = "405";
+    public static final String METHOD_NOT_ALLOWED = "Not Allowed";
 }

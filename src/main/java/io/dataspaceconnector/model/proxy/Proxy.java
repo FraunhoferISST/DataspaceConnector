@@ -15,17 +15,8 @@
  */
 package io.dataspaceconnector.model.proxy;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.ElementCollection;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import java.net.URI;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.dataspaceconnector.model.auth.Authentication;
+import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.base.RemoteService;
 import io.dataspaceconnector.model.util.UriConverter;
@@ -37,6 +28,16 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.net.URI;
+import java.util.List;
 
 import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
@@ -52,6 +53,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Setter(AccessLevel.PACKAGE)
 @RequiredArgsConstructor
 public class Proxy extends Entity implements RemoteService {
+
     /**
      * Serial version uid.
      **/
@@ -73,8 +75,8 @@ public class Proxy extends Entity implements RemoteService {
     /**
      * The authentication information for the proxy.
      */
-    @OneToOne(cascade = { CascadeType.ALL })
+    @OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
     @JsonInclude
     @ToString.Exclude
-    private Authentication authentication;
+    private BasicAuth authentication;
 }

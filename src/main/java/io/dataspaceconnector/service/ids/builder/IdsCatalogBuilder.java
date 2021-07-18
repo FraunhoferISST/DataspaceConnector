@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
- * Converts DSC artifacts to ids artifacts.
+ * Converts dsc catalogs to ids catalogs.
  */
 @Component
 @RequiredArgsConstructor

@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.view.endpoint;
 
-import java.net.URI;
-
-import io.dataspaceconnector.controller.configurations.EndpointControllers;
+import io.dataspaceconnector.controller.configuration.EndpointController;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpointDesc;
 import io.dataspaceconnector.model.endpoint.GenericEndpointFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -37,7 +37,7 @@ public class GenericEndpointViewAssemblerTest {
         /* ARRANGE */
         final var shouldLookLike = getGenericEndpoint();
         final var link = ViewAssemblerHelper.
-                getSelfLink(shouldLookLike.getId(), EndpointControllers.class);
+                getSelfLink(shouldLookLike.getId(), EndpointController.class);
 
         /* ACT */
         final var after = getGenericEndpointView();

@@ -44,7 +44,7 @@ public final class ControllerUtils {
      * @return ResponseEntity with status code 500.
      */
     public static ResponseEntity<Object> respondIdsMessageFailed(final Exception e) {
-        final var msg = ErrorMessages.MESSAGE_HANDLING_FAILED;
+        final var msg = ErrorMessage.MESSAGE_HANDLING_FAILED;
         if (log.isDebugEnabled()) {
             log.debug("{} [exception=({})]", msg, e.getMessage(), e);
         }
@@ -59,7 +59,7 @@ public final class ControllerUtils {
      * @return ResponseEntity with status code 500.
      */
     public static ResponseEntity<Object> respondMessageSendingFailed(final Exception e) {
-        final var msg = ErrorMessages.MESSAGE_SENDING_FAILED;
+        final var msg = ErrorMessage.MESSAGE_SENDING_FAILED;
         if (log.isDebugEnabled()) {
             log.debug("{} [exception=({})]", msg, e.getMessage(), e);
         }
@@ -120,7 +120,7 @@ public final class ControllerUtils {
      * @return ResponseEntity with status code 400.
      */
     public static ResponseEntity<Object> respondInvalidInput(final Exception e) {
-        final var msg = ErrorMessages.INVALID_INPUT;
+        final var msg = ErrorMessage.INVALID_INPUT;
         if (log.isWarnEnabled()) {
             log.warn("{} [exception=({})]", msg, e.getMessage(), e);
         }
@@ -167,7 +167,7 @@ public final class ControllerUtils {
      * @return ResponseEntity with status code 504.
      */
     public static ResponseEntity<Object> respondConnectionTimedOut(final Exception exception) {
-        final var msg = ErrorMessages.GATEWAY_TIMEOUT;
+        final var msg = ErrorMessage.GATEWAY_TIMEOUT;
         if (log.isWarnEnabled()) {
             log.warn("{} [exception=({})]", msg, exception.getMessage(), exception);
         }
@@ -182,7 +182,7 @@ public final class ControllerUtils {
      * @return ResponseEntity with status code 502.
      */
     public static ResponseEntity<Object> respondReceivedInvalidResponse(final Exception exception) {
-        final var msg = ErrorMessages.INVALID_MESSAGE;
+        final var msg = ErrorMessage.INVALID_MESSAGE;
         if (log.isDebugEnabled()) {
             log.debug("{} [exception=({})]", msg, exception.getMessage(), exception);
         }
@@ -196,7 +196,7 @@ public final class ControllerUtils {
      * @return ResponseEntity with status code 502.
      */
     public static ResponseEntity<Object> respondReceivedInvalidResponse() {
-        final var msg = ErrorMessages.INVALID_MESSAGE;
+        final var msg = ErrorMessage.INVALID_MESSAGE;
         if (log.isDebugEnabled()) {
             log.debug("{}", msg.toString());
         }

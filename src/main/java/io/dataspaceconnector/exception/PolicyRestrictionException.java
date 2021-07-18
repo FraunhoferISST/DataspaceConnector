@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.exception;
 
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 
 /**
  * Thrown if a policy restriction has been detected.
@@ -32,7 +32,7 @@ public class PolicyRestrictionException extends RuntimeException {
      *
      * @param msg The detail message.
      */
-    public PolicyRestrictionException(final ErrorMessages msg) {
+    public PolicyRestrictionException(final ErrorMessage msg) {
         super(msg.toString());
     }
 
@@ -42,7 +42,7 @@ public class PolicyRestrictionException extends RuntimeException {
      * @param msg   The detail message.
      * @param cause The cause.
      */
-    public PolicyRestrictionException(final ErrorMessages msg, final Throwable cause) {
+    public PolicyRestrictionException(final ErrorMessage msg, final Throwable cause) {
         super(msg.toString(), cause);
     }
 }

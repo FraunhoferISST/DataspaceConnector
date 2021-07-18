@@ -31,6 +31,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class KeystoreDesc extends Description {
+
     /**
      * The key store.
      */

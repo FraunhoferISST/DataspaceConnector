@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.model.rule;
 
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
+import io.dataspaceconnector.util.MetadataUtils;
+import org.springframework.stereotype.Component;
+
 import java.net.URI;
 import java.util.ArrayList;
-
-import io.dataspaceconnector.util.MetadataUtils;
-import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates a ContractRule.
@@ -40,6 +40,7 @@ public class ContractRuleFactory extends AbstractNamedFactory<ContractRule, Cont
 
     /**
      * Create a new ContractRule.
+     *
      * @param desc The description of the new ContractRule.
      * @return The new ContractRule.
      * @throws IllegalArgumentException if desc is null.
@@ -54,6 +55,7 @@ public class ContractRuleFactory extends AbstractNamedFactory<ContractRule, Cont
 
     /**
      * Update a ContractRule.
+     *
      * @param contractRule The ContractRule to be updated.
      * @param desc         The new ContractRule description.
      * @return True if the ContractRule has been modified.
@@ -68,8 +70,8 @@ public class ContractRuleFactory extends AbstractNamedFactory<ContractRule, Cont
     }
 
     private boolean updateRemoteId(final ContractRule contractRule, final URI remoteId) {
-        final var newUri = MetadataUtils.updateUri(
-                contractRule.getRemoteId(), remoteId, DEFAULT_REMOTE_ID);
+        final var newUri = MetadataUtils.updateUri(contractRule.getRemoteId(),
+                remoteId, DEFAULT_REMOTE_ID);
         newUri.ifPresent(contractRule::setRemoteId);
 
         return newUri.isPresent();

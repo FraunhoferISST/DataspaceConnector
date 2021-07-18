@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.model.broker;
 
+import io.dataspaceconnector.model.base.RegistrationStatus;
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
+import io.dataspaceconnector.util.MetadataUtils;
+import org.springframework.stereotype.Component;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Objects;
-
-import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.util.MetadataUtils;
-import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates a broker.
@@ -75,7 +75,7 @@ public class BrokerFactory extends AbstractNamedFactory<Broker, BrokerDesc> {
     }
 
     /**
-     * @param broker    The entity to be updated.
+     * @param broker   The entity to be updated.
      * @param location The new location url of the entity.
      * @return True, if broker is updated.
      */

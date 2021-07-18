@@ -24,6 +24,7 @@ import java.util.List;
 
 /**
  * Base class for creating and updating resources.
+ *
  * @param <T> The resource type.
  * @param <D> The description type.
  */
@@ -62,6 +63,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
 
     /**
      * Create a new resource.
+     *
      * @param desc The description of the new resource.
      * @return The new resource.
      * @throws IllegalArgumentException if desc is null.
@@ -80,6 +82,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
 
     /**
      * Create a new resource. Implement type specific stuff here.
+     *
      * @param desc The description passed to the factory.
      * @return The new resource.
      */
@@ -87,6 +90,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
 
     /**
      * Update a resource.
+     *
      * @param resource The resource to be updated.
      * @param desc     The new resource description.
      * @return True if the resource has been modified.
@@ -105,9 +109,9 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         final var hasChildUpdated = updateInternal(resource, desc);
 
         final var hasUpdated = hasParentUpdated || hasChildUpdated
-                               || hasUpdatedKeywords || hasUpdatedPublisher
-                               || hasUpdatedLanguage || hasUpdatedLicense
-                               || hasUpdatedSovereign || hasUpdatedEndpointDocs;
+                || hasUpdatedKeywords || hasUpdatedPublisher
+                || hasUpdatedLanguage || hasUpdatedLicense
+                || hasUpdatedSovereign || hasUpdatedEndpointDocs;
 
         if (hasUpdated) {
             resource.setVersion(resource.getVersion() + 1);
@@ -118,6 +122,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
 
     /**
      * Update a resource's keywords.
+     *
      * @param resource The resource.
      * @param keywords The new keywords.
      * @return true if the resource's keywords have been modified.
@@ -132,6 +137,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
 
     /**
      * Update a resource's publisher.
+     *
      * @param resource  The resource.
      * @param publisher The new publisher.
      * @return true if the resource's publisher has been modified.
@@ -146,6 +152,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
 
     /**
      * Update a resource's language.
+     *
      * @param resource The resource.
      * @param language The new language.
      * @return true if the resource's language has been modified.
@@ -160,6 +167,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
 
     /**
      * Update a resource's license.
+     *
      * @param resource The resource.
      * @param license  The new license.
      * @return true if the resource's license has been modified.
@@ -174,6 +182,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
 
     /**
      * Update a resource's sovereign.
+     *
      * @param resource  The resource.
      * @param sovereign The new sovereign.
      * @return true if the resource's sovereign has been modified.
@@ -188,6 +197,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
 
     /**
      * Update a resource's endpoint documentation.
+     *
      * @param resource     The resource.
      * @param endpointDocs The new endpoint documentation.
      * @return true if the resource's endpoint documentation has been modified.

@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
-import java.net.URI;
-
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.net.URI;
 
 /**
  * Base class for describing endpoints.
@@ -34,6 +34,7 @@ import lombok.EqualsAndHashCode;
         @JsonSubTypes.Type(value = GenericEndpointDesc.class, name = "GENERIC")}
 )
 public class EndpointDesc extends Description {
+
     /**
      * The location information about the endpoint.
      */

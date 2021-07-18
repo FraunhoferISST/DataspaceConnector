@@ -15,9 +15,7 @@
  */
 package io.dataspaceconnector.view.endpoint;
 
-import java.util.UUID;
-
-import io.dataspaceconnector.controller.configurations.EndpointControllers;
+import io.dataspaceconnector.controller.configuration.EndpointController;
 import io.dataspaceconnector.controller.resource.view.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
@@ -25,6 +23,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 /**
  * Assembles the REST resource for an connector endpoint.
@@ -35,7 +35,7 @@ public class ConnectorEndpointViewAssembler implements
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, EndpointControllers.class);
+        return ViewAssemblerHelper.getSelfLink(entityId, EndpointController.class);
     }
 
     @Override

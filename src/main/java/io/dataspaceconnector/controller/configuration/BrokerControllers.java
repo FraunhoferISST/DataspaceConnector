@@ -13,16 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.configurations;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
+package io.dataspaceconnector.controller.configuration;
 
 import io.dataspaceconnector.controller.resource.BaseResourceChildController;
 import io.dataspaceconnector.controller.resource.BaseResourceController;
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
+import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
+import io.dataspaceconnector.controller.resource.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.broker.BrokerDesc;
@@ -41,8 +38,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+
 /**
- * Controller for the broker management.
+ * Controller for the broker entities.
  */
 public final class BrokerControllers {
 
@@ -51,16 +53,17 @@ public final class BrokerControllers {
      */
     @RestController
     @RequestMapping("/api/brokers")
-    @Tag(name = "Broker", description = "Endpoints for CRUD operations on broker")
+    @Tag(name = ResourceName.BROKERS, description = ResourceDescription.BROKERS)
     public static class BrokerController extends BaseResourceController<Broker, BrokerDesc,
-            BrokerView, BrokerService> { }
+            BrokerView, BrokerService> {
+    }
 
     /**
      * Offers the endpoints for managing the relations between broker and offered resources.
      */
     @RestController
     @RequestMapping("/api/brokers/{id}/offers")
-    @Tag(name = "Broker", description = "Endpoints for linking broker to offered resources")
+    @Tag(name = ResourceName.BROKERS, description = ResourceDescription.BROKERS)
     public static class BrokerToOfferedResources extends
             BaseResourceChildController<EntityLinkerService.BrokerOfferedResourcesLinker,
                     OfferedResource, OfferedResourceView> {
@@ -68,8 +71,7 @@ public final class BrokerControllers {
         @Hidden
         @ApiResponses(value = {
                 @ApiResponse(responseCode = "401", description = "Unauthorized"),
-                @ApiResponse(responseCode = "405", description = "Not allowed")
-        })
+                @ApiResponse(responseCode = "405", description = "Not allowed")})
         public final PagedModel<OfferedResourceView> addResources(
                 @Valid @PathVariable(name = "id") final UUID ownerId,
                 @Valid @RequestBody final List<URI> resources) {

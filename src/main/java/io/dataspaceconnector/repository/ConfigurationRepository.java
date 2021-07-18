@@ -15,7 +15,12 @@
  */
 package io.dataspaceconnector.repository;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import io.dataspaceconnector.model.configuration.Configuration;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -23,4 +28,37 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ConfigurationRepository extends BaseEntityRepository<Configuration> {
+
+    /**
+     * Get all selected configurations.
+     *
+     * @return UUIDs of Configurations that are marked as selected.
+     */
+    @Query("SELECT a "
+            + "FROM #{#entityName} a "
+            + "WHERE a.active = true "
+            + "AND a.deleted = false")
+    Optional<Configuration> findActive();
+
+    /**
+     * Deselect current configuration.
+     */
+    @Modifying
+    @Query("UPDATE Configuration a "
+            + "SET a.active = NULL "
+            + "WHERE a.active = true "
+            + "AND a.deleted = false")
+    void unsetActive();
+
+    /**
+     * Select new configuration.
+     *
+     * @param id Id to select
+     */
+    @Modifying
+    @Query("UPDATE Configuration a "
+            + "SET a.active = true "
+            + "WHERE a.id = :id "
+            + "AND a.deleted = false")
+    void setActive(UUID id);
 }

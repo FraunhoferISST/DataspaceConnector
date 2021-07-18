@@ -25,7 +25,6 @@ import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
 import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
 import de.fraunhofer.ids.messaging.protocol.multipart.UnknownResponseException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
-import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
@@ -97,9 +96,7 @@ public class ConnectorUnavailableMessageController {
             connectorService.updateConfigModel();
 
             // Send the connector unavailable message.
-            Optional<MessageContainer<?>> response = messageService
-                    .sendConnectorUnavailableMessage(recipient);
-
+            final var response = messageService.sendConnectorUnavailableMessage(recipient);
             return messageService.validateResponse(response,
                     MessageProcessedNotificationMessageImpl.class);
         } catch (ConfigUpdateException exception) {

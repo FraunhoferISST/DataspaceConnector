@@ -33,7 +33,7 @@ class ControllerUtilsTest {
     @Test
     public void respondIdsMessageFailed_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var msg = ErrorMessages.MESSAGE_HANDLING_FAILED.toString();
+        final var msg = ErrorMessage.MESSAGE_HANDLING_FAILED.toString();
         final var expectedResponse = new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
 
         /* ACT */
@@ -144,7 +144,7 @@ class ControllerUtilsTest {
     @Test
     public void respondConnectionTimedOut_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>(ErrorMessages.GATEWAY_TIMEOUT.toString(),
+        final var expectedResponse = new ResponseEntity<>(ErrorMessage.GATEWAY_TIMEOUT.toString(),
                 HttpStatus.GATEWAY_TIMEOUT);
 
         /* ACT */

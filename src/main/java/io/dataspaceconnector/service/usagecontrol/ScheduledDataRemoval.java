@@ -21,7 +21,7 @@ import java.net.URI;
 import java.time.format.DateTimeParseException;
 
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.config.UsageControlFramework;
+import io.dataspaceconnector.config.util.UsageControlFramework;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.AgreementService;

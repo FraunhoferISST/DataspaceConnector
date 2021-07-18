@@ -20,7 +20,7 @@ import io.dataspaceconnector.service.ids.DeserializationService;
 import org.springframework.stereotype.Component;
 
 /**
- * Converts DSC rule to ids duty.
+ * Converts dsc rule to ids duty.
  */
 @Component
 public class IdsDutyBuilder extends IdsRuleBuilder<Duty> {

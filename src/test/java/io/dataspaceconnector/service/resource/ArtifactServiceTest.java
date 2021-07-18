@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,17 +36,20 @@ import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.artifact.Data;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.model.artifact.RemoteData;
+import io.dataspaceconnector.model.auth.Authentication;
+import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.repository.ArtifactRepository;
+import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.HttpService;
 import io.dataspaceconnector.util.QueryInput;
-import kotlin.Pair;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -56,7 +61,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {ArtifactService.class, ArtifactFactory.class, ArtifactRepository.class,
-        DataRepository.class, HttpService.class})
+        DataRepository.class, AuthenticationRepository.class, HttpService.class})
 class ArtifactServiceTest {
 
     @MockBean
@@ -64,6 +69,9 @@ class ArtifactServiceTest {
 
     @MockBean
     private DataRepository dataRepository;
+
+    @MockBean
+    private AuthenticationRepository authenticationRepository;
 
     @MockBean
     private HttpService httpService;
@@ -267,16 +275,14 @@ class ArtifactServiceTest {
         final var remoteData = "I am data from a remote source.".getBytes(StandardCharsets.UTF_8);
         ArtifactImpl remoteArtifact = getRemoteArtifact(getRemoteDataWithBasicAuth());
         URL url = ((RemoteData) remoteArtifact.getData()).getAccessUrl();
-        String username = ((RemoteData) remoteArtifact.getData()).getUsername();
-        String password = ((RemoteData) remoteArtifact.getData()).getPassword();
+        final var auth = ((RemoteData) remoteArtifact.getData()).getAuthentication();
 
         final var response = new HttpService.Response();
         response.setBody(new ByteArrayInputStream(remoteData));
 
         when(artifactRepository.findById(remoteArtifact.getId()))
                 .thenReturn(Optional.of(remoteArtifact));
-        when(httpService.get(url, null, new Pair<>(username, password)))
-                .thenReturn(response);
+        when(httpService.get(url, null, auth)).thenReturn(response);
 
         /* ACT */
         final var data = service.getData(null,
@@ -447,29 +453,17 @@ class ArtifactServiceTest {
     @SneakyThrows
     private RemoteData getRemoteData() {
         final var remoteData = new RemoteData();
-
-        Field accessUrlField = remoteData.getClass().getDeclaredField("accessUrl");
-        accessUrlField.setAccessible(true);
-        accessUrlField.set(remoteData, new URL("http://some-url.com"));
-
+        ReflectionTestUtils.setField(remoteData, "authentication", new ArrayList<Authentication>());
+        ReflectionTestUtils.setField(remoteData, "accessUrl",  new URL("http://some-url.com"));
         return remoteData;
     }
 
     @SneakyThrows
     private RemoteData getRemoteDataWithBasicAuth() {
         final var remoteData = new RemoteData();
-
-        Field accessUrlField = remoteData.getClass().getDeclaredField("accessUrl");
-        accessUrlField.setAccessible(true);
-        accessUrlField.set(remoteData, new URL("http://some-url.com"));
-
-        Field usernameField = remoteData.getClass().getDeclaredField("username");
-        usernameField.setAccessible(true);
-        usernameField.set(remoteData, "username");
-
-        Field passwordField = remoteData.getClass().getDeclaredField("password");
-        passwordField.setAccessible(true);
-        passwordField.set(remoteData, "password");
+        ReflectionTestUtils.setField(remoteData, "authentication", List
+                .of(new BasicAuth("username", "password")));
+        ReflectionTestUtils.setField(remoteData, "accessUrl",  new URL("http://some-url.com"));
 
         return remoteData;
     }

@@ -35,8 +35,11 @@ import lombok.EqualsAndHashCode;
         @JsonSubTypes.Type(value = NotificationDesc.class, names = {"USAGE_NOTIFICATION"}),
         @JsonSubTypes.Type(value = PermissionDesc.class, names = {"PROVIDE_ACCESS"}),
         @JsonSubTypes.Type(value = ProhibitionDesc.class, names = {"PROHIBIT_ACCESS"}),
-        @JsonSubTypes.Type(value = RestrictionDesc.class, names = {"CONNECTOR_RESTRICTED_USAGE"}),
-        @JsonSubTypes.Type(value = UsageNumberDesc.class, names = {"N_TIMES_USAGE"})}
+        @JsonSubTypes.Type(value = ConnectorRestrictionDesc.class,
+                names = {"CONNECTOR_RESTRICTED_USAGE"}),
+        @JsonSubTypes.Type(value = UsageNumberDesc.class, names = {"N_TIMES_USAGE"}),
+        @JsonSubTypes.Type(value = SecurityRestrictionDesc.class,
+                names = {"SECURITY_PROFILE_RESTRICTED_USAGE"})}
 )
 public class PatternDesc extends NamedDescription {
 }

@@ -65,11 +65,11 @@ class ContractNegotiatorTest {
             throws DatatypeConfigurationException, UnexpectedResponseException {
         /* ARRANGE */
         final var ruleList = (List<Rule>) (List<?>) Arrays.asList(new PermissionBuilder()
-                                                                          ._action_(List.of(Action.NOTIFY))
-                                                                          .build());
+                ._action_(List.of(Action.NOTIFY))
+                .build());
         final var request = new ContractRequestBuilder()
                 ._contractStart_(DatatypeFactory.newInstance()
-                                                .newXMLGregorianCalendar("2009-05-07T17:05:45.678Z"))
+                        .newXMLGregorianCalendar("2009-05-07T17:05:45.678Z"))
                 .build();
         final var recipient = URI.create("https://recipient");
         Mockito.when(contractManager.buildContractRequest(eq(ruleList))).thenReturn(request);
@@ -80,7 +80,7 @@ class ContractNegotiatorTest {
 
         final var agreement = new ContractAgreementBuilder()
                 ._contractStart_(DatatypeFactory.newInstance()
-                                                .newXMLGregorianCalendar("2009-05-07T17:05:45.678Z"))
+                        .newXMLGregorianCalendar("2009-05-07T17:05:45.678Z"))
                 .build();
         Mockito.when(contractManager.validateContractAgreement(eq(response.get("payload")), eq(request))).thenReturn(agreement);
 

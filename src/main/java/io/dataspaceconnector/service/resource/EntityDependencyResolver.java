@@ -23,7 +23,7 @@ import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.service.util.EndpointUtils;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -59,7 +59,7 @@ public class EntityDependencyResolver {
      */
     public List<Contract> getContractOffersByArtifactId(final URI artifactId) {
         final var uuid = EndpointUtils.getUUIDFromPath(artifactId);
-        Utils.requireNonNull(artifactId, ErrorMessages.ENTITYID_NULL);
+        Utils.requireNonNull(artifactId, ErrorMessage.ENTITYID_NULL);
         return contractService.getAllByArtifactId(uuid);
     }
 
@@ -70,7 +70,7 @@ public class EntityDependencyResolver {
      * @return list of all rules in the contract
      */
     public List<ContractRule> getRulesByContractOffer(final Contract contract) {
-        Utils.requireNonNull(contract, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(contract, ErrorMessage.ENTITY_NULL);
         return ruleService.getAllByContract(contract.getId());
     }
 
@@ -81,7 +81,7 @@ public class EntityDependencyResolver {
      * @return list of all artifacts referenced in the agreement
      */
     public List<Artifact> getArtifactsByAgreement(final Agreement agreement) {
-        Utils.requireNonNull(agreement, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(agreement, ErrorMessage.ENTITY_NULL);
         return artifactService.getAllByAgreement(agreement.getId());
     }
 }

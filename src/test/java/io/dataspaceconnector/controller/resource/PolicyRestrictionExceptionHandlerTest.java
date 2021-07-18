@@ -17,7 +17,7 @@ package io.dataspaceconnector.controller.resource;
 
 import io.dataspaceconnector.controller.exceptionhandler.PolicyRestrictionExceptionHandler;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -32,7 +32,7 @@ public class PolicyRestrictionExceptionHandlerTest {
     @Test
     public void handlePolicyRestrictionException_anyException_returnForbiddenError() {
         /* ARRANGE */
-        final var exception = new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
+        final var exception = new PolicyRestrictionException(ErrorMessage.POLICY_RESTRICTION);
 
         /* ACT */
         final var result = handler.handlePolicyRestrictionException(exception);
@@ -44,7 +44,7 @@ public class PolicyRestrictionExceptionHandlerTest {
     @Test
     public void handlePolicyRestrictionException_anyException_returnJsonContentType() {
         /* ARRANGE */
-        final var exception = new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
+        final var exception = new PolicyRestrictionException(ErrorMessage.POLICY_RESTRICTION);
 
         /* ACT */
         final var result = handler.handlePolicyRestrictionException(exception);
@@ -59,7 +59,7 @@ public class PolicyRestrictionExceptionHandlerTest {
         final var body = new JSONObject();
         body.put("message", "A policy restriction has been detected.");
 
-        final var exception = new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
+        final var exception = new PolicyRestrictionException(ErrorMessage.POLICY_RESTRICTION);
 
         /* ACT */
         final var result = handler.handlePolicyRestrictionException(exception);

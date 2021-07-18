@@ -17,6 +17,7 @@ package io.dataspaceconnector.controller.configurations;
 
 import java.util.UUID;
 
+import io.dataspaceconnector.controller.configuration.RouteControllers;
 import io.dataspaceconnector.service.configuration.RouteService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

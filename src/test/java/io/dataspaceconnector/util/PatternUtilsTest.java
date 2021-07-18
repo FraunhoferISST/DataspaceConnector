@@ -25,7 +25,7 @@ import io.dataspaceconnector.model.pattern.DeletionDesc;
 import io.dataspaceconnector.model.pattern.DurationDesc;
 import io.dataspaceconnector.model.pattern.IntervalDesc;
 import io.dataspaceconnector.model.pattern.NotificationDesc;
-import io.dataspaceconnector.model.pattern.RestrictionDesc;
+import io.dataspaceconnector.model.pattern.ConnectorRestrictionDesc;
 import io.dataspaceconnector.model.pattern.UsageNumberDesc;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -270,7 +270,7 @@ public class PatternUtilsTest {
     public void buildConnectorRestrictedUsageRule_returnPermissionWithPostDuty() {
         /* ARRANGE */
         final var value = "https://someRecipient";
-        final var input = new RestrictionDesc();
+        final var input = new ConnectorRestrictionDesc();
         input.setUrl(value);
 
         /* ACT */

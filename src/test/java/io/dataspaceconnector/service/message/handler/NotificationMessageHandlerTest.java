@@ -15,12 +15,6 @@
  */
 package io.dataspaceconnector.service.message.handler;
 
-import java.net.URI;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-
 import de.fraunhofer.iais.eis.DynamicAttributeToken;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
@@ -33,11 +27,17 @@ import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.type.MessageProcessedNotificationService;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+
+import javax.xml.datatype.DatatypeFactory;
+import java.net.URI;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -61,6 +61,7 @@ class NotificationMessageHandlerTest {
     private final String version = "4.0.0";
     private final URI uri = URI.create("https://localhost:8080");
 
+    @SneakyThrows
     @Test
     public void handleMessage_nullMessage_returnBadRequest() {
         /* ARRANGE */
@@ -76,8 +77,9 @@ class NotificationMessageHandlerTest {
                 result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
-    public void handleMessage_nullMessage_returnVersionNotSupported() throws DatatypeConfigurationException {
+    public void handleMessage_nullMessage_returnVersionNotSupported() {
         /* ARRANGE */
         final var calendar = new GregorianCalendar();
         calendar.setTime(new Date());
@@ -104,8 +106,9 @@ class NotificationMessageHandlerTest {
                 result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
-    public void handleMessage_validMsg_returnMessageProcessNotification() throws DatatypeConfigurationException {
+    public void handleMessage_validMsg_returnMessageProcessNotification() {
         /* ARRANGE */
         final var calendar = new GregorianCalendar();
         calendar.setTime(new Date());

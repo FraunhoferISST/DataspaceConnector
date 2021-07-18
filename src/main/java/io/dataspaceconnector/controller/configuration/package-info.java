@@ -13,23 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exception;
-
-import io.dataspaceconnector.util.ErrorMessages;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-public class SelfLinkCreationExceptionTest {
-    @Test
-    public void constructor_someMsg_holdsMsg() {
-        /* ARRANGE */
-        final var msg = ErrorMessages.CONTRACT_NULL;
-
-        /* ACT */
-        final var exception = new SelfLinkCreationException(msg);
-
-        /* ASSERT */
-        assertEquals(msg.toString(), exception.getMessage());
-    }
-}
+/**
+ * Groups all controllers which are needed for the Configuration Manager.
+ */
+package io.dataspaceconnector.controller.configuration;

@@ -17,10 +17,10 @@ package io.dataspaceconnector.controller.resource;
 
 import de.fraunhofer.ids.messaging.protocol.UnexpectedResponseException;
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
-import io.dataspaceconnector.controller.resource.tag.ResourceDescriptions;
-import io.dataspaceconnector.controller.resource.tag.ResourceNames;
-import io.dataspaceconnector.controller.resource.swagger.response.ResponseCodes;
-import io.dataspaceconnector.controller.resource.swagger.response.ResponseDescriptions;
+import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
+import io.dataspaceconnector.controller.resource.tag.ResourceName;
+import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
+import io.dataspaceconnector.controller.resource.swagger.response.ResponseDescription;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.agreement.AgreementDesc;
 import io.dataspaceconnector.model.artifact.Artifact;
@@ -97,7 +97,7 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/catalogs")
-    @Tag(name = ResourceNames.CATALOGS, description = ResourceDescriptions.CATALOGS)
+    @Tag(name = ResourceName.CATALOGS, description = ResourceDescription.CATALOGS)
     public static class CatalogController
             extends BaseResourceController<Catalog, CatalogDesc, CatalogView, CatalogService> {
     }
@@ -107,7 +107,7 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/rules")
-    @Tag(name = ResourceNames.RULES, description = ResourceDescriptions.RULES)
+    @Tag(name = ResourceName.RULES, description = ResourceDescription.RULES)
     public static class RuleController extends BaseResourceController<ContractRule,
             ContractRuleDesc, ContractRuleView, RuleService> {
     }
@@ -117,7 +117,7 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/representations")
-    @Tag(name = ResourceNames.REPRESENTATIONS, description = ResourceDescriptions.REPRESENTATIONS)
+    @Tag(name = ResourceName.REPRESENTATIONS, description = ResourceDescription.REPRESENTATIONS)
     public static class RepresentationController extends BaseResourceController<Representation,
             RepresentationDesc, RepresentationView, RepresentationService> {
     }
@@ -127,7 +127,7 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/contracts")
-    @Tag(name = ResourceNames.CONTRACTS, description = ResourceDescriptions.CONTRACTS)
+    @Tag(name = ResourceName.CONTRACTS, description = ResourceDescription.CONTRACTS)
     public static class ContractController
             extends BaseResourceController<Contract, ContractDesc, ContractView, ContractService> {
     }
@@ -137,7 +137,7 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/offers")
-    @Tag(name = ResourceNames.OFFERS, description = ResourceDescriptions.OFFERS)
+    @Tag(name = ResourceName.OFFERS, description = ResourceDescription.OFFERS)
     public static class OfferedResourceController
             extends BaseResourceController<OfferedResource, OfferedResourceDesc,
             OfferedResourceView, ResourceService<OfferedResource, OfferedResourceDesc>> {
@@ -148,15 +148,15 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/requests")
-    @Tag(name = ResourceNames.REQUESTS, description = ResourceDescriptions.REQUESTS)
+    @Tag(name = ResourceName.REQUESTS, description = ResourceDescription.REQUESTS)
     public static class RequestedResourceController
             extends BaseResourceController<RequestedResource, RequestedResourceDesc,
             RequestedResourceView,
             ResourceService<RequestedResource, RequestedResourceDesc>> {
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.METHOD_NOT_ALLOWED,
-                description = ResponseDescriptions.METHOD_NOT_ALLOWED)})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = ResponseDescription.METHOD_NOT_ALLOWED)})
         public final ResponseEntity<RequestedResourceView> create(
                 final RequestedResourceDesc desc) {
             throw new MethodNotAllowed();
@@ -168,21 +168,21 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/agreements")
-    @Tag(name = ResourceNames.AGREEMENTS, description = ResourceDescriptions.AGREEMENTS)
+    @Tag(name = ResourceName.AGREEMENTS, description = ResourceDescription.AGREEMENTS)
     public static class AgreementController extends BaseResourceController<Agreement, AgreementDesc,
             AgreementView, AgreementService> {
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.METHOD_NOT_ALLOWED,
-                description = ResponseDescriptions.METHOD_NOT_ALLOWED)})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = ResponseDescription.METHOD_NOT_ALLOWED)})
         public final ResponseEntity<AgreementView> create(final AgreementDesc desc) {
             throw new MethodNotAllowed();
         }
 
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.METHOD_NOT_ALLOWED,
-                description = ResponseDescriptions.METHOD_NOT_ALLOWED)})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = ResponseDescription.METHOD_NOT_ALLOWED)})
         public final ResponseEntity<AgreementView> update(@Valid final UUID resourceId,
                                                    final AgreementDesc desc) {
             throw new MethodNotAllowed();
@@ -190,8 +190,8 @@ public final class ResourceControllers {
 
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.METHOD_NOT_ALLOWED,
-                description = ResponseDescriptions.METHOD_NOT_ALLOWED)})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = ResponseDescription.METHOD_NOT_ALLOWED)})
         public final ResponseEntity<Void> delete(@Valid final UUID resourceId) {
             throw new MethodNotAllowed();
         }
@@ -202,7 +202,7 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/artifacts")
-    @Tag(name = ResourceNames.ARTIFACTS, description = ResourceDescriptions.ARTIFACTS)
+    @Tag(name = ResourceName.ARTIFACTS, description = ResourceDescription.ARTIFACTS)
     @RequiredArgsConstructor
     public static class ArtifactController
             extends BaseResourceController<Artifact, ArtifactDesc, ArtifactView, ArtifactService> {
@@ -239,17 +239,15 @@ public final class ResourceControllers {
          */
         @GetMapping("{id}/data/**")
         @Operation(summary = "Get data by artifact id with query input")
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.OK,
-                description = ResponseDescriptions.OK)})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.OK,
+                description = ResponseDescription.OK)})
         public ResponseEntity<StreamingResponseBody> getData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
                 @RequestParam(required = false) final Boolean download,
                 @RequestParam(required = false) final URI agreementUri,
                 @RequestParam(required = false) final Map<String, String> params,
                 @RequestHeader final Map<String, String> headers,
-                final HttpServletRequest request) throws IOException,
-                UnexpectedResponseException,
-                io.dataspaceconnector.exception.UnexpectedResponseException {
+                final HttpServletRequest request) throws IOException {
             headers.remove("authorization");
             headers.remove("host");
 
@@ -293,8 +291,8 @@ public final class ResourceControllers {
          */
         @PostMapping("{id}/data")
         @Operation(summary = "Get data by artifact id with query input")
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.OK,
-                description = ResponseDescriptions.OK)})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.OK,
+                description = ResponseDescription.OK)})
         public ResponseEntity<StreamingResponseBody> getData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
                 @RequestBody(required = false) final QueryInput queryInput)

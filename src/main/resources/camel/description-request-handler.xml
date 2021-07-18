@@ -15,12 +15,6 @@
             <to uri="direct:handleResponseMessageBuilderException"/>
         </onException>
 
-        <!-- the self link for finding the requested element could not be built  -->
-        <onException>
-            <exception>io.dataspaceconnector.exception.SelfLinkCreationException</exception>
-            <to uri="direct:handleSelfLinkCreationException"/>
-        </onException>
-
         <from uri="direct:descriptionRequestHandler"/>
         <to uri="direct:ids-validation"/>
         <choice>

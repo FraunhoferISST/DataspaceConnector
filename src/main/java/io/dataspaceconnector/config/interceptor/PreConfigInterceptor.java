@@ -15,25 +15,29 @@
  */
 package io.dataspaceconnector.config.interceptor;
 
-import de.fraunhofer.iais.eis.ConfigurationModel;
-import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
-import de.fraunhofer.ids.messaging.core.config.ConfigProducerInterceptorException;
-import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
-import de.fraunhofer.ids.messaging.core.config.PreConfigProducerInterceptor;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Component;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 
+import de.fraunhofer.iais.eis.ConfigurationModel;
+import de.fraunhofer.ids.messaging.core.config.ConfigProducerInterceptorException;
+import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
+import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import de.fraunhofer.ids.messaging.core.config.PreConfigProducerInterceptor;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.dataspaceconnector.service.configuration.ConfigurationService;
+import io.dataspaceconnector.service.ids.DeserializationService;
+import io.dataspaceconnector.service.ids.builder.IdsConfigModelBuilder;
+import io.dataspaceconnector.util.MappingUtils;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
+
 /**
- * Intercepts {@link de.fraunhofer.ids.messaging.core.config.ConfigProducer}
- * and changes how the startup configuration is loaded.
+ * Intercepts {@link de.fraunhofer.ids.messaging.core.config.ConfigProducer} and changes how the
+ * startup configuration is loaded.
  */
 @Component
 @Slf4j
@@ -41,51 +45,69 @@ import java.nio.file.Paths;
 public final class PreConfigInterceptor implements PreConfigProducerInterceptor {
 
     /**
-     * Serializer for parsing configmodel from json-ld.
+     * Service for ids deserialization.
      */
-    private final Serializer serializer;
+    private final DeserializationService deserializationSvc;
+
+    /**
+     * Service for configuration management.
+     */
+    private final ConfigurationService configurationSvc;
+
+    /**
+     * Service for mapping ids configModel to dsc configuration.
+     */
+    private final IdsConfigModelBuilder configModelBuilder;
 
     @Override
     public ConfigurationModel perform(final ConfigProperties properties)
             throws ConfigProducerInterceptorException {
-        if (log.isInfoEnabled()) {
-            log.info("Intecepting loading of configuration!");
+        if (doesStoredConfigExits()) {
+            return loadConfigFromDb();
+        } else {
+            return loadConfigFromFile(properties);
         }
+    }
+
+    private boolean doesStoredConfigExits() {
+        return configurationSvc.findActiveConfig().isPresent();
+    }
+
+    private ConfigurationModel loadConfigFromDb() {
+        return configModelBuilder.create(configurationSvc.findActiveConfig().get());
+    }
+
+    private ConfigurationModel loadConfigFromFile(final ConfigProperties properties)
+            throws ConfigProducerInterceptorException {
         try {
-            //TODO check if configmodel is already saved in db,
-            // then load from there instead of config file.
-            var config = loadConfig(properties);
-            config.setProperty("preInterceptor", true);
-            return config;
-        } catch (IOException e) {
+            return loadConfig(properties);
+        } catch (IOException | ConfigUpdateException e) {
             throw new ConfigProducerInterceptorException(e.getMessage());
         }
     }
 
     private ConfigurationModel loadConfig(final ConfigProperties properties)
-            throws IOException {
+            throws IOException, ConfigUpdateException {
         if (log.isDebugEnabled()) {
-            log.debug(
-                    "Loading configuration from {}",
-                    properties.getPath().replaceAll("[\r\n]", "")
-            );
+            log.debug("Loading configuration. [path=({})] ",
+                    properties.getPath().replaceAll("[\r\n]", ""));
         }
 
         final var config = getConfiguration(properties);
 
         if (log.isInfoEnabled()) {
-            log.info("Importing configuration from file");
+            log.info("Importing configuration from file.");
         }
 
-        return serializer.deserialize(config, ConfigurationModel.class);
+        final var configModel = deserializationSvc.getConfigurationModel(config);
+        final var dscConfig = configurationSvc.create(MappingUtils.fromIdsConfig(configModel));
+        configurationSvc.swapActiveConfig(dscConfig.getId());
+        return configModel;
     }
 
-    @SuppressFBWarnings(
-            value = "PATH_TRAVERSAL_IN",
-            justification = "path of config json should be specified by user"
-    )
-    private String getConfiguration(final ConfigProperties properties)
-            throws IOException {
+    @SuppressFBWarnings(value = "PATH_TRAVERSAL_IN",
+            justification = "path of config json should be specified by user")
+    private String getConfiguration(final ConfigProperties properties) throws IOException {
         if (Paths.get(properties.getPath()).isAbsolute()) {
             return getAbsolutePathConfig(properties);
         } else {
@@ -93,68 +115,45 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
         }
     }
 
-    @SuppressFBWarnings(
-            value = {
-                    "PATH_TRAVERSAL_IN",
-                    "REC_CATCH_EXCEPTION",
-                    "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"
-            },
-            justification = "path of config json should be specified by user"
-    )
-    private String getClassPathConfig(final ConfigProperties properties)
-            throws IOException {
+    @SuppressFBWarnings(value = {"PATH_TRAVERSAL_IN", "REC_CATCH_EXCEPTION",
+            "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"},
+            justification = "path of config json should be specified by user")
+    private String getClassPathConfig(final ConfigProperties properties) throws IOException {
         if (log.isInfoEnabled()) {
-            log.info(
-                    "Loading config from classpath: {}",
+            log.info("Loading config from classpath. [path=({})]",
                     properties.getPath().replaceAll("[\r\n]", "")
             );
         }
 
-        try (var configurationStream = new ClassPathResource(
-                properties.getPath()
-        ).getInputStream()) {
-            return new String(
-                    configurationStream.readAllBytes(),
-                    StandardCharsets.UTF_8
-            );
+        try (var configStream = new ClassPathResource(properties.getPath()).getInputStream()) {
+            return new String(configStream.readAllBytes(), StandardCharsets.UTF_8);
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
-                log.warn(
-                        "Could not load config from path {}",
-                        properties.getPath().replaceAll("[\r\n]", "")
-                );
+                log.warn("Could not load config from classpath. [path=({})]",
+                        properties.getPath().replaceAll("[\r\n]", ""));
                 throw new IOException(e.getMessage(), e);
             }
         }
         return "";
     }
 
-    @SuppressFBWarnings(
-            value = {"PATH_TRAVERSAL_IN", "REC_CATCH_EXCEPTION"},
-            justification = "path of config json should be specified by user"
-    )
-    private String getAbsolutePathConfig(final ConfigProperties properties)
-            throws IOException {
+    @SuppressFBWarnings(value = {"PATH_TRAVERSAL_IN", "REC_CATCH_EXCEPTION"},
+            justification = "path of config json should be specified by user")
+    private String getAbsolutePathConfig(final ConfigProperties properties) throws IOException {
         if (log.isInfoEnabled()) {
-            log.info(
-                    "Loading config from absolute Path {}",
-                    properties.getPath().replaceAll("[\r\n]", "")
-            );
+            log.info("Loading config from absolute path. [path=({})]",
+                    properties.getPath().replaceAll("[\r\n]", ""));
         }
         try (var fis = new FileInputStream(properties.getPath())) {
-            return new String(
-                    fis.readAllBytes(),
-                    StandardCharsets.UTF_8
-            );
+            return new String(fis.readAllBytes(), StandardCharsets.UTF_8);
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
-                log.warn(
-                        "Could not load config from absolute path {}",
-                        properties.getPath().replaceAll("[\r\n]", "")
-                );
+                log.warn("Could not load config from absolute path. [path=({})]",
+                        properties.getPath().replaceAll("[\r\n]", ""));
                 throw new IOException(e.getMessage(), e);
             }
         }
         return "";
     }
+
 }

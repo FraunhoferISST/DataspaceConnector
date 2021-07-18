@@ -32,7 +32,7 @@ import io.dataspaceconnector.model.template.ContractTemplate;
 import io.dataspaceconnector.model.template.RepresentationTemplate;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -133,7 +133,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
      * @throws IllegalArgumentException if the passed template is null.
      */
     public Catalog build(final CatalogTemplate template) {
-        Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(template, ErrorMessage.ENTITY_NULL);
 
         final var templateBuilderOfferedResource = (TemplateBuilderOfferedResource)
                 applicationContext.getBean("templateBuilderOfferedResource");
@@ -166,7 +166,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
      * @throws IllegalArgumentException if the passed template is null.
      */
     public T build(final ResourceTemplate<D> template) {
-        Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(template, ErrorMessage.ENTITY_NULL);
 
         final var representationIds =
                 Utils.toStream(template.getRepresentations()).map(x -> build(x).getId())
@@ -197,7 +197,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
      * @throws IllegalArgumentException if the passed template is null.
      */
     public Representation build(final RepresentationTemplate template) {
-        Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(template, ErrorMessage.ENTITY_NULL);
 
         final var artifactIds = Utils.toStream(template.getArtifacts()).map(x -> build(x).getId())
                 .collect(Collectors.toSet());
@@ -223,7 +223,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
      * @throws IllegalArgumentException if the passed template is null.
      */
     public Contract build(final ContractTemplate template) {
-        Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(template, ErrorMessage.ENTITY_NULL);
 
         final var ruleIds = Utils.toStream(template.getRules()).map(x -> build(x).getId())
                 .collect(Collectors.toSet());
@@ -241,7 +241,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
      * @throws IllegalArgumentException if the passed template is null.
      */
     public Artifact build(final ArtifactTemplate template) {
-        Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(template, ErrorMessage.ENTITY_NULL);
 
         Artifact artifact;
         final var contractId = artifactService.identifyByRemoteId(template.getDesc().getRemoteId());
@@ -262,7 +262,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
      * @throws IllegalArgumentException if the passed template is null.
      */
     public ContractRule build(final RuleTemplate template) {
-        Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(template, ErrorMessage.ENTITY_NULL);
         return ruleService.create(template.getDesc());
     }
 

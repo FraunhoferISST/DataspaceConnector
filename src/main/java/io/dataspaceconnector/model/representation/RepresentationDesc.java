@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.model.representation;
 
-import java.net.URI;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dataspaceconnector.model.named.NamedDescription;
 import io.dataspaceconnector.model.base.RemoteObject;
+import io.dataspaceconnector.model.named.NamedDescription;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.net.URI;
 
 /**
  * Describes a representation. Use this for creating or updating a representation.
@@ -47,8 +47,8 @@ public class RepresentationDesc extends NamedDescription implements RemoteObject
     private String language;
 
     /**
-     * "Standard followed at representation level, i.e. it governs
-     * the serialization of an abstract content like RDF/XML."
+     * "Standard followed at representation level, i.e. it governs the serialization of an abstract
+     * content like RDF/XML."
      */
     private String standard;
 }

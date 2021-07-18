@@ -37,9 +37,8 @@ public final class EntityLinkerService {
      */
     @Service
     @NoArgsConstructor
-    public static class BrokerOfferedResourcesLinker
-            extends OwningRelationService<Broker, OfferedResource, BrokerService,
-            OfferedResourceService> {
+    public static class BrokerOfferedResourcesLinker extends OwningRelationService<Broker,
+            OfferedResource, BrokerService, OfferedResourceService> {
 
         @Override
         protected final List<OfferedResource> getInternal(final Broker owner) {
@@ -48,12 +47,12 @@ public final class EntityLinkerService {
     }
 
     /**
-     * Handles the relation between the routes and subroutes.
+     * Handles the relation between the routes and sub-routes.
      */
     @Service
     @NoArgsConstructor
-    public static class RouteStepsLinker
-            extends OwningRelationService<Route, Route, RouteService, RouteService> {
+    public static class RouteStepsLinker extends OwningRelationService<Route, Route, RouteService,
+            RouteService> {
 
         @Override
         protected final List<Route> getInternal(final Route owner) {
@@ -66,9 +65,8 @@ public final class EntityLinkerService {
      */
     @Service
     @NoArgsConstructor
-    public static class RouteArtifactsLinker
-            extends OwningRelationService<Route, Artifact, RouteService,
-            ArtifactService> {
+    public static class RouteArtifactsLinker extends OwningRelationService<Route, Artifact,
+            RouteService, ArtifactService> {
 
         @Override
         protected final List<Artifact> getInternal(final Route owner) {

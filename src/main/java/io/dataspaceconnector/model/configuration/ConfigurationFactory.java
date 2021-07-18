@@ -16,7 +16,7 @@
 package io.dataspaceconnector.model.configuration;
 
 import java.net.URI;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
@@ -142,7 +142,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     }
 
     /**
-     * @param config The configuration.
+     * @param config          The configuration.
      * @param securityProfile The new security profile.
      * @return True, if security profile is updated.
      */
@@ -158,7 +158,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     }
 
     /**
-     * @param config The configuration.
+     * @param config               The configuration.
      * @param outboundModelVersion The outbound model version.
      * @return True, if outbound model version is updated.
      */
@@ -173,7 +173,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     }
 
     /**
-     * @param config The configuration.
+     * @param config              The configuration.
      * @param inboundModelVersion The new inbound model version list.
      * @return True, if list is updated.
      */
@@ -181,14 +181,14 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
                                               final List<String> inboundModelVersion) {
         final var newInboundModelVersionList =
                 MetadataUtils.updateStringList(config.getInboundModelVersion(), inboundModelVersion,
-                        new ArrayList<>());
+                                               Arrays.asList(DEFAULT_OUTBOUND_VERSION));
         newInboundModelVersionList.ifPresent(config::setInboundModelVersion);
 
         return newInboundModelVersionList.isPresent();
     }
 
     /**
-     * @param config The configuration.
+     * @param config     The configuration.
      * @param maintainer The new maintainer.
      * @return True, if maintainer is updated.
      */
@@ -202,7 +202,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     }
 
     /**
-     * @param config The configuration.
+     * @param config  The configuration.
      * @param curator The new curator.
      * @return True, if curator is updated.
      */
@@ -216,7 +216,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     }
 
     /**
-     * @param config The configuration.
+     * @param config  The configuration.
      * @param version The updated project version.
      * @return True, if version is updated.
      */
@@ -230,7 +230,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     }
 
     /**
-     * @param config The configuration
+     * @param config            The configuration
      * @param connectorEndpoint The new connector endpoint.
      * @return True, if connector endpoint is updated.
      */

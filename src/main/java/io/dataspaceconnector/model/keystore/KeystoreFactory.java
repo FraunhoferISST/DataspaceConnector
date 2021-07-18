@@ -35,7 +35,7 @@ public class KeystoreFactory extends AbstractFactory<Keystore, KeystoreDesc> {
     /**
      * The default location.
      */
-    public static final URI DEFAULT_LOCATION = URI.create("");
+    public static final URI DEFAULT_LOCATION = URI.create("file:///conf/keystore-localhost.p12");
 
     @Override
     protected final Keystore initializeEntity(final KeystoreDesc desc) {

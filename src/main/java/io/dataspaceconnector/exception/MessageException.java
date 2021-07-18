@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.exception;
 
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 
 /**
  * Thrown to indicate that a problem regarding a message occurred.
@@ -32,7 +32,7 @@ public class MessageException extends RuntimeException {
      * @param msg   The detail message.
      * @param cause The cause.
      */
-    public MessageException(final ErrorMessages msg, final Throwable cause) {
+    public MessageException(final ErrorMessage msg, final Throwable cause) {
         super(msg.toString(), cause);
     }
 }

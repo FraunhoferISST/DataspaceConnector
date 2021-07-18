@@ -33,8 +33,8 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
     /**
      * Finds all artifacts of a specific resource.
      *
-     * @param resourceId ID of the resource
-     * @return list of all artifacts of the resource
+     * @param resourceId The resource's id.
+     * @return List of all artifacts of the resource.
      */
     @Query("SELECT a "
             + "FROM Artifact a, Representation r, OfferedResource o "
@@ -49,8 +49,8 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
     /**
      * Finds all artifacts referenced in a specific agreement.
      *
-     * @param agreementId ID of the agreement
-     * @return list of all artifacts referenced in the agreement
+     * @param agreementId The id of the agreement.
+     * @return List of all artifacts referenced in the agreement.
      */
     @Query("SELECT a "
             + "FROM Artifact a INNER JOIN Agreement ag ON a MEMBER OF ag.artifacts "
@@ -61,6 +61,7 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
 
     /**
      * Search for all agreements signed for requested resources by this connector as consumer.
+     *
      * @param artifactId The artifact.
      * @return The list of agreement ids.
      */
@@ -77,9 +78,10 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
 
     /**
      * Set the artifacts data.
+     *
      * @param artifactId The artifact.
-     * @param checkSum The new CRC32C checksum.
-     * @param size The new size in bytes.
+     * @param checkSum   The new CRC32C checksum.
+     * @param size       The new size in bytes.
      */
     @Modifying
     @Query("UPDATE Artifact a "
@@ -91,8 +93,8 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
     /**
      * Finds all artifacts with a specific bootstrap ID.
      *
-     * @param bootstrapId bootstrap ID of the artifact
-     * @return list of all artifacts with given bootstrap ID
+     * @param bootstrapId The bootstrap id of the artifact.
+     * @return A list of all artifacts with given bootstrap id.
      */
     @Query("SELECT a "
             + "FROM Artifact a "

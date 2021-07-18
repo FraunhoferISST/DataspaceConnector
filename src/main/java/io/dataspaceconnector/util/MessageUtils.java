@@ -56,7 +56,7 @@ public final class MessageUtils {
      * @throws IllegalArgumentException If the message is null.
      */
     public static URI extractRequestedElement(final DescriptionRequestMessage message) {
-        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
+        Utils.requireNonNull(message, ErrorMessage.MESSAGE_NULL);
         return message.getRequestedElement();
     }
 
@@ -68,7 +68,7 @@ public final class MessageUtils {
      * @throws IllegalArgumentException If the message is null.
      */
     public static URI extractRequestedArtifact(final ArtifactRequestMessage message) {
-        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
+        Utils.requireNonNull(message, ErrorMessage.MESSAGE_NULL);
         return message.getRequestedArtifact();
     }
 
@@ -80,7 +80,7 @@ public final class MessageUtils {
      * @throws IllegalArgumentException If the message is null.
      */
     public static URI extractTransferContract(final ArtifactRequestMessage message) {
-        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
+        Utils.requireNonNull(message, ErrorMessage.MESSAGE_NULL);
         return message.getTransferContract();
     }
 
@@ -92,7 +92,7 @@ public final class MessageUtils {
      * @throws IllegalArgumentException If the message is null.
      */
     public static URI extractAffectedResource(final ResourceUpdateMessage message) {
-        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
+        Utils.requireNonNull(message, ErrorMessage.MESSAGE_NULL);
         return message.getAffectedResource();
     }
 
@@ -104,7 +104,7 @@ public final class MessageUtils {
      * @throws IllegalArgumentException If the message is null.
      */
     public static URI extractIssuerConnector(final Message message) {
-        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
+        Utils.requireNonNull(message, ErrorMessage.MESSAGE_NULL);
         return message.getIssuerConnector();
     }
 
@@ -116,7 +116,7 @@ public final class MessageUtils {
      * @throws IllegalArgumentException If the message is null.
      */
     public static URI extractMessageId(final Message message) {
-        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
+        Utils.requireNonNull(message, ErrorMessage.MESSAGE_NULL);
         return message.getId();
     }
 
@@ -128,7 +128,7 @@ public final class MessageUtils {
      * @throws IllegalArgumentException If the message is null.
      */
     public static String extractModelVersion(final Message message) {
-        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
+        Utils.requireNonNull(message, ErrorMessage.MESSAGE_NULL);
         return message.getModelVersion();
     }
 
@@ -140,7 +140,7 @@ public final class MessageUtils {
      * @throws IllegalArgumentException If the message is null.
      */
     public static RejectionReason extractRejectionReason(final RejectionMessage message) {
-        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
+        Utils.requireNonNull(message, ErrorMessage.MESSAGE_NULL);
         return message.getRejectionReason();
     }
 
@@ -201,7 +201,7 @@ public final class MessageUtils {
      * @throws IllegalArgumentException If the message is null.
      */
     public static String extractHeaderFromMultipartMessage(final Map<String, String> message) {
-        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
+        Utils.requireNonNull(message, ErrorMessage.MESSAGE_NULL);
         return message.get("header");
     }
 
@@ -213,7 +213,7 @@ public final class MessageUtils {
      * @throws IllegalArgumentException If the message is null.
      */
     public static String extractPayloadFromMultipartMessage(final Map<String, String> message) {
-        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
+        Utils.requireNonNull(message, ErrorMessage.MESSAGE_NULL);
         return message.get("payload");
     }
 
@@ -226,8 +226,8 @@ public final class MessageUtils {
      * @throws IOException              If the stream could not be read.
      */
     public static String getStreamAsString(final MessagePayload payload) throws IOException {
-        Utils.requireNonNull(payload, ErrorMessages.MISSING_PAYLOAD);
-        Utils.requireNonNull(payload.getUnderlyingInputStream(), ErrorMessages.MISSING_PAYLOAD);
+        Utils.requireNonNull(payload, ErrorMessage.MISSING_PAYLOAD);
+        Utils.requireNonNull(payload.getUnderlyingInputStream(), ErrorMessage.MISSING_PAYLOAD);
         return IOUtils.toString(payload.getUnderlyingInputStream(), StandardCharsets.UTF_8);
     }
 
@@ -241,19 +241,19 @@ public final class MessageUtils {
     public static String getPayloadAsString(final MessagePayload payload)
             throws MessageRequestException {
         if (payload == null) {
-            throw new MessageRequestException(ErrorMessages.MISSING_PAYLOAD);
+            throw new MessageRequestException(ErrorMessage.MISSING_PAYLOAD);
         }
 
         String content;
         try {
             content = MessageUtils.getStreamAsString(payload);
         } catch (IOException e) {
-            throw new MessageRequestException(ErrorMessages.MALFORMED_PAYLOAD, e);
+            throw new MessageRequestException(ErrorMessage.MALFORMED_PAYLOAD, e);
         }
 
         // If request is empty, return rejection message.
         if (content.isEmpty()) {
-            throw new MessageRequestException(ErrorMessages.MISSING_PAYLOAD);
+            throw new MessageRequestException(ErrorMessage.MISSING_PAYLOAD);
         }
 
         return content;

@@ -25,15 +25,17 @@ import lombok.EqualsAndHashCode;
  * specific connector.
  */
 @Schema(example = "{\n"
-        + "\t\"type\": \"CONNECTOR_RESTRICTED_USAGE\",\n"
-        + "\t\"url\": \"https://localhost:8080\"\n"
-        + "}")
+        + "\t\"type\": \"SECURITY_PROFILE_RESTRICTED_USAGE\",\n"
+        + "\t\"profile\": \"BASE_SECURITY_PROFILE\"\n"
+        + "}", description = "Possible profiles are: idsc:BASE_SECURITY_PROFILE, "
+        + "idsc:TRUST_SECURITY_PROFILE and idsc:TRUST_PLUS_SECURITY_PROFILE")
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class RestrictionDesc extends PatternDesc {
+public class SecurityRestrictionDesc extends PatternDesc {
+
     /**
-     * The connector id.
+     * The security profile.
      */
-    @JsonProperty("url")
-    private String url;
+    @JsonProperty("profile")
+    private String profile;
 }

@@ -21,6 +21,7 @@ import java.net.URI;
  * Interface for remote objects.
  */
 public interface RemoteObject extends Remote {
+
     /**
      * @return remote id
      */

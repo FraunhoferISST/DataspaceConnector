@@ -22,7 +22,7 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.model.message.ContractRejectionMessageDesc;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.Utils;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +43,7 @@ public final class ContractRejectionService
     @Override
     public Message buildMessage(final ContractRejectionMessageDesc desc)
             throws ConstraintViolationException {
-        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+        Utils.requireNonNull(desc, ErrorMessage.DESC_NULL);
 
         final var connectorId = getConnectorService().getConnectorId();
         final var modelVersion = getConnectorService().getOutboundModelVersion();

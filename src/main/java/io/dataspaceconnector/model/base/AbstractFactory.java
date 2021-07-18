@@ -15,17 +15,18 @@
  */
 package io.dataspaceconnector.model.base;
 
+import io.dataspaceconnector.util.ErrorMessage;
+import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.util.Utils;
+
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import io.dataspaceconnector.util.ErrorMessages;
-import io.dataspaceconnector.util.MetadataUtils;
-import io.dataspaceconnector.util.Utils;
-
 /**
  * Abstract factory class for entities.
+ *
  * @param <T> The type of the entity.
  * @param <D> The type of the entity description.
  */
@@ -35,8 +36,9 @@ public abstract class AbstractFactory<T extends Entity, D extends Description> {
 
     /**
      * Updates the internal entity representation with a given new description.
+     *
      * @param entity The entity to update.
-     * @param desc The new description.
+     * @param desc   The new description.
      * @return If updating the entity was successful.
      */
     protected boolean updateInternal(final T entity, final D desc) {
@@ -48,7 +50,7 @@ public abstract class AbstractFactory<T extends Entity, D extends Description> {
      * @return entity
      */
     public T create(final D desc) {
-        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+        Utils.requireNonNull(desc, ErrorMessage.DESC_NULL);
 
         final var entity = initializeEntity(desc);
 
@@ -59,12 +61,12 @@ public abstract class AbstractFactory<T extends Entity, D extends Description> {
 
     /**
      * @param entity The entity.
-     * @param desc The description of the entity.
+     * @param desc   The description of the entity.
      * @return true, if entity is updated.
      */
     public boolean update(final T entity, final D desc) {
-        Utils.requireNonNull(entity, ErrorMessages.ENTITY_NULL);
-        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+        Utils.requireNonNull(entity, ErrorMessage.ENTITY_NULL);
+        Utils.requireNonNull(desc, ErrorMessage.DESC_NULL);
 
         final var additional = updateAdditional(entity, desc.getAdditional());
         final var bootstrap = updateBootstrapId(entity, desc.getBootstrapId());

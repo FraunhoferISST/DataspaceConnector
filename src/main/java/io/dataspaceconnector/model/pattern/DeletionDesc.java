@@ -32,6 +32,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class DeletionDesc extends PatternDesc {
+
     /**
      * The start value of the usage interval.
      */

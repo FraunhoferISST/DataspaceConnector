@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.configurations;
-
-import javax.validation.Valid;
-import java.util.UUID;
+package io.dataspaceconnector.controller.configuration;
 
 import io.dataspaceconnector.controller.resource.BaseResourceChildController;
 import io.dataspaceconnector.controller.resource.BaseResourceController;
-import io.dataspaceconnector.controller.resource.swagger.response.ResponseCodes;
-import io.dataspaceconnector.controller.resource.swagger.response.ResponseDescriptions;
+import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
+import io.dataspaceconnector.controller.resource.swagger.response.ResponseDescription;
+import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
+import io.dataspaceconnector.controller.resource.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.ArtifactView;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.route.Route;
@@ -43,6 +42,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+import java.util.UUID;
+
 /**
  * Controller for route management.
  */
@@ -53,22 +55,23 @@ public final class RouteControllers {
      */
     @RestController
     @RequestMapping("/api/routes")
-    @Tag(name = "Route", description = "Endpoints for CRUD operations on routes")
+    @Tag(name = ResourceName.ROUTES, description = ResourceDescription.ROUTES)
     @RequiredArgsConstructor
-    public static class RouteController
-            extends BaseResourceController<Route, RouteDesc, RouteView, RouteService> {
+    public static class RouteController extends BaseResourceController<Route, RouteDesc, RouteView,
+            RouteService> {
 
         /**
-         * @param routeId The id of the route.
+         * @param routeId    The id of the route.
          * @param endpointId The id of the endpoint.
          * @return response status OK, if start endpoint is created.
          */
         @PutMapping("{id}/endpoint/start")
         @Operation(summary = "Creates start endpoint for the route")
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.NO_CONTENT,
-                description = ResponseDescriptions.NO_CONTENT),
-                @ApiResponse(responseCode = ResponseCodes.UNAUTHORIZED,
-                        description = ResponseDescriptions.UNAUTHORIZED)})
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
+                        description = ResponseDescription.NO_CONTENT),
+                @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                        description = ResponseDescription.UNAUTHORIZED)})
         public ResponseEntity<String> createStartEndpoint(
                 @Valid @PathVariable(name = "id") final UUID routeId,
                 @RequestBody final UUID endpointId) {
@@ -82,10 +85,11 @@ public final class RouteControllers {
          */
         @DeleteMapping("{id}/endpoint/start")
         @Operation(summary = "Deletes the start endpoint of the route")
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.NO_CONTENT,
-                description = ResponseDescriptions.NO_CONTENT),
-                @ApiResponse(responseCode = ResponseCodes.UNAUTHORIZED,
-                        description = ResponseDescriptions.UNAUTHORIZED)})
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
+                        description = ResponseDescription.NO_CONTENT),
+                @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                        description = ResponseDescription.UNAUTHORIZED)})
         public ResponseEntity<String> deleteStartEndpoint(
                 @Valid @PathVariable(name = "id") final UUID routeId) {
             getService().removeStartEndpoint(routeId);
@@ -93,16 +97,17 @@ public final class RouteControllers {
         }
 
         /**
-         * @param routeId The id of the route.
+         * @param routeId    The id of the route.
          * @param endpointId The id of the endpoint.
          * @return response status OK, if last endpoint is created.
          */
         @PutMapping("{id}/endpoint/end")
         @Operation(summary = "Creates last endpoint for the route")
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.NO_CONTENT,
-                description = ResponseDescriptions.NO_CONTENT),
-                @ApiResponse(responseCode = ResponseCodes.UNAUTHORIZED,
-                        description = ResponseDescriptions.UNAUTHORIZED)})
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
+                        description = ResponseDescription.NO_CONTENT),
+                @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                        description = ResponseDescription.UNAUTHORIZED)})
         public ResponseEntity<String> createLastEndpoint(
                 @Valid @PathVariable(name = "id") final UUID routeId,
                 @RequestBody final UUID endpointId) {
@@ -111,15 +116,16 @@ public final class RouteControllers {
         }
 
         /**
-         * @param routeId The id of the route
+         * @param routeId The id of the route.
          * @return response status OK, if last endpoint is deleted.
          */
         @DeleteMapping("{id}/endpoint/end")
         @Operation(summary = "Deletes the start endpoint of the route")
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.NO_CONTENT,
-                description = ResponseDescriptions.NO_CONTENT),
-                @ApiResponse(responseCode = ResponseCodes.UNAUTHORIZED,
-                        description = ResponseDescriptions.UNAUTHORIZED)})
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
+                        description = ResponseDescription.NO_CONTENT),
+                @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                        description = ResponseDescription.UNAUTHORIZED)})
         public ResponseEntity<String> deleteLastEndpoint(
                 @Valid @PathVariable(name = "id") final UUID routeId) {
             getService().removeLastEndpoint(routeId);
@@ -132,10 +138,9 @@ public final class RouteControllers {
      */
     @RestController
     @RequestMapping("/api/routes/{id}/steps")
-    @Tag(name = "Route", description = "Endpoints for linking routes to steps")
-    public static class RoutesToSteps
-            extends BaseResourceChildController<EntityLinkerService.RouteStepsLinker,
-            Route, RouteView> {
+    @Tag(name = ResourceName.ROUTES, description = ResourceDescription.ROUTES)
+    public static class RoutesToSteps extends BaseResourceChildController<
+            EntityLinkerService.RouteStepsLinker, Route, RouteView> {
     }
 
     /**
@@ -143,9 +148,8 @@ public final class RouteControllers {
      */
     @RestController
     @RequestMapping("/api/routes/{id}/outputs")
-    @Tag(name = "Route", description = "Endpoints for linking routes to offered resources")
-    public static class RoutesToArtifacts
-            extends BaseResourceChildController<EntityLinkerService.RouteArtifactsLinker,
-            Artifact, ArtifactView> {
+    @Tag(name = ResourceName.ROUTES, description = ResourceDescription.ROUTES)
+    public static class RoutesToArtifacts extends BaseResourceChildController<
+            EntityLinkerService.RouteArtifactsLinker, Artifact, ArtifactView> {
     }
 }

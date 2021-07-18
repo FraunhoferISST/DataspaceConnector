@@ -30,6 +30,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class DurationDesc extends PatternDesc {
+
     /**
      * The duration value.
      */

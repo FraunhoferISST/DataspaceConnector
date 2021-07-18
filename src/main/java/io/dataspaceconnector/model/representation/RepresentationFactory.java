@@ -51,6 +51,7 @@ public class RepresentationFactory
 
     /**
      * Create a new representation.
+     *
      * @param desc The description of the new representation.
      * @return The new representation.
      * @throws IllegalArgumentException if desc is null.
@@ -66,6 +67,7 @@ public class RepresentationFactory
 
     /**
      * Update a representation.
+     *
      * @param representation The representation to be updated.
      * @param desc           The new representation description.
      * @return True if the representation has been modified.
@@ -92,27 +94,24 @@ public class RepresentationFactory
     }
 
     private boolean updateLanguage(final Representation representation, final String language) {
-        final var newLanguage =
-                MetadataUtils
-                        .updateString(representation.getLanguage(), language, DEFAULT_LANGUAGE);
+        final var newLanguage = MetadataUtils.updateString(
+                representation.getLanguage(), language, DEFAULT_LANGUAGE);
         newLanguage.ifPresent(representation::setLanguage);
 
         return newLanguage.isPresent();
     }
 
     private boolean updateMediaType(final Representation representation, final String mediaType) {
-        final var newMediaType =
-                MetadataUtils
-                        .updateString(representation.getMediaType(), mediaType, DEFAULT_MEDIA_TYPE);
+        final var newMediaType = MetadataUtils.updateString(representation.getMediaType(),
+                mediaType, DEFAULT_MEDIA_TYPE);
         newMediaType.ifPresent(representation::setMediaType);
 
         return newMediaType.isPresent();
     }
 
     private boolean updateStandard(final Representation representation, final String standard) {
-        final var newAdditional =
-                MetadataUtils
-                        .updateString(representation.getStandard(), standard, DEFAULT_STANDARD);
+        final var newAdditional = MetadataUtils.updateString(representation.getStandard(),
+                standard, DEFAULT_STANDARD);
         newAdditional.ifPresent(representation::setStandard);
 
         return newAdditional.isPresent();

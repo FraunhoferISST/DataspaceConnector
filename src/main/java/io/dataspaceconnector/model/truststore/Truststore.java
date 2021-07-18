@@ -44,6 +44,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
 public class Truststore extends Entity {
+
     /**
      * Serial version uid.
      **/

@@ -21,6 +21,7 @@ import java.net.URI;
  * Interface for remote service.
  */
 public interface RemoteService extends Remote {
+
     /**
      * @return location information
      */

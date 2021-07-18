@@ -15,12 +15,14 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.SecurityProfile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+
+import java.net.URI;
+import java.util.Optional;
 
 /**
  * A DTO for information required to decide if data provision should be allowed.
@@ -44,4 +46,10 @@ public class VerificationInput {
      * The contract agreements for policy verification.
      */
     private ContractAgreement agreement;
+
+    /**
+     * The security profile.
+     */
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private Optional<SecurityProfile> securityProfile;
 }

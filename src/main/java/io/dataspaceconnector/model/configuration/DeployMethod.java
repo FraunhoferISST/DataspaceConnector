@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Enumeration for deploy method.
  */
 public enum DeployMethod {
+
     /**
      * Deploy method is none.
      */

@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.model.catalog;
 
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import java.util.List;
-
 import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.RequestedResource;
@@ -29,6 +25,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import java.util.List;
 
 /**
  * A catalog groups resources.
@@ -42,6 +42,7 @@ import org.hibernate.annotations.Where;
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
 public class Catalog extends NamedEntity {
+
     /**
      * Serial version uid.
      **/

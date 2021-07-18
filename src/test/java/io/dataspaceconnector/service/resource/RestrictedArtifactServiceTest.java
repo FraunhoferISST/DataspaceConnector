@@ -23,11 +23,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.repository.ArtifactRepository;
+import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
 import io.dataspaceconnector.service.HttpService;
@@ -50,6 +50,9 @@ public class RestrictedArtifactServiceTest {
     private ArtifactRepository artifactRepository;
 
     @MockBean
+    private AuthenticationRepository authenticationRepository;
+
+    @MockBean
     private DataRepository dataRepository;
 
     @MockBean
@@ -65,7 +68,7 @@ public class RestrictedArtifactServiceTest {
     private ArtifactService service;
 
     @Test
-    public void getData_restrictedData_allowAccessAndDownloadDataAndReturnData() throws IOException, UnexpectedResponseException {
+    public void getData_restrictedData_allowAccessAndDownloadDataAndReturnData() throws IOException {
         /* ARRANGE */
         final var verifier = new AllowAccessVerifier();
         final var artifactId = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");

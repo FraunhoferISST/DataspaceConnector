@@ -26,7 +26,7 @@ import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseExcep
 import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -155,7 +155,7 @@ public class QueryMessageControllerTest {
 
         /* ASSERT */
         assertEquals(502, result.getResponse().getStatus());
-        final var msg = ErrorMessages.INVALID_MESSAGE.toString();
+        final var msg = ErrorMessage.INVALID_MESSAGE.toString();
         assertEquals(msg, result.getResponse().getContentAsString());
     }
 
@@ -231,7 +231,7 @@ public class QueryMessageControllerTest {
 
         /* ASSERT */
         assertEquals(502, result.getResponse().getStatus());
-        final var msg = ErrorMessages.INVALID_MESSAGE.toString();
+        final var msg = ErrorMessage.INVALID_MESSAGE.toString();
         assertEquals(msg, result.getResponse().getContentAsString());
     }
 

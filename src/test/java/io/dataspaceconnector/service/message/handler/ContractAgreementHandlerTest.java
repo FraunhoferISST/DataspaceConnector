@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.service.message.handler;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.ByteArrayInputStream;
@@ -77,6 +76,7 @@ class ContractAgreementHandlerTest {
     @Value("${clearing.house.url}")
     private URI chUri;
 
+    @SneakyThrows
     @Test
     public void handleMessage_nullMessage_returnBadParametersResponse() {
         /* ARRANGE */
@@ -89,9 +89,9 @@ class ContractAgreementHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
-    public void handleMessage_unsupportedMessage_returnUnsupportedVersionRejectionMessage() throws
-            DatatypeConfigurationException {
+    public void handleMessage_unsupportedMessage_returnUnsupportedVersionRejectionMessage() {
         /* ARRANGE */
         final var message = new ContractAgreementMessageBuilder()
                 ._senderAgent_(URI.create("https://localhost:8080"))
@@ -110,9 +110,9 @@ class ContractAgreementHandlerTest {
     }
 
 
+    @SneakyThrows
     @Test
-    public void handleMessage_nullPayload_returnBadRequestErrorResponse() throws
-            DatatypeConfigurationException {
+    public void handleMessage_nullPayload_returnBadRequestErrorResponse() {
         /* ARRANGE */
         final var message = new ContractAgreementMessageBuilder()
                 ._senderAgent_(URI.create("https://localhost:8080"))
@@ -130,9 +130,9 @@ class ContractAgreementHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
-    public void handleMessage_emptyPayload_returnBadRequestErrorResponse() throws
-            DatatypeConfigurationException {
+    public void handleMessage_emptyPayload_returnBadRequestErrorResponse()  {
         /* ARRANGE */
         final var message = new ContractAgreementMessageBuilder()
                 ._senderAgent_(URI.create("https://localhost:8080"))
@@ -150,6 +150,7 @@ class ContractAgreementHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
     public void handleMessage_agreementsDoNotMatch_returnBadParametersResponse() {
         final var message = new ContractAgreementMessageBuilder()
@@ -179,6 +180,7 @@ class ContractAgreementHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
     public void handleMessage_updatingAgreementFails_returnBadParametersResponse() {
         /* ARRANGE */
@@ -209,6 +211,7 @@ class ContractAgreementHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
+    @SneakyThrows
     @Test
     @SuppressWarnings("unchecked")
     public void handleMessage_validAgreement_returnMessageProcessedNotificationMessageAndLogToCH() {

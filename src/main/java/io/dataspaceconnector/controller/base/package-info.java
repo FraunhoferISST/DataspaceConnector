@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Defines a controller for crud operations.
+ * Defines a controller for CRUD operations.
  */
 package io.dataspaceconnector.controller.base;

@@ -13,7 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.dataspaceconnector.repository;
+
+import io.dataspaceconnector.model.auth.Authentication;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 /**
- * Groups all controllers which are needed for the Configuration Manager.
+ * The repository containing all objects of type {@link Authentication}.
  */
-package io.dataspaceconnector.controller.configurations;
+@Repository
+public interface AuthenticationRepository extends JpaRepository<Authentication, Long> {
+}

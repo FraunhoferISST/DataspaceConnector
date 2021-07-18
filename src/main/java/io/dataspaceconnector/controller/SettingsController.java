@@ -15,11 +15,7 @@
  */
 package io.dataspaceconnector.controller;
 
-import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
-import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.util.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -33,7 +29,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -43,14 +38,9 @@ import org.springframework.web.bind.annotation.RestController;
  * This class provides endpoints for connector configurations via a connected config manager.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/configuration")
 @RequiredArgsConstructor
-public class ConfigurationController {
-
-    /**
-     * The current connector configuration.
-     */
-    private final @NonNull ConfigContainer configContainer;
+public class SettingsController {
 
     /**
      * The current policy configuration.
@@ -58,71 +48,12 @@ public class ConfigurationController {
     private final @NonNull ConnectorConfiguration connectorConfig;
 
     /**
-     * Service for deserializing ids objects.
-     */
-    private final @NonNull DeserializationService idsService;
-
-    /**
-     * Update the connector's current configuration.
-     *
-     * @param configuration The new configuration.
-     * @return Ok or error response.
-     */
-    @PutMapping(value = "/configuration", consumes = {"application/json", "application/ld+json"},
-            produces = {"application/ld+json"})
-    @Operation(summary = "Update current configuration.")
-    @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "400", description = "Failed to deserialize."),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "415", description = "Wrong media type."),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
-    @ResponseBody
-    public ResponseEntity<Object> updateConfiguration(@RequestBody final String configuration) {
-        try {
-            // Deserialize input.
-            final var config = idsService.getConfigurationModel(configuration);
-
-            // Update configuration of connector.
-            configContainer.updateConfiguration(config);
-            return getConfiguration();
-        } catch (ConfigUpdateException exception) {
-            return ControllerUtils.respondConfigurationUpdateError(exception);
-        } catch (IllegalArgumentException exception) {
-            return ControllerUtils.respondInvalidInput(exception);
-        }
-    }
-
-    /**
-     * Return the connector's current configuration.
-     *
-     * @return The configuration object or an error.
-     */
-    @GetMapping(value = "/configuration", produces = "application/json")
-    @Operation(summary = "Get current configuration.")
-    @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "404", description = "Not found")})
-    @ResponseBody
-    public ResponseEntity<Object> getConfiguration() {
-        final var config = configContainer.getConfigurationModel();
-        if (config == null) {
-            return new ResponseEntity<>("No configuration found.", HttpStatus.NOT_FOUND);
-        } else {
-            return ResponseEntity.ok(config.toRdf());
-        }
-    }
-
-    /**
      * Turns contract negotiation on or off (at runtime).
      *
      * @param status The desired state.
      * @return Http ok or error response.
      */
-    @PutMapping(value = "/configuration/negotiation", produces = "application/json")
+    @PutMapping(value = "/negotiation", produces = "application/json")
     @Operation(summary = "Set contract negotiation status")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok"),
@@ -139,7 +70,7 @@ public class ConfigurationController {
      *
      * @return Http ok or error response.
      */
-    @GetMapping(value = "/configuration/negotiation", produces = "application/json")
+    @GetMapping(value = "/negotiation", produces = "application/json")
     @Operation(summary = "Get contract negotiation status")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok"),
@@ -161,7 +92,7 @@ public class ConfigurationController {
      * @param status The desired state.
      * @return Http ok or error response.
      */
-    @PutMapping(value = "/configuration/pattern", produces = "application/json")
+    @PutMapping(value = "/pattern", produces = "application/json")
     @Operation(summary = "Allow unsupported patterns", description = "Allow "
             + "requesting data without policy enforcement if an unsupported pattern is recognized.")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
@@ -179,7 +110,7 @@ public class ConfigurationController {
      *
      * @return Http ok or error response.
      */
-    @GetMapping(value = "/configuration/pattern", produces = "application/json")
+    @GetMapping(value = "/pattern", produces = "application/json")
     @Operation(summary = "Get pattern validation status",
             description = "Return if unsupported patterns are ignored when requesting data.")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")

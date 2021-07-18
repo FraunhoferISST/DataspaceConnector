@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.model.contract;
 
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
+import io.dataspaceconnector.util.MetadataUtils;
+import org.springframework.stereotype.Component;
+
 import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-
-import io.dataspaceconnector.util.MetadataUtils;
-import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates a contract.
@@ -47,6 +47,7 @@ public class ContractFactory extends AbstractNamedFactory<Contract, ContractDesc
 
     /**
      * Create a new contract.
+     *
      * @param desc The description of the new contract.
      * @return The new contract.
      * @throws IllegalArgumentException if desc is null.
@@ -62,6 +63,7 @@ public class ContractFactory extends AbstractNamedFactory<Contract, ContractDesc
 
     /**
      * Update a contract.
+     *
      * @param contract The contract to be updated.
      * @param desc     The new contract description.
      * @return True if the contract has been modified.

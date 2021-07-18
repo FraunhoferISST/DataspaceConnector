@@ -15,8 +15,35 @@
  */
 package io.dataspaceconnector.util;
 
+import de.fraunhofer.iais.eis.Artifact;
+import de.fraunhofer.iais.eis.BaseConnector;
+import de.fraunhofer.iais.eis.BaseConnectorBuilder;
+import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
+import de.fraunhofer.iais.eis.Catalog;
+import de.fraunhofer.iais.eis.Connector;
+import de.fraunhofer.iais.eis.ConnectorDeployMode;
+import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
+import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.ContractOffer;
+import de.fraunhofer.iais.eis.ContractRequest;
+import de.fraunhofer.iais.eis.Language;
+import de.fraunhofer.iais.eis.LogLevel;
+import de.fraunhofer.iais.eis.Proxy;
+import de.fraunhofer.iais.eis.ProxyBuilder;
+import de.fraunhofer.iais.eis.Representation;
+import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.Rule;
+import de.fraunhofer.iais.eis.SecurityProfile;
+import de.fraunhofer.iais.eis.util.TypedLiteral;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.dataspaceconnector.exception.RdfBuilderException;
+import io.dataspaceconnector.model.configuration.Configuration;
+import io.dataspaceconnector.model.configuration.DeployMode;
+import lombok.SneakyThrows;
+
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.net.URI;
 import java.text.Normalizer;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -25,22 +52,9 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.TimeZone;
-
-import de.fraunhofer.iais.eis.Artifact;
-import de.fraunhofer.iais.eis.BaseConnector;
-import de.fraunhofer.iais.eis.Catalog;
-import de.fraunhofer.iais.eis.ContractAgreement;
-import de.fraunhofer.iais.eis.ContractOffer;
-import de.fraunhofer.iais.eis.ContractRequest;
-import de.fraunhofer.iais.eis.Language;
-import de.fraunhofer.iais.eis.Representation;
-import de.fraunhofer.iais.eis.Resource;
-import de.fraunhofer.iais.eis.Rule;
-import de.fraunhofer.iais.eis.util.TypedLiteral;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.dataspaceconnector.exception.RdfBuilderException;
-import lombok.SneakyThrows;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -65,7 +79,7 @@ public final class IdsUtils {
         try {
             return baseConnector.toRdf();
         } catch (Exception exception) {
-            throw new RdfBuilderException(ErrorMessages.RDF_FAILED);
+            throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
         }
     }
 
@@ -80,7 +94,7 @@ public final class IdsUtils {
         try {
             return resource.toRdf();
         } catch (Exception exception) {
-            throw new RdfBuilderException(ErrorMessages.RDF_FAILED);
+            throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
         }
     }
 
@@ -89,14 +103,14 @@ public final class IdsUtils {
      *
      * @param artifact The ids artifact.
      * @return The ids artifact as rdf string.
-     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException
-     *         If the response could not be extracted.
+     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException If the response could not
+     *                                                                  be extracted.
      */
     public static String toRdf(final Artifact artifact) throws RdfBuilderException {
         try {
             return artifact.toRdf();
         } catch (Exception exception) {
-            throw new RdfBuilderException(ErrorMessages.RDF_FAILED);
+            throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
         }
     }
 
@@ -111,7 +125,7 @@ public final class IdsUtils {
         try {
             return representation.toRdf();
         } catch (Exception exception) {
-            throw new RdfBuilderException(ErrorMessages.RDF_FAILED);
+            throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
         }
     }
 
@@ -126,7 +140,7 @@ public final class IdsUtils {
         try {
             return catalog.toRdf();
         } catch (Exception exception) {
-            throw new RdfBuilderException(ErrorMessages.RDF_FAILED);
+            throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
         }
     }
 
@@ -141,7 +155,7 @@ public final class IdsUtils {
         try {
             return request.toRdf();
         } catch (Exception exception) {
-            throw new RdfBuilderException(ErrorMessages.RDF_FAILED);
+            throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
         }
     }
 
@@ -156,7 +170,7 @@ public final class IdsUtils {
         try {
             return offer.toRdf();
         } catch (Exception exception) {
-            throw new RdfBuilderException(ErrorMessages.RDF_FAILED);
+            throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
         }
     }
 
@@ -171,7 +185,7 @@ public final class IdsUtils {
         try {
             return agreement.toRdf();
         } catch (Exception exception) {
-            throw new RdfBuilderException(ErrorMessages.RDF_FAILED);
+            throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
         }
     }
 
@@ -186,7 +200,7 @@ public final class IdsUtils {
         try {
             return rule.toRdf();
         } catch (Exception exception) {
-            throw new RdfBuilderException(ErrorMessages.RDF_FAILED);
+            throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
         }
     }
 
@@ -198,7 +212,7 @@ public final class IdsUtils {
      * @return List of typed literal.
      */
     public static List<TypedLiteral> getKeywordsAsTypedLiteral(final List<String> keywords,
-                                                 final String language) {
+                                                               final String language) {
         final var idsKeywords = new ArrayList<TypedLiteral>();
         for (final var keyword : keywords) {
             idsKeywords.add(new TypedLiteral(keyword, language));
@@ -215,14 +229,11 @@ public final class IdsUtils {
      */
     @SuppressFBWarnings("IMPROPER_UNICODE")
     public static Language getLanguage(final String language) {
-        for (final var infomodelLanguage : Language.values()) {
-            if (Normalizer.normalize(
-                    language.toLowerCase(Locale.ROOT),
-                    Normalizer.Form.NFC).equals(
-                    Normalizer.normalize(infomodelLanguage.name()
-                                    .toLowerCase(Locale.ROOT),
-                            Normalizer.Form.NFC))) {
-                return infomodelLanguage;
+        for (final var idsLanguage : Language.values()) {
+            if (Normalizer.normalize(language.toLowerCase(Locale.ROOT),
+                    Normalizer.Form.NFC).equals(Normalizer.normalize(
+                    idsLanguage.name().toLowerCase(Locale.ROOT), Normalizer.Form.NFC))) {
+                return idsLanguage;
             }
         }
 
@@ -232,6 +243,7 @@ public final class IdsUtils {
     /**
      * Get list of ids keywords as list of strings.
      * If the passed list is null, an empty list is returned.
+     *
      * @param keywords List of typed literals.
      * @return List of strings.
      */
@@ -258,5 +270,123 @@ public final class IdsUtils {
         final var calendar = GregorianCalendar.from(date);
         calendar.setTimeZone(TimeZone.getTimeZone(ZoneId.ofOffset("", ZoneOffset.UTC)));
         return DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
+    }
+
+    /**
+     * Get security profile from string.
+     *
+     * @param input The input value.
+     * @return A security profile, if the value matches the provided enums.
+     */
+    public static Optional<SecurityProfile> getSecurityProfile(final String input) {
+        switch (input) {
+            case "idsc:BASE_SECURITY_PROFILE":
+            case "BASE_SECURITY_PROFILE":
+            case "idsc:BASE_CONNECTOR_SECURITY_PROFILE":
+                return Optional.of(SecurityProfile.BASE_SECURITY_PROFILE);
+            case "idsc:TRUST_SECURITY_PROFILE":
+            case "TRUST_SECURITY_PROFILE":
+            case "idsc:TRUST_CONNECTOR_SECURITY_PROFILE":
+                return Optional.of(SecurityProfile.TRUST_SECURITY_PROFILE);
+            case "idsc:TRUST_PLUS_SECURITY_PROFILE":
+            case "TRUST_PLUS_SECURITY_PROFILE":
+            case "idsc:TRUST_PLUS_CONNECTOR_SECURITY_PROFILE":
+                return Optional.of(SecurityProfile.TRUST_PLUS_SECURITY_PROFILE);
+            default:
+                return Optional.empty();
+        }
+    }
+
+    /**
+     * Get ids deploy mode from dsc deploy mode.
+     *
+     * @param deployMode The internal deploy mode.
+     * @return The ids deploy mode.
+     */
+    public static ConnectorDeployMode getConnectorDeployMode(final DeployMode deployMode) {
+        return deployMode == DeployMode.TEST ? ConnectorDeployMode.TEST_DEPLOYMENT
+                : ConnectorDeployMode.PRODUCTIVE_DEPLOYMENT;
+    }
+
+    /**
+     * Get ids log level from dsc log level.
+     *
+     * @param logLevel The internal log level.
+     * @return The ids log level.
+     */
+    public static LogLevel getLogLevel(
+            final io.dataspaceconnector.model.configuration.LogLevel logLevel) {
+        switch (logLevel) {
+            // TODO infomodel has less log levels than DSC, info will get lost.
+            case INFO:
+            case WARN:
+            case ERROR:
+            case TRACE:
+                return LogLevel.MINIMAL_LOGGING;
+            case DEBUG:
+                return LogLevel.DEBUG_LEVEL_LOGGING;
+            default:
+                return LogLevel.NO_LOGGING;
+        }
+    }
+
+    /**
+     * Get ids proxy from dsc proxy.
+     *
+     * @param proxy The internal proxy.
+     * @return The ids proxy.
+     */
+    public static Proxy getProxy(final io.dataspaceconnector.model.proxy.Proxy proxy) {
+        // TODO auth from DSC has ID field, not available in InfoModel. Create auth build service.
+        final var auth = proxy.getAuthentication();
+        final var idsAuth = new BasicAuthenticationBuilder()
+                ._authPassword_(auth.getPassword())
+                ._authUsername_(auth.getUsername())
+                .build();
+
+        return new ProxyBuilder()._noProxy_(proxy.getExclusions()
+                .stream()
+                .map(URI::create)
+                .collect(Collectors.toList()))
+                ._proxyAuthentication_(idsAuth)
+                ._proxyURI_(proxy.getLocation())
+                .build();
+    }
+
+    /**
+     * Fill ids connector with config properties.
+     *
+     * @param config The internal configuration model.
+     * @return The filled ids connector.
+     */
+    public static Connector getConnectorFromConfiguration(final Configuration config) {
+        return new BaseConnectorBuilder()
+                ._curator_(config.getCurator())
+                ._maintainer_(config.getMaintainer())
+                ._securityProfile_(getSecurityProfile(config.getSecurityProfile()))
+                ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()
+                        ._accessURL_(config.getConnectorEndpoint())
+                        .build())
+                ._outboundModelVersion_(config.getOutboundModelVersion())
+                ._inboundModelVersion_(config.getInboundModelVersion())
+                .build();
+    }
+
+    /**
+     * Get ids security profile from dsc security profile.
+     *
+     * @param securityProfile The internal security profile.
+     * @return The ids security profile.
+     */
+    private static SecurityProfile getSecurityProfile(
+            final io.dataspaceconnector.model.configuration.SecurityProfile securityProfile) {
+        switch (securityProfile) {
+            case TRUST_SECURITY:
+                return SecurityProfile.TRUST_SECURITY_PROFILE;
+            case TRUST_PLUS_SECURITY:
+                return SecurityProfile.TRUST_PLUS_SECURITY_PROFILE;
+            default:
+                return SecurityProfile.BASE_SECURITY_PROFILE;
+        }
     }
 }

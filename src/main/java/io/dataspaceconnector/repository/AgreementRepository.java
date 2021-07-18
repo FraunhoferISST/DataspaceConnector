@@ -15,13 +15,12 @@
  */
 package io.dataspaceconnector.repository;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.model.agreement.Agreement;
-
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.UUID;
 
 /**
  * The repository containing all objects of type {@link Agreement}.
@@ -31,6 +30,7 @@ public interface AgreementRepository extends BaseEntityRepository<Agreement> {
 
     /**
      * Set the status of an agreement to confirmed.
+     *
      * @param entityId The id of the agreement.
      */
     @Modifying

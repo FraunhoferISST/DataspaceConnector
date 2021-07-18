@@ -55,6 +55,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Table(name = "resource")
 @RequiredArgsConstructor
 public class Resource extends NamedEntity {
+
     /**
      * Serial version uid.
      **/

@@ -17,37 +17,38 @@ package io.dataspaceconnector.controller.resource.swagger.response;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ResponseCodesTest {
+class ResponseCodeTest {
 
     @Test
     public void constructor_is_hidden() {
-        assertThrows(UnsupportedOperationException.class, ResponseCodes::new);
+        assertThrows(UnsupportedOperationException.class, ResponseCode::new);
     }
 
     @Test
     public void ok_is_code_200() {
-        assertEquals("200", ResponseCodes.OK);
+        assertEquals("200", ResponseCode.OK);
     }
 
     @Test
     public void created_is_code_201() {
-        assertEquals("201", ResponseCodes.CREATED);
+        assertEquals("201", ResponseCode.CREATED);
     }
 
     @Test
     public void no_content_is_code_204() {
-        assertEquals("204", ResponseCodes.NO_CONTENT);
+        assertEquals("204", ResponseCode.NO_CONTENT);
     }
 
     @Test
     public void no_content_is_code_401() {
-        assertEquals("401", ResponseCodes.UNAUTHORIZED);
+        assertEquals("401", ResponseCode.UNAUTHORIZED);
     }
 
     @Test
     public void method_not_allowed_is_code_405() {
-        assertEquals("405", ResponseCodes.METHOD_NOT_ALLOWED);
+        assertEquals("405", ResponseCode.METHOD_NOT_ALLOWED);
     }
 }

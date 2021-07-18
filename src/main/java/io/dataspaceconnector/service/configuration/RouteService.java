@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.service.configuration;
 
-import java.util.UUID;
-
 import io.configmanager.extensions.routes.camel.exceptions.RouteCreationException;
 import io.configmanager.extensions.routes.camel.exceptions.RouteDeletionException;
 import io.dataspaceconnector.model.route.Route;
@@ -35,6 +33,8 @@ import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 /**
  * Service class for routes.
@@ -61,9 +61,10 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
 
     /**
      * Constructor for route service.
-     * @param endpointRepository The endpoint repository.
+     *
+     * @param endpointRepository   The endpoint repository.
      * @param endpointServiceProxy The endpoint service.
-     * @param camelRouteHelper The helper class for Camel routes.
+     * @param camelRouteHelper     The helper class for Camel routes.
      */
     @Autowired
     public RouteService(final @NonNull EndpointRepository endpointRepository,
@@ -94,16 +95,18 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
 
     /**
      * Set the start point of a route.
-     * @param routeId The route id.
+     *
+     * @param routeId    The route id.
      * @param endpointId The endpoint id.
      */
     public void setStartEndpoint(final UUID routeId, final UUID endpointId) {
         persist(((RouteFactory) getFactory()).setStartEndpoint(get(routeId),
-                                                               endpointService.get(endpointId)));
+                endpointService.get(endpointId)));
     }
 
     /**
      * Remove the start point of a route.
+     *
      * @param routeId The route id.
      */
     public void removeStartEndpoint(final UUID routeId) {
@@ -112,16 +115,18 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
 
     /**
      * Set the last point of a route.
-     * @param routeId The route id.
+     *
+     * @param routeId    The route id.
      * @param endpointId The endpoint id.
      */
     public void setLastEndpoint(final UUID routeId, final UUID endpointId) {
         persist(((RouteFactory) getFactory()).setLastEndpoint(get(routeId),
-                                                              endpointService.get(endpointId)));
+                endpointService.get(endpointId)));
     }
 
     /**
      * Remove the last point of a route.
+     *
      * @param routeId The route id.
      */
     public void removeLastEndpoint(final UUID routeId) {

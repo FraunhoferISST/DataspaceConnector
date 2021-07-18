@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.exception;
 
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 
 /**
  * Thrown to indicate that this line in the code should not have been possible to reach.
@@ -40,7 +40,7 @@ public class UnreachableLineException extends RuntimeException {
      *
      * @param msg The detail message.
      */
-    public UnreachableLineException(final ErrorMessages msg) {
+    public UnreachableLineException(final ErrorMessage msg) {
         super(msg.toString());
     }
 }

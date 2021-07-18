@@ -28,6 +28,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class LogMessageDesc extends MessageDesc {
+
     /**
      * All args constructor.
      *

@@ -18,7 +18,8 @@ package io.dataspaceconnector.controller.resource.tag;
 /**
  * The descriptions of tags for resources.
  */
-public final class ResourceDescriptions {
+public final class ResourceDescription {
+
     /**
      * Tag description for catalogs.
      */
@@ -50,16 +51,41 @@ public final class ResourceDescriptions {
     public static final String REQUESTS = "Endpoints for operations on requested resources";
 
     /**
-     * Tag description for contract/policy handling.
+     * Tag description for contract agreement handling.
      */
-    public static final String AGREEMENTS = "Endpoints for contract/policy handling";
+    public static final String AGREEMENTS = "Endpoints for contract agreement handling";
 
     /**
      * Tag description for artifacts.
      */
     public static final String ARTIFACTS = "Endpoints for operations on artifacts";
 
-    private ResourceDescriptions() {
+    /**
+     * Tag description for brokers.
+     */
+    public static final String BROKERS = "Endpoints for operations on brokers";
+
+    /**
+     * Tag description for configurations.
+     */
+    public static final String CONFIGURATIONS = "Endpoints for operations on configurations";
+
+    /**
+     * Tag description for data sources/sinks.
+     */
+    public static final String DATA_SOURCES = "Endpoints for operations on data sources/sinks";
+
+    /**
+     * Tag description for endpoints.
+     */
+    public static final String ENDPOINTS = "Endpoints for operations on endpoints";
+
+    /**
+     * Tag description for routes.
+     */
+    public static final String ROUTES = "Endpoints for operations on routes";
+
+    private ResourceDescription() {
         // Nothing to do here.
     }
 }

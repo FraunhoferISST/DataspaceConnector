@@ -15,11 +15,13 @@
  */
 package io.dataspaceconnector.service;
 
+import de.fraunhofer.iais.eis.RejectionReason;
+import io.dataspaceconnector.exception.DataRetrievalException;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
 import io.dataspaceconnector.service.resource.ArtifactService;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.MessageUtils;
 import io.dataspaceconnector.util.QueryInput;
 import lombok.NonNull;
@@ -31,6 +33,7 @@ import org.springframework.util.Base64Utils;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -57,7 +60,7 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
      */
     @Override
     public InputStream retrieve(final UUID artifactId, final URI recipient,
-                                final URI transferContract) throws UnexpectedResponseException {
+                                final URI transferContract) {
         return retrieve(artifactId, recipient, transferContract, null);
     }
 
@@ -67,17 +70,26 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
     @Override
     public InputStream retrieve(final UUID artifactId, final URI recipient,
                                 final URI transferContract, final QueryInput queryInput)
-            throws PolicyRestrictionException, UnexpectedResponseException {
+            throws PolicyRestrictionException {
         final var artifact = artifactService.get(artifactId);
-        final var response = artifactReqSvc.sendMessage(recipient,
-                artifact.getRemoteId(), transferContract, queryInput);
-        if (!artifactReqSvc.validateResponse(response)) {
-            final var content = artifactReqSvc.getResponseContent(response);
+        Map<String, String> response;
+        try {
+            response = artifactReqSvc.sendMessage(recipient,
+                    artifact.getRemoteId(), transferContract, queryInput);
+        } catch (UnexpectedResponseException exception) {
+            final var content = exception.getContent();
             if (log.isDebugEnabled()) {
                 log.debug("Data could not be loaded. [content=({})]", content);
             }
 
-            throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
+            if (content.containsKey("reason")) {
+                final var reason = content.get("reason");
+                if (reason.equals(RejectionReason.NOT_AUTHORIZED)) {
+                    throw new PolicyRestrictionException(ErrorMessage.POLICY_RESTRICTION);
+                }
+            }
+
+            throw new DataRetrievalException(content.toString());
         }
 
         final var data = MessageUtils.extractPayloadFromMultipartMessage(response);

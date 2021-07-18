@@ -15,17 +15,10 @@
  */
 package io.dataspaceconnector.model.route;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import java.util.List;
-
-import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.endpoint.Endpoint;
+import io.dataspaceconnector.model.named.NamedEntity;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -33,6 +26,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Lob;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.util.List;
 
 /**
  *
@@ -55,6 +56,7 @@ public class Route extends NamedEntity {
     /**
      * The route configuration.
      */
+    @Lob
     private String configuration;
 
     /**
@@ -64,7 +66,7 @@ public class Route extends NamedEntity {
     private DeployMethod deploy;
 
     /**
-     * List of subroutes.
+     * List of sub-routes.
      */
     @OneToMany
     private List<Route> steps;

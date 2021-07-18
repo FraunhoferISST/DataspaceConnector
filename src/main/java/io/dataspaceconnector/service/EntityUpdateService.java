@@ -31,7 +31,7 @@ import io.dataspaceconnector.service.ids.updater.RequestedResourceUpdater;
 import io.dataspaceconnector.service.resource.AgreementService;
 import io.dataspaceconnector.service.resource.ArtifactService;
 import io.dataspaceconnector.service.resource.RelationServices;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.SelfLinkHelper;
 import io.dataspaceconnector.util.Utils;
 import lombok.NonNull;
@@ -91,7 +91,7 @@ public class EntityUpdateService {
 
             final var representations = resource.getRepresentation();
             for (final var representation : Utils
-                    .requireNonNull(representations, ErrorMessages.LIST_NULL)) {
+                    .requireNonNull(representations, ErrorMessage.LIST_NULL)) {
                 updateRepresentation(representation);
             }
         } catch (ResourceNotFoundException | IllegalArgumentException exception) {
@@ -115,7 +115,7 @@ public class EntityUpdateService {
             }
 
             final var artifacts = representation.getInstance();
-            for (final var artifact : Utils.requireNonNull(artifacts, ErrorMessages.LIST_NULL)) {
+            for (final var artifact : Utils.requireNonNull(artifacts, ErrorMessage.LIST_NULL)) {
                 updateArtifact((Artifact) artifact);
             }
         } catch (ResourceNotFoundException | IllegalArgumentException exception) {

@@ -24,7 +24,7 @@ class ErrorMessagesTest {
     @Test
     void toString_nothing_correctMsg() {
         /* ARRANGE */
-        final var input = ErrorMessages.DESC_NULL;
+        final var input = ErrorMessage.DESC_NULL;
 
         /* ACT */
         final var msg = input.toString();

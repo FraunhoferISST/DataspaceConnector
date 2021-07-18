@@ -35,13 +35,19 @@ public class TruststoreFactory extends AbstractFactory<Truststore, TruststoreDes
     /**
      * The default location.
      */
-    public static final URI DEFAULT_LOCATION = URI.create("");
+    public static final URI DEFAULT_LOCATION = URI.create("file:///conf/truststore.p12");
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected final Truststore initializeEntity(final TruststoreDesc desc) {
         return new Truststore();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final boolean updateInternal(final Truststore truststore, final TruststoreDesc desc) {
         final var hasUpdatedLocation = updateLocation(truststore, desc.getLocation());

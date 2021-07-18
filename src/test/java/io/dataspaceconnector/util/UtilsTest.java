@@ -37,7 +37,7 @@ class UtilsTest {
     @Test
     public void requireNonNull_nullObj_throwsIllegalArgumentException() {
         /* ARRANGE */
-        final var errorMsg = ErrorMessages.DESC_NULL;
+        final var errorMsg = ErrorMessage.DESC_NULL;
 
         /* ACT && ASSERT */
         final var msg = assertThrows(IllegalArgumentException.class,
@@ -72,7 +72,7 @@ class UtilsTest {
         final var obj = 5;
 
         /* ACT */
-        final var value = Utils.requireNonNull(obj, ErrorMessages.DESC_NULL);
+        final var value = Utils.requireNonNull(obj, ErrorMessage.DESC_NULL);
 
         /* ASSERT */
         assertEquals(5, value);
