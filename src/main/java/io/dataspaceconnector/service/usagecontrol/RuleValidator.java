@@ -16,6 +16,7 @@
 package io.dataspaceconnector.service.usagecontrol;
 
 import de.fraunhofer.iais.eis.Rule;
+import de.fraunhofer.iais.eis.SecurityProfile;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.ContractRule;
@@ -36,6 +37,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This class provides policy pattern recognition and calls the {@link
@@ -74,10 +76,13 @@ public class RuleValidator {
      * @param rule            The ids rule.
      * @param target          The requested/accessed element.
      * @param issuerConnector The issuer connector.
+     * @param profile         The security profile.
+     * @param agreementId     The id of the transfer contract (agreement).
      * @throws PolicyRestrictionException If a policy restriction was detected.
      */
     public void validatePolicy(final PolicyPattern pattern, final Rule rule, final URI target,
-                        final URI issuerConnector) throws PolicyRestrictionException {
+                               final URI issuerConnector, final Optional<SecurityProfile> profile,
+                               final URI agreementId) throws PolicyRestrictionException {
         switch (pattern) {
             case PROVIDE_ACCESS:
                 break;
@@ -89,7 +94,7 @@ public class RuleValidator {
                 validateDuration(rule, target);
                 break;
             case USAGE_LOGGING:
-                executionService.logDataAccess(target);
+                executionService.logDataAccess(target, agreementId);
                 break;
             case N_TIMES_USAGE:
                 validateAccessNumber(rule, target);
@@ -99,6 +104,9 @@ public class RuleValidator {
                 break;
             case CONNECTOR_RESTRICTED_USAGE:
                 validateIssuerConnector(rule, issuerConnector);
+                break;
+            case SECURITY_PROFILE_RESTRICTED_USAGE:
+                validateSecurityProfile(rule, profile);
                 break;
             case PROHIBIT_ACCESS:
                 throw new PolicyRestrictionException(ErrorMessages.NOT_ALLOWED);
@@ -144,7 +152,7 @@ public class RuleValidator {
      * @return True if the lists are equal, false if not.
      */
     private boolean compareRulesOfOfferToRequest(final List<ContractRule> offerRules,
-                                                final List<Rule> requestRules) {
+                                                 final List<Rule> requestRules) {
         final var idsRuleList = new ArrayList<Rule>();
         for (final var rule : offerRules) {
             idsRuleList.add(deserializationService.getRule(rule.getValue()));
@@ -264,6 +272,32 @@ public class RuleValidator {
                 log.debug("Invalid consumer connector. [issuer=({})]", issuerConnector);
             }
             throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_CONSUMER);
+        }
+    }
+
+    /**
+     * Checks whether the requesting connector has the right security level.
+     *
+     * @param rule    The ids rule.
+     * @param profile The security profile.
+     * @throws PolicyRestrictionException If the connector ids do no match.
+     */
+    private void validateSecurityProfile(final Rule rule, final Optional<SecurityProfile> profile)
+            throws PolicyRestrictionException {
+        if (profile.isEmpty()) {
+            throw new PolicyRestrictionException(ErrorMessages.MISSING_SECURITY_PROFILE_CLAIM);
+        }
+
+        try {
+            final var allowedProfile = RuleUtils.getSecurityProfile(rule);
+            final var securityProfile = profile.get();
+            if (!allowedProfile.equals(securityProfile.toString())) {
+                throw new PolicyRestrictionException(
+                        ErrorMessages.DATA_ACCESS_INVALID_SECURITY_PROFILE);
+            }
+        } catch (Exception e) {
+            throw new PolicyRestrictionException(
+                    ErrorMessages.DATA_ACCESS_INVALID_SECURITY_PROFILE);
         }
     }
 }

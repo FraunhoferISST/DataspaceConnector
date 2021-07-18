@@ -27,8 +27,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
- * Controller for handling {@link
- * io.dataspaceconnector.exception.ResourceNotFoundException}.
+ * Controller for handling {@link PolicyRestrictionException}.
  */
 @ControllerAdvice
 @Log4j2
@@ -38,7 +37,7 @@ public final class PolicyRestrictionExceptionHandler {
      * Handle {@link PolicyRestrictionException}.
      *
      * @param exception The thrown exception.
-     * @return Response entity with code 404.
+     * @return Response entity with code 403.
      */
     @ExceptionHandler(PolicyRestrictionException.class)
     public ResponseEntity<JSONObject> handlePolicyRestrictionException(

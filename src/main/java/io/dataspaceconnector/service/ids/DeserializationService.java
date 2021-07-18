@@ -23,7 +23,6 @@ import de.fraunhofer.iais.eis.InfrastructureComponent;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
-import de.fraunhofer.iais.eis.ResponseMessage;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.ids.messaging.util.SerializerProvider;
 import lombok.NonNull;
@@ -44,7 +43,7 @@ public class DeserializationService {
     /**
      * Service for ids serializations.
      */
-    private final @NonNull SerializerProvider serializerProvider;
+    private final @NonNull SerializerProvider serProvider;
 
     /**
      * Deserialize string to ids configuration model.
@@ -56,7 +55,7 @@ public class DeserializationService {
     public ConfigurationModel getConfigurationModel(final String config)
             throws IllegalArgumentException {
         try {
-            return serializerProvider.getSerializer().deserialize(config, ConfigurationModel.class);
+            return serProvider.getSerializer().deserialize(config, ConfigurationModel.class);
         } catch (IOException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not deserialize config model. [exception=({})]", e.getMessage(), e);
@@ -75,7 +74,7 @@ public class DeserializationService {
     public InfrastructureComponent getInfrastructureComponent(final String component)
             throws IllegalArgumentException {
         try {
-            return serializerProvider.getSerializer().deserialize(component,
+            return serProvider.getSerializer().deserialize(component,
                     InfrastructureComponent.class);
         } catch (IOException e) {
             if (log.isDebugEnabled()) {
@@ -94,33 +93,12 @@ public class DeserializationService {
      */
     public Resource getResource(final String resource) throws IllegalArgumentException {
         try {
-            return serializerProvider.getSerializer().deserialize(resource, Resource.class);
+            return serProvider.getSerializer().deserialize(resource, Resource.class);
         } catch (IOException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Could not deserialize resource. [exception=({})]", e.getMessage(), e);
             }
             throw new IllegalArgumentException("Could not deserialize input.", e);
-        }
-    }
-
-    /**
-     * Returns the ids header of an http multipart response if the header is of type
-     * ResponseMessage.
-     *
-     * @param response An ids response message.
-     * @return The response message.
-     * @throws IllegalArgumentException If deserialization fails.
-     */
-    public ResponseMessage getResponseMessage(final String response)
-            throws IllegalArgumentException {
-        try {
-            return serializerProvider.getSerializer().deserialize(response, ResponseMessage.class);
-        } catch (IOException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Could not deserialize response message. [exception=({})]",
-                        e.getMessage(), e);
-            }
-            throw new IllegalArgumentException("Could not deserialize response message.", e);
         }
     }
 
@@ -133,7 +111,7 @@ public class DeserializationService {
      */
     public Message getMessage(final String response) throws IllegalArgumentException {
         try {
-            return serializerProvider.getSerializer().deserialize(response, Message.class);
+            return serProvider.getSerializer().deserialize(response, Message.class);
         } catch (IOException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not deserialize message. [exception=({})]", e.getMessage(), e);
@@ -165,7 +143,7 @@ public class DeserializationService {
     public <T extends Rule> T getRule(final String policy, final Class<T> tClass)
             throws IllegalArgumentException {
         try {
-            return serializerProvider.getSerializer().deserialize(policy, tClass);
+            return serProvider.getSerializer().deserialize(policy, tClass);
         } catch (IOException exception) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not deserialize rule. [exception=({})]", exception.getMessage());
@@ -185,7 +163,7 @@ public class DeserializationService {
     public <T extends Rule> boolean isRuleType(final String policy, final Class<T> tClass) {
         var isType = false;
         try {
-            serializerProvider.getSerializer().deserialize(policy, tClass);
+            serProvider.getSerializer().deserialize(policy, tClass);
             isType = true;
         } catch (IOException expected) {
             // Intentionally empty
@@ -204,8 +182,7 @@ public class DeserializationService {
     public ContractAgreement getContractAgreement(final String contract)
             throws IllegalArgumentException {
         try {
-            return serializerProvider.getSerializer().deserialize(contract,
-                    ContractAgreement.class);
+            return serProvider.getSerializer().deserialize(contract, ContractAgreement.class);
         } catch (IOException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not deserialize agreement. [exception=({})]", e.getMessage(), e);
@@ -223,8 +200,7 @@ public class DeserializationService {
      */
     public Catalog getCatalog(final String catalog) throws IllegalArgumentException {
         try {
-            return serializerProvider.getSerializer().deserialize(catalog,
-                    Catalog.class);
+            return serProvider.getSerializer().deserialize(catalog, Catalog.class);
         } catch (IOException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not deserialize catalog. [exception=({})]", e.getMessage(), e);
@@ -243,8 +219,7 @@ public class DeserializationService {
     public ResourceCatalog getResourceCatalog(final String catalog)
             throws IllegalArgumentException {
         try {
-            return serializerProvider.getSerializer().deserialize(catalog,
-                    ResourceCatalog.class);
+            return serProvider.getSerializer().deserialize(catalog, ResourceCatalog.class);
         } catch (IOException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not deserialize resource catalog. [exception=({})]",
@@ -264,7 +239,7 @@ public class DeserializationService {
     public ContractRequest getContractRequest(final String contract)
             throws IllegalArgumentException {
         try {
-            return serializerProvider.getSerializer().deserialize(contract, ContractRequest.class);
+            return serProvider.getSerializer().deserialize(contract, ContractRequest.class);
         } catch (IOException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not deserialize request. [exception=({})]", e.getMessage(), e);

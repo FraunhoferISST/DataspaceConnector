@@ -13,24 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exception;
+package io.dataspaceconnector.service.usagecontrol;
+
+import io.dataspaceconnector.model.Artifact;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
+import java.net.URI;
 
 /**
- * Thrown to indicate that the message could not be build.
+ * A DTO for information required to decide if data provision should be allowed.
  */
-public class MessageBuilderException extends MessageResponseException {
-    /**
-     * Default serial version uid.
-     */
-    private static final long serialVersionUID = 1L;
+@AllArgsConstructor
+@Data
+@RequiredArgsConstructor
+public class AccessVerificationInput {
 
     /**
-     * Construct a MessageBuilderException with the specified detail message and cause.
-     *
-     * @param msg   The detail message.
-     * @param cause The cause.
+     * The id of the transfer contract (agreement).
      */
-    public MessageBuilderException(final String msg, final Throwable cause) {
-        super(msg, cause);
-    }
+    private URI agreementId;
+
+    /**
+     * The artifact.
+     */
+    private Artifact artifact;
 }

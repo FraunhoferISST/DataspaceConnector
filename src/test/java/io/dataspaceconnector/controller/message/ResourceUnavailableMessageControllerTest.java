@@ -22,8 +22,9 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
-import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
+import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.util.ErrorMessages;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,8 +115,7 @@ public class ResourceUnavailableMessageControllerTest {
                 .andReturn();
 
         /* ASSERT */
-        assertEquals("Resource 550e8400-e29b-11d4-a716-446655440000 not found.",
-                result.getResponse().getContentAsString());
+        assertEquals("Resource not found.", result.getResponse().getContentAsString());
     }
 
     @Test
@@ -134,8 +134,8 @@ public class ResourceUnavailableMessageControllerTest {
                 .andReturn();
 
         /* ASSERT */
-        assertEquals("Ids message handling failed. null",
-                result.getResponse().getContentAsString());
+        final var msg = ErrorMessages.MESSAGE_HANDLING_FAILED.toString();
+        assertEquals(msg, result.getResponse().getContentAsString());
     }
 
     @Test
@@ -154,8 +154,8 @@ public class ResourceUnavailableMessageControllerTest {
                 .andReturn();
 
         /* ASSERT */
-        assertEquals("Ids message handling failed. null",
-                result.getResponse().getContentAsString());
+        final var msg = ErrorMessages.MESSAGE_HANDLING_FAILED.toString();
+        assertEquals(msg, result.getResponse().getContentAsString());
     }
 
     @Test
@@ -172,7 +172,7 @@ public class ResourceUnavailableMessageControllerTest {
                 ._securityToken_(token)
                 .build();
 
-        final var response = new MessageProcessedNotificationMAP(message);
+        final var response = new MessageContainer<>(message, "EMPTY");
 
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(Optional.of(resource)).when(connectorService).getOfferedResourceById(Mockito.eq(resourceURI));
@@ -186,7 +186,7 @@ public class ResourceUnavailableMessageControllerTest {
                 .andReturn();
 
         /* ASSERT */
-        assertEquals("", result.getResponse().getContentAsString());
+        assertEquals("EMPTY", result.getResponse().getContentAsString());
     }
 
     private Resource getResource() {

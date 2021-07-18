@@ -89,7 +89,7 @@ public class ConfigurationController {
         } catch (ConfigUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
         } catch (IllegalArgumentException exception) {
-            return ControllerUtils.respondDeserializationError(exception);
+            return ControllerUtils.respondInvalidInput(exception);
         }
     }
 
@@ -108,7 +108,7 @@ public class ConfigurationController {
     public ResponseEntity<Object> getConfiguration() {
         final var config = configContainer.getConfigurationModel();
         if (config == null) {
-            return ControllerUtils.respondConfigurationNotFound();
+            return new ResponseEntity<>("No configuration found.", HttpStatus.NOT_FOUND);
         } else {
             return ResponseEntity.ok(config.toRdf());
         }

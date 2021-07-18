@@ -15,16 +15,15 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
-import io.dataspaceconnector.model.Artifact;
 import org.springframework.stereotype.Component;
 
 /**
  * A {@link PolicyVerifier} implementation that simply allows access.
  */
 @Component
-public final class AllowAccessVerifier implements PolicyVerifier<Artifact> {
+public final class AllowAccessVerifier implements PolicyVerifier<AccessVerificationInput> {
     @Override
-    public VerificationResult verify(final Artifact input) {
+    public VerificationResult verify(final AccessVerificationInput input) {
         return VerificationResult.ALLOWED;
     }
 }

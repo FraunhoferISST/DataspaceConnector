@@ -26,6 +26,7 @@ import io.dataspaceconnector.controller.resource.view.ContractView;
 import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
 import io.dataspaceconnector.controller.resource.view.RepresentationView;
 import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.controller.resource.view.SubscriptionView;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.AgreementDesc;
@@ -347,7 +348,8 @@ public final class ResourceControllers {
         @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
         public ResponseEntity<StreamingResponseBody> getData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
-                @RequestBody(required = false) final QueryInput queryInput) throws IOException {
+                @RequestBody(required = false) final QueryInput queryInput)
+                throws IOException, UnexpectedResponseException {
             ValidationUtils.validateQueryInput(queryInput);
             final var data =
                     artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput);

@@ -72,12 +72,13 @@ public class DataAccessVerifierTest {
         /* ARRANGE */
         final var artifact = getArtifact();
         final var agreement = getContractAgreement();
+        final var input = new AccessVerificationInput(agreement.getId(), artifact);
 
         when(entityResolver.getContractAgreementsByTarget(any())).thenReturn(List.of(agreement));
-        doNothing().when(ruleValidator).validatePolicy(any(), any(), any(), any());
+        doNothing().when(ruleValidator).validatePolicy(any(), any(), any(), any(), any(), any());
 
         /* ACT */
-        final var result = verifier.verify(artifact);
+        final var result = verifier.verify(input);
 
         /* ASSERT */
         assertEquals(VerificationResult.ALLOWED, result);
@@ -88,14 +89,15 @@ public class DataAccessVerifierTest {
         /* ARRANGE */
         final var artifact = getArtifact();
         final var agreement = getContractAgreement();
+        final var input = new AccessVerificationInput(agreement.getId(), artifact);
 
         when(entityResolver.getContractAgreementsByTarget(any())).thenReturn(List.of(agreement));
         doThrow(PolicyRestrictionException.class)
-                .when(ruleValidator).validatePolicy(any(), any(), any(), any());
+                .when(ruleValidator).validatePolicy(any(), any(), any(), any(), any(), any());
         when(connectorConfig.isAllowUnsupported()).thenReturn(false);
 
         /* ACT */
-        final var result = verifier.verify(artifact);
+        final var result = verifier.verify(input);
 
         /* ASSERT */
         assertEquals(VerificationResult.DENIED, result);

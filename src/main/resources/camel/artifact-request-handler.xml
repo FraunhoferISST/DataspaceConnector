@@ -15,7 +15,6 @@
 
         <!-- the response could not be built -->
         <onException>
-            <exception>io.dataspaceconnector.exception.MessageBuilderException</exception>
             <exception>java.io.IOException</exception>
             <exception>de.fraunhofer.iais.eis.util.ConstraintViolationException</exception>
             <to uri="direct:handleResponseMessageBuilderException"/>
@@ -30,6 +29,7 @@
         <from uri="direct:artifactRequestHandler"/>
         <to uri="direct:ids-validation"/>
         <process ref="RequestedArtifactValidator"/>
+        <process ref="ClearingHouseLoggingProcessor"/>
         <choice>
             <when>
                 <simple>${bean:connectorConfiguration.isPolicyNegotiation} == true</simple>
@@ -37,6 +37,6 @@
             </when>
         </choice>
         <process ref="DataRequestProcessor"/>
-
+        <process ref="ClearingHouseLoggingProcessor"/>
     </route>
 </routes>

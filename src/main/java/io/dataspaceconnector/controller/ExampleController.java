@@ -37,7 +37,8 @@ import io.dataspaceconnector.model.pattern.NotificationDesc;
 import io.dataspaceconnector.model.pattern.PatternDesc;
 import io.dataspaceconnector.model.pattern.PermissionDesc;
 import io.dataspaceconnector.model.pattern.ProhibitionDesc;
-import io.dataspaceconnector.model.pattern.RestrictionDesc;
+import io.dataspaceconnector.model.pattern.ConnectorRestrictionDesc;
+import io.dataspaceconnector.model.pattern.SecurityRestrictionDesc;
 import io.dataspaceconnector.model.pattern.UsageNumberDesc;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.controller.util.ControllerUtils;
@@ -146,7 +147,7 @@ public class ExampleController {
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
+            @ApiResponse(responseCode = "400", description = "Internal server error")})
     @PostMapping("/validation")
     @ResponseBody
     public ResponseEntity<Object> getPolicyPattern(
@@ -195,12 +196,16 @@ public class ExampleController {
             } else if (input instanceof LoggingDesc) {
                 return ResponseEntity.ok(PatternUtils.buildUsageLoggingRule().toRdf());
             } else if (input instanceof NotificationDesc) {
-                final var policy =
-                        PatternUtils.buildUsageNotificationRule((NotificationDesc) input);
+                final var policy = PatternUtils.buildUsageNotificationRule(
+                        (NotificationDesc) input);
                 return ResponseEntity.ok(policy.toRdf());
-            } else if (input instanceof RestrictionDesc) {
-                final var policy =
-                        PatternUtils.buildConnectorRestrictedUsageRule((RestrictionDesc) input);
+            } else if (input instanceof ConnectorRestrictionDesc) {
+                final var policy = PatternUtils.buildConnectorRestrictedUsageRule(
+                        (ConnectorRestrictionDesc) input);
+                return ResponseEntity.ok(policy.toRdf());
+            } else if (input instanceof SecurityRestrictionDesc) {
+                final var policy = PatternUtils.buildSecurityProfileRestrictedUsageRule(
+                        (SecurityRestrictionDesc) input);
                 return ResponseEntity.ok(policy.toRdf());
             } else {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

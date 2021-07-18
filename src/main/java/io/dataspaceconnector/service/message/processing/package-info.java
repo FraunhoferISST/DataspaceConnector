@@ -13,24 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exception;
-
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-public class MessageBuilderExceptionTest {
-    @Test
-    public void constructor_someMsgAndsSomeException_holdsMsgAndException() {
-        /* ARRANGE */
-        final var msg = "Some msg";
-        final var someError = new RuntimeException("WELL?");
-
-        /* ACT */
-        final var exception = new MessageBuilderException(msg, someError);
-
-        /* ASSERT */
-        assertEquals(msg, exception.getMessage());
-        assertEquals(someError, exception.getCause());
-    }
-}
+/**
+ * Services for IDS participant communication, e.g. IDS Broker, App Store, Clearing House etc.
+ */
+package io.dataspaceconnector.service.message.processing;

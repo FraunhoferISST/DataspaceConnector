@@ -25,10 +25,15 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
+import io.dataspaceconnector.service.ids.DeserializationService;
+import io.dataspaceconnector.service.message.processing.ClearingHouseService;
 import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.MessageUtils;
 import io.dataspaceconnector.util.Utils;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -44,6 +49,16 @@ import java.util.Map;
 @RequiredArgsConstructor
 public final class ArtifactRequestService
         extends AbstractMessageService<ArtifactRequestMessageDesc> {
+
+    /**
+     * Service for ids deserialization.
+     */
+    private final @NonNull DeserializationService deserializer;
+
+    /**
+     * Clearing House logging utility.
+     */
+    private final @NonNull ClearingHouseService clearingHouseService;
 
     /**
      * @throws IllegalArgumentException     if desc is null.
@@ -63,7 +78,7 @@ public final class ArtifactRequestService
         final var artifactId = desc.getRequestedArtifact();
         final var contractId = desc.getTransferContract();
 
-        return new ArtifactRequestMessageBuilder()
+        final var message = new ArtifactRequestMessageBuilder()
                 ._issued_(IdsMessageUtils.getGregorianNow())
                 ._modelVersion_(modelVersion)
                 ._issuerConnector_(connectorId)
@@ -73,6 +88,10 @@ public final class ArtifactRequestService
                 ._recipientConnector_(Util.asList(recipient))
                 ._transferContract_(contractId)
                 .build();
+
+            // Log outgoing ArtifactRequestMessages in ClearingHouse
+        clearingHouseService.logIdsMessage(message);
+        return message;
     }
 
     @Override
@@ -87,39 +106,68 @@ public final class ArtifactRequestService
      * @param elementId   The requested artifact.
      * @param agreementId The transfer contract.
      * @return The response map.
-     * @throws MessageException If message handling failed.
+     * @throws MessageException            if message handling failed.
+     * @throws MessageResponseException    if the response could not be processed.
+     * @throws UnexpectedResponseException if the response is not as expected.
      */
     public Map<String, String> sendMessage(final URI recipient, final URI elementId,
-                                           final URI agreementId) throws MessageException {
+                                           final URI agreementId)
+            throws MessageException, UnexpectedResponseException {
         return sendMessage(recipient, elementId, agreementId, null);
     }
 
     /**
-     * Send artifact request message.
+     * Send artifact request message and then validate the response.
      *
      * @param recipient   The recipient.
      * @param elementId   The requested artifact.
      * @param agreementId The transfer contract.
      * @param queryInput  The query input.
      * @return The response map.
-     * @throws MessageException If message handling failed.
+     * @throws MessageException            if message handling failed.
+     * @throws MessageResponseException    if the response could not be processed.
+     * @throws UnexpectedResponseException if the response is not as expected.
      */
-    public Map<String, String> sendMessage(
-            final URI recipient, final URI elementId, final URI agreementId,
-            final QueryInput queryInput) throws MessageException {
+    public Map<String, String> sendMessage(final URI recipient, final URI elementId,
+                                           final URI agreementId, final QueryInput queryInput)
+            throws MessageException, MessageResponseException, UnexpectedResponseException {
         String payload = "";
         if (queryInput != null) {
             try {
                 payload = new ObjectMapper().writeValueAsString(queryInput);
             } catch (JsonProcessingException e) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Failed to parse query. Loading everything. [exception=({})]",
-                            e.getMessage(), e);
+                    log.debug("Failed to parse query. Loading everything. "
+                            + "[exception=({})]", e.getMessage(), e);
                 }
             }
         }
 
-        return send(new ArtifactRequestMessageDesc(recipient, elementId, agreementId), payload);
+        final var desc = new ArtifactRequestMessageDesc(recipient, elementId, agreementId);
+        final var response = send(desc, payload);
+
+        try {
+            if (!validateResponse(response)) {
+                final var content = getResponseContent(response);
+                if (log.isDebugEnabled()) {
+                    log.debug("Data could not be loaded. [content=({})]", content);
+                }
+                throw new UnexpectedResponseException(content);
+            }
+        } catch (MessageResponseException e) {
+            final var content = getResponseContent(response);
+            if (log.isDebugEnabled()) {
+                log.debug("Data could not be loaded. [content=({})]", content);
+            }
+            throw new UnexpectedResponseException(content);
+        }
+
+        // Log response header in the Clearing House
+        final var header = MessageUtils.extractHeaderFromMultipartMessage(response);
+        final var idsMessage = deserializer.getMessage(header);
+        clearingHouseService.logIdsMessage(idsMessage);
+
+        return response;
     }
 
     /**

@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.service;
 
-import io.dataspaceconnector.exception.PolicyRestrictionException;
+import io.dataspaceconnector.exception.DataRetrievalException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactImpl;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
@@ -90,7 +90,8 @@ public class BlockingArtifactReceiverTest {
     }
 
     @Test
-    public void retrieve_noValidResponse_throwPolicyRestrictionException() {
+    @SneakyThrows
+    public void retrieve_noValidResponse_throwDataRetrievalException() {
         /* ARRANGE */
         final var artifactId = UUID.randomUUID();
         final var recipient = URI.create("https://recipient.com");
@@ -104,12 +105,12 @@ public class BlockingArtifactReceiverTest {
 
         when(artifactService.get(artifactId)).thenReturn(artifact);
         when(messageService.sendMessage(recipient, artifact.getRemoteId(), transferContract,
-                null)).thenReturn(response);
+                null)).thenThrow(DataRetrievalException.class);
         when(messageService.validateResponse(response)).thenReturn(false);
         when(messageService.getResponseContent(response)).thenReturn(new HashMap<>());
 
         /* ACT && ASSERT */
-        assertThrows(PolicyRestrictionException.class, () -> blockingArtifactReceiver
+        assertThrows(DataRetrievalException.class, () -> blockingArtifactReceiver
                 .retrieve(artifactId, recipient, transferContract));
     }
 

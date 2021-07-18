@@ -30,7 +30,6 @@ public interface AbstractFactory<T extends AbstractEntity, D extends AbstractDes
      * created from the description.
      */
     T create(D desc);
-
     /**
      * Update an entity.
      * @param entity The entity to be updated.

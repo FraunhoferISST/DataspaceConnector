@@ -25,15 +25,16 @@ import io.dataspaceconnector.model.LocalData;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.model.RemoteData;
 import io.dataspaceconnector.repository.ArtifactRepository;
+import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.ArtifactRetriever;
 import io.dataspaceconnector.service.HttpService;
+import io.dataspaceconnector.service.usagecontrol.AccessVerificationInput;
 import io.dataspaceconnector.service.usagecontrol.PolicyVerifier;
 import io.dataspaceconnector.service.usagecontrol.VerificationResult;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.Utils;
 import kotlin.NotImplementedError;
-import kotlin.Pair;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -71,17 +72,25 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private final @NonNull HttpService httpSvc;
 
     /**
+     * Repository for storing AuthTypes.
+     */
+    private final @NonNull AuthenticationRepository authRepo;
+
+    /**
      * Constructor for ArtifactService.
      *
-     * @param dataRepository The data repository.
-     * @param httpService    The HTTP service for fetching remote data.
+     * @param dataRepository     The data repository.
+     * @param httpService        The HTTP service for fetching remote data.
+     * @param authenticationRepository The AuthType repository.
      */
     @Autowired
     public ArtifactService(final @NonNull DataRepository dataRepository,
-                           final @NonNull HttpService httpService) {
+                           final @NonNull HttpService httpService,
+                           final @NonNull AuthenticationRepository authenticationRepository) {
         super();
         this.dataRepo = dataRepository;
         this.httpSvc = httpService;
+        this.authRepo = authenticationRepository;
     }
 
     /**
@@ -96,6 +105,10 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         if (tmp.getData() != null) {
             if (tmp.getData().getId() == null) {
                 // The data element is new, insert
+                if (tmp.getData() instanceof RemoteData) {
+                    var data = (RemoteData) tmp.getData();
+                    data.getAuthentication().forEach(authRepo::saveAndFlush);
+                }
                 dataRepo.saveAndFlush(tmp.getData());
             } else {
                 // The data element exists already, check if an update is
@@ -131,7 +144,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @throws IOException if IO errors occurr.
      */
     @Transactional
-    public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
+    public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final QueryInput queryInput)
             throws PolicyRestrictionException, IOException {
@@ -192,13 +205,15 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @throws IOException if IO errors occurr.
      */
     @Transactional
-    public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
+    public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final RetrievalInformation information)
             throws PolicyRestrictionException, IOException {
         // Check the artifact exists and access is granted.
         final var artifact = get(artifactId);
-        if (accessVerifier.verify(artifact) == VerificationResult.DENIED) {
+        final var agreementId = information.getTransferContract();
+        final var input = new AccessVerificationInput(agreementId, artifact);
+        if (accessVerifier.verify(input) == VerificationResult.DENIED) {
             if (log.isInfoEnabled()) {
                 log.info("Access denied. [artifactId=({})]", artifactId);
             }
@@ -289,9 +304,9 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             throws IOException {
         try {
             InputStream backendData;
-            if (data.getUsername() != null || data.getPassword() != null) {
+            if (!data.getAuthentication().isEmpty()) {
                 backendData = httpSvc.get(data.getAccessUrl(), queryInput,
-                                             new Pair<>(data.getUsername(), data.getPassword()))
+                                             data.getAuthentication())
                                       .getBody();
             } else {
                 backendData = httpSvc.get(data.getAccessUrl(), queryInput).getBody();

@@ -13,35 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.usagecontrol;
+package io.dataspaceconnector.model.pattern;
 
-import java.net.URI;
-
-import de.fraunhofer.iais.eis.ContractAgreement;
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 /**
- * A DTO for information required to decide if data provision should be allowed.
+ * Class for inputs of a policy pattern that describes the restriction of data usage to a
+ * specific connector.
  */
-@AllArgsConstructor
+@Schema(example = "{\n"
+        + "\t\"type\": \"CONNECTOR_RESTRICTED_USAGE\",\n"
+        + "\t\"url\": \"https://localhost:8080\"\n"
+        + "}")
 @Data
-@RequiredArgsConstructor
-public class VerificationInput {
-
+@EqualsAndHashCode(callSuper = true)
+public class ConnectorRestrictionDesc extends PatternDesc {
     /**
-     * The id of the targeted artifact.
+     * The connector id.
      */
-    private URI target;
-
-    /**
-     * The id of the issuing connector.
-     */
-    private URI issuerConnector;
-
-    /**
-     * The contract agreements for policy verification.
-     */
-    private ContractAgreement agreement;
+    @JsonProperty("url")
+    private String url;
 }

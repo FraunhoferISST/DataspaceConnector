@@ -25,6 +25,7 @@ import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.RdfBuilderException;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.message.ContractRequestMessageDesc;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.IdsUtils;
@@ -75,21 +76,35 @@ public final class ContractRequestService
     }
 
     /**
-     * Build and send a description request message.
+     * Build and send a description request message and then validate the response.
      *
      * @param recipient The recipient.
      * @param request   The contract request.
      * @return The response map.
-     * @throws MessageException         if message handling failed.
-     * @throws RdfBuilderException      if the contract request rdf string could not be built.
-     * @throws IllegalArgumentException if contract request is null.
+     * @throws MessageException            if message handling failed.
+     * @throws MessageResponseException    if the response could not be processed.
+     * @throws UnexpectedResponseException if the response is not as expected.
+     * @throws RdfBuilderException         if the contract request rdf string could not be built.
+     * @throws IllegalArgumentException    if contract request is null.
      */
     public Map<String, String> sendMessage(final URI recipient, final ContractRequest request)
-            throws MessageException, RdfBuilderException {
+            throws MessageException, MessageResponseException, UnexpectedResponseException,
+            RdfBuilderException {
         Utils.requireNonNull(request, ErrorMessages.ENTITY_NULL);
 
         final var contractRdf = IdsUtils.toRdf(request);
-        return send(new ContractRequestMessageDesc(recipient, request.getId()), contractRdf);
+        final var desc = new ContractRequestMessageDesc(recipient, request.getId());
+        final var response = send(desc, contractRdf);
+
+        try {
+            if (!validateResponse(response)) {
+                throw new UnexpectedResponseException(getResponseContent(response));
+            }
+        } catch (MessageResponseException e) {
+            throw new UnexpectedResponseException(getResponseContent(response), e);
+        }
+
+        return response;
     }
 
     /**
