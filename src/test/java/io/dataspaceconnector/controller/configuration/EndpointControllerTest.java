@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.configurations;
+package io.dataspaceconnector.controller.configuration;
 
-import io.dataspaceconnector.controller.configuration.EndpointController;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;

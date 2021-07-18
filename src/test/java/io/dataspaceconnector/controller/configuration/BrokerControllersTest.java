@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.configurations;
+package io.dataspaceconnector.controller.configuration;
 
-import io.dataspaceconnector.controller.configuration.BrokerControllers;
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
