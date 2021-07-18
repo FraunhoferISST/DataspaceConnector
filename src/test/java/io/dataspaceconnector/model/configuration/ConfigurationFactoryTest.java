@@ -56,7 +56,7 @@ public class ConfigurationFactoryTest {
         assertEquals(ConfigurationFactory.DEFAULT_CURATOR, result.getCurator());
         assertEquals(ConfigurationFactory.DEFAULT_OUTBOUND_VERSION, result.getOutboundModelVersion());
         assertEquals(ConfigurationFactory.DEFAULT_SECURITY_PROFILE, result.getSecurityProfile());
-        assertTrue(result.getInboundModelVersion().isEmpty());
+        assertEquals(ConfigurationFactory.DEFAULT_OUTBOUND_VERSION, result.getInboundModelVersion().get(0));
     }
 
     @Test
