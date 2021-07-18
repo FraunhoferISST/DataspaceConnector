@@ -23,8 +23,6 @@ import io.dataspaceconnector.service.message.type.ArtifactRequestService;
 import io.dataspaceconnector.service.message.type.ContractAgreementService;
 import io.dataspaceconnector.service.message.type.ContractRequestService;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
-import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.Exchange;
@@ -39,8 +37,7 @@ public abstract class IdsResponseMessageValidator implements Processor {
     /**
      * The error message used for throwing an Exception when the response is not valid.
      */
-    @Getter(AccessLevel.PROTECTED)
-    private final String errorMessage = "Received an invalid response.";
+    protected static final String ERROR_MESSAGE = "Received an invalid response.";
 
     /**
      * Override of the {@link Processor}'s process method. Calls the implementing class's
@@ -89,7 +86,7 @@ class DescriptionResponseValidator extends IdsResponseMessageValidator {
         if (!descReqSvc.validateResponse(map)) {
             // If the response is not a description response message, show the response.
             final var content = descReqSvc.getResponseContent(map);
-            throw new InvalidResponseException(content, getErrorMessage());
+            throw new InvalidResponseException(content, ERROR_MESSAGE);
         }
 
     }
@@ -120,7 +117,7 @@ class ContractResponseValidator extends IdsResponseMessageValidator {
         if (!contractReqSvc.validateResponse(map)) {
             // If the response is not a description response message, show the response.
             final var content = contractReqSvc.getResponseContent(map);
-            throw new InvalidResponseException(content, getErrorMessage());
+            throw new InvalidResponseException(content, ERROR_MESSAGE);
         }
     }
 
@@ -151,7 +148,7 @@ class ContractAgreementResponseValidator extends IdsResponseMessageValidator {
         if (!agreementSvc.validateResponse(map)) {
             // If the response is not a description response message, show the response.
             final var content = agreementSvc.getResponseContent(map);
-            throw new InvalidResponseException(content, getErrorMessage());
+            throw new InvalidResponseException(content, ERROR_MESSAGE);
         }
     }
 
@@ -182,7 +179,7 @@ class ArtifactResponseValidator extends IdsResponseMessageValidator {
         if (!artifactReqSvc.validateResponse(map)) {
             // If the response is not a description response message, show the response.
             final var content = artifactReqSvc.getResponseContent(map);
-            throw new InvalidResponseException(content, getErrorMessage());
+            throw new InvalidResponseException(content, ERROR_MESSAGE);
         }
     }
 }

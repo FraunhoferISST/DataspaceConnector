@@ -76,7 +76,7 @@ class ResponseToDtoConverter extends Idscp2MappingProcessor {
     protected void processInternal(final Message in) {
         final var header = in
                 .getHeader(ParameterUtils.IDSCP_HEADER, de.fraunhofer.iais.eis.Message.class);
-        final var payload = new String(in.getBody(byte[].class));
+        final var payload = new String(in.getBody(byte[].class), StandardCharsets.UTF_8);
 
         in.setBody(new Response(header, payload));
     }
@@ -252,11 +252,11 @@ class OutgoingMessageParser extends Idscp2MappingProcessor {
 
         if (response != null) {
             in.setHeader(ParameterUtils.IDSCP_HEADER, response.getHeader());
-            in.setBody(response.getBody().getBytes());
+            in.setBody(response.getBody().getBytes(StandardCharsets.UTF_8));
         } else {
             final var rejection = in.getBody(ErrorResponse.class);
             in.setHeader(ParameterUtils.IDSCP_HEADER, rejection.getRejectionMessage());
-            in.setBody(rejection.getErrorMessage().getBytes());
+            in.setBody(rejection.getErrorMessage().getBytes(StandardCharsets.UTF_8));
         }
     }
 

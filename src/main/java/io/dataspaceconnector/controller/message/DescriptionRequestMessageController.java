@@ -124,9 +124,6 @@ public class DescriptionRequestMessageController {
                 // Send and validate description request/response message.
                 final var response = descriptionReqSvc.sendMessage(recipient, elementId);
 
-                // Read and process the response message.
-                payload = MessageUtils.extractPayloadFromMultipartMessage(response);
-
                 // Read the response message.
                 payload = MessageUtils.extractPayloadFromMultipartMessage(response);
             } catch (MessageException exception) {
