@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  */
 @ControllerAdvice
 @Log4j2
-@Order(1)
+@Order
 public class InvalidEntityExceptionHandler {
 
     /**
