@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.resource;
+package io.dataspaceconnector.controller;
 
 import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;

@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.controller.configuration;
 
+import javax.validation.Valid;
+import java.util.UUID;
+
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.controller.resource.BaseResourceController;
@@ -39,9 +42,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.util.UUID;
 
 /**
  * Offers the endpoints for managing configurations.
@@ -69,7 +69,7 @@ public class ConfigurationController extends BaseResourceController<Configuratio
      * @param toSelect The new configuration.
      * @return Ok or error response.
      */
-    @PutMapping(value = "/{id}", consumes = {"*/*"})
+    @PutMapping(value = "/{id}/active", consumes = {"*/*"})
     @Operation(summary = "Update current configuration")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
@@ -94,7 +94,7 @@ public class ConfigurationController extends BaseResourceController<Configuratio
      *
      * @return The configuration object or an error.
      */
-    @GetMapping(value = "/", produces = "application/hal+json")
+    @GetMapping(value = "/active", produces = "application/hal+json")
     @Operation(summary = "Get current configuration")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
@@ -109,7 +109,7 @@ public class ConfigurationController extends BaseResourceController<Configuratio
      *
      * @return The configuration object or an error.
      */
-    @GetMapping(value = "/", produces = "application/ld+json")
+    @GetMapping(value = "/active", produces = "application/ld+json")
     @Operation(summary = "Get current configuration")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
