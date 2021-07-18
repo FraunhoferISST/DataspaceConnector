@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.resource.configuration;
+package io.dataspaceconnector.controller.configuration;
 
 import java.net.URI;
 
@@ -21,10 +21,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -104,5 +106,46 @@ class ConfigurationControllerIT {
 
         mockMvc.perform(delete(URI.create(newObj).getPath()))
                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    void get_validInput_returnDSCRepresentation() throws Exception {
+        final var newObject =
+                mockMvc.perform(get("/api/configurations/active")
+                                        .accept("application/hal+json"))
+                       .andExpect(status().isOk()).andReturn();
+
+        assertEquals(HttpStatus.OK.value(), newObject.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    void get_validInput_returnIDSRepresentation() throws Exception {
+        final var newObject =
+                mockMvc.perform(get("/api/configurations/active")
+                                        .accept("application/ld+json"))
+                       .andExpect(status().isOk()).andReturn();
+
+        assertEquals(HttpStatus.OK.value(), newObject.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    void setConfiguration_validInput_swapConfig() throws Exception {
+        final var newObject =
+                mockMvc.perform(post("/api/configurations")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content("{}"))
+                       .andExpect(status().isCreated()).andReturn();
+
+        final var newObj = newObject.getResponse().getHeader("Location");
+        final var activatePath = URI.create(newObj).getPath() + "/active";
+
+        final var result =
+                mockMvc.perform(put(activatePath))
+                       .andExpect(status().isNoContent()).andReturn();
+
+        assertEquals(HttpStatus.NO_CONTENT.value(), result.getResponse().getStatus());
     }
 }
