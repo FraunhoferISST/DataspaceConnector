@@ -15,6 +15,13 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import javax.xml.datatype.DatatypeFactory;
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
+
 import de.fraunhofer.iais.eis.DynamicAttributeToken;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
@@ -24,6 +31,7 @@ import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.util.ErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -31,17 +39,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.xml.datatype.DatatypeFactory;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Optional;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,6 +58,9 @@ public class ResourceUnavailableMessageControllerTest {
 
     @MockBean
     private ConnectorService connectorService;
+
+    @SpyBean
+    private GlobalMessageService globalMessageService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -124,8 +132,8 @@ public class ResourceUnavailableMessageControllerTest {
         /* ARRANGE */
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(Optional.of(resource)).when(connectorService).getOfferedResourceById(Mockito.eq(resourceURI));
-        Mockito.doThrow(IOException.class).when(brokerService).removeResourceFromBroker(Mockito.any(),
-                Mockito.eq(resource));
+        Mockito.doThrow(IOException.class).when(brokerService).removeResourceFromBroker(any(),
+                                                                                        Mockito.eq(resource));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/resource/unavailable")
@@ -144,8 +152,8 @@ public class ResourceUnavailableMessageControllerTest {
         /* ARRANGE */
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(Optional.of(resource)).when(connectorService).getOfferedResourceById(Mockito.eq(resourceURI));
-        Mockito.doThrow(IOException.class).when(brokerService).removeResourceFromBroker(Mockito.any(),
-                Mockito.eq(resource));
+        Mockito.doThrow(IOException.class).when(brokerService).removeResourceFromBroker(any(),
+                                                                                        Mockito.eq(resource));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/resource/unavailable")
@@ -176,8 +184,8 @@ public class ResourceUnavailableMessageControllerTest {
 
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(Optional.of(resource)).when(connectorService).getOfferedResourceById(Mockito.eq(resourceURI));
-        Mockito.doReturn(response).when(brokerService).removeResourceFromBroker(Mockito.any(),
-                Mockito.eq(resource));
+        Mockito.doReturn(response).when(brokerService).removeResourceFromBroker(any(),
+                                                                                Mockito.eq(resource));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/resource/unavailable")
@@ -187,6 +195,24 @@ public class ResourceUnavailableMessageControllerTest {
 
         /* ASSERT */
         assertEquals("EMPTY", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void sendConnectorUpdateMessage_validRequestButTimesOut_returnsConnectionTimeout() throws Exception {
+        /* ARRANGE */
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+        Mockito.doReturn(Optional.of(resource)).when(connectorService).getOfferedResourceById(Mockito.eq(resourceURI));
+        Mockito.doThrow(SocketTimeoutException.class).when(globalMessageService).sendResourceUnavailableMessage(any(), any());
+
+        /* ACT */
+        final var result = mockMvc.perform(post("/api/ids/resource/unavailable")
+                                                   .param("recipient", recipient)
+                                                   .param("resourceId", resourceId.toString()))
+                                  .andReturn();
+
+        /* ASSERT */
+        assertEquals(HttpStatus.GATEWAY_TIMEOUT.value(), result.getResponse().getStatus());
     }
 
     private Resource getResource() {
