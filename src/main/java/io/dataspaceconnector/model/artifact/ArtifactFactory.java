@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.model.artifact;
 
-import io.dataspaceconnector.util.MetadataUtils;
-import org.springframework.stereotype.Component;
-import io.dataspaceconnector.model.named.AbstractNamedFactory;
-
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -26,7 +22,11 @@ import java.util.ArrayList;
 import java.util.zip.CRC32C;
 
 import io.dataspaceconnector.model.auth.ApiKey;
+import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.auth.BasicAuth;
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
+import io.dataspaceconnector.util.MetadataUtils;
+import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates an artifact.
@@ -105,8 +105,7 @@ public final class ArtifactFactory extends AbstractNamedFactory<Artifact, Artifa
         boolean hasChanged;
         if (isRemoteData(desc)) {
             hasChanged = updateRemoteData((ArtifactImpl) artifact, desc.getAccessUrl(),
-                                          desc.getUsername(), desc.getPassword(),
-                                          desc.getApiKey(), desc.getApiKeyValue());
+                                          desc.getBasicAuth(), desc.getApiKey());
         } else {
             hasChanged = updateLocalData((ArtifactImpl) artifact, desc.getValue());
         }
@@ -140,16 +139,16 @@ public final class ArtifactFactory extends AbstractNamedFactory<Artifact, Artifa
     }
 
     private boolean updateRemoteData(final ArtifactImpl artifact, final URL accessUrl,
-                                     final String username, final String password,
-                                     final String apiKey, final String apiKeyValue) {
+                                     final AuthenticationDesc basicAuth,
+                                     final AuthenticationDesc apiKey) {
         final var newData = new RemoteData();
         newData.setAuthentication(new ArrayList<>());
         newData.setAccessUrl(accessUrl);
-        if (username != null && password != null) {
-            newData.addAuthentication(new BasicAuth(username, password));
+        if (basicAuth != null) {
+            newData.addAuthentication(new BasicAuth(basicAuth.getKey(), basicAuth.getValue()));
         }
-        if (apiKey != null && apiKeyValue != null) {
-            newData.addAuthentication(new ApiKey(apiKey, apiKeyValue));
+        if (apiKey != null) {
+            newData.addAuthentication(new ApiKey(apiKey.getKey(), apiKey.getValue()));
         }
 
         final var oldData = artifact.getData();

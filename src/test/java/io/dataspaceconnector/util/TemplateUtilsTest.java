@@ -125,8 +125,8 @@ class TemplateUtilsTest {
         assertEquals(remoteUrl, desc.getRemoteAddress());
         assertNull(desc.getTitle());
         assertNull(desc.getAccessUrl());
-        assertNull(desc.getUsername());
-        assertNull(desc.getPassword());
+        assertNull(desc.getBasicAuth());
+        assertNull(desc.getApiKey());
         assertNull(desc.getValue());
         assertEquals(download, desc.isAutomatedDownload());
         assertEquals(0, desc.getAdditional().size());

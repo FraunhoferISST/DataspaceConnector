@@ -30,14 +30,15 @@ import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedExcepti
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import io.dataspaceconnector.bootstrap.util.BootstrapUtils;
-import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
+import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.ids.DeserializationService;
+import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.service.resource.CatalogService;
 import io.dataspaceconnector.service.resource.TemplateBuilder;
 import io.dataspaceconnector.util.TemplateUtils;
@@ -437,12 +438,8 @@ public class Bootstrapper {
             }
         }
 
-        if (username != null) {
-            desc.setUsername(username);
-        }
-
-        if (password != null) {
-            desc.setPassword(password);
+        if (username != null || password != null) {
+            desc.setBasicAuth(new AuthenticationDesc(username, password));
         }
 
         if (value != null) {
