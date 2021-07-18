@@ -15,14 +15,12 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
-import de.fraunhofer.iais.eis.ContractAgreement;
-import de.fraunhofer.iais.eis.SecurityProfile;
+import io.dataspaceconnector.model.Artifact;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import java.net.URI;
-import java.util.Optional;
 
 /**
  * A DTO for information required to decide if data provision should be allowed.
@@ -30,25 +28,15 @@ import java.util.Optional;
 @AllArgsConstructor
 @Data
 @RequiredArgsConstructor
-public class VerificationInput {
+public class AccessVerificationInput {
 
     /**
-     * The id of the targeted artifact.
+     * The id of the transfer contract (agreement).
      */
-    private URI target;
+    private URI agreementId;
 
     /**
-     * The id of the issuing connector.
+     * The artifact.
      */
-    private URI issuerConnector;
-
-    /**
-     * The contract agreements for policy verification.
-     */
-    private ContractAgreement agreement;
-
-    /**
-     * The security profile.
-     */
-    private Optional<SecurityProfile> securityProfile;
+    private Artifact artifact;
 }

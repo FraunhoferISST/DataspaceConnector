@@ -48,9 +48,11 @@ public class RuleValidatorTest {
 
         final var target = URI.create("https://target");
         final var issuer = URI.create("https://issuer");
+        final var agreementId = URI.create("https://agreementId");
 
         /* ACT & ASSERT */
         assertDoesNotThrow(() -> ruleValidator.validatePolicy(
-                PolicyPattern.SECURITY_PROFILE_RESTRICTED_USAGE, rule, target, issuer, Optional.of(profile)));
+                PolicyPattern.SECURITY_PROFILE_RESTRICTED_USAGE, rule, target, issuer,
+                Optional.of(profile), agreementId));
     }
 }

@@ -270,9 +270,9 @@ class ContractRequestHandlerTest {
         final var contractRequest =
                 new ContractRequestBuilder(URI.create("https://someUri"))
                         ._permission_(Util.asList(new PermissionBuilder()
-                                ._action_(Util.asList(Action.USE))
-                                ._target_(URI.create("https://someUri/"))
-                                .build()))
+                                                          ._action_(Util.asList(Action.USE))
+                                                          ._target_(URI.create("https://someUri/"))
+                                                          .build()))
                         .build();
         final var payload = new Serializer().serialize(contractRequest);
 
@@ -285,9 +285,34 @@ class ContractRequestHandlerTest {
                                 new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
 
         /* ASSERT */
-        assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR,
-                result.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, result.getRejectionMessage().getRejectionReason());
     }
+
+//    @Test
+//    @SneakyThrows
+//    public void checkContractRequest_unknownTarget_returnNotFoundErrorResponse(){
+//        /* ARRANGE */
+//        final var contractRequest =
+//                new ContractRequestBuilder(URI.create("https://someUri"))
+//                        ._permission_(Util.asList(new PermissionBuilder()
+//                                                          ._action_(Util.asList(Action.USE))
+//                                                          ._target_(URI.create("https://localhost:8080/api/artifacts/550e8400-e29b-11d4-a716-446655440000"))
+//                                                          .build()))
+//                        .build();
+//
+//        final var payload = new Serializer().serialize(contractRequest);
+//
+//        final var message = getMessage();
+//
+//        /* ACT */
+//        final var result = (ErrorResponse) handler
+//                .handleMessage((ContractRequestMessageImpl) message,
+//                        new MessagePayloadInputstream(
+//                                new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
+//
+//        /* ASSERT */
+//        assertEquals(RejectionReason.NOT_FOUND, result.getRejectionMessage().getRejectionReason());
+//    }
 
     @Test
     @SneakyThrows
@@ -458,7 +483,7 @@ class ContractRequestHandlerTest {
                 any(), Mockito.eq(Arrays.asList(artifactId)), Mockito.eq(issuerConnector));
 
         /* ACT */
-        final var result = (BodyResponse) handler
+        final var result = (BodyResponse<?>) handler
                 .handleMessage((ContractRequestMessageImpl) message,
                         new MessagePayloadInputstream(
                                 new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));

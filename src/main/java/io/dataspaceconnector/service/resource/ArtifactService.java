@@ -15,14 +15,6 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.exception.UnreachableLineException;
 import io.dataspaceconnector.model.Artifact;
@@ -37,6 +29,7 @@ import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.ArtifactRetriever;
 import io.dataspaceconnector.service.HttpService;
+import io.dataspaceconnector.service.usagecontrol.AccessVerificationInput;
 import io.dataspaceconnector.service.usagecontrol.PolicyVerifier;
 import io.dataspaceconnector.service.usagecontrol.VerificationResult;
 import io.dataspaceconnector.util.ErrorMessages;
@@ -50,6 +43,14 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Handles the basic logic for artifacts.
@@ -143,7 +144,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @throws IOException if IO errors occurr.
      */
     @Transactional
-    public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
+    public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final QueryInput queryInput)
             throws PolicyRestrictionException, IOException {
@@ -204,13 +205,15 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @throws IOException if IO errors occurr.
      */
     @Transactional
-    public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
+    public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final RetrievalInformation information)
             throws PolicyRestrictionException, IOException {
         // Check the artifact exists and access is granted.
         final var artifact = get(artifactId);
-        if (accessVerifier.verify(artifact) == VerificationResult.DENIED) {
+        final var agreementId = information.getTransferContract();
+        final var input = new AccessVerificationInput(agreementId, artifact);
+        if (accessVerifier.verify(input) == VerificationResult.DENIED) {
             if (log.isInfoEnabled()) {
                 log.info("Access denied. [artifactId=({})]", artifactId);
             }
