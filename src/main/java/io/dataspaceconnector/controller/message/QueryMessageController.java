@@ -124,7 +124,7 @@ public class QueryMessageController {
 
             final var response = result.getIn().getBody(Response.class);
             if (response != null) {
-                return new ResponseEntity<>(HttpStatus.OK);
+                return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
             } else {
                 final var responseEntity = result.getIn().getBody(ResponseEntity.class);
                 return Objects.requireNonNullElseGet(responseEntity,
@@ -202,7 +202,7 @@ public class QueryMessageController {
 
             final var response = result.getIn().getBody(Response.class);
             if (response != null) {
-                return new ResponseEntity<>(HttpStatus.OK);
+                return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
             } else {
                 final var responseEntity = result.getIn().getBody(ResponseEntity.class);
                 return Objects.requireNonNullElseGet(responseEntity,
