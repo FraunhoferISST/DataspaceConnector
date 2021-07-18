@@ -55,6 +55,7 @@ import io.dataspaceconnector.service.message.type.ContractRejectionService;
 import io.dataspaceconnector.service.message.type.DescriptionResponseService;
 import io.dataspaceconnector.service.message.type.MessageProcessedNotificationService;
 import io.dataspaceconnector.util.ContractUtils;
+import io.dataspaceconnector.util.IdsUtils;
 import io.dataspaceconnector.util.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -182,7 +183,7 @@ class SelfDescriptionProcessor extends IdsProcessor<
         final var header = messageService.buildMessage(desc);
 
         // Send ids response message.
-        return new Response(header, connector.toRdf());
+        return new Response(header, IdsUtils.toRdf(connector));
     }
 }
 
@@ -387,7 +388,7 @@ class AcceptContractProcessor extends
         }
 
         // Send ids response message.
-        return new Response(header, agreement.toRdf());
+        return new Response(header, IdsUtils.toRdf(agreement));
     }
 
 }
