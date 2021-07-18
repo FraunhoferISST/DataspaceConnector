@@ -15,21 +15,23 @@
  */
 package io.dataspaceconnector.model.auth;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
  * This class describes authentication properties.
  */
 @Data
+@AllArgsConstructor
 public class AuthenticationDesc {
 
     /**
      * The username for the authentication.
      */
-    private String username;
+    private String key;
 
     /**
      * The password for the authentication.
      */
-    private String password;
+    private String value;
 }

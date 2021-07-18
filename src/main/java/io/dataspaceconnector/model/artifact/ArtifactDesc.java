@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.URL;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.named.NamedDescription;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -51,22 +52,12 @@ public class ArtifactDesc extends NamedDescription {
     /**
      * The username for authentication at the data location.
      */
-    private String username;
-
-    /**
-     * The password for authentication at the data location.
-     */
-    private String password;
+    private AuthenticationDesc basicAuth;
 
     /**
      * The API key name used for authentication at the data location.
      */
-    private String apiKey;
-
-    /**
-     * The API key value for authentication at the data location.
-     */
-    private String apiKeyValue;
+    private AuthenticationDesc apiKey;
 
     /**
      * Some value for storing data locally.
