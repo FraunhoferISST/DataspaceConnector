@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.camel;
+package io.dataspaceconnector.camel.processor;
 import de.fraunhofer.iais.eis.Message;
 import io.dataspaceconnector.camel.dto.Request;
 import io.dataspaceconnector.camel.dto.Response;
