@@ -35,7 +35,9 @@ public class QueryControllerRoute extends RouteBuilder {
                 .routeId("querySender")
                 .process("QueryMessageBuilder")
                 .process("QueryPreparer")
-                .toD("idscp2client://${exchangeProperty.recipient}?awaitResponse=true&sslContextParameters=#serverSslContext&useIdsMessages=true")
+                .toD("idscp2client://${exchangeProperty.recipient}?"
+                        + "awaitResponse=true&sslContextParameters=#serverSslContext"
+                        + "&useIdsMessages=true")
                 .process("ResponseToDtoConverter");
     }
 

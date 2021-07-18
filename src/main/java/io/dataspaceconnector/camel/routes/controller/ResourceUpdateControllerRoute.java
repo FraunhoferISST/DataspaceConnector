@@ -40,7 +40,9 @@ public class ResourceUpdateControllerRoute extends RouteBuilder {
                 .process("ResourceFinder")
                 .process("ResourceUpdateMessageBuilder")
                 .process("RequestWithResourcePayloadPreparer")
-                .toD("idscp2client://${exchangeProperty.recipient}?awaitResponse=true&sslContextParameters=#serverSslContext&useIdsMessages=true")
+                .toD("idscp2client://${exchangeProperty.recipient}?"
+                        + "awaitResponse=true&sslContextParameters=#serverSslContext"
+                        + "&useIdsMessages=true")
                 .process("ResponseToDtoConverter");
     }
 

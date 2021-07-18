@@ -28,30 +28,54 @@ import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.camel.dto.Request;
 import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
 
+/**
+ * Superclass for all processors that perform mapping between IDSCPv2 messages and the DTOs used
+ * in the routes.
+ */
 public abstract class Idscp2MappingProcessor implements Processor {
 
-    protected final String IDSCP2_HEADER = "idscp2-header";
-
+    /**
+     * Override of the {@link Processor}'s process method. Calls the implementing class's
+     * processInternal method with the {@link Exchange}'s in-message.
+     *
+     * @param exchange the exchange.
+     * @throws Exception if mapping fails.
+     */
     @Override
     public void process(final Exchange exchange) throws Exception {
         processInternal(exchange.getIn());
     }
 
+    /**
+     * Performs the mapping operation. To be implemented by sub classes.
+     *
+     * @param in the in-message of the exchange.
+     */
     protected abstract void processInternal(Message in);
 
 }
 
+/**
+ * Converts a response received over IDSCPv2 to a response DTO.
+ */
 @Component("ResponseToDtoConverter")
 class ResponseToDtoConverter extends Idscp2MappingProcessor {
 
+    /**
+     * Converts an incoming response message to q {@link Response}.
+     *
+     * @param in the in-message of the exchange.
+     */
     @Override
     protected void processInternal(final Message in) {
-        final var header = in.getHeader(IDSCP2_HEADER, de.fraunhofer.iais.eis.Message.class);
+        final var header = in
+                .getHeader(ParameterUtils.IDSCP_HEADER, de.fraunhofer.iais.eis.Message.class);
         final var payload = new String(in.getBody(byte[].class));
 
         in.setBody(new Response(header, payload));
@@ -59,94 +83,151 @@ class ResponseToDtoConverter extends Idscp2MappingProcessor {
 
 }
 
+/**
+ * Prepares a request message for IDSCPv2 communication without a payload.
+ */
 @Component("RequestWithoutPayloadPreparer")
 class RequestWithoutPayloadPreparer extends Idscp2MappingProcessor {
 
+    /**
+     * Prepares a {@link Request} with empty body for communication over IDSCPv2.
+     *
+     * @param in the in-message of the exchange.
+     */
     @Override
     protected void processInternal(final Message in) {
         final var request = in.getBody(Request.class);
 
-        in.setHeader(IDSCP2_HEADER, request.getHeader());
+        in.setHeader(ParameterUtils.IDSCP_HEADER, request.getHeader());
         in.setBody(null);
     }
 
 }
 
+/**
+ * Prepares a request message for IDSCPv2 communication with a contract request as payload.
+ */
 @Component("ContractRequestPreparer")
 class ContractRequestPreparer extends Idscp2MappingProcessor {
 
+    /**
+     * Prepares a {@link Request} with a contract request as body for communication over IDSCPv2.
+     *
+     * @param in the in-message of the exchange.
+     */
     @Override
     protected void processInternal(final Message in) {
         final var request = in.getBody(Request.class);
         final var contractRequest = (ContractRequest) request.getBody();
 
-        in.setHeader(IDSCP2_HEADER, request.getHeader());
+        in.setHeader(ParameterUtils.IDSCP_HEADER, request.getHeader());
         in.setBody(contractRequest.toRdf().getBytes(StandardCharsets.UTF_8));
     }
 }
 
+/**
+ * Prepares a request message for IDSCPv2 communication with a contract agreement as payload.
+ */
 @Component("ContractAgreementPreparer")
 class ContractAgreementPreparer extends Idscp2MappingProcessor {
 
+    /**
+     * Prepares a {@link Request} with a contract agreement as body for communication over IDSCPv2.
+     *
+     * @param in the in-message of the exchange.
+     */
     @Override
     protected void processInternal(final Message in) {
         final var request = in.getBody(Request.class);
         final var agreement = (ContractAgreement) request.getBody();
 
-        in.setHeader(IDSCP2_HEADER, request.getHeader());
+        in.setHeader(ParameterUtils.IDSCP_HEADER, request.getHeader());
         in.setBody(agreement.toRdf().getBytes(StandardCharsets.UTF_8));
     }
 
 }
 
+/**
+ * Prepares a request message for IDSCPv2 communication with a resource as payload.
+ */
 @Component("RequestWithResourcePayloadPreparer")
 class RequestWithResourcePayloadPreparer extends Idscp2MappingProcessor {
 
+    /**
+     * Prepares a {@link Request} with a resource as body for communication over IDSCPv2.
+     *
+     * @param in the in-message of the exchange.
+     */
     @Override
     protected void processInternal(final Message in) {
         final var request = in.getBody(Request.class);
         final var resource = (Resource) request.getBody();
 
-        in.setHeader(IDSCP2_HEADER, request.getHeader());
+        in.setHeader(ParameterUtils.IDSCP_HEADER, request.getHeader());
         in.setBody(resource.toRdf().getBytes(StandardCharsets.UTF_8));
     }
 
 }
 
+/**
+ * Prepares a request message for IDSCPv2 communication with a connector as payload.
+ */
 @Component("RequestWithConnectorPayloadPreparer")
 class RequestWithConnectorPayloadPreparer extends Idscp2MappingProcessor {
 
+    /**
+     * Prepares a {@link Request} with a connector as body for communication over IDSCPv2.
+     *
+     * @param in the in-message of the exchange.
+     */
     @Override
     protected void processInternal(final Message in) {
         final var request = in.getBody(Request.class);
         final var connector = (Connector) request.getBody();
 
-        in.setHeader(IDSCP2_HEADER, request.getHeader());
+        in.setHeader(ParameterUtils.IDSCP_HEADER, request.getHeader());
         in.setBody(connector.toRdf().getBytes(StandardCharsets.UTF_8));
     }
 
 }
 
+/**
+ * Prepares a request message for IDSCPv2 communication with a query string as payload.
+ */
 @Component("QueryPreparer")
 class QueryPreparer extends Idscp2MappingProcessor {
 
+    /**
+     * Prepares a {@link Request} with a query string as body for communication over IDSCPv2.
+     *
+     * @param in the in-message of the exchange.
+     */
     @Override
     protected void processInternal(final Message in) {
         final var request = in.getBody(Request.class);
         final var payload = (String) request.getBody();
 
-        in.setHeader(IDSCP2_HEADER, request.getHeader());
+        in.setHeader(ParameterUtils.IDSCP_HEADER, request.getHeader());
         in.setBody(payload.getBytes(StandardCharsets.UTF_8));
     }
 
 }
 
+/**
+ * Converts an incoming IDSCPv2 message to a request DTO.
+ */
 @Component("IncomingIdscpMessageParser")
 class IncomingMessageParser extends Idscp2MappingProcessor {
 
+    /**
+     * Creates a {@link Request} with the header and payload from the IDSCPv2 message.
+     *
+     * @param in the in-message of the exchange.
+     */
     @Override
     protected void processInternal(final Message in) {
-        final var header = in.getHeader(IDSCP2_HEADER, de.fraunhofer.iais.eis.Message.class);
+        final var header = in
+                .getHeader(ParameterUtils.IDSCP_HEADER, de.fraunhofer.iais.eis.Message.class);
         final var payloadStream = new ByteArrayInputStream(in.getBody(byte[].class));
         final var payload = new MessagePayloadInputstream(payloadStream, new ObjectMapper());
         in.setBody(new Request(header, payload, Optional.empty()));
@@ -154,19 +235,27 @@ class IncomingMessageParser extends Idscp2MappingProcessor {
 
 }
 
+/**
+ * Converts a response DTO to an IDSCPv2 message.
+ */
 @Component("OutgoingIdscpMessageParser")
 class OutgoingMessageParser extends Idscp2MappingProcessor {
 
+    /**
+     * Creates an IDSCPv2 message with header and payload from a {@link Response}.
+     *
+     * @param in the in-message of the exchange.
+     */
     @Override
     protected void processInternal(final Message in) {
         final var response = in.getBody(Response.class);
 
         if (response != null) {
-            in.setHeader("idscp2-header", response.getHeader());
+            in.setHeader(ParameterUtils.IDSCP_HEADER, response.getHeader());
             in.setBody(response.getBody().getBytes());
         } else {
             final var rejection = in.getBody(ErrorResponse.class);
-            in.setHeader("idscp2-header", rejection.getRejectionMessage());
+            in.setHeader(ParameterUtils.IDSCP_HEADER, rejection.getRejectionMessage());
             in.setBody(rejection.getErrorMessage().getBytes());
         }
     }

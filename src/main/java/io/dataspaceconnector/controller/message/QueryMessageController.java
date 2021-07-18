@@ -35,6 +35,7 @@ import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedExcepti
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.util.ControllerUtils;
@@ -117,8 +118,8 @@ public class QueryMessageController {
         if (CommunicationProtocol.IDSCP_V2.equals(protocol)) {
             final var result = template.send("direct:querySender",
                     ExchangeBuilder.anExchange(context)
-                            .withProperty("recipient", recipient)
-                            .withProperty("query", query)
+                            .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)
+                            .withProperty(ParameterUtils.QUERY_PARAM, query)
                             .build());
 
             final var response = result.getIn().getBody(Response.class);
@@ -139,12 +140,14 @@ public class QueryMessageController {
                 // If a timeout has occurred.
                 return ControllerUtils.respondConnectionTimedOut(exception);
             } catch (MultipartParseException | UnknownResponseException | ShaclValidatorException
-                    | DeserializeException | UnexpectedPayloadException | ClaimsException exception) {
+                    | DeserializeException | UnexpectedPayloadException
+                    | ClaimsException exception) {
                 // If the response was invalid.
                 return ControllerUtils.respondReceivedInvalidResponse(exception);
             } catch (RejectionException ignored) {
                 // If the response is a rejection message. Error is ignored.
-            } catch (SendMessageException | SerializeException | DapsTokenManagerException exception) {
+            } catch (SendMessageException | SerializeException
+                    | DapsTokenManagerException exception) {
                 // If the message could not be built or sent.
                 return ControllerUtils.respondMessageSendingFailed(exception);
             } catch (NoTemplateProvidedException | IOException exception) {
@@ -191,10 +194,10 @@ public class QueryMessageController {
         if (CommunicationProtocol.IDSCP_V2.equals(protocol)) {
             final var result = template.send("direct:querySender",
                     ExchangeBuilder.anExchange(context)
-                            .withProperty("recipient", recipient)
-                            .withProperty("limit", limit)
-                            .withProperty("offset", offset)
-                            .withProperty("term", term)
+                            .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)
+                            .withProperty(ParameterUtils.QUERY_LIMIT_PARAM, limit)
+                            .withProperty(ParameterUtils.QUERY_OFFSET_PARAM, offset)
+                            .withProperty(ParameterUtils.QUERY_TERM_PARAM, term)
                             .build());
 
             final var response = result.getIn().getBody(Response.class);
@@ -215,12 +218,14 @@ public class QueryMessageController {
                 // If a timeout has occurred.
                 return ControllerUtils.respondConnectionTimedOut(exception);
             } catch (MultipartParseException | UnknownResponseException | ShaclValidatorException
-                    | DeserializeException | UnexpectedPayloadException | ClaimsException exception) {
+                    | DeserializeException | UnexpectedPayloadException
+                    | ClaimsException exception) {
                 // If the response was invalid.
                 return ControllerUtils.respondReceivedInvalidResponse(exception);
             } catch (RejectionException ignored) {
                 // If the response is a rejection message. Error is ignored.
-            } catch (SendMessageException | SerializeException | DapsTokenManagerException exception) {
+            } catch (SendMessageException | SerializeException
+                    | DapsTokenManagerException exception) {
                 // If the message could not be built or sent.
                 return ControllerUtils.respondMessageSendingFailed(exception);
             } catch (NoTemplateProvidedException | IOException exception) {

@@ -123,6 +123,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param accessVerifier Checks if the data access should be allowed.
      * @param retriever      Retrieves the data from an external source.
      * @param artifactId     The id of the artifact.
+     * @param protocol       The communication protocol to use.
      * @param queryInput     The query for the backend.
      * @return The artifacts data.
      * @throws PolicyRestrictionException if the data access has been denied.

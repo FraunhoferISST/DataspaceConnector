@@ -20,6 +20,7 @@ import javax.persistence.PersistenceException;
 
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.camel.exception.InvalidResponseException;
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
 import io.dataspaceconnector.exception.MessageException;
@@ -67,20 +68,20 @@ public class ContractRequestControllerRoute extends RouteBuilder {
                 .process("RuleListInputValidator")
                 .process("ContractRequestMessageBuilder")
                 .process("ContractRequestPreparer")
-                .toD("idscp2client://${exchangeProperty.recipient}?awaitResponse=true&sslContextParameters=#serverSslContext&useIdsMessages=true")
+                .toD(ParameterUtils.IDSCP_CLIENT_URI)
                 .process("ResponseToDtoConverter")
                 .process("ContractResponseValidator")
                 .process("ContractAgreementValidator")
                 .process("ContractAgreementMessageBuilder")
                 .process("ContractAgreementPreparer")
-                .toD("idscp2client://${exchangeProperty.recipient}?awaitResponse=true&sslContextParameters=#serverSslContext&useIdsMessages=true")
+                .toD(ParameterUtils.IDSCP_CLIENT_URI)
                 .process("ResponseToDtoConverter")
                 .process("ContractAgreementResponseValidator")
                 .process("ContractAgreementPersistenceProcessor")
                 .loop(simple("${exchangeProperty.resources.size()}"))
                     .process("DescriptionRequestMessageBuilder")
                     .process("RequestWithoutPayloadPreparer")
-                    .toD("idscp2client://${exchangeProperty.recipient}?awaitResponse=true&sslContextParameters=#serverSslContext&useIdsMessages=true")
+                    .toD(ParameterUtils.IDSCP_CLIENT_URI)
                     .process("ResponseToDtoConverter")
                     .process("DescriptionResponseValidator")
                     .process("MetadataPersistenceProcessor")
@@ -91,7 +92,7 @@ public class ContractRequestControllerRoute extends RouteBuilder {
                         .loop(simple("${exchangeProperty.artifacts.size()}"))
                             .process("ArtifactRequestMessageBuilder")
                             .process("RequestWithoutPayloadPreparer")
-                            .toD("idscp2client://${exchangeProperty.recipient}?awaitResponse=true&sslContextParameters=#serverSslContext&useIdsMessages=true")
+                            .toD(ParameterUtils.IDSCP_CLIENT_URI)
                             .process("ResponseToDtoConverter")
                             .process("ArtifactResponseValidator")
                             .process("DataPersistenceProcessor")

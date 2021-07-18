@@ -19,6 +19,7 @@ import java.net.URI;
 import java.util.Objects;
 
 import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
@@ -105,8 +106,8 @@ public class DescriptionRequestMessageController {
         if (CommunicationProtocol.IDSCP_V2.equals(protocol)) {
             final var result = template.send("direct:descriptionRequestSender",
                     ExchangeBuilder.anExchange(context)
-                            .withProperty("recipient", recipient)
-                            .withProperty("elementId", elementId)
+                            .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)
+                            .withProperty(ParameterUtils.ELEMENT_ID_PARAM, elementId)
                             .build());
 
             final var response = result.getIn().getBody(Response.class);

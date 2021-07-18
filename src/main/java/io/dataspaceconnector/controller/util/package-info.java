@@ -13,21 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.util;
-
 /**
- * Enum for the communication protocols that can be chosen for IDS communication.
+ * Contains utility classes for controllers.
  */
-public enum CommunicationProtocol {
-
-    /**
-     * Communication over IDS multipart messages (HTTP).
-     */
-    MULTIPART,
-
-    /**
-     * Communication over IDSCPv2.
-     */
-    IDSCP_V2;
-
-}
+package io.dataspaceconnector.controller.util;

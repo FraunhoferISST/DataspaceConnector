@@ -16,6 +16,7 @@
 package io.dataspaceconnector.camel.routes.controller;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
@@ -40,7 +41,7 @@ public class ConenctorUpdateControllerRoute extends RouteBuilder {
                 .process("ConfigurationUpdater")
                 .process("ConnectorUnavailableMessageBuilder")
                 .process("RequestWithConnectorPayloadPreparer")
-                .toD("idscp2client://${exchangeProperty.recipient}?awaitResponse=true&sslContextParameters=#serverSslContext&useIdsMessages=true")
+                .toD(ParameterUtils.IDSCP_CLIENT_URI)
                 .process("ResponseToDtoConverter");
     }
 

@@ -16,6 +16,7 @@
 package io.dataspaceconnector.camel.routes.controller;
 
 import io.dataspaceconnector.camel.exception.InvalidResponseException;
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
@@ -39,7 +40,7 @@ public class ArtifactRequestControllerRoute extends RouteBuilder {
                 .routeId("artifactRequestSender")
                 .process("ArtifactRequestMessageBuilder")
                 .process("RequestWithoutPayloadPreparer")
-                .toD("idscp2client://${exchangeProperty.recipient}?awaitResponse=true&sslContextParameters=#serverSslContext&useIdsMessages=true")
+                .toD(ParameterUtils.IDSCP_CLIENT_URI)
                 .process("ResponseToDtoConverter")
                 .process("ArtifactResponseValidator");
     }

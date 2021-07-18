@@ -45,7 +45,9 @@ public class DescriptionRequestControllerRoute extends RouteBuilder {
                 .routeId("descriptionRequestSender")
                 .process("DescriptionRequestMessageBuilder")
                 .process("RequestWithoutPayloadPreparer")
-                .toD("idscp2client://${exchangeProperty.recipient}?awaitResponse=true&sslContextParameters=#serverSslContext&useIdsMessages=true")
+                .toD("idscp2client://${exchangeProperty.recipient}?"
+                        + "awaitResponse=true&sslContextParameters=#serverSslContext"
+                        + "&useIdsMessages=true")
                 .process("ResponseToDtoConverter")
                 .process("DescriptionResponseValidator");
     }

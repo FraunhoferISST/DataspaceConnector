@@ -19,11 +19,14 @@ import java.util.HashMap;
 
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.exception.InvalidResponseException;
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
 import io.dataspaceconnector.service.message.type.ContractAgreementService;
 import io.dataspaceconnector.service.message.type.ContractRequestService;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.Exchange;
@@ -36,14 +39,10 @@ import org.springframework.stereotype.Component;
 public abstract class IdsResponseMessageValidator implements Processor {
 
     /**
-     * Name of the header part.
+     * The error message used for throwing an Exception when the response is not valid.
      */
-    protected final String HEADER_NAME = "header";
-
-    /**
-     * Name of the payload part.
-     */
-    protected final String PAYLOAD_NAME = "payload";
+    @Getter(AccessLevel.PROTECTED)
+    private final String errorMessage = "Received an invalid response.";
 
     /**
      * Override of the {@link Processor}'s process method. Calls the implementing class's
@@ -88,13 +87,13 @@ class DescriptionResponseValidator extends IdsResponseMessageValidator {
     @Override
     protected void processInternal(final Response response) throws MessageResponseException {
         final var map = new HashMap<String, String>();
-        map.put(HEADER_NAME, response.getHeader().toRdf());
-        map.put(PAYLOAD_NAME, response.getBody());
+        map.put(ParameterUtils.HEADER_PART_NAME, response.getHeader().toRdf());
+        map.put(ParameterUtils.PAYLOAD_PART_NAME, response.getBody());
 
         if (!descReqSvc.validateResponse(map)) {
             // If the response is not a description response message, show the response.
             final var content = descReqSvc.getResponseContent(map);
-            throw new InvalidResponseException(content, "Received an invalid response.");
+            throw new InvalidResponseException(content, getErrorMessage());
         }
 
     }
@@ -121,13 +120,13 @@ class ContractResponseValidator extends IdsResponseMessageValidator {
     @Override
     protected void processInternal(final Response response) throws MessageResponseException {
         final var map = new HashMap<String, String>();
-        map.put(HEADER_NAME, response.getHeader().toRdf());
-        map.put(PAYLOAD_NAME, response.getBody());
+        map.put(ParameterUtils.HEADER_PART_NAME, response.getHeader().toRdf());
+        map.put(ParameterUtils.PAYLOAD_PART_NAME, response.getBody());
 
         if (!contractReqSvc.validateResponse(map)) {
             // If the response is not a description response message, show the response.
             final var content = contractReqSvc.getResponseContent(map);
-            throw new InvalidResponseException(content, "Received an invalid response.");
+            throw new InvalidResponseException(content, getErrorMessage());
         }
     }
 
@@ -154,13 +153,13 @@ class ContractAgreementResponseValidator extends IdsResponseMessageValidator {
     @Override
     protected void processInternal(final Response response) throws MessageResponseException {
         final var map = new HashMap<String, String>();
-        map.put(HEADER_NAME, response.getHeader().toRdf());
-        map.put(PAYLOAD_NAME, response.getBody());
+        map.put(ParameterUtils.HEADER_PART_NAME, response.getHeader().toRdf());
+        map.put(ParameterUtils.PAYLOAD_PART_NAME, response.getBody());
 
         if (!agreementSvc.validateResponse(map)) {
             // If the response is not a description response message, show the response.
             final var content = agreementSvc.getResponseContent(map);
-            throw new InvalidResponseException(content, "Received an invalid response.");
+            throw new InvalidResponseException(content, getErrorMessage());
         }
     }
 
@@ -187,13 +186,13 @@ class ArtifactResponseValidator extends IdsResponseMessageValidator {
     @Override
     protected void processInternal(final Response response) throws MessageResponseException {
         final var map = new HashMap<String, String>();
-        map.put(HEADER_NAME, response.getHeader().toRdf());
-        map.put(PAYLOAD_NAME, response.getBody());
+        map.put(ParameterUtils.HEADER_PART_NAME, response.getHeader().toRdf());
+        map.put(ParameterUtils.PAYLOAD_PART_NAME, response.getBody());
 
         if (!artifactReqSvc.validateResponse(map)) {
             // If the response is not a description response message, show the response.
             final var content = artifactReqSvc.getResponseContent(map);
-            throw new InvalidResponseException(content, "Received an invalid response.");
+            throw new InvalidResponseException(content, getErrorMessage());
         }
     }
 }

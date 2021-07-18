@@ -34,7 +34,8 @@ public class NoAffectedResourceRoute extends RouteBuilder {
     public void configure() throws Exception {
         from("direct:handleNoAffectedResourceException")
                 .routeId("noAffectedResource")
-                .log(LoggingLevel.DEBUG, "Error route for handling missing affected resource called.")
+                .log(LoggingLevel.DEBUG, "Error route for handling missing affected "
+                        + "resource called.")
                 .to("bean:messageResponseService?method=handleMissingAffectedResource("
                         + "${body.getHeader().getAffectedResource()}, "
                         + "${body.getHeader().getIssuerConnector()}, "

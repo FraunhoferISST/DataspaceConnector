@@ -15,6 +15,15 @@
  */
 package io.dataspaceconnector.controller.resource;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
 import io.dataspaceconnector.controller.resource.tag.ResourceDescriptions;
 import io.dataspaceconnector.controller.resource.tag.ResourceNames;
@@ -76,15 +85,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * This class contains all implementations of the {@link BaseResourceController}.
@@ -269,7 +269,8 @@ public final class ResourceControllers {
             // TODO: Check what happens when this connector is the provider and one of its provided
             //  agreements is passed.
             final var data = (agreementUri == null)
-                    ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId, protocol, queryInput)
+                    ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId, protocol,
+                    queryInput)
                     : artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
                     new RetrievalInformation(agreementUri, download, protocol,
                                              queryInput));
@@ -298,7 +299,8 @@ public final class ResourceControllers {
                 throws IOException, UnexpectedResponseException {
             ValidationUtils.validateQueryInput(queryInput);
             final var data =
-                    artifactSvc.getData(accessVerifier, dataReceiver, artifactId, protocol, queryInput);
+                    artifactSvc.getData(accessVerifier, dataReceiver, artifactId, protocol,
+                            queryInput);
             return returnData(artifactId, data);
         }
 

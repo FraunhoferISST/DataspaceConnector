@@ -19,6 +19,9 @@ import java.util.Map;
 
 import lombok.Getter;
 
+/**
+ * Thrown to indicate that an invalid response has been received.
+ */
 public class InvalidResponseException extends RuntimeException {
 
     /**
@@ -30,7 +33,7 @@ public class InvalidResponseException extends RuntimeException {
      * The multipart response as map.
      */
     @Getter
-    private Map<String, Object> response;
+    private final Map<String, Object> response;
 
     /**
      * Constructs an InvalidResponseException with the specified response map and detail message.

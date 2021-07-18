@@ -20,6 +20,7 @@ import java.util.List;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
 import io.dataspaceconnector.util.RuleUtils;
 import lombok.NonNull;
@@ -74,13 +75,13 @@ class ContractAgreementValidator extends IdsValidator {
     @Override
     protected void processInternal(final Exchange exchange) {
         final var contractRequest = exchange
-                .getProperty("contractRequest", ContractRequest.class);
+                .getProperty(ParameterUtils.CONTRACT_REQUEST_PARAM, ContractRequest.class);
         final var agreementString = exchange.getIn().getBody(Response.class).getBody();
 
         final var agreement = contractManager
                 .validateContractAgreement(agreementString, contractRequest);
 
-        exchange.setProperty("contractAgreement", agreement);
+        exchange.setProperty(ParameterUtils.CONTRACT_AGREEMENT_PARAM, agreement);
     }
 
 }
@@ -98,7 +99,8 @@ class RuleListInputValidator extends IdsValidator {
      */
     @Override
     protected void processInternal(final Exchange exchange) {
-        final var ruleList = (List<Rule>) exchange.getProperty("ruleList", List.class);
+        final var ruleList = (List<Rule>) exchange
+                .getProperty(ParameterUtils.RULE_LIST_PARAM, List.class);
 
         // Validate input for contract request.
         RuleUtils.validateRuleTarget(ruleList);

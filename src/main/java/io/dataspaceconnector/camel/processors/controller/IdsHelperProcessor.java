@@ -19,6 +19,7 @@ import java.net.URI;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.camel.exception.InvalidResponseException;
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.service.ids.ConnectorService;
@@ -80,7 +81,7 @@ class ResourceFinder extends IdsHelperProcessor {
      */
     @Override
     protected void processInternal(final Exchange exchange) throws ResourceNotFoundException {
-        final var resourceId = exchange.getProperty("resourceId", URI.class);
+        final var resourceId = exchange.getProperty(ParameterUtils.RESOURCE_ID_PARAM, URI.class);
         final var resource = connectorService.getOfferedResourceById(resourceId);
 
         if (resource.isEmpty()) {

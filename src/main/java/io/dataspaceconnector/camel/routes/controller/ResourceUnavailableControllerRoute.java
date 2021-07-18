@@ -40,7 +40,9 @@ public class ResourceUnavailableControllerRoute extends RouteBuilder {
                 .process("ResourceFinder")
                 .process("ResourceUnavailableMessageBuilder")
                 .process("RequestWithResourcePayloadPreparer")
-                .toD("idscp2client://${exchangeProperty.recipient}?awaitResponse=true&sslContextParameters=#serverSslContext&useIdsMessages=true")
+                .toD("idscp2client://${exchangeProperty.recipient}?"
+                        + "awaitResponse=true&sslContextParameters=#serverSslContext"
+                        + "&useIdsMessages=true")
                 .process("ResponseToDtoConverter");
     }
 

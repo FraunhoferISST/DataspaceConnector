@@ -23,6 +23,7 @@ import java.util.UUID;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.service.EntityPersistenceService;
 import io.dataspaceconnector.service.EntityUpdateService;
 import lombok.NonNull;
@@ -77,9 +78,10 @@ class ContractAgreementPersistenceProcessor extends IdsResponseProcessor {
      */
     @Override
     protected void processInternal(final Exchange exchange) {
-        final var agreement = exchange.getProperty("contractAgreement", ContractAgreement.class);
+        final var agreement = exchange
+                .getProperty(ParameterUtils.CONTRACT_AGREEMENT_PARAM, ContractAgreement.class);
         final var agreementId = persistenceSvc.saveContractAgreement(agreement);
-        exchange.setProperty("agreementId", agreementId);
+        exchange.setProperty(ParameterUtils.AGREEMENT_ID_PARAM, agreementId);
     }
 
 }
@@ -104,12 +106,13 @@ class MetadataPersistenceProcessor extends IdsResponseProcessor {
     protected void processInternal(final Exchange exchange) {
         final var response = exchange.getIn().getBody(Response.class);
         final var map = new HashMap<String, String>();
-        map.put("header", response.getHeader().toRdf());
-        map.put("payload", response.getBody());
+        map.put(ParameterUtils.HEADER_PART_NAME, response.getHeader().toRdf());
+        map.put(ParameterUtils.PAYLOAD_PART_NAME, response.getBody());
 
-        final var artifacts = (List<URI>) exchange.getProperty("artifacts", List.class);
-        final var download = exchange.getProperty("download", boolean.class);
-        final var recipient = exchange.getProperty("recipient", URI.class);
+        final var artifacts = (List<URI>) exchange
+                .getProperty(ParameterUtils.ARTIFACTS_PARAM, List.class);
+        final var download = exchange.getProperty(ParameterUtils.DOWNLOAD_PARAM, boolean.class);
+        final var recipient = exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class);
 
         persistenceSvc.saveMetadata(map, artifacts, download, recipient);
     }
@@ -138,13 +141,13 @@ class DataPersistenceProcessor extends IdsResponseProcessor {
     protected void processInternal(final Exchange exchange) throws IOException {
         final var response = exchange.getIn().getBody(Response.class);
         final var map = new HashMap<String, String>();
-        map.put("header", response.getHeader().toRdf());
-        map.put("payload", response.getBody());
+        map.put(ParameterUtils.HEADER_PART_NAME, response.getHeader().toRdf());
+        map.put(ParameterUtils.PAYLOAD_PART_NAME, response.getBody());
 
         final var artifactId = exchange.getProperty(Exchange.LOOP_INDEX, URI.class);
 
         // Set current artifact as exchange property so it is available for error handling.
-        exchange.setProperty("currentArtifact", artifactId);
+        exchange.setProperty(ParameterUtils.CURRENT_ARTIFACT_PARAM, artifactId);
 
         persistenceSvc.saveData(map, artifactId);
     }
@@ -172,8 +175,9 @@ class AgreementToArtifactsLinker extends IdsResponseProcessor {
      */
     @Override
     protected void processInternal(final Exchange exchange) throws Exception {
-        final var agreementId = exchange.getProperty("agreementId", UUID.class);
-        final var artifacts = (List<URI>) exchange.getProperty("artifacts", List.class);
+        final var agreementId = exchange.getProperty(ParameterUtils.AGREEMENT_ID_PARAM, UUID.class);
+        final var artifacts = (List<URI>) exchange
+                .getProperty(ParameterUtils.ARTIFACTS_PARAM, List.class);
 
         updateService.linkArtifactToAgreement(artifacts, agreementId);
     }

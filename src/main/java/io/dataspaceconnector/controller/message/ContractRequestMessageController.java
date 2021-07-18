@@ -24,6 +24,7 @@ import javax.persistence.PersistenceException;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;
 import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.exception.ContractException;
@@ -152,16 +153,16 @@ public class ContractRequestMessageController {
             UUID agreementId;
             final var result = template.send("direct:contractRequestSender",
                     ExchangeBuilder.anExchange(context)
-                            .withProperty("recipient", recipient)
-                            .withProperty("resources", resources)
-                            .withProperty("artifacts", artifacts)
-                            .withProperty("download", download)
-                            .withProperty("ruleList", ruleList)
+                            .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)
+                            .withProperty(ParameterUtils.RESOURCES_PARAM, resources)
+                            .withProperty(ParameterUtils.ARTIFACTS_PARAM, artifacts)
+                            .withProperty(ParameterUtils.DOWNLOAD_PARAM, download)
+                            .withProperty(ParameterUtils.RULE_LIST_PARAM, ruleList)
                             .build());
 
             final var response = result.getIn().getBody(Response.class);
             if (response != null) {
-                agreementId = result.getProperty("agreementId", UUID.class);
+                agreementId = result.getProperty(ParameterUtils.AGREEMENT_ID_PARAM, UUID.class);
             } else {
                 final var responseEntity = result.getIn().getBody(ResponseEntity.class);
                 return Objects.requireNonNullElseGet(responseEntity,

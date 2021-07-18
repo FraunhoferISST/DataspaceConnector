@@ -41,6 +41,7 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.broker.util.FullTextQueryTemplate;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Request;
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
 import io.dataspaceconnector.model.message.ContractAgreementMessageDesc;
 import io.dataspaceconnector.model.message.ContractRequestMessageDesc;
@@ -116,8 +117,8 @@ class ContractAgreementMessageBuilder extends
     protected Request<ContractAgreementMessageImpl, ContractAgreement, Optional<Jws<Claims>>>
     processInternal(final Exchange exchange) {
         final var agreement = exchange
-                .getProperty("contractAgreement", ContractAgreement.class);
-        final var recipient = exchange.getProperty("recipient", URI.class);
+                .getProperty(ParameterUtils.CONTRACT_AGREEMENT_PARAM, ContractAgreement.class);
+        final var recipient = exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class);
 
         final var message = (ContractAgreementMessageImpl) agreementSvc
                 .buildMessage(new ContractAgreementMessageDesc(recipient, agreement.getId()));
@@ -150,13 +151,14 @@ class DescriptionRequestMessageBuilder extends
     @Override
     protected Request<DescriptionRequestMessageImpl, String, Optional<Jws<Claims>>> processInternal(
             final Exchange exchange) {
-        final var recipient = exchange.getProperty("recipient", URI.class);
+        final var recipient = exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class);
 
-        var elementId = exchange.getProperty("elementId", URI.class);
+        var elementId = exchange.getProperty(ParameterUtils.ELEMENT_ID_PARAM, URI.class);
         if (elementId == null) {
             final var index = exchange.getProperty(Exchange.LOOP_INDEX, Integer.class);
             if (index != null) {
-                final var resources = (List<URI>) exchange.getProperty("resources", List.class);
+                final var resources = (List<URI>) exchange
+                        .getProperty(ParameterUtils.RESOURCES_PARAM, List.class);
                 elementId = resources.get(index);
             }
         }
@@ -189,13 +191,15 @@ class ArtifactRequestMessageBuilder extends IdsMessageBuilder<ArtifactRequestMes
     @Override
     protected Request<ArtifactRequestMessageImpl, String, Optional<Jws<Claims>>> processInternal(
             final Exchange exchange) {
-        final var recipient = exchange.getProperty("recipient", URI.class);
-        final var agreementId = exchange.getProperty("transferContract", URI.class);
+        final var recipient = exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class);
+        final var agreementId = exchange
+                .getProperty(ParameterUtils.TRANSFER_CONTRACT_PARAM, URI.class);
 
-        URI artifactId = exchange.getProperty("artifactId", URI.class);
+        URI artifactId = exchange.getProperty(ParameterUtils.ARTIFACT_ID_PARAM, URI.class);
         if (artifactId == null) {
             final var index = exchange.getProperty(Exchange.LOOP_INDEX, Integer.class);
-            final var artifacts = (List<URI>) exchange.getProperty("artifacts", List.class);
+            final var artifacts = (List<URI>) exchange
+                    .getProperty(ParameterUtils.ARTIFACTS_PARAM, List.class);
             artifactId = artifacts.get(index);
         }
 
@@ -212,7 +216,8 @@ class ArtifactRequestMessageBuilder extends IdsMessageBuilder<ArtifactRequestMes
  */
 @Component("ContractRequestMessageBuilder")
 @RequiredArgsConstructor
-class ContractRequestMessageBuilder extends IdsMessageBuilder<ContractRequestMessageImpl, ContractRequest> {
+class ContractRequestMessageBuilder
+        extends IdsMessageBuilder<ContractRequestMessageImpl, ContractRequest> {
 
     /**
      * Service for contract processing.
@@ -234,8 +239,9 @@ class ContractRequestMessageBuilder extends IdsMessageBuilder<ContractRequestMes
     @Override
     protected Request<ContractRequestMessageImpl, ContractRequest, Optional<Jws<Claims>>>
     processInternal(final Exchange exchange) {
-        final var ruleList = (List<Rule>) exchange.getProperty("ruleList", List.class);
-        final var recipient = exchange.getProperty("recipient", URI.class);
+        final var ruleList = (List<Rule>) exchange
+                .getProperty(ParameterUtils.RULE_LIST_PARAM, List.class);
+        final var recipient = exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class);
 
         final var request = contractManager.buildContractRequest(ruleList);
         exchange.setProperty("contractRequest", request);
@@ -275,8 +281,8 @@ class ResourceUpdateMessageBuilder extends IdsMessageBuilder<ResourceUpdateMessa
         final var connectorId = connectorService.getConnectorId();
         final var modelVersion = connectorService.getOutboundModelVersion();
         final var token = connectorService.getCurrentDat();
-        final var recipient = exchange.getProperty("recipient", URI.class);
-        final var resourceId = exchange.getProperty("resourceId", URI.class);
+        final var recipient = exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class);
+        final var resourceId = exchange.getProperty(ParameterUtils.RESOURCE_ID_PARAM, URI.class);
 
         final var message = new de.fraunhofer.iais.eis.ResourceUpdateMessageBuilder()
                 ._issued_(IdsMessageUtils.getGregorianNow())
@@ -298,7 +304,8 @@ class ResourceUpdateMessageBuilder extends IdsMessageBuilder<ResourceUpdateMessa
  */
 @Component("ResourceUnavailableMessageBuilder")
 @RequiredArgsConstructor
-class ResourceUnavailableMessageBuilder extends IdsMessageBuilder<ResourceUnavailableMessageImpl, Resource> {
+class ResourceUnavailableMessageBuilder
+        extends IdsMessageBuilder<ResourceUnavailableMessageImpl, Resource> {
 
     /**
      * Service for the current connector configuration.
@@ -320,8 +327,8 @@ class ResourceUnavailableMessageBuilder extends IdsMessageBuilder<ResourceUnavai
         final var connectorId = connectorService.getConnectorId();
         final var modelVersion = connectorService.getOutboundModelVersion();
         final var token = connectorService.getCurrentDat();
-        final var recipient = exchange.getProperty("recipient", URI.class);
-        final var resourceId = exchange.getProperty("resourceId", URI.class);
+        final var recipient = exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class);
+        final var resourceId = exchange.getProperty(ParameterUtils.RESOURCE_ID_PARAM, URI.class);
 
         final var message = new de.fraunhofer.iais.eis.ResourceUnavailableMessageBuilder()
                 ._issued_(IdsMessageUtils.getGregorianNow())
@@ -343,7 +350,8 @@ class ResourceUnavailableMessageBuilder extends IdsMessageBuilder<ResourceUnavai
  */
 @Component("ConnectorUpdateMessageBuilder")
 @RequiredArgsConstructor
-class ConnectorUpdateMessageBuilder extends IdsMessageBuilder<ConnectorUpdateMessageImpl, Connector> {
+class ConnectorUpdateMessageBuilder
+        extends IdsMessageBuilder<ConnectorUpdateMessageImpl, Connector> {
 
     /**
      * Service for the current connector configuration.
@@ -364,7 +372,7 @@ class ConnectorUpdateMessageBuilder extends IdsMessageBuilder<ConnectorUpdateMes
         final var token = connectorService.getCurrentDat();
         final var connector = connectorService.getConnectorWithoutResources();
         final var connectorId = connector.getId();
-        final var recipient = exchange.getProperty("recipient", URI.class);
+        final var recipient = exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class);
 
         final var message = new de.fraunhofer.iais.eis.ConnectorUpdateMessageBuilder()
                 ._issued_(IdsMessageUtils.getGregorianNow())
@@ -386,7 +394,8 @@ class ConnectorUpdateMessageBuilder extends IdsMessageBuilder<ConnectorUpdateMes
  */
 @Component("ConnectorUnavailableMessageBuilder")
 @RequiredArgsConstructor
-class ConnectorUnavailableMessageBuilder extends IdsMessageBuilder<ConnectorUnavailableMessageImpl, Connector> {
+class ConnectorUnavailableMessageBuilder
+        extends IdsMessageBuilder<ConnectorUnavailableMessageImpl, Connector> {
 
     /**
      * Service for the current connector configuration.
@@ -408,7 +417,7 @@ class ConnectorUnavailableMessageBuilder extends IdsMessageBuilder<ConnectorUnav
         final var token = connectorService.getCurrentDat();
         final var connector = connectorService.getConnectorWithoutResources();
         final var connectorId = connector.getId();
-        final var recipient = exchange.getProperty("recipient", URI.class);
+        final var recipient = exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class);
 
         final var message = new de.fraunhofer.iais.eis.ConnectorUnavailableMessageBuilder()
                 ._issued_(IdsMessageUtils.getGregorianNow())
@@ -420,7 +429,8 @@ class ConnectorUnavailableMessageBuilder extends IdsMessageBuilder<ConnectorUnav
                 ._affectedConnector_(connectorId)
                 .build();
 
-        return new Request<>((ConnectorUnavailableMessageImpl) message, connector, Optional.empty());
+        return new Request<>((ConnectorUnavailableMessageImpl) message, connector,
+                Optional.empty());
     }
 
 }
@@ -451,7 +461,7 @@ class QueryMessageBuilder extends IdsMessageBuilder<QueryMessageImpl, String> {
         final var token = connectorService.getCurrentDat();
         final var connector = connectorService.getConnectorWithoutResources();
         final var connectorId = connector.getId();
-        final var recipient = exchange.getProperty("recipient", URI.class);
+        final var recipient = exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class);
 
         final var message = new de.fraunhofer.iais.eis.QueryMessageBuilder()
                 ._issued_(IdsMessageUtils.getGregorianNow())
@@ -466,14 +476,18 @@ class QueryMessageBuilder extends IdsMessageBuilder<QueryMessageImpl, String> {
                 .build();
 
         String payload;
-        if (exchange.getProperty("query") != null) {
-            payload = (String) exchange.getProperty("query");
+        if (exchange.getProperty(ParameterUtils.QUERY_PARAM) != null) {
+            payload = (String) exchange.getProperty(ParameterUtils.QUERY_PARAM);
         } else {
-            final var searchTerm = exchange.getProperty("term", String.class);
-            final var limit = exchange.getProperty("limit", Integer.class);
-            final var offset = exchange.getProperty("offset", Integer.class);
+            final var searchTerm = exchange
+                    .getProperty(ParameterUtils.QUERY_TERM_PARAM, String.class);
+            final var limit = exchange
+                    .getProperty(ParameterUtils.QUERY_LIMIT_PARAM, Integer.class);
+            final var offset = exchange
+                    .getProperty(ParameterUtils.QUERY_OFFSET_PARAM, Integer.class);
 
-            payload = String.format(FullTextQueryTemplate.FULL_TEXT_QUERY, searchTerm, limit, offset);
+            payload = String.format(FullTextQueryTemplate.FULL_TEXT_QUERY, searchTerm,
+                    limit, offset);
         }
 
         return new Request<>((QueryMessageImpl) message, payload, Optional.empty());

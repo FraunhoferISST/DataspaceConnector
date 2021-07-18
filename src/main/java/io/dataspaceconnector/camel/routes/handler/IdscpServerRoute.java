@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.camel.routes.handler;
 
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +34,7 @@ public class IdscpServerRoute extends RouteBuilder {
      */
     @Override
     public void configure() throws Exception {
-        from("idscp2server://0.0.0.0:29292?sslContextParameters=#serverSslContext&useIdsMessages=true")
+        from(ParameterUtils.IDSCP_SERVER_URI)
                 .routeId("idscpServer")
                 .process("TypeExtractionProcessor")
                 .process("IncomingIdscpMessageParser")

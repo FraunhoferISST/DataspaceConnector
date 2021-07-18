@@ -15,6 +15,12 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.util.Objects;
+import java.util.Optional;
+
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
 import de.fraunhofer.ids.messaging.common.DeserializeException;
 import de.fraunhofer.ids.messaging.common.SerializeException;
@@ -24,12 +30,13 @@ import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
 import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
 import de.fraunhofer.ids.messaging.protocol.multipart.UnknownResponseException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
-import io.dataspaceconnector.camel.dto.Response;
-import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
+import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.util.ParameterUtils;
+import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.util.ControllerUtils;
@@ -51,12 +58,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Controller for sending ids resource update messages.
@@ -118,8 +119,8 @@ public class ResourceUpdateMessageController {
         if (CommunicationProtocol.IDSCP_V2.equals(protocol)) {
             final var result = template.send("direct:resourceUpdateSender",
                     ExchangeBuilder.anExchange(context)
-                            .withProperty("recipient", recipient)
-                            .withProperty("resourceId", resourceId)
+                            .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)
+                            .withProperty(ParameterUtils.RESOURCE_ID_PARAM, resourceId)
                             .build());
 
             final var response = result.getIn().getBody(Response.class);
@@ -145,12 +146,14 @@ public class ResourceUpdateMessageController {
                 // If a timeout has occurred.
                 return ControllerUtils.respondConnectionTimedOut(exception);
             } catch (MultipartParseException | UnknownResponseException | ShaclValidatorException
-                    | DeserializeException | UnexpectedPayloadException | ClaimsException exception) {
+                    | DeserializeException | UnexpectedPayloadException
+                    | ClaimsException exception) {
                 // If the response was invalid.
                 return ControllerUtils.respondReceivedInvalidResponse(exception);
             } catch (RejectionException ignored) {
                 // If the response is a rejection message. Error is ignored.
-            } catch (SendMessageException | SerializeException | DapsTokenManagerException exception) {
+            } catch (SendMessageException | SerializeException
+                    | DapsTokenManagerException exception) {
                 // If the message could not be built or sent.
                 return ControllerUtils.respondMessageSendingFailed(exception);
             } catch (NoTemplateProvidedException | IOException exception) {
