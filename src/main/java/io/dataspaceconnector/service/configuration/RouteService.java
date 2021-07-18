@@ -25,7 +25,7 @@ import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.configuration.util.RouteHelper;
 import io.dataspaceconnector.service.resource.BaseEntityService;
 import io.dataspaceconnector.service.resource.EndpointServiceProxy;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.Utils;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -142,7 +142,7 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      */
     @Override
     public void delete(final UUID routeId) throws RouteDeletionException {
-        Utils.requireNonNull(routeId, ErrorMessages.ENTITYID_NULL);
+        Utils.requireNonNull(routeId, ErrorMessage.ENTITYID_NULL);
 
         final var route = get(routeId);
         routeHelper.delete(route);

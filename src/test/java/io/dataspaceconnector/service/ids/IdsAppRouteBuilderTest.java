@@ -21,7 +21,7 @@ import java.util.UUID;
 
 import de.fraunhofer.iais.eis.AppRoute;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.model.auth.Authentication;
+import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.datasource.DataSource;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
@@ -147,7 +147,7 @@ public class IdsAppRouteBuilderTest {
         assertEquals(idsEndpoint.getEndpointDocumentation().get(0), endpoint.getDocs());
         assertEquals(idsEndpoint.getEndpointInformation().get(0).getValue(), endpoint.getInfo());
 
-        final var auth = endpoint.getDataSource().getAuthentication();
+        final var auth = (BasicAuth) endpoint.getDataSource().getAuthentication();
         final var idsAuth = idsEndpoint.getGenericEndpointAuthentication();
         assertEquals(idsAuth.getAuthUsername(), auth.getUsername());
         assertEquals(idsAuth.getAuthPassword(), auth.getPassword());
@@ -203,7 +203,7 @@ public class IdsAppRouteBuilderTest {
     }
 
     private GenericEndpoint getGenericEndpoint() {
-        final var auth = new Authentication();
+        final var auth = new BasicAuth();
         ReflectionTestUtils.setField(auth, "username", "username");
         ReflectionTestUtils.setField(auth, "password", "password");
 

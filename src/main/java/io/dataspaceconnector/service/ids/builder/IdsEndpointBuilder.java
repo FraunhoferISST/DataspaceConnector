@@ -22,6 +22,7 @@ import de.fraunhofer.iais.eis.GenericEndpointBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import org.springframework.stereotype.Component;
@@ -49,7 +50,7 @@ public final class IdsEndpointBuilder
             BasicAuthentication basicAuth = null;
             if (genericEndpoint.getDataSource() != null
                     && genericEndpoint.getDataSource().getAuthentication() != null) {
-                final var auth = genericEndpoint.getDataSource().getAuthentication();
+                final var auth = (BasicAuth) genericEndpoint.getDataSource().getAuthentication();
                 basicAuth = new BasicAuthenticationBuilder()
                         ._authUsername_(auth.getUsername())
                         ._authPassword_(auth.getPassword())

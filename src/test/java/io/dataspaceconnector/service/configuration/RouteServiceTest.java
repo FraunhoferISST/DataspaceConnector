@@ -22,6 +22,7 @@ import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteFactory;
 import io.dataspaceconnector.repository.EndpointRepository;
 import io.dataspaceconnector.repository.RouteRepository;
+import io.dataspaceconnector.service.configuration.util.RouteHelper;
 import io.dataspaceconnector.service.resource.EndpointServiceProxy;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -44,6 +45,9 @@ class RouteServiceTest {
 
     @MockBean
     private EndpointServiceProxy endpointService;
+
+    @MockBean
+    private RouteHelper routeHelper;
 
     @Autowired
     private RouteService service;
