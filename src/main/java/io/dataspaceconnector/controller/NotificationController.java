@@ -75,8 +75,7 @@ public class NotificationController {
             }
 
             // Notify all subscribers.
-            subscriberNotificationSvc.notifySubscribers(subscriptions, elementId, entity.get());
-            subscriberNotificationSvc.notifyIdsSubscribers(subscriptions, entity.get());
+            subscriberNotificationSvc.notifyAll(subscriptions, elementId, entity.get());
 
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception exception) {

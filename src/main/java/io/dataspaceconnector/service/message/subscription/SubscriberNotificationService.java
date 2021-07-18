@@ -83,8 +83,8 @@ public class SubscriberNotificationService {
     private final @NonNull IdsResourceBuilder<OfferedResource> resourceBuilder;
 
     /**
-     * Notifies all backend systems subscribed for updates to an entity using a
-     * {@link SubscriberNotificationRunner}. The backends are notified in parallel and
+     * Notifies all backend systems and ids participants that subscribed for updates to an entity
+     * using a {@link SubscriberNotificationRunner}. The backends are notified in parallel and
      * asynchronously. If a request to one of the subscribed URLs results in a status code 5xx,
      * the request is retried 5 times with a delay of 5 seconds each.
      *
@@ -92,8 +92,15 @@ public class SubscriberNotificationService {
      * @param target        The target of the subscriptions.
      * @param entity        The target entity of the subscriptions.
      */
-    public void notifySubscribers(final List<Subscription> subscriptions, final URI target,
-                                  final AbstractEntity entity) {
+    public void notifyAll(final List<Subscription> subscriptions, final URI target,
+                          final AbstractEntity entity) {
+        notifySubscribers(subscriptions, target, entity);
+        notifyIdsSubscribers(subscriptions, entity);
+    }
+
+
+    private void notifySubscribers(final List<Subscription> subscriptions, final URI target,
+                                   final AbstractEntity entity) {
         // Get list of non-ids subscribers.
         final var recipients = subscriptions.stream()
                 .filter(subscription -> !subscription.isIdsProtocol() && !subscription.isPushData())
@@ -117,17 +124,8 @@ public class SubscriberNotificationService {
         }
     }
 
-    /**
-     * Notifies all backend systems subscribed for updates to an entity using a
-     * {@link SubscriberNotificationRunner}. The backends are notified in parallel and
-     * asynchronously. If a request to one of the subscribed URLs results in a status code 5xx,
-     * the request is retried 5 times with a delay of 5 seconds each.
-     *
-     * @param subscriptions List of subscriptions for a certain target.
-     * @param entity        The target entity of the subscriptions.
-     */
-    public void notifyIdsSubscribers(final List<Subscription> subscriptions,
-                                     final AbstractEntity entity) {
+    private void notifyIdsSubscribers(final List<Subscription> subscriptions,
+                                      final AbstractEntity entity) {
         final var idsRecipients = subscriptions.stream()
                 .filter(Subscription::isIdsProtocol)
                 .map(Subscription::getUrl)
