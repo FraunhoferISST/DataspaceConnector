@@ -165,6 +165,13 @@ public final class ResourceControllers {
          */
         private final @NonNull ConnectorService connectorSvc;
 
+        /**
+         * Create subscription and set ids protocol value to false as this subscription has been
+         * created via a REST API call.
+         *
+         * @param desc The resource description.
+         * @return Response with code 201 (Created).
+         */
         @Override
         @PostMapping
         @Operation(summary = "Create a base resource")
@@ -204,6 +211,7 @@ public final class ResourceControllers {
             if (entities.hasContent()) {
                 model = getPagedAssembler().toModel(entities, getAssembler());
             } else {
+                //noinspection unchecked
                 model = (PagedModel<SubscriptionView>) getPagedAssembler().toEmptyModel(entities,
                         getResourceType());
             }
