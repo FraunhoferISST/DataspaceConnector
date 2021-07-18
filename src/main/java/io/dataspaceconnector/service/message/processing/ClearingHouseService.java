@@ -27,7 +27,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
-
 /**
  * Service for communication with the clearing house.
  */
@@ -66,9 +65,9 @@ public class ClearingHouseService {
      * @param idsMessage the message that should be logged.
      */
     public void logIdsMessage(final Message idsMessage) {
-        final var transferContractId = UUIDUtils.uuidFromUri(idsMessage.getTransferContract());
         if (isClearingHouseEnabled()) {
             try {
+                final var transferContractId = UUIDUtils.uuidFromUri(idsMessage.getTransferContract());
                 final var url = buildDestination(URI.create(transferContractId.toString()));
                 logMessageSvc.sendMessage(url, idsMessage.toRdf());
             } catch (Exception exception) {
