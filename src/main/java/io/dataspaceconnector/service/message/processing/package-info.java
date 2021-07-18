@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Services for IDS participant communication, e.g. IDS Broker, App Store, etc.
+ * Services for IDS participant communication, e.g. IDS Broker, App Store, Clearing House etc.
  */
 package io.dataspaceconnector.service.message.processing;

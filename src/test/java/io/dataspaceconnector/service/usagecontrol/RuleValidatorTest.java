@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.ConstraintBuilder;
@@ -39,6 +35,10 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -82,9 +82,10 @@ class RuleValidatorTest {
                                                   .build()))
                 .build();
         final var target = URI.create("https://target");
+        final var agreementId = URI.create("https://target");
 
         /* ACT && ASSERT */
-        assertDoesNotThrow(() -> validator.validatePolicy( PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient, Optional.empty()));
+        assertDoesNotThrow(() -> validator.validatePolicy( PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient, Optional.empty(), agreementId));
     }
 
     @Test
@@ -105,9 +106,10 @@ class RuleValidatorTest {
                                                   .build()))
                 .build();
         final var target = URI.create("https://target");
+        final var agreementId = URI.create("https://target");
 
         /* ACT && ASSERT */
-        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy( PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient, Optional.empty()));
+        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy( PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient, Optional.empty(), agreementId));
         assertEquals(ErrorMessage.DATA_ACCESS_INVALID_INTERVAL.toString(), result.getMessage());
     }
 
@@ -129,9 +131,10 @@ class RuleValidatorTest {
                                                   .build()))
                 .build();
         final var target = URI.create("https://target");
+        final var agreementId = URI.create("https://target");
 
         /* ACT && ASSERT */
-        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy( PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient, Optional.empty()));
+        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy(PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient, Optional.empty(), agreementId));
         assertEquals(ErrorMessage.DATA_ACCESS_INVALID_INTERVAL.toString(), result.getMessage());
     }
 
@@ -148,11 +151,12 @@ class RuleValidatorTest {
                                                   .build()))
                 .build();
         final var target = URI.create("https://target");
+        final var agreementId = URI.create("https://target");
 
         Mockito.when(informationService.getAccessNumber(eq(target))).thenReturn(0L);
 
         /* ACT && ASSERT */
-        assertDoesNotThrow(() -> validator.validatePolicy( PolicyPattern.N_TIMES_USAGE, rule, target, recipient, Optional.empty()));
+        assertDoesNotThrow(() -> validator.validatePolicy( PolicyPattern.N_TIMES_USAGE, rule, target, recipient, Optional.empty(),agreementId));
     }
 
     @Test
@@ -168,11 +172,12 @@ class RuleValidatorTest {
                                                   .build()))
                 .build();
         final var target = URI.create("https://target");
+        final var agreementId = URI.create("https://target");
 
         Mockito.when(informationService.getAccessNumber(eq(target))).thenReturn(6L);
 
         /* ACT && ASSERT */
-        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy(PolicyPattern.N_TIMES_USAGE, rule, target, recipient, Optional.empty()));
+        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy(PolicyPattern.N_TIMES_USAGE, rule, target, recipient, Optional.empty(), agreementId));
         assertEquals(ErrorMessage.DATA_ACCESS_NUMBER_REACHED.toString(), result.getMessage());
     }
 
@@ -189,9 +194,10 @@ class RuleValidatorTest {
                                       .build()))
                                   .build();
         final var target = URI.create("https://target");
+        final var agreementId = URI.create("https://target");
 
         /* ACT && ASSERT */
-        assertDoesNotThrow(() -> validator.validatePolicy( PolicyPattern.CONNECTOR_RESTRICTED_USAGE, rule, target, recipient, Optional.empty()));
+        assertDoesNotThrow(() -> validator.validatePolicy( PolicyPattern.CONNECTOR_RESTRICTED_USAGE, rule, target, recipient, Optional.empty(), agreementId));
     }
 
     @Test
@@ -208,9 +214,10 @@ class RuleValidatorTest {
                 .build();
         final var recipient = URI.create("https://recipient");
         final var target = URI.create("https://target");
+        final var agreementId = URI.create("https://target");
 
         /* ACT && ASSERT */
-        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy(PolicyPattern.CONNECTOR_RESTRICTED_USAGE, rule, target, recipient, Optional.empty()));
+        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy(PolicyPattern.CONNECTOR_RESTRICTED_USAGE, rule, target, recipient, Optional.empty(), agreementId));
         assertEquals(ErrorMessage.DATA_ACCESS_INVALID_CONSUMER.toString(), result.getMessage());
     }
 
@@ -225,9 +232,11 @@ class RuleValidatorTest {
 
         final var target = URI.create("https://target");
         final var issuer = URI.create("https://issuer");
+        final var agreementId = URI.create("https://agreementId");
 
         /* ACT & ASSERT */
         assertDoesNotThrow(() -> validator.validatePolicy(
-                PolicyPattern.SECURITY_PROFILE_RESTRICTED_USAGE, rule, target, issuer, Optional.of(profile)));
+                PolicyPattern.SECURITY_PROFILE_RESTRICTED_USAGE, rule, target, issuer,
+                Optional.of(profile), agreementId));
     }
 }

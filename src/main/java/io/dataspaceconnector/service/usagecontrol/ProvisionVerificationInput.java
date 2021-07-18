@@ -30,7 +30,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @Data
 @RequiredArgsConstructor
-public class VerificationInput {
+public class ProvisionVerificationInput {
 
     /**
      * The id of the targeted artifact.

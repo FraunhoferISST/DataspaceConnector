@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.configurations;
+package io.dataspaceconnector.controller.configuration;
 
 import java.util.UUID;
 
-import io.dataspaceconnector.controller.configuration.RouteControllers;
 import io.dataspaceconnector.service.configuration.RouteService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

@@ -30,15 +30,18 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.service.message.processing.ClearingHouseService;
 import io.dataspaceconnector.service.message.type.LogMessageService;
 import io.dataspaceconnector.service.message.type.NotificationService;
 import io.dataspaceconnector.util.IdsUtils;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.net.URI;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -48,7 +51,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {PolicyExecutionService.class})
+@SpringBootTest(classes = {PolicyExecutionService.class, ClearingHouseService.class})
 public class PolicyExecutionServiceTest {
 
     @MockBean
@@ -66,7 +69,8 @@ public class PolicyExecutionServiceTest {
     @Autowired
     private PolicyExecutionService policyExecutionService;
 
-    private final URI chUri = URI.create("https://clearing-house.com");
+    private final URI chUri = URI.create("https://clearing-house.com/");
+    private final UUID agreementID = UUID.fromString("260eb25e-9a83-457b-8607-8829d57fda10");
 
     @Test
     public void sendAgreement_inputNull_doNothing() {
@@ -80,6 +84,7 @@ public class PolicyExecutionServiceTest {
         verify(logMessageService, never()).sendMessage(any(), any());
     }
 
+    @SneakyThrows
     @Test
     public void sendAgreement_validInput_sendAgreementToClearingHouse() {
         /* ARRANGE */
@@ -93,7 +98,7 @@ public class PolicyExecutionServiceTest {
 
         /* ASSERT */
         verify(logMessageService, times(1))
-                .sendMessage(chUri, IdsUtils.toRdf(agreement));
+                .sendMessage(new URI(chUri + agreementID.toString()), IdsUtils.toRdf(agreement));
     }
 
     @Test
@@ -107,10 +112,11 @@ public class PolicyExecutionServiceTest {
         when(connectorService.getConnectorId()).thenReturn(connectorId);
 
         /* ACT */
-        policyExecutionService.logDataAccess(target);
+        policyExecutionService.logDataAccess(target, URI.create("https://agreement.com/api/agreements/" + agreementID));
 
         /* ASSERT */
-        verify(logMessageService, times(1)).sendMessage(eq(chUri), any());
+        verify(logMessageService, times(1))
+                .sendMessage(eq(URI.create(chUri + agreementID.toString())), any());
     }
 
     @Test
@@ -135,7 +141,7 @@ public class PolicyExecutionServiceTest {
      **********************************************************************************************/
 
     private ContractAgreement getContractAgreement() {
-        return new ContractAgreementBuilder(URI.create("https://agreement.com"))
+        return new ContractAgreementBuilder(URI.create("https://agreement.com/api/agreements/" + agreementID))
                 ._contractStart_(IdsMessageUtils.getGregorianNow())
                 ._contractEnd_(IdsMessageUtils.getGregorianNow())
                 .build();

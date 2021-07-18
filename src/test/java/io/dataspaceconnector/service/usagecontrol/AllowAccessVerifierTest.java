@@ -15,10 +15,9 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
-import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AllowAccessVerifierTest {
     @Test
@@ -38,11 +37,10 @@ public class AllowAccessVerifierTest {
     public void verify_any_returnAllowed() {
         /* ARRANGE */
         final var verifier = new AllowAccessVerifier();
-
-        final var artifact = new ArtifactImpl();
+        final var input = new AccessVerificationInput();
 
         /* ACT */
-        final var result = verifier.verify(artifact);
+        final var result = verifier.verify(input);
 
         /* ASSERT */
         assertEquals(VerificationResult.ALLOWED, result);

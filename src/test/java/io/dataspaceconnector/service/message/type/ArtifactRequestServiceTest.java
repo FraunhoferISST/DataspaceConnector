@@ -22,10 +22,13 @@ import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.protocol.http.IdsHttpService;
+import io.dataspaceconnector.camel.ClearingHouseLoggingProcessor;
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.ids.DeserializationService;
+import io.dataspaceconnector.service.message.processing.ClearingHouseService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -42,14 +45,21 @@ import java.util.HashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest(classes = {ArtifactRequestService.class})
+@SpringBootTest(classes = {ArtifactRequestService.class, ClearingHouseService.class,
+        ConnectorConfiguration.class })
 class ArtifactRequestServiceTest {
 
     @MockBean
     private ConnectorService connectorService;
 
     @MockBean
+    private ClearingHouseLoggingProcessor clearingHouseLoggingProcessor;
+
+    @MockBean
     private IdsHttpService idsHttpService;
+
+    @MockBean
+    private LogMessageService logMessageService;
 
     @MockBean
     private DeserializationService deserializationService;
@@ -71,8 +81,8 @@ class ArtifactRequestServiceTest {
         /* ARRANGE */
         final var desc = new ArtifactRequestMessageDesc();
         desc.setRecipient(URI.create("https://recipient"));
-        desc.setRequestedArtifact(URI.create("https://artifact"));
-        desc.setTransferContract(URI.create("https://transferContract"));
+        desc.setRequestedArtifact(URI.create("https://artifact/550e8400-e29b-11d4-a716-446655440000"));
+        desc.setTransferContract(URI.create("https://transferContract/550e8400-e29b-11d4-a716-446655449999"));
 
         final var connectorId = URI.create("https://connector");
         final var modelVersion = "4.0.0";
