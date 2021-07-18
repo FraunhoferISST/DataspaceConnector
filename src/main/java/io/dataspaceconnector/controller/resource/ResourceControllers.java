@@ -26,8 +26,8 @@ import io.dataspaceconnector.controller.resource.view.ContractView;
 import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
 import io.dataspaceconnector.controller.resource.view.RepresentationView;
 import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
-import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.controller.resource.view.SubscriptionView;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.AgreementDesc;
 import io.dataspaceconnector.model.Artifact;
@@ -49,6 +49,7 @@ import io.dataspaceconnector.model.Subscription;
 import io.dataspaceconnector.model.SubscriptionDesc;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
 import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.service.message.subscription.SubscriberNotificationService;
 import io.dataspaceconnector.service.resource.AgreementService;
 import io.dataspaceconnector.service.resource.ArtifactService;
 import io.dataspaceconnector.service.resource.CatalogService;
@@ -97,6 +98,7 @@ import java.util.UUID;
 /**
  * This class contains all implementations of the {@link BaseResourceController}.
  */
+@RequiredArgsConstructor
 public final class ResourceControllers {
 
     /**
@@ -122,11 +124,56 @@ public final class ResourceControllers {
     /**
      * Offers the endpoints for managing representations.
      */
+    @RequiredArgsConstructor
     @RestController
     @RequestMapping("/api/representations")
     @Tag(name = ResourceNames.REPRESENTATIONS, description = ResourceDescriptions.REPRESENTATIONS)
     public static class RepresentationController extends BaseResourceController<Representation,
             RepresentationDesc, RepresentationView, RepresentationService> {
+
+        /**
+         * Service for notifying subscribers about an entity update.
+         */
+        private final @NonNull SubscriberNotificationService subscriberNotificationSvc;
+
+        /**
+         * Update representation details and notify subscribers.
+         *
+         * @param resourceId The id of the resource to be updated.
+         * @param desc       The new description of the resource.
+         * @return Response with code (No_Content) when the resource has been updated or response
+         * with code (201) if the resource has been updated and been moved to a new endpoint.
+         */
+        @Override
+        @PutMapping("{id}")
+        @Operation(summary = "Update a base resource by id")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "201", description = "Created"),
+                @ApiResponse(responseCode = "204", description = "No Content")})
+        public ResponseEntity<Object> update(
+                @Valid @PathVariable(name = "id") final UUID resourceId,
+                @RequestBody final RepresentationDesc desc) {
+            final var resource = getService().update(resourceId, desc);
+
+            ResponseEntity<Object> response;
+            if (resource.getId().equals(resourceId)) {
+                // The resource was not moved
+                response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } else {
+                // The resource has been moved
+                final var entity = getAssembler().toModel(resource);
+                final var headers = new HttpHeaders();
+                headers.setLocation(entity.getRequiredLink("self").toUri());
+
+                response = new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
+            }
+
+            // Notify subscribers on update event.
+            subscriberNotificationSvc.notifyOnUpdate(resource);
+
+            return response;
+        }
+
     }
 
     /**
@@ -142,12 +189,56 @@ public final class ResourceControllers {
     /**
      * Offers the endpoints for managing offered resources.
      */
+    @RequiredArgsConstructor
     @RestController
     @RequestMapping("/api/offers")
     @Tag(name = ResourceNames.OFFERS, description = ResourceDescriptions.OFFERS)
     public static class OfferedResourceController
             extends BaseResourceController<OfferedResource, OfferedResourceDesc,
             OfferedResourceView, ResourceService<OfferedResource, OfferedResourceDesc>> {
+
+        /**
+         * Service for notifying subscribers about an entity update.
+         */
+        private final @NonNull SubscriberNotificationService subscriberNotificationSvc;
+
+        /**
+         * Update offered resource details and notify subscribers.
+         *
+         * @param resourceId The id of the resource to be updated.
+         * @param desc       The new description of the resource.
+         * @return Response with code (No_Content) when the resource has been updated or response
+         * with code (201) if the resource has been updated and been moved to a new endpoint.
+         */
+        @Override
+        @PutMapping("{id}")
+        @Operation(summary = "Update a base resource by id")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "201", description = "Created"),
+                @ApiResponse(responseCode = "204", description = "No Content")})
+        public ResponseEntity<Object> update(
+                @Valid @PathVariable(name = "id") final UUID resourceId,
+                @RequestBody final OfferedResourceDesc desc) {
+            final var resource = getService().update(resourceId, desc);
+
+            ResponseEntity<Object> response;
+            if (resource.getId().equals(resourceId)) {
+                // The resource was not moved
+                response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } else {
+                // The resource has been moved
+                final var entity = getAssembler().toModel(resource);
+                final var headers = new HttpHeaders();
+                headers.setLocation(entity.getRequiredLink("self").toUri());
+
+                response = new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
+            }
+
+            // Notify subscribers on update event.
+            subscriberNotificationSvc.notifyOnUpdate(resource);
+
+            return response;
+        }
     }
 
     /**
@@ -223,13 +314,56 @@ public final class ResourceControllers {
     /**
      * Offers the endpoints for managing requested resources.
      */
+    @RequiredArgsConstructor
     @RestController
     @RequestMapping("/api/requests")
     @Tag(name = ResourceNames.REQUESTS, description = ResourceDescriptions.REQUESTS)
     public static class RequestedResourceController
             extends BaseResourceController<RequestedResource, RequestedResourceDesc,
-            RequestedResourceView,
-            ResourceService<RequestedResource, RequestedResourceDesc>> {
+            RequestedResourceView, ResourceService<RequestedResource, RequestedResourceDesc>> {
+
+        /**
+         * Service for notifying subscribers about an entity update.
+         */
+        private final @NonNull SubscriberNotificationService subscriberNotificationSvc;
+
+        /**
+         * Update requested resource details and notify subscribers.
+         *
+         * @param resourceId The id of the resource to be updated.
+         * @param desc       The new description of the resource.
+         * @return Response with code (No_Content) when the resource has been updated or response
+         * with code (201) if the resource has been updated and been moved to a new endpoint.
+         */
+        @Override
+        @PutMapping("{id}")
+        @Operation(summary = "Update a base resource by id")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "201", description = "Created"),
+                @ApiResponse(responseCode = "204", description = "No Content")})
+        public ResponseEntity<Object> update(
+                @Valid @PathVariable(name = "id") final UUID resourceId,
+                @RequestBody final RequestedResourceDesc desc) {
+            final var resource = getService().update(resourceId, desc);
+
+            ResponseEntity<Object> response;
+            if (resource.getId().equals(resourceId)) {
+                // The resource was not moved
+                response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } else {
+                // The resource has been moved
+                final var entity = getAssembler().toModel(resource);
+                final var headers = new HttpHeaders();
+                headers.setLocation(entity.getRequiredLink("self").toUri());
+
+                response = new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
+            }
+
+            // Notify subscribers on update event.
+            subscriberNotificationSvc.notifyOnUpdate(resource);
+
+            return response;
+        }
 
         @Override
         @Hidden
@@ -295,6 +429,49 @@ public final class ResourceControllers {
          * The verifier for the data access.
          */
         private final @NonNull DataAccessVerifier accessVerifier;
+
+        /**
+         * Service for notifying subscribers about an entity update.
+         */
+        private final @NonNull SubscriberNotificationService subscriberNotificationSvc;
+
+        /**
+         * Update artifact details and notify subscribers.
+         *
+         * @param resourceId The id of the resource to be updated.
+         * @param desc       The new description of the resource.
+         * @return Response with code (No_Content) when the resource has been updated or response
+         * with code (201) if the resource has been updated and been moved to a new endpoint.
+         */
+        @Override
+        @PutMapping("{id}")
+        @Operation(summary = "Update a base resource by id")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "201", description = "Created"),
+                @ApiResponse(responseCode = "204", description = "No Content")})
+        public ResponseEntity<Object> update(
+                @Valid @PathVariable(name = "id") final UUID resourceId,
+                @RequestBody final ArtifactDesc desc) {
+            final var resource = getService().update(resourceId, desc);
+
+            ResponseEntity<Object> response;
+            if (resource.getId().equals(resourceId)) {
+                // The resource was not moved
+                response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } else {
+                // The resource has been moved
+                final var entity = getAssembler().toModel(resource);
+                final var headers = new HttpHeaders();
+                headers.setLocation(entity.getRequiredLink("self").toUri());
+
+                response = new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
+            }
+
+            // Notify subscribers on update event.
+            subscriberNotificationSvc.notifyOnUpdate(resource);
+
+            return response;
+        }
 
         /**
          * Returns data from the local database or a remote data source. In case of a remote data

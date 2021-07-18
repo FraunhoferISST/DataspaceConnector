@@ -18,11 +18,6 @@ package io.dataspaceconnector.service.resource;
 import io.dataspaceconnector.model.RequestedResource;
 import io.dataspaceconnector.model.RequestedResourceDesc;
 import io.dataspaceconnector.repository.RequestedResourcesRepository;
-import io.dataspaceconnector.service.message.subscription.SubscriberNotificationService;
-import io.dataspaceconnector.util.ErrorMessages;
-import io.dataspaceconnector.util.Utils;
-import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -37,48 +32,12 @@ public final class RequestedResourceService extends ResourceService<RequestedRes
         RequestedResourceDesc> implements RemoteResolver {
 
     /**
-     * Service for notifying subscribers about an entity update.
-     */
-    private final @NonNull SubscriberNotificationService subscriberNotificationSvc;
-
-    /**
-     * Constructor for RequestedResourceService.
-     *
-     * @param subscriberSvc Service for notifying subscribers about an entity update.
-     */
-    @Autowired
-    public RequestedResourceService(final @NonNull SubscriberNotificationService subscriberSvc) {
-        super();
-        this.subscriberNotificationSvc = subscriberSvc;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public Optional<UUID> identifyByRemoteId(final URI remoteId) {
         final var repo = (RequestedResourcesRepository) getRepository();
         return repo.identifyByRemoteId(remoteId);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public RequestedResource update(final UUID entityId, final RequestedResourceDesc desc) {
-        Utils.requireNonNull(entityId, ErrorMessages.ENTITYID_NULL);
-        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
-
-        var entity = get(entityId);
-
-        if (getFactory().update(entity, desc)) {
-            entity = persist(entity);
-        }
-
-        // Notify subscribers on update event.
-        subscriberNotificationSvc.notifyOnUpdate(entity);
-
-        return entity;
     }
 
     /**

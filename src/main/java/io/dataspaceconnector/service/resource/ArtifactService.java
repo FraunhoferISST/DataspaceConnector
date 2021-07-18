@@ -29,7 +29,6 @@ import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.ArtifactRetriever;
 import io.dataspaceconnector.service.HttpService;
-import io.dataspaceconnector.service.message.subscription.SubscriberNotificationService;
 import io.dataspaceconnector.service.usagecontrol.AccessVerificationInput;
 import io.dataspaceconnector.service.usagecontrol.PolicyVerifier;
 import io.dataspaceconnector.service.usagecontrol.VerificationResult;
@@ -78,48 +77,20 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private final @NonNull AuthenticationRepository authRepo;
 
     /**
-     * Service for notifying subscribers about an entity update.
-     */
-    private final @NonNull SubscriberNotificationService subscriberNotificationSvc;
-
-    /**
      * Constructor for ArtifactService.
      *
      * @param dataRepository           The data repository.
      * @param httpService              The HTTP service for fetching remote data.
      * @param authenticationRepository The AuthType repository.
-     * @param subscriberSvc            Service for notifying subscribers about an entity update.
      */
     @Autowired
     public ArtifactService(final @NonNull DataRepository dataRepository,
                            final @NonNull HttpService httpService,
-                           final @NonNull AuthenticationRepository authenticationRepository,
-                           final @NonNull SubscriberNotificationService subscriberSvc) {
+                           final @NonNull AuthenticationRepository authenticationRepository) {
         super();
         this.dataRepo = dataRepository;
         this.httpSvc = httpService;
         this.authRepo = authenticationRepository;
-        this.subscriberNotificationSvc = subscriberSvc;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Artifact update(final UUID entityId, final ArtifactDesc desc) {
-        Utils.requireNonNull(entityId, ErrorMessages.ENTITYID_NULL);
-        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
-
-        var entity = get(entityId);
-
-        if (getFactory().update(entity, desc)) {
-            entity = persist(entity);
-        }
-
-        // Notify subscribers on update event.
-        subscriberNotificationSvc.notifyOnUpdate(entity);
-
-        return entity;
     }
 
     /**
