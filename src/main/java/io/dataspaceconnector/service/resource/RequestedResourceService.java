@@ -80,4 +80,15 @@ public final class RequestedResourceService extends ResourceService<RequestedRes
 
         return entity;
     }
+
+    /**
+     * Find requested resource by remote id.
+     *
+     * @param remoteId The remote id.
+     * @return The entity.
+     */
+    public Optional<RequestedResource> getEntityByRemoteId(final URI remoteId) {
+        final var repo = (RequestedResourcesRepository) getRepository();
+        return repo.getByRemoteId(remoteId);
+    }
 }

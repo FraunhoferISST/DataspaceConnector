@@ -322,6 +322,11 @@ class ResourceUpdateProcessor extends IdsProcessor<RouteMsg<ResourceUpdateMessag
     private final @NonNull MessageProcessedNotificationService messageService;
 
     /**
+     * The global event publisher used for handling events.
+     */
+    private final @NonNull ApplicationEventPublisher publisher;
+
+    /**
      * Updates the local copy of the resource given in the ResourceUpdateMessage and creates a
      * MessageProcessedNotificationMessage as the response header.
      *
@@ -333,6 +338,9 @@ class ResourceUpdateProcessor extends IdsProcessor<RouteMsg<ResourceUpdateMessag
     protected Response processInternal(final RouteMsg<ResourceUpdateMessageImpl, Resource> msg)
             throws Exception {
         updateService.updateResource(msg.getBody());
+
+        // Publish the agreement so that the designated event handler sends it to the CH.
+        publisher.publishEvent(msg.getBody());
 
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
         final var messageId = MessageUtils.extractMessageId(msg.getHeader());
@@ -464,7 +472,7 @@ class AgreementComparisonProcessor extends IdsProcessor<
     private final @NonNull EntityUpdateService updateService;
 
     /**
-     * The global event publisher used for publishing agreements.
+     * The global event publisher used for handling events.
      */
     private final @NonNull ApplicationEventPublisher publisher;
 
