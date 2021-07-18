@@ -147,6 +147,6 @@ public class ExampleControllerIT {
                                             .andExpect(status().isOk())
                                             .andReturn();
 
-        assertEquals("PROVIDE_ACCESS", result);
+        assertEquals("\"PROVIDE_ACCESS\"", result.getResponse().getContentAsString());
     }
 }
