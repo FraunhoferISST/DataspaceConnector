@@ -39,7 +39,7 @@ import java.util.Optional;
 @Component
 @Log4j2
 @RequiredArgsConstructor
-public final class DataAccessVerifier implements PolicyVerifier<Artifact> {
+public final class DataAccessVerifier implements PolicyVerifier<AccessVerificationInput> {
 
     /**
      * The policy execution point.
@@ -59,10 +59,11 @@ public final class DataAccessVerifier implements PolicyVerifier<Artifact> {
     /**
      * Policy check on data access on consumer side. Ignore if unknown patterns are allowed.
      *
-     * @param target The requested element.
+     * @param target      The requested artifact.
+     * @param agreementId The id of the transfer contract (agreement).
      * @throws PolicyRestrictionException If a policy restriction has been detected.
      */
-    public void checkPolicy(final Artifact target) throws PolicyRestrictionException {
+    public void checkPolicy(final Artifact target, final URI agreementId) throws PolicyRestrictionException {
         final var patternsToCheck = Arrays.asList(
                 PolicyPattern.PROVIDE_ACCESS,
                 PolicyPattern.USAGE_DURING_INTERVAL,
@@ -74,7 +75,7 @@ public final class DataAccessVerifier implements PolicyVerifier<Artifact> {
 
         try {
             final var artifactId = SelfLinkHelper.getSelfLink(target);
-            checkForAccess(patternsToCheck, artifactId, target.getRemoteId());
+            checkForAccess(patternsToCheck, artifactId, target.getRemoteId(), agreementId);
         } catch (PolicyRestrictionException exception) {
             // Unknown patterns cause an exception. Ignore if unsupported patterns are allowed.
             if (!connectorConfig.isAllowUnsupported()) {
@@ -86,14 +87,15 @@ public final class DataAccessVerifier implements PolicyVerifier<Artifact> {
     /**
      * Checks the contract content for data access (on consumer side).
      *
-     * @param patterns   List of patterns that should be enforced.
-     * @param artifactId The requested artifact.
-     * @param remoteId   The remote id of the requested artifact.
+     * @param patterns    List of patterns that should be enforced.
+     * @param artifactId  The requested artifact.
+     * @param remoteId    The remote id of the requested artifact.
+     * @param agreementId The id of the transfer contract (agreement).
      * @throws io.dataspaceconnector.exception.UnsupportedPatternException If no suitable pattern
-     * could be found.
+     *                                                                     could be found.
      */
     public void checkForAccess(final List<PolicyPattern> patterns, final URI artifactId,
-                               final URI remoteId) {
+                               final URI remoteId, final URI agreementId) {
         // Get the contract agreement's rules for the target.
         final var agreements = entityResolver.getContractAgreementsByTarget(artifactId);
         for (final var agreement : agreements) {
@@ -104,7 +106,8 @@ public final class DataAccessVerifier implements PolicyVerifier<Artifact> {
                 final var pattern = RuleUtils.getPatternByRule(rule);
                 // Enforce only a set of patterns.
                 if (patterns.contains(pattern)) {
-                    ruleValidator.validatePolicy(pattern, rule, artifactId, null, Optional.empty());
+                    ruleValidator.validatePolicy(pattern, rule, artifactId, null,
+                            Optional.empty(), agreementId);
                 }
             }
         }
@@ -114,9 +117,9 @@ public final class DataAccessVerifier implements PolicyVerifier<Artifact> {
      * {@inheritDoc}
      */
     @Override
-    public VerificationResult verify(final Artifact input) {
+    public VerificationResult verify(final AccessVerificationInput input) {
         try {
-            this.checkPolicy(input);
+            this.checkPolicy(input.getArtifact(), input.getAgreementId());
             return VerificationResult.ALLOWED;
         } catch (PolicyRestrictionException exception) {
             if (log.isDebugEnabled()) {

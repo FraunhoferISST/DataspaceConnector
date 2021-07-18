@@ -15,15 +15,6 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
-import java.net.URI;
-import java.text.ParseException;
-import java.time.Duration;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
@@ -38,6 +29,15 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.text.ParseException;
+import java.time.Duration;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * This class provides policy pattern recognition and calls the {@link
@@ -77,11 +77,12 @@ public class RuleValidator {
      * @param target          The requested/accessed element.
      * @param issuerConnector The issuer connector.
      * @param profile         The security profile.
+     * @param agreementId     The id of the transfer contract (agreement).
      * @throws PolicyRestrictionException If a policy restriction was detected.
      */
     public void validatePolicy(final PolicyPattern pattern, final Rule rule, final URI target,
-                               final URI issuerConnector, final Optional<SecurityProfile> profile)
-            throws PolicyRestrictionException {
+                               final URI issuerConnector, final Optional<SecurityProfile> profile,
+                               final URI agreementId) throws PolicyRestrictionException {
         switch (pattern) {
             case PROVIDE_ACCESS:
                 break;
@@ -93,7 +94,7 @@ public class RuleValidator {
                 validateDuration(rule, target);
                 break;
             case USAGE_LOGGING:
-                executionService.logDataAccess(target, null);
+                executionService.logDataAccess(target, agreementId);
                 break;
             case N_TIMES_USAGE:
                 validateAccessNumber(rule, target);

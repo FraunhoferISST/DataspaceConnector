@@ -37,7 +37,7 @@ import java.util.Optional;
 @Component
 @Log4j2
 @RequiredArgsConstructor
-public class DataProvisionVerifier implements PolicyVerifier<VerificationInput> {
+public class DataProvisionVerifier implements PolicyVerifier<ProvisionVerificationInput> {
 
     /**
      * The policy execution point.
@@ -101,7 +101,8 @@ public class DataProvisionVerifier implements PolicyVerifier<VerificationInput> 
             final var pattern = RuleUtils.getPatternByRule(rule);
             // Enforce only a set of patterns.
             if (patterns.contains(pattern)) {
-                ruleValidator.validatePolicy(pattern, rule, target, issuerConnector, profile);
+                ruleValidator.validatePolicy(pattern, rule, target, issuerConnector, profile,
+                        agreement.getId());
             }
         }
     }
@@ -110,7 +111,7 @@ public class DataProvisionVerifier implements PolicyVerifier<VerificationInput> 
      * {@inheritDoc}
      */
     @Override
-    public VerificationResult verify(final VerificationInput input) {
+    public VerificationResult verify(final ProvisionVerificationInput input) {
         try {
             this.checkPolicy(input.getTarget(), input.getIssuerConnector(), input.getAgreement(),
                     input.getSecurityProfile());
