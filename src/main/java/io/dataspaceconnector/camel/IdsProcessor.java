@@ -39,6 +39,7 @@ import io.dataspaceconnector.exception.InvalidInputException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.model.Subscription;
+import io.dataspaceconnector.model.SubscriptionDesc;
 import io.dataspaceconnector.model.message.ArtifactResponseMessageDesc;
 import io.dataspaceconnector.model.message.ContractAgreementMessageDesc;
 import io.dataspaceconnector.model.message.ContractRejectionMessageDesc;
@@ -527,12 +528,9 @@ class SubscriptionProcessor extends IdsProcessor<RouteMsg<RequestMessageImpl, ?>
     /**
      * Handler for adding and removing subscriptions.
      */
-    private final @NonNull SubscriptionService subscriptionHandler;
+    private final @NonNull SubscriptionService subscriptionSvc;
 
     /**
-     * private final @NonNull
-     * <p>
-     * /**
      * Creates a MessageProcessedNotificationMessage as the response header.
      *
      * @param msg the incoming message.
@@ -548,10 +546,23 @@ class SubscriptionProcessor extends IdsProcessor<RouteMsg<RequestMessageImpl, ?>
         String response;
         if (optional.isPresent()) {
             final var subscription = optional.get();
-            subscriptionHandler.addSubscription(subscription);
+
+            // Create new subscription.
+            final var desc = new SubscriptionDesc();
+            desc.setSubscriber(subscription.getSubscriber());
+            desc.setTarget(subscription.getTarget());
+            desc.setPushData(subscription.isPushData());
+            desc.setUrl(subscription.getUrl());
+
+            // Set boolean to true as this subscription has been created via ids message.
+            desc.setIdsProtocol(true);
+
+            // Create subscription (this will also be linked to the target)
+            subscriptionSvc.create(desc);
+
             response = "Successfully subscribed to %s.";
         } else {
-            subscriptionHandler.removeSubscription(target, issuer);
+            subscriptionSvc.removeSubscription(target, issuer);
             response = "Successfully unsubscribed from %s.";
         }
 

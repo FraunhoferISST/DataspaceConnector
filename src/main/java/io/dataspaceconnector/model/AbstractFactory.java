@@ -26,7 +26,7 @@ public interface AbstractFactory<T extends AbstractEntity, D extends AbstractDes
      * Create a new entity.
      * @param desc The description of the entity.
      * @return The new entity.
-     * @throws io.dataspaceconnector.exceptions.InvalidEntityException; if no valid entity can be
+     * @throws io.dataspaceconnector.exception.InvalidEntityException; if no valid entity can be
      * created from the description.
      */
     T create(D desc);
@@ -35,7 +35,7 @@ public interface AbstractFactory<T extends AbstractEntity, D extends AbstractDes
      * @param entity The entity to be updated.
      * @param desc The description of the new entity.
      * @return true if changes where performed.
-     * @throws io.dataspaceconnector.exceptions.InvalidEntityException; if no valid entity can be
+     * @throws io.dataspaceconnector.exception.InvalidEntityException; if no valid entity can be
      * created from the description.
      */
     boolean update(T entity, D desc);

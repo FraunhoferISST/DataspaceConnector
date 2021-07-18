@@ -71,6 +71,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -160,14 +161,26 @@ public final class ResourceControllers {
             SubscriptionDesc, SubscriptionView, SubscriptionService> {
 
         /**
-         * The service for managing subscriptions.
-         */
-        private final @NonNull SubscriptionService subscriptionSvc;
-
-        /**
          * The service for managing connector settings.
          */
         private final @NonNull ConnectorService connectorSvc;
+
+        @Override
+        @PostMapping
+        @Operation(summary = "Create a base resource")
+        @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Created")})
+        public ResponseEntity<SubscriptionView> create(@RequestBody final SubscriptionDesc desc) {
+            // Set boolean to false as this subscription has been created via a REST API call.
+            desc.setIdsProtocol(false);
+
+            final var obj = getService().create(desc);
+            final var entity = getAssembler().toModel(obj);
+
+            final var headers = new HttpHeaders();
+            headers.setLocation(entity.getRequiredLink("self").toUri());
+
+            return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
+        }
 
         /**
          * Get a list of all resources endpoints of subscription selected by a given filter.
@@ -184,8 +197,7 @@ public final class ResourceControllers {
             final var pageable = Utils.toPageRequest(page, size);
 
             final var connectorId = connectorSvc.getConnectorId();
-            final var list = subscriptionSvc.getBySubscriber(pageable,
-                    connectorId);
+            final var list = getService().getBySubscriber(pageable, connectorId);
 
             final var entities = new PageImpl<>(list);
             PagedModel<SubscriptionView> model;

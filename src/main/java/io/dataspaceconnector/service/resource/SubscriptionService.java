@@ -52,12 +52,6 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
     private AbstractFactory<Subscription, SubscriptionDesc> factory;
 
     /**
-     * Service for handling subscriptions.
-     */
-    @Autowired
-    private SubscriptionService subscriptionSvc;
-
-    /**
      * Service for linking artifacts and subscriptions.
      */
     @Autowired
@@ -95,8 +89,6 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
     public Subscription create(final SubscriptionDesc desc) {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        // Set boolean to false as this subscription has been created via a REST API call.
-        desc.setIdsProtocol(false);
         final var subscription = persist(factory.create(desc));
         final var target = subscription.getTarget();
 
@@ -160,7 +152,7 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
      */
     public void removeSubscription(final URI target, final URI issuer)
             throws SubscriptionProcessingException, ResourceNotFoundException {
-        final var subscriptions = subscriptionSvc.getBySubscriberAndTarget(issuer, target);
+        final var subscriptions = getBySubscriberAndTarget(issuer, target);
         if (subscriptions.isEmpty()) {
             throw new ResourceNotFoundException("Subscription with the given target id for this"
                     + "issuer connector could not be found.");
@@ -169,39 +161,11 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
         try {
             for (final var subscription : subscriptions) {
                 final var id = subscription.getId();
-                subscriptionSvc.delete(id);
+                delete(id);
             }
         } catch (Exception exception) {
             throw new SubscriptionProcessingException("Failed to remove subscription.");
         }
-    }
-
-    /**
-     * Add subscription to the database and link it to the target entity.
-     *
-     * @param subscription The subscription.
-     * @throws SubscriptionProcessingException                        if subscription for
-     *                                                                targeted entity failed.
-     * @throws ResourceNotFoundException                              if the resource could not
-     *                                                                be found.
-     * @throws io.dataspaceconnector.exception.InvalidEntityException if no valid entity could be
-     *                                                                created.
-     */
-    public void addSubscription(final Subscription subscription)
-            throws SubscriptionProcessingException, ResourceNotFoundException {
-        // Create new subscription.
-        final var desc = new SubscriptionDesc();
-        final var target = subscription.getTarget();
-        desc.setSubscriber(subscription.getSubscriber());
-        desc.setTarget(target);
-        desc.setPushData(subscription.isPushData());
-        desc.setUrl(subscription.getUrl());
-
-        // Set boolean to true as this subscription has been created via ids message.
-        desc.setIdsProtocol(true);
-
-        // Create subscription and link it to target.
-        linkSubscriptionToEntityById(target, subscriptionSvc.create(desc));
     }
 
     /**
