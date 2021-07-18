@@ -140,7 +140,10 @@ class DataPersistenceProcessor extends IdsResponseProcessor {
         final var response = exchange.getIn().getBody(Response.class);
         final var map = ProcessorUtils.getResponseMap(response);
 
-        final var artifactId = exchange.getProperty(Exchange.LOOP_INDEX, URI.class);
+        final var index = exchange.getProperty(Exchange.LOOP_INDEX, Integer.class);
+        final var artifacts = (List<URI>) exchange
+                .getProperty(ParameterUtils.ARTIFACTS_PARAM, List.class);
+        final var artifactId = artifacts.get(index);
 
         // Set current artifact as exchange property so it is available for error handling.
         exchange.setProperty(ParameterUtils.CURRENT_ARTIFACT_PARAM, artifactId);
