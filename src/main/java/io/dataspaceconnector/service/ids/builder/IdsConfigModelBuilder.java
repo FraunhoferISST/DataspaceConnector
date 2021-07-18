@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.service.ids.builder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
 import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -22,8 +25,6 @@ import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.util.IdsUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * Converts dsc configuration to ids configuration.
@@ -41,13 +42,13 @@ public final class IdsConfigModelBuilder extends AbstractIdsBuilder<Configuratio
         // Prepare configuration attributes.
         // TODO unmapped: configuration.getVersion()
         // TODO: keystore/truststore don't have alias fields
-        final var proxy = IdsUtils.getProxy(config.getProxy());
         final var deployMode = IdsUtils.getConnectorDeployMode(config.getDeployMode());
         final var logLevel = IdsUtils.getLogLevel(config.getLogLevel());
         final var connector = IdsUtils.getConnectorFromConfiguration(config);
 
         return new ConfigurationModelBuilder()
-                ._connectorProxy_(List.of(proxy))
+                ._connectorProxy_(config.getProxy() == null ? new ArrayList<>() :
+                        List.of(IdsUtils.getProxy(config.getProxy())))
                 ._connectorDeployMode_(deployMode)
                 ._keyStore_(config.getKeystore().getLocation())
                 ._keyStorePassword_(config.getKeystore().getPassword())

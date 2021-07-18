@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.model.truststore;
 
+import java.net.URI;
+
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
 
 /**
  * Factory class for the trust store.
@@ -35,7 +35,7 @@ public class TruststoreFactory extends AbstractFactory<Truststore, TruststoreDes
     /**
      * The default location.
      */
-    public static final URI DEFAULT_LOCATION = URI.create("");
+    public static final URI DEFAULT_LOCATION = URI.create("file:///conf/truststore.p12");
 
     /**
      * {@inheritDoc}

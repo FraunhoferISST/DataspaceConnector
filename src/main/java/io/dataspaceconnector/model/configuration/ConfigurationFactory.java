@@ -16,7 +16,7 @@
 package io.dataspaceconnector.model.configuration;
 
 import java.net.URI;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
@@ -181,7 +181,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
                                               final List<String> inboundModelVersion) {
         final var newInboundModelVersionList =
                 MetadataUtils.updateStringList(config.getInboundModelVersion(), inboundModelVersion,
-                        new ArrayList<>());
+                                               Arrays.asList(DEFAULT_OUTBOUND_VERSION));
         newInboundModelVersionList.ifPresent(config::setInboundModelVersion);
 
         return newInboundModelVersionList.isPresent();
