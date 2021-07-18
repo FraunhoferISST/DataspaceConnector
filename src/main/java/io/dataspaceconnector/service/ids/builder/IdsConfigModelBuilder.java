@@ -47,8 +47,8 @@ public final class IdsConfigModelBuilder extends AbstractIdsBuilder<Configuratio
         final var connector = IdsUtils.getConnectorFromConfiguration(config);
 
         return new ConfigurationModelBuilder()
-                ._connectorProxy_(config.getProxy() == null ? new ArrayList<>() :
-                        List.of(IdsUtils.getProxy(config.getProxy())))
+                ._connectorProxy_(config.getProxy() == null ? new ArrayList<>()
+                                          : List.of(IdsUtils.getProxy(config.getProxy())))
                 ._connectorDeployMode_(deployMode)
                 ._keyStore_(config.getKeystore().getLocation())
                 ._keyStorePassword_(config.getKeystore().getPassword())
