@@ -42,6 +42,7 @@ import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.EntityUpdateService;
 import io.dataspaceconnector.service.message.type.LogMessageService;
+import io.dataspaceconnector.util.UUIDUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,7 +164,7 @@ class ContractAgreementHandlerTest {
                 .build();
 
         final var agreement = getContractAgreement();
-        final var storedAgreement = getAgreement(agreement.toRdf());
+        final var storedAgreement = getAgreement(agreement);
         final var differentAgreement = getDifferentContractAgreement();
 
         when(entityResolver.getEntityById(any())).thenReturn(storedAgreement);
@@ -194,7 +195,7 @@ class ContractAgreementHandlerTest {
                 .build();
 
         final var agreement = getContractAgreement();
-        final var storedAgreement = getAgreement(agreement.toRdf());
+        final var storedAgreement = getAgreement(agreement);
 
         when(entityResolver.getEntityById(any())).thenReturn(storedAgreement);
         when(updateService.confirmAgreement(any())).thenReturn(false);
@@ -226,11 +227,14 @@ class ContractAgreementHandlerTest {
                 .build();
 
         final var agreement = getContractAgreement();
-        final var storedAgreement = getAgreement(agreement.toRdf());
+        final var storedAgreement = getAgreement(agreement);
 
         when(entityResolver.getEntityById(any())).thenReturn(storedAgreement);
         when(updateService.confirmAgreement(any())).thenReturn(true);
         doNothing().when(logMessageService).sendMessage(any(), any());
+
+        final var clearingHouseTarget = URI.create(chUri.toString()
+                                                   + UUIDUtils.uuidFromUri(agreement.getId()));
 
         /* ACT */
         final var result = (BodyResponse<MessageProcessedNotificationMessage>)
@@ -241,7 +245,7 @@ class ContractAgreementHandlerTest {
 
         /* ASSERT */
         assertNotNull(result.getHeader());
-        verify(logMessageService, times(1)).sendMessage(chUri, agreement.toRdf());
+        verify(logMessageService, times(1)).sendMessage(clearingHouseTarget, agreement.toRdf());
     }
 
     @SneakyThrows
@@ -278,9 +282,10 @@ class ContractAgreementHandlerTest {
                 .build();
     }
 
-    private Agreement getAgreement(final String rdf) {
+    private Agreement getAgreement(final ContractAgreement contractAgreement) {
         final var agreement = new Agreement();
-        ReflectionTestUtils.setField(agreement, "value", rdf);
+        ReflectionTestUtils.setField(agreement, "id", UUIDUtils.uuidFromUri(contractAgreement.getId()));
+        ReflectionTestUtils.setField(agreement, "value", contractAgreement.toRdf());
         ReflectionTestUtils.setField(agreement, "artifacts",
                 Collections.singletonList(URI.create("https://artifact.com")));
         return agreement;
