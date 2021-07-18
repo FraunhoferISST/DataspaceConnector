@@ -18,7 +18,7 @@ import de.fraunhofer.iais.eis.Message;
 import io.dataspaceconnector.camel.dto.Request;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.dto.RouteMsg;
-import io.dataspaceconnector.service.usagecontrol.ClearingHouseService;
+import io.dataspaceconnector.service.message.processing.ClearingHouseService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.Exchange;
@@ -34,7 +34,7 @@ public class ClearingHouseLoggingProcessor implements Processor {
     /**
      * Service for ids log messages.
      */
-    private final @NonNull ClearingHouseService clearingHouseService;
+    private final @NonNull ClearingHouseService clearingHouseSvc;
 
     /**
      * Processes the input. Extract the request/response IDS message,
@@ -50,6 +50,6 @@ public class ClearingHouseLoggingProcessor implements Processor {
             msg = exchange.getIn().getBody(Response.class);
         }
 
-        clearingHouseService.logIdsMessage((Message) msg.getHeader());
+        clearingHouseSvc.logIdsMessage((Message) msg.getHeader());
     }
 }

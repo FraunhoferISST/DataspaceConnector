@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.service.message.type;
 
-import java.net.URI;
-import java.util.Map;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageBuilder;
@@ -32,7 +29,7 @@ import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
 import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.service.usagecontrol.ClearingHouseService;
+import io.dataspaceconnector.service.message.processing.ClearingHouseService;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.MessageUtils;
 import io.dataspaceconnector.util.Utils;
@@ -40,6 +37,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.util.Map;
 
 /**
  * Message service for ids artifact request messages.

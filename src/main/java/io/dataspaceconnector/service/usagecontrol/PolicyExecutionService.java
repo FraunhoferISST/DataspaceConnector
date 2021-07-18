@@ -15,18 +15,24 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.exception.PolicyExecutionException;
+import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.service.message.processing.ClearingHouseService;
 import io.dataspaceconnector.service.message.type.NotificationService;
+import io.dataspaceconnector.util.IdsUtils;
 import io.dataspaceconnector.util.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
 
 /**
  * Executes policy conditions. Refers to the ids policy enforcement point (PEP).
@@ -39,17 +45,17 @@ public class PolicyExecutionService {
     /**
      * Service for ids notification messages.
      */
-    private final @NonNull NotificationService notificationService;
+    private final @NonNull NotificationService notificationSvc;
 
     /**
      * Service for sending messages to the clearing house.
      */
-    private final @NonNull ClearingHouseService clearingHouseService;
+    private final @NonNull ClearingHouseService clearingHouseSvc;
 
     /**
-     * Service for building log messages.
+     * Service for the current connector configuration.
      */
-    private final @NonNull LogBuilder logBuilder;
+    private final @NonNull ConnectorService connectorSvc;
 
     /**
      * Send contract agreement to clearing house.
@@ -57,19 +63,37 @@ public class PolicyExecutionService {
      * @param agreement The ids contract agreement.
      */
     public void sendAgreement(final ContractAgreement agreement) {
-        clearingHouseService.sendAgreement(agreement);
+        try {
+            final var agreementId = agreement.getId();
+            final var logItem = IdsUtils.toRdf(agreement);
+
+            clearingHouseSvc.sendToClearingHouse(agreementId, logItem);
+        } catch (Exception exception) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to send contract agreement to clearing house. "
+                        + "[exception=({})]", exception.getMessage());
+            }
+        }
     }
 
     /**
      * Send a message to the clearing house. Allow the access only if that operation was successful.
      *
-     * @param target The target object.
-     * @param agreementId The agreement ID.
+     * @param target      The target object.
+     * @param agreementId The agreement id.
      * @throws PolicyExecutionException if the access could not be successfully logged.
      */
-    public void logDataAccess(final URI target,
-                              final URI agreementId) throws PolicyExecutionException {
-        clearingHouseService.logDataAccess(target, agreementId);
+    public void logDataAccess(final URI target, final URI agreementId)
+            throws PolicyExecutionException {
+        try {
+            final var logItem = buildLog(target);
+            clearingHouseSvc.sendToClearingHouse(agreementId, logItem);
+        } catch (Exception exception) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to send log message to clearing house. [exception=({})]",
+                        exception.getMessage());
+            }
+        }
     }
 
     /**
@@ -85,9 +109,26 @@ public class PolicyExecutionService {
             final var postDuty = ((Permission) rule).getPostDuty().get(0);
             final var recipient = RuleUtils.getEndpoint(postDuty);
 
-            notificationService.sendMessage(URI.create(recipient), logBuilder.buildLog(element));
+            notificationSvc.sendMessage(URI.create(recipient), buildLog(element));
         } else if (log.isWarnEnabled()) {
             log.warn("Reporting data access is only supported for permissions.");
         }
+    }
+
+    /**
+     * Build a log information object.
+     *
+     * @param target The accessed element.
+     * @return The log line.
+     */
+    public String buildLog(final URI target) {
+        final var id = connectorSvc.getConnectorId();
+
+        final var output = new HashMap<String, Object>();
+        output.put("target", target);
+        output.put("issuerConnector", id);
+        output.put("accessed", ZonedDateTime.now(ZoneOffset.UTC));
+
+        return output.toString();
     }
 }

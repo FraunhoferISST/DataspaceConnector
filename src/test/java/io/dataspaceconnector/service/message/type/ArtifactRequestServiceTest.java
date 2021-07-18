@@ -15,12 +15,6 @@
  */
 package io.dataspaceconnector.service.message.type;
 
-import javax.xml.datatype.DatatypeFactory;
-import java.net.URI;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-
 import de.fraunhofer.iais.eis.ArtifactRequestMessage;
 import de.fraunhofer.iais.eis.ArtifactResponseMessage;
 import de.fraunhofer.iais.eis.ArtifactResponseMessageBuilder;
@@ -34,8 +28,7 @@ import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.service.usagecontrol.ClearingHouseService;
-import io.dataspaceconnector.service.usagecontrol.LogBuilder;
+import io.dataspaceconnector.service.message.processing.ClearingHouseService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -43,11 +36,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import javax.xml.datatype.DatatypeFactory;
+import java.net.URI;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = {ArtifactRequestService.class, ClearingHouseService.class,
-        ConnectorConfiguration.class, LogMessageService.class, LogBuilder.class })
+        ConnectorConfiguration.class, LogMessageService.class })
 class ArtifactRequestServiceTest {
 
     @MockBean
