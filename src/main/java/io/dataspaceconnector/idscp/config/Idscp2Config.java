@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.idscp.config;
 
-import java.net.URI;
 import javax.annotation.PostConstruct;
 
 import de.fhg.aisec.ids.camel.idscp2.Utils;
 import de.fhg.aisec.ids.camel.idscp2.processors.IdsMessageTypeExtractionProcessor;
+import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
@@ -71,9 +71,20 @@ public class Idscp2Config {
     private String trustStorePassword;
 
     /**
+     * Base URL of the DAPS.
+     */
+    @Value("${daps.url}")
+    private String dapsUrl;
+
+    /**
      * Transaction manager required for creating a transaction policy for Camel routes.
      */
     private final @NonNull TransactionManager transactionManager;
+
+    /**
+     * The current connector configuration.
+     */
+    private final @NonNull ConfigContainer configContainer;
 
     /**
      * Processor required for determining the type of an IDS message in a Camel route.
@@ -133,13 +144,12 @@ public class Idscp2Config {
      */
     @PostConstruct
     public void initConfig() {
-        Utils.INSTANCE.setMaintainerUrlProducer(() -> URI.create("https://connector.com"));
+        final var connector = configContainer.getConnector();
 
-        Utils.INSTANCE.setConnectorUrlProducer(() -> URI.create("https://connector.com"));
-
-        Utils.INSTANCE.setInfomodelVersion("4.0.4");
-
-        Utils.INSTANCE.setDapsUrlProducer(() -> "https://daps.aisec.fraunhofer.de");
+        Utils.INSTANCE.setMaintainerUrlProducer(connector::getMaintainer);
+        Utils.INSTANCE.setConnectorUrlProducer(connector::getId);
+        Utils.INSTANCE.setInfomodelVersion(connector.getOutboundModelVersion());
+        Utils.INSTANCE.setDapsUrlProducer(() -> dapsUrl);
     }
 
 }
