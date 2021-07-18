@@ -21,7 +21,6 @@ import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.ContractRule;
 import io.dataspaceconnector.model.TimeInterval;
-import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.EntityDependencyResolver;
 import io.dataspaceconnector.util.ErrorMessages;
@@ -71,11 +70,6 @@ public class RuleValidator {
     private final @NonNull DeserializationService deserializationService;
 
     /**
-     * Service for handling connector information and configuration.
-     */
-    private final @NonNull ConnectorService connectorService;
-
-    /**
      * Validates the data access for a given rule.
      *
      * @param pattern         The recognized policy pattern.
@@ -83,11 +77,12 @@ public class RuleValidator {
      * @param target          The requested/accessed element.
      * @param issuerConnector The issuer connector.
      * @param profile         The security profile.
+     * @param agreementId     The id of the transfer contract (agreement).
      * @throws PolicyRestrictionException If a policy restriction was detected.
      */
     public void validatePolicy(final PolicyPattern pattern, final Rule rule, final URI target,
-                               final URI issuerConnector, final Optional<SecurityProfile> profile)
-            throws PolicyRestrictionException {
+                               final URI issuerConnector, final Optional<SecurityProfile> profile,
+                               final URI agreementId) throws PolicyRestrictionException {
         switch (pattern) {
             case PROVIDE_ACCESS:
                 break;
@@ -99,7 +94,7 @@ public class RuleValidator {
                 validateDuration(rule, target);
                 break;
             case USAGE_LOGGING:
-                executionService.logDataAccess(target);
+                executionService.logDataAccess(target, agreementId);
                 break;
             case N_TIMES_USAGE:
                 validateAccessNumber(rule, target);

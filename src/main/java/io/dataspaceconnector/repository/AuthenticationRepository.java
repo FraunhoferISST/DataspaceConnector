@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.usagecontrol;
+package io.dataspaceconnector.repository;
 
-import org.springframework.stereotype.Component;
+import io.dataspaceconnector.model.auth.Authentication;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 /**
- * A {@link PolicyVerifier} implementation that simply allows access.
+ * The repository containing all objects of type {@link Authentication}.
  */
-@Component
-public final class AllowAccessVerifier implements PolicyVerifier<AccessVerificationInput> {
-    @Override
-    public VerificationResult verify(final AccessVerificationInput input) {
-        return VerificationResult.ALLOWED;
-    }
+@Repository
+public interface AuthenticationRepository extends JpaRepository<Authentication, Long> {
 }

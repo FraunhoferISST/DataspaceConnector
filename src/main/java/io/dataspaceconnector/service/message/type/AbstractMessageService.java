@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,6 +64,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
     /**
      * Service for the current connector configuration.
      */
+
     @Autowired
     private ConnectorService connectorService;
 
@@ -108,7 +110,6 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
                 log.debug("Built request message. [body=({})]", body);
             }
 
-            // Send message and return response. TODO Log outgoing messages.
             return idsHttpService.sendAndCheckDat(body, recipient);
         } catch (SerializeException | ConstraintViolationException e) {
             final var msg = ErrorMessages.MESSAGE_BUILDING_FAILED;

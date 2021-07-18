@@ -30,6 +30,7 @@
         <transacted ref="transactionPolicy"/>
         <to uri="direct:ids-validation"/>
         <process ref="RequestedArtifactValidator"/>
+        <process ref="ClearingHouseLoggingProcessor"/>
         <choice>
             <when>
                 <simple>${bean:connectorConfiguration.isPolicyNegotiation} == true</simple>
@@ -37,6 +38,6 @@
             </when>
         </choice>
         <process ref="DataRequestProcessor"/>
-
+        <process ref="ClearingHouseLoggingProcessor"/>
     </route>
 </routes>

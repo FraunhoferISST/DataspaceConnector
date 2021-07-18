@@ -46,7 +46,7 @@ import io.dataspaceconnector.service.message.type.DescriptionResponseService;
 import io.dataspaceconnector.service.resource.EntityDependencyResolver;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
 import io.dataspaceconnector.service.usagecontrol.DataProvisionVerifier;
-import io.dataspaceconnector.service.usagecontrol.VerificationInput;
+import io.dataspaceconnector.service.usagecontrol.ProvisionVerificationInput;
 import io.dataspaceconnector.service.usagecontrol.VerificationResult;
 import io.dataspaceconnector.util.ContractUtils;
 import io.dataspaceconnector.util.ErrorMessages;
@@ -181,7 +181,8 @@ class PolicyValidator extends IdsValidator<Request<ArtifactRequestMessageImpl, M
         final var agreement = contractManager.validateTransferContract(
                 transferContract, requestedArtifact, issuer);
         final var profile = extractSecurityProfile(msg.getClaims());
-        final var input = new VerificationInput(requestedArtifact, issuer, agreement, profile);
+        final var input = new ProvisionVerificationInput(requestedArtifact, issuer, agreement,
+                profile);
         if (accessVerifier.verify(input) == VerificationResult.DENIED) {
             throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
         }

@@ -13,36 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.usagecontrol;
+package io.dataspaceconnector.model.auth;
 
+import io.dataspaceconnector.service.HttpService;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class AllowAccessVerifierTest {
-    @Test
-    public void verify_null_returnAllowed() {
-        /* ARRANGE */
-        final var verifier = new AllowAccessVerifier();
-
-        /* ACT */
-        final var result = verifier.verify(null);
-
-        /* ASSERT */
-        assertEquals(VerificationResult.ALLOWED, result);
-    }
-
+class ApiKeyTest {
 
     @Test
-    public void verify_any_returnAllowed() {
+    void getAuthPair_validContent_setHeader() {
         /* ARRANGE */
-        final var verifier = new AllowAccessVerifier();
-        final var input = new AccessVerificationInput();
+        var key = "key";
+        var value = "value";
+        var apiKey = new ApiKey(key, value);
+        final var args = new HttpService.HttpArgs();
 
         /* ACT */
-        final var result = verifier.verify(input);
+        apiKey.setAuth(args);
 
         /* ASSERT */
-        assertEquals(VerificationResult.ALLOWED, result);
+        assertTrue(args.getHeaders().containsKey(key));
+        assertEquals(value, args.getHeaders().get(key));
     }
 }
