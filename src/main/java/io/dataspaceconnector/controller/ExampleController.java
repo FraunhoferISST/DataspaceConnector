@@ -15,6 +15,11 @@
  */
 package io.dataspaceconnector.controller;
 
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
 import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
@@ -29,6 +34,7 @@ import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.exception.ContractException;
+import io.dataspaceconnector.model.pattern.ConnectorRestrictionDesc;
 import io.dataspaceconnector.model.pattern.DeletionDesc;
 import io.dataspaceconnector.model.pattern.DurationDesc;
 import io.dataspaceconnector.model.pattern.IntervalDesc;
@@ -37,7 +43,6 @@ import io.dataspaceconnector.model.pattern.NotificationDesc;
 import io.dataspaceconnector.model.pattern.PatternDesc;
 import io.dataspaceconnector.model.pattern.PermissionDesc;
 import io.dataspaceconnector.model.pattern.ProhibitionDesc;
-import io.dataspaceconnector.model.pattern.ConnectorRestrictionDesc;
 import io.dataspaceconnector.model.pattern.SecurityRestrictionDesc;
 import io.dataspaceconnector.model.pattern.UsageNumberDesc;
 import io.dataspaceconnector.service.ids.DeserializationService;
@@ -60,11 +65,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * This class provides endpoints exposing example resources and configurations.

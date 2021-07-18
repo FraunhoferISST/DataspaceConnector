@@ -15,6 +15,12 @@
  */
 package io.dataspaceconnector.controller.resource;
 
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+
+import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
 import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
@@ -23,35 +29,35 @@ import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.KeyType;
 import de.fraunhofer.iais.eis.LogLevel;
+import de.fraunhofer.iais.eis.PermissionBuilder;
 import de.fraunhofer.iais.eis.ProxyBuilder;
 import de.fraunhofer.iais.eis.PublicKeyBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.controller.ExampleController;
 import io.dataspaceconnector.service.ids.DeserializationService;
+import org.apache.commons.codec.CharEncoding;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-@SpringBootTest(classes = {ExampleController.class})
-public class ExampleControllerTest {
+@SpringBootTest
+public class ExampleControllerIT {
 
-    @MockBean
+    @SpyBean
     private DeserializationService deserializationService;
 
     @Autowired
@@ -120,5 +126,27 @@ public class ExampleControllerTest {
     @Test
     public void getPolicyPattern_notAuthorized_notAuthorized() throws Exception {
         mockMvc.perform(get("/api/examples/validation")).andExpect(status().isUnauthorized());
+    }
+
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void getPolicyPattern_AllowAccess_returnPatternDescriptor() throws Exception {
+        final var permission = new PermissionBuilder()
+                ._title_(Util.asList(new TypedLiteral("Allow Data Usage")))
+                ._description_(Util.asList(new TypedLiteral("provide-access")))
+                ._action_(Util.asList(Action.USE))
+                .build();
+
+        Mockito.doReturn(permission).when(deserializationService).getRule(eq(permission.toRdf()));
+
+        final var result = mockMvc.perform(post("/api/examples/validation")
+                                                                .contentType(MediaType.APPLICATION_JSON)
+                                                                .characterEncoding(CharEncoding.UTF_8)
+                                                                .content(permission.toRdf()))
+                                            .andExpect(status().isOk())
+                                            .andReturn();
+
+        assertEquals("PROVIDE_ACCESS", result);
     }
 }

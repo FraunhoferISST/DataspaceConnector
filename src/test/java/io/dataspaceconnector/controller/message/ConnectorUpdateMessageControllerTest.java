@@ -25,20 +25,25 @@ import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
+import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import io.dataspaceconnector.service.configuration.BrokerService;
 import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.service.message.GlobalMessageService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -51,6 +56,9 @@ public class ConnectorUpdateMessageControllerTest {
 
     @MockBean
     private BrokerService dataBrokerService;
+
+    @SpyBean
+    private GlobalMessageService globalMessageService;
 
     @MockBean
     private ConnectorService connectorService;
@@ -156,5 +164,37 @@ public class ConnectorUpdateMessageControllerTest {
         /* ASSERT */
         assertEquals("EMPTY", result.getResponse().getContentAsString());
         assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void sendConnectorUpdateMessage_failsToSendMsg_respondMessageSendingFailed() throws Exception {
+        /* ARRANGE */
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+        Mockito.doThrow(SendMessageException.class).when(globalMessageService).sendConnectorUpdateMessage(any());
+
+        /* ACT */
+        final var result = mockMvc.perform(post("/api/ids/connector/update")
+                                                   .param("recipient", recipient)).andReturn();
+
+        /* ASSERT */
+        assertEquals("Message sending failed.", result.getResponse().getContentAsString());
+        assertEquals(500, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void sendConnectorUpdateMessage_gettingRejected_notifyOfInvalidIdsMessage() throws Exception {
+        /* ARRANGE */
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+        Mockito.doThrow(RejectionException.class).when(globalMessageService).sendConnectorUpdateMessage(any());
+
+        /* ACT */
+        final var result = mockMvc.perform(post("/api/ids/connector/update")
+                                                   .param("recipient", recipient)).andReturn();
+
+        /* ASSERT */
+        assertEquals("Received invalid ids message.", result.getResponse().getContentAsString());
+        assertEquals(502, result.getResponse().getStatus());
     }
 }
