@@ -24,11 +24,18 @@ import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
+import de.fraunhofer.ids.messaging.core.daps.DapsValidator;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.camel.dto.Request;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.util.ParameterUtils;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -217,10 +224,17 @@ class QueryPreparer extends Idscp2MappingProcessor {
  * Converts an incoming IDSCPv2 message to a request DTO.
  */
 @Component("IncomingIdscpMessageParser")
+@RequiredArgsConstructor
 class IncomingMessageParser extends Idscp2MappingProcessor {
 
     /**
-     * Creates a {@link Request} with the header and payload from the IDSCPv2 message.
+     * Service for validating DATs.
+     */
+    private final @NonNull DapsValidator dapsValidator;
+
+    /**
+     * Creates a {@link Request} with the header and payload from the IDSCPv2 message. Also
+     * gets the claims from the DAT and adds them to the request.
      *
      * @param in the in-message of the exchange.
      */
@@ -230,7 +244,15 @@ class IncomingMessageParser extends Idscp2MappingProcessor {
                 .getHeader(ParameterUtils.IDSCP_HEADER, de.fraunhofer.iais.eis.Message.class);
         final var payloadStream = new ByteArrayInputStream(in.getBody(byte[].class));
         final var payload = new MessagePayloadInputstream(payloadStream, new ObjectMapper());
-        in.setBody(new Request(header, payload, Optional.empty()));
+
+        Optional<Jws<Claims>> claims;
+        try {
+            claims = Optional.of(dapsValidator.getClaims(header.getSecurityToken()));
+        } catch (ClaimsException | ExpiredJwtException exception) {
+            claims = Optional.empty();
+        }
+
+        in.setBody(new Request(header, payload, claims));
     }
 
 }
