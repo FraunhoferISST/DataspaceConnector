@@ -38,6 +38,7 @@ import io.dataspaceconnector.model.broker.BrokerFactory;
 import io.dataspaceconnector.repository.BrokerRepository;
 import io.dataspaceconnector.service.configuration.BrokerService;
 import io.dataspaceconnector.service.configuration.EntityLinkerService;
+import io.dataspaceconnector.service.message.processing.BrokerCommunication;
 import io.dataspaceconnector.service.message.type.NotificationService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -70,6 +71,9 @@ class GlobalMessageServiceTest {
 
     @MockBean
     private NotificationService notificationSvc;
+
+    @MockBean
+    private BrokerCommunication brokerCommunication;
 
     @Autowired
     GlobalMessageService messageService;
