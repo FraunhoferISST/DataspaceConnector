@@ -15,16 +15,6 @@
  */
 package io.dataspaceconnector.service.message.handler;
 
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.RejectionReason;
@@ -37,14 +27,10 @@ import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.service.EntityUpdateService;
-import io.dataspaceconnector.service.message.subscription.SubscriberNotificationService;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -66,17 +52,8 @@ class ResourceUpdateMessageHandlerTest {
     @SpyBean
     EntityUpdateService updateService;
 
-    @MockBean
-    SubscriberNotificationService notificationService;
-
     @Autowired
     ResourceUpdateMessageHandler handler;
-
-    @BeforeEach
-    public void init() {
-        MockitoAnnotations.initMocks(this);
-        ReflectionTestUtils.setField(handler, "notificationService", notificationService);
-    }
 
     @SneakyThrows
     @Test
