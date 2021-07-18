@@ -21,6 +21,7 @@ import io.dataspaceconnector.model.AbstractFactory;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.Representation;
+import io.dataspaceconnector.model.RequestedResource;
 import io.dataspaceconnector.model.Subscription;
 import io.dataspaceconnector.model.SubscriptionDesc;
 import io.dataspaceconnector.repository.SubscriptionRepository;
@@ -92,11 +93,7 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
         final var subscription = persist(factory.create(desc));
         final var target = subscription.getTarget();
 
-        try {
-            linkSubscriptionToEntityById(target, subscription);
-        } catch (Exception exception) {
-            throw new ResourceNotFoundException("Failed to add subscription to target entity.");
-        }
+        linkSubscriptionToEntityById(target, subscription);
 
         return subscription;
     }
@@ -177,7 +174,7 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
      * @throws ResourceNotFoundException       if the resource could not be found.
      */
     private void linkSubscriptionToEntityById(final URI target, final Subscription subscription)
-            throws SubscriptionProcessingException, ResourceNotFoundException {
+            throws SubscriptionProcessingException, ResourceNotFoundException, IllegalArgumentException {
         // Check if target exists.
         final var entity = entityResolver.getEntityById(target);
         if (entity.isEmpty()) {
@@ -193,6 +190,8 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
             repSubLinker.add(value.getId(), Set.of(subscriptionId));
         } else if (value instanceof OfferedResource) {
             offerSubLinker.add(value.getId(), Set.of(subscriptionId));
+        } else if (value instanceof RequestedResource) {
+            repSubLinker.add(value.getId(), Set.of(subscriptionId));
         } else {
             throw new SubscriptionProcessingException("No subscription offered for this target.");
         }
