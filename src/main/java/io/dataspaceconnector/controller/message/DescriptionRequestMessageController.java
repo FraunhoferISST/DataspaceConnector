@@ -18,6 +18,7 @@ package io.dataspaceconnector.controller.message;
 import java.net.URI;
 import java.util.Objects;
 
+import de.fraunhofer.iais.eis.RejectionMessage;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.controller.util.CommunicationProtocol;
@@ -112,6 +113,9 @@ public class DescriptionRequestMessageController {
 
             final var response = result.getIn().getBody(Response.class);
             if (response != null) {
+                if (response.getHeader() instanceof RejectionMessage) {
+                    return new ResponseEntity<>(response.getBody(), HttpStatus.EXPECTATION_FAILED);
+                }
                 payload = response.getBody();
             } else {
                 final var responseEntity = result.getIn().getBody(ResponseEntity.class);

@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.camel.route.controller.error;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.exception.InvalidResponseException;
+import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
@@ -24,6 +28,11 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class InvalidResponseRoute extends RouteBuilder {
+
+    /**
+     * ObjectMapper for writing the response to JSON.
+     */
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * Configures the route.
@@ -36,8 +45,15 @@ public class InvalidResponseRoute extends RouteBuilder {
                 .routeId("receivedInvalidResponse")
                 .log(LoggingLevel.DEBUG,
                         "Error route for handling received invalid response called.")
-                .to("bean:io.dataspaceconnector.util.ControllerUtils?"
-                        + "method=respondReceivedInvalidResponse(${exception})");
+                .process(exchange -> {
+                    final var initialResponse = exchange.getIn().getBody(Response.class);
+                    final var exception = exchange
+                            .getProperty(Exchange.EXCEPTION_CAUGHT, InvalidResponseException.class);
+                    final var map = exception.getResponse();
+                    final var response = new Response(initialResponse.getHeader(),
+                            objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(map));
+                    exchange.getIn().setBody(response);
+                });
     }
 
 }

@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
+import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.ids.messaging.common.DeserializeException;
 import de.fraunhofer.ids.messaging.common.SerializeException;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
@@ -125,6 +126,9 @@ public class ResourceUnavailableMessageController {
 
             final var response = result.getIn().getBody(Response.class);
             if (response != null) {
+                if (response.getHeader() instanceof RejectionMessage) {
+                    return new ResponseEntity<>(response.getBody(), HttpStatus.EXPECTATION_FAILED);
+                }
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {
                 final var responseEntity = result.getIn().getBody(ResponseEntity.class);

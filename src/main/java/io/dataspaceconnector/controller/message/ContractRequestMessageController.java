@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.UUID;
 import javax.persistence.PersistenceException;
 
+import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.camel.dto.Response;
@@ -162,6 +163,9 @@ public class ContractRequestMessageController {
 
             final var response = result.getIn().getBody(Response.class);
             if (response != null) {
+                if (response.getHeader() instanceof RejectionMessage) {
+                    return new ResponseEntity<>(response.getBody(), HttpStatus.EXPECTATION_FAILED);
+                }
                 agreementId = result.getProperty(ParameterUtils.AGREEMENT_ID_PARAM, UUID.class);
             } else {
                 final var responseEntity = result.getIn().getBody(ResponseEntity.class);
@@ -213,6 +217,9 @@ public class ContractRequestMessageController {
             } catch (ContractException e) {
                 // If the contract agreement is invalid.
                 return ControllerUtils.respondNegotiationAborted();
+            } catch (UnexpectedResponseException e) {
+                // If the response is not as expected.
+                return ControllerUtils.respondWithContent(e.getContent());
             }
         }
     }

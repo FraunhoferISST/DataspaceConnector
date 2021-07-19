@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;
 
+import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.ResultMessageImpl;
 import de.fraunhofer.ids.messaging.common.DeserializeException;
 import de.fraunhofer.ids.messaging.common.SerializeException;
@@ -124,6 +125,9 @@ public class QueryMessageController {
 
             final var response = result.getIn().getBody(Response.class);
             if (response != null) {
+                if (response.getHeader() instanceof RejectionMessage) {
+                    return new ResponseEntity<>(response.getBody(), HttpStatus.EXPECTATION_FAILED);
+                }
                 return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
             } else {
                 final var responseEntity = result.getIn().getBody(ResponseEntity.class);
@@ -202,6 +206,9 @@ public class QueryMessageController {
 
             final var response = result.getIn().getBody(Response.class);
             if (response != null) {
+                if (response.getHeader() instanceof RejectionMessage) {
+                    return new ResponseEntity<>(response.getBody(), HttpStatus.EXPECTATION_FAILED);
+                }
                 return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
             } else {
                 final var responseEntity = result.getIn().getBody(ResponseEntity.class);
