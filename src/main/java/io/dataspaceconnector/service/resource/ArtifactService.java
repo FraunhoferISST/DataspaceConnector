@@ -296,7 +296,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         if (information.getForceDownload() == null && information.getQueryInput() == null) {
             return !isDataPresent(artifact) || artifact.isAutomatedDownload();
         } else {
-            return information.getForceDownload();
+            return true;
         }
     }
 
