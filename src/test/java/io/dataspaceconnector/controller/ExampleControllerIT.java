@@ -64,11 +64,6 @@ public class ExampleControllerIT {
     private MockMvc mockMvc;
 
     @Test
-    public void getConnectorConfiguration_notAuthorized_notAuthorized() throws Exception {
-        mockMvc.perform(get("/api/examples/configuration")).andExpect(status().isUnauthorized());
-    }
-
-    @Test
     @WithMockUser("ADMIN")
     public void getConnectorConfiguration_nothing_sampleConfig() throws Exception {
         /* ARRANGE */
@@ -122,12 +117,6 @@ public class ExampleControllerIT {
     /**
      * getPolicyPattern
      */
-
-    @Test
-    public void getPolicyPattern_notAuthorized_notAuthorized() throws Exception {
-        mockMvc.perform(get("/api/examples/validation")).andExpect(status().isUnauthorized());
-    }
-
 
     @Test
     @WithMockUser("ADMIN")
