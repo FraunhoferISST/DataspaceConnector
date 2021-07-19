@@ -19,8 +19,11 @@ import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteDesc;
 import io.dataspaceconnector.model.route.RouteFactory;
 import io.dataspaceconnector.repository.EndpointRepository;
+import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.resource.BaseEntityService;
 import io.dataspaceconnector.service.resource.EndpointServiceProxy;
+import io.dataspaceconnector.util.ErrorMessage;
+import io.dataspaceconnector.util.Utils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -70,6 +73,9 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
         if (route.getEnd() != null) {
             endpointRepo.save(route.getEnd());
         }
+
+        var repo = (RouteRepository) getRepository();
+
         return super.persist(route);
     }
 
@@ -112,4 +118,29 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
     public void removeLastEndpoint(final UUID routeId) {
         persist(((RouteFactory) getFactory()).deleteLastEndpoint(get(routeId)));
     }
+
+    /**
+     * Delete a route with the given id, after the associated Camel route has been successfully
+     * deleted.
+     *
+     * @param routeId The id of the entity.
+     * @throws IllegalArgumentException if the passed id is null.
+     */
+    @Override
+    public void delete(final UUID routeId) {
+        Utils.requireNonNull(routeId, ErrorMessage.ENTITYID_NULL);
+
+        final var route = get(routeId);
+
+        final var linker = new EntityLinkerService.RouteStepsLinker();
+        final var steps = linker.getInternal(route);
+        if (steps != null && !steps.isEmpty()) {
+            setStartEndpoint(routeId, steps.get(0).getStart().getId());
+            setLastEndpoint(routeId, steps.get(0).getEnd().getId());
+        }
+        ((RouteFactory) getFactory()).deleteSubroutes(route);
+
+        super.delete(routeId);
+    }
+
 }
