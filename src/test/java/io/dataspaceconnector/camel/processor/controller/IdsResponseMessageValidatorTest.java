@@ -26,6 +26,10 @@ import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.exception.InvalidResponseException;
+import io.dataspaceconnector.camel.processor.controller.ids.response.validator.ArtifactResponseValidator;
+import io.dataspaceconnector.camel.processor.controller.ids.response.validator.ContractAgreementResponseValidator;
+import io.dataspaceconnector.camel.processor.controller.ids.response.validator.ContractResponseValidator;
+import io.dataspaceconnector.camel.processor.controller.ids.response.validator.DescriptionResponseValidator;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
 import io.dataspaceconnector.service.message.type.ContractAgreementService;
 import io.dataspaceconnector.service.message.type.ContractRequestService;
@@ -42,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {ArtifactResponseValidator.class,
+@SpringBootTest(classes = { ArtifactResponseValidator.class,
         ContractAgreementResponseValidator.class, ContractResponseValidator.class,
         DescriptionResponseValidator.class})
 public class IdsResponseMessageValidatorTest {

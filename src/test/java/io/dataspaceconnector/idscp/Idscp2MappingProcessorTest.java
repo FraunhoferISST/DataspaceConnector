@@ -43,6 +43,12 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Request;
 import io.dataspaceconnector.camel.util.ParameterUtils;
+import io.dataspaceconnector.idscp.preparer.ContractAgreementPreparer;
+import io.dataspaceconnector.idscp.preparer.ContractRequestPreparer;
+import io.dataspaceconnector.idscp.preparer.QueryPreparer;
+import io.dataspaceconnector.idscp.preparer.RequestWithConnectorPayloadPreparer;
+import io.dataspaceconnector.idscp.preparer.RequestWithResourcePayloadPreparer;
+import io.dataspaceconnector.idscp.preparer.RequestWithoutPayloadPreparer;
 import lombok.SneakyThrows;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -59,7 +65,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {ContractAgreementPreparer.class, ContractRequestPreparer.class,
+@SpringBootTest(classes = { ContractAgreementPreparer.class, ContractRequestPreparer.class,
         QueryPreparer.class, RequestWithConnectorPayloadPreparer.class,
         RequestWithoutPayloadPreparer.class, RequestWithResourcePayloadPreparer.class})
 public class Idscp2MappingProcessorTest {

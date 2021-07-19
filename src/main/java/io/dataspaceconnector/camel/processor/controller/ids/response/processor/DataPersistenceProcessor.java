@@ -1,0 +1,47 @@
+package io.dataspaceconnector.camel.processor.controller.ids.response.processor;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+
+import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.util.ParameterUtils;
+import io.dataspaceconnector.camel.util.ProcessorUtils;
+import io.dataspaceconnector.service.EntityPersistenceService;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.apache.camel.Exchange;
+import org.springframework.stereotype.Component;
+
+/**
+ * Persists the data received as the response to an ArtifactRequestMessage.
+ */
+@Component("DataPersistenceProcessor")
+@RequiredArgsConstructor
+public class DataPersistenceProcessor extends IdsResponseProcessor {
+
+    /**
+     * Service for persisting entities.
+     */
+    private final @NonNull EntityPersistenceService persistenceSvc;
+
+    /**
+     * Persists the data.
+     * @param exchange the exchange.
+     * @throws IOException if persisting the data fails.
+     */
+    @Override
+    protected void processInternal(final Exchange exchange) throws IOException {
+        final var response = exchange.getIn().getBody(Response.class);
+        final var map = ProcessorUtils.getResponseMap(response);
+
+        final var index = exchange.getProperty(Exchange.LOOP_INDEX, Integer.class);
+        final var artifacts = exchange.getProperty(ParameterUtils.ARTIFACTS_PARAM, List.class);
+        final var artifactId = (URI) artifacts.get(index);
+
+        // Set current artifact as exchange property so it is available for error handling.
+        exchange.setProperty(ParameterUtils.CURRENT_ARTIFACT_PARAM, artifactId);
+
+        persistenceSvc.saveData(map, artifactId);
+    }
+}

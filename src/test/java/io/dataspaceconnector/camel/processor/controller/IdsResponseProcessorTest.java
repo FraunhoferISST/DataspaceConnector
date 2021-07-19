@@ -32,6 +32,10 @@ import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.processor.controller.ids.response.processor.AgreementToArtifactsLinker;
+import io.dataspaceconnector.camel.processor.controller.ids.response.processor.ContractAgreementPersistenceProcessor;
+import io.dataspaceconnector.camel.processor.controller.ids.response.processor.DataPersistenceProcessor;
+import io.dataspaceconnector.camel.processor.controller.ids.response.processor.MetadataPersistenceProcessor;
 import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.service.EntityPersistenceService;
 import io.dataspaceconnector.service.EntityUpdateService;
@@ -52,7 +56,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {AgreementToArtifactsLinker.class,
+@SpringBootTest(classes = { AgreementToArtifactsLinker.class,
         ContractAgreementPersistenceProcessor.class, DataPersistenceProcessor.class,
         MetadataPersistenceProcessor.class})
 public class IdsResponseProcessorTest {
