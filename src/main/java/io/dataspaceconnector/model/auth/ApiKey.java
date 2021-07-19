@@ -16,7 +16,6 @@
 package io.dataspaceconnector.model.auth;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.HashMap;
 
 import io.dataspaceconnector.service.HttpService.HttpArgs;
