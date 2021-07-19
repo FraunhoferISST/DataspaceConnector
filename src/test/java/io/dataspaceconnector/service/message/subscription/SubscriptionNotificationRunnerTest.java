@@ -15,108 +15,106 @@
  */
 package io.dataspaceconnector.service.message.subscription;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Date;
-import java.util.List;
+// import java.io.ByteArrayInputStream;
+// import java.io.InputStream;
+// import java.net.URI;
+// import java.util.Date;
+// import java.util.List;
 
-import io.dataspaceconnector.controller.util.Event;
-import io.dataspaceconnector.controller.util.Notification;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+// import io.dataspaceconnector.controller.util.Event;
+// import io.dataspaceconnector.controller.util.Notification;
+// import org.junit.jupiter.api.AfterEach;
+// import org.junit.jupiter.api.BeforeEach;
+// import org.junit.jupiter.api.Test;
+// import org.mockito.Mock;
+// import org.mockito.Mockito;
+// import org.mockito.MockitoAnnotations;
+// import org.springframework.test.util.ReflectionTestUtils;
+// import org.springframework.web.reactive.function.client.WebClient;
+// import reactor.core.publisher.Mono;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+// import static org.mockito.ArgumentMatchers.any;
+// import static org.mockito.Mockito.times;
+// import static org.mockito.Mockito.verify;
+// import static org.mockito.Mockito.when;
 
-public class SubscriptionNotificationRunnerTest {
+// public class SubscriptionNotificationRunnerTest {
 
-    @Mock
-    private WebClient webClient;
+//     @Mock
+//     private WebClient webClient;
 
-    @Mock
-    private WebClient.RequestBodyUriSpec requestBodyUriSpec;
+//     @Mock
+//     private WebClient.RequestBodyUriSpec requestBodyUriSpec;
 
-    @Mock
-    private WebClient.RequestBodySpec requestBodySpec;
+//     @Mock
+//     private WebClient.RequestBodySpec requestBodySpec;
 
-    @Mock
-    @SuppressWarnings("rawtypes")
-    private WebClient.RequestHeadersSpec requestHeadersSpec;
+//     @Mock
+//     private WebClient.RequestHeadersSpec requestHeadersSpec;
 
-    @Mock
-    private WebClient.ResponseSpec responseSpec;
+//     @Mock
+//     private WebClient.ResponseSpec responseSpec;
 
-    @Mock
-    private Mono<String> mono;
+//     @Mock
+//     private Mono<String> mono;
 
-    private SubscriberNotificationRunner runner;
+//     private SubscriberNotificationRunner runner;
 
-    private final URI subscriber1 = URI.create("https://subscriber-1.com");
+//     private final URI subscriber1 = URI.create("https://subscriber-1.com");
 
-    private final URI subscriber2 = URI.create("https://subscriber-2.com");
+//     private final URI subscriber2 = URI.create("https://subscriber-2.com");
 
-    private final InputStream data = new ByteArrayInputStream("SOME DATA".getBytes());
+//     private final InputStream data = new ByteArrayInputStream("SOME DATA".getBytes());
 
-    @BeforeEach
-    @SuppressWarnings("unchecked")
-    public void init() {
-        MockitoAnnotations.openMocks(this);
+//     @BeforeEach
+//     public void init() {
+//         MockitoAnnotations.openMocks(this);
 
-        when(webClient.post()).thenReturn(requestBodyUriSpec);
-        when(requestBodyUriSpec.uri(any(URI.class))).thenReturn(requestBodySpec);
-        when(requestBodySpec.bodyValue(any())).thenReturn(requestHeadersSpec);
-        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
-        when(responseSpec.bodyToMono(String.class)).thenReturn(mono);
-        when(mono.retryWhen(any())).thenReturn(mono);
-        when(mono.onErrorResume(any())).thenReturn(mono);
-    }
+//         when(webClient.post()).thenReturn(requestBodyUriSpec);
+//         when(requestBodyUriSpec.uri(any(URI.class))).thenReturn(requestBodySpec);
+//         when(requestBodySpec.bodyValue(any())).thenReturn(requestHeadersSpec);
+//         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+//         when(responseSpec.bodyToMono(String.class)).thenReturn(mono);
+//         when(mono.retryWhen(any())).thenReturn(mono);
+//         when(mono.onErrorResume(any())).thenReturn(mono);
+//     }
 
-    @AfterEach
-    public void reset() {
-        Mockito.reset(webClient, requestBodyUriSpec, requestBodySpec, requestHeadersSpec,
-                responseSpec, mono);
-    }
+//     @AfterEach
+//     public void reset() {
+//         Mockito.reset(webClient, requestBodyUriSpec, requestBodySpec, requestHeadersSpec,
+//                 responseSpec, mono);
+//     }
 
-    @Test
-    public void run_oneSubscription_sendOneNotification() throws InterruptedException {
-        /* ARRANGE */
-        final var notification = new Notification(new Date(), URI.create("https://target"), Event.UPDATED);
-        runner = new SubscriberNotificationRunner(notification, List.of(subscriber1), data);
-        ReflectionTestUtils.setField(runner, "webClient", webClient);
+//     @Test
+//     public void run_oneSubscription_sendOneNotification() throws InterruptedException {
+//         /* ARRANGE */
+//         final var notification = new Notification(new Date(), URI.create("https://target"), Event.UPDATED);
+//         runner = new SubscriberNotificationRunner(notification, List.of(subscriber1), data);
+//         ReflectionTestUtils.setField(runner, "webClient", webClient);
 
-        /* ACT */
-        runner.run();
+//         /* ACT */
+//         runner.run();
 
-        Thread.sleep(1000);
+//         Thread.sleep(1000);
 
-        /* ASSERT */
-        verify(webClient, times(1)).post();
-    }
+//         /* ASSERT */
+//         verify(webClient, times(1)).post();
+//     }
 
-    @Test
-    public void run_twoSubscriptions_sendTwoNotifications() throws InterruptedException {
-        /* ARRANGE */
-        final var notification = new Notification(new Date(), URI.create("https://target"), Event.UPDATED);
-        runner = new SubscriberNotificationRunner(notification, List.of(subscriber1, subscriber2), data);
-        ReflectionTestUtils.setField(runner, "webClient", webClient);
+//     @Test
+//     public void run_twoSubscriptions_sendTwoNotifications() throws InterruptedException {
+//         /* ARRANGE */
+//         final var notification = new Notification(new Date(), URI.create("https://target"), Event.UPDATED);
+//         runner = new SubscriberNotificationRunner(notification, List.of(subscriber1, subscriber2), data);
+//         ReflectionTestUtils.setField(runner, "webClient", webClient);
 
-        /* ACT */
-        runner.run();
+//         /* ACT */
+//         runner.run();
 
-        Thread.sleep(1000);
+//         Thread.sleep(1000);
 
-        /* ASSERT */
-        verify(webClient, times(2)).post();
-    }
+//         /* ASSERT */
+//         verify(webClient, times(2)).post();
+//     }
 
-}
+// }
