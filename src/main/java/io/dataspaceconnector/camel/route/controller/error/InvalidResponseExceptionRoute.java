@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.camel.route.controller.error;
 
+import io.dataspaceconnector.camel.exception.InvalidResponseException;
+import io.dataspaceconnector.camel.util.ParameterUtils;
+import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
@@ -36,8 +39,14 @@ public class InvalidResponseExceptionRoute extends RouteBuilder {
                 .routeId("invalidResponse")
                 .log(LoggingLevel.DEBUG,
                         "Error route for handling invalid response called.")
-                .to("bean:io.dataspaceconnector.controller.util.ControllerUtils?"
-                        + "method=respondWithMessageContent(${exception.getResponse()})");
+                .process(exchange -> {
+                    final var exception = exchange
+                            .getProperty(Exchange.EXCEPTION_CAUGHT, InvalidResponseException.class);
+                    final var map = exception.getResponse();
+                    exchange.getIn().setBody(map);
+                })
+                .to(ParameterUtils.CONTROLLER_UTILS_BEAN
+                        + "respondWithContent(${body})");
     }
 
 }

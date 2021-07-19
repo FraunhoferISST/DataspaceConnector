@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.camel.route.controller.error;
 
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
@@ -36,7 +37,7 @@ public class InvalidInputRoute extends RouteBuilder {
                 .routeId("invalidInput")
                 .log(LoggingLevel.DEBUG,
                         "Error route for handling invalid input called.")
-                .to("bean:io.dataspaceconnector.controller.util.ControllerUtils?"
-                        + "method=respondInvalidInput(${exception})");
+                .to(ParameterUtils.CONTROLLER_UTILS_BEAN
+                        + "respondInvalidInput(${exception})");
     }
 }
