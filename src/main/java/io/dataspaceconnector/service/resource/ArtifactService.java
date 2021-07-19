@@ -318,8 +318,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @return The stored data.
      */
     private InputStream getData(final LocalData data) {
-        final var stream =toInputStream(data.getValue());
-        return stream;
+        return toInputStream(data.getValue());
     }
 
     /**
