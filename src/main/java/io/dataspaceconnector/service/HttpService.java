@@ -26,7 +26,7 @@ import java.util.Map;
 import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.QueryInput;
 import io.dataspaceconnector.util.Utils;
-import kotlin.NotImplementedError;
+import io.dataspaceconnector.util.exception.NotImplemented;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -64,12 +64,16 @@ public class HttpService {
         //        DELETE
     }
 
+
+    /**
+     * Pair of strings.
+     */
     @Data
     @AllArgsConstructor
     public static class Pair {
-        /** First element */
+        /** First element. */
         private String first;
-        /** Second element */
+        /** Second element. */
         private String second;
     }
 
@@ -249,7 +253,7 @@ public class HttpService {
             return get(target, args);
         }
 
-        throw new NotImplementedError();
+        throw new NotImplemented();
     }
 
     /**
