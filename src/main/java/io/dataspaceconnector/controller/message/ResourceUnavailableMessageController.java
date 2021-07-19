@@ -153,14 +153,14 @@ public class ResourceUnavailableMessageController {
                 // If a timeout has occurred.
                 return ControllerUtils.respondConnectionTimedOut(exception);
             } catch (MultipartParseException | UnknownResponseException | ShaclValidatorException
-                    | DeserializeException | UnexpectedPayloadException | ClaimsException exception) {
+                    | DeserializeException | UnexpectedPayloadException | ClaimsException e) {
                 // If the response was invalid.
-                return ControllerUtils.respondReceivedInvalidResponse(exception);
+                return ControllerUtils.respondReceivedInvalidResponse(e);
             } catch (RejectionException ignored) {
                 // If the response is a rejection message. Error is ignored.
-            } catch (SendMessageException | SerializeException | DapsTokenManagerException exception) {
+            } catch (SendMessageException | SerializeException | DapsTokenManagerException e) {
                 // If the message could not be built or sent.
-                return ControllerUtils.respondMessageSendingFailed(exception);
+                return ControllerUtils.respondMessageSendingFailed(e);
             } catch (NoTemplateProvidedException | IOException exception) {
                 // If any other error occurred.
                 return ControllerUtils.respondIdsMessageFailed(exception);

@@ -145,14 +145,14 @@ public class QueryMessageController {
                 // If a timeout has occurred.
                 return ControllerUtils.respondConnectionTimedOut(exception);
             } catch (MultipartParseException | UnknownResponseException | ShaclValidatorException
-                    | DeserializeException | UnexpectedPayloadException | ClaimsException exception) {
+                    | DeserializeException | UnexpectedPayloadException | ClaimsException e) {
                 // If the response was invalid.
-                return ControllerUtils.respondReceivedInvalidResponse(exception);
+                return ControllerUtils.respondReceivedInvalidResponse(e);
             } catch (RejectionException ignored) {
                 // If the response is a rejection message. Error is ignored.
-            } catch (SendMessageException | SerializeException | DapsTokenManagerException exception) {
+            } catch (SendMessageException | SerializeException | DapsTokenManagerException e) {
                 // If the message could not be built or sent.
-                return ControllerUtils.respondMessageSendingFailed(exception);
+                return ControllerUtils.respondMessageSendingFailed(e);
             } catch (NoTemplateProvidedException | IOException exception) {
                 // If any other error occurred.
                 return ControllerUtils.respondIdsMessageFailed(exception);
@@ -214,21 +214,21 @@ public class QueryMessageController {
         } else {
             try {
                 // Send the query message for full text search.
-                final var response = messageService.sendFullTextSearchMessage(recipient, term, limit,
-                        offset);
+                final var response = messageService.sendFullTextSearchMessage(recipient, term,
+                                                                                limit, offset);
                 return messageService.validateResponse(response, ResultMessageImpl.class);
             } catch (SocketTimeoutException exception) {
                 // If a timeout has occurred.
                 return ControllerUtils.respondConnectionTimedOut(exception);
             } catch (MultipartParseException | UnknownResponseException | ShaclValidatorException
-                    | DeserializeException | UnexpectedPayloadException | ClaimsException exception) {
+                    | DeserializeException | UnexpectedPayloadException | ClaimsException e) {
                 // If the response was invalid.
-                return ControllerUtils.respondReceivedInvalidResponse(exception);
+                return ControllerUtils.respondReceivedInvalidResponse(e);
             } catch (RejectionException ignored) {
                 // If the response is a rejection message. Error is ignored.
-            } catch (SendMessageException | SerializeException | DapsTokenManagerException exception) {
+            } catch (SendMessageException | SerializeException | DapsTokenManagerException e) {
                 // If the message could not be built or sent.
-                return ControllerUtils.respondMessageSendingFailed(exception);
+                return ControllerUtils.respondMessageSendingFailed(e);
             } catch (NoTemplateProvidedException | IOException exception) {
                 // If any other error occurred.
                 return ControllerUtils.respondIdsMessageFailed(exception);
