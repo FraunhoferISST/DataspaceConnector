@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
  * handler route.
  */
 @Component
-@ConditionalOnProperty(name = "idscp.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "idscp2.enabled", havingValue = "true")
 public class IdscpServerRoute extends RouteBuilder {
 
     /**

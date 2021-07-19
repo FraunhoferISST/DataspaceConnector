@@ -43,7 +43,7 @@ public class Idscp2Config {
     /**
      * Location of the keystore containing the IDS certificate.
      */
-    @Value("${idscp.keystore}")
+    @Value("${idscp2.keystore}")
     private String keyStoreLocation;
 
     /**
@@ -61,7 +61,7 @@ public class Idscp2Config {
     /**
      * Location of the truststore to use.
      */
-    @Value("${idscp.truststore}")
+    @Value("${idscp2.truststore}")
     private String trustStoreLocation;
 
     /**
