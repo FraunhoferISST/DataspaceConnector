@@ -28,6 +28,6 @@ public enum CommunicationProtocol {
     /**
      * Communication over IDSCPv2.
      */
-    IDSCP_V2;
+    IDSCP2;
 
 }

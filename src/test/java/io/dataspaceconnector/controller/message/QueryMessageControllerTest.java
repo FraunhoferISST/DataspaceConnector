@@ -236,7 +236,7 @@ public class QueryMessageControllerTest {
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/query")
                 .param("recipient", brokerUrl)
-                .param("protocol", CommunicationProtocol.IDSCP_V2.name())
+                .param("protocol", CommunicationProtocol.IDSCP2.name())
                 .content("SOME QUERY"))
                 .andReturn();
 
@@ -262,7 +262,7 @@ public class QueryMessageControllerTest {
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/query")
                 .param("recipient", brokerUrl)
-                .param("protocol", CommunicationProtocol.IDSCP_V2.name())
+                .param("protocol", CommunicationProtocol.IDSCP2.name())
                 .content("SOME QUERY"))
                 .andReturn();
 
@@ -378,7 +378,7 @@ public class QueryMessageControllerTest {
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/search")
                 .param("recipient", brokerUrl)
-                .param("protocol", CommunicationProtocol.IDSCP_V2.name())
+                .param("protocol", CommunicationProtocol.IDSCP2.name())
                 .content("SOME SEARCH TERM"))
                 .andReturn();
 
@@ -404,7 +404,7 @@ public class QueryMessageControllerTest {
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/search")
                 .param("recipient", brokerUrl)
-                .param("protocol", CommunicationProtocol.IDSCP_V2.name())
+                .param("protocol", CommunicationProtocol.IDSCP2.name())
                 .content("SOME SEARCH TERM"))
                 .andReturn();
 

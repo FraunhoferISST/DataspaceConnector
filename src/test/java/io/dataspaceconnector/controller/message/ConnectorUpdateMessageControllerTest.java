@@ -208,7 +208,7 @@ public class ConnectorUpdateMessageControllerTest {
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/connector/update")
                 .param("recipient", recipient)
-                .param("protocol", CommunicationProtocol.IDSCP_V2.name()))
+                .param("protocol", CommunicationProtocol.IDSCP2.name()))
                 .andReturn();
 
         /* ASSERT */
@@ -232,7 +232,7 @@ public class ConnectorUpdateMessageControllerTest {
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/connector/update")
                 .param("recipient", recipient)
-                .param("protocol", CommunicationProtocol.IDSCP_V2.name()))
+                .param("protocol", CommunicationProtocol.IDSCP2.name()))
                 .andReturn();
 
         /* ASSERT */

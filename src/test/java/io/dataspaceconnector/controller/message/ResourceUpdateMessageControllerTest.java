@@ -241,7 +241,7 @@ public class ResourceUpdateMessageControllerTest {
         final var mvcResult = mockMvc.perform(post("/api/ids/resource/update")
                 .param("recipient", recipient)
                 .param("resourceId", resourceId.toString())
-                .param("protocol", CommunicationProtocol.IDSCP_V2.name()))
+                .param("protocol", CommunicationProtocol.IDSCP2.name()))
                 .andReturn();
 
         /* ASSERT */
@@ -266,7 +266,7 @@ public class ResourceUpdateMessageControllerTest {
         final var mvcResult = mockMvc.perform(post("/api/ids/resource/update")
                 .param("recipient", recipient)
                 .param("resourceId", resourceId.toString())
-                .param("protocol", CommunicationProtocol.IDSCP_V2.name()))
+                .param("protocol", CommunicationProtocol.IDSCP2.name()))
                 .andReturn();
 
         /* ASSERT */

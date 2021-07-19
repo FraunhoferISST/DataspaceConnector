@@ -146,7 +146,7 @@ public class DescriptionRequestMessageControllerTest {
         /* ACT */
         final var responseEntity = controller
                 .sendMessage(URI.create("https://recipient.com"),
-                        null, CommunicationProtocol.IDSCP_V2);
+                        null, CommunicationProtocol.IDSCP2);
 
         /* ASSERT */
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -166,7 +166,7 @@ public class DescriptionRequestMessageControllerTest {
         /* ACT */
         final var responseEntity = controller
                 .sendMessage(URI.create("https://recipient.com"),
-                        null, CommunicationProtocol.IDSCP_V2);
+                        null, CommunicationProtocol.IDSCP2);
 
         /* ASSERT */
         assertEquals(response, responseEntity);

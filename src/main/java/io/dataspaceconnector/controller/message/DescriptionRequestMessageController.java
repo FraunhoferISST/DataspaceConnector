@@ -103,7 +103,7 @@ public class DescriptionRequestMessageController {
             @Parameter(description = "The protocol to use for IDS communication.")
             @RequestParam("protocol") final CommunicationProtocol protocol) {
         String payload;
-        if (CommunicationProtocol.IDSCP_V2.equals(protocol)) {
+        if (CommunicationProtocol.IDSCP2.equals(protocol)) {
             final var result = template.send("direct:descriptionRequestSender",
                     ExchangeBuilder.anExchange(context)
                             .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)

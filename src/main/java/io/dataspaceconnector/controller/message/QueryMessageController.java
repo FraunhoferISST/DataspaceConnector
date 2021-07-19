@@ -115,7 +115,7 @@ public class QueryMessageController {
                             + "WHERE {\n"
                             + "  ?subject ?predicate ?object\n"
                             + "};") @RequestBody final String query) {
-        if (CommunicationProtocol.IDSCP_V2.equals(protocol)) {
+        if (CommunicationProtocol.IDSCP2.equals(protocol)) {
             final var result = template.send("direct:querySender",
                     ExchangeBuilder.anExchange(context)
                             .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)
@@ -191,7 +191,7 @@ public class QueryMessageController {
             @RequestParam("protocol") final CommunicationProtocol protocol,
             @Parameter(description = "The search term.", required = true)
             @RequestBody final String term) {
-        if (CommunicationProtocol.IDSCP_V2.equals(protocol)) {
+        if (CommunicationProtocol.IDSCP2.equals(protocol)) {
             final var result = template.send("direct:querySender",
                     ExchangeBuilder.anExchange(context)
                             .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)

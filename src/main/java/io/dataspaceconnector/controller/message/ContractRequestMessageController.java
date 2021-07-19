@@ -149,7 +149,7 @@ public class ContractRequestMessageController {
             @RequestParam("protocol") final CommunicationProtocol protocol,
             @Parameter(description = "List of ids rules with an artifact id as target.")
             @RequestBody final List<Rule> ruleList) throws UnexpectedResponseException {
-        if (CommunicationProtocol.IDSCP_V2.equals(protocol)) {
+        if (CommunicationProtocol.IDSCP2.equals(protocol)) {
             UUID agreementId;
             final var result = template.send("direct:contractRequestSender",
                     ExchangeBuilder.anExchange(context)

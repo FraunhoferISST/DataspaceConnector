@@ -15,7 +15,7 @@ All notable changes to this project will be documented in this file.
   authentication.
 - Integrate IDSCPv2 for IDS communication.
   * Add parameter for protocol to all controller endpoints for IDS messages
-    (`MULTIPART` or `IDSCP_V2`).
+    (`MULTIPART` or `IDSCP2`).
   * Add property `idscp2.enabled` for enabling and disabling IDSCPv2 server.
   * Add properties for configuring keystore and truststore for IDSCPv2.
   * When enabling IDSCPv2, a valid IDS certificate is required!

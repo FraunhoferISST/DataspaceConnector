@@ -113,7 +113,7 @@ public class ConnectorUnavailableMessageController {
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The protocol to use for IDS communication.")
             @RequestParam("protocol") final CommunicationProtocol protocol) {
-        if (CommunicationProtocol.IDSCP_V2.equals(protocol)) {
+        if (CommunicationProtocol.IDSCP2.equals(protocol)) {
             final var result = template.send("direct:connectorUnavailableSender",
                     ExchangeBuilder.anExchange(context)
                             .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)

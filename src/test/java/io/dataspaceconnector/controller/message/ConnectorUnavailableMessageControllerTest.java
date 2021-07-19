@@ -246,7 +246,7 @@ public class ConnectorUnavailableMessageControllerTest {
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/connector/unavailable")
                 .param("recipient", recipient)
-                .param("protocol", CommunicationProtocol.IDSCP_V2.name()))
+                .param("protocol", CommunicationProtocol.IDSCP2.name()))
                 .andReturn();
 
         /* ASSERT */
@@ -270,7 +270,7 @@ public class ConnectorUnavailableMessageControllerTest {
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/connector/unavailable")
                 .param("recipient", recipient)
-                .param("protocol", CommunicationProtocol.IDSCP_V2.name()))
+                .param("protocol", CommunicationProtocol.IDSCP2.name()))
                 .andReturn();
 
         /* ASSERT */
