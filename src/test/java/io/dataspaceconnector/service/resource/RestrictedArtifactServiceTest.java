@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -78,6 +79,7 @@ public class RestrictedArtifactServiceTest {
         final var localData = new LocalData();
         ReflectionTestUtils.setField(localData, "value", dataString);
         final var artifact = new ArtifactImpl();
+        ReflectionTestUtils.setField(artifact, "additional", new HashMap<>());
         ReflectionTestUtils.setField(artifact, "remoteAddress", URI.create("https://remoteAddress"));
         ReflectionTestUtils.setField(artifact, "data", localData);
 
