@@ -112,13 +112,13 @@ public class SubscriptionViewAssemblerTest {
      *************************************************************************/
 
     private Subscription getSubscriber() {
-        final var url = URI.create("http://valid-url.com");
+        final var location = URI.create("http://valid-url.com");
         final var date = ZonedDateTime.now(ZoneOffset.UTC);
         final var additional = new HashMap<String, String>();
         additional.put("key", "value");
 
         final var subscriber = new Subscription();
-        ReflectionTestUtils.setField(subscriber, "url", url);
+        ReflectionTestUtils.setField(subscriber, "location", location);
         ReflectionTestUtils.setField(subscriber, "id", UUID.randomUUID());
         ReflectionTestUtils.setField(subscriber, "creationDate", date);
         ReflectionTestUtils.setField(subscriber, "modificationDate", date);

@@ -183,9 +183,6 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
      */
     private boolean updateInboundModelVersion(final Configuration config,
                                               final List<String> inboundModelVersion) {
-        if (inboundModelVersion == null || inboundModelVersion.isEmpty()) {
-            return false;
-        }
         final var newInboundModelVersionList =
                 MetadataUtils.updateStringList(config.getInboundModelVersion(), inboundModelVersion,
                                                DEFAULT_INBOUND_VERSION);
