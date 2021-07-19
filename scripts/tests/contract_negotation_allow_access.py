@@ -15,11 +15,9 @@
 # limitations under the License.
 #
 
-from typing import Counter
 from resourceapi import ResourceApi
 from idsapi import IdsApi
 import requests
-import json
 import pprint
 import sys
 

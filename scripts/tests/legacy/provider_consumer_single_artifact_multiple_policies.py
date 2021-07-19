@@ -30,28 +30,28 @@ s.verify = False
 ####################################################################################################
 
 def create_catalog():
-    return s.post("https://localhost:8080/api/catalogs", json={}).headers['Location']
+    return s.post("http://localhost:8080/api/catalogs", json={}).headers['Location']
 
 def create_offered_resource():
-    return s.post("https://localhost:8080/api/offers", json={}).headers['Location']
+    return s.post("http://localhost:8080/api/offers", json={}).headers['Location']
 
 def create_representation():
-    return s.post("https://localhost:8080/api/representations", json={}).headers['Location']
+    return s.post("http://localhost:8080/api/representations", json={}).headers['Location']
 
 def create_artifact():
-    return s.post("https://localhost:8080/api/artifacts", json={"value": "SOME LONG VALUE"}).headers['Location']
+    return s.post("http://localhost:8080/api/artifacts", json={"value": "SOME LONG VALUE"}).headers['Location']
 
 def create_contract():
-    return s.post("https://localhost:8080/api/contracts", json={}).headers['Location']
+    return s.post("http://localhost:8080/api/contracts", json={}).headers['Location']
 
 def create_usage_notification_rule():
-    return s.post("https://localhost:8080/api/rules", json={'value': """{
+    return s.post("http://localhost:8080/api/rules", json={'value': """{
         "@context" : {
-            "ids" : "https://w3id.org/idsa/core/",
-            "idsc" : "https://w3id.org/idsa/code/"
+            "ids" : "http://w3id.org/idsa/core/",
+            "idsc" : "http://w3id.org/idsa/code/"
         },
       "@type": "ids:Permission",
-      "@id": "https://w3id.org/idsa/autogen/permission/c0bdb9d5-e86a-4bb3-86d2-2b1dc9d226f5",
+      "@id": "http://w3id.org/idsa/autogen/permission/c0bdb9d5-e86a-4bb3-86d2-2b1dc9d226f5",
       "ids:description": [
         {
           "@value": "usage-notification",
@@ -72,7 +72,7 @@ def create_usage_notification_rule():
       "ids:postDuty": [
         {
           "@type": "ids:Duty",
-          "@id": "https://w3id.org/idsa/autogen/duty/863d2fac-1072-476d-b504-9d6347fe4b6f",
+          "@id": "http://w3id.org/idsa/autogen/duty/863d2fac-1072-476d-b504-9d6347fe4b6f",
           "ids:action": [
             {
               "@id": "idsc:NOTIFY"
@@ -81,9 +81,9 @@ def create_usage_notification_rule():
           "ids:constraint": [
             {
               "@type": "ids:Constraint",
-              "@id": "https://w3id.org/idsa/autogen/constraint/c91e64ce-1fc1-44fd-bec1-6c6778603919",
+              "@id": "http://w3id.org/idsa/autogen/constraint/c91e64ce-1fc1-44fd-bec1-6c6778603919",
               "ids:rightOperand": {
-                "@value": "https://localhost:8080/api/ids/data",
+                "@value": "http://localhost:8080/api/ids/data",
                 "@type": "http://www.w3.org/2001/XMLSchema#anyURI"
               },
               "ids:leftOperand": {
@@ -99,13 +99,13 @@ def create_usage_notification_rule():
     }"""}).headers['Location']
 
 def create_n_times_usage_rule():
-    return s.post("https://localhost:8080/api/rules", json={'value': """{
+    return s.post("http://localhost:8080/api/rules", json={'value': """{
         "@context" : {
-            "ids" : "https://w3id.org/idsa/core/",
-            "idsc" : "https://w3id.org/idsa/code/"
+            "ids" : "http://w3id.org/idsa/core/",
+            "idsc" : "http://w3id.org/idsa/code/"
         },
       "@type": "ids:Permission",
-      "@id": "https://w3id.org/idsa/autogen/permission/154df1cf-557b-4f44-b839-4b68056606a2",
+      "@id": "http://w3id.org/idsa/autogen/permission/154df1cf-557b-4f44-b839-4b68056606a2",
       "ids:description": [
         {
           "@value": "n-times-usage",
@@ -126,7 +126,7 @@ def create_n_times_usage_rule():
       "ids:constraint": [
         {
           "@type": "ids:Constraint",
-          "@id": "https://w3id.org/idsa/autogen/constraint/4ae656d1-2a73-44e3-a168-b1cbe49d4622",
+          "@id": "http://w3id.org/idsa/autogen/constraint/4ae656d1-2a73-44e3-a168-b1cbe49d4622",
           "ids:rightOperand": {
             "@value": "5",
             "@type": "http://www.w3.org/2001/XMLSchema#double"
@@ -177,10 +177,10 @@ add_rule_to_contract(contract, notification_rule)
 add_rule_to_contract(contract, count_rule)
 
 ####################################################################################################
-# CONSUMER (running on port 8081)                                                                  #
+# CONSUMER (running on port 8080)                                                                  #
 ####################################################################################################
 
-provider = "https://localhost:8080/api/ids/data"
+provider = "http://localhost:8080/api/ids/data"
 
 def descriptionRequest(recipient, elementId):
     params = {}
@@ -189,7 +189,7 @@ def descriptionRequest(recipient, elementId):
     if elementId is not None:
         params['elementId'] = elementId
 
-    return s.post("https://localhost:8081/api/ids/description", params=params)
+    return s.post("http://localhost:8080/api/ids/description", params=params)
 
 def contractRequest(recipient, resourceId, artifactId, download, contract):
     params = {}
@@ -202,7 +202,7 @@ def contractRequest(recipient, resourceId, artifactId, download, contract):
     if download is not None:
         params['download'] = download
 
-    return s.post("https://localhost:8081/api/ids/contract", params=params, json=contract)
+    return s.post("http://localhost:8080/api/ids/contract", params=params, json=contract)
 
 response = descriptionRequest(provider, catalog)
 catalogResponse = json.loads(response.text)

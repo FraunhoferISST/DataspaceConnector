@@ -15,6 +15,16 @@
  */
 package io.dataspaceconnector.util;
 
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.ConfigurationModel;
@@ -26,7 +36,7 @@ import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
-import io.dataspaceconnector.model.auth.BasicAuth;
+import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
 import io.dataspaceconnector.model.configuration.DeployMode;
@@ -47,16 +57,6 @@ import io.dataspaceconnector.model.template.RepresentationTemplate;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
-
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * Maps ids resources to internal resources.
@@ -598,6 +598,6 @@ public final class MappingUtils {
                 .stream()
                 .map(URI::toString)
                 .collect(Collectors.toList()),
-                new BasicAuth(auth.getAuthUsername(), auth.getAuthPassword()));
+                new AuthenticationDesc(auth.getAuthUsername(), auth.getAuthPassword()));
     }
 }
