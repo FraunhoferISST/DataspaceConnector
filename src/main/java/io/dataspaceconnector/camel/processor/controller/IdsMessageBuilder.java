@@ -244,7 +244,7 @@ class ContractRequestMessageBuilder
     @Override
     protected Request<ContractRequestMessageImpl, ContractRequest, Optional<Jws<Claims>>>
     processInternal(final Exchange exchange) {
-        final var recipient = (URI)  exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class);
+        final var recipient = exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class);
         final var ruleList = exchange.getProperty(ParameterUtils.RULE_LIST_PARAM, List.class);
         final var request = contractManager.buildContractRequest(toRuleList(ruleList));
         exchange.setProperty("contractRequest", request);

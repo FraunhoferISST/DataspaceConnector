@@ -132,7 +132,7 @@ public class ResourceUnavailableMessageController {
                 }
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {
-                final var responseEntity = result.getIn().getBody(ResponseEntity.class);
+                final var responseEntity = toObjectResponse(result.getIn().getBody(ResponseEntity.class));
                 return Objects.requireNonNullElseGet(responseEntity,
                         () -> new ResponseEntity<Object>("An internal server error occurred.",
                                 HttpStatus.INTERNAL_SERVER_ERROR));
@@ -168,5 +168,10 @@ public class ResourceUnavailableMessageController {
             return messageService.validateResponse(Optional.empty(),
                     MessageProcessedNotificationMessageImpl.class);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static ResponseEntity<Object> toObjectResponse(final ResponseEntity<?> response) {
+        return (ResponseEntity<Object>) response;
     }
 }

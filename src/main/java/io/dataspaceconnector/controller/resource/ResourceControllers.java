@@ -399,6 +399,7 @@ public final class ResourceControllers {
          * @return Response with code 200 (Ok) and the list of all endpoints of this resource type.
          */
         @GetMapping("owning")
+        @SuppressWarnings("unchecked")
         @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
         public final PagedModel<SubscriptionView> getAllFiltered(
                 @RequestParam(required = false, defaultValue = "0") final Integer page,
@@ -413,7 +414,6 @@ public final class ResourceControllers {
             if (entities.hasContent()) {
                 model = getPagedAssembler().toModel(entities, getAssembler());
             } else {
-                //noinspection unchecked
                 model = (PagedModel<SubscriptionView>) getPagedAssembler().toEmptyModel(entities,
                         getResourceType());
             }
