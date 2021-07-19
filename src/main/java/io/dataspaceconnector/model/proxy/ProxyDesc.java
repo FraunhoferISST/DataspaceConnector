@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.model.proxy;
 
-import io.dataspaceconnector.model.auth.BasicAuth;
+import java.net.URI;
+import java.util.List;
+
+import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.base.Description;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.net.URI;
-import java.util.List;
 
 /**
  * This class holds information about the proxy properties.
@@ -47,5 +47,5 @@ public class ProxyDesc extends Description {
     /**
      * The authentication information.
      */
-    private BasicAuth authentication;
+    private AuthenticationDesc authentication;
 }
