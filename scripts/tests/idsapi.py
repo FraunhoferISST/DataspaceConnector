@@ -52,5 +52,13 @@ class IdsApi:
         if download is not None:
             params["download"] = download
 
-        response = self.session.post(url, params=params, json=[contract])
+        response = self.session.post(
+            url, params=params, json=self.toListIfNeeded(contract)
+        )
         return json.loads(response.text)
+
+    def toListIfNeeded(self, obj):
+        if isinstance(obj, list):
+            return obj
+        else:
+            return [obj]
