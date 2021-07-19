@@ -42,7 +42,7 @@ import io.dataspaceconnector.service.usagecontrol.VerificationResult;
 import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.QueryInput;
 import io.dataspaceconnector.util.Utils;
-import kotlin.NotImplementedError;
+import io.dataspaceconnector.util.exception.NotImplemented;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -391,7 +391,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         if (currentData instanceof LocalData) {
             return setLocalData(artifactId, data, artifact, (LocalData) currentData);
         } else {
-            throw new NotImplementedError();
+            throw new NotImplemented();
         }
     }
 

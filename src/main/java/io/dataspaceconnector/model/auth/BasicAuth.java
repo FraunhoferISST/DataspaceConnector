@@ -18,7 +18,7 @@ package io.dataspaceconnector.model.auth;
 import javax.persistence.Entity;
 
 import io.dataspaceconnector.service.HttpService.HttpArgs;
-import kotlin.Pair;
+import io.dataspaceconnector.service.HttpService.Pair;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -72,7 +72,7 @@ public class BasicAuth extends Authentication {
     public void setAuth(final HttpArgs args) {
         if (args.getAuth() == null
                 || (args.getAuth().getFirst() == null && args.getAuth().getSecond() == null)) {
-            args.setAuth(new Pair<>("Authorization", Credentials.basic(username, password)));
+            args.setAuth(new Pair("Authorization", Credentials.basic(username, password)));
         }
     }
 }

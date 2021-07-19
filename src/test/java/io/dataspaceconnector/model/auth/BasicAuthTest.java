@@ -48,7 +48,7 @@ class BasicAuthTest {
         basicAuth.setAuth(args);
 
         /* ASSERT */
-        assertEquals("Authorization", args.getAuth().component1());
+        assertEquals("Authorization", args.getAuth().getFirst());
     }
 
     @Test
@@ -65,6 +65,6 @@ class BasicAuthTest {
         basicAuth.setAuth(args);
 
         /* ASSERT */
-        assertEquals(expected, args.getAuth().component2());
+        assertEquals(expected, args.getAuth().getSecond());
     }
 }
