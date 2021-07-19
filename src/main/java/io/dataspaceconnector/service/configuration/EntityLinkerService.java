@@ -55,7 +55,7 @@ public final class EntityLinkerService {
             RouteService> {
 
         @Override
-        protected final List<Route> getInternal(final Route owner) {
+        public final List<Route> getInternal(final Route owner) {
             return owner.getSteps();
         }
     }

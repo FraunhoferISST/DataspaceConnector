@@ -141,11 +141,19 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      * @throws IllegalArgumentException if the passed id is null.
      */
     @Override
-    public void delete(final UUID routeId) throws RouteDeletionException {
+    public void delete(final UUID routeId) throws RouteDeletionException  {
         Utils.requireNonNull(routeId, ErrorMessage.ENTITYID_NULL);
 
         final var route = get(routeId);
         routeHelper.delete(route);
+
+        final var linker = new EntityLinkerService.RouteStepsLinker();
+        final var steps = linker.getInternal(route);
+        if (steps != null && !steps.isEmpty()) {
+            setStartEndpoint(routeId, steps.get(0).getStart().getId());
+            setLastEndpoint(routeId, steps.get(0).getEnd().getId());
+        }
+        ((RouteFactory) getFactory()).deleteSubroutes(route);
 
         super.delete(routeId);
     }

@@ -126,4 +126,13 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
         route.setEnd(null);
         return route;
     }
+
+    /**
+     * @param route The route.
+     * @return The route without sub routes.
+     */
+    public final Route deleteSubroutes(final Route route) {
+        route.setSteps(null);
+        return route;
+    }
 }
