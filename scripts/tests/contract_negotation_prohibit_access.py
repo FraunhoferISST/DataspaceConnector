@@ -22,17 +22,11 @@ import sys
 from idsapi import IdsApi
 from resourceapi import ResourceApi
 
-#providerUrl = "http://localhost:8080"
-#consumerUrl = "http://localhost:8081"
-
-#provider_alias = "http://provider-dataspace-connector"
-#consumer_alias = "http://consumer-dataspace-connector"
-
 providerUrl = "http://localhost:8080"
-consumerUrl = "http://localhost:8080"
+consumerUrl = "http://localhost:8081"
 
-provider_alias = providerUrl
-consumer_alias = consumerUrl
+provider_alias = "http://provider-dataspace-connector"
+consumer_alias = "http://consumer-dataspace-connector"
 
 def main(argv):
     if len(argv) == 2:
@@ -124,7 +118,7 @@ pprint.pprint(first_artifact)
 data = consumerResources.get_data(first_artifact).text
 pprint.pprint(data)
 
-expectedErorMessage = """{"message":"An error occurred. Please try again later."}"""
+expectedErorMessage = """{"message":"A policy restriction has been detected."}"""
 if data != expectedErorMessage:
     exit(1)
 
