@@ -15,10 +15,11 @@
  */
 package io.dataspaceconnector.camel.route.controller;
 
-import java.net.SocketTimeoutException;
-
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
+
+import java.net.SocketTimeoutException;
 
 /**
  * Builds the route for sending a query message over IDSCP_v2.
@@ -40,9 +41,7 @@ public class QueryControllerRoute extends RouteBuilder {
                 .routeId("querySender")
                 .process("QueryMessageBuilder")
                 .process("QueryPreparer")
-                .toD("idscp2client://${exchangeProperty.recipient}?"
-                        + "awaitResponse=true&sslContextParameters=#serverSslContext"
-                        + "&useIdsMessages=true")
+                .toD(ParameterUtils.IDSCP_CLIENT_URI)
                 .process("ResponseToDtoConverter");
     }
 

@@ -15,11 +15,12 @@
  */
 package io.dataspaceconnector.camel.route.controller;
 
-import java.net.SocketTimeoutException;
-
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
+
+import java.net.SocketTimeoutException;
 
 /**
  * Builds the route for sending a resource update over IDSCP_v2.
@@ -44,9 +45,7 @@ public class ResourceUpdateControllerRoute extends RouteBuilder {
                 .process("ResourceFinder")
                 .process("ResourceUpdateMessageBuilder")
                 .process("RequestWithResourcePayloadPreparer")
-                .toD("idscp2client://${exchangeProperty.recipient}?"
-                        + "awaitResponse=true&sslContextParameters=#serverSslContext"
-                        + "&useIdsMessages=true")
+                .toD(ParameterUtils.IDSCP_CLIENT_URI)
                 .process("ResponseToDtoConverter");
     }
 
