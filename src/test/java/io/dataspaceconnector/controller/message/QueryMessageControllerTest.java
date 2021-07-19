@@ -50,7 +50,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
@@ -70,11 +69,6 @@ public class QueryMessageControllerTest {
             ._tokenValue_("token")
             ._tokenFormat_(TokenFormat.JWT)
             .build();
-
-    @Test
-    public void sendQueryMessage_unauthorized_rejectUnauthorized() throws Exception {
-        mockMvc.perform(post("/api/ids/query")).andExpect(status().isUnauthorized());
-    }
 
     @Test
     @WithMockUser("ADMIN")
@@ -172,11 +166,6 @@ public class QueryMessageControllerTest {
 
         /* ASSERT */
         assertEquals(504, result.getResponse().getStatus());
-    }
-
-    @Test
-    public void sendSearchMessage_unauthorized_rejectUnauthorized() throws Exception {
-        mockMvc.perform(post("/api/ids/search")).andExpect(status().isUnauthorized());
     }
 
     @Test

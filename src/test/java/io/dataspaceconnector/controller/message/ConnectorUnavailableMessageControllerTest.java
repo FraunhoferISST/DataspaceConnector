@@ -42,7 +42,6 @@ import java.net.URI;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
@@ -62,11 +61,6 @@ public class ConnectorUnavailableMessageControllerTest {
             ._tokenValue_("token")
             ._tokenFormat_(TokenFormat.JWT)
             .build();
-
-    @Test
-    public void sendConnectorUpdateMessage_unauthorized_returnUnauthorized() throws Exception {
-        mockMvc.perform(post("/api/ids/connector/unavailable")).andExpect(status().isUnauthorized());
-    }
 
     @Test
     @WithMockUser("ADMIN")

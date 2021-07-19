@@ -112,15 +112,6 @@ public class MainControllerTest {
         assertEquals(connector.toRdf(), result.getResponse().getContentAsString());
     }
 
-    @Test
-    public void getPrivateSelfDescription_nothing_accessRestriction() throws Exception {
-        /* ARRANGE */
-        // Nothing to arrange here.
-
-        /* ACT && ASSERT */
-        mockMvc.perform(get("/api/connector")).andExpect(status().isUnauthorized());
-    }
-
 
     @Test
     @WithMockUser("ADMIN")
@@ -141,15 +132,6 @@ public class MainControllerTest {
     /**
      * root
      */
-
-    @Test
-    public void root_nothing_accessRestriction() throws Exception {
-        /* ARRANGE */
-        // Nothing to arrange here.
-
-        /* ACT && ASSERT */
-        mockMvc.perform(get("/api")).andExpect(status().isUnauthorized());
-    }
 
     @Test
     @WithMockUser("ADMIN")

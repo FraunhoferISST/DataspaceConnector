@@ -67,11 +67,6 @@ public class ResourceUnavailableMessageControllerTest {
             .build();
 
     @Test
-    public void sendConnectorUpdateMessage_unauthorized_returnUnauthorized() throws Exception {
-        mockMvc.perform(post("/api/ids/resource/unavailable")).andExpect(status().isUnauthorized());
-    }
-
-    @Test
     @WithMockUser("ADMIN")
     public void sendConnectorUpdateMessage_noRecipient_throws400() throws Exception {
         /* ARRANGE */
