@@ -302,7 +302,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
 
     private boolean isDataPresent(final Artifact artifact) {
         if (artifact.getAdditional().containsKey("ids:byteSize")) {
-            final var providerDataSize = Integer.parseInt(artifact.getAdditional().get("ids:byteSize"));
+            final var providerDataSize =
+                        Integer.parseInt(artifact.getAdditional().get("ids:byteSize"));
             final var thisDataSize = artifact.getByteSize();
             return thisDataSize >= providerDataSize;
         }
