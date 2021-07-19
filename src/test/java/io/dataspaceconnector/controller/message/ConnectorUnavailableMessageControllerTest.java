@@ -21,6 +21,7 @@ import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import io.dataspaceconnector.service.ids.ConnectorService;
@@ -156,7 +157,24 @@ public class ConnectorUnavailableMessageControllerTest {
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_validRequest_returnsBrokerResponse() throws Exception {
+    public void sendConnectorUpdateMessage_throwSendMessageException_throws500() throws Exception {
+        /* ARRANGE */
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+        Mockito.doThrow(SendMessageException.class).when(brokerService).unregisterAtBroker(Mockito.eq(URI.create(recipient)));
+
+        /* ACT */
+        final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
+                .param("recipient", recipient)).andReturn();
+
+        /* ASSERT */
+        assertEquals(500, result.getResponse().getStatus());
+        final var msg = ErrorMessages.MESSAGE_SENDING_FAILED.toString();
+        assertEquals(msg, result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void sendConnectorUpdateMessage_validRequest_returnsResponse() throws Exception {
         /* ARRANGE */
         final var message = new MessageProcessedNotificationMessageBuilder()
                 ._issuerConnector_(new URI("https://url"))
