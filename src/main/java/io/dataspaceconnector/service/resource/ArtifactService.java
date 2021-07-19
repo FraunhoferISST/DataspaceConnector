@@ -229,7 +229,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
 
         // Make sure the data exists and is up to date.
         if (shouldDownload(artifact, information)) {
-            downloadAndUpdateData(retriever, artifactId, information, artifact);
+            return downloadAndUpdateData(retriever, artifactId, information, artifact);
         }
 
         // Artifact exists, access granted, data exists and data up to date.
@@ -248,7 +248,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         }
     }
 
-    private void downloadAndUpdateData(final ArtifactRetriever retriever,
+    private InputStream downloadAndUpdateData(final ArtifactRetriever retriever,
                                        final UUID artifactId,
                                        final RetrievalInformation information,
                                        final Artifact artifact)
@@ -257,7 +257,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                 artifact.getRemoteAddress(),
                 information.getTransferContract(),
                 information.getQueryInput());
-        setData(artifactId, dataStream);
+        return setData(artifactId, dataStream);
     }
 
     /**
@@ -318,7 +318,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @return The stored data.
      */
     private InputStream getData(final LocalData data) {
-        return toInputStream(data.getValue());
+        final var stream =toInputStream(data.getValue());
+        return stream;
     }
 
     /**
