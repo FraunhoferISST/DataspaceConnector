@@ -59,6 +59,14 @@ Testing multiple_artifacts.py
 chmod +x ./scripts/tests/multiple_artifacts.py
 ./scripts/tests/multiple_artifacts.py "http://provider-dataspace-connector" "http://consumer-dataspace-connector"
 
+echo "
+********************************************************************************
+Testing single_artifact_multiple_policies.py
+********************************************************************************
+"
+chmod +x ./scripts/tests/single_artifact_multiple_policies.py
+./scripts/tests/single_artifact_multiple_policies.py "http://provider-dataspace-connector" "http://consumer-dataspace-connector"
+
 echo "Cleanup"
 #helm uninstall provider
 #helm uninstall consumer
