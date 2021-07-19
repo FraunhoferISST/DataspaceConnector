@@ -15,11 +15,7 @@
  */
 package io.dataspaceconnector.service;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.UUID;
-
-import io.dataspaceconnector.exception.PolicyRestrictionException;
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.DataRetrievalException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactImpl;
@@ -61,6 +57,9 @@ public class BlockingArtifactReceiverTest {
 
     @Autowired
     private BlockingArtifactReceiver blockingArtifactReceiver;
+
+    @MockBean
+    private ConnectorConfiguration connectorConfiguration;
 
     @Test
     public void retrieve_artifactIdNull_throwIllegalArgumentException() {

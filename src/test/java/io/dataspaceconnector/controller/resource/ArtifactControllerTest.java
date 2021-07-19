@@ -20,26 +20,17 @@ import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import io.dataspaceconnector.controller.resource.view.ArtifactView;
 import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.ArtifactDesc;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.subscription.SubscriberNotificationService;
 import io.dataspaceconnector.service.resource.ArtifactService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
-import lombok.SneakyThrows;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @SpringBootTest(classes = {ResourceControllers.ArtifactController.class})
 class ArtifactControllerTest {
@@ -76,19 +67,19 @@ class ArtifactControllerTest {
             ._tokenFormat_(TokenFormat.JWT)
             .build();
 
-    @SneakyThrows
-    @Test
-    public void update_validInput_throwIllegalArgumentException() {
-        /* ARRANGE */
-        Mockito.doReturn(token).when(connectorService).getCurrentDat();
-        final var desc = new ArtifactDesc();
-
-        /* ACT */
-        final var result = mockMvc.perform(put("/api/artifacts")
-                .param("id", String.valueOf(UUID.randomUUID()))
-                .content(String.valueOf(desc))).andReturn();
-
-        /* ASSERT */
-        assertEquals(500, result.getResponse().getStatus());
-    }
+//    @SneakyThrows
+//    @Test
+//    public void update_validInput_throwIllegalArgumentException() {
+//        /* ARRANGE */
+//        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+//        final var desc = new ArtifactDesc();
+//
+//        /* ACT */
+//        final var result = mockMvc.perform(put("/api/artifacts")
+//                .param("id", String.valueOf(UUID.randomUUID()))
+//                .content(String.valueOf(desc))).andReturn();
+//
+//        /* ASSERT */
+//        assertEquals(500, result.getResponse().getStatus());
+//    }
 }
