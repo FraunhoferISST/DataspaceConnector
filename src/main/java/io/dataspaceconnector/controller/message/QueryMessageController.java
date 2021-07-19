@@ -132,7 +132,8 @@ public class QueryMessageController {
                 }
                 return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
             } else {
-                final var responseEntity = toObjectResponse(result.getIn().getBody(ResponseEntity.class));
+                final var responseEntity =
+                    toObjectResponse(result.getIn().getBody(ResponseEntity.class));
                 return Objects.requireNonNullElseGet(responseEntity,
                         () -> new ResponseEntity<Object>("An internal server error occurred.",
                                 HttpStatus.INTERNAL_SERVER_ERROR));
@@ -207,7 +208,8 @@ public class QueryMessageController {
                 }
                 return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
             } else {
-                final var responseEntity = toObjectResponse(result.getIn().getBody(ResponseEntity.class));
+                final var responseEntity =
+                    toObjectResponse(result.getIn().getBody(ResponseEntity.class));
                 return Objects.requireNonNullElseGet(responseEntity,
                         () -> new ResponseEntity<Object>("An internal server error occurred.",
                                 HttpStatus.INTERNAL_SERVER_ERROR));
