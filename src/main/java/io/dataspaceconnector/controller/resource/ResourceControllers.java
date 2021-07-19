@@ -27,6 +27,7 @@ import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
 import io.dataspaceconnector.controller.resource.view.RepresentationView;
 import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
 import io.dataspaceconnector.controller.resource.view.SubscriptionView;
+import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.AgreementDesc;
@@ -49,7 +50,6 @@ import io.dataspaceconnector.model.Subscription;
 import io.dataspaceconnector.model.SubscriptionDesc;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
 import io.dataspaceconnector.service.ids.ConnectorService;
-import io.dataspaceconnector.service.message.subscription.SubscriberNotificationService;
 import io.dataspaceconnector.service.resource.AgreementService;
 import io.dataspaceconnector.service.resource.ArtifactService;
 import io.dataspaceconnector.service.resource.CatalogService;
@@ -98,7 +98,6 @@ import java.util.UUID;
 /**
  * This class contains all implementations of the {@link BaseResourceController}.
  */
-@RequiredArgsConstructor
 public final class ResourceControllers {
 
     /**
@@ -124,56 +123,11 @@ public final class ResourceControllers {
     /**
      * Offers the endpoints for managing representations.
      */
-    @RequiredArgsConstructor
     @RestController
     @RequestMapping("/api/representations")
     @Tag(name = ResourceNames.REPRESENTATIONS, description = ResourceDescriptions.REPRESENTATIONS)
     public static class RepresentationController extends BaseResourceController<Representation,
             RepresentationDesc, RepresentationView, RepresentationService> {
-
-        /**
-         * Service for notifying subscribers about an entity update.
-         */
-        private final @NonNull SubscriberNotificationService subscriberNotificationSvc;
-
-        /**
-         * Update representation details and notify subscribers.
-         *
-         * @param resourceId The id of the resource to be updated.
-         * @param desc       The new description of the resource.
-         * @return Response with code (No_Content) when the resource has been updated or response
-         * with code (201) if the resource has been updated and been moved to a new endpoint.
-         */
-        @Override
-        @PutMapping("{id}")
-        @Operation(summary = "Update a base resource by id")
-        @ApiResponses(value = {
-                @ApiResponse(responseCode = "201", description = "Created"),
-                @ApiResponse(responseCode = "204", description = "No Content")})
-        public ResponseEntity<Object> update(
-                @Valid @PathVariable(name = "id") final UUID resourceId,
-                @RequestBody final RepresentationDesc desc) {
-            final var resource = getService().update(resourceId, desc);
-
-            ResponseEntity<Object> response;
-            if (resource.getId().equals(resourceId)) {
-                // The resource was not moved
-                response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            } else {
-                // The resource has been moved
-                final var entity = getAssembler().toModel(resource);
-                final var headers = new HttpHeaders();
-                headers.setLocation(entity.getRequiredLink("self").toUri());
-
-                response = new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
-            }
-
-            // Notify subscribers on update event.
-            subscriberNotificationSvc.notifyOnUpdate(resource);
-
-            return response;
-        }
-
     }
 
     /**
@@ -189,55 +143,206 @@ public final class ResourceControllers {
     /**
      * Offers the endpoints for managing offered resources.
      */
-    @RequiredArgsConstructor
     @RestController
     @RequestMapping("/api/offers")
     @Tag(name = ResourceNames.OFFERS, description = ResourceDescriptions.OFFERS)
     public static class OfferedResourceController
             extends BaseResourceController<OfferedResource, OfferedResourceDesc,
             OfferedResourceView, ResourceService<OfferedResource, OfferedResourceDesc>> {
+    }
 
-        /**
-         * Service for notifying subscribers about an entity update.
-         */
-        private final @NonNull SubscriberNotificationService subscriberNotificationSvc;
-
-        /**
-         * Update offered resource details and notify subscribers.
-         *
-         * @param resourceId The id of the resource to be updated.
-         * @param desc       The new description of the resource.
-         * @return Response with code (No_Content) when the resource has been updated or response
-         * with code (201) if the resource has been updated and been moved to a new endpoint.
-         */
+    /**
+     * Offers the endpoints for managing requested resources.
+     */
+    @RestController
+    @RequestMapping("/api/requests")
+    @Tag(name = ResourceNames.REQUESTS, description = ResourceDescriptions.REQUESTS)
+    public static class RequestedResourceController
+            extends BaseResourceController<RequestedResource, RequestedResourceDesc,
+            RequestedResourceView,
+            ResourceService<RequestedResource, RequestedResourceDesc>> {
         @Override
-        @PutMapping("{id}")
-        @Operation(summary = "Update a base resource by id")
-        @ApiResponses(value = {
-                @ApiResponse(responseCode = "201", description = "Created"),
-                @ApiResponse(responseCode = "204", description = "No Content")})
-        public ResponseEntity<Object> update(
-                @Valid @PathVariable(name = "id") final UUID resourceId,
-                @RequestBody final OfferedResourceDesc desc) {
-            final var resource = getService().update(resourceId, desc);
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        public final ResponseEntity<RequestedResourceView> create(
+                final RequestedResourceDesc desc) {
+            throw new MethodNotAllowed();
+        }
+    }
 
-            ResponseEntity<Object> response;
-            if (resource.getId().equals(resourceId)) {
-                // The resource was not moved
-                response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            } else {
-                // The resource has been moved
-                final var entity = getAssembler().toModel(resource);
-                final var headers = new HttpHeaders();
-                headers.setLocation(entity.getRequiredLink("self").toUri());
+    /**
+     * Offers the endpoints for managing agreements.
+     */
+    @RestController
+    @RequestMapping("/api/agreements")
+    @Tag(name = ResourceNames.AGREEMENTS, description = ResourceDescriptions.AGREEMENTS)
+    public static class AgreementController extends BaseResourceController<Agreement, AgreementDesc,
+            AgreementView, AgreementService> {
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        public final ResponseEntity<AgreementView> create(final AgreementDesc desc) {
+            throw new MethodNotAllowed();
+        }
 
-                response = new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        public final ResponseEntity<Object> update(@Valid final UUID resourceId,
+                                                   final AgreementDesc desc) {
+            throw new MethodNotAllowed();
+        }
+
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        public final ResponseEntity<Void> delete(@Valid final UUID resourceId) {
+            throw new MethodNotAllowed();
+        }
+    }
+
+    /**
+     * Offers the endpoints for managing artifacts.
+     */
+    @RestController
+    @RequestMapping("/api/artifacts")
+    @Tag(name = ResourceNames.ARTIFACTS, description = ResourceDescriptions.ARTIFACTS)
+    @RequiredArgsConstructor
+    public static class ArtifactController
+            extends BaseResourceController<Artifact, ArtifactDesc, ArtifactView, ArtifactService> {
+
+        /**
+         * The service managing artifacts.
+         */
+        private final @NonNull ArtifactService artifactSvc;
+
+        /**
+         * The receiver for getting data from a remote source.
+         */
+        private final @NonNull BlockingArtifactReceiver dataReceiver;
+
+        /**
+         * The verifier for the data access.
+         */
+        private final @NonNull DataAccessVerifier accessVerifier;
+
+        /**
+         * Returns data from the local database or a remote data source. In case of a remote data
+         * source, all headers and query parameters included in this request will be used for the
+         * request to the backend.
+         *
+         * @param artifactId   Artifact id.
+         * @param download     If the data should be forcefully downloaded.
+         * @param agreementUri The agreement which should be used for access control.
+         * @param params       All request parameters.
+         * @param headers      All request headers.
+         * @param request      The current http request.
+         * @return The data object.
+         * @throws IOException if the data cannot be received.
+         */
+        @GetMapping("{id}/data/**")
+        @Operation(summary = "Get data by artifact id with query input")
+        @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
+        public ResponseEntity<StreamingResponseBody> getData(
+                @Valid @PathVariable(name = "id") final UUID artifactId,
+                @RequestParam(required = false) final Boolean download,
+                @RequestParam(required = false) final URI agreementUri,
+                @RequestParam(required = false) final Map<String, String> params,
+                @RequestHeader final Map<String, String> headers,
+                final HttpServletRequest request) throws IOException {
+            headers.remove("authorization");
+            headers.remove("host");
+
+            final var queryInput = new QueryInput();
+            queryInput.setParams(params);
+            queryInput.setHeaders(headers);
+
+            final var searchString = request.getContextPath() + "/data";
+            var optional = request.getRequestURI().substring(
+                    request.getRequestURI().indexOf(searchString) + searchString.length());
+            if ("/**".equals(optional)) {
+                optional = "";
             }
 
-            // Notify subscribers on update event.
-            subscriberNotificationSvc.notifyOnUpdate(resource);
+            if (!optional.isBlank()) {
+                queryInput.setOptional(optional);
+            }
 
-            return response;
+            /*
+                If no agreement information has been passed the connector needs
+                to check if the data access is restricted by the usage control.
+             */
+            // TODO: Check what happens when this connector is the provider and one of its provided
+            //  agreements is passed.
+            final var data = (agreementUri == null)
+                    ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
+                    CommunicationProtocol.MULTIPART, queryInput)
+                    : artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
+                    new RetrievalInformation(agreementUri, download,
+                            CommunicationProtocol.MULTIPART, queryInput)); // TODO
+
+            return returnData(artifactId, data);
+        }
+
+        /**
+         * Returns data from the local database or a remote data source. In case of a remote data
+         * source, the headers, query parameters and path variables from the request body will be
+         * used when fetching the data.
+         *
+         * @param artifactId Artifact id.
+         * @param queryInput Query input containing headers, query parameters, and path variables.
+         * @return The data object.
+         * @throws IOException if the data could not be stored.
+         */
+        @PostMapping("{id}/data")
+        @Operation(summary = "Get data by artifact id with query input")
+        @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
+        public ResponseEntity<StreamingResponseBody> getData(
+                @Valid @PathVariable(name = "id") final UUID artifactId,
+                @RequestBody(required = false) final QueryInput queryInput)
+                throws IOException, UnexpectedResponseException {
+            ValidationUtils.validateQueryInput(queryInput);
+            final var data =
+                    artifactSvc.getData(accessVerifier, dataReceiver, artifactId, CommunicationProtocol.MULTIPART, queryInput); // TODO
+            return returnData(artifactId, data);
+        }
+
+        private ResponseEntity<StreamingResponseBody> returnData(
+                final UUID artifactId, final InputStream data) {
+            final StreamingResponseBody body = outputStream -> {
+                final int blockSize = 1024;
+                int numBytesToWrite;
+                var buffer = new byte[blockSize];
+                while ((numBytesToWrite = data.read(buffer, 0, buffer.length)) != -1) {
+                    outputStream.write(buffer, 0, numBytesToWrite);
+                }
+
+                data.close();
+            };
+
+            final var outputHeader = new HttpHeaders();
+            outputHeader.set("Content-Disposition", "attachment;filename=" + artifactId.toString());
+
+            return ResponseEntity.ok()
+                    .headers(outputHeader)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(body);
+        }
+
+        /**
+         * Replace the data of an artifact.
+         *
+         * @param artifactId  The artifact whose data should be replaced.
+         * @param inputStream The new data.
+         * @return Http Status ok.
+         * @throws IOException if the data could not be stored.
+         */
+        @PutMapping(value = "{id}/data", consumes = "*/*")
+        public ResponseEntity<Void> putData(
+                @Valid @PathVariable(name = "id") final UUID artifactId,
+                @RequestBody final byte[] inputStream) throws IOException {
+            artifactSvc.setData(artifactId, new ByteArrayInputStream(inputStream));
+            return ResponseEntity.ok().build();
         }
     }
 
@@ -308,289 +413,6 @@ public final class ResourceControllers {
             }
 
             return model;
-        }
-    }
-
-    /**
-     * Offers the endpoints for managing requested resources.
-     */
-    @RequiredArgsConstructor
-    @RestController
-    @RequestMapping("/api/requests")
-    @Tag(name = ResourceNames.REQUESTS, description = ResourceDescriptions.REQUESTS)
-    public static class RequestedResourceController
-            extends BaseResourceController<RequestedResource, RequestedResourceDesc,
-            RequestedResourceView, ResourceService<RequestedResource, RequestedResourceDesc>> {
-
-        /**
-         * Service for notifying subscribers about an entity update.
-         */
-        private final @NonNull SubscriberNotificationService subscriberNotificationSvc;
-
-        /**
-         * Update requested resource details and notify subscribers.
-         *
-         * @param resourceId The id of the resource to be updated.
-         * @param desc       The new description of the resource.
-         * @return Response with code (No_Content) when the resource has been updated or response
-         * with code (201) if the resource has been updated and been moved to a new endpoint.
-         */
-        @Override
-        @PutMapping("{id}")
-        @Operation(summary = "Update a base resource by id")
-        @ApiResponses(value = {
-                @ApiResponse(responseCode = "201", description = "Created"),
-                @ApiResponse(responseCode = "204", description = "No Content")})
-        public ResponseEntity<Object> update(
-                @Valid @PathVariable(name = "id") final UUID resourceId,
-                @RequestBody final RequestedResourceDesc desc) {
-            final var resource = getService().update(resourceId, desc);
-
-            ResponseEntity<Object> response;
-            if (resource.getId().equals(resourceId)) {
-                // The resource was not moved
-                response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            } else {
-                // The resource has been moved
-                final var entity = getAssembler().toModel(resource);
-                final var headers = new HttpHeaders();
-                headers.setLocation(entity.getRequiredLink("self").toUri());
-
-                response = new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
-            }
-
-            // Notify subscribers on update event.
-            subscriberNotificationSvc.notifyOnUpdate(resource);
-
-            return response;
-        }
-
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
-        public final ResponseEntity<RequestedResourceView> create(
-                final RequestedResourceDesc desc) {
-            throw new MethodNotAllowed();
-        }
-    }
-
-    /**
-     * Offers the endpoints for managing agreements.
-     */
-    @RestController
-    @RequestMapping("/api/agreements")
-    @Tag(name = ResourceNames.AGREEMENTS, description = ResourceDescriptions.AGREEMENTS)
-    public static class AgreementController extends BaseResourceController<Agreement, AgreementDesc,
-            AgreementView, AgreementService> {
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
-        public final ResponseEntity<AgreementView> create(final AgreementDesc desc) {
-            throw new MethodNotAllowed();
-        }
-
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
-        public final ResponseEntity<Object> update(@Valid final UUID resourceId,
-                                                   final AgreementDesc desc) {
-            throw new MethodNotAllowed();
-        }
-
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
-        public final ResponseEntity<Void> delete(@Valid final UUID resourceId) {
-            throw new MethodNotAllowed();
-        }
-    }
-
-    /**
-     * Offers the endpoints for managing artifacts.
-     */
-    @RestController
-    @RequestMapping("/api/artifacts")
-    @Tag(name = ResourceNames.ARTIFACTS, description = ResourceDescriptions.ARTIFACTS)
-    @RequiredArgsConstructor
-    public static class ArtifactController
-            extends BaseResourceController<Artifact, ArtifactDesc, ArtifactView, ArtifactService> {
-
-        /**
-         * The service managing artifacts.
-         */
-        private final @NonNull ArtifactService artifactSvc;
-
-        /**
-         * The receiver for getting data from a remote source.
-         */
-        private final @NonNull BlockingArtifactReceiver dataReceiver;
-
-        /**
-         * The verifier for the data access.
-         */
-        private final @NonNull DataAccessVerifier accessVerifier;
-
-        /**
-         * Service for notifying subscribers about an entity update.
-         */
-        private final @NonNull SubscriberNotificationService subscriberNotificationSvc;
-
-        /**
-         * Update artifact details and notify subscribers.
-         *
-         * @param resourceId The id of the resource to be updated.
-         * @param desc       The new description of the resource.
-         * @return Response with code (No_Content) when the resource has been updated or response
-         * with code (201) if the resource has been updated and been moved to a new endpoint.
-         */
-        @Override
-        @PutMapping("{id}")
-        @Operation(summary = "Update a base resource by id")
-        @ApiResponses(value = {
-                @ApiResponse(responseCode = "201", description = "Created"),
-                @ApiResponse(responseCode = "204", description = "No Content")})
-        public ResponseEntity<Object> update(
-                @Valid @PathVariable(name = "id") final UUID resourceId,
-                @RequestBody final ArtifactDesc desc) {
-            final var resource = getService().update(resourceId, desc);
-
-            ResponseEntity<Object> response;
-            if (resource.getId().equals(resourceId)) {
-                // The resource was not moved
-                response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            } else {
-                // The resource has been moved
-                final var entity = getAssembler().toModel(resource);
-                final var headers = new HttpHeaders();
-                headers.setLocation(entity.getRequiredLink("self").toUri());
-
-                response = new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
-            }
-
-            // Notify subscribers on update event.
-            subscriberNotificationSvc.notifyOnUpdate(resource);
-
-            return response;
-        }
-
-        /**
-         * Returns data from the local database or a remote data source. In case of a remote data
-         * source, all headers and query parameters included in this request will be used for the
-         * request to the backend.
-         *
-         * @param artifactId   Artifact id.
-         * @param download     If the data should be forcefully downloaded.
-         * @param agreementUri The agreement which should be used for access control.
-         * @param params       All request parameters.
-         * @param headers      All request headers.
-         * @param request      The current http request.
-         * @return The data object.
-         * @throws IOException if the data cannot be received.
-         */
-        @GetMapping("{id}/data/**")
-        @Operation(summary = "Get data by artifact id with query input")
-        @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-        public ResponseEntity<StreamingResponseBody> getData(
-                @Valid @PathVariable(name = "id") final UUID artifactId,
-                @RequestParam(required = false) final Boolean download,
-                @RequestParam(required = false) final URI agreementUri,
-                @RequestParam(required = false) final Map<String, String> params,
-                @RequestHeader final Map<String, String> headers,
-                final HttpServletRequest request) throws IOException {
-            headers.remove("authorization");
-            headers.remove("host");
-
-            final var queryInput = new QueryInput();
-            queryInput.setParams(params);
-            queryInput.setHeaders(headers);
-
-            final var searchString = request.getContextPath() + "/data";
-            var optional = request.getRequestURI().substring(
-                    request.getRequestURI().indexOf(searchString) + searchString.length());
-            if ("/**".equals(optional)) {
-                optional = "";
-            }
-
-            if (!optional.isBlank()) {
-                queryInput.setOptional(optional);
-            }
-
-            /*
-                If no agreement information has been passed the connector needs
-                to check if the data access is restricted by the usage control.
-             */
-            // TODO: Check what happens when this connector is the provider and one of its provided
-            //  agreements is passed.
-            final var data = (agreementUri == null)
-                    ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput)
-                    : artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
-                    new RetrievalInformation(agreementUri, download,
-                            queryInput));
-
-            return returnData(artifactId, data);
-        }
-
-        /**
-         * Returns data from the local database or a remote data source. In case of a remote data
-         * source, the headers, query parameters and path variables from the request body will be
-         * used when fetching the data.
-         *
-         * @param artifactId Artifact id.
-         * @param queryInput Query input containing headers, query parameters, and path variables.
-         * @return The data object.
-         * @throws IOException                 if the data could not be stored.
-         * @throws UnexpectedResponseException if ids message retrieval failed due to unexpected
-         *                                     response message.
-         */
-        @PostMapping("{id}/data")
-        @Operation(summary = "Get data by artifact id with query input")
-        @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-        public ResponseEntity<StreamingResponseBody> getData(
-                @Valid @PathVariable(name = "id") final UUID artifactId,
-                @RequestBody(required = false) final QueryInput queryInput)
-                throws IOException, UnexpectedResponseException {
-            ValidationUtils.validateQueryInput(queryInput);
-            final var data =
-                    artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput);
-            return returnData(artifactId, data);
-        }
-
-        private ResponseEntity<StreamingResponseBody> returnData(
-                final UUID artifactId, final InputStream data) {
-            final StreamingResponseBody body = outputStream -> {
-                final int blockSize = 1024;
-                int numBytesToWrite;
-                var buffer = new byte[blockSize];
-                while ((numBytesToWrite = data.read(buffer, 0, buffer.length)) != -1) {
-                    outputStream.write(buffer, 0, numBytesToWrite);
-                }
-
-                data.close();
-            };
-
-            final var outputHeader = new HttpHeaders();
-            outputHeader.set("Content-Disposition", "attachment;filename=" + artifactId.toString());
-
-            return ResponseEntity.ok()
-                    .headers(outputHeader)
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(body);
-        }
-
-        /**
-         * Replace the data of an artifact.
-         *
-         * @param artifactId  The artifact whose data should be replaced.
-         * @param inputStream The new data.
-         * @return Http Status ok.
-         * @throws IOException if the data could not be stored.
-         */
-        @PutMapping(value = "{id}/data", consumes = "*/*")
-        public ResponseEntity<Void> putData(
-                @Valid @PathVariable(name = "id") final UUID artifactId,
-                @RequestBody final byte[] inputStream) throws IOException {
-            artifactSvc.setData(artifactId, new ByteArrayInputStream(inputStream));
-            return ResponseEntity.ok().build();
         }
     }
 }

@@ -15,6 +15,16 @@
  */
 package io.dataspaceconnector.service.message.handler;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.RejectionReason;
@@ -26,12 +36,15 @@ import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
+import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.service.EntityUpdateService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.xml.datatype.DatatypeFactory;
@@ -47,7 +60,11 @@ import java.util.GregorianCalendar;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class ResourceUpdateMessageHandlerTest {
+
+    @MockBean
+    private IdscpServerRoute idscpServerRoute;
 
     @SpyBean
     EntityUpdateService updateService;

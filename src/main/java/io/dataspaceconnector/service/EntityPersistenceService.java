@@ -36,6 +36,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jose4j.base64url.Base64;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -58,6 +59,12 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class EntityPersistenceService {
+
+    /**
+     * The HTTP base URL of the application.
+     */
+    @Value("${application.http.base-url}")
+    private String baseUrl;
 
     /**
      * Service for contract agreements.
@@ -131,7 +138,7 @@ public class EntityPersistenceService {
         UUID agreementUuid = null;
         try {
             // Get base URL of application and path to agreements API.
-            final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
+            final var applicationBaseUrl = getApplicationBaseUrl();
             final var path = ResourceControllers.AgreementController.class.getAnnotation(
                     RequestMapping.class).value()[0];
 
@@ -139,7 +146,7 @@ public class EntityPersistenceService {
             agreementUuid = agreementService.create(new AgreementDesc()).getId();
 
             // Construct ID of contract agreement (URI) using base URL, path and the UUID.
-            final var agreementId = URI.create(baseUrl + path + "/" + agreementUuid);
+            final var agreementId = URI.create(applicationBaseUrl + path + "/" + agreementUuid);
 
             // Build the contract agreement using the constructed ID
             final var agreement = contractManager.buildContractAgreement(request,
@@ -178,6 +185,24 @@ public class EntityPersistenceService {
 
             throw new PersistenceException("Could not store contract agreement.", e);
         }
+    }
+
+    /**
+     * Returns the connector's base URL. As no request context is available to obtain
+     * the application's base URL from when communicating via IDSCPv2, this method then
+     * defaults to using the base URL set in application.properties.
+     *
+     * @return the base URL.
+     */
+    private String getApplicationBaseUrl() {
+        String applicationBaseUrl;
+        try {
+            applicationBaseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
+        } catch (IllegalStateException e) {
+            //communicating via IDSCPv2, no current request context available
+            applicationBaseUrl = this.baseUrl;
+        }
+        return applicationBaseUrl;
     }
 
     /**

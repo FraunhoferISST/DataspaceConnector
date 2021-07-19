@@ -1,0 +1,17 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="connectorUnavailableSender">
+
+        <onException>
+            <exception>de.fraunhofer.ids.messaging.core.config.ConfigUpdateException</exception>
+            <to uri="direct:handleConfigUpdateException"/>
+        </onException>
+
+        <from uri="direct:connectorUnavailableSender"/>
+        <process ref="ConfigurationUpdater"/>
+        <process ref="ConnectorUpdateMessageBuilder"/>
+        <process ref="RequestWithConnectorPayloadPreparer"/>
+        <toD uri="idscp2client://${exchangeProperty.recipient}?awaitResponse=true&amp;sslContextParameters=#serverSslContext&amp;useIdsMessages=true"/>
+        <process ref="ResponseToDtoConverter"/>
+
+    </route>
+</routes>

@@ -109,6 +109,7 @@
 		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
 		<camel.version>3.11.0</camel.version>
+		<idscp2.version>0.5.0</idscp2.version>
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
@@ -153,6 +154,18 @@
 				<exclusion>
 					<groupId>log4j</groupId>
 					<artifactId>log4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>io.jsonwebtoken</groupId>
+					<artifactId>jjwt</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcpkix-fips</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.bitbucket.b_c</groupId>
+					<artifactId>jose4j</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -397,6 +410,11 @@
 			<version>${camel.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>de.fhg.aisec.ids</groupId>
+			<artifactId>camel-idscp2</artifactId>
+			<version>${idscp2.version}</version>
+		</dependency>
 
 	</dependencies>
 
@@ -455,7 +473,6 @@
 				<filtering>true</filtering>
 				<includes>
 					<include>conf/**/*.*</include>
-					<include>camel/**</include>
 					<include>log4j2.xml</include>
 					<include>application.properties</include>
 					<include>banner.txt</include>

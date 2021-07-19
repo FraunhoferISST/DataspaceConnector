@@ -15,6 +15,12 @@
  */
 package io.dataspaceconnector.service.message.handler;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import javax.xml.datatype.DatatypeFactory;
+
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
@@ -29,6 +35,7 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import de.fraunhofer.ids.messaging.response.MessageResponse;
+import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.ArtifactDesc;
 import io.dataspaceconnector.model.ArtifactFactory;
@@ -43,6 +50,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.annotation.DirtiesContext;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -54,8 +62,12 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
-class DescriptionRequestHandlerTest {
+ @SpringBootTest
+ @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+ class DescriptionRequestHandlerTest {
+
+     @MockBean
+     private IdscpServerRoute idscpServerRoute;
 
     @Autowired
     DescriptionResponseService messageService;

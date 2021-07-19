@@ -13,6 +13,12 @@ All notable changes to this project will be documented in this file.
 - Send `ArtifactRequest` and `ArtifactResponse` messages to the Clearing House.
 - Allow artifacts pointing to backend systems to be created with both BasicAuth and API key
   authentication.
+- Integrate IDSCPv2 for IDS communication.
+  * Add parameter for protocol to all controller endpoints for IDS messages
+    (`MULTIPART` or `IDSCP2`).
+  * Add property `idscp2.enabled` for enabling and disabling IDSCPv2 server.
+  * Add properties for configuring keystore and truststore for IDSCPv2.
+  * When enabling IDSCPv2, a valid IDS certificate is required!
 
 ### Changed
 - Replace IDS Connector Framework v5.0.4 by IDS Messaging Services v2.0.0.

@@ -1,0 +1,17 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="artifactRequestSender">
+
+        <onException>
+            <exception>io.dataspaceconnector.camel.exception.InvalidResponseException</exception>
+            <process ref="PolicyRestrictionProcessor"/>
+        </onException>
+
+        <from uri="direct:artifactRequestSender"/>
+        <process ref="ArtifactRequestMessageBuilder"/>
+        <process ref="RequestWithoutPayloadPreparer"/>
+        <toD uri="idscp2client://${exchangeProperty.recipient}?awaitResponse=true&amp;sslContextParameters=#serverSslContext&amp;useIdsMessages=true"/>
+        <process ref="ResponseToDtoConverter"/>
+        <process ref="ArtifactResponseValidator"/>
+
+    </route>
+</routes>

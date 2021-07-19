@@ -13,103 +13,82 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-//package io.dataspaceconnector.controller.resources;
-//
-//import java.net.URI;
-//import java.util.UUID;
-//
-//import io.dataspaceconnector.exceptions.ResourceNotFoundException;
-//import io.dataspaceconnector.model.Artifact;
-//import io.dataspaceconnector.model.QueryInput;
-//import io.dataspaceconnector.services.ArtifactRetriever;
-//import io.dataspaceconnector.services.BlockingArtifactReceiver;
-//import io.dataspaceconnector.services.resources.ArtifactService;
-//import io.dataspaceconnector.services.usagecontrol.PolicyVerifier;
-//import io.dataspaceconnector.services.usagecontrol.VerificationResult;
-//import io.dataspaceconnector.controller.resource.view.ArtifactViewAssembler;
-//import org.junit.jupiter.api.Test;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.Mockito;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.boot.test.mock.mockito.MockBean;
-//import org.springframework.data.web.PagedResourcesAssembler;
-//import org.springframework.http.HttpStatus;
-//
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//import static org.junit.jupiter.api.Assertions.assertThrows;
-//
-//@SpringBootTest(classes = {ResourceControllers.ArtifactController.class})
-//class ArtifactControllerTest {
-//    @MockBean
-//    ArtifactService service;
-//
-//    @MockBean
-//    private ArtifactViewAssembler assembler;
-//
-//    @MockBean
-//    private PagedResourcesAssembler<Artifact> pagedAssembler;
-//
-//    @MockBean
-//    private PolicyVerifier<URI> policyVerifier;
-//
-//    @MockBean
-//    private ArtifactRetriever artifactRetriever;
-//
-//    @Autowired
-//    @InjectMocks
-//    ResourceControllers.ArtifactController controller;
-//
-//    @Test
-//    public void getData_null_throwIllegalArgumentException() {
-//        /* ARRANGE */
-//        Mockito.when(policyVerifier.verify(Mockito.any())).thenReturn(VerificationResult.ALLOWED);
-//        Mockito.when(service.getData(policyVerifier, artifactRetriever, Mockito.isNull(), (QueryInput) Mockito.any()))
-//                .thenThrow(IllegalArgumentException.class);
-//
-//        /* ACT && ASSERT */
-//        assertThrows(IllegalArgumentException.class, () -> controller.getData(null,
-//                new QueryInput()));
-//    }
-//
-//    @Test
-//    public void getData_unknownId_throwResourceNotFoundException() {
-//        /* ARRANGE */
-//        final var unknownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
-//        Mockito.when(service.getData(Mockito.eq(unknownUuid), (QueryInput) Mockito.any()))
-//                .thenThrow(ResourceNotFoundException.class);
-//
-//        /* ACT */
-//        assertThrows(ResourceNotFoundException.class, () -> controller.getData(unknownUuid,
-//                new QueryInput()));
-//    }
-//
-//    @Test
-//    public void getData_knownId_returnData() {
-//        /* ARRANGE */
-//        final var expected = "TEST";
-//        final var knownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
-//        Mockito.when(service.getData(Mockito.eq(knownUuid), (QueryInput) Mockito.any())).thenReturn(expected);
-//
-//        /* ACT */
-//        final var result = controller.getData(knownUuid, new QueryInput());
-//
-//        /* ASSERT */
-//        assertEquals(expected, result.getBody());
-//    }
-//
-//    @Test
-//    public void getData_knownId_hasStatusCode200() {
-//        /* ARRANGE */
-//        final var expected = "TEST";
-//        final var knownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
-//        Mockito.when(service.getData(Mockito.eq(knownUuid), (QueryInput) Mockito.any())).thenReturn(expected);
-//
-//        /* ACT */
-//        final var result = controller.getData(knownUuid, new QueryInput());
-//
-//        /* ASSERT */
-//        assertEquals(HttpStatus.OK.value(), result.getStatusCodeValue());
-//    }
-//}
+package io.dataspaceconnector.controller.resource;
+
+import de.fraunhofer.iais.eis.DynamicAttributeToken;
+import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
+import de.fraunhofer.iais.eis.TokenFormat;
+import io.dataspaceconnector.controller.resource.view.ArtifactView;
+import io.dataspaceconnector.model.Artifact;
+import io.dataspaceconnector.model.ArtifactDesc;
+import io.dataspaceconnector.service.BlockingArtifactReceiver;
+import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.service.message.subscription.SubscriberNotificationService;
+import io.dataspaceconnector.service.resource.ArtifactService;
+import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+
+@SpringBootTest(classes = {ResourceControllers.ArtifactController.class})
+class ArtifactControllerTest {
+
+    @Autowired
+    ResourceControllers.ArtifactController controller;
+
+    @MockBean
+    private ConnectorService connectorService;
+
+    @MockBean
+    ArtifactService service;
+
+    @MockBean
+    BlockingArtifactReceiver dataReceiver;
+
+    @MockBean
+    DataAccessVerifier accessVerifier;
+
+    @MockBean
+    SubscriberNotificationService subscriberNotificationSvc;
+
+    @MockBean
+    RepresentationModelAssembler<Artifact, ArtifactView> modelAssembler;
+
+    @MockBean
+    PagedResourcesAssembler<Artifact> pagedResourcesAssembler;
+
+    @MockBean
+    private MockMvc mockMvc;
+
+    private final DynamicAttributeToken token = new DynamicAttributeTokenBuilder()
+            ._tokenValue_("token")
+            ._tokenFormat_(TokenFormat.JWT)
+            .build();
+
+    @SneakyThrows
+    @Test
+    public void update_validInput_throwIllegalArgumentException() {
+        /* ARRANGE */
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+        final var desc = new ArtifactDesc();
+
+        /* ACT */
+        final var result = mockMvc.perform(put("/api/artifacts")
+                .param("id", String.valueOf(UUID.randomUUID()))
+                .content(String.valueOf(desc))).andReturn();
+
+        /* ASSERT */
+        assertEquals(500, result.getResponse().getStatus());
+    }
+}

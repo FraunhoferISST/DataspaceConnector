@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.service.resource;
 
+import java.lang.reflect.Field;
+import java.net.URL;
+import java.util.UUID;
+
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.ArtifactDesc;
 import io.dataspaceconnector.model.ArtifactFactory;
@@ -32,10 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.lang.reflect.Field;
-import java.net.URL;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -193,6 +193,7 @@ class ArtifactServiceTest {
         assertThrows(IllegalArgumentException.class, () -> service.getData( null,
                 null,
                 null,
+                null,
                 queryInput));
     }
 
@@ -207,6 +208,7 @@ class ArtifactServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> service.getData(null,
                 null,
                 unknownUuid,
+                null,
                 (QueryInput) null));
     }
 

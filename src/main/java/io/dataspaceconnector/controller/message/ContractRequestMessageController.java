@@ -15,9 +15,19 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import java.net.URI;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+import javax.persistence.PersistenceException;
+
+import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;
+import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
@@ -39,6 +49,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.ExchangeBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,11 +62,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * This controller provides the endpoint for sending a contract request message and starting the
@@ -96,6 +104,16 @@ public class ContractRequestMessageController {
     private final @NonNull ArtifactDataDownloader artifactDataDownloader;
 
     /**
+     * Template for triggering Camel routes.
+     */
+    private final @NonNull ProducerTemplate template;
+
+    /**
+     * The CamelContext required for constructing the {@link ProducerTemplate}.
+     */
+    private final @NonNull CamelContext context;
+
+    /**
      * Starts a contract, metadata, and data exchange with an external connector.
      *
      * @param recipient The recipient.
@@ -103,6 +121,7 @@ public class ContractRequestMessageController {
      * @param artifacts List of requested artifacts by IDs.
      * @param download  download data directly after successful contract and description request.
      * @param ruleList  List of rules that should be used within a contract request.
+     * @param protocol The communication protocol to use.
      * @return The response entity.
      */
     @PostMapping("/contract")
@@ -127,44 +146,81 @@ public class ContractRequestMessageController {
             @Parameter(description = "Indicates whether the connector should automatically "
                     + "download data of an artifact.")
             @RequestParam("download") final boolean download,
+            @Parameter(description = "The protocol to use for IDS communication.")
+            @RequestParam("protocol") final CommunicationProtocol protocol,
             @Parameter(description = "List of ids rules with an artifact id as target.")
             @RequestBody final List<Rule> ruleList) {
-        try {
-            // Validates user input.
-            RuleUtils.validateRuleTarget(ruleList);
+        if (CommunicationProtocol.IDSCP2.equals(protocol)) {
+            UUID agreementId;
+            final var result = template.send("direct:contractRequestSender",
+                    ExchangeBuilder.anExchange(context)
+                            .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)
+                            .withProperty(ParameterUtils.RESOURCES_PARAM, resources)
+                            .withProperty(ParameterUtils.ARTIFACTS_PARAM, artifacts)
+                            .withProperty(ParameterUtils.DOWNLOAD_PARAM, download)
+                            .withProperty(ParameterUtils.RULE_LIST_PARAM, ruleList)
+                            .build());
 
-            // Initiate contract negotiation.
-            final var agreementId = negotiator.negotiate(recipient, ruleList);
-
-            // Download metadata.
-            downloadMetadata(recipient, resources, artifacts, download, agreementId);
-
-            // Download data, if requested.
-            if (download) {
-                artifactDataDownloader.download(recipient, artifacts, agreementId);
+            final var response = result.getIn().getBody(Response.class);
+            if (response != null) {
+                if (response.getHeader() instanceof RejectionMessage) {
+                    return new ResponseEntity<>(response.getBody(), HttpStatus.EXPECTATION_FAILED);
+                }
+                agreementId = result.getProperty(ParameterUtils.AGREEMENT_ID_PARAM, UUID.class);
+            } else {
+                final var responseEntity = result.getIn().getBody(ResponseEntity.class);
+                return Objects.requireNonNullElseGet(responseEntity,
+                        () -> new ResponseEntity<Object>("An internal server error occurred.",
+                                HttpStatus.INTERNAL_SERVER_ERROR));
             }
 
-            return respondWithCreatedAgreement(agreementId);
-        } catch (InvalidInputException exception) {
-            // If the input rules are malformed.
-            return ControllerUtils.respondInvalidInput(exception);
-        } catch (ConstraintViolationException | RdfBuilderException exception) {
-            // If contract request could not be built.
-            return ControllerUtils.respondFailedToBuildContractRequest(exception);
-        } catch (PersistenceException exception) {
-            // If metadata, data, or contract agreement could not be stored.
-            return ControllerUtils.respondFailedToStoreEntity(exception);
-        } catch (MessageException exception) {
-            return ControllerUtils.respondIdsMessageFailed(exception);
-        } catch (MessageResponseException | IllegalArgumentException e) {
-            // If the response message is invalid or malformed.
-            return ControllerUtils.respondReceivedInvalidResponse(e);
-        } catch (ContractException e) {
-            // If the contract agreement is invalid.
-            return ControllerUtils.respondNegotiationAborted();
-        } catch (UnexpectedResponseException e) {
-            // If the response is not as expected.
-            return ControllerUtils.respondWithContent(e.getContent());
+            // Return response entity containing the locations of the contract agreement, the
+            // downloaded resources, and the downloaded data.
+
+            final var entity = agreementAsm.toModel(agreementService.get(agreementId));
+
+            final var headers = new HttpHeaders();
+            headers.setLocation(entity.getRequiredLink("self").toUri());
+
+            return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
+        } else {
+            try {
+                // Validates user input.
+                RuleUtils.validateRuleTarget(ruleList);
+
+                // Initiate contract negotiation.
+                final var agreementId = negotiator.negotiate(recipient, ruleList);
+
+                // Download metadata.
+                downloadMetadata(recipient, resources, artifacts, download, agreementId);
+
+                // Download data, if requested.
+                if (download) {
+                    artifactDataDownloader.download(recipient, artifacts, agreementId);
+                }
+
+                return respondWithCreatedAgreement(agreementId);
+            } catch (InvalidInputException exception) {
+                // If the input rules are malformed.
+                return ControllerUtils.respondInvalidInput(exception);
+            } catch (ConstraintViolationException | RdfBuilderException exception) {
+                // If contract request could not be built.
+                return ControllerUtils.respondFailedToBuildContractRequest(exception);
+            } catch (PersistenceException exception) {
+                // If metadata, data, or contract agreement could not be stored.
+                return ControllerUtils.respondFailedToStoreEntity(exception);
+            } catch (MessageException exception) {
+                return ControllerUtils.respondIdsMessageFailed(exception);
+            } catch (MessageResponseException | IllegalArgumentException e) {
+                // If the response message is invalid or malformed.
+                return ControllerUtils.respondReceivedInvalidResponse(e);
+            } catch (ContractException e) {
+                // If the contract agreement is invalid.
+                return ControllerUtils.respondNegotiationAborted();
+            } catch (UnexpectedResponseException e) {
+                // If the response is not as expected.
+                return ControllerUtils.respondWithContent(e.getContent());
+            }
         }
     }
 
@@ -184,4 +240,5 @@ public class ContractRequestMessageController {
 
         return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
     }
+
 }

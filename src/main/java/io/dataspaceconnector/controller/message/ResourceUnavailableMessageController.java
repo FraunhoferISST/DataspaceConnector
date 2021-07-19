@@ -15,7 +15,14 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.util.Objects;
+import java.util.Optional;
+
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
+import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.ids.messaging.common.DeserializeException;
 import de.fraunhofer.ids.messaging.common.SerializeException;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
@@ -28,6 +35,9 @@ import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
+import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.util.ParameterUtils;
+import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
@@ -38,6 +48,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.ExchangeBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,11 +59,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.util.Optional;
 
 /**
  * Controller for sending ids resource unavailable messages.
@@ -71,10 +80,21 @@ public class ResourceUnavailableMessageController {
     private final @NonNull ConnectorService connectorService;
 
     /**
+     * Template for triggering Camel routes.
+     */
+    private final @NonNull ProducerTemplate template;
+
+    /**
+     * The CamelContext required for constructing the {@link ProducerTemplate}.
+     */
+    private final @NonNull CamelContext context;
+
+    /**
      * Sending an ids resource unavailable message with a resource as payload.
      *
      * @param recipient  The url of the recipient.
      * @param resourceId The resource id.
+     * @param protocol   The communication protocol to use.
      * @return The response message or an error.
      */
     @PostMapping("/resource/unavailable")
@@ -94,33 +114,59 @@ public class ResourceUnavailableMessageController {
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The resource id.", required = true)
-            @RequestParam("resourceId") final URI resourceId) {
-        Optional<MessageContainer<?>> response = Optional.empty();
-        try {
-            final var resource = connectorService.getOfferedResourceById(resourceId);
-            if (resource.isEmpty()) {
-                return ControllerUtils.respondResourceNotFound(resourceId);
+            @RequestParam("resourceId") final URI resourceId,
+            @Parameter(description = "The protocol to use for IDS communication.")
+            @RequestParam("protocol") final CommunicationProtocol protocol) {
+        if (CommunicationProtocol.IDSCP2.equals(protocol)) {
+            final var result = template.send("direct:resourceUnavailableSender",
+                    ExchangeBuilder.anExchange(context)
+                            .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)
+                            .withProperty(ParameterUtils.RESOURCE_ID_PARAM, resourceId)
+                            .build());
+
+            final var response = result.getIn().getBody(Response.class);
+            if (response != null) {
+                if (response.getHeader() instanceof RejectionMessage) {
+                    return new ResponseEntity<>(response.getBody(), HttpStatus.EXPECTATION_FAILED);
+                }
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                final var responseEntity = result.getIn().getBody(ResponseEntity.class);
+                return Objects.requireNonNullElseGet(responseEntity,
+                        () -> new ResponseEntity<Object>("An internal server error occurred.",
+                                HttpStatus.INTERNAL_SERVER_ERROR));
+            }
+        } else {
+            Optional<MessageContainer<?>> response = Optional.empty();
+            try {
+                final var resource = connectorService.getOfferedResourceById(resourceId);
+                if (resource.isEmpty()) {
+                    return ControllerUtils.respondResourceNotFound(resourceId);
+                }
+
+                // Send the resource unavailable message.
+                response = messageService.sendResourceUnavailableMessage(recipient, resource.get());
+            } catch (SocketTimeoutException exception) {
+                // If a timeout has occurred.
+                return ControllerUtils.respondConnectionTimedOut(exception);
+            } catch (MultipartParseException | UnknownResponseException | ShaclValidatorException
+                    | DeserializeException | UnexpectedPayloadException
+                    | ClaimsException exception) {
+                // If the response was invalid.
+                return ControllerUtils.respondReceivedInvalidResponse(exception);
+            } catch (RejectionException ignored) {
+                // If the response is a rejection message. Error is ignored.
+            } catch (SendMessageException | SerializeException
+                    | DapsTokenManagerException exception) {
+                // If the message could not be built or sent.
+                return ControllerUtils.respondMessageSendingFailed(exception);
+            } catch (NoTemplateProvidedException | IOException exception) {
+                // If any other error occurred.
+                return ControllerUtils.respondIdsMessageFailed(exception);
             }
 
-            // Send the resource unavailable message.
-            response = messageService.sendResourceUnavailableMessage(recipient, resource.get());
-        } catch (SocketTimeoutException exception) {
-            // If a timeout has occurred.
-            return ControllerUtils.respondConnectionTimedOut(exception);
-        } catch (MultipartParseException | UnknownResponseException | ShaclValidatorException
-                | DeserializeException | UnexpectedPayloadException | ClaimsException exception) {
-            // If the response was invalid.
-            return ControllerUtils.respondReceivedInvalidResponse(exception);
-        } catch (RejectionException ignored) {
-            // If the response is a rejection message. Error is ignored.
-        } catch (SendMessageException | SerializeException | DapsTokenManagerException exception) {
-            // If the message could not be built or sent.
-            return ControllerUtils.respondMessageSendingFailed(exception);
-        } catch (NoTemplateProvidedException | IOException exception) {
-            // If any other error occurred.
-            return ControllerUtils.respondIdsMessageFailed(exception);
+            return messageService.validateResponse(response,
+                    MessageProcessedNotificationMessageImpl.class);
         }
-        return messageService.validateResponse(response,
-                MessageProcessedNotificationMessageImpl.class);
     }
 }

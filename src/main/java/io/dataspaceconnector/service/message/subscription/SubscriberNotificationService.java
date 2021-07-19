@@ -16,6 +16,7 @@
 package io.dataspaceconnector.service.message.subscription;
 
 import de.fraunhofer.iais.eis.Resource;
+import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.controller.util.Event;
 import io.dataspaceconnector.controller.util.Notification;
 import io.dataspaceconnector.model.AbstractEntity;
@@ -214,7 +215,7 @@ public class SubscriberNotificationService {
         if (entity instanceof Artifact) {
             final var id = entity.getId();
             try {
-                return artifactSvc.getData(accessVerifier, dataReceiver, id, new QueryInput());
+                return artifactSvc.getData(accessVerifier, dataReceiver, id, CommunicationProtocol.MULTIPART, new QueryInput()); // TODO
             } catch (IOException exception) {
                 log.debug("Failed to retrieve data. [exception=({})]", exception.getMessage());
             }

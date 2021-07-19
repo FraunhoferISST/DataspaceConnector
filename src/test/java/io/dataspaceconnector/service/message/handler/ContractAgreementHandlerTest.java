@@ -15,6 +15,16 @@
  */
 package io.dataspaceconnector.service.message.handler;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -30,6 +40,7 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
+import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.EntityUpdateService;
@@ -40,17 +51,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -59,7 +61,11 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(properties = {"clearing.house.url=https://ch-ids.aisec.fraunhofer.de/logs/messages/"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class ContractAgreementHandlerTest {
+
+    @MockBean
+    private IdscpServerRoute idscpServerRoute;
 
     @Autowired
     ContractAgreementHandler handler;
@@ -182,7 +188,7 @@ class ContractAgreementHandlerTest {
 
     @SneakyThrows
     @Test
-    public void handleMessage_updatingAgreementFails_returnBadParametersResponse() {
+    public void handleMessage_updatingAgreementFails_returnInternalRecipientErrorResponse() {
         /* ARRANGE */
         final var message = new ContractAgreementMessageBuilder()
                 ._senderAgent_(URI.create("https://localhost:8080"))
@@ -208,7 +214,7 @@ class ContractAgreementHandlerTest {
                                 new ObjectMapper()));
 
         /* ASSERT */
-        assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, result.getRejectionMessage().getRejectionReason());
     }
 
     @SneakyThrows

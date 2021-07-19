@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Contains until classes for REST controllers.
+ * Contains utility classes for controllers.
  */
 package io.dataspaceconnector.controller.util;
