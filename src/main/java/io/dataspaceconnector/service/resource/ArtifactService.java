@@ -144,7 +144,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * exist.
      * @throws IllegalArgumentException                                  if any of the parameters
      * is null.
-     * @throws IOException                                               if IO errors occurr.
+     * @throws IOException                                               if IO errors occur.
      */
     public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
