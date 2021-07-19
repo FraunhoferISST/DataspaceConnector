@@ -107,7 +107,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
         final var config = super.update(entityId, desc);
         try {
             final var activeConfig = findActiveConfig();
-            if(activeConfig.isPresent()
+            if (activeConfig.isPresent()
                 && activeConfig.get().getId().equals(config.getId())) {
                 reload(config.getId());
             }
