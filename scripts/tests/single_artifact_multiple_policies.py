@@ -24,10 +24,10 @@ import sys
 
 
 providerUrl = "http://localhost:8080"
-consumerUrl = "http://localhost:8080"
+consumerUrl = "http://localhost:8081"
 
-provider_alias = providerUrl
-consumer_alias = consumerUrl
+provider_alias = "http://provider-dataspace-connector"
+consumer_alias = "http://consumer-dataspace-connector"
 
 
 def main(argv):
@@ -57,7 +57,7 @@ artifact = provider.create_artifact()
 contract = provider.create_contract()
 notification_rule = provider.create_rule(
     data={
-        "value":"""{
+        "value": """{
         "@context" : {
             "ids" : "http://w3id.org/idsa/core/",
             "idsc" : "http://w3id.org/idsa/code/"
@@ -112,7 +112,7 @@ notification_rule = provider.create_rule(
     }
 )
 count_rule = provider.create_rule(
-    data= {
+    data={
         "value": """{
         "@context" : {
             "ids" : "http://w3id.org/idsa/core/",
@@ -172,28 +172,32 @@ consumer = IdsApi(consumerUrl)
 
 ##
 catalogResponse = consumer.descriptionRequest(provider_alias + "/api/ids/data", catalog)
-obj = catalogResponse['ids:offeredResource'][0]
-resourceId = obj['@id']
+obj = catalogResponse["ids:offeredResource"][0]
+resourceId = obj["@id"]
 pprint.pprint(resourceId)
-contract = obj['ids:contractOffer'][0]
-contractId = contract['@id']
+contract = obj["ids:contractOffer"][0]
+contractId = contract["@id"]
 pprint.pprint(contractId)
-representation = obj['ids:representation'][0]
-artifact = representation['ids:instance'][0]
-artifactId = artifact['@id']
+representation = obj["ids:representation"][0]
+artifact = representation["ids:instance"][0]
+artifactId = artifact["@id"]
 pprint.pprint(artifactId)
 
 ##
-contractResponse = consumer.descriptionRequest(provider_alias + "/api/ids/data", contractId)
-notify = contractResponse['ids:permission'][0]
-notify['ids:target'] = artifactId
+contractResponse = consumer.descriptionRequest(
+    provider_alias + "/api/ids/data", contractId
+)
+notify = contractResponse["ids:permission"][0]
+notify["ids:target"] = artifactId
 
-count = contractResponse['ids:permission'][1]
-count['ids:target'] = artifactId
+count = contractResponse["ids:permission"][1]
+count["ids:target"] = artifactId
 
 # Accept both rules
 body = [notify, count]
-response = consumer.contractRequest(provider_alias + "/api/ids/data", resourceId, artifactId, True, body)
+response = consumer.contractRequest(
+    provider_alias + "/api/ids/data", resourceId, artifactId, True, body
+)
 pprint.pprint(response)
 
 exit(0)

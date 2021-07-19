@@ -24,33 +24,50 @@ import os
 requests.packages.urllib3.disable_warnings()
 
 s = requests.Session()
-s.auth = ('admin', 'password')
+s.auth = ("admin", "password")
 s.verify = False
 
 ####################################################################################################
 # PROVIDER (running on port 8080)                                                                  #
 ####################################################################################################
 
+
 def create_catalog():
-    return s.post("https://localhost:8080/api/catalogs", json={}).headers['Location']
+    return s.post("https://localhost:8080/api/catalogs", json={}).headers["Location"]
+
 
 def create_offered_resource():
-    return s.post("https://localhost:8080/api/offers", json={}).headers['Location']
+    return s.post("https://localhost:8080/api/offers", json={}).headers["Location"]
+
 
 def create_representation():
-    return s.post("https://localhost:8080/api/representations", json={}).headers['Location']
+    return s.post("https://localhost:8080/api/representations", json={}).headers[
+        "Location"
+    ]
+
 
 def create_local_artifact():
-    return s.post("https://localhost:8080/api/artifacts", json={"value": "SOME LONG VALUE"}).headers['Location']
+    return s.post(
+        "https://localhost:8080/api/artifacts", json={"value": "SOME LONG VALUE"}
+    ).headers["Location"]
+
 
 def create_remote_artifact():
-    return s.post("https://localhost:8080/api/artifacts", json={"accessUrl": "https://www.google.de/"}).headers['Location']
+    return s.post(
+        "https://localhost:8080/api/artifacts",
+        json={"accessUrl": "https://www.google.de/"},
+    ).headers["Location"]
+
 
 def create_contract():
-    return s.post("https://localhost:8080/api/contracts", json={}).headers['Location']
+    return s.post("https://localhost:8080/api/contracts", json={}).headers["Location"]
+
 
 def create_usage_notification_rule():
-    return s.post("https://localhost:8080/api/rules", json={'value': """{
+    return s.post(
+        "https://localhost:8080/api/rules",
+        json={
+            "value": """{
         "@context" : {
             "ids" : "https://w3id.org/idsa/core/",
             "idsc" : "https://w3id.org/idsa/code/"
@@ -101,10 +118,16 @@ def create_usage_notification_rule():
           ]
         }
       ]
-    }"""}).headers['Location']
+    }"""
+        },
+    ).headers["Location"]
+
 
 def create_n_times_usage_rule():
-    return s.post("https://localhost:8080/api/rules", json={'value': """{
+    return s.post(
+        "https://localhost:8080/api/rules",
+        json={
+            "value": """{
         "@context" : {
             "ids" : "https://w3id.org/idsa/core/",
             "idsc" : "https://w3id.org/idsa/code/"
@@ -144,25 +167,34 @@ def create_n_times_usage_rule():
           }
         }
       ]
-    }"""}).headers['Location']
+    }"""
+        },
+    ).headers["Location"]
+
 
 def add_resource_to_catalog(catalog, resource):
     s.post(catalog + "/offers", json=[resource])
 
+
 def add_catalog_to_resource(resource, catalog):
     s.post(resource + "/catalogs", json=[catalog])
+
 
 def add_representation_to_resource(resource, representation):
     s.post(resource + "/representations", json=[representation])
 
+
 def add_artifact_to_representation(representation, artifact):
     s.post(representation + "/artifacts", json=[artifact])
+
 
 def add_contract_to_resource(resource, contract):
     s.post(resource + "/contracts", json=[contract])
 
+
 def add_rule_to_contract(contract, rule):
     s.post(contract + "/rules", json=[rule])
+
 
 # for i in tqdm.tqdm(range(500)):
 catalog = create_catalog()
@@ -196,58 +228,63 @@ add_rule_to_contract(contract2, count_rule)
 
 provider = "https://localhost:8080/api/ids/data"
 
+
 def descriptionRequest(recipient, elementId):
     params = {}
     if recipient is not None:
-        params['recipient'] = recipient
+        params["recipient"] = recipient
     if elementId is not None:
-        params['elementId'] = elementId
+        params["elementId"] = elementId
 
     return s.post("https://localhost:8081/api/ids/description", params=params)
+
 
 def contractRequest(recipient, resourceId, artifactId, download, contract):
     params = {}
     if recipient is not None:
-        params['recipient'] = recipient
+        params["recipient"] = recipient
     if resourceId is not None:
-        params['resourceIds'] = resourceId
+        params["resourceIds"] = resourceId
     if artifactId is not None:
-        params['artifactIds'] = artifactId
+        params["artifactIds"] = artifactId
     if download is not None:
-        params['download'] = download
+        params["download"] = download
 
-    return s.post("https://localhost:8081/api/ids/contract", params=params, json=contract)
+    return s.post(
+        "https://localhost:8081/api/ids/contract", params=params, json=contract
+    )
+
 
 response = descriptionRequest(provider, catalog)
 catalogResponse = json.loads(response.text)
 
-obj = catalogResponse['ids:offeredResource'][0]
-resourceId1 = obj['@id']
-contract = obj['ids:contractOffer'][0]
-contractId = contract['@id']
-representation = obj['ids:representation'][0]
-artifact = representation['ids:instance'][0]
-artifactId1 = artifact['@id']
+obj = catalogResponse["ids:offeredResource"][0]
+resourceId1 = obj["@id"]
+contract = obj["ids:contractOffer"][0]
+contractId = contract["@id"]
+representation = obj["ids:representation"][0]
+artifact = representation["ids:instance"][0]
+artifactId1 = artifact["@id"]
 
 response = descriptionRequest(provider, contractId)
 contract1Response = json.loads(response.text)
 
-obj = catalogResponse['ids:offeredResource'][1]
-resourceId2 = obj['@id']
-contract = obj['ids:contractOffer'][0]
-contractId = contract['@id']
-representation = obj['ids:representation'][0]
-artifact = representation['ids:instance'][0]
-artifactId2 = artifact['@id']
+obj = catalogResponse["ids:offeredResource"][1]
+resourceId2 = obj["@id"]
+contract = obj["ids:contractOffer"][0]
+contractId = contract["@id"]
+representation = obj["ids:representation"][0]
+artifact = representation["ids:instance"][0]
+artifactId2 = artifact["@id"]
 
 response = descriptionRequest(provider, contractId)
 contract2Response = json.loads(response.text)
 
-notify = contract1Response['ids:permission'][0]
-notify['ids:target'] = artifactId1
+notify = contract1Response["ids:permission"][0]
+notify["ids:target"] = artifactId1
 
-count = contract2Response['ids:permission'][0]
-count['ids:target'] = artifactId2
+count = contract2Response["ids:permission"][0]
+count["ids:target"] = artifactId2
 
 # Accept both rules
 body = [notify, count]
