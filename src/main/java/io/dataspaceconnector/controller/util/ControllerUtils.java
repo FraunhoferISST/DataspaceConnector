@@ -233,16 +233,16 @@ public final class ControllerUtils {
     }
 
     /**
-     * Creates a ResponseEntity with status code 200 and a message indicating that no subscription
+     * Creates a ResponseEntity with status code 204 and a message indicating that no subscription
      * could be found for the targeted entity.
      *
      * @param target The target element.
-     * @return ResponseEntity with status code 200.
+     * @return ResponseEntity with status code 204.
      */
     public static ResponseEntity<Object> respondNoSubscriptionsFound(final URI target) {
         if (log.isDebugEnabled()) {
             log.debug("No subscriptions found. [target=({})]", target);
         }
-        return new ResponseEntity<>("No subscriptions found.", HttpStatus.OK);
+        return new ResponseEntity<>("No subscriptions found.", HttpStatus.NO_CONTENT);
     }
 }
