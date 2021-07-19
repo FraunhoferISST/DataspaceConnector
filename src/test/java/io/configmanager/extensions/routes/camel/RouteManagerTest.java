@@ -21,7 +21,6 @@ import de.fraunhofer.iais.eis.GenericEndpointBuilder;
 import de.fraunhofer.iais.eis.util.Util;
 import io.configmanager.extensions.routes.camel.exceptions.RouteCreationException;
 import io.dataspaceconnector.camel.config.CamelConfig;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,6 @@ import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Slf4j
 @SpringBootTest(classes = {RouteManager.class, RouteConfigurer.class, CamelConfig.class, DefaultCamelContext.class})
 public class RouteManagerTest {
     @Autowired

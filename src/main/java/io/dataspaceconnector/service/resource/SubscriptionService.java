@@ -28,7 +28,6 @@ import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.Utils;
 import lombok.NoArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,7 +39,6 @@ import java.util.Set;
 /**
  * Handles the basic logic for subscriptions.
  */
-@Log4j2
 @Service
 @NoArgsConstructor
 public class SubscriptionService extends BaseEntityService<Subscription, SubscriptionDesc> {
@@ -62,12 +60,6 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
      */
     @Autowired
     private RelationServices.OfferedResourceSubscriptionLinker offerSubLinker;
-
-    /**
-     * Service for linking requested resources and subscriptions.
-     */
-    @Autowired
-    private RelationServices.RequestedResourceSubscriptionLinker reqSubLinker;
 
     /**
      * Service for resolving database entities by id.

@@ -22,7 +22,6 @@ import java.util.UUID;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.repository.RequestedResourcesRepository;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**

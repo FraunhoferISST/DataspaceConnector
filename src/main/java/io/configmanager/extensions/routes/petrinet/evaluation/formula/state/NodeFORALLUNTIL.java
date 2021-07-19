@@ -19,7 +19,6 @@ import io.configmanager.extensions.routes.petrinet.model.Node;
 import io.configmanager.extensions.routes.petrinet.model.Place;
 import io.configmanager.extensions.routes.petrinet.simulator.PetriNetSimulator;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,6 @@ import java.util.List;
  * Evaluates to true, if on any possible path every place fulfills parameter1,
  * until a place fulfills parameter2.
  */
-@Log4j2
 @AllArgsConstructor
 public class NodeFORALLUNTIL implements StateFormula {
     /**

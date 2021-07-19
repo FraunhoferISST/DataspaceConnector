@@ -18,7 +18,6 @@ package io.configmanager.extensions.gui.api.controller;
 import io.configmanager.extensions.gui.api.GuiUtilApi;
 import io.configmanager.extensions.gui.api.service.GuiUtilService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
  * The api class offers the possibilities to provide other api's which could be needed.
  * As an example, enum values are supplied here via an api.
  */
-@Log4j2
 @RestController
 @RequestMapping("/api/configmanager")
 @Tag(name = "ConfigManager: GUI Utilities")

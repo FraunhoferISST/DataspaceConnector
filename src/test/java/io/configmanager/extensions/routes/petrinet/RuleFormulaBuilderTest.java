@@ -21,7 +21,6 @@ import de.fraunhofer.iais.eis.util.Util;
 import io.configmanager.extensions.routes.petrinet.builder.RuleFormulaBuilder;
 import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
 import lombok.NoArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Test for building a formula from policy pattern, rule and resource id
  */
-@Log4j2
 @NoArgsConstructor
 class RuleFormulaBuilderTest {
 

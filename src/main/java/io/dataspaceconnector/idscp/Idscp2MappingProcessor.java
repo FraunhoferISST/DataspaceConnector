@@ -289,7 +289,7 @@ class IncomingMessageParser extends Idscp2MappingProcessor {
             claims = Optional.empty();
         }
 
-        in.setBody(new Request(header, payload, claims));
+        in.setBody(new Request<>(header, payload, claims));
     }
 
 }

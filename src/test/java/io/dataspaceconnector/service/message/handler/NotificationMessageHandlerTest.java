@@ -33,8 +33,6 @@ import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.model.message.MessageProcessedNotificationMessageDesc;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.type.MessageProcessedNotificationService;
-import de.fraunhofer.ids.messaging.response.BodyResponse;
-import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

@@ -17,7 +17,6 @@ package io.configmanager.extensions.routes.petrinet.simulator;
 
 import io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.ArcSubExpression;
 import io.configmanager.extensions.routes.petrinet.model.Transition;
-import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
  * Methods to check parallel evaluation of a
  * {@link io.configmanager.extensions.routes.petrinet.model.PetriNet}.
  */
-@Log4j2
 public final class ParallelEvaluator {
     private ParallelEvaluator() {
         throw new UnsupportedOperationException();

@@ -22,9 +22,6 @@ import io.dataspaceconnector.model.contract.Contract;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.UUID;
-
 /**
  * The repository containing all objects of type {@link
  * io.dataspaceconnector.model.catalog.Catalog}.

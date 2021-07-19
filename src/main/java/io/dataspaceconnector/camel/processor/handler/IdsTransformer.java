@@ -16,9 +16,7 @@
 package io.dataspaceconnector.camel.processor.handler;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -47,11 +45,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Superclass for Camel processors that transform an incoming message's payload, e.g. by

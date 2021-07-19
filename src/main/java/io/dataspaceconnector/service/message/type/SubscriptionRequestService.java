@@ -27,7 +27,6 @@ import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.message.SubscriptionMessageDesc;
 import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.Utils;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -38,7 +37,6 @@ import java.util.Map;
  * An generic ids request message will be used. For an unsubscription message, a separate service
  * would have to be added in this package.
  */
-@Log4j2
 @Service
 public final class SubscriptionRequestService
         extends AbstractMessageService<SubscriptionMessageDesc> {

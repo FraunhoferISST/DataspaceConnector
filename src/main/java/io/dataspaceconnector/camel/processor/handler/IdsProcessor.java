@@ -110,7 +110,6 @@ public abstract class IdsProcessor<I extends RouteMsg<?, ?>> implements Processo
  * element was given.
  */
 @Component("ResourceDescription")
-@Log4j2
 @RequiredArgsConstructor
 class ResourceDescriptionProcessor extends IdsProcessor<
         RouteMsg<DescriptionRequestMessageImpl, MessagePayload>> {

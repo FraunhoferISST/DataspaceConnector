@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 import io.configmanager.extensions.routes.api.RoutesApi;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NoArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
  * The api class implements the AppRouteApi and offers the possibilities to manage
  * the app routes in the configuration manager.
  */
-@Log4j2
 @RestController("configManagerRoutesController")
 @NoArgsConstructor
 @RequestMapping("/api/configmanager")
