@@ -69,12 +69,6 @@ public class SubscriptionFactoryTest {
     }
 
     @Test
-    public void create_descUrlNull_throwInvalidEntityException() {
-        /* ACT  && ASSERT */
-        assertThrows(InvalidEntityException.class, () -> factory.create(new SubscriptionDesc()));
-    }
-
-    @Test
     public void update_subscriberNull_throwIllegalArgumentException() {
         /* ACT && ASSERT */
         assertThrows(IllegalArgumentException.class,
@@ -89,18 +83,18 @@ public class SubscriptionFactoryTest {
     }
 
     @Test
-    public void update_newUrl_returnTrueAndSubscriberUpdates() {
+    public void update_newLocation_returnTrueAndSubscriberUpdates() {
         /* ACT */
         final var subscriber = getSubscriber();
         final var desc = getValidDesc();
 
-        final var url = subscriber.getLocation();
+        final var location = subscriber.getLocation();
 
         /* ACT */
         factory.update(subscriber, desc);
 
         /* ASSERT */
-        assertNotEquals(url, subscriber.getLocation());
+        assertNotEquals(location, subscriber.getLocation());
         assertEquals(desc.getLocation(), subscriber.getLocation());
     }
 
@@ -127,7 +121,7 @@ public class SubscriptionFactoryTest {
 
     private Subscription getSubscriber() {
         final var subscriber = new Subscription();
-        ReflectionTestUtils.setField(subscriber, "url", initialUrl);
+        ReflectionTestUtils.setField(subscriber, "location", initialUrl);
         return subscriber;
     }
 
