@@ -83,7 +83,7 @@ class ResourceApi:
                 }
             ]
             }"""
-        },
+        }
     ):
         response = self.session.post(self.recipient + "/api/rules", json=data)
         return response.headers["Location"]
