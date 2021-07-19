@@ -22,10 +22,10 @@ import pprint
 import sys
 
 providerUrl = "http://localhost:8080"
-consumerUrl = "http://localhost:8080"
+consumerUrl = "http://localhost:8081"
 
-provider_alias = providerUrl
-consumer_alias = consumerUrl
+provider_alias = "http://provider-dataspace-connector"
+consumer_alias = "http://consumer-dataspace-connector"
 
 
 def main(argv):
