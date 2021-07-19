@@ -15,6 +15,14 @@
  */
 package io.dataspaceconnector.service.resource;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.exception.UnreachableLineException;
 import io.dataspaceconnector.model.artifact.Artifact;
@@ -40,18 +48,9 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Handles the basic logic for artifacts.
@@ -147,7 +146,6 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * is null.
      * @throws IOException                                               if IO errors occurr.
      */
-    @Transactional
     public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final QueryInput queryInput)
@@ -230,7 +228,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                 new AccessVerificationInput(information.getTransferContract(), artifact));
 
         // Make sure the data exists and is up to date.
-        if (shouldDownload(artifact, information.getForceDownload())) {
+        if (shouldDownload(artifact, information)) {
             downloadAndUpdateData(retriever, artifactId, information, artifact);
         }
 
@@ -293,15 +291,22 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         persist(artifact);
     }
 
-    private boolean shouldDownload(final Artifact artifact, final Boolean forceDownload) {
-        if (forceDownload == null) {
-            return !isDataPresent() || artifact.isAutomatedDownload();
+    private boolean shouldDownload(final Artifact artifact,
+                                   final RetrievalInformation information) {
+        if (information.getForceDownload() == null && information.getQueryInput() == null) {
+            return !isDataPresent(artifact) || artifact.isAutomatedDownload();
         } else {
-            return forceDownload;
+            return information.getForceDownload();
         }
     }
 
-    private boolean isDataPresent() {
+    private boolean isDataPresent(final Artifact artifact) {
+        if (artifact.getAdditional().containsKey("ids:byteSize")) {
+            final var providerDataSize = Integer.parseInt(artifact.getAdditional().get("ids:byteSize"));
+            final var thisDataSize = artifact.getByteSize();
+            return thisDataSize >= providerDataSize;
+        }
+
         return false;
     }
 
@@ -378,6 +383,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @return The data stored in the artifact.
      * @throws IOException if the data could not be stored.
      */
+    @NonNull
     public InputStream setData(final UUID artifactId, final InputStream data) throws IOException {
         final var artifact = get(artifactId);
         final var currentData = ((ArtifactImpl) artifact).getData();
@@ -388,7 +394,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         }
     }
 
-    @NotNull
+    @NonNull
     private ByteArrayInputStream setLocalData(final UUID artifactId,
                                               final InputStream data,
                                               final Artifact artifact,
