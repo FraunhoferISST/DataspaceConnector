@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.model.auth;
 
+import javax.persistence.Entity;
+
 import io.dataspaceconnector.service.HttpService.HttpArgs;
 import kotlin.Pair;
 import lombok.AccessLevel;
@@ -25,8 +27,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import okhttp3.Credentials;
-
-import javax.persistence.Entity;
 
 /**
  * Entity used for containing Basic Auth information in the context of AuthTypes.
@@ -55,6 +55,15 @@ public class BasicAuth extends Authentication {
      */
     @NonNull
     private String password;
+
+    /**
+     * Constructor.
+     * @param desc The authentication description.
+     */
+    public BasicAuth(final AuthenticationDesc desc) {
+        this.username = desc.getKey();
+        this.password = desc.getValue();
+    }
 
     /**
      * {@inheritDoc}

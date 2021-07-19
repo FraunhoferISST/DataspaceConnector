@@ -15,7 +15,8 @@
  */
 package io.dataspaceconnector.model.datasource;
 
-import io.dataspaceconnector.model.auth.Authentication;
+import io.dataspaceconnector.model.auth.AuthenticationDesc;
+import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import org.springframework.stereotype.Component;
 
@@ -76,17 +77,17 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
      * @return updated entity.
      */
     public boolean updateAuthentication(final DataSource dataSource,
-                                        final Authentication authentication) {
+                                        final AuthenticationDesc authentication) {
         if (dataSource.getAuthentication() == null && authentication == null) {
             return false;
         }
 
         if (dataSource.getAuthentication() != null
-                && !dataSource.getAuthentication().equals(authentication)) {
+                && !dataSource.getAuthentication().equals(new BasicAuth(authentication))) {
             return false;
         }
 
-        dataSource.setAuthentication(authentication);
+        dataSource.setAuthentication(new BasicAuth(authentication));
         return true;
     }
 }
