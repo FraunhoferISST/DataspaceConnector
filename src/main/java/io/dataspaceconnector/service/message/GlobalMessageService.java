@@ -110,7 +110,7 @@ public class GlobalMessageService {
             if (log.isInfoEnabled()) {
                 log.info("Successfully updated connector. [url=({}})]", input);
             }
-            brokerService.setRegistrationStatus(input, RegistrationStatus.REGISTERED);
+            brokerService.setRegistrationStatus(address, RegistrationStatus.REGISTERED);
         }
 
         return Optional.ofNullable(response);
@@ -149,7 +149,7 @@ public class GlobalMessageService {
             if (log.isInfoEnabled()) {
                 log.info("Successfully unregistered connector. [url=({}})]", input);
             }
-            brokerService.setRegistrationStatus(input, RegistrationStatus.UNREGISTERED);
+            brokerService.setRegistrationStatus(address, RegistrationStatus.UNREGISTERED);
         }
         return Optional.ofNullable(response);
     }
@@ -191,7 +191,7 @@ public class GlobalMessageService {
                         resource.getId(), input);
             }
             // TODO Does this causes errors on subscription update?
-            brokerCommunication.updateOfferedResourceBrokerList(input, resource);
+            brokerCommunication.updateOfferedResourceBrokerList(address, resource);
         }
         return Optional.ofNullable(response);
     }
@@ -232,7 +232,7 @@ public class GlobalMessageService {
                 log.info("Successfully unregistered resource. [resourceId=({}}), url=({}})]",
                         resource.getId(), input);
             }
-            brokerCommunication.removeBrokerFromOfferedResourceBrokerList(input, resource);
+            brokerCommunication.removeBrokerFromOfferedResourceBrokerList(address, resource);
         }
         return Optional.ofNullable(response);
     }
