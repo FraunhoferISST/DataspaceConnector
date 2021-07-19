@@ -20,16 +20,22 @@ import de.fraunhofer.iais.eis.ConnectorDeployMode;
 import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.LogLevel;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
+import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.idscp.config.Idscp2Config;
+import io.dataspaceconnector.service.ids.DeserializationService;
 import net.minidev.json.JSONObject;
+import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,15 +43,25 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class SettingsControllerIT {
+
+    @MockBean
+    private Idscp2Config idscp2Config;
+
+    @MockBean
+    private SpringTransactionPolicy transactionPolicy;
 
     @SpyBean
     private ConfigContainer configContainer;
 
     @SpyBean
     private ConnectorConfiguration connectorConfig;
+
+    @MockBean
+    private DeserializationService idsService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -68,15 +84,202 @@ public class SettingsControllerIT {
         Mockito.verify(configContainer, Mockito.never()).updateConfiguration(Mockito.any());
     }
 
-    /**
-     * getConfiguration
-     */
-
     @Test
     public void getConfiguration_unauthorized_return401() throws Exception {
         /* ACT && ASSERT */
         mockMvc.perform(get("/api/configuration"))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void updateConfiguration_validJson_consumesJson() throws Exception {
+        /* ARRANGE */
+        final var model = new ConfigurationModelBuilder()
+                ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
+                ._configurationModelLogLevel_(LogLevel.MINIMAL_LOGGING)
+                ._connectorStatus_(ConnectorStatus.CONNECTOR_OFFLINE)
+                .build();
+
+        Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
+        Mockito.when(configContainer.getConfigurationModel()).thenReturn(model);
+
+        /* ACT && ASSERT */
+        mockMvc.perform(put("/api/configuration")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(model.toRdf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void updateConfiguration_validJsonLd_consumesJsonLd() throws Exception {
+        /* ARRANGE */
+        final var model = new ConfigurationModelBuilder()
+                ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
+                ._configurationModelLogLevel_(LogLevel.MINIMAL_LOGGING)
+                ._connectorStatus_(ConnectorStatus.CONNECTOR_OFFLINE)
+                .build();
+
+        Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
+        Mockito.when(configContainer.getConfigurationModel()).thenReturn(model);
+
+        /* ACT && ASSERT */
+        mockMvc.perform(put("/api/configuration")
+                .contentType("application/ld+json")
+                .content(model.toRdf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void updateConfiguration_validJson_producesJsonLd() throws Exception {
+        /* ARRANGE */
+        final var model = new ConfigurationModelBuilder()
+                ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
+                ._configurationModelLogLevel_(LogLevel.MINIMAL_LOGGING)
+                ._connectorStatus_(ConnectorStatus.CONNECTOR_OFFLINE)
+                .build();
+
+        Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
+        Mockito.when(configContainer.getConfigurationModel()).thenReturn(model);
+
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(put("/api/configuration")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(model.toRdf()))
+                .andExpect(status().isOk()).andReturn();
+
+        assertEquals("application/ld+json", result.getResponse().getContentType());
+    }
+
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void updateConfiguration_invalidMediaType_return415() throws Exception {
+        /* ARRANGE */
+        final var model = new ConfigurationModelBuilder()
+                ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
+                ._configurationModelLogLevel_(LogLevel.MINIMAL_LOGGING)
+                ._connectorStatus_(ConnectorStatus.CONNECTOR_OFFLINE)
+                .build();
+
+        Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
+
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(put("/api/configuration")
+                .contentType(MediaType.APPLICATION_ATOM_XML)
+                .content(model.toRdf()))
+                .andExpect(status().is4xxClientError()).andReturn();
+
+        assertEquals(415, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void updateConfiguration_validJson_200AndReturnsNewConfig() throws Exception {
+        /* ARRANGE */
+        final var model = new ConfigurationModelBuilder()
+                ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
+                ._configurationModelLogLevel_(LogLevel.MINIMAL_LOGGING)
+                ._connectorStatus_(ConnectorStatus.CONNECTOR_OFFLINE)
+                .build();
+
+        Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
+        Mockito.when(configContainer.getConfigurationModel()).thenReturn(model);
+
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(put("/api/configuration")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(model.toRdf()))
+                .andExpect(status().isOk()).andReturn();
+
+        Mockito.verify(configContainer, Mockito.atLeastOnce()).updateConfiguration(Mockito.any());
+
+        assertEquals(model.toRdf(), result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void updateConfiguration_invalidJson_return400() throws Exception {
+        /* ARRANGE */
+        final var model = new ConfigurationModelBuilder()
+                ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
+                ._configurationModelLogLevel_(LogLevel.MINIMAL_LOGGING)
+                ._connectorStatus_(ConnectorStatus.CONNECTOR_OFFLINE)
+                .build();
+
+        Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf())))
+                .thenThrow(IllegalArgumentException.class);
+
+
+        /* ACT && ASSERT */
+        mockMvc.perform(put("/api/configuration")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(model.toRdf()))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void updateConfiguration_validJsonFailsUpdate_return500() throws Exception {
+        /* ARRANGE */
+        final var model = new ConfigurationModelBuilder()
+                ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
+                ._configurationModelLogLevel_(LogLevel.MINIMAL_LOGGING)
+                ._connectorStatus_(ConnectorStatus.CONNECTOR_OFFLINE)
+                .build();
+
+        Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
+        Mockito.doThrow(ConfigUpdateException.class).when(configContainer).updateConfiguration(Mockito.eq(model));
+
+        /* ACT && ASSERT */
+        mockMvc.perform(put("/api/configuration")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(model.toRdf()))
+                .andExpect(status().isInternalServerError());
+    }
+
+    /**
+     * getConfiguration
+     */
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void getConfiguration_hasConfig_returnConfig() throws Exception {
+        /* ARRANGE */
+        final var model = new ConfigurationModelBuilder()
+                ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
+                ._configurationModelLogLevel_(LogLevel.MINIMAL_LOGGING)
+                ._connectorStatus_(ConnectorStatus.CONNECTOR_OFFLINE)
+                .build();
+
+        Mockito.doReturn(model).when(configContainer).getConfigurationModel();
+
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(get("/api/configuration"))
+                .andExpect(status().isOk()).andReturn();
+
+        assertEquals(model.toRdf(), result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void getConfiguration_hasConfig_returnMediaTypeJson() throws Exception {
+        /* ARRANGE */
+        final var model = new ConfigurationModelBuilder()
+                ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
+                ._configurationModelLogLevel_(LogLevel.MINIMAL_LOGGING)
+                ._connectorStatus_(ConnectorStatus.CONNECTOR_OFFLINE)
+                .build();
+
+        Mockito.doReturn(model).when(configContainer).getConfigurationModel();
+
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(get("/api/configuration"))
+                .andExpect(status().isOk()).andReturn();
+
+        assertEquals("application/json", result.getResponse().getContentType());
     }
 
     @Test
@@ -93,14 +296,6 @@ public class SettingsControllerIT {
     /**
      * setNegotiationStatus
      */
-
-    @Test
-    public void setNegotiationStatus_unauthorized_return401() throws Exception {
-        /* ACT && ASSERT */
-        mockMvc.perform(put("/api/configuration/negotiation")
-                .param("status", "true"))
-                .andExpect(status().isUnauthorized());
-    }
 
     @Test
     @WithMockUser("ADMIN")
@@ -165,13 +360,6 @@ public class SettingsControllerIT {
      */
 
     @Test
-    public void getNegotiationStatus_unauthorized_return401() throws Exception {
-        /* ACT && ASSERT */
-        mockMvc.perform(get("/api/configuration/negotiation"))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
     @WithMockUser("ADMIN")
     public void getNegotiationStatus_isTrue_returnTrue() throws Exception {
         final var body = new JSONObject();
@@ -217,14 +405,6 @@ public class SettingsControllerIT {
     /**
      * setPatternStatus
      */
-
-    @Test
-    public void setPatternStatus_unauthorized_return401() throws Exception {
-        /* ACT && ASSERT */
-        mockMvc.perform(put("/api/configuration/pattern")
-                .param("status", "true"))
-                .andExpect(status().isUnauthorized());
-    }
 
     @Test
     @WithMockUser("ADMIN")
@@ -286,13 +466,6 @@ public class SettingsControllerIT {
     /**
      * getPatternStatus
      */
-
-    @Test
-    public void getPatternStatus_unauthorized_return401() throws Exception {
-        /* ACT && ASSERT */
-        mockMvc.perform(get("/api/configuration/pattern"))
-                .andExpect(status().isUnauthorized());
-    }
 
     @Test
     @WithMockUser("ADMIN")

@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import de.fraunhofer.iais.eis.DescriptionRequestMessage;
+import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DynamicAttributeToken;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
@@ -23,15 +25,28 @@ import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.requests.MessageContainer;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
+import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
+import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.util.ErrorMessage;
+import lombok.SneakyThrows;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.ProducerTemplate;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.xml.datatype.DatatypeFactory;
@@ -42,18 +57,36 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ResourceUpdateMessageControllerTest {
+
+    @Mock
+    private Exchange exchange;
+
+    @Mock
+    private Message in;
+
+    @MockBean
+    private IdscpServerRoute idscpServerRoute;
 
     @MockBean
     private IDSBrokerService brokerService;
 
     @MockBean
     private ConnectorService connectorService;
+
+    @MockBean
+    private ProducerTemplate producerTemplate;
+
+    @MockBean
+    private ConnectorConfiguration connectorConfiguration;
 
     @Autowired
     private MockMvc mockMvc;
@@ -68,15 +101,10 @@ public class ResourceUpdateMessageControllerTest {
             .build();
 
     @Test
-    public void sendConnectorUpdateMessage_unauthorized_returnUnauthorized() throws Exception {
-        mockMvc.perform(post("/api/ids/resource/update")).andExpect(status().isUnauthorized());
-    }
-
-    @Test
     @WithMockUser("ADMIN")
     public void sendConnectorUpdateMessage_noRecipient_throws400() throws Exception {
         /* ARRANGE */
-        // Nothing to arrange here.
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/resource/update")
@@ -91,7 +119,7 @@ public class ResourceUpdateMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendConnectorUpdateMessage_noResourceId_throws400() throws Exception {
         /* ARRANGE */
-        // Nothing to arrange here.
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/resource/update")
@@ -112,7 +140,8 @@ public class ResourceUpdateMessageControllerTest {
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/resource/update")
                 .param("recipient", "https://someURL")
-                .param("resourceId", resourceId.toString()))
+                .param("resourceId", resourceId.toString())
+                .param("protocol", "MULTIPART"))
                 .andReturn();
 
         /* ASSERT */
@@ -131,7 +160,8 @@ public class ResourceUpdateMessageControllerTest {
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/resource/update")
                 .param("recipient", "https://someURL")
-                .param("resourceId", resourceId.toString()))
+                .param("resourceId", resourceId.toString())
+                .param("protocol", "MULTIPART"))
                 .andReturn();
 
         /* ASSERT */
@@ -151,7 +181,8 @@ public class ResourceUpdateMessageControllerTest {
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/resource/update")
                 .param("recipient", recipient)
-                .param("resourceId", resourceId.toString()))
+                .param("resourceId", resourceId.toString())
+                .param("protocol", "MULTIPART"))
                 .andReturn();
 
         /* ASSERT */
@@ -183,11 +214,81 @@ public class ResourceUpdateMessageControllerTest {
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/resource/update")
                 .param("recipient", recipient)
-                .param("resourceId", resourceId.toString()))
+                .param("resourceId", resourceId.toString())
+                .param("protocol", "MULTIPART"))
                 .andReturn();
 
         /* ASSERT */
         assertEquals("EMPTY", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @SneakyThrows
+    @WithMockUser("ADMIN")
+    public void sendMessage_protocolIdscp_parseResponseFromRoute() {
+        /* ARRANGE */
+        final var response = new Response(getMessage(), "body");
+
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+
+        when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
+        when(exchange.getIn()).thenReturn(in);
+        when(in.getBody(Response.class)).thenReturn(response);
+        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
+
+        /* ACT */
+        final var mvcResult = mockMvc.perform(post("/api/ids/resource/update")
+                .param("recipient", recipient)
+                .param("resourceId", resourceId.toString())
+                .param("protocol", CommunicationProtocol.IDSCP2.name()))
+                .andReturn();
+
+        /* ASSERT */
+        assertEquals(HttpStatus.OK.value(), mvcResult.getResponse().getStatus());
+    }
+
+    @Test
+    @SneakyThrows
+    @WithMockUser("ADMIN")
+    public void sendMessage_protocolIdscp_returnResponseEntityFromErrorRoute() {
+        /* ARRANGE */
+        final var errorMessage = "Error message.";
+        final var response = new ResponseEntity<Object>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+
+        when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
+        when(exchange.getIn()).thenReturn(in);
+        when(in.getBody(ResponseEntity.class)).thenReturn(response);
+        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
+
+        /* ACT */
+        final var mvcResult = mockMvc.perform(post("/api/ids/resource/update")
+                .param("recipient", recipient)
+                .param("resourceId", resourceId.toString())
+                .param("protocol", CommunicationProtocol.IDSCP2.name()))
+                .andReturn();
+
+        /* ASSERT */
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), mvcResult.getResponse().getStatus());
+        assertEquals(errorMessage, mvcResult.getResponse().getContentAsString());
+    }
+
+    /**************************************************************************
+     * Utilities.
+     *************************************************************************/
+
+    private DescriptionRequestMessage getMessage() {
+        return new DescriptionRequestMessageBuilder()
+                ._issuerConnector_(URI.create("https://connector.com"))
+                ._issued_(IdsMessageUtils.getGregorianNow())
+                ._securityToken_(new DynamicAttributeTokenBuilder()
+                        ._tokenValue_("value")
+                        ._tokenFormat_(TokenFormat.JWT)
+                        .build())
+                ._modelVersion_("version")
+                ._senderAgent_(URI.create("https://connector.com"))
+                .build();
     }
 
     private Resource getResource() {

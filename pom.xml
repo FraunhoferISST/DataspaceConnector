@@ -110,6 +110,7 @@
 		<jaeger.version>3.3.1</jaeger.version>
 		<velocity.version>1.7</velocity.version>
 		<camel.version>3.11.0</camel.version>
+		<idscp2.version>0.5.0</idscp2.version>
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
@@ -154,6 +155,18 @@
 				<exclusion>
 					<groupId>log4j</groupId>
 					<artifactId>log4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>io.jsonwebtoken</groupId>
+					<artifactId>jjwt</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcpkix-fips</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.bitbucket.b_c</groupId>
+					<artifactId>jose4j</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -241,6 +254,17 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-hateoas</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework.boot</groupId>
@@ -408,6 +432,11 @@
 			<scope>compile</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>de.fhg.aisec.ids</groupId>
+			<artifactId>camel-idscp2</artifactId>
+			<version>${idscp2.version}</version>
+		</dependency>
 
 	</dependencies>
 
@@ -466,9 +495,8 @@
 				<filtering>true</filtering>
 				<includes>
 					<include>conf/**/*.*</include>
-					<include>camel/**</include>
-					<include>camel-templates/**/*.vm</include>
 					<include>log4j2.xml</include>
+					<include>camel-templates/**/*.vm</include>
 					<include>application.properties</include>
 					<include>banner.txt</include>
 				</includes>

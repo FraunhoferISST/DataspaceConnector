@@ -206,10 +206,8 @@ class ArtifactServiceTest {
         when(artifactRepository.findById(null)).thenThrow(new IllegalArgumentException());
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> service.getData( null,
-                                                                            null,
-                                                                            null,
-                                                                            queryInput));
+        assertThrows(IllegalArgumentException.class, () -> service.getData(null,
+                null, null, queryInput));
     }
 
     @Test
@@ -221,9 +219,7 @@ class ArtifactServiceTest {
 
         /* ACT && ASSERT */
         assertThrows(ResourceNotFoundException.class, () -> service.getData(null,
-                                                                            null,
-                                                                            unknownUuid,
-                                                                            (QueryInput) null));
+                null, unknownUuid, (QueryInput) null));
     }
 
     @Test

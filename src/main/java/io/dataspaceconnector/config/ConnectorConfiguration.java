@@ -50,4 +50,10 @@ public class ConnectorConfiguration {
      */
     @Value("${policy.framework}")
     private UsageControlFramework ucFramework;
+
+    /**
+     * Indicates whether IDSCP protocol is enabled or not.
+     */
+    @Value("${idscp2.enabled}")
+    private boolean idscpEnabled;
 }

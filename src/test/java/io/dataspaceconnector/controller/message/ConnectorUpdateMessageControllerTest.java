@@ -19,6 +19,8 @@ import javax.xml.datatype.DatatypeFactory;
 import java.io.IOException;
 import java.net.URI;
 
+import de.fraunhofer.iais.eis.DescriptionRequestMessage;
+import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DynamicAttributeToken;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
@@ -29,27 +31,52 @@ import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import io.dataspaceconnector.service.configuration.BrokerService;
 import de.fraunhofer.ids.messaging.requests.MessageContainer;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
+import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
+import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
+import lombok.SneakyThrows;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.ProducerTemplate;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ConnectorUpdateMessageControllerTest {
+
+    @Mock
+    private Exchange exchange;
+
+    @Mock
+    private Message in;
+
+    @MockBean
+    private IdscpServerRoute idscpServerRoute;
 
     @MockBean
     private IDSBrokerService brokerService;
@@ -63,6 +90,12 @@ public class ConnectorUpdateMessageControllerTest {
     @MockBean
     private ConnectorService connectorService;
 
+    @MockBean
+    private ProducerTemplate producerTemplate;
+
+    @MockBean
+    private ConnectorConfiguration connectorConfiguration;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -71,11 +104,6 @@ public class ConnectorUpdateMessageControllerTest {
             ._tokenValue_("token")
             ._tokenFormat_(TokenFormat.JWT)
             .build();
-
-    @Test
-    public void sendConnectorUpdateMessage_unauthorized_returnUnauthorized() throws Exception {
-        mockMvc.perform(post("/api/ids/connector/update")).andExpect(status().isUnauthorized());
-    }
 
     @Test
     @WithMockUser("ADMIN")
@@ -101,7 +129,9 @@ public class ConnectorUpdateMessageControllerTest {
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/update")
-                .param("recipient", recipient)).andReturn();
+                .param("recipient", recipient)
+                .param("protocol", "MULTIPART"))
+                .andReturn();
 
         /* ASSERT */
         assertEquals("Failed to update configuration.", result.getResponse().getContentAsString());
@@ -117,7 +147,9 @@ public class ConnectorUpdateMessageControllerTest {
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/update")
-                .param("recipient", recipient)).andReturn();
+                .param("recipient", recipient)
+                .param("protocol", "MULTIPART"))
+                .andReturn();
 
         /* ASSERT */
         assertEquals(500, result.getResponse().getStatus());
@@ -132,7 +164,9 @@ public class ConnectorUpdateMessageControllerTest {
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/update")
-                .param("recipient", recipient)).andReturn();
+                .param("recipient", recipient)
+                .param("protocol", "MULTIPART"))
+                .andReturn();
 
         /* ASSERT */
         assertEquals(500, result.getResponse().getStatus());
@@ -159,7 +193,9 @@ public class ConnectorUpdateMessageControllerTest {
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/update")
-                .param("recipient", recipient)).andReturn();
+                .param("recipient", recipient)
+                .param("protocol", "MULTIPART"))
+                .andReturn();
 
         /* ASSERT */
         assertEquals("EMPTY", result.getResponse().getContentAsString());
@@ -197,4 +233,72 @@ public class ConnectorUpdateMessageControllerTest {
         assertEquals("Received invalid ids message.", result.getResponse().getContentAsString());
         assertEquals(502, result.getResponse().getStatus());
     }
+
+    @Test
+    @SneakyThrows
+    @WithMockUser("ADMIN")
+    public void sendMessage_protocolIdscp_parseResponseFromRoute() {
+        /* ARRANGE */
+        final var response = new Response(getMessage(), "body");
+
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+
+        when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
+        when(exchange.getIn()).thenReturn(in);
+        when(in.getBody(Response.class)).thenReturn(response);
+        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
+
+        /* ACT */
+        final var mvcResult = mockMvc.perform(post("/api/ids/connector/update")
+                .param("recipient", recipient)
+                .param("protocol", CommunicationProtocol.IDSCP2.name()))
+                .andReturn();
+
+        /* ASSERT */
+        assertEquals(HttpStatus.OK.value(), mvcResult.getResponse().getStatus());
+    }
+
+    @Test
+    @SneakyThrows
+    @WithMockUser("ADMIN")
+    public void sendMessage_protocolIdscp_returnResponseEntityFromErrorRoute() {
+        /* ARRANGE */
+        final var errorMessage = "Error message.";
+        final var response = new ResponseEntity<Object>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+
+        when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
+        when(exchange.getIn()).thenReturn(in);
+        when(in.getBody(ResponseEntity.class)).thenReturn(response);
+        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
+
+        /* ACT */
+        final var mvcResult = mockMvc.perform(post("/api/ids/connector/update")
+                .param("recipient", recipient)
+                .param("protocol", CommunicationProtocol.IDSCP2.name()))
+                .andReturn();
+
+        /* ASSERT */
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), mvcResult.getResponse().getStatus());
+        assertEquals(errorMessage, mvcResult.getResponse().getContentAsString());
+    }
+
+    /**************************************************************************
+     * Utilities.
+     *************************************************************************/
+
+    private DescriptionRequestMessage getMessage() {
+        return new DescriptionRequestMessageBuilder()
+                ._issuerConnector_(URI.create("https://connector.com"))
+                ._issued_(IdsMessageUtils.getGregorianNow())
+                ._securityToken_(new DynamicAttributeTokenBuilder()
+                        ._tokenValue_("value")
+                        ._tokenFormat_(TokenFormat.JWT)
+                        .build())
+                ._modelVersion_("version")
+                ._senderAgent_(URI.create("https://connector.com"))
+                .build();
+    }
+
 }

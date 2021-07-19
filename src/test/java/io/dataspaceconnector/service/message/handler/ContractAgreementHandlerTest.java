@@ -15,14 +15,6 @@
  */
 package io.dataspaceconnector.service.message.handler;
 
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -38,6 +30,7 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
+import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.EntityUpdateService;
@@ -49,7 +42,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -60,7 +63,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(properties = {"clearing.house.url=https://ch-ids.aisec.fraunhofer.de/logs/messages/"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class ContractAgreementHandlerTest {
+
+    @MockBean
+    private IdscpServerRoute idscpServerRoute;
 
     @Autowired
     ContractAgreementHandler handler;
@@ -167,7 +174,7 @@ class ContractAgreementHandlerTest {
         final var storedAgreement = getAgreement(agreement);
         final var differentAgreement = getDifferentContractAgreement();
 
-        when(entityResolver.getEntityById(any())).thenReturn(storedAgreement);
+        when(entityResolver.getEntityById(any())).thenReturn(Optional.of(storedAgreement));
 
         /* ACT */
         final var result = (ErrorResponse)
@@ -183,7 +190,7 @@ class ContractAgreementHandlerTest {
 
     @SneakyThrows
     @Test
-    public void handleMessage_updatingAgreementFails_returnBadParametersResponse() {
+    public void handleMessage_updatingAgreementFails_returnInternalRecipientErrorResponse() {
         /* ARRANGE */
         final var message = new ContractAgreementMessageBuilder()
                 ._senderAgent_(URI.create("https://localhost:8080"))
@@ -197,7 +204,7 @@ class ContractAgreementHandlerTest {
         final var agreement = getContractAgreement();
         final var storedAgreement = getAgreement(agreement);
 
-        when(entityResolver.getEntityById(any())).thenReturn(storedAgreement);
+        when(entityResolver.getEntityById(any())).thenReturn(Optional.of(storedAgreement));
         when(updateService.confirmAgreement(any())).thenReturn(false);
 
         /* ACT */
@@ -209,7 +216,7 @@ class ContractAgreementHandlerTest {
                                 new ObjectMapper()));
 
         /* ASSERT */
-        assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, result.getRejectionMessage().getRejectionReason());
     }
 
     @SneakyThrows
@@ -229,7 +236,7 @@ class ContractAgreementHandlerTest {
         final var agreement = getContractAgreement();
         final var storedAgreement = getAgreement(agreement);
 
-        when(entityResolver.getEntityById(any())).thenReturn(storedAgreement);
+        when(entityResolver.getEntityById(any())).thenReturn(Optional.of(storedAgreement));
         when(updateService.confirmAgreement(any())).thenReturn(true);
         doNothing().when(logMessageService).sendMessage(any(), any());
 

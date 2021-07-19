@@ -61,6 +61,7 @@ public final class ArtifactFactory extends AbstractNamedFactory<Artifact, Artifa
         final var artifact = new ArtifactImpl();
         artifact.setAgreements(new ArrayList<>());
         artifact.setRepresentations(new ArrayList<>());
+        artifact.setSubscriptions(new ArrayList<>());
 
         return artifact;
     }

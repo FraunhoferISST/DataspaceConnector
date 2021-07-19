@@ -18,7 +18,6 @@ package io.dataspaceconnector.service;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.exception.InvalidResourceException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.base.Entity;
@@ -44,6 +43,7 @@ import io.dataspaceconnector.service.resource.RuleService;
 import io.dataspaceconnector.service.usagecontrol.AllowAccessVerifier;
 import io.dataspaceconnector.service.util.EndpointUtils;
 import io.dataspaceconnector.util.ErrorMessage;
+import io.dataspaceconnector.util.IdsUtils;
 import io.dataspaceconnector.util.QueryInput;
 import io.dataspaceconnector.util.Utils;
 import lombok.NonNull;
@@ -57,6 +57,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This service offers methods for finding entities by their identifying URI.
@@ -99,8 +100,7 @@ public class EntityResolver {
     /**
      * Service for contract agreements.
      */
-    private final @NonNull
-    AgreementService agreementService;
+    private final @NonNull AgreementService agreementService;
 
     /**
      * Service for building ids objects.
@@ -150,7 +150,7 @@ public class EntityResolver {
      * @throws ResourceNotFoundException If the resource could not be found.
      * @throws IllegalArgumentException  If the resource is null or the elementId.
      */
-    public Entity getEntityById(final URI elementId) throws ResourceNotFoundException {
+    public Optional<Entity> getEntityById(final URI elementId) {
         Utils.requireNonNull(elementId, ErrorMessage.URI_NULL);
 
         try {
@@ -163,28 +163,24 @@ public class EntityResolver {
             // Find the right service and return the requested element.
             switch (Objects.requireNonNull(pathEnum)) {
                 case ARTIFACTS:
-                    return artifactService.get(entityId);
+                    return Optional.of(artifactService.get(entityId));
                 case REPRESENTATIONS:
-                    return representationService.get(entityId);
+                    return Optional.of(representationService.get(entityId));
                 case OFFERS:
-                    return offerService.get(entityId);
+                    return Optional.of(offerService.get(entityId));
                 case CATALOGS:
-                    return catalogService.get(entityId);
+                    return Optional.of(catalogService.get(entityId));
                 case CONTRACTS:
-                    return contractService.get(entityId);
+                    return Optional.of(contractService.get(entityId));
                 case RULES:
-                    return ruleService.get(entityId);
+                    return Optional.of(ruleService.get(entityId));
                 case AGREEMENTS:
-                    return agreementService.get(entityId);
+                    return Optional.of(agreementService.get(entityId));
                 default:
-                    return null;
+                    return Optional.empty();
             }
         } catch (Exception exception) {
-            if (log.isDebugEnabled()) {
-                log.debug("Resource not found. [exception=({}), elementId=({})]",
-                        exception.getMessage(), elementId, exception);
-            }
-            throw new ResourceNotFoundException(ErrorMessage.EMTPY_ENTITY.toString(), exception);
+            return Optional.empty();
         }
     }
 
@@ -201,19 +197,19 @@ public class EntityResolver {
         try {
             if (entity instanceof Artifact) {
                 final var artifact = artifactBuilder.create((Artifact) entity);
-                return Objects.requireNonNull(artifact).toRdf();
+                return IdsUtils.toRdf(Objects.requireNonNull(artifact));
             } else if (entity instanceof OfferedResource) {
                 final var resource = offerBuilder.create((OfferedResource) entity);
-                return Objects.requireNonNull(resource).toRdf();
+                return IdsUtils.toRdf(Objects.requireNonNull(resource));
             } else if (entity instanceof Representation) {
                 final var representation = representationBuilder.create((Representation) entity);
-                return Objects.requireNonNull(representation).toRdf();
+                return IdsUtils.toRdf(Objects.requireNonNull(representation));
             } else if (entity instanceof Catalog) {
                 final var catalog = catalogBuilder.create((Catalog) entity);
-                return Objects.requireNonNull(catalog).toRdf();
+                return IdsUtils.toRdf(Objects.requireNonNull(catalog));
             } else if (entity instanceof Contract) {
-                final var catalog = contractBuilder.create((Contract) entity);
-                return Objects.requireNonNull(catalog).toRdf();
+                final var contractOffer = contractBuilder.create((Contract) entity);
+                return IdsUtils.toRdf(Objects.requireNonNull(contractOffer));
             } else if (entity instanceof Agreement) {
                 final var agreement = (Agreement) entity;
                 return agreement.getValue();
@@ -247,7 +243,7 @@ public class EntityResolver {
      */
     public InputStream getDataByArtifactId(final URI requestedArtifact,
                                            final QueryInput queryInput)
-            throws IOException, UnexpectedResponseException {
+            throws IOException {
         final var endpoint = EndpointUtils.getUUIDFromPath(requestedArtifact);
         return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint, queryInput);
     }

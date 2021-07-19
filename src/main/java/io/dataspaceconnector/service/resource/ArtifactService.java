@@ -139,12 +139,12 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param queryInput     The query for the backend.
      * @return The artifacts data.
      * @throws PolicyRestrictionException                                if the data access has
-     * been denied.
+     *                                                                   been denied.
      * @throws io.dataspaceconnector.exception.ResourceNotFoundException if the artifact does not
-     * exist.
+     *                                                                   exist.
      * @throws IllegalArgumentException                                  if any of the parameters
-     * is null.
-     * @throws IOException                                               if IO errors occur.
+     *                                                                   is null.
+     * @throws IOException                                               if IO errors occurr.
      */
     public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
@@ -210,12 +210,12 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param information    Information for pulling the data from a remote source.
      * @return The artifact's data.
      * @throws PolicyRestrictionException                                if the data access has
-     * been denied.
+     *                                                                   been denied.
      * @throws io.dataspaceconnector.exception.ResourceNotFoundException if the artifact does not
-     * exist.
+     *                                                                   exist.
      * @throws IllegalArgumentException                                  if any of the parameters
-     * is null.
-     * @throws IOException                                               if IO errors occur.
+     *                                                                   is null.
+     * @throws IOException                                               if IO errors occurr.
      */
     @Transactional
     public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,

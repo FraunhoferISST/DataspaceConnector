@@ -38,6 +38,7 @@ import java.net.URI;
 
 /**
  * This class handles message responses.
+ * NOTE: Used in the camel routes. Do not delete "unused" methods!
  */
 @Log4j2
 @Component
@@ -297,11 +298,11 @@ public class MessageResponseService {
      * @param messageId         The id of the incoming message.
      * @return A message response.
      */
-    public MessageResponse handleMessageProcessingFailed(final Exception exception,
-                                                         final URI requestedArtifact,
-                                                         final URI transferContract,
-                                                         final URI issuerConnector,
-                                                         final URI messageId) {
+    public MessageResponse handleMessageProcessingFailedForArtifact(final Exception exception,
+                                                                    final URI requestedArtifact,
+                                                                    final URI transferContract,
+                                                                    final URI issuerConnector,
+                                                                    final URI messageId) {
         if (log.isWarnEnabled()) {
             log.warn("Could not process request message. [exception=({}), artifact=({}), "
                             + "contract=({}), issuer=({}), messageId=({})]", exception.getMessage(),
@@ -430,27 +431,27 @@ public class MessageResponseService {
     }
 
     /**
-     * Handle {@link InvalidInputException} because of an invalid query input in message payload.
+     * Handle {@link InvalidInputException} because of an invalid input in message payload.
      *
-     * @param exception         Exception that was thrown while reading the query input.
+     * @param exception         Exception that was thrown while reading the input.
      * @param requestedArtifact The requested artifact.
      * @param transferContract  The transfer contract id.
      * @param issuerConnector   The issuer connector extracted from the incoming message.
      * @param messageId         The id of the incoming message.
      * @return A message response.
      */
-    public MessageResponse handleInvalidQueryInput(final InvalidInputException exception,
+    public MessageResponse handleInvalidInput(final InvalidInputException exception,
                                                    final URI requestedArtifact,
                                                    final URI transferContract,
                                                    final URI issuerConnector,
                                                    final URI messageId) {
         if (log.isDebugEnabled()) {
-            log.debug("Invalid query input. [exception=({}), artifact=({}), contract=({}), "
+            log.debug("Invalid input. [exception=({}), artifact=({}), contract=({}), "
                             + "issuer=({}), messageId=({})]", exception.getMessage(),
                     requestedArtifact, transferContract, issuerConnector, messageId, exception);
         }
         return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
-                "Invalid query input.",
+                "Invalid input in payload.",
                 connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 

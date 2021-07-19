@@ -15,22 +15,6 @@
  */
 package io.dataspaceconnector.util;
 
-import java.net.URI;
-
-import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.exception.UnreachableLineException;
-import io.dataspaceconnector.model.base.Entity;
-import io.dataspaceconnector.model.agreement.Agreement;
-import io.dataspaceconnector.model.artifact.Artifact;
-import io.dataspaceconnector.model.catalog.Catalog;
-import io.dataspaceconnector.model.contract.Contract;
-import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
-import io.dataspaceconnector.model.endpoint.GenericEndpoint;
-import io.dataspaceconnector.model.route.Route;
-import io.dataspaceconnector.model.rule.ContractRule;
-import io.dataspaceconnector.model.resource.OfferedResource;
-import io.dataspaceconnector.model.representation.Representation;
-import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;
 import io.dataspaceconnector.controller.resource.view.ArtifactViewAssembler;
 import io.dataspaceconnector.controller.resource.view.CatalogViewAssembler;
@@ -40,9 +24,27 @@ import io.dataspaceconnector.controller.resource.view.OfferedResourceViewAssembl
 import io.dataspaceconnector.controller.resource.view.RepresentationViewAssembler;
 import io.dataspaceconnector.controller.resource.view.RequestedResourceViewAssembler;
 import io.dataspaceconnector.controller.resource.view.SelfLinking;
+import io.dataspaceconnector.controller.resource.view.SubscriptionViewAssembler;
+import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.exception.UnreachableLineException;
+import io.dataspaceconnector.model.agreement.Agreement;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.base.Entity;
+import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
+import io.dataspaceconnector.model.endpoint.GenericEndpoint;
+import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.route.Route;
+import io.dataspaceconnector.model.rule.ContractRule;
+import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.view.endpoint.ConnectorEndpointViewAssembler;
 import io.dataspaceconnector.view.endpoint.GenericEndpointViewAssembler;
 import io.dataspaceconnector.view.route.RouteViewAssembler;
+
+import java.net.URI;
 
 /**
  * This is a helper class for retrieving self-links of a database entity.
@@ -109,6 +111,12 @@ public final class SelfLinkHelper {
     private static final RouteViewAssembler ROUTE_VIEW_ASSEMBLER = new RouteViewAssembler();
 
     /**
+     * View assembler for subscriptions.
+     */
+    private static final SubscriptionViewAssembler SUBSCRIPTION_ASSEMBLER =
+            new SubscriptionViewAssembler();
+
+    /**
      * Default constructor.
      */
     private SelfLinkHelper() {
@@ -146,6 +154,8 @@ public final class SelfLinkHelper {
             return getSelfLink((ConnectorEndpoint) entity);
         } else if (entity instanceof Route) {
             return getSelfLink((Route) entity);
+        } else if (entity instanceof Subscription) {
+            return getSelfLink((Subscription) entity);
         }
 
         throw new UnreachableLineException(ErrorMessage.UNKNOWN_TYPE);
@@ -293,5 +303,17 @@ public final class SelfLinkHelper {
      */
     private static URI getSelfLink(final Route route) throws ResourceNotFoundException {
         return getSelfLink(route, ROUTE_VIEW_ASSEMBLER);
+    }
+
+    /**
+     * Get self-link of subscription.
+     *
+     * @param subscription The subscription.
+     * @return The self-link of the subscription.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    public static URI getSelfLink(final Subscription subscription)
+            throws ResourceNotFoundException {
+        return getSelfLink(subscription, SUBSCRIPTION_ASSEMBLER);
     }
 }

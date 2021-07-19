@@ -85,6 +85,11 @@ public final class ResourceDescription {
      */
     public static final String ROUTES = "Endpoints for operations on routes";
 
+    /**
+     * Tag description for subscriptions.
+     */
+    public static final String SUBSCRIPTIONS = "Endpoints for operations on subscriptions";
+
     private ResourceDescription() {
         // Nothing to do here.
     }

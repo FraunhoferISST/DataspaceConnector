@@ -61,6 +61,7 @@ public class RepresentationFactory
         final var representation = new Representation();
         representation.setArtifacts(new ArrayList<>());
         representation.setResources(new ArrayList<>());
+        representation.setSubscriptions(new ArrayList<>());
 
         return representation;
     }

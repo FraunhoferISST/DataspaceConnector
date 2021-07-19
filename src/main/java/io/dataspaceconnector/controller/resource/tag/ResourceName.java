@@ -85,6 +85,11 @@ public final class ResourceName {
      */
     public static final String ROUTES = "Routes";
 
+    /**
+     * Tag name for subscriptions.
+     */
+    public static final String SUBSCRIPTIONS = "Subscriptions";
+
     private ResourceName() {
         // Nothing to do here.
     }

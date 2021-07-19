@@ -15,12 +15,13 @@
  */
 package io.dataspaceconnector.model.resource;
 
-import io.dataspaceconnector.model.util.UriConverter;
-import io.dataspaceconnector.model.named.NamedEntity;
+import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.util.UriConverter;
 import io.dataspaceconnector.util.exception.NotImplemented;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -36,6 +37,7 @@ import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
@@ -163,4 +165,10 @@ public class Resource extends NamedEntity {
          */
         throw new NotImplemented();
     }
+
+    /**
+     * List of subscriptions listening to updates for this resource.
+     */
+    @OneToMany
+    private List<Subscription> subscriptions;
 }

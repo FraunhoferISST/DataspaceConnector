@@ -18,10 +18,24 @@ package io.dataspaceconnector.bootstrap;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import javax.xml.datatype.DatatypeFactory;
+
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.requests.MessageContainer;
+import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
+import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.template.CatalogTemplate;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.service.resource.CatalogService;
@@ -34,22 +48,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import javax.xml.datatype.DatatypeFactory;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class BootstrapperTest {
+
+    @MockBean
+    private IdscpServerRoute idscpServerRoute;
 
     @MockBean
     GlobalMessageService messageService;

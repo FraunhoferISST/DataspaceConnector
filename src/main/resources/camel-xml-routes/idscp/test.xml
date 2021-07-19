@@ -1,0 +1,31 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+
+    <route id="test-route">
+        <from uri="timer://test?delay=10000&amp;repeatCount=1" />
+        <log message="test"/>
+
+<!--        <from uri="timer://contractRequest?delay=10000&amp;repeatCount=1" />-->
+<!--        <setProperty name="artifactUri">-->
+<!--            <constant>https://example.com/some_artifact</constant>-->
+<!--        </setProperty>-->
+<!--        <process ref="ContractRequestCreationProcessor" />-->
+<!--        <to uri="idscp2client://localhost:29292?awaitResponse=true&amp;sslContextParameters=#serverSslContext&amp;useIdsMessages=true"/>-->
+<!--        <log message="${body}"/>-->
+
+<!--        <process ref="TypeExtractionProcessor"/>-->
+<!--        <choice>-->
+<!--            <when>-->
+<!--                <simple>${exchangeProperty.ids-type} == 'ContractResponseMessage'</simple>-->
+<!--                <log message="### Handle ContractResponseMessage ###"/>-->
+<!--                <process ref="ContractResponseProcessor"/>-->
+<!--                <to uri="idscp2client://localhost:29292?connectionShareId=ucConnection&amp;sslContextParameters=#serverSslContext&amp;useIdsMessages=true"/>-->
+<!--            </when>-->
+<!--            <otherwise>-->
+<!--                <log loggingLevel="ERROR" message="Expected ContractResponseMessage, but received:\n${body}\n### Header: ###\n${headers[idscp2-header]}"/>-->
+<!--                <removeHeader headerName="idscp2-header" />-->
+<!--                <setBody><simple>${null}</simple></setBody>-->
+<!--            </otherwise>-->
+<!--        </choice>-->
+    </route>
+
+</routes>

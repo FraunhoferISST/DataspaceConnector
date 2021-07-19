@@ -16,6 +16,9 @@
 package io.dataspaceconnector.service;
 
 import de.fraunhofer.iais.eis.RejectionReason;
+import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.util.ParameterUtils;
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.DataRetrievalException;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
@@ -27,6 +30,9 @@ import io.dataspaceconnector.util.QueryInput;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.ExchangeBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 
@@ -56,6 +62,21 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
     private final @NonNull ArtifactService artifactService;
 
     /**
+     * Template for triggering Camel routes.
+     */
+    private final @NonNull ProducerTemplate template;
+
+    /**
+     * The CamelContext required for constructing the {@link ProducerTemplate}.
+     */
+    private final @NonNull CamelContext context;
+
+    /**
+     * Service for handle application.properties settings.
+     */
+    private final @NonNull ConnectorConfiguration connectorConfig;
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -69,18 +90,33 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
      */
     @Override
     public InputStream retrieve(final UUID artifactId, final URI recipient,
-                                final URI transferContract, final QueryInput queryInput)
+                                final URI transferContract,
+                                final QueryInput queryInput)
             throws PolicyRestrictionException {
         final var artifact = artifactService.get(artifactId);
-        Map<String, String> response;
-        try {
-            response = artifactReqSvc.sendMessage(recipient,
-                    artifact.getRemoteId(), transferContract, queryInput);
-        } catch (UnexpectedResponseException exception) {
-            final var content = exception.getContent();
-            if (log.isDebugEnabled()) {
-                log.debug("Data could not be loaded. [content=({})]", content);
-            }
+
+        String data;
+        if (connectorConfig.isIdscpEnabled()) {
+            final var result = template.send("direct:artifactRequestSender",
+                    ExchangeBuilder.anExchange(context)
+                            .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)
+                            .withProperty(ParameterUtils.ARTIFACT_ID_PARAM, artifact.getRemoteId())
+                            .withProperty(ParameterUtils.TRANSFER_CONTRACT_PARAM, transferContract)
+                            .withProperty(ParameterUtils.QUERY_INPUT_PARAM, queryInput)
+                            .build());
+
+            final var response = result.getIn().getBody(Response.class);
+            data = response.getBody();
+        } else {
+            Map<String, String> response;
+            try {
+                response = artifactReqSvc.sendMessage(recipient,
+                        artifact.getRemoteId(), transferContract, queryInput);
+            } catch (UnexpectedResponseException exception) {
+                final var content = exception.getContent();
+                if (log.isDebugEnabled()) {
+                    log.debug("Data could not be loaded. [content=({})]", content);
+                }
 
             if (content.containsKey("reason")) {
                 final var reason = content.get("reason");
@@ -89,10 +125,13 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
                 }
             }
 
-            throw new DataRetrievalException(content.toString());
+                throw new DataRetrievalException(content.toString());
+            }
+
+            data = MessageUtils.extractPayloadFromMultipartMessage(response);
         }
 
-        final var data = MessageUtils.extractPayloadFromMultipartMessage(response);
+
         return new ByteArrayInputStream(Base64Utils.decodeFromString(data));
     }
 }

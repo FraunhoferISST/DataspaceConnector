@@ -29,14 +29,25 @@ import org.springframework.stereotype.Service;
  * Handles the basic logic for requested resources.
  */
 @Service
-@NoArgsConstructor
 public final class RequestedResourceService extends ResourceService<RequestedResource,
         RequestedResourceDesc> implements RemoteResolver {
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Optional<UUID> identifyByRemoteId(final URI remoteId) {
         return ((RequestedResourcesRepository) getRepository()).identifyByRemoteId(remoteId);
+    }
+
+    /**
+     * Find requested resource by remote id.
+     *
+     * @param remoteId The remote id.
+     * @return The entity.
+     */
+    public Optional<RequestedResource> getEntityByRemoteId(final URI remoteId) {
+        final var repo = (RequestedResourcesRepository) getRepository();
+        return repo.getByRemoteId(remoteId);
     }
 }

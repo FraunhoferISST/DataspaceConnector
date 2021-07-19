@@ -1,0 +1,32 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="descriptionRequestHandler">
+
+        <!-- the requested element could not be found -->
+        <onException>
+            <exception>io.dataspaceconnector.exception.ResourceNotFoundException</exception>
+            <exception>io.dataspaceconnector.exception.InvalidResourceException</exception>
+            <to uri="direct:handleResourceNotFoundException"/>
+        </onException>
+
+        <!-- the response could not be built -->
+        <onException>
+            <exception>java.lang.IllegalStateException</exception>
+            <exception>de.fraunhofer.iais.eis.util.ConstraintViolationException</exception>
+            <to uri="direct:handleResponseMessageBuilderException"/>
+        </onException>
+
+        <from uri="direct:descriptionRequestHandler"/>
+        <transacted ref="transactionPolicy"/>
+        <to uri="direct:ids-validation"/>
+        <choice>
+            <when>
+                <simple>${body.getHeader().getRequestedElement()} == null</simple>
+                <process ref="SelfDescription"/>
+            </when>
+            <otherwise>
+                <process ref="ResourceDescription"/>
+            </otherwise>
+        </choice>
+
+    </route>
+</routes>

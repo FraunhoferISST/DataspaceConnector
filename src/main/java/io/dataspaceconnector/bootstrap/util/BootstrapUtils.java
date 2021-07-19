@@ -151,11 +151,12 @@ public final class BootstrapUtils {
      * @return A list of all files that are stored at given path (and subdirectories) with required
      * extension and optional required filename.
      * @throws FileNotFoundException if the given path does not exist.
+     * @throws NullPointerException  if the directory does not contain child files.
      */
     @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     public static List<File> findFilesByExtension(final String path, final String filename,
                                                   final String extension)
-            throws FileNotFoundException {
+            throws FileNotFoundException, NullPointerException {
         // Validate input.
         final var base = new File(path);
         if (!base.exists()) {

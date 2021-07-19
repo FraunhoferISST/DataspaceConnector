@@ -15,18 +15,15 @@
  */
 package io.dataspaceconnector.controller.configuration;
 
-import javax.validation.Valid;
-import java.util.UUID;
-
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.controller.resource.BaseResourceController;
 import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.tag.ResourceName;
+import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
 import io.dataspaceconnector.service.configuration.ConfigurationService;
-import io.dataspaceconnector.util.ControllerUtils;
 import io.dataspaceconnector.view.configuration.ConfigurationView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -42,6 +39,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.util.UUID;
 
 /**
  * Offers the endpoints for managing configurations.

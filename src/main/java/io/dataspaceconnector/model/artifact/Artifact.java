@@ -15,17 +15,10 @@
  */
 package io.dataspaceconnector.model.artifact;
 
-import java.net.URI;
-import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Inheritance;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-
-import io.dataspaceconnector.model.named.NamedEntity;
+import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.base.RemoteObject;
+import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
@@ -35,6 +28,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Inheritance;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.net.URI;
+import java.util.List;
 
 import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
@@ -109,4 +111,10 @@ public abstract class Artifact extends NamedEntity implements RemoteObject {
     public void incrementAccessCounter() {
         numAccessed += 1;
     }
+
+    /**
+     * List of subscriptions listening to updates for this artifact.
+     */
+    @OneToMany
+    private List<Subscription> subscriptions;
 }

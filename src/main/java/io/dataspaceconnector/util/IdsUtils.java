@@ -28,12 +28,14 @@ import de.fraunhofer.iais.eis.ContractOffer;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.Language;
 import de.fraunhofer.iais.eis.LogLevel;
+import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.Proxy;
 import de.fraunhofer.iais.eis.ProxyBuilder;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.SecurityProfile;
+import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -70,6 +72,11 @@ public final class IdsUtils {
     }
 
     /**
+     * Serializer for Infomodel objects.
+     */
+    private static final Serializer SERIALIZER = new Serializer();
+
+    /**
      * Get rdf string from instance of type {@link BaseConnector}.
      *
      * @param baseConnector The ids connector.
@@ -78,7 +85,11 @@ public final class IdsUtils {
      */
     public static String toRdf(final BaseConnector baseConnector) throws RdfBuilderException {
         try {
-            return baseConnector.toRdf();
+            var rdf = baseConnector.toRdf();
+            if (rdf == null || rdf.isEmpty()) {
+                rdf = SERIALIZER.serialize(baseConnector);
+            }
+            return rdf;
         } catch (Exception exception) {
             throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
         }
@@ -93,7 +104,11 @@ public final class IdsUtils {
      */
     public static String toRdf(final Resource resource) throws RdfBuilderException {
         try {
-            return resource.toRdf();
+            var rdf = resource.toRdf();
+            if (rdf == null || rdf.isEmpty()) {
+                rdf = SERIALIZER.serialize(resource);
+            }
+            return rdf;
         } catch (Exception exception) {
             throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
         }
@@ -109,7 +124,11 @@ public final class IdsUtils {
      */
     public static String toRdf(final Artifact artifact) throws RdfBuilderException {
         try {
-            return artifact.toRdf();
+            var rdf = artifact.toRdf();
+            if (rdf == null || rdf.isEmpty()) {
+                rdf = SERIALIZER.serialize(artifact);
+            }
+            return rdf;
         } catch (Exception exception) {
             throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
         }
@@ -124,7 +143,11 @@ public final class IdsUtils {
      */
     public static String toRdf(final Representation representation) throws RdfBuilderException {
         try {
-            return representation.toRdf();
+            var rdf = representation.toRdf();
+            if (rdf == null || rdf.isEmpty()) {
+                rdf = SERIALIZER.serialize(representation);
+            }
+            return rdf;
         } catch (Exception exception) {
             throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
         }
@@ -139,7 +162,11 @@ public final class IdsUtils {
      */
     public static String toRdf(final Catalog catalog) throws RdfBuilderException {
         try {
-            return catalog.toRdf();
+            var rdf = catalog.toRdf();
+            if (rdf == null || rdf.isEmpty()) {
+                rdf = SERIALIZER.serialize(catalog);
+            }
+            return rdf;
         } catch (Exception exception) {
             throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
         }
@@ -154,7 +181,11 @@ public final class IdsUtils {
      */
     public static String toRdf(final ContractRequest request) throws RdfBuilderException {
         try {
-            return request.toRdf();
+            var rdf = request.toRdf();
+            if (rdf == null || rdf.isEmpty()) {
+                rdf = SERIALIZER.serialize(request);
+            }
+            return rdf;
         } catch (Exception exception) {
             throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
         }
@@ -169,7 +200,11 @@ public final class IdsUtils {
      */
     public static String toRdf(final ContractOffer offer) throws RdfBuilderException {
         try {
-            return offer.toRdf();
+            var rdf = offer.toRdf();
+            if (rdf == null || rdf.isEmpty()) {
+                rdf = SERIALIZER.serialize(offer);
+            }
+            return rdf;
         } catch (Exception exception) {
             throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
         }
@@ -184,7 +219,11 @@ public final class IdsUtils {
      */
     public static String toRdf(final ContractAgreement agreement) throws RdfBuilderException {
         try {
-            return agreement.toRdf();
+            var rdf = agreement.toRdf();
+            if (rdf == null || rdf.isEmpty()) {
+                rdf = SERIALIZER.serialize(agreement);
+            }
+            return rdf;
         } catch (Exception exception) {
             throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
         }
@@ -199,7 +238,30 @@ public final class IdsUtils {
      */
     public static String toRdf(final Rule rule) throws RdfBuilderException {
         try {
-            return rule.toRdf();
+            var rdf = rule.toRdf();
+            if (rdf == null || rdf.isEmpty()) {
+                rdf = SERIALIZER.serialize(rule);
+            }
+            return rdf;
+        } catch (Exception exception) {
+            throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
+        }
+    }
+
+    /**
+     * Get rdf string from instance of type {@link Message}.
+     *
+     * @param message The ids message.
+     * @return The ids message as rdf string.
+     * @throws RdfBuilderException If the response could not be extracted.
+     */
+    public static String toRdf(final Message message) throws RdfBuilderException {
+        try {
+            var rdf = message.toRdf();
+            if (rdf == null || rdf.isEmpty()) {
+                rdf = SERIALIZER.serialize(message);
+            }
+            return rdf;
         } catch (Exception exception) {
             throw new RdfBuilderException(ErrorMessage.RDF_FAILED);
         }

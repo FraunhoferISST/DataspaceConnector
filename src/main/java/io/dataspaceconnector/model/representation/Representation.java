@@ -15,15 +15,9 @@
  */
 package io.dataspaceconnector.model.representation;
 
-import java.net.URI;
-import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-
-import io.dataspaceconnector.model.named.NamedEntity;
+import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.resource.Resource;
 import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
@@ -33,6 +27,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.net.URI;
+import java.util.List;
 
 import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
@@ -88,4 +90,10 @@ public class Representation extends NamedEntity {
      */
     @ManyToMany(mappedBy = "representations")
     private List<Resource> resources;
+
+    /**
+     * List of subscriptions listening to updates for this representation.
+     */
+    @OneToMany
+    private List<Subscription> subscriptions;
 }

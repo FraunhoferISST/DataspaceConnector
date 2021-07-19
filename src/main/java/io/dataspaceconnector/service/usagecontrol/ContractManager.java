@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementBuilder;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -41,10 +37,15 @@ import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.EntityDependencyResolver;
 import io.dataspaceconnector.util.ContractUtils;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This service offers methods related to contract management.
@@ -88,7 +89,11 @@ public class ContractManager {
     public ContractAgreement validateTransferContract(
             final URI agreementId, final URI requestedArtifact, final URI issuer)
             throws IllegalArgumentException, ResourceNotFoundException, ContractException {
-        final var agreement = (Agreement) entityResolver.getEntityById(agreementId);
+        final var entity = entityResolver.getEntityById(agreementId);
+        if (entity.isEmpty()) {
+            throw new ResourceNotFoundException(ErrorMessage.EMTPY_ENTITY.toString());
+        }
+        final var agreement = (Agreement) entity.get();
         final var artifacts = dependencyResolver.getArtifactsByAgreement(agreement);
 
         if (!ContractUtils.isMatchingTransferContract(artifacts, requestedArtifact)) {

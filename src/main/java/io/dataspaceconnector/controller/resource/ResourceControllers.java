@@ -17,37 +17,10 @@ package io.dataspaceconnector.controller.resource;
 
 import de.fraunhofer.ids.messaging.protocol.UnexpectedResponseException;
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
-import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
-import io.dataspaceconnector.controller.resource.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
 import io.dataspaceconnector.controller.resource.swagger.response.ResponseDescription;
-import io.dataspaceconnector.model.agreement.Agreement;
-import io.dataspaceconnector.model.agreement.AgreementDesc;
-import io.dataspaceconnector.model.artifact.Artifact;
-import io.dataspaceconnector.model.artifact.ArtifactDesc;
-import io.dataspaceconnector.model.catalog.Catalog;
-import io.dataspaceconnector.model.catalog.CatalogDesc;
-import io.dataspaceconnector.model.contract.Contract;
-import io.dataspaceconnector.model.contract.ContractDesc;
-import io.dataspaceconnector.model.rule.ContractRule;
-import io.dataspaceconnector.model.rule.ContractRuleDesc;
-import io.dataspaceconnector.model.resource.OfferedResource;
-import io.dataspaceconnector.model.resource.OfferedResourceDesc;
-import io.dataspaceconnector.model.representation.Representation;
-import io.dataspaceconnector.model.representation.RepresentationDesc;
-import io.dataspaceconnector.model.resource.RequestedResource;
-import io.dataspaceconnector.model.resource.RequestedResourceDesc;
-import io.dataspaceconnector.service.BlockingArtifactReceiver;
-import io.dataspaceconnector.service.resource.AgreementService;
-import io.dataspaceconnector.service.resource.ArtifactService;
-import io.dataspaceconnector.service.resource.CatalogService;
-import io.dataspaceconnector.service.resource.ContractService;
-import io.dataspaceconnector.service.resource.RepresentationService;
-import io.dataspaceconnector.service.resource.ResourceService;
-import io.dataspaceconnector.service.resource.RetrievalInformation;
-import io.dataspaceconnector.service.resource.RuleService;
-import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
-import io.dataspaceconnector.util.ValidationUtils;
+import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
+import io.dataspaceconnector.controller.resource.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.AgreementView;
 import io.dataspaceconnector.controller.resource.view.ArtifactView;
 import io.dataspaceconnector.controller.resource.view.CatalogView;
@@ -56,7 +29,40 @@ import io.dataspaceconnector.controller.resource.view.ContractView;
 import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
 import io.dataspaceconnector.controller.resource.view.RepresentationView;
 import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
+import io.dataspaceconnector.controller.resource.view.SubscriptionView;
+import io.dataspaceconnector.model.subscription.Subscription;
+import io.dataspaceconnector.model.subscription.SubscriptionDesc;
+import io.dataspaceconnector.model.agreement.Agreement;
+import io.dataspaceconnector.model.agreement.AgreementDesc;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.artifact.ArtifactDesc;
+import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.catalog.CatalogDesc;
+import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.contract.ContractDesc;
+import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.representation.RepresentationDesc;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
+import io.dataspaceconnector.model.rule.ContractRule;
+import io.dataspaceconnector.model.rule.ContractRuleDesc;
+import io.dataspaceconnector.service.BlockingArtifactReceiver;
+import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.service.resource.AgreementService;
+import io.dataspaceconnector.service.resource.ArtifactService;
+import io.dataspaceconnector.service.resource.CatalogService;
+import io.dataspaceconnector.service.resource.ContractService;
+import io.dataspaceconnector.service.resource.RepresentationService;
+import io.dataspaceconnector.service.resource.ResourceService;
+import io.dataspaceconnector.service.resource.RetrievalInformation;
+import io.dataspaceconnector.service.resource.RuleService;
+import io.dataspaceconnector.service.resource.SubscriptionService;
+import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
 import io.dataspaceconnector.util.QueryInput;
+import io.dataspaceconnector.util.Utils;
+import io.dataspaceconnector.util.ValidationUtils;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -64,7 +70,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -272,8 +281,7 @@ public final class ResourceControllers {
             final var data = (agreementUri == null)
                     ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput)
                     : artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
-                    new RetrievalInformation(agreementUri, download,
-                            queryInput));
+                    new RetrievalInformation(agreementUri, download, queryInput));
 
             return returnData(artifactId, data);
         }
@@ -286,7 +294,8 @@ public final class ResourceControllers {
          * @param artifactId Artifact id.
          * @param queryInput Query input containing headers, query parameters, and path variables.
          * @return The data object.
-         * @throws IOException if the data could not be stored.
+         * @throws IOException                 if the data could not be stored.
+         * @throws UnexpectedResponseException if the ids response message has been unexpected.
          */
         @PostMapping("{id}/data")
         @Operation(summary = "Get data by artifact id with query input")
@@ -340,6 +349,76 @@ public final class ResourceControllers {
                 @RequestBody final byte[] inputStream) throws IOException {
             artifactSvc.setData(artifactId, new ByteArrayInputStream(inputStream));
             return ResponseEntity.ok().build();
+        }
+    }
+
+    /**
+     * Offers the endpoints for managing subscriptions.
+     */
+    @RestController
+    @RequestMapping("/api/subscriptions")
+    @RequiredArgsConstructor
+    @Tag(name = ResourceName.SUBSCRIPTIONS, description = ResourceDescription.SUBSCRIPTIONS)
+    public static class SubscriptionController extends BaseResourceController<Subscription,
+            SubscriptionDesc, SubscriptionView, SubscriptionService> {
+
+        /**
+         * The service for managing connector settings.
+         */
+        private final @NonNull ConnectorService connectorSvc;
+
+        /**
+         * Create subscription and set ids protocol value to false as this subscription has been
+         * created via a REST API call.
+         *
+         * @param desc The resource description.
+         * @return Response with code 201 (Created).
+         */
+        @Override
+        @PostMapping
+        @Operation(summary = "Create a base resource")
+        @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Created")})
+        public ResponseEntity<SubscriptionView> create(@RequestBody final SubscriptionDesc desc) {
+            // Set boolean to false as this subscription has been created via a REST API call.
+            desc.setIdsProtocol(false);
+
+            final var obj = getService().create(desc);
+            final var entity = getAssembler().toModel(obj);
+
+            final var headers = new HttpHeaders();
+            headers.setLocation(entity.getRequiredLink("self").toUri());
+
+            return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
+        }
+
+        /**
+         * Get a list of all resources endpoints of subscription selected by a given filter.
+         *
+         * @param page The page index.
+         * @param size The page size.
+         * @return Response with code 200 (Ok) and the list of all endpoints of this resource type.
+         */
+        @GetMapping("owning")
+        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        public final PagedModel<SubscriptionView> getAllFiltered(
+                @RequestParam(required = false, defaultValue = "0") final Integer page,
+                @RequestParam(required = false, defaultValue = "30") final Integer size) {
+            final var pageable = Utils.toPageRequest(page, size);
+
+            final var connectorId = connectorSvc.getConnectorId();
+            final var list = getService().getBySubscriber(pageable, connectorId);
+
+            final var entities = new PageImpl<>(list);
+            PagedModel<SubscriptionView> model;
+            if (entities.hasContent()) {
+                model = getPagedAssembler().toModel(entities, getAssembler());
+            } else {
+                //noinspection unchecked
+                model = (PagedModel<SubscriptionView>) getPagedAssembler().toEmptyModel(entities,
+                        getResourceType());
+            }
+
+            return model;
         }
     }
 }

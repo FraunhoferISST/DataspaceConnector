@@ -13,13 +13,19 @@ All notable changes to this project will be documented in this file.
 - Send `ArtifactRequest` and `ArtifactResponse` messages to the Clearing House.
 - Allow artifacts pointing to backend systems to be created with both BasicAuth and API key
   authentication.
+- Integrate IDSCPv2 for IDS communication.
+  * Add parameter for protocol to all controller endpoints for IDS messages
+    (`MULTIPART` or `IDSCP2`).
+  * Add property `idscp2.enabled` for enabling and disabling IDSCPv2 server.
+  * Add properties for configuring keystore and truststore for IDSCPv2.
+  * When enabling IDSCPv2, a valid IDS certificate is required!
 
 ### Changed
 - Replace IDS Connector Framework v5.0.4 by IDS Messaging Services v2.0.0.
 - Edit response codes and response content for the following endpoints: `/ids/connector/unavailable`,
   `/ids/connector/update`, `/ids/resource/unavailable`, `/ids/resource/update`, `/ids/query`.
 - Move implementation for sending IDS query, connector, and resource messages to
-  `GeneralMessageService`.
+  `GlobalMessageService`.
 - Handle DAT retrieving errors in `PRODUCTIVE_DEPLOYMENT` with status code 500 and a corresponding
   message.
 - Change naming of the resource's license attribute from `licence` to `license`.
@@ -147,6 +153,7 @@ All notable changes to this project will be documented in this file.
   * Handle out contract agreements for multiple artifacts (targets) within one negotiation sequence.
   * Restrict agreement processing to confirmed agreements.
   * Add relation between artifacts and agreements.
+- Add possibility to subscribe backend URLs for updates to a requested resource.
 
 ### Changed
 - Support of IDS Infomodel v4.0.4 (direct import in `pom.xml`).

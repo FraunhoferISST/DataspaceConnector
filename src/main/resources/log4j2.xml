@@ -32,9 +32,15 @@
         <!-- <Logger name="io.dataspaceconnector" level="info">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger> -->
-        <Logger name="camel-route-logger" level="info">
+<!--        <Logger name="camel-route-logger" level="info"/>-->
+<!--        <Logger name="de.fhg.aisec.ids.idscp2" level="TRACE">-->
+<!--            <AppenderRef ref="ConsoleAppender"/>-->
+<!--        </Logger>-->
+<!--        <Logger name="de.fhg.aisec.ids.camel.idscp2" level="TRACE">-->
+<!--            <AppenderRef ref="ConsoleAppender"/>-->
+<!--        </Logger>-->
+        <Logger name="de.fhg.aisec.ids.camel.idscp2.processors" level="INFO">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
-
     </Loggers>
 </Configuration>

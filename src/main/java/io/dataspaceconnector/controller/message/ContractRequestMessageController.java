@@ -15,21 +15,25 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.util.ParameterUtils;
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;
+import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.RdfBuilderException;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.ArtifactDataDownloader;
 import io.dataspaceconnector.service.ContractNegotiator;
 import io.dataspaceconnector.service.EntityUpdateService;
 import io.dataspaceconnector.service.MetadataDownloader;
-import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.resource.AgreementService;
-import io.dataspaceconnector.util.ControllerUtils;
 import io.dataspaceconnector.util.RuleUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -38,6 +42,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.ExchangeBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +59,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.persistence.PersistenceException;
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -61,7 +69,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
-@Tag(name = "IDS Messages", description = "Endpoints for invoke sending IDS messages")
+@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
 public class ContractRequestMessageController {
     /**
      * Service for updating database entities.
@@ -94,6 +102,21 @@ public class ContractRequestMessageController {
     private final @NonNull ArtifactDataDownloader artifactDataDownloader;
 
     /**
+     * Template for triggering Camel routes.
+     */
+    private final @NonNull ProducerTemplate template;
+
+    /**
+     * The CamelContext required for constructing the {@link ProducerTemplate}.
+     */
+    private final @NonNull CamelContext context;
+
+    /**
+     * Service for handle application.properties settings.
+     */
+    private final @NonNull ConnectorConfiguration connectorConfig;
+
+    /**
      * Starts a contract, metadata, and data exchange with an external connector.
      *
      * @param recipient The recipient.
@@ -104,7 +127,7 @@ public class ContractRequestMessageController {
      * @return The response entity.
      */
     @PostMapping("/contract")
-    @Operation(summary = "Send ids contract request message")
+    @Operation(summary = "Send IDS contract request message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "201", description = "Created"),
@@ -126,40 +149,78 @@ public class ContractRequestMessageController {
                     + "download data of an artifact.")
             @RequestParam("download") final boolean download,
             @Parameter(description = "List of ids rules with an artifact id as target.")
-            @RequestBody final List<Rule> ruleList) throws UnexpectedResponseException {
-        try {
-            // Validates user input.
-            RuleUtils.validateRuleTarget(ruleList);
+            @RequestBody final List<Rule> ruleList) {
+        if (connectorConfig.isIdscpEnabled()) {
+            UUID agreementId;
+            final var result = template.send("direct:contractRequestSender",
+                    ExchangeBuilder.anExchange(context)
+                            .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)
+                            .withProperty(ParameterUtils.RESOURCES_PARAM, resources)
+                            .withProperty(ParameterUtils.ARTIFACTS_PARAM, artifacts)
+                            .withProperty(ParameterUtils.DOWNLOAD_PARAM, download)
+                            .withProperty(ParameterUtils.RULE_LIST_PARAM, ruleList)
+                            .build());
 
-            // Initiate contract negotiation.
-            final var agreementId = negotiator.negotiate(recipient, ruleList);
-
-            // Download metadata.
-            downloadMetadata(recipient, resources, artifacts, download, agreementId);
-
-            // Download data, if requested.
-            if (download) {
-                artifactDataDownloader.download(recipient, artifacts, agreementId);
+            final var response = result.getIn().getBody(Response.class);
+            if (response != null) {
+                if (response.getHeader() instanceof RejectionMessage) {
+                    return new ResponseEntity<>(response.getBody(), HttpStatus.EXPECTATION_FAILED);
+                }
+                agreementId = result.getProperty(ParameterUtils.AGREEMENT_ID_PARAM, UUID.class);
+            } else {
+                final var responseEntity = result.getIn().getBody(ResponseEntity.class);
+                return Objects.requireNonNullElseGet(responseEntity,
+                        () -> new ResponseEntity<Object>("An internal server error occurred.",
+                                HttpStatus.INTERNAL_SERVER_ERROR));
             }
 
-            return respondWithCreatedAgreement(agreementId);
-        } catch (InvalidInputException exception) {
-            // If the input rules are malformed.
-            return ControllerUtils.respondInvalidInput(exception);
-        } catch (ConstraintViolationException | RdfBuilderException exception) {
-            // If contract request could not be built.
-            return ControllerUtils.respondFailedToBuildContractRequest(exception);
-        } catch (PersistenceException exception) {
-            // If metadata, data, or contract agreement could not be stored.
-            return ControllerUtils.respondFailedToStoreEntity(exception);
-        } catch (MessageException exception) {
-            return ControllerUtils.respondIdsMessageFailed(exception);
-        } catch (MessageResponseException | IllegalArgumentException e) {
-            // If the response message is invalid or malformed.
-            return ControllerUtils.respondReceivedInvalidResponse(e);
-        } catch (ContractException e) {
-            // If the contract agreement is invalid.
-            return ControllerUtils.respondNegotiationAborted();
+            // Return response entity containing the locations of the contract agreement, the
+            // downloaded resources, and the downloaded data.
+
+            final var entity = agreementAsm.toModel(agreementService.get(agreementId));
+
+            final var headers = new HttpHeaders();
+            headers.setLocation(entity.getRequiredLink("self").toUri());
+
+            return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
+        } else {
+            try {
+                // Validates user input.
+                RuleUtils.validateRuleTarget(ruleList);
+
+                // Initiate contract negotiation.
+                final var agreementId = negotiator.negotiate(recipient, ruleList);
+
+                // Download metadata.
+                downloadMetadata(recipient, resources, artifacts, download, agreementId);
+
+                // Download data, if requested.
+                if (download) {
+                    artifactDataDownloader.download(recipient, artifacts, agreementId);
+                }
+
+                return respondWithCreatedAgreement(agreementId);
+            } catch (InvalidInputException exception) {
+                // If the input rules are malformed.
+                return ControllerUtils.respondInvalidInput(exception);
+            } catch (ConstraintViolationException | RdfBuilderException exception) {
+                // If contract request could not be built.
+                return ControllerUtils.respondFailedToBuildContractRequest(exception);
+            } catch (PersistenceException exception) {
+                // If metadata, data, or contract agreement could not be stored.
+                return ControllerUtils.respondFailedToStoreEntity(exception);
+            } catch (MessageException exception) {
+                return ControllerUtils.respondIdsMessageFailed(exception);
+            } catch (MessageResponseException | IllegalArgumentException e) {
+                // If the response message is invalid or malformed.
+                return ControllerUtils.respondReceivedInvalidResponse(e);
+            } catch (ContractException e) {
+                // If the contract agreement is invalid.
+                return ControllerUtils.respondNegotiationAborted();
+            } catch (UnexpectedResponseException e) {
+                // If the response is not as expected.
+                return ControllerUtils.respondWithContent(e.getContent());
+            }
         }
     }
 
@@ -179,4 +240,5 @@ public class ContractRequestMessageController {
 
         return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
     }
+
 }

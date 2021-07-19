@@ -23,6 +23,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.net.URI;
+
 
 /**
  * Bundles information for retrieving data from another connector.

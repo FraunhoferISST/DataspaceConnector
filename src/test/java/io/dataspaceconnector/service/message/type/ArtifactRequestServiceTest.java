@@ -22,7 +22,7 @@ import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.protocol.http.IdsHttpService;
-import io.dataspaceconnector.camel.ClearingHouseLoggingProcessor;
+import io.dataspaceconnector.camel.processor.ClearingHouseLoggingProcessor;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;

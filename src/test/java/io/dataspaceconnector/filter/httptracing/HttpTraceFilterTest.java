@@ -15,6 +15,12 @@
  */
 package io.dataspaceconnector.filter.httptracing;
 
+import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+
+import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.filter.httptracing.internal.RequestWrapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -23,14 +29,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -38,7 +41,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class HttpTraceFilterTest {
+
+    @MockBean
+    private IdscpServerRoute idscpServerRoute;
 
     @Mock
     HttpTraceEventHandler eventHandler;

@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.service;
 
-import java.net.URI;
-import java.util.UUID;
-
-import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
@@ -50,8 +46,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.net.URI;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = {EntityResolver.class})
 public class EntityResolverTest {
@@ -126,7 +127,8 @@ public class EntityResolverTest {
         final var result = resolver.getEntityById(resourceUri);
 
         /* ASSERT */
-        assertEquals(resource, result);
+        assertTrue(result.isPresent());
+        assertEquals(resource, result.get());
     }
 
     @Test
@@ -141,7 +143,8 @@ public class EntityResolverTest {
         final var result = resolver.getEntityById(resourceUri);
 
         /* ASSERT */
-        assertEquals(resource, result);
+        assertTrue(result.isPresent());
+        assertEquals(resource, result.get());
     }
 
     @Test
@@ -155,7 +158,8 @@ public class EntityResolverTest {
         final var result = resolver.getEntityById(resourceUri);
 
         /* ASSERT */
-        assertEquals(resource, result);
+        assertTrue(result.isPresent());
+        assertEquals(resource, result.get());
     }
 
     @Test
@@ -169,7 +173,8 @@ public class EntityResolverTest {
         final var result = resolver.getEntityById(resourceUri);
 
         /* ASSERT */
-        assertEquals(resource, result);
+        assertTrue(result.isPresent());
+        assertEquals(resource, result.get());
     }
 
     @Test
@@ -183,7 +188,8 @@ public class EntityResolverTest {
         final var result = resolver.getEntityById(resourceUri);
 
         /* ASSERT */
-        assertEquals(resource, result);
+        assertTrue(result.isPresent());
+        assertEquals(resource, result.get());
     }
 
     @Test
@@ -197,7 +203,8 @@ public class EntityResolverTest {
         final var result = resolver.getEntityById(resourceUri);
 
         /* ASSERT */
-        assertEquals(resource, result);
+        assertTrue(result.isPresent());
+        assertEquals(resource, result.get());
     }
 
     @Test
@@ -211,7 +218,8 @@ public class EntityResolverTest {
         final var result = resolver.getEntityById(resourceUri);
 
         /* ASSERT */
-        assertEquals(resource, result);
+        assertTrue(result.isPresent());
+        assertEquals(resource, result.get());
     }
 
     @Test
@@ -220,8 +228,11 @@ public class EntityResolverTest {
         final var resourceUri =
                 URI.create("https://localhost:8080/someWhereIdontKnow/" + resourceId);
 
-        /* ACT && ASSERT */
-        assertThrows(ResourceNotFoundException.class, () -> resolver.getEntityById(resourceUri));
+        /* ACT */
+        final var result = resolver.getEntityById(resourceUri);
+
+        /* ASSERT */
+        assertFalse(result.isPresent());
     }
 
 
