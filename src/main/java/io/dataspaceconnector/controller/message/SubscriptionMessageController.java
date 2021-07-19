@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
@@ -55,6 +56,11 @@ public class SubscriptionMessageController {
     private final @NonNull SubscriptionRequestService subscriptionReqSvc;
 
     /**
+     * Service for handle application.properties settings.
+     */
+    private final @NonNull ConnectorConfiguration connectorConfig;
+
+    /**
      * Subscribe to updates of an provided ids element.
      *
      * @param recipient    The target connector url.
@@ -76,6 +82,7 @@ public class SubscriptionMessageController {
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The subscription object.")
             @RequestBody final Subscription subscription) {
+        // TODO IDSCPv2
         try {
             // Send and validate request/response message.
             final var response = subscriptionReqSvc.sendMessage(recipient,

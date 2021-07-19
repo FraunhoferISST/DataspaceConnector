@@ -29,6 +29,7 @@ import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
@@ -64,10 +65,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class QueryMessageControllerTest {
 
@@ -85,6 +85,9 @@ public class QueryMessageControllerTest {
 
     @MockBean
     private ProducerTemplate producerTemplate;
+
+    @MockBean
+    private ConnectorConfiguration connectorConfiguration;
 
     @Autowired
     private MockMvc mockMvc;
@@ -227,6 +230,7 @@ public class QueryMessageControllerTest {
         when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
         when(exchange.getIn()).thenReturn(in);
         when(in.getBody(Response.class)).thenReturn(response);
+        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
 
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/query")
@@ -253,6 +257,7 @@ public class QueryMessageControllerTest {
         when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
         when(exchange.getIn()).thenReturn(in);
         when(in.getBody(ResponseEntity.class)).thenReturn(response);
+        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
 
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/query")
@@ -264,11 +269,6 @@ public class QueryMessageControllerTest {
         /* ASSERT */
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), mvcResult.getResponse().getStatus());
         assertEquals(errorMessage, mvcResult.getResponse().getContentAsString());
-    }
-
-    @Test
-    public void sendSearchMessage_unauthorized_rejectUnauthorized() throws Exception {
-        mockMvc.perform(post("/api/ids/search")).andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -369,6 +369,7 @@ public class QueryMessageControllerTest {
         when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
         when(exchange.getIn()).thenReturn(in);
         when(in.getBody(Response.class)).thenReturn(response);
+        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
 
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/search")
@@ -395,6 +396,7 @@ public class QueryMessageControllerTest {
         when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
         when(exchange.getIn()).thenReturn(in);
         when(in.getBody(ResponseEntity.class)).thenReturn(response);
+        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
 
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/search")

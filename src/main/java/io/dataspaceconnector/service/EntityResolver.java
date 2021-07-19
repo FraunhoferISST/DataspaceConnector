@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.exception.InvalidResourceException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
@@ -259,8 +252,7 @@ public class EntityResolver {
                                            final QueryInput queryInput)
             throws IOException {
         final var endpoint = EndpointUtils.getUUIDFromPath(requestedArtifact);
-        return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint,
-                null, queryInput);
+        return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint, queryInput);
     }
 
     /**

@@ -136,7 +136,6 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param accessVerifier Checks if the data access should be allowed.
      * @param retriever      Retrieves the data from an external source.
      * @param artifactId     The id of the artifact.
-     * @param protocol       The communication protocol to use.
      * @param queryInput     The query for the backend.
      * @return The artifacts data.
      * @throws PolicyRestrictionException                                if the data access has
@@ -150,7 +149,6 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     @Transactional
     public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
-                               final CommunicationProtocol protocol,
                                final QueryInput queryInput)
             throws PolicyRestrictionException, IOException {
         /*
@@ -167,8 +165,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             var policyException = new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
             for (final var agRemoteId : agreements) {
                 try {
-                    final var info = new RetrievalInformation(agRemoteId, null,
-                            protocol, queryInput);
+                    final var info = new RetrievalInformation(agRemoteId, null, queryInput);
                     return getData(accessVerifier, retriever, artifactId, info);
                 } catch (PolicyRestrictionException exception) {
                     // Access denied, log it and try the next agreement.
@@ -237,7 +234,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
              */
             final var dataStream = retriever.retrieve(artifactId,
                     artifact.getRemoteAddress(), information.getTransferContract(),
-                    information.getProtocol(), information.getQueryInput());
+                    information.getQueryInput());
             final var persistedData = setData(artifactId, dataStream);
             artifact.incrementAccessCounter();
             persist(artifact);

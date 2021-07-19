@@ -15,12 +15,6 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.util.Objects;
-import java.util.Optional;
-
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.ResultMessageImpl;
 import de.fraunhofer.ids.messaging.common.DeserializeException;
@@ -37,9 +31,9 @@ import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.util.ParameterUtils;
-import io.dataspaceconnector.controller.util.CommunicationProtocol;
-import io.dataspaceconnector.service.message.GlobalMessageService;
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.controller.util.ControllerUtils;
+import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -60,6 +54,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Controller for sending ids query messages.
@@ -86,10 +86,14 @@ public class QueryMessageController {
     private final @NonNull CamelContext context;
 
     /**
+     * Service for handle application.properties settings.
+     */
+    private final @NonNull ConnectorConfiguration connectorConfig;
+
+    /**
      * Send an ids query message with a query message as payload.
      *
      * @param recipient The url of the recipient.
-     * @param protocol  The communication protocol to use.
      * @param query     The query statement.
      * @return The response message or an error.
      */
@@ -108,15 +112,13 @@ public class QueryMessageController {
     public ResponseEntity<Object> sendQueryMessage(
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
-            @Parameter(description = "The protocol to use for IDS communication.")
-            @RequestParam("protocol") final CommunicationProtocol protocol,
             @Schema(description = "Database query (SparQL)", required = true,
                     example = "SELECT ?subject ?predicate ?object\n"
                             + "FROM <urn:x-arq:UnionGraph>\n"
                             + "WHERE {\n"
                             + "  ?subject ?predicate ?object\n"
                             + "};") @RequestBody final String query) {
-        if (CommunicationProtocol.IDSCP2.equals(protocol)) {
+        if (connectorConfig.isIdscpEnabled()) {
             final var result = template.send("direct:querySender",
                     ExchangeBuilder.anExchange(context)
                             .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)
@@ -170,7 +172,6 @@ public class QueryMessageController {
      * @param term      The search term.
      * @param limit     The limit of the number of response objects.
      * @param offset    The search offset value.
-     * @param protocol  The communication protocol to use.
      * @return The response message or an error.
      */
     @PostMapping("/search")
@@ -191,11 +192,9 @@ public class QueryMessageController {
             @RequestParam(value = "limit", defaultValue = "50") final Integer limit,
             @Parameter(description = "The offset value.", required = true)
             @RequestParam(value = "offset", defaultValue = "0") final Integer offset,
-            @Parameter(description = "The protocol to use for IDS communication.")
-            @RequestParam("protocol") final CommunicationProtocol protocol,
             @Parameter(description = "The search term.", required = true)
             @RequestBody final String term) {
-        if (CommunicationProtocol.IDSCP2.equals(protocol)) {
+        if (connectorConfig.isIdscpEnabled()) {
             final var result = template.send("direct:querySender",
                     ExchangeBuilder.anExchange(context)
                             .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)

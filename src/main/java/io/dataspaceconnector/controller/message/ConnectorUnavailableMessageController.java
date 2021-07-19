@@ -32,7 +32,7 @@ import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.util.ParameterUtils;
-import io.dataspaceconnector.controller.util.CommunicationProtocol;
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
@@ -91,10 +91,14 @@ public class ConnectorUnavailableMessageController {
     private final @NonNull CamelContext context;
 
     /**
+     * Service for handle application.properties settings.
+     */
+    private final @NonNull ConnectorConfiguration connectorConfig;
+
+    /**
      * Sending an ids connector unavailable message with the current connector as payload.
      *
      * @param recipient The url of the recipient.
-     * @param protocol  The communication protocol to use.
      * @return The response message or an error.
      */
     @PostMapping("/connector/unavailable")
@@ -111,10 +115,8 @@ public class ConnectorUnavailableMessageController {
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     public ResponseEntity<Object> sendMessage(
             @Parameter(description = "The recipient url.", required = true)
-            @RequestParam("recipient") final URI recipient,
-            @Parameter(description = "The protocol to use for IDS communication.")
-            @RequestParam("protocol") final CommunicationProtocol protocol) {
-        if (CommunicationProtocol.IDSCP2.equals(protocol)) {
+            @RequestParam("recipient") final URI recipient) {
+        if (connectorConfig.isIdscpEnabled()) {
             final var result = template.send("direct:connectorUnavailableSender",
                     ExchangeBuilder.anExchange(context)
                             .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)

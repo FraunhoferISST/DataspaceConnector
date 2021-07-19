@@ -15,12 +15,6 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.util.Objects;
-import java.util.Optional;
-
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.ids.messaging.common.DeserializeException;
@@ -38,10 +32,10 @@ import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.util.ParameterUtils;
-import io.dataspaceconnector.controller.util.CommunicationProtocol;
+import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
-import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -60,6 +54,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Controller for sending ids connector update messages.
@@ -91,10 +91,14 @@ public class ConnectorUpdateMessageController {
     private final @NonNull CamelContext context;
 
     /**
+     * Service for handle application.properties settings.
+     */
+    private final @NonNull ConnectorConfiguration connectorConfig;
+
+    /**
      * Sending an ids connector update message with the current connector as payload.
      *
      * @param recipient The url of the recipient.
-     * @param protocol  The communication protocol to use.
      * @return The response message or an error.
      */
     @PostMapping("/connector/update")
@@ -111,10 +115,8 @@ public class ConnectorUpdateMessageController {
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     public ResponseEntity<Object> sendMessage(
             @Parameter(description = "The recipient url.", required = true)
-            @RequestParam("recipient") final URI recipient,
-            @Parameter(description = "The protocol to use for IDS communication.")
-            @RequestParam("protocol") final CommunicationProtocol protocol) {
-        if (CommunicationProtocol.IDSCP2.equals(protocol)) {
+            @RequestParam("recipient") final URI recipient) {
+        if (connectorConfig.isIdscpEnabled()) {
             final var result = template.send("direct:connectorUpdateSender",
                     ExchangeBuilder.anExchange(context)
                             .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)

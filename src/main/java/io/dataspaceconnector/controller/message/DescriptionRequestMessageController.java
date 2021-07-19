@@ -15,19 +15,16 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import java.net.URI;
-import java.util.Objects;
-
 import de.fraunhofer.iais.eis.RejectionMessage;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.util.ParameterUtils;
-import io.dataspaceconnector.controller.util.CommunicationProtocol;
+import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
-import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.util.MessageUtils;
 import io.dataspaceconnector.util.Utils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,6 +45,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.net.URI;
+import java.util.Objects;
 
 /**
  * Controller for sending description request messages.
@@ -79,11 +79,15 @@ public class DescriptionRequestMessageController {
     private final @NonNull CamelContext context;
 
     /**
+     * Service for handle application.properties settings.
+     */
+    private final @NonNull ConnectorConfiguration connectorConfig;
+
+    /**
      * Requests metadata from an external connector by building an DescriptionRequestMessage.
      *
      * @param recipient The target connector url.
      * @param elementId The requested element id.
-     * @param protocol  The communication protocol to use.
      * @return The response entity.
      */
     @PostMapping("/description")
@@ -100,11 +104,9 @@ public class DescriptionRequestMessageController {
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The id of the requested resource.")
-            @RequestParam(value = "elementId", required = false) final URI elementId,
-            @Parameter(description = "The protocol to use for IDS communication.")
-            @RequestParam("protocol") final CommunicationProtocol protocol) {
+            @RequestParam(value = "elementId", required = false) final URI elementId) {
         String payload;
-        if (CommunicationProtocol.IDSCP2.equals(protocol)) {
+        if (connectorConfig.isIdscpEnabled()) {
             final var result = template.send("direct:descriptionRequestSender",
                     ExchangeBuilder.anExchange(context)
                             .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)

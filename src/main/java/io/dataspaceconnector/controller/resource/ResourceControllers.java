@@ -27,7 +27,6 @@ import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
 import io.dataspaceconnector.controller.resource.view.RepresentationView;
 import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
 import io.dataspaceconnector.controller.resource.view.SubscriptionView;
-import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.AgreementDesc;
@@ -275,11 +274,9 @@ public final class ResourceControllers {
             // TODO: Check what happens when this connector is the provider and one of its provided
             //  agreements is passed.
             final var data = (agreementUri == null)
-                    ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
-                    CommunicationProtocol.MULTIPART, queryInput)
+                    ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput)
                     : artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
-                    new RetrievalInformation(agreementUri, download,
-                            CommunicationProtocol.MULTIPART, queryInput)); // TODO
+                    new RetrievalInformation(agreementUri, download, queryInput));
 
             return returnData(artifactId, data);
         }
@@ -303,7 +300,7 @@ public final class ResourceControllers {
                 throws IOException, UnexpectedResponseException {
             ValidationUtils.validateQueryInput(queryInput);
             final var data =
-                    artifactSvc.getData(accessVerifier, dataReceiver, artifactId, CommunicationProtocol.MULTIPART, queryInput); // TODO
+                    artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput);
             return returnData(artifactId, data);
         }
 

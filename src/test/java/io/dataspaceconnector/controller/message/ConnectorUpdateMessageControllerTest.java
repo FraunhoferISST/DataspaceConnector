@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import java.io.IOException;
-import java.net.URI;
-import javax.xml.datatype.DatatypeFactory;
-
 import de.fraunhofer.iais.eis.DescriptionRequestMessage;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DynamicAttributeToken;
@@ -31,6 +27,7 @@ import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import lombok.SneakyThrows;
@@ -50,6 +47,10 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.xml.datatype.DatatypeFactory;
+import java.io.IOException;
+import java.net.URI;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,7 +59,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ConnectorUpdateMessageControllerTest {
 
@@ -79,6 +80,9 @@ public class ConnectorUpdateMessageControllerTest {
 
     @MockBean
     private ProducerTemplate producerTemplate;
+
+    @MockBean
+    private ConnectorConfiguration connectorConfiguration;
 
     @Autowired
     private MockMvc mockMvc;
@@ -198,6 +202,7 @@ public class ConnectorUpdateMessageControllerTest {
         when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
         when(exchange.getIn()).thenReturn(in);
         when(in.getBody(Response.class)).thenReturn(response);
+        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
 
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/connector/update")
@@ -222,6 +227,7 @@ public class ConnectorUpdateMessageControllerTest {
         when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
         when(exchange.getIn()).thenReturn(in);
         when(in.getBody(ResponseEntity.class)).thenReturn(response);
+        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
 
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/connector/update")

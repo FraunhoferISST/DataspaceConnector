@@ -31,7 +31,7 @@ import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.util.ParameterUtils;
-import io.dataspaceconnector.controller.util.CommunicationProtocol;
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
@@ -90,11 +90,15 @@ public class ResourceUpdateMessageController {
     private final @NonNull CamelContext context;
 
     /**
+     * Service for handle application.properties settings.
+     */
+    private final @NonNull ConnectorConfiguration connectorConfig;
+
+    /**
      * Sending an ids resource update message with a resource as payload.
      *
      * @param recipient  The url of the recipient.
      * @param resourceId The resource id.
-     * @param protocol  The communication protocol to use.
      * @return The response message or an error.
      */
     @PostMapping("/resource/update")
@@ -114,10 +118,8 @@ public class ResourceUpdateMessageController {
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The resource id.", required = true)
-            @RequestParam("resourceId") final URI resourceId,
-            @Parameter(description = "The protocol to use for IDS communication.")
-            @RequestParam("protocol") final CommunicationProtocol protocol) {
-        if (CommunicationProtocol.IDSCP2.equals(protocol)) {
+            @RequestParam("resourceId") final URI resourceId) {
+        if (connectorConfig.isIdscpEnabled()) {
             final var result = template.send("direct:resourceUpdateSender",
                     ExchangeBuilder.anExchange(context)
                             .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)
