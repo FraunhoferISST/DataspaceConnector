@@ -20,21 +20,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.QueryInput;
 import io.dataspaceconnector.util.Utils;
-import kotlin.NotImplementedError;
-import kotlin.Pair;
+import io.dataspaceconnector.util.exception.NotImplemented;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import okhttp3.HttpUrl;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * This class builds up http or httpS endpoint connections and sends GET requests.
@@ -67,6 +66,18 @@ public class HttpService {
 
 
     /**
+     * Pair of strings.
+     */
+    @Data
+    @AllArgsConstructor
+    public static class Pair {
+        /** First element. */
+        private String first;
+        /** Second element. */
+        private String second;
+    }
+
+    /**
      * The http request arguments.
      */
     @Data
@@ -84,7 +95,7 @@ public class HttpService {
         /**
          * Authentication information. Will overwrite entry in headers.
          */
-        private Pair<String, String> auth;
+        private Pair auth;
     }
 
 
@@ -242,7 +253,7 @@ public class HttpService {
             return get(target, args);
         }
 
-        throw new NotImplementedError();
+        throw new NotImplemented();
     }
 
     /**
