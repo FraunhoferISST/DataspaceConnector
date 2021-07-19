@@ -229,7 +229,9 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
 
         // Make sure the data exists and is up to date.
         if (shouldDownload(artifact, information)) {
-            return downloadAndUpdateData(retriever, artifactId, information, artifact);
+            final var data = downloadAndUpdateData(retriever, artifactId, information, artifact);
+            incrementAccessCounter(artifact);
+            return data;
         }
 
         // Artifact exists, access granted, data exists and data up to date.

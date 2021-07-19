@@ -35,14 +35,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-class ConfigurationControllerIT {
+public class ConfigurationControllerIT {
 
     @Autowired
     MockMvc mockMvc;
 
     @Test
     @WithMockUser("ADMIN")
-    void create_validInput_returnNew() throws Exception {
+    public void create_validInput_returnNew() throws Exception {
         mockMvc.perform(post("/api/configurations")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
@@ -51,7 +51,7 @@ class ConfigurationControllerIT {
 
     @Test
     @WithMockUser("ADMIN")
-    void getAll_validInput_returnObj() throws Exception {
+     public void getAll_validInput_returnObj() throws Exception {
         for(int i = 0; i < 5; i++) {
             mockMvc.perform(post("/api/configurations")
                                     .contentType(MediaType.APPLICATION_JSON)
@@ -64,7 +64,7 @@ class ConfigurationControllerIT {
 
     @Test
     @WithMockUser("ADMIN")
-    void get_validInput_returnObj() throws Exception {
+     public void get_validInput_returnObj() throws Exception {
         final var newObject =
         mockMvc.perform(post("/api/configurations")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -78,7 +78,7 @@ class ConfigurationControllerIT {
 
     @Test
     @WithMockUser("ADMIN")
-    void update_validInput_returnAcknowledge() throws Exception {
+     public void update_validInput_returnAcknowledge() throws Exception {
         final var newObject =
                 mockMvc.perform(post("/api/configurations")
                                         .contentType(MediaType.APPLICATION_JSON)
@@ -95,7 +95,7 @@ class ConfigurationControllerIT {
 
     @Test
     @WithMockUser("ADMIN")
-    void delete_validInput_returnAcknowledge() throws Exception {
+     public void delete_validInput_returnAcknowledge() throws Exception {
         final var newObject =
                 mockMvc.perform(post("/api/configurations")
                                         .contentType(MediaType.APPLICATION_JSON)
@@ -110,7 +110,7 @@ class ConfigurationControllerIT {
 
     @Test
     @WithMockUser("ADMIN")
-    void get_validInput_returnDSCRepresentation() throws Exception {
+     public void get_validInput_returnDSCRepresentation() throws Exception {
         final var newObject =
                 mockMvc.perform(get("/api/configurations/active")
                                         .accept("application/hal+json"))
@@ -121,7 +121,7 @@ class ConfigurationControllerIT {
 
     @Test
     @WithMockUser("ADMIN")
-    void get_validInput_returnIDSRepresentation() throws Exception {
+     public void get_validInput_returnIDSRepresentation() throws Exception {
         final var newObject =
                 mockMvc.perform(get("/api/configurations/active")
                                         .accept("application/ld+json"))
@@ -132,7 +132,7 @@ class ConfigurationControllerIT {
 
     @Test
     @WithMockUser("ADMIN")
-    void setConfiguration_validInput_swapConfig() throws Exception {
+     public void setConfiguration_validInput_swapConfig() throws Exception {
         final var newObject =
                 mockMvc.perform(post("/api/configurations")
                                         .contentType(MediaType.APPLICATION_JSON)
