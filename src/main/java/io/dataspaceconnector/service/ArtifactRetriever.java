@@ -15,11 +15,12 @@
  */
 package io.dataspaceconnector.service;
 
-import io.dataspaceconnector.model.QueryInput;
-
 import java.io.InputStream;
 import java.net.URI;
 import java.util.UUID;
+
+import io.dataspaceconnector.controller.util.CommunicationProtocol;
+import io.dataspaceconnector.model.QueryInput;
 
 /**
  * Performs an artifact request for an artifact.
@@ -31,9 +32,11 @@ public interface ArtifactRetriever {
      * @param artifactId       The artifact whose data should be updated.
      * @param recipient        The target connector holding the artifact's data.
      * @param transferContract The contract authorizing the data transfer.
+     * @param protocol         The communication protocol to use.
      * @return The artifact's data.
      */
-    InputStream retrieve(UUID artifactId, URI recipient, URI transferContract);
+    InputStream retrieve(UUID artifactId, URI recipient, URI transferContract,
+                         CommunicationProtocol protocol);
 
     /**
      * Perform an artifact request for a given artifact with query parameters.
@@ -41,9 +44,11 @@ public interface ArtifactRetriever {
      * @param artifactId       The artifact whose data should be updated.
      * @param recipient        The target connector holding the artifact's data.
      * @param transferContract The contract authorizing the data transfer.
+     * @param protocol         The communication protocol to use.
      * @param queryInput       The data query for specifying the requested data.
      * @return The artifact's data.
      */
     InputStream retrieve(UUID artifactId, URI recipient, URI transferContract,
+                         CommunicationProtocol protocol,
                          QueryInput queryInput);
 }

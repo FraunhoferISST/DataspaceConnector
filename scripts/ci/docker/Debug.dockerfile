@@ -33,5 +33,6 @@ FROM gcr.io/distroless/java-debian10:debug
 COPY --from=maven /app/target/*.jar /app/app.jar
 WORKDIR /app
 EXPOSE 8080
+EXPOSE 29292
 # USER nonroot # Run root in debug images
 ENTRYPOINT ["java","-jar","app.jar"]

@@ -15,12 +15,19 @@
  */
 package io.dataspaceconnector.service;
 
+import java.net.URI;
+import java.util.HashMap;
+import java.util.UUID;
+
+import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.exception.DataRetrievalException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactImpl;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
 import io.dataspaceconnector.service.resource.ArtifactService;
 import lombok.SneakyThrows;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,6 +52,12 @@ public class BlockingArtifactReceiverTest {
 
     @MockBean
     private ArtifactService artifactService;
+
+    @MockBean
+    private ProducerTemplate producerTemplate;
+
+    @MockBean
+    private CamelContext camelContext;
 
     @Autowired
     private BlockingArtifactReceiver blockingArtifactReceiver;
@@ -83,7 +96,7 @@ public class BlockingArtifactReceiverTest {
 
         /* ACT */
         final var result = blockingArtifactReceiver.retrieve(
-                artifactId, recipient, transferContract);
+                artifactId, recipient, transferContract, null);
 
         /* ASSERT */
         assertEquals(data, Base64Utils.encodeToString(result.readAllBytes()));
@@ -111,7 +124,7 @@ public class BlockingArtifactReceiverTest {
 
         /* ACT && ASSERT */
         assertThrows(DataRetrievalException.class, () -> blockingArtifactReceiver
-                .retrieve(artifactId, recipient, transferContract));
+                .retrieve(artifactId, recipient, transferContract, null));
     }
 
     /***********************************************************************************************

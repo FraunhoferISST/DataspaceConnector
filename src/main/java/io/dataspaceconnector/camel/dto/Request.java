@@ -20,7 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
- * Implementation of the {@link io.dataspaceconnector.camel.dto.RouteMsg} interface for requests.
+ * Implementation of the {@link RouteMsg} interface for requests.
  * Should contain a subclass of either {@link de.fraunhofer.iais.eis.RequestMessage} or
  * {@link de.fraunhofer.iais.eis.NotificationMessage} as header and can contain an arbitrary
  * payload.

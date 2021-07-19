@@ -15,6 +15,13 @@
  */
 package io.dataspaceconnector.service;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.exception.InvalidResourceException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
@@ -46,18 +53,12 @@ import io.dataspaceconnector.service.resource.RuleService;
 import io.dataspaceconnector.service.usagecontrol.AllowAccessVerifier;
 import io.dataspaceconnector.service.util.EndpointUtils;
 import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.IdsUtils;
 import io.dataspaceconnector.util.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * This service offers methods for finding entities by their identifying URI.
@@ -216,19 +217,19 @@ public class EntityResolver {
         try {
             if (entity instanceof Artifact) {
                 final var artifact = artifactBuilder.create((Artifact) entity);
-                return Objects.requireNonNull(artifact).toRdf();
+                return IdsUtils.toRdf(Objects.requireNonNull(artifact));
             } else if (entity instanceof OfferedResource) {
                 final var resource = offerBuilder.create((OfferedResource) entity);
-                return Objects.requireNonNull(resource).toRdf();
+                return IdsUtils.toRdf(Objects.requireNonNull(resource));
             } else if (entity instanceof Representation) {
                 final var representation = representationBuilder.create((Representation) entity);
-                return Objects.requireNonNull(representation).toRdf();
+                return IdsUtils.toRdf(Objects.requireNonNull(representation));
             } else if (entity instanceof Catalog) {
                 final var catalog = catalogBuilder.create((Catalog) entity);
-                return Objects.requireNonNull(catalog).toRdf();
+                return IdsUtils.toRdf(Objects.requireNonNull(catalog));
             } else if (entity instanceof Contract) {
-                final var catalog = contractBuilder.create((Contract) entity);
-                return Objects.requireNonNull(catalog).toRdf();
+                final var contractOffer = contractBuilder.create((Contract) entity);
+                return IdsUtils.toRdf(Objects.requireNonNull(contractOffer));
             } else if (entity instanceof Agreement) {
                 final var agreement = (Agreement) entity;
                 return agreement.getValue();
@@ -270,7 +271,8 @@ public class EntityResolver {
                                            final QueryInput queryInput)
             throws IOException, UnexpectedResponseException {
         final var endpoint = EndpointUtils.getUUIDFromPath(requestedArtifact);
-        return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint, queryInput);
+        return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint,
+                null, queryInput);
     }
 
     /**

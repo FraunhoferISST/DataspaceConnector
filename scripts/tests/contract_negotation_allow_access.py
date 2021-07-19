@@ -105,18 +105,20 @@ def add_rule_to_contract(contract, rule):
 
 
 # IDS
-def descriptionRequest(recipient, elementId):
+def descriptionRequest(recipient, elementId, protocol):
     url = "https://localhost:8080/api/ids/description"
     params = {}
     if recipient is not None:
         params['recipient'] = recipient
     if elementId is not None:
         params['elementId'] = elementId
+    if protocol is not None:
+        params['protocol'] = protocol
 
     return s.post(url, params=params)
 
 
-def contractRequest(recipient, resourceId, artifactId, download, contract):
+def contractRequest(recipient, resourceId, artifactId, download, protocol, contract):
     url = "https://localhost:8080/api/ids/contract"
     params = {}
     if recipient is not None:
@@ -127,6 +129,8 @@ def contractRequest(recipient, resourceId, artifactId, download, contract):
         params['artifactIds'] = artifactId
     if download is not None:
         params['download'] = download
+    if protocol is not None:
+        params['protocol'] = protocol
 
     return s.post(url, params=params, json=[contract])
 
@@ -146,11 +150,11 @@ add_contract_to_resource(offers, contract)
 add_rule_to_contract(contract, use_rule)
 
 # Call description
-response = descriptionRequest("https://localhost:8080/api/ids/data", offers)
+response = descriptionRequest("https://localhost:8080/api/ids/data", offers, "MULTIPART")
 offer = json.loads(response.text)
 
 # Negotiate contract
 obj = offer['ids:contractOffer'][0]['ids:permission'][0]
 obj['ids:target'] = artifact
-response = contractRequest("https://localhost:8080/api/ids/data", offers, artifact, False, obj)
+response = contractRequest("https://localhost:8080/api/ids/data", offers, artifact, False, "MULTIPART", obj)
 pprint.pprint(str(response.content))

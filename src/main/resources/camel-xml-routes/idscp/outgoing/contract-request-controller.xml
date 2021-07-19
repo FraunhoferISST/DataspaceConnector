@@ -1,0 +1,85 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="contractRequestSender">
+
+        <onException>
+            <exception>io.dataspaceconnector.exception.InvalidInputException</exception>
+            <to uri="direct:handleInvalidInputException"/>
+        </onException>
+
+        <onException>
+            <exception>de.fraunhofer.iais.eis.util.ConstraintViolationException</exception>
+            <to uri="direct:handleFailedToBuildContractRequest"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.camel.exception.InvalidResponseException</exception>
+            <to uri="direct:handleInvalidResponseException"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.exception.MessageException</exception>
+            <to uri="direct:handleIdsMessageFailed"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.exception.MessageResponseException</exception>
+            <exception>io.dataspaceconnector.exception.ContractException</exception>
+            <exception>java.lang.IllegalArgumentException</exception>
+            <to uri="direct:handleReceivedInvalidResponse"/>
+        </onException>
+
+        <onException>
+            <exception>javax.persistence.PersistenceException</exception>
+            <to uri="direct:handlePersistenceException"/>
+        </onException>
+
+        <onException>
+            <exception>java.io.IOException</exception>
+            <exception>io.dataspaceconnector.exception.ResourceNotFoundException</exception>
+            <exception>io.dataspaceconnector.exception.MessageResponseException</exception>
+            <log loggingLevel="DEBUG" message="Could not save data for artifact. [artifact=(${exchangeProperty.currentArtifact}), exception=(${exception.message})]"/>
+        </onException>
+
+        <from uri="direct:contractRequestSender"/>
+        <process ref="RuleListInputValidator"/>
+        <process ref="ContractRequestMessageBuilder"/>
+        <process ref="ContractRequestPreparer"/>
+        <toD uri="idscp2client://${exchangeProperty.recipient}?awaitResponse=true&amp;sslContextParameters=#serverSslContext&amp;useIdsMessages=true"/>
+        <process ref="ResponseToDtoConverter"/>
+        <process ref="ContractResponseValidator"/>
+        <process ref="ContractAgreementValidator"/>
+        <process ref="ContractAgreementMessageBuilder"/>
+        <process ref="ContractAgreementPreparer"/>
+        <toD uri="idscp2client://${exchangeProperty.recipient}?awaitResponse=true&amp;sslContextParameters=#serverSslContext&amp;useIdsMessages=true"/>
+        <process ref="ResponseToDtoConverter"/>
+        <process ref="ContractAgreementResponseValidator"/>
+        <process ref="ContractAgreementPersistenceProcessor"/>
+
+        <loop>
+            <simple>${exchangeProperty.resources.size()}</simple>
+            <process ref="DescriptionRequestMessageBuilder"/>
+            <process ref="RequestWithoutPayloadPreparer"/>
+            <toD uri="idscp2client://${exchangeProperty.recipient}?awaitResponse=true&amp;sslContextParameters=#serverSslContext&amp;useIdsMessages=true"/>
+            <process ref="ResponseToDtoConverter"/>
+            <process ref="DescriptionResponseValidator"/>
+            <process ref="MetadataPersistenceProcessor"/>
+        </loop>
+        <process ref="AgreementToArtifactsLinker"/>
+
+        <choice>
+            <when>
+                <simple>${exchangeProperty.download}</simple>
+                <loop>
+                    <simple>${exchangeProperty.artifacts.size()}</simple>
+                    <process ref="ArtifactRequestMessageBuilder"/>
+                    <process ref="RequestWithoutPayloadPreparer"/>
+                    <toD uri="idscp2client://${exchangeProperty.recipient}?awaitResponse=true&amp;sslContextParameters=#serverSslContext&amp;useIdsMessages=true"/>
+                    <process ref="ResponseToDtoConverter"/>
+                    <process ref="ArtifactResponseValidator"/>
+                    <process ref="DataPersistenceProcessor"/>
+                </loop>
+            </when>
+        </choice>
+
+    </route>
+</routes>

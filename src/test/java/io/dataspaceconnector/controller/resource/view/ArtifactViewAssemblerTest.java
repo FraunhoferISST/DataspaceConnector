@@ -15,6 +15,12 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.UUID;
+
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
 import io.dataspaceconnector.model.Artifact;
@@ -30,12 +36,6 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -172,7 +172,7 @@ public class ArtifactViewAssemblerTest {
     @SneakyThrows
     private String getArtifactDataLink(final UUID artifactId) {
         return linkTo(methodOn(ResourceControllers.ArtifactController.class)
-                .getData(artifactId, new QueryInput())).toString();
+                .getData(artifactId, null, new QueryInput())).toString();
     }
 
     private String getArtifactRepresentationsLink(final UUID artifactId) {

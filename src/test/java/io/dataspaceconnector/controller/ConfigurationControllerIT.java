@@ -22,8 +22,10 @@ import de.fraunhofer.iais.eis.LogLevel;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.idscp.config.Idscp2Config;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import net.minidev.json.JSONObject;
+import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,7 +44,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ConfigurationControllerIT {
+
+    @MockBean
+    private Idscp2Config idscp2Config;
+
+    @MockBean
+    private SpringTransactionPolicy transactionPolicy;
 
     @MockBean
     private ConfigContainer configContainer;

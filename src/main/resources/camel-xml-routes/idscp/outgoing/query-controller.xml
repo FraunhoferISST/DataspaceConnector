@@ -1,0 +1,11 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="querySender">
+
+        <from uri="direct:querySender"/>
+        <process ref="QueryMessageBuilder"/>
+        <process ref="QueryPreparer"/>
+        <toD uri="idscp2client://${exchangeProperty.recipient}?awaitResponse=true&amp;sslContextParameters=#serverSslContext&amp;useIdsMessages=true"/>
+        <process ref="ResponseToDtoConverter"/>
+
+    </route>
+</routes>
