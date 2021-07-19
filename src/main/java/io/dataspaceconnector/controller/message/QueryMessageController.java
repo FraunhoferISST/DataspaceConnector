@@ -41,6 +41,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
@@ -131,7 +132,8 @@ public class QueryMessageController {
                 }
                 return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
             } else {
-                final var responseEntity = result.getIn().getBody(ResponseEntity.class);
+                final var responseEntity =
+                    toObjectResponse(result.getIn().getBody(ResponseEntity.class));
                 return Objects.requireNonNullElseGet(responseEntity,
                         () -> new ResponseEntity<Object>("An internal server error occurred.",
                                 HttpStatus.INTERNAL_SERVER_ERROR));
@@ -206,7 +208,8 @@ public class QueryMessageController {
                 }
                 return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
             } else {
-                final var responseEntity = result.getIn().getBody(ResponseEntity.class);
+                final var responseEntity =
+                    toObjectResponse(result.getIn().getBody(ResponseEntity.class));
                 return Objects.requireNonNullElseGet(responseEntity,
                         () -> new ResponseEntity<Object>("An internal server error occurred.",
                                 HttpStatus.INTERNAL_SERVER_ERROR));
@@ -235,5 +238,10 @@ public class QueryMessageController {
             }
             return messageService.validateResponse(Optional.empty(), ResultMessageImpl.class);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static ResponseEntity<Object> toObjectResponse(final ResponseEntity<?> response) {
+        return (ResponseEntity<Object>) response;
     }
 }

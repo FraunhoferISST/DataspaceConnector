@@ -22,6 +22,9 @@ import java.util.Optional;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import io.dataspaceconnector.camel.exception.InvalidResponseException;
+import io.dataspaceconnector.camel.processor.controller.helper.ConfigurationUpdater;
+import io.dataspaceconnector.camel.processor.controller.helper.PolicyRestrictionProcessor;
+import io.dataspaceconnector.camel.processor.controller.helper.ResourceFinder;
 import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
@@ -42,7 +45,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {ConfigurationUpdater.class, PolicyRestrictionProcessor.class,
+@SpringBootTest(classes = { ConfigurationUpdater.class, PolicyRestrictionProcessor.class,
         ResourceFinder.class})
 public class IdsHelperProcessorTest {
 

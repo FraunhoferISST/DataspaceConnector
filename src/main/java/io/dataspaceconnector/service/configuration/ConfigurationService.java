@@ -94,11 +94,25 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
     private void replaceActiveConfig(final UUID newConfig, final Configuration activeConfig)
             throws ConfigUpdateException {
         if (activeConfig.getId().equals(newConfig)) {
-            return;
+            reload(newConfig);
         }
 
         swapActiveConfigInDb(newConfig);
         reload(newConfig);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Configuration update(final UUID entityId, final ConfigurationDesc desc) {
+        final var config = super.update(entityId, desc);
+        try {
+            final var activeConfig = findActiveConfig();
+            if (activeConfig.isPresent()
+                && activeConfig.get().getId().equals(config.getId())) {
+                reload(config.getId());
+            }
+        } catch (ConfigUpdateException ignored) { }
+        return config;
     }
 
     private void swapActiveConfigInDb(final UUID newConfig) {

@@ -30,6 +30,7 @@ public class NotificationHandlerRoute extends RouteBuilder {
      *
      * @throws Exception if any error occurs.
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void configure() throws Exception {
         onException(IllegalStateException.class, ConstraintViolationException.class)

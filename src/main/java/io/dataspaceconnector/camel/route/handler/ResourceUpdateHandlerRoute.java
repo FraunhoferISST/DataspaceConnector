@@ -35,6 +35,7 @@ public class ResourceUpdateHandlerRoute extends RouteBuilder {
      *
      * @throws Exception if any error occurs.
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void configure() throws Exception {
         onException(NoAffectedResourceException.class)
