@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ConfigurationControllerIT {
@@ -214,35 +214,9 @@ public class ConfigurationControllerIT {
                 .andExpect(status().isInternalServerError());
     }
 
-    @Test
-    public void updateConfiguration_unauthorized_return401() throws Exception {
-        /* ARRANGE */
-        final var model = new ConfigurationModelBuilder()
-                ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
-                ._configurationModelLogLevel_(LogLevel.MINIMAL_LOGGING)
-                ._connectorStatus_(ConnectorStatus.CONNECTOR_OFFLINE)
-                .build();
-
-        /* ACT && ASSERT */
-        mockMvc.perform(put("/api/configuration")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(model.toRdf()))
-                .andExpect(status().isUnauthorized());
-
-        Mockito.verify(configContainer, Mockito.never()).updateConfiguration(Mockito.any());
-    }
-
     /**
      * getConfiguration
      */
-
-    @Test
-    public void getConfiguration_unauthorized_return401() throws Exception {
-        /* ACT && ASSERT */
-        mockMvc.perform(get("/api/configuration"))
-                .andExpect(status().isUnauthorized());
-    }
-
 
     @Test
     @WithMockUser("ADMIN")
@@ -296,14 +270,6 @@ public class ConfigurationControllerIT {
     /**
      * setNegotiationStatus
      */
-
-    @Test
-    public void setNegotiationStatus_unauthorized_return401() throws Exception {
-        /* ACT && ASSERT */
-        mockMvc.perform(put("/api/configuration/negotiation")
-                .param("status", "true"))
-                .andExpect(status().isUnauthorized());
-    }
 
     @Test
     @WithMockUser("ADMIN")
@@ -368,13 +334,6 @@ public class ConfigurationControllerIT {
      */
 
     @Test
-    public void getNegotiationStatus_unauthorized_return401() throws Exception {
-        /* ACT && ASSERT */
-        mockMvc.perform(get("/api/configuration/negotiation"))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
     @WithMockUser("ADMIN")
     public void getNegotiationStatus_isTrue_returnTrue() throws Exception {
         final var body = new JSONObject();
@@ -420,14 +379,6 @@ public class ConfigurationControllerIT {
     /**
      * setPatternStatus
      */
-
-    @Test
-    public void setPatternStatus_unauthorized_return401() throws Exception {
-        /* ACT && ASSERT */
-        mockMvc.perform(put("/api/configuration/pattern")
-                .param("status", "true"))
-                .andExpect(status().isUnauthorized());
-    }
 
     @Test
     @WithMockUser("ADMIN")
@@ -489,13 +440,6 @@ public class ConfigurationControllerIT {
     /**
      * getPatternStatus
      */
-
-    @Test
-    public void getPatternStatus_unauthorized_return401() throws Exception {
-        /* ACT && ASSERT */
-        mockMvc.perform(get("/api/configuration/pattern"))
-                .andExpect(status().isUnauthorized());
-    }
 
     @Test
     @WithMockUser("ADMIN")

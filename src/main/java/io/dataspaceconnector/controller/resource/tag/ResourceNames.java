@@ -59,6 +59,11 @@ public final class ResourceNames {
      */
     public static final String ARTIFACTS = "Artifacts";
 
+    /**
+     * Tag name for subscriptions.
+     */
+    public static final String SUBSCRIPTIONS = "Subscriptions";
+
     private ResourceNames() {
         // Nothing to do here.
     }

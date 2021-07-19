@@ -15,8 +15,16 @@
  */
 package io.dataspaceconnector.util;
 
-import java.net.URI;
-
+import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;
+import io.dataspaceconnector.controller.resource.view.ArtifactViewAssembler;
+import io.dataspaceconnector.controller.resource.view.CatalogViewAssembler;
+import io.dataspaceconnector.controller.resource.view.ContractRuleViewAssembler;
+import io.dataspaceconnector.controller.resource.view.ContractViewAssembler;
+import io.dataspaceconnector.controller.resource.view.OfferedResourceViewAssembler;
+import io.dataspaceconnector.controller.resource.view.RepresentationViewAssembler;
+import io.dataspaceconnector.controller.resource.view.RequestedResourceViewAssembler;
+import io.dataspaceconnector.controller.resource.view.SelfLinking;
+import io.dataspaceconnector.controller.resource.view.SubscriptionViewAssembler;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.exception.UnreachableLineException;
 import io.dataspaceconnector.model.AbstractEntity;
@@ -28,15 +36,9 @@ import io.dataspaceconnector.model.ContractRule;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.Representation;
 import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;
-import io.dataspaceconnector.controller.resource.view.ArtifactViewAssembler;
-import io.dataspaceconnector.controller.resource.view.CatalogViewAssembler;
-import io.dataspaceconnector.controller.resource.view.ContractRuleViewAssembler;
-import io.dataspaceconnector.controller.resource.view.ContractViewAssembler;
-import io.dataspaceconnector.controller.resource.view.OfferedResourceViewAssembler;
-import io.dataspaceconnector.controller.resource.view.RepresentationViewAssembler;
-import io.dataspaceconnector.controller.resource.view.RequestedResourceViewAssembler;
-import io.dataspaceconnector.controller.resource.view.SelfLinking;
+import io.dataspaceconnector.model.Subscription;
+
+import java.net.URI;
 
 /**
  * This is a helper class for retrieving self-links of a database entity.
@@ -86,6 +88,12 @@ public final class SelfLinkHelper {
     private static final AgreementViewAssembler AGREEMENT_ASSEMBLER = new AgreementViewAssembler();
 
     /**
+     * View assembler for subscriptions.
+     */
+    private static final SubscriptionViewAssembler SUBSCRIPTION_ASSEMBLER =
+            new SubscriptionViewAssembler();
+
+    /**
      * Default constructor.
      */
     private SelfLinkHelper() {
@@ -117,6 +125,8 @@ public final class SelfLinkHelper {
             return getSelfLink((ContractRule) entity);
         } else if (entity instanceof Agreement) {
             return getSelfLink((Agreement) entity);
+        } else if (entity instanceof Subscription) {
+            return getSelfLink((Subscription) entity);
         }
 
         throw new UnreachableLineException(ErrorMessages.UNKNOWN_TYPE);
@@ -229,5 +239,17 @@ public final class SelfLinkHelper {
      */
     public static URI getSelfLink(final Agreement agreement) throws ResourceNotFoundException {
         return getSelfLink(agreement, AGREEMENT_ASSEMBLER);
+    }
+
+    /**
+     * Get self-link of subscription.
+     *
+     * @param subscription The subscription.
+     * @return The self-link of the subscription.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    public static URI getSelfLink(final Subscription subscription)
+            throws ResourceNotFoundException {
+        return getSelfLink(subscription, SUBSCRIPTION_ASSEMBLER);
     }
 }

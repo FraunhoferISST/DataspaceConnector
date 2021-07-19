@@ -15,19 +15,14 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-import javax.persistence.PersistenceException;
-
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.util.ParameterUtils;
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;
-import io.dataspaceconnector.controller.util.CommunicationProtocol;
+import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
 import io.dataspaceconnector.exception.MessageException;
@@ -39,7 +34,6 @@ import io.dataspaceconnector.service.ContractNegotiator;
 import io.dataspaceconnector.service.EntityUpdateService;
 import io.dataspaceconnector.service.MetadataDownloader;
 import io.dataspaceconnector.service.resource.AgreementService;
-import io.dataspaceconnector.util.ControllerUtils;
 import io.dataspaceconnector.util.RuleUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -63,6 +57,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+
 /**
  * This controller provides the endpoint for sending a contract request message and starting the
  * metadata and data exchange.
@@ -71,7 +71,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
-@Tag(name = "IDS Messages", description = "Endpoints for invoke sending IDS messages")
+@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
 public class ContractRequestMessageController {
     /**
      * Service for updating database entities.
@@ -114,6 +114,11 @@ public class ContractRequestMessageController {
     private final @NonNull CamelContext context;
 
     /**
+     * Service for handle application.properties settings.
+     */
+    private final @NonNull ConnectorConfiguration connectorConfig;
+
+    /**
      * Starts a contract, metadata, and data exchange with an external connector.
      *
      * @param recipient The recipient.
@@ -121,11 +126,10 @@ public class ContractRequestMessageController {
      * @param artifacts List of requested artifacts by IDs.
      * @param download  download data directly after successful contract and description request.
      * @param ruleList  List of rules that should be used within a contract request.
-     * @param protocol The communication protocol to use.
      * @return The response entity.
      */
     @PostMapping("/contract")
-    @Operation(summary = "Send ids contract request message")
+    @Operation(summary = "Send IDS contract request message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "201", description = "Created"),
@@ -146,11 +150,9 @@ public class ContractRequestMessageController {
             @Parameter(description = "Indicates whether the connector should automatically "
                     + "download data of an artifact.")
             @RequestParam("download") final boolean download,
-            @Parameter(description = "The protocol to use for IDS communication.")
-            @RequestParam("protocol") final CommunicationProtocol protocol,
             @Parameter(description = "List of ids rules with an artifact id as target.")
-            @RequestBody final List<Rule> ruleList) throws UnexpectedResponseException {
-        if (CommunicationProtocol.IDSCP2.equals(protocol)) {
+            @RequestBody final List<Rule> ruleList) {
+        if (connectorConfig.isIdscpEnabled()) {
             UUID agreementId;
             final var result = template.send("direct:contractRequestSender",
                     ExchangeBuilder.anExchange(context)

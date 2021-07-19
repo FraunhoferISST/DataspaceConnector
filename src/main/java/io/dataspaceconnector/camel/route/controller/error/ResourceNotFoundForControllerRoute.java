@@ -36,7 +36,7 @@ public class ResourceNotFoundForControllerRoute extends RouteBuilder {
                 .routeId("resourceNotFoundForController")
                 .log(LoggingLevel.DEBUG,
                         "Error route for handling resource not found called.")
-                .to("bean:io.dataspaceconnector.util.ControllerUtils?"
+                .to("bean:io.dataspaceconnector.controller.util.ControllerUtils?"
                         + "method=respondResourceNotFound(${exchangeProperty.resourceId})");
     }
 

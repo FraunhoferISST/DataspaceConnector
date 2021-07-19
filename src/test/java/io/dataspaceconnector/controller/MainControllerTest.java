@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class MainControllerTest {
@@ -118,15 +118,6 @@ public class MainControllerTest {
         assertEquals(connector.toRdf(), result.getResponse().getContentAsString());
     }
 
-    @Test
-    public void getPrivateSelfDescription_nothing_accessRestriction() throws Exception {
-        /* ARRANGE */
-        // Nothing to arrange here.
-
-        /* ACT && ASSERT */
-        mockMvc.perform(get("/api/connector")).andExpect(status().isUnauthorized());
-    }
-
 
     @Test
     @WithMockUser("ADMIN")
@@ -147,15 +138,6 @@ public class MainControllerTest {
     /**
      * root
      */
-
-    @Test
-    public void root_nothing_accessRestriction() throws Exception {
-        /* ARRANGE */
-        // Nothing to arrange here.
-
-        /* ACT && ASSERT */
-        mockMvc.perform(get("/api")).andExpect(status().isUnauthorized());
-    }
 
     @Test
     @WithMockUser("ADMIN")
@@ -180,6 +162,8 @@ public class MainControllerTest {
                 + "\"requests\":{\"href\":\"http://localhost/api/requests{?page,size}\","
                 + "\"templated\":true},"
                 + "\"rules\":{\"href\":\"http://localhost/api/rules{?page,size}\","
+                + "\"templated\":true},"
+                + "\"subscriptions\":{\"href\":\"http://localhost/api/subscriptions{?page,size}\","
                 + "\"templated\":true}}}", result.getResponse().getContentAsString());
         assertEquals("application/hal+json", result.getResponse().getContentType());
     }

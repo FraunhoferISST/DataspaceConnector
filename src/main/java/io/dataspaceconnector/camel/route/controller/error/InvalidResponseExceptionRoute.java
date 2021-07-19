@@ -36,7 +36,7 @@ public class InvalidResponseExceptionRoute extends RouteBuilder {
                 .routeId("invalidResponse")
                 .log(LoggingLevel.DEBUG,
                         "Error route for handling invalid response called.")
-                .to("bean:io.dataspaceconnector.util.ControllerUtils?"
+                .to("bean:io.dataspaceconnector.controller.util.ControllerUtils?"
                         + "method=respondWithMessageContent(${exception.getResponse()})");
     }
 

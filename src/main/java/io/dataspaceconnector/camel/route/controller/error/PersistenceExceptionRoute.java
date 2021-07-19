@@ -36,7 +36,7 @@ public class PersistenceExceptionRoute extends RouteBuilder {
                 .routeId("persistenceException")
                 .log(LoggingLevel.DEBUG,
                         "Error route for handling PersistenceException called.")
-                .to("bean:io.dataspaceconnector.util.ControllerUtils?"
+                .to("bean:io.dataspaceconnector.controller.util.ControllerUtils?"
                         + "method=respondFailedToStoreEntity(${exception})");
     }
 

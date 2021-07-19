@@ -194,7 +194,17 @@ public enum ErrorMessages {
      * The security profile claim is not present.
      */
     MISSING_SECURITY_PROFILE_CLAIM("The DAT of the issuer connector is missing attributes. "
-            + "Cannot enforce security restricted policy. Access denied.");
+            + "Cannot enforce security restricted policy. Access denied."),
+
+    /**
+     * No valid entity could be created from a given input.
+     */
+    INVALID_ENTITY_INPUT("Could not create valid entity with given input."),
+
+    /**
+     * If a resource update message could not be sent.
+     */
+    UPDATE_MESSAGE_FAILED("Failed to send update message.");
 
     /**
      * Holds the enums string.

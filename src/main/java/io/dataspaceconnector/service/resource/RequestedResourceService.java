@@ -18,7 +18,6 @@ package io.dataspaceconnector.service.resource;
 import io.dataspaceconnector.model.RequestedResource;
 import io.dataspaceconnector.model.RequestedResourceDesc;
 import io.dataspaceconnector.repository.RequestedResourcesRepository;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -29,9 +28,9 @@ import java.util.UUID;
  * Handles the basic logic for requested resources.
  */
 @Service
-@NoArgsConstructor
 public final class RequestedResourceService extends ResourceService<RequestedResource,
         RequestedResourceDesc> implements RemoteResolver {
+
     /**
      * {@inheritDoc}
      */
@@ -39,5 +38,16 @@ public final class RequestedResourceService extends ResourceService<RequestedRes
     public Optional<UUID> identifyByRemoteId(final URI remoteId) {
         final var repo = (RequestedResourcesRepository) getRepository();
         return repo.identifyByRemoteId(remoteId);
+    }
+
+    /**
+     * Find requested resource by remote id.
+     *
+     * @param remoteId The remote id.
+     * @return The entity.
+     */
+    public Optional<RequestedResource> getEntityByRemoteId(final URI remoteId) {
+        final var repo = (RequestedResourcesRepository) getRepository();
+        return repo.getByRemoteId(remoteId);
     }
 }

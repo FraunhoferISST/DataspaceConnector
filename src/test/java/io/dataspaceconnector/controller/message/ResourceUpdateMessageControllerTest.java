@@ -15,12 +15,6 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Optional;
-import java.util.UUID;
-import javax.xml.datatype.DatatypeFactory;
-
 import de.fraunhofer.iais.eis.DescriptionRequestMessage;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DynamicAttributeToken;
@@ -34,6 +28,7 @@ import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.util.ErrorMessages;
@@ -54,16 +49,21 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.xml.datatype.DatatypeFactory;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ResourceUpdateMessageControllerTest {
 
@@ -85,6 +85,9 @@ public class ResourceUpdateMessageControllerTest {
     @MockBean
     private ProducerTemplate producerTemplate;
 
+    @MockBean
+    private ConnectorConfiguration connectorConfiguration;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -98,15 +101,10 @@ public class ResourceUpdateMessageControllerTest {
             .build();
 
     @Test
-    public void sendConnectorUpdateMessage_unauthorized_returnUnauthorized() throws Exception {
-        mockMvc.perform(post("/api/ids/resource/update")).andExpect(status().isUnauthorized());
-    }
-
-    @Test
     @WithMockUser("ADMIN")
     public void sendConnectorUpdateMessage_noRecipient_throws400() throws Exception {
         /* ARRANGE */
-        // Nothing to arrange here.
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/resource/update")
@@ -121,7 +119,7 @@ public class ResourceUpdateMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendConnectorUpdateMessage_noResourceId_throws400() throws Exception {
         /* ARRANGE */
-        // Nothing to arrange here.
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/resource/update")
@@ -236,6 +234,7 @@ public class ResourceUpdateMessageControllerTest {
         when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
         when(exchange.getIn()).thenReturn(in);
         when(in.getBody(Response.class)).thenReturn(response);
+        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
 
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/resource/update")
@@ -261,6 +260,7 @@ public class ResourceUpdateMessageControllerTest {
         when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
         when(exchange.getIn()).thenReturn(in);
         when(in.getBody(ResponseEntity.class)).thenReturn(response);
+        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
 
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/resource/update")

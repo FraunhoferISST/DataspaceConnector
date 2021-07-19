@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import java.util.List;
-
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.Catalog;
@@ -25,8 +23,11 @@ import io.dataspaceconnector.model.ContractRule;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.Representation;
 import io.dataspaceconnector.model.RequestedResource;
+import io.dataspaceconnector.model.Subscription;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * This class contains all implementations of {@link OwningRelationService} and
@@ -64,6 +65,21 @@ public final class RelationServices {
     }
 
     /**
+     * Handles the relation between artifacts and subscriptions.
+     */
+    @Service
+    @NoArgsConstructor
+    public static class ArtifactSubscriptionLinker
+            extends OwningRelationService<Artifact, Subscription, ArtifactService,
+            SubscriptionService> {
+
+        @Override
+        protected final List<Subscription> getInternal(final Artifact owner) {
+            return owner.getSubscriptions();
+        }
+    }
+
+    /**
      * Handles the relation between representations and offered resources.
      */
     @Service
@@ -92,6 +108,21 @@ public final class RelationServices {
         @SuppressWarnings("unchecked")
         protected final List<RequestedResource> getInternal(final Representation owner) {
             return (List<RequestedResource>) (List<?>) owner.getResources();
+        }
+    }
+
+    /**
+     * Handles the relation between representations and subscriptions.
+     */
+    @Service
+    @NoArgsConstructor
+    public static class RepresentationSubscriptionLinker
+            extends OwningRelationService<Representation, Subscription,
+            RepresentationService, SubscriptionService> {
+
+        @Override
+        protected final List<Subscription> getInternal(final Representation owner) {
+            return owner.getSubscriptions();
         }
     }
 
@@ -195,6 +226,7 @@ public final class RelationServices {
             Artifact, RepresentationService, ArtifactService> {
         /**
          * Get the list of artifacts owned by the representation.
+         *
          * @param owner The owner of the artifacts.
          * @return The list of owned artifacts.
          */
@@ -213,12 +245,55 @@ public final class RelationServices {
             ContractService, RuleService> {
         /**
          * Get the list of rules owned by the contract.
+         *
          * @param owner The owner of the rules.
          * @return The list of owned rules.
          */
         @Override
         protected List<ContractRule> getInternal(final Contract owner) {
             return owner.getRules();
+        }
+    }
+
+    /**
+     * Handles the relation between requested resources and subscriptions.
+     */
+    @Service
+    @NoArgsConstructor
+    public static class RequestedResourceSubscriptionLinker
+            extends OwningRelationService<RequestedResource, Subscription,
+            RequestedResourceService, SubscriptionService> {
+
+        /**
+         * Returns the list of subscriptions owned by a given requested resource.
+         *
+         * @param owner the requested resource whose subscriptions should be received.
+         * @return the list of owned subscriptions.
+         */
+        @Override
+        protected List<Subscription> getInternal(final RequestedResource owner) {
+            return owner.getSubscriptions();
+        }
+    }
+
+    /**
+     * Handles the relation between offered resources and subscriptions.
+     */
+    @Service
+    @NoArgsConstructor
+    public static class OfferedResourceSubscriptionLinker
+            extends OwningRelationService<OfferedResource, Subscription,
+            OfferedResourceService, SubscriptionService> {
+
+        /**
+         * Returns the list of subscriptions owned by a given offered resource.
+         *
+         * @param owner the offered resource whose subscriptions should be received.
+         * @return the list of owned subscriptions.
+         */
+        @Override
+        protected List<Subscription> getInternal(final OfferedResource owner) {
+            return owner.getSubscriptions();
         }
     }
 }

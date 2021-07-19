@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.AbstractDescription;
 import io.dataspaceconnector.model.AbstractEntity;
@@ -30,6 +28,8 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.UUID;
 
 /**
  * The base service implements base logic for persistent entities.

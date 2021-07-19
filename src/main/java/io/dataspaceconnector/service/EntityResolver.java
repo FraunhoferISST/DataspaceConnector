@@ -15,18 +15,10 @@
  */
 package io.dataspaceconnector.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.exception.InvalidResourceException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.exception.SelfLinkCreationException;
-import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.Artifact;
@@ -60,6 +52,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 /**
  * This service offers methods for finding entities by their identifying URI.
  */
@@ -71,92 +71,77 @@ public class EntityResolver {
     /**
      * Service for artifacts.
      */
-    private final @NonNull
-    ArtifactService artifactService;
+    private final @NonNull ArtifactService artifactService;
 
     /**
      * Service for representations.
      */
-    private final @NonNull
-    RepresentationService representationService;
+    private final @NonNull RepresentationService representationService;
 
     /**
      * Service for offered resources.
      */
-    private final @NonNull
-    ResourceService<OfferedResource, OfferedResourceDesc> offerService;
+    private final @NonNull ResourceService<OfferedResource, OfferedResourceDesc> offerService;
 
     /**
      * Service for catalogs.
      */
-    private final @NonNull
-    CatalogService catalogService;
+    private final @NonNull CatalogService catalogService;
 
     /**
      * Service for contract offers.
      */
-    private final @NonNull
-    ContractService contractService;
+    private final @NonNull ContractService contractService;
 
     /**
      * Service for contract rules.
      */
-    private final @NonNull
-    RuleService ruleService;
+    private final @NonNull RuleService ruleService;
 
     /**
      * Service for contract agreements.
      */
-    private final @NonNull
-    AgreementService agreementService;
+    private final @NonNull AgreementService agreementService;
 
     /**
      * Service for building ids objects.
      */
-    private final @NonNull
-    IdsCatalogBuilder catalogBuilder;
+    private final @NonNull IdsCatalogBuilder catalogBuilder;
 
     /**
      * Service for building ids resource.
      */
-    private final @NonNull
-    IdsResourceBuilder<OfferedResource> offerBuilder;
+    private final @NonNull IdsResourceBuilder<OfferedResource> offerBuilder;
 
     /**
      * Service for building ids artifact.
      */
-    private final @NonNull
-    IdsArtifactBuilder artifactBuilder;
+    private final @NonNull IdsArtifactBuilder artifactBuilder;
 
     /**
      * Service for building ids representation.
      */
-    private final @NonNull
-    IdsRepresentationBuilder representationBuilder;
+    private final @NonNull IdsRepresentationBuilder representationBuilder;
 
     /**
      * Service for building ids contract.
      */
-    private final @NonNull
-    IdsContractBuilder contractBuilder;
+    private final @NonNull IdsContractBuilder contractBuilder;
 
     /**
      * Skips the data access verification.
      */
-    private final @NonNull
-    AllowAccessVerifier allowAccessVerifier;
+    private final @NonNull AllowAccessVerifier allowAccessVerifier;
 
     /**
      * Performs a artifact requests.
      */
-    private final @NonNull
-    BlockingArtifactReceiver artifactReceiver;
+    private final @NonNull BlockingArtifactReceiver artifactReceiver;
 
     /**
      * Service for deserialization.
      */
-    private final @NonNull
-    DeserializationService deserializationService;
+    private final @NonNull DeserializationService deserializationService;
 
     /**
      * Return any connector entity by its id.
@@ -166,7 +151,7 @@ public class EntityResolver {
      * @throws ResourceNotFoundException If the resource could not be found.
      * @throws IllegalArgumentException  If the resource is null or the elementId.
      */
-    public AbstractEntity getEntityById(final URI elementId) throws ResourceNotFoundException {
+    public Optional<AbstractEntity> getEntityById(final URI elementId) {
         Utils.requireNonNull(elementId, ErrorMessages.URI_NULL);
 
         try {
@@ -179,28 +164,24 @@ public class EntityResolver {
             // Find the right service and return the requested element.
             switch (Objects.requireNonNull(pathEnum)) {
                 case ARTIFACTS:
-                    return artifactService.get(entityId);
+                    return Optional.of(artifactService.get(entityId));
                 case REPRESENTATIONS:
-                    return representationService.get(entityId);
+                    return Optional.of(representationService.get(entityId));
                 case OFFERS:
-                    return offerService.get(entityId);
+                    return Optional.of(offerService.get(entityId));
                 case CATALOGS:
-                    return catalogService.get(entityId);
+                    return Optional.of(catalogService.get(entityId));
                 case CONTRACTS:
-                    return contractService.get(entityId);
+                    return Optional.of(contractService.get(entityId));
                 case RULES:
-                    return ruleService.get(entityId);
+                    return Optional.of(ruleService.get(entityId));
                 case AGREEMENTS:
-                    return agreementService.get(entityId);
+                    return Optional.of(agreementService.get(entityId));
                 default:
-                    return null;
+                    return Optional.empty();
             }
         } catch (Exception exception) {
-            if (log.isDebugEnabled()) {
-                log.debug("Resource not found. [exception=({}), elementId=({})]",
-                        exception.getMessage(), elementId, exception);
-            }
-            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
+            return Optional.empty();
         }
     }
 
@@ -269,10 +250,9 @@ public class EntityResolver {
      */
     public InputStream getDataByArtifactId(final URI requestedArtifact,
                                            final QueryInput queryInput)
-            throws IOException, UnexpectedResponseException {
+            throws IOException {
         final var endpoint = EndpointUtils.getUUIDFromPath(requestedArtifact);
-        return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint,
-                null, queryInput);
+        return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint, queryInput);
     }
 
     /**

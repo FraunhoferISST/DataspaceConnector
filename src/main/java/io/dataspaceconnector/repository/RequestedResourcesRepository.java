@@ -16,11 +16,27 @@
 package io.dataspaceconnector.repository;
 
 import io.dataspaceconnector.model.RequestedResource;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.net.URI;
+import java.util.Optional;
 
 /**
  * The repository containing all objects of type {@link RequestedResource}.
  */
 @Repository
 public interface RequestedResourcesRepository extends RemoteEntityRepository<RequestedResource> {
+
+    /**
+     * Find an entity by its remote id.
+     *
+     * @param remoteId The remote id.
+     * @return The entity.
+     */
+    @Query("SELECT a "
+            + "FROM RequestedResource a "
+            + "WHERE a.remoteId = :remoteId "
+            + "AND a.deleted = false")
+    Optional<RequestedResource> getByRemoteId(URI remoteId);
 }

@@ -15,16 +15,10 @@
  */
 package io.dataspaceconnector.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.RejectionReason;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.util.ParameterUtils;
-import io.dataspaceconnector.controller.util.CommunicationProtocol;
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.DataRetrievalException;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
@@ -41,6 +35,12 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Performs an artifact request for an artifact. All functions will block till the request is
@@ -72,12 +72,17 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
     private final @NonNull CamelContext context;
 
     /**
+     * Service for handle application.properties settings.
+     */
+    private final @NonNull ConnectorConfiguration connectorConfig;
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public InputStream retrieve(final UUID artifactId, final URI recipient,
-                                final URI transferContract, final CommunicationProtocol protocol) {
-        return retrieve(artifactId, recipient, transferContract, protocol, null);
+                                final URI transferContract) {
+        return retrieve(artifactId, recipient, transferContract, null);
     }
 
     /**
@@ -85,13 +90,13 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
      */
     @Override
     public InputStream retrieve(final UUID artifactId, final URI recipient,
-                                final URI transferContract, final CommunicationProtocol protocol,
+                                final URI transferContract,
                                 final QueryInput queryInput)
             throws PolicyRestrictionException {
         final var artifact = artifactService.get(artifactId);
 
         String data;
-        if (CommunicationProtocol.IDSCP2.equals(protocol)) {
+        if (connectorConfig.isIdscpEnabled()) {
             final var result = template.send("direct:artifactRequestSender",
                     ExchangeBuilder.anExchange(context)
                             .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)

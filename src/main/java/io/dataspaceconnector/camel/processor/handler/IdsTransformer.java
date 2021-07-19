@@ -188,8 +188,8 @@ class ContractAgreementTransformer extends IdsTransformer<
     protected RouteMsg<ContractAgreementMessageImpl, ContractAgreement> processInternal(
             final Request<ContractAgreementMessageImpl, MessagePayload, Optional<Jws<Claims>>> msg)
             throws Exception {
-        final var agreement = deserializationService
-                .getContractAgreement(MessageUtils.getPayloadAsString(msg.getBody()));
+        final var payload = MessageUtils.getPayloadAsString(msg.getBody());
+        final var agreement = deserializationService.getContractAgreement(payload);
         return new Request<>(msg.getHeader(), agreement, msg.getClaims());
     }
 

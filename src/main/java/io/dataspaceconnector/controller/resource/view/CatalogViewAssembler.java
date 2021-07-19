@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers.CatalogController;
 import io.dataspaceconnector.model.Catalog;
@@ -26,6 +24,8 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -38,6 +38,7 @@ public class CatalogViewAssembler
         implements RepresentationModelAssembler<Catalog, CatalogView>, SelfLinking {
     /**
      * Construct the CatalogView from a Catalog.
+     *
      * @param catalog The catalog.
      * @return The new view.
      */
@@ -49,7 +50,7 @@ public class CatalogViewAssembler
 
         final var offeredResLink = WebMvcLinkBuilder
                 .linkTo(methodOn(RelationControllers.CatalogsToOfferedResources.class)
-                .getResource(catalog.getId(), null, null))
+                        .getResource(catalog.getId(), null, null))
                 .withRel("offers");
         view.add(offeredResLink);
 

@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.camel.processor.handler;
 
-import java.util.ArrayList;
-import javax.persistence.PersistenceException;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -26,6 +23,7 @@ import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
 import de.fraunhofer.iais.eis.NotificationMessageImpl;
 import de.fraunhofer.iais.eis.RejectionMessage;
+import de.fraunhofer.iais.eis.RequestMessageImpl;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -38,7 +36,10 @@ import io.dataspaceconnector.camel.exception.AgreementPersistenceException;
 import io.dataspaceconnector.camel.exception.UnconfirmedAgreementException;
 import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
+import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.QueryInput;
+import io.dataspaceconnector.model.Subscription;
+import io.dataspaceconnector.model.SubscriptionDesc;
 import io.dataspaceconnector.model.message.ArtifactResponseMessageDesc;
 import io.dataspaceconnector.model.message.ContractAgreementMessageDesc;
 import io.dataspaceconnector.model.message.ContractRejectionMessageDesc;
@@ -54,7 +55,9 @@ import io.dataspaceconnector.service.message.type.ContractAgreementService;
 import io.dataspaceconnector.service.message.type.ContractRejectionService;
 import io.dataspaceconnector.service.message.type.DescriptionResponseService;
 import io.dataspaceconnector.service.message.type.MessageProcessedNotificationService;
+import io.dataspaceconnector.service.resource.SubscriptionService;
 import io.dataspaceconnector.util.ContractUtils;
+import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.IdsUtils;
 import io.dataspaceconnector.util.MessageUtils;
 import lombok.NonNull;
@@ -65,6 +68,10 @@ import org.apache.camel.Processor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
+
+import javax.persistence.PersistenceException;
+import java.util.ArrayList;
+import java.util.Optional;
 
 /**
  * Superclass for Camel processors that execute the final logic to generate a response to an
@@ -101,6 +108,7 @@ public abstract class IdsProcessor<I> implements Processor {
  * element was given.
  */
 @Component("ResourceDescription")
+@Log4j2
 @RequiredArgsConstructor
 class ResourceDescriptionProcessor extends IdsProcessor<
         RouteMsg<DescriptionRequestMessageImpl, MessagePayload>> {
@@ -129,14 +137,18 @@ class ResourceDescriptionProcessor extends IdsProcessor<
             MessagePayload> msg) throws Exception {
         // Read relevant parameters for message processing.
         final var requested = MessageUtils.extractRequestedElement(msg.getHeader());
-        final var entity = entityResolver.getEntityById(requested);
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
         final var messageId = MessageUtils.extractMessageId(msg.getHeader());
+        final var entity = entityResolver.getEntityById(requested);
+
+        if (entity.isEmpty()) {
+            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString());
+        }
 
         // If the element has been found, build the ids response message.
         final var desc = new DescriptionResponseMessageDesc(issuer, messageId);
         final var header = messageService.buildMessage(desc);
-        final var payload = entityResolver.getEntityAsRdfString(entity);
+        final var payload = entityResolver.getEntityAsRdfString(entity.get());
 
         // Send ids response message.
         return new Response(header, payload);
@@ -219,14 +231,13 @@ class DataRequestProcessor extends IdsProcessor<
     @Override
     protected Response processInternal(final RouteMsg<ArtifactRequestMessageImpl,
             MessagePayload> msg) throws Exception {
-        final var requestedArtifact = msg.getHeader().getRequestedArtifact();
-        final var issuer = msg.getHeader().getIssuerConnector();
-        final var messageId = msg.getHeader().getId();
-        final var transferContract = msg.getHeader().getTransferContract();
+        final var artifact = MessageUtils.extractRequestedArtifact(msg.getHeader());
+        final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
+        final var messageId = MessageUtils.extractMessageId(msg.getHeader());
+        final var transferContract = MessageUtils.extractTransferContract(msg.getHeader());
 
         final var queryInput = getQueryInputFromPayload(msg.getBody());
-        final var data = entityResolver
-                .getDataByArtifactId(requestedArtifact, queryInput);
+        final var data = entityResolver.getDataByArtifactId(artifact, queryInput);
 
         final var desc = new ArtifactResponseMessageDesc(issuer, messageId, transferContract);
         final var responseHeader = messageService.buildMessage(desc);
@@ -312,6 +323,11 @@ class ResourceUpdateProcessor extends IdsProcessor<RouteMsg<ResourceUpdateMessag
     private final @NonNull MessageProcessedNotificationService messageService;
 
     /**
+     * The global event publisher used for handling events.
+     */
+    private final @NonNull ApplicationEventPublisher publisher;
+
+    /**
      * Updates the local copy of the resource given in the ResourceUpdateMessage and creates a
      * MessageProcessedNotificationMessage as the response header.
      *
@@ -323,6 +339,9 @@ class ResourceUpdateProcessor extends IdsProcessor<RouteMsg<ResourceUpdateMessag
     protected Response processInternal(final RouteMsg<ResourceUpdateMessageImpl, Resource> msg)
             throws Exception {
         updateService.updateResource(msg.getBody());
+
+        // Publish the agreement so that the designated event handler sends it to the CH.
+        publisher.publishEvent(msg.getBody());
 
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
         final var messageId = MessageUtils.extractMessageId(msg.getHeader());
@@ -454,7 +473,7 @@ class AgreementComparisonProcessor extends IdsProcessor<
     private final @NonNull EntityUpdateService updateService;
 
     /**
-     * The global event publisher used for publishing agreements.
+     * The global event publisher used for handling events.
      */
     private final @NonNull ApplicationEventPublisher publisher;
 
@@ -500,4 +519,92 @@ class AgreementComparisonProcessor extends IdsProcessor<
         return new Response(responseHeader, "Received contract agreement message.");
     }
 
+}
+
+/**
+ * Generates the response to a SubscriptionMessage.
+ */
+@Component("ProcessedSubscription")
+@Log4j2
+@RequiredArgsConstructor
+class SubscriptionProcessor extends IdsProcessor<RouteMsg<RequestMessageImpl, ?>> {
+
+    /**
+     * Service for handling message processed subscription messages.
+     */
+    private final @NonNull MessageProcessedNotificationService messageService;
+
+    /**
+     * Handler for adding and removing subscriptions.
+     */
+    private final @NonNull SubscriptionService subscriptionSvc;
+
+    /**
+     * Creates a MessageProcessedNotificationMessage as the response header.
+     *
+     * @param msg the incoming message.
+     * @return a Response object with a MessageProcessedNotificationMessage as header.
+     * @throws Exception if an error occurs building the response.
+     */
+    @Override
+    protected Response processInternal(final RouteMsg<RequestMessageImpl, ?> msg) throws Exception {
+        final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
+        final var target = MessageUtils.extractTargetId(msg.getHeader());
+        final var optional = getSubscriptionFromPayload((MessagePayload) msg.getBody());
+
+        String response;
+        if (optional.isPresent()) {
+            final var subscription = optional.get();
+
+            // Create new subscription.
+            final var desc = new SubscriptionDesc();
+            desc.setSubscriber(subscription.getSubscriber());
+            desc.setTarget(subscription.getTarget());
+            desc.setPushData(subscription.isPushData());
+            desc.setUrl(subscription.getUrl());
+
+            // Set boolean to true as this subscription has been created via ids message.
+            desc.setIdsProtocol(true);
+
+            // Create subscription (this will also be linked to the target)
+            subscriptionSvc.create(desc);
+
+            response = "Successfully subscribed to %s.";
+        } else {
+            subscriptionSvc.removeSubscription(target, issuer);
+            response = "Successfully unsubscribed from %s.";
+        }
+
+        // Build the ids response.
+        final var messageId = MessageUtils.extractMessageId(msg.getHeader());
+        final var desc = new MessageProcessedNotificationMessageDesc(issuer, messageId);
+        final var header = messageService.buildMessage(desc);
+
+        return new Response(header, String.format(response, target));
+    }
+
+    /**
+     * Read subscription from message payload.
+     *
+     * @param messagePayload The message's payload.
+     * @return the subscription input.
+     * @throws InvalidInputException if the subscription is not empty but invalid.
+     */
+    private Optional<Subscription> getSubscriptionFromPayload(final MessagePayload messagePayload)
+            throws InvalidInputException {
+        try {
+            final var payload = MessageUtils.getStreamAsString(messagePayload);
+            if (payload.equals("")) {
+                return Optional.empty();
+            } else {
+                final var subscription = new ObjectMapper().readValue(payload, Subscription.class);
+                return Optional.of(subscription);
+            }
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Invalid subscription payload. [exception=({})]", e.getMessage(), e);
+            }
+            throw new InvalidInputException("Invalid subscription payload.", e);
+        }
+    }
 }

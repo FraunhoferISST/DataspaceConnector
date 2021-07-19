@@ -36,7 +36,7 @@ public class FailedToBuildContractRequestRoute extends RouteBuilder {
                 .routeId("failedToBuildContractRequest")
                 .log(LoggingLevel.DEBUG,
                         "Error route for handling failed contract building called.")
-                .to("bean:io.dataspaceconnector.util.ControllerUtils?"
+                .to("bean:io.dataspaceconnector.controller.util.ControllerUtils?"
                         + "method=respondFailedToBuildContractRequest(${exception})");
     }
 

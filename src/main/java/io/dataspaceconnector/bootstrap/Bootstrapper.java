@@ -229,7 +229,7 @@ public class Bootstrapper {
             }
 
             return files;
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | NullPointerException e) {
             if (log.isDebugEnabled()) {
                 log.debug("No catalog files for bootstrapping found. [exception=({})]",
                         e.getMessage(), e);

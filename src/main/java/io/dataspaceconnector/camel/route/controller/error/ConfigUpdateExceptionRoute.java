@@ -36,7 +36,7 @@ public class ConfigUpdateExceptionRoute extends RouteBuilder {
                 .routeId("configUpdateException")
                 .log(LoggingLevel.DEBUG,
                         "Error route for handling ConfigUpdateException called.")
-                .to("bean:io.dataspaceconnector.util.ControllerUtils?"
+                .to("bean:io.dataspaceconnector.controller.util.ControllerUtils?"
                         + "method=respondConfigurationUpdateError(${exception})");
     }
 

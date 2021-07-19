@@ -52,6 +52,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.annotation.DirtiesContext;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
  @SpringBootTest
@@ -166,7 +174,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
                         .build();
 
         Mockito.when(resolver.getEntityById(Mockito.eq(message.getRequestedElement())))
-                .thenReturn(artifact);
+                .thenReturn(Optional.of(artifact));
         Mockito.when(resolver.getEntityAsRdfString(artifact)).thenReturn(getArtifact().toRdf());
 
         /* ACT */
@@ -302,7 +310,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
             // If the element has been found, build the ids response message.
             final var desc = new DescriptionResponseMessageDesc(issuer, messageId);
             final var header = messageService.buildMessage(desc);
-            final var payload = resolver.getEntityAsRdfString(entity);
+            final var payload = resolver.getEntityAsRdfString(entity.get());
 
             // Send ids response message.
             return BodyResponse.create(header, payload);
@@ -312,7 +320,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
     }
 
     private Artifact getArtifact() {
-        return new ArtifactBuilder(URI.create("http://id.com"))
-                .build();
+        return new ArtifactBuilder(URI.create("http://id.com")).build();
     }
 }

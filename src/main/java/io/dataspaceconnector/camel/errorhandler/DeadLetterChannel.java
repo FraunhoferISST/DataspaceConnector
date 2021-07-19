@@ -39,14 +39,13 @@ public class DeadLetterChannel extends RouteBuilder {
      */
     @Override
     public void configure() {
-        onException(Exception.class)
-                .process(exchange -> {
-                    final var cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT,
-                            Exception.class);
-                    log.warn("Failed to send error logs to Configuration Manager. [exception=({})]",
-                            cause.getMessage());
-                })
-                .handled(true);
+        onException(Exception.class).process(exchange -> {
+            final var cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to send error logs to Configuration Manager. [exception=({})]",
+                        cause.getMessage());
+            }
+        }).handled(true);
 
         from("direct:deadLetterChannel")
                 .process("dlcProcessor")

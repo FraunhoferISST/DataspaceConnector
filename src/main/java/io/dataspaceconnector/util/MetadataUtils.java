@@ -55,6 +55,25 @@ public final class MetadataUtils {
     }
 
     /**
+     * Update boolean.
+     *
+     * @param oldBoolean     Old value.
+     * @param newBoolean     New value.
+     * @param defaultBoolean Default value.
+     * @return Optional with the new value or without a value.
+     */
+    public static Optional<Boolean> updateBoolean(final Boolean oldBoolean,
+                                                  final Boolean newBoolean,
+                                                  final Boolean defaultBoolean) {
+        final var newValue = newBoolean == null ? defaultBoolean : newBoolean;
+        if (oldBoolean == null || !oldBoolean.equals(newValue)) {
+            return Optional.of(newValue);
+        }
+
+        return Optional.empty();
+    }
+
+    /**
      * Update uri.
      *
      * @param oldUri     Old uri.

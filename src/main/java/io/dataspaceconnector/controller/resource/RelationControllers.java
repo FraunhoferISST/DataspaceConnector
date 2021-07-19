@@ -15,26 +15,9 @@
  */
 package io.dataspaceconnector.controller.resource;
 
-import javax.validation.Valid;
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
 import io.dataspaceconnector.controller.resource.tag.ResourceDescriptions;
 import io.dataspaceconnector.controller.resource.tag.ResourceNames;
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.service.resource.AbstractCatalogResourceLinker;
-import io.dataspaceconnector.service.resource.AbstractResourceContractLinker;
-import io.dataspaceconnector.service.resource.AbstractResourceRepresentationLinker;
-import io.dataspaceconnector.service.resource.RelationServices;
 import io.dataspaceconnector.controller.resource.view.AgreementView;
 import io.dataspaceconnector.controller.resource.view.ArtifactView;
 import io.dataspaceconnector.controller.resource.view.CatalogView;
@@ -43,6 +26,20 @@ import io.dataspaceconnector.controller.resource.view.ContractView;
 import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
 import io.dataspaceconnector.controller.resource.view.RepresentationView;
 import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
+import io.dataspaceconnector.controller.resource.view.SubscriptionView;
+import io.dataspaceconnector.model.Agreement;
+import io.dataspaceconnector.model.Artifact;
+import io.dataspaceconnector.model.Catalog;
+import io.dataspaceconnector.model.Contract;
+import io.dataspaceconnector.model.ContractRule;
+import io.dataspaceconnector.model.OfferedResource;
+import io.dataspaceconnector.model.Representation;
+import io.dataspaceconnector.model.RequestedResource;
+import io.dataspaceconnector.model.Subscription;
+import io.dataspaceconnector.service.resource.AbstractCatalogResourceLinker;
+import io.dataspaceconnector.service.resource.AbstractResourceContractLinker;
+import io.dataspaceconnector.service.resource.AbstractResourceRepresentationLinker;
+import io.dataspaceconnector.service.resource.RelationServices;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -53,6 +50,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * This class contains all implementations of the {@link BaseResourceChildController}.
@@ -80,6 +82,16 @@ public final class RelationControllers {
     }
 
     /**
+     * Offers the endpoints for managing the relations between artifacts and subscriptions.
+     */
+    @RestController
+    @RequestMapping("/api/artifacts/{id}/subscriptions")
+    @Tag(name = ResourceNames.ARTIFACTS, description = ResourceDescriptions.ARTIFACTS)
+    public static class ArtifactsToSubscriptions extends BaseResourceChildController<
+            RelationServices.ArtifactSubscriptionLinker, Subscription, SubscriptionView> {
+    }
+
+    /**
      * Offers the endpoints for managing the relations between representations and offered
      * resources.
      */
@@ -101,6 +113,16 @@ public final class RelationControllers {
     public static class RepresentationsToRequestedResources extends BaseResourceChildController<
             RelationServices.RepresentationOfferedResourceLinker, RequestedResource,
             RequestedResourceView> {
+    }
+
+    /**
+     * Offers the endpoints for managing the relations between representations and subscriptions.
+     */
+    @RestController
+    @RequestMapping("/api/representations/{id}/subscriptions")
+    @Tag(name = ResourceNames.REPRESENTATIONS, description = ResourceDescriptions.REPRESENTATIONS)
+    public static class RepresentationsToSubscriptions extends BaseResourceChildController<
+            RelationServices.RepresentationSubscriptionLinker, Subscription, SubscriptionView> {
     }
 
     /**
@@ -130,8 +152,7 @@ public final class RelationControllers {
     @RequestMapping("/api/contracts/{id}/offers")
     @Tag(name = ResourceNames.CONTRACTS, description = ResourceDescriptions.CONTRACTS)
     public static class ContractsToOfferedResources extends BaseResourceChildController<
-            RelationServices.ContractOfferedResourceLinker, OfferedResource,
-            OfferedResourceView> {
+            RelationServices.ContractOfferedResourceLinker, OfferedResource, OfferedResourceView> {
     }
 
     /**
@@ -292,5 +313,78 @@ public final class RelationControllers {
     public static class RequestedResourcesToRepresentations
             extends BaseResourceChildController<AbstractResourceRepresentationLinker<
             RequestedResource>, Representation, RepresentationView> {
+    }
+
+    /**
+     * Offers the endpoints for managing relations between requested resources and subscriptions.
+     */
+    @RestController
+    @RequestMapping("/api/requests/{id}/subscriptions")
+    @Tag(name = ResourceNames.REQUESTS, description = ResourceDescriptions.REQUESTS)
+    public static class RequestedResourcesToSubscriptions extends BaseResourceChildController<
+            RelationServices.RequestedResourceSubscriptionLinker, Subscription, SubscriptionView> {
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        public final PagedModel<SubscriptionView> addResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
+
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
+        public final HttpEntity<Void> replaceResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
+
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
+        public final HttpEntity<Void> removeResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
+    }
+
+    /**
+     * Offers the endpoints for managing the relations between offered resources and subscriptions.
+     */
+    @RestController
+    @RequestMapping("/api/offers/{id}/subscriptions")
+    @Tag(name = ResourceNames.OFFERS, description = ResourceDescriptions.OFFERS)
+    public static class OfferedResourcesToSubscriptions
+            extends BaseResourceChildController<RelationServices.OfferedResourceSubscriptionLinker,
+            Subscription, SubscriptionView> {
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        public final PagedModel<SubscriptionView> addResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
+
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
+        public final HttpEntity<Void> replaceResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
+
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
+        public final HttpEntity<Void> removeResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
     }
 }

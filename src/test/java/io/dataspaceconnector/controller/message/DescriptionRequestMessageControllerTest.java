@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
@@ -35,7 +31,7 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Response;
-import io.dataspaceconnector.controller.util.CommunicationProtocol;
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
 import lombok.SneakyThrows;
@@ -51,6 +47,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -82,6 +82,9 @@ public class DescriptionRequestMessageControllerTest {
     @Autowired
     private DescriptionRequestMessageController controller;
 
+    @MockBean
+    private ConnectorConfiguration connectorConfiguration;
+
     @Test
     @SneakyThrows
     public void sendDescriptionRequestMessage_elementIdNull_returnDeserializedResponsePayload() {
@@ -96,8 +99,7 @@ public class DescriptionRequestMessageControllerTest {
         when(deserializationService.getInfrastructureComponent(any())).thenReturn(connector);
 
         /* ACT */
-        final var result = controller
-                .sendMessage(recipient, null, CommunicationProtocol.MULTIPART);
+        final var result = controller.sendMessage(recipient, null);
 
         /* ASSERT */
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -142,11 +144,11 @@ public class DescriptionRequestMessageControllerTest {
         when(exchange.getIn()).thenReturn(in);
         when(in.getBody(Response.class)).thenReturn(response);
         when(deserializationService.getInfrastructureComponent(any())).thenReturn(connector);
+        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
 
         /* ACT */
         final var responseEntity = controller
-                .sendMessage(URI.create("https://recipient.com"),
-                        null, CommunicationProtocol.IDSCP2);
+                .sendMessage(URI.create("https://recipient.com"), null);
 
         /* ASSERT */
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -162,11 +164,11 @@ public class DescriptionRequestMessageControllerTest {
         when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
         when(exchange.getIn()).thenReturn(in);
         when(in.getBody(ResponseEntity.class)).thenReturn(response);
+        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
 
         /* ACT */
         final var responseEntity = controller
-                .sendMessage(URI.create("https://recipient.com"),
-                        null, CommunicationProtocol.IDSCP2);
+                .sendMessage(URI.create("https://recipient.com"), null);
 
         /* ASSERT */
         assertEquals(response, responseEntity);

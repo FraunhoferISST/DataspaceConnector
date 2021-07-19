@@ -24,19 +24,19 @@ import org.springframework.stereotype.Component;
 
 /**
  * This @{@link ContractAgreementHandler} handles all incoming messages that have a
- * {@link ContractAgreementMessageImpl} as part one in the multipart message.
- * This header must have the correct '@type' reference as defined in the
- * {@link ContractAgreementMessageImpl} JsonTypeName annotation.
+ * {@link ContractAgreementMessageImpl} as part one in the multipart message. This header must have
+ * the correct '@type' reference as defined in the {@link ContractAgreementMessageImpl}
+ * JsonTypeName annotation.
  */
 @Component
 @SupportedMessageType(ContractAgreementMessageImpl.class)
 public class ContractAgreementHandler extends AbstractMessageHandler<ContractAgreementMessageImpl> {
 
     /**
-     * Constructs an ContractAgreementHandler with the required super class parameters.
+     * Constructs a ContractAgreementHandler with the required super class parameters.
      *
-     * @param template Template for triggering Camel routes.
-     * @param context The CamelContext required for constructing the {@link ProducerTemplate}.
+     * @param template         Template for triggering Camel routes.
+     * @param context          Camel Context required for constructing the {@link ProducerTemplate}.
      * @param connectorService Service for the current connector configuration.
      */
     public ContractAgreementHandler(final ProducerTemplate template,

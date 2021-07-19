@@ -7,7 +7,7 @@
             <to uri="direct:handleNoRequestedArtifactException"/>
         </onException>
 
-        <!-- The query input from the consumer for fetching the data is invalid -->
+        <!-- the query input from the consumer for fetching the data is invalid -->
         <onException>
             <exception>io.dataspaceconnector.exception.InvalidInputException</exception>
             <to uri="direct:handleInvalidInputException"/>

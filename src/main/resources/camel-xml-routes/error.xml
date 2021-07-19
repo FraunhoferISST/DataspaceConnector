@@ -159,6 +159,15 @@
         ${body.getHeader().getId()})"/>
     </route>
 
+    <route id="messageProcessingFailedForSubscription">
+        <from uri="direct:handleMessageProcessingFailedForSubscription"/>
+        <log loggingLevel="DEBUG" message="Error route for handling failed message processing called."/>
+        <to uri="bean:messageResponseService?method=handleMessageProcessingFailed(${exception},
+        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getBody().toRdf(),
+        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getHeader().getId()})"/>
+    </route>
+
     <route id="policyRestrictionException">
         <from uri="direct:handlePolicyRestrictionException"/>
         <log loggingLevel="DEBUG" message="Error route for handling PolicyRestrictionException called."/>

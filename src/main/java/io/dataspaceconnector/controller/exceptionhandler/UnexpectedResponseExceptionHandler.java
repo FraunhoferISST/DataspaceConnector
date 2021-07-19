@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.controller.exceptionhandler;
 
+import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
-import io.dataspaceconnector.util.ControllerUtils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;

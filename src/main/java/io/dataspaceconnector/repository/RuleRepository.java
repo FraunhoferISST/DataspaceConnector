@@ -30,8 +30,8 @@ public interface RuleRepository extends BaseEntityRepository<ContractRule> {
     /**
      * Finds all rules in a specific contract.
      *
-     * @param contractId ID of the contract
-     * @return list of all rules in the contract
+     * @param contractId ID of the contract.
+     * @return list of all rules in the contract.
      */
     @Query("SELECT r "
             + "FROM ContractRule r INNER JOIN Contract c ON r MEMBER OF c.rules "

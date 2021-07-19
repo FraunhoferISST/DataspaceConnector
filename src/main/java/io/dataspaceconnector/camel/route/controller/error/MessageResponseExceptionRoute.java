@@ -36,7 +36,7 @@ public class MessageResponseExceptionRoute extends RouteBuilder {
                 .routeId("messageResponseException")
                 .log(LoggingLevel.DEBUG,
                         "Error route for handling MessageResponseException called.")
-                .to("bean:io.dataspaceconnector.util.ControllerUtils?"
+                .to("bean:io.dataspaceconnector.controller.util.ControllerUtils?"
                         + "method=respondReceivedInvalidResponse(${exception})");
     }
 

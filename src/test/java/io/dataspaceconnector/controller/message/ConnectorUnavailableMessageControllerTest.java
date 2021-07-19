@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import javax.xml.datatype.DatatypeFactory;
-
 import de.fraunhofer.iais.eis.DescriptionRequestMessage;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DynamicAttributeToken;
@@ -28,11 +23,13 @@ import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.util.ErrorMessages;
@@ -53,16 +50,20 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.xml.datatype.DatatypeFactory;
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ConnectorUnavailableMessageControllerTest {
 
@@ -84,6 +85,9 @@ public class ConnectorUnavailableMessageControllerTest {
     @MockBean
     private ProducerTemplate producerTemplate;
 
+    @MockBean
+    private ConnectorConfiguration connectorConfiguration;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -92,11 +96,6 @@ public class ConnectorUnavailableMessageControllerTest {
             ._tokenValue_("token")
             ._tokenFormat_(TokenFormat.JWT)
             .build();
-
-    @Test
-    public void sendConnectorUpdateMessage_unauthorized_returnUnauthorized() throws Exception {
-        mockMvc.perform(post("/api/ids/connector/unavailable")).andExpect(status().isUnauthorized());
-    }
 
     @Test
     @WithMockUser("ADMIN")
@@ -202,7 +201,24 @@ public class ConnectorUnavailableMessageControllerTest {
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_validRequest_returnsBrokerResponse() throws Exception {
+    public void sendConnectorUpdateMessage_throwSendMessageException_throws500() throws Exception {
+        /* ARRANGE */
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+        Mockito.doThrow(SendMessageException.class).when(brokerService).unregisterAtBroker(Mockito.eq(URI.create(recipient)));
+
+        /* ACT */
+        final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
+                .param("recipient", recipient)).andReturn();
+
+        /* ASSERT */
+        assertEquals(500, result.getResponse().getStatus());
+        final var msg = ErrorMessages.MESSAGE_SENDING_FAILED.toString();
+        assertEquals(msg, result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void sendConnectorUpdateMessage_validRequest_returnsResponse() throws Exception {
         /* ARRANGE */
         final var message = new MessageProcessedNotificationMessageBuilder()
                 ._issuerConnector_(new URI("https://url"))
@@ -242,6 +258,7 @@ public class ConnectorUnavailableMessageControllerTest {
         when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
         when(exchange.getIn()).thenReturn(in);
         when(in.getBody(Response.class)).thenReturn(response);
+        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
 
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/connector/unavailable")
@@ -266,6 +283,7 @@ public class ConnectorUnavailableMessageControllerTest {
         when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
         when(exchange.getIn()).thenReturn(in);
         when(in.getBody(ResponseEntity.class)).thenReturn(response);
+        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
 
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/connector/unavailable")

@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.exception.UnreachableLineException;
 import io.dataspaceconnector.model.Artifact;
@@ -80,8 +79,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     /**
      * Constructor for ArtifactService.
      *
-     * @param dataRepository     The data repository.
-     * @param httpService        The HTTP service for fetching remote data.
+     * @param dataRepository           The data repository.
+     * @param httpService              The HTTP service for fetching remote data.
      * @param authenticationRepository The AuthType repository.
      */
     @Autowired
@@ -136,19 +135,19 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param accessVerifier Checks if the data access should be allowed.
      * @param retriever      Retrieves the data from an external source.
      * @param artifactId     The id of the artifact.
-     * @param protocol       The communication protocol to use.
      * @param queryInput     The query for the backend.
      * @return The artifacts data.
-     * @throws PolicyRestrictionException if the data access has been denied.
-     * @throws io.dataspaceconnector.exception.ResourceNotFoundException
-     *         if the artifact does not exist.
-     * @throws IllegalArgumentException   if any of the parameters is null.
-     * @throws IOException if IO errors occurr.
+     * @throws PolicyRestrictionException                                if the data access has
+     *                                                                   been denied.
+     * @throws io.dataspaceconnector.exception.ResourceNotFoundException if the artifact does not
+     *                                                                   exist.
+     * @throws IllegalArgumentException                                  if any of the parameters
+     *                                                                   is null.
+     * @throws IOException                                               if IO errors occurr.
      */
     @Transactional
     public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
-                               final CommunicationProtocol protocol,
                                final QueryInput queryInput)
             throws PolicyRestrictionException, IOException {
         /*
@@ -165,8 +164,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             var policyException = new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
             for (final var agRemoteId : agreements) {
                 try {
-                    final var info = new RetrievalInformation(agRemoteId, null,
-                            protocol, queryInput);
+                    final var info = new RetrievalInformation(agRemoteId, null, queryInput);
                     return getData(accessVerifier, retriever, artifactId, info);
                 } catch (PolicyRestrictionException exception) {
                     // Access denied, log it and try the next agreement.
@@ -202,11 +200,13 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param artifactId     The id of the artifact.
      * @param information    Information for pulling the data from a remote source.
      * @return The artifact's data.
-     * @throws PolicyRestrictionException if the data access has been denied.
-     * @throws io.dataspaceconnector.exception.ResourceNotFoundException
-     *         if the artifact does not exist.
-     * @throws IllegalArgumentException   if any of the parameters is null.
-     * @throws IOException if IO errors occurr.
+     * @throws PolicyRestrictionException                                if the data access has
+     *                                                                   been denied.
+     * @throws io.dataspaceconnector.exception.ResourceNotFoundException if the artifact does not
+     *                                                                   exist.
+     * @throws IllegalArgumentException                                  if any of the parameters
+     *                                                                   is null.
+     * @throws IOException                                               if IO errors occurr.
      */
     @Transactional
     public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
@@ -233,7 +233,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
              */
             final var dataStream = retriever.retrieve(artifactId,
                     artifact.getRemoteAddress(), information.getTransferContract(),
-                    information.getProtocol(), information.getQueryInput());
+                    information.getQueryInput());
             final var persistedData = setData(artifactId, dataStream);
             artifact.incrementAccessCounter();
             persist(artifact);
@@ -310,8 +310,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             InputStream backendData;
             if (!data.getAuthentication().isEmpty()) {
                 backendData = httpSvc.get(data.getAccessUrl(), queryInput,
-                                             data.getAuthentication())
-                                      .getBody();
+                        data.getAuthentication())
+                        .getBody();
             } else {
                 backendData = httpSvc.get(data.getAccessUrl(), queryInput).getBody();
             }

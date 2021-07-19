@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.util;
+package io.dataspaceconnector.controller.util;
 
+import io.dataspaceconnector.util.ErrorMessages;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -228,5 +229,19 @@ public final class ControllerUtils {
             log.debug(msg);
         }
         return new ResponseEntity<>(msg, HttpStatus.BAD_GATEWAY);
+    }
+
+    /**
+     * Creates a ResponseEntity with status code 200 and a message indicating that no subscription
+     * could be found for the targeted entity.
+     *
+     * @param target The target element.
+     * @return ResponseEntity with status code 200.
+     */
+    public static ResponseEntity<Object> respondNoSubscriptionsFound(final URI target) {
+        if (log.isDebugEnabled()) {
+            log.debug("No subscriptions found. [target=({})]", target);
+        }
+        return new ResponseEntity<>("No subscriptions found.", HttpStatus.OK);
     }
 }

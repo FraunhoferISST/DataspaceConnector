@@ -133,7 +133,6 @@ class AffectedResourceValidator extends IdsValidator<Request<ResourceUpdateMessa
     protected void processInternal(final Request<ResourceUpdateMessageImpl,
             MessagePayload, Optional<Jws<Claims>>> message) throws Exception {
         final var affected = MessageUtils.extractAffectedResource(message.getHeader());
-
         if (affected == null || affected.toString().isEmpty()) {
             throw new NoAffectedResourceException("Affected resource is null or empty.");
         }

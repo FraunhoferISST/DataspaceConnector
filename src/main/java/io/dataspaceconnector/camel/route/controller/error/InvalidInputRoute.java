@@ -36,7 +36,7 @@ public class InvalidInputRoute extends RouteBuilder {
                 .routeId("invalidInput")
                 .log(LoggingLevel.DEBUG,
                         "Error route for handling invalid input called.")
-                .to("bean:io.dataspaceconnector.util.ControllerUtils?"
+                .to("bean:io.dataspaceconnector.controller.util.ControllerUtils?"
                         + "method=respondInvalidInput(${exception})");
     }
 }
