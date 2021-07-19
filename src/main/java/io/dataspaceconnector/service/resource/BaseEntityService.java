@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.AbstractDescription;
 import io.dataspaceconnector.model.AbstractEntity;
@@ -30,6 +28,8 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.UUID;
 
 /**
  * The base service implements base logic for persistent entities.
@@ -65,8 +65,6 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
      * @param desc The description of the new entity.
      * @return The new entity.
      * @throws IllegalArgumentException if the desc is null.
-     * @throws io.dataspaceconnector.exceptions.InvalidEntityException; if no valid entity can be
-     * created from the description.
      */
     public T create(final D desc) {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
@@ -82,8 +80,6 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
      * @return The updated entity.
      * @throws IllegalArgumentException  if any of the passed arguments is null.
      * @throws ResourceNotFoundException if the entity is unknown.
-     * @throws io.dataspaceconnector.exceptions.InvalidEntityException; if no valid entity can be
-     * created from the description.
      */
     public T update(final UUID entityId, final D desc) {
         Utils.requireNonNull(entityId, ErrorMessages.ENTITYID_NULL);

@@ -19,7 +19,6 @@ import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.exception.InvalidResourceException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.exception.SelfLinkCreationException;
-import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.Artifact;
@@ -250,7 +249,7 @@ public class EntityResolver {
      */
     public InputStream getDataByArtifactId(final URI requestedArtifact,
                                            final QueryInput queryInput)
-            throws IOException, UnexpectedResponseException {
+            throws IOException {
         final var endpoint = EndpointUtils.getUUIDFromPath(requestedArtifact);
         return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint, queryInput);
     }
