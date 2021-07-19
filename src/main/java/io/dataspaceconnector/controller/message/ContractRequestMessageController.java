@@ -22,7 +22,6 @@ import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;
-import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;

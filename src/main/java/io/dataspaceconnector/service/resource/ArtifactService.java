@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.exception.UnreachableLineException;
 import io.dataspaceconnector.model.Artifact;

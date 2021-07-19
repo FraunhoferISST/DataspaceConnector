@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.camel.processor.handler;
 
-import java.util.ArrayList;
-import javax.persistence.PersistenceException;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -60,8 +57,8 @@ import io.dataspaceconnector.service.message.type.DescriptionResponseService;
 import io.dataspaceconnector.service.message.type.MessageProcessedNotificationService;
 import io.dataspaceconnector.service.resource.SubscriptionService;
 import io.dataspaceconnector.util.ContractUtils;
-import io.dataspaceconnector.util.IdsUtils;
 import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.IdsUtils;
 import io.dataspaceconnector.util.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

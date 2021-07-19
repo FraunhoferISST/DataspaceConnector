@@ -289,7 +289,8 @@ public final class ResourceControllers {
          * @param artifactId Artifact id.
          * @param queryInput Query input containing headers, query parameters, and path variables.
          * @return The data object.
-         * @throws IOException if the data could not be stored.
+         * @throws IOException                 if the data could not be stored.
+         * @throws UnexpectedResponseException if the ids response message has been unexpected.
          */
         @PostMapping("{id}/data")
         @Operation(summary = "Get data by artifact id with query input")
