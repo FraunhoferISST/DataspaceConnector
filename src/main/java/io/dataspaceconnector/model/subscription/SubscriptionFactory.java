@@ -15,15 +15,14 @@
  */
 package io.dataspaceconnector.model.subscription;
 
+import java.net.URI;
+
 import io.dataspaceconnector.exception.InvalidEntityException;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.MetadataUtils;
-import io.dataspaceconnector.util.Utils;
 import io.dataspaceconnector.util.ValidationUtils;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
 
 /**
  * Creates and updates a subscription.
@@ -31,36 +30,28 @@ import java.net.URI;
 @Component
 public class SubscriptionFactory extends AbstractNamedFactory<Subscription, SubscriptionDesc> {
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected Subscription initializeEntity(final SubscriptionDesc desc) {
         return new Subscription();
     }
 
     /**
-     * Updates a subscription.
-     *
-     * @param subscription The subscription to be updated.
-     * @param desc         The new subscription description.
-     * @return true, if the subscription has been modified; false otherwise.
+     * {@inheritDoc}
      * @throws IllegalArgumentException if any of the parameters is null.
      * @throws InvalidEntityException   if no valid entity can be created from the description.
      */
     @Override
     public boolean update(final Subscription subscription, final SubscriptionDesc desc) {
-        Utils.requireNonNull(subscription, ErrorMessage.ENTITY_NULL);
-        Utils.requireNonNull(desc, ErrorMessage.DESC_NULL);
-
-        final var hasUpdatedUrl = this.updateUrl(subscription, desc.getUrl());
+        final var hasParentUpdated = super.update(subscription, desc);
+        final var hasUpdatedUrl = this.updateLocation(subscription, desc.getLocation());
         final var hasUpdatedTarget = this.updateTarget(subscription, desc.getTarget());
         final var hasUpdatedPushData = this.updatePushData(subscription, desc.isPushData());
         final var hasUpdatedSubscriber = this.updateSubscriber(subscription, desc.getSubscriber());
         final var hasUpdateIdsValue = this.updateIdsValue(subscription, desc.isIdsProtocol());
 
-        return hasUpdatedUrl || hasUpdatedTarget || hasUpdatedPushData || hasUpdatedSubscriber
-                || hasUpdateIdsValue;
+        return hasParentUpdated || hasUpdatedUrl || hasUpdatedTarget || hasUpdatedPushData
+               || hasUpdatedSubscriber || hasUpdateIdsValue;
     }
 
     /**
@@ -70,13 +61,14 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
      * @param url          The new URL.
      * @return true, if the URL was updated; false otherwise.
      */
-    private boolean updateUrl(final Subscription subscription, final URI url) {
+    private boolean updateLocation(final Subscription subscription, final URI url) {
+        // TODO Should not throw?
         if (url == null || ValidationUtils.isInvalidUri(String.valueOf(url))) {
             throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT.toString());
         }
 
-        final var newUri = MetadataUtils.updateUri(subscription.getUrl(), url, null);
-        newUri.ifPresent(subscription::setUrl);
+        final var newUri = MetadataUtils.updateUri(subscription.getLocation(), url, null);
+        newUri.ifPresent(subscription::setLocation);
 
         return newUri.isPresent();
     }

@@ -37,7 +37,7 @@ public class SubscriptionDesc extends NamedDescription {
     /**
      * The URL to use when notifying the subscriber about updates to a resource.
      */
-    private URI url;
+    private URI location;
 
     /**
      * A connector or backend system identifier.

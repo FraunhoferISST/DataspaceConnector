@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model.subscription;
 
+import io.dataspaceconnector.model.base.RemoteService;
 import io.dataspaceconnector.model.named.NamedEntity;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -39,7 +40,7 @@ import java.net.URI;
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class Subscription extends NamedEntity {
+public class Subscription extends NamedEntity implements RemoteService {
 
     /**
      * Serial version uid.
@@ -54,7 +55,7 @@ public class Subscription extends NamedEntity {
     /**
      * The URL to use when notifying the subscriber about updates to a resource.
      */
-    private URI url;
+    private URI location;
 
     /**
      * A connector or backend system identifier.
