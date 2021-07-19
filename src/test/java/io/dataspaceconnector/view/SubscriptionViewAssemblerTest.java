@@ -96,7 +96,7 @@ public class SubscriptionViewAssemblerTest {
 
         /* ASSERT */
         assertNotNull(result);
-        assertEquals(subscriber.getUrl(), result.getUrl());
+        assertEquals(subscriber.getLocation(), result.getLocation());
         assertEquals(subscriber.getCreationDate(), result.getCreationDate());
         assertEquals(subscriber.getModificationDate(), result.getModificationDate());
         assertEquals(subscriber.getAdditional(), result.getAdditional());

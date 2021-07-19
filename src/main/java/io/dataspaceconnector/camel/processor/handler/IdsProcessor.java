@@ -566,7 +566,7 @@ class SubscriptionProcessor extends IdsProcessor<RouteMsg<RequestMessageImpl, ?>
             desc.setSubscriber(subscription.getSubscriber());
             desc.setTarget(subscription.getTarget());
             desc.setPushData(subscription.isPushData());
-            desc.setUrl(subscription.getUrl());
+            desc.setLocation(subscription.getLocation());
 
             // Set boolean to true as this subscription has been created via ids message.
             desc.setIdsProtocol(true);

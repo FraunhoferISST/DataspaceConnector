@@ -117,13 +117,13 @@ public class SubscriberNotificationService {
         // Get list of non-ids subscribers.
         final var recipients = subscriptions.stream()
                 .filter(subscription -> !subscription.isIdsProtocol() && !subscription.isPushData())
-                .map(Subscription::getUrl)
+                .map(Subscription::getLocation)
                 .collect(Collectors.toList());
 
         // Get list of non-ids subscribers with isPushData == true.
         final var recipientsWithData = subscriptions.stream()
                 .filter(subscription -> !subscription.isIdsProtocol() && subscription.isPushData())
-                .map(Subscription::getUrl)
+                .map(Subscription::getLocation)
                 .collect(Collectors.toList());
 
         // Update non-ids subscribers.
@@ -140,7 +140,7 @@ public class SubscriberNotificationService {
     private void notifyIdsSubscribers(final List<Subscription> subscriptions, final Entity entity) {
         final var idsRecipients = subscriptions.stream()
                 .filter(Subscription::isIdsProtocol)
-                .map(Subscription::getUrl)
+                .map(Subscription::getLocation)
                 .collect(Collectors.toList());
 
         final var resources = getIdsResourcesFromEntity(entity);

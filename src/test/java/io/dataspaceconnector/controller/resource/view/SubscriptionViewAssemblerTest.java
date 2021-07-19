@@ -85,7 +85,7 @@ public class SubscriptionViewAssemblerTest {
         assertNotNull(result);
         Assertions.assertEquals(subscription.getSubscriber(), result.getSubscriber());
         Assertions.assertEquals(subscription.getTarget(), result.getTarget());
-        Assertions.assertEquals(subscription.getUrl(), result.getUrl());
+        Assertions.assertEquals(subscription.getLocation(), result.getLocation());
         Assertions.assertEquals(subscription.isPushData(), result.isPushData());
         Assertions.assertEquals(subscription.getCreationDate(), result.getCreationDate());
         Assertions.assertEquals(subscription.getModificationDate(), result.getModificationDate());
@@ -98,7 +98,7 @@ public class SubscriptionViewAssemblerTest {
         desc.setPushData(false);
         desc.setTarget(URI.create("https://target"));
         desc.setSubscriber(URI.create("https://subscriber"));
-        desc.setUrl(URI.create("https://url"));
+        desc.setLocation(URI.create("https://url"));
         final var subscription = subscriptionFactory.create(desc);
 
         final var additional = new HashMap<String, String>();

@@ -15,16 +15,16 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
-
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.util.Map;
 
 /**
  * A DTO for controlled exposing of subscription information in API responses.
@@ -55,7 +55,7 @@ public class SubscriptionView extends RepresentationModel<SubscriptionView> {
     /**
      * The URL to use when notifying the subscriber about updates to a resource.
      */
-    private URI url;
+    private URI location;
 
     /**
      * A connector or backend system identifier.

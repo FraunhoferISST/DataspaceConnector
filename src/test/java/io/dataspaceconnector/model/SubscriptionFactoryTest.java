@@ -59,7 +59,7 @@ public class SubscriptionFactoryTest {
 
         /* ASSERT */
         assertEquals(Subscription.class, result.getClass());
-        assertEquals(desc.getUrl(), result.getUrl());
+        assertEquals(desc.getLocation(), result.getLocation());
         assertEquals(desc.getSubscriber(), result.getSubscriber());
         assertEquals(desc.getTarget(), result.getTarget());
         assertEquals(desc.isIdsProtocol(), result.isIdsProtocol());
@@ -94,14 +94,14 @@ public class SubscriptionFactoryTest {
         final var subscriber = getSubscriber();
         final var desc = getValidDesc();
 
-        final var url = subscriber.getUrl();
+        final var url = subscriber.getLocation();
 
         /* ACT */
         factory.update(subscriber, desc);
 
         /* ASSERT */
-        assertNotEquals(url, subscriber.getUrl());
-        assertEquals(desc.getUrl(), subscriber.getUrl());
+        assertNotEquals(url, subscriber.getLocation());
+        assertEquals(desc.getLocation(), subscriber.getLocation());
     }
 
     @Test
@@ -118,7 +118,7 @@ public class SubscriptionFactoryTest {
     private SubscriptionDesc getValidDesc() {
         final var desc = new SubscriptionDesc();
         desc.setTarget(newUrl);
-        desc.setUrl(newUrl);
+        desc.setLocation(newUrl);
         desc.setSubscriber(newUrl);
         desc.setPushData(true);
         desc.setIdsProtocol(false);
