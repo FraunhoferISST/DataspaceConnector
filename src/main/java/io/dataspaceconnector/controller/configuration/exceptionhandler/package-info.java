@@ -16,4 +16,4 @@
 /**
  * Contains the exception handlers used only by the controllers for managing the configuration.
  */
-package io.dataspaceconnector.controller.configurations.exceptionhandler;
+package io.dataspaceconnector.controller.configuration.exceptionhandler;

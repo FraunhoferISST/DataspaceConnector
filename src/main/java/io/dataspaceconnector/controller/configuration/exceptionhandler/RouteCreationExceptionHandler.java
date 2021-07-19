@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.configurations.exceptionhandler;
+package io.dataspaceconnector.controller.configuration.exceptionhandler;
 
 import io.configmanager.extensions.routes.camel.exceptions.RouteCreationException;
 import lombok.extern.log4j.Log4j2;
