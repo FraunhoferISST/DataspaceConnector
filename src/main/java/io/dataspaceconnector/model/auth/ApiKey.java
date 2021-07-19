@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.model.auth;
 
+import javax.persistence.Entity;
+import java.util.HashMap;
+
 import io.dataspaceconnector.service.HttpService.HttpArgs;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -22,9 +25,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.Entity;
-import java.util.HashMap;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 /**
  * Entity used for containing Basic Auth information in the context of AuthTypes.
@@ -35,6 +37,8 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@SQLDelete(sql = "UPDATE authentication SET deleted=true WHERE id=?")
+@Where(clause = "deleted = false")
 public class ApiKey extends Authentication {
 
     /**

@@ -27,6 +27,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import okhttp3.Credentials;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 /**
  * Entity used for containing Basic Auth information in the context of AuthTypes.
@@ -37,6 +39,8 @@ import okhttp3.Credentials;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@SQLDelete(sql = "UPDATE authentication SET deleted=true WHERE id=?")
+@Where(clause = "deleted = false")
 public class BasicAuth extends Authentication {
 
     /**
