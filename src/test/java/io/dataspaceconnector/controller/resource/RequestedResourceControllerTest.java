@@ -16,18 +16,12 @@
 package io.dataspaceconnector.controller.resource;
 
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
-import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
-import io.dataspaceconnector.controller.resource.view.RequestedResourceViewAssembler;
-import io.dataspaceconnector.service.resource.ResourceService;
 import io.dataspaceconnector.service.message.subscription.SubscriberNotificationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.net.URI;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -39,10 +33,6 @@ class RequestedResourceControllerTest {
 
     @Autowired
     private ResourceControllers.RequestedResourceController controller;
-
-    private final UUID resourceId = UUID.randomUUID();
-
-    private final URI subscriberUrl = URI.create("https://subscriber.com");
 
     @Test
     public void create_null_returnMethodNotAllowed() {

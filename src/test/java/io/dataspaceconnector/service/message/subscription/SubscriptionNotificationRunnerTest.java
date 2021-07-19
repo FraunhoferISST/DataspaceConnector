@@ -15,6 +15,12 @@
  */
 package io.dataspaceconnector.service.message.subscription;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Date;
+import java.util.List;
+
 import io.dataspaceconnector.controller.util.Event;
 import io.dataspaceconnector.controller.util.Notification;
 import org.junit.jupiter.api.AfterEach;
@@ -26,13 +32,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -51,6 +50,7 @@ public class SubscriptionNotificationRunnerTest {
     private WebClient.RequestBodySpec requestBodySpec;
 
     @Mock
+    @SuppressWarnings("rawtypes")
     private WebClient.RequestHeadersSpec requestHeadersSpec;
 
     @Mock
@@ -61,8 +61,6 @@ public class SubscriptionNotificationRunnerTest {
 
     private SubscriberNotificationRunner runner;
 
-    private final UUID resourceId = UUID.randomUUID();
-
     private final URI subscriber1 = URI.create("https://subscriber-1.com");
 
     private final URI subscriber2 = URI.create("https://subscriber-2.com");
@@ -70,8 +68,9 @@ public class SubscriptionNotificationRunnerTest {
     private final InputStream data = new ByteArrayInputStream("SOME DATA".getBytes());
 
     @BeforeEach
+    @SuppressWarnings("unchecked")
     public void init() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         when(webClient.post()).thenReturn(requestBodyUriSpec);
         when(requestBodyUriSpec.uri(any(URI.class))).thenReturn(requestBodySpec);
@@ -102,10 +101,6 @@ public class SubscriptionNotificationRunnerTest {
 
         /* ASSERT */
         verify(webClient, times(1)).post();
-//        verify(requestBodyUriSpec, times(1)).uri(subscriber1);
-//        verify(requestBodySpec, times(1)).bodyValue(data);
-//        verify(requestHeadersSpec, times(1)).retrieve();
-//        verify(responseSpec, times(1)).bodyToMono(String.class);
     }
 
     @Test
@@ -122,11 +117,6 @@ public class SubscriptionNotificationRunnerTest {
 
         /* ASSERT */
         verify(webClient, times(2)).post();
-//        verify(requestBodyUriSpec, times(1)).uri(subscriber1);
-//        verify(requestBodyUriSpec, times(1)).uri(subscriber2);
-//        verify(requestBodySpec, times(2)).bodyValue(data);
-//        verify(requestHeadersSpec, times(2)).retrieve();
-//        verify(responseSpec, times(2)).bodyToMono(String.class);
     }
 
 }

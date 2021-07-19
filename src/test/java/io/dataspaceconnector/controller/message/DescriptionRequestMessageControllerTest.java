@@ -23,8 +23,6 @@ import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.KeyType;
 import de.fraunhofer.iais.eis.PublicKeyBuilder;
-import de.fraunhofer.iais.eis.RejectionMessage;
-import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
@@ -258,14 +256,6 @@ public class DescriptionRequestMessageControllerTest {
                         ._accessURL_(URI.create("/api/ids/data"))
                         .build())
                 .build();
-    }
-
-    private Map<String, Object> getResponseContent(final String payload) {
-        final var map = new HashMap<String, Object>();
-        map.put("type", RejectionMessage.class);
-        map.put("reason", RejectionReason.INTERNAL_RECIPIENT_ERROR);
-        map.put("payload", payload);
-        return map;
     }
 
     private DescriptionRequestMessage getMessage() {

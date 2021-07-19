@@ -71,7 +71,7 @@ public class IdsMessageBuilderTest {
     private ConnectorService connectorService;
 
     @Captor
-    private ArgumentCaptor<Request> captor;
+    private ArgumentCaptor<Request<?, ?, ?>> captor;
 
     @Autowired
     private ConnectorUnavailableMessageBuilder connectorUnavailableBuilder;
