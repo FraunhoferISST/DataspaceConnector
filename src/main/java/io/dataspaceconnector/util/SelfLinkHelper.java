@@ -24,6 +24,9 @@ import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
+import io.dataspaceconnector.model.endpoint.GenericEndpoint;
+import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.representation.Representation;
@@ -37,6 +40,9 @@ import io.dataspaceconnector.controller.resource.view.OfferedResourceViewAssembl
 import io.dataspaceconnector.controller.resource.view.RepresentationViewAssembler;
 import io.dataspaceconnector.controller.resource.view.RequestedResourceViewAssembler;
 import io.dataspaceconnector.controller.resource.view.SelfLinking;
+import io.dataspaceconnector.view.endpoint.ConnectorEndpointViewAssembler;
+import io.dataspaceconnector.view.endpoint.GenericEndpointViewAssembler;
+import io.dataspaceconnector.view.route.RouteViewAssembler;
 
 /**
  * This is a helper class for retrieving self-links of a database entity.
@@ -86,6 +92,23 @@ public final class SelfLinkHelper {
     private static final AgreementViewAssembler AGREEMENT_ASSEMBLER = new AgreementViewAssembler();
 
     /**
+     * View assembler for generic endpoints.
+     */
+    private static final GenericEndpointViewAssembler GENERIC_ENDPOINT_ASSEMBLER =
+            new GenericEndpointViewAssembler();
+
+    /**
+     * View assembler for connector endpoints.
+     */
+    private static final ConnectorEndpointViewAssembler CONNECTOR_ENDPOINT_ASSEMBLER =
+            new ConnectorEndpointViewAssembler();
+
+    /**
+     * View assembler for routes.
+     */
+    private static final RouteViewAssembler ROUTE_VIEW_ASSEMBLER = new RouteViewAssembler();
+
+    /**
      * Default constructor.
      */
     private SelfLinkHelper() {
@@ -117,6 +140,12 @@ public final class SelfLinkHelper {
             return getSelfLink((ContractRule) entity);
         } else if (entity instanceof Agreement) {
             return getSelfLink((Agreement) entity);
+        } else if (entity instanceof GenericEndpoint) {
+            return getSelfLink((GenericEndpoint) entity);
+        } else if (entity instanceof ConnectorEndpoint) {
+            return getSelfLink((ConnectorEndpoint) entity);
+        } else if (entity instanceof Route) {
+            return getSelfLink((Route) entity);
         }
 
         throw new UnreachableLineException(ErrorMessage.UNKNOWN_TYPE);
@@ -229,5 +258,40 @@ public final class SelfLinkHelper {
      */
     public static URI getSelfLink(final Agreement agreement) throws ResourceNotFoundException {
         return getSelfLink(agreement, AGREEMENT_ASSEMBLER);
+    }
+
+    /**
+     * Get self-link of generic endpoint.
+     *
+     * @param endpoint the generic endpoint.
+     * @return the self-link of the generic endpoint.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    private static URI getSelfLink(final GenericEndpoint endpoint)
+            throws ResourceNotFoundException {
+        return getSelfLink(endpoint, GENERIC_ENDPOINT_ASSEMBLER);
+    }
+
+    /**
+     * Get self-link of connector endpoint.
+     *
+     * @param endpoint the connector endpoint.
+     * @return the self-link to the connector endpoint.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    private static URI getSelfLink(final ConnectorEndpoint endpoint)
+            throws ResourceNotFoundException {
+        return getSelfLink(endpoint, CONNECTOR_ENDPOINT_ASSEMBLER);
+    }
+
+    /**
+     * Get self-link of route.
+     *
+     * @param route the route.
+     * @return the self-link to the route.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    private static URI getSelfLink(final Route route) throws ResourceNotFoundException {
+        return getSelfLink(route, ROUTE_VIEW_ASSEMBLER);
     }
 }

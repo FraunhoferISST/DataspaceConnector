@@ -67,7 +67,7 @@ class MainControllerIT {
     private BaseConnector getConnectorWithoutResources() {
         return new BaseConnectorBuilder()
                 ._curator_(URI.create("https://someBody"))
-                ._maintainer_(URI.create("https:://someoneElse"))
+                ._maintainer_(URI.create("https://someoneElse"))
                 ._outboundModelVersion_("4.0.0")
                 ._inboundModelVersion_(de.fraunhofer.iais.eis.util.Util.asList("4.0.0"))
                 ._securityProfile_(SecurityProfile.BASE_SECURITY_PROFILE)

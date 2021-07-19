@@ -15,11 +15,14 @@
  */
 package io.dataspaceconnector.service.configuration;
 
+import io.configmanager.extensions.routes.camel.exceptions.RouteCreationException;
+import io.configmanager.extensions.routes.camel.exceptions.RouteDeletionException;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteDesc;
 import io.dataspaceconnector.model.route.RouteFactory;
 import io.dataspaceconnector.repository.EndpointRepository;
 import io.dataspaceconnector.repository.RouteRepository;
+import io.dataspaceconnector.service.configuration.util.RouteHelper;
 import io.dataspaceconnector.service.resource.BaseEntityService;
 import io.dataspaceconnector.service.resource.EndpointServiceProxy;
 import io.dataspaceconnector.util.ErrorMessage;
@@ -52,21 +55,29 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
     private final @NonNull EndpointServiceProxy endpointService;
 
     /**
+     * Helper class for deploying and deleting Camel routes.
+     */
+    private final @NonNull RouteHelper routeHelper;
+
+    /**
      * Constructor for route service.
      *
      * @param endpointRepository   The endpoint repository.
      * @param endpointServiceProxy The endpoint service.
+     * @param camelRouteHelper     The helper class for Camel routes.
      */
     @Autowired
     public RouteService(final @NonNull EndpointRepository endpointRepository,
-                        final @NonNull EndpointServiceProxy endpointServiceProxy) {
+                        final @NonNull EndpointServiceProxy endpointServiceProxy,
+                        final @NonNull RouteHelper camelRouteHelper) {
         super();
         this.endpointRepo = endpointRepository;
         this.endpointService = endpointServiceProxy;
+        this.routeHelper = camelRouteHelper;
     }
 
     @Override
-    protected final Route persist(final Route route) {
+    protected final Route persist(final Route route) throws RouteCreationException {
         if (route.getStart() != null) {
             endpointRepo.save(route.getStart());
         }
@@ -75,6 +86,9 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
         }
 
         var repo = (RouteRepository) getRepository();
+        if (repo.findAllTopLevelRoutes().contains(route)) {
+            routeHelper.deploy(route);
+        }
 
         return super.persist(route);
     }
@@ -127,10 +141,11 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      * @throws IllegalArgumentException if the passed id is null.
      */
     @Override
-    public void delete(final UUID routeId) {
+    public void delete(final UUID routeId) throws RouteDeletionException  {
         Utils.requireNonNull(routeId, ErrorMessage.ENTITYID_NULL);
 
         final var route = get(routeId);
+        routeHelper.delete(route);
 
         final var linker = new EntityLinkerService.RouteStepsLinker();
         final var steps = linker.getInternal(route);
