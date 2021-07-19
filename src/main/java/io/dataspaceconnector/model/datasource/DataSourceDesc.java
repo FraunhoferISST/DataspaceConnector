@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.model.datasource;
 
-import io.dataspaceconnector.model.auth.Authentication;
+import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,7 +30,7 @@ public class DataSourceDesc extends Description {
     /**
      * The authentication for the data source.
      */
-    private Authentication authentication;
+    private AuthenticationDesc authentication;
 
     /**
      * The type of the data source.

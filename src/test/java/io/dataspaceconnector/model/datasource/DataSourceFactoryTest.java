@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model.datasource;
 
+import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.auth.BasicAuth;
 
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ public class DataSourceFactoryTest {
     void update_newAuth_willUpdate() {
         /* ARRANGE */
         final var desc = new DataSourceDesc();
-        desc.setAuthentication(new BasicAuth());
+        desc.setAuthentication(new AuthenticationDesc("", ""));
         final var dataSource = factory.create(new DataSourceDesc());
 
         /* ACT */
@@ -53,7 +54,7 @@ public class DataSourceFactoryTest {
 
         /* ASSERT */
         assertTrue(result);
-        assertEquals(desc.getAuthentication(), dataSource.getAuthentication());
+        assertEquals(new BasicAuth(desc.getAuthentication()), dataSource.getAuthentication());
     }
 
     @Test
