@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  * Global exception handler for {@link UnexpectedResponseException}.
  */
 @ControllerAdvice
-@Order
+@Order(1)
 public final class UnexpectedResponseExceptionHandler {
     /**
      * Handle runtime exceptions with response code 417.
