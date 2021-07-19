@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.util;
 
-import java.net.URI;
-import java.time.Duration;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.List;
-
 import de.fraunhofer.iais.eis.AbstractConstraint;
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
@@ -38,6 +31,13 @@ import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
 import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
 import lombok.extern.log4j.Log4j2;
+
+import java.net.URI;
+import java.time.Duration;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.List;
 
 /**
  * Contains utility methods for validating the content of ids rules.
@@ -288,7 +288,7 @@ public final class RuleUtils {
         final var constraint = rule.getConstraint().get(0);
         final var type = ((ConstraintImpl) constraint).getRightOperand().getType();
 
-        if ("xsd:duration".equals(type)) {
+        if ("http://www.w3.org/2001/XMLSchema#duration".equals(type)) {
             final var duration = ((ConstraintImpl) constraint).getRightOperand().getValue();
             return Duration.parse(duration);
         } else {
