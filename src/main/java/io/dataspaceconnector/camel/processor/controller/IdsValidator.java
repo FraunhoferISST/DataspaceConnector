@@ -99,11 +99,14 @@ class RuleListInputValidator extends IdsValidator {
      */
     @Override
     protected void processInternal(final Exchange exchange) {
-        final var ruleList = (List<Rule>) exchange
-                .getProperty(ParameterUtils.RULE_LIST_PARAM, List.class);
+        final var ruleList = exchange.getProperty(ParameterUtils.RULE_LIST_PARAM, List.class);
 
         // Validate input for contract request.
-        RuleUtils.validateRuleTarget(ruleList);
+        RuleUtils.validateRuleTarget(toRuleList(ruleList));
     }
 
+    @SuppressWarnings("unchecked")
+    private static List<Rule> toRuleList(final List<?> list) {
+        return (List<Rule>) list;
+    }
 }

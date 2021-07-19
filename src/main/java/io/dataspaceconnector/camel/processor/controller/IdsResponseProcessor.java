@@ -107,14 +107,17 @@ class MetadataPersistenceProcessor extends IdsResponseProcessor {
         final var response = exchange.getIn().getBody(Response.class);
         final var map = ProcessorUtils.getResponseMap(response);
 
-        final var artifacts = (List<URI>) exchange
-                .getProperty(ParameterUtils.ARTIFACTS_PARAM, List.class);
+        final var artifacts = exchange.getProperty(ParameterUtils.ARTIFACTS_PARAM, List.class);
         final var download = exchange.getProperty(ParameterUtils.DOWNLOAD_PARAM, boolean.class);
         final var recipient = exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class);
 
-        persistenceSvc.saveMetadata(map, artifacts, download, recipient);
+        persistenceSvc.saveMetadata(map, toUriList(artifacts), download, recipient);
     }
 
+    @SuppressWarnings("unchecked")
+    private static List<URI> toUriList(final List<?> list) {
+        return (List<URI>) list;
+    }
 }
 
 /**
@@ -141,16 +144,14 @@ class DataPersistenceProcessor extends IdsResponseProcessor {
         final var map = ProcessorUtils.getResponseMap(response);
 
         final var index = exchange.getProperty(Exchange.LOOP_INDEX, Integer.class);
-        final var artifacts = (List<URI>) exchange
-                .getProperty(ParameterUtils.ARTIFACTS_PARAM, List.class);
-        final var artifactId = artifacts.get(index);
+        final var artifacts = exchange.getProperty(ParameterUtils.ARTIFACTS_PARAM, List.class);
+        final var artifactId = (URI) artifacts.get(index);
 
         // Set current artifact as exchange property so it is available for error handling.
         exchange.setProperty(ParameterUtils.CURRENT_ARTIFACT_PARAM, artifactId);
 
         persistenceSvc.saveData(map, artifactId);
     }
-
 }
 
 /**
@@ -175,10 +176,13 @@ class AgreementToArtifactsLinker extends IdsResponseProcessor {
     @Override
     protected void processInternal(final Exchange exchange) throws Exception {
         final var agreementId = exchange.getProperty(ParameterUtils.AGREEMENT_ID_PARAM, UUID.class);
-        final var artifacts = (List<URI>) exchange
-                .getProperty(ParameterUtils.ARTIFACTS_PARAM, List.class);
+        final var artifacts = exchange.getProperty(ParameterUtils.ARTIFACTS_PARAM, List.class);
 
-        updateService.linkArtifactToAgreement(artifacts, agreementId);
+        updateService.linkArtifactToAgreement(toUriList(artifacts), agreementId);
     }
 
+    @SuppressWarnings("unchecked")
+    private static List<URI> toUriList(final List<?> list) {
+        return (List<URI>) list;
+    }
 }

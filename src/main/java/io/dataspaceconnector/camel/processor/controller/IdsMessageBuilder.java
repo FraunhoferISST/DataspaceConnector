@@ -158,9 +158,9 @@ class DescriptionRequestMessageBuilder extends
         if (elementId == null) {
             final var index = exchange.getProperty(Exchange.LOOP_INDEX, Integer.class);
             if (index != null) {
-                final var resources = (List<URI>) exchange
+                final var resources = exchange
                         .getProperty(ParameterUtils.RESOURCES_PARAM, List.class);
-                elementId = resources.get(index);
+                elementId = (URI) resources.get(index);
             }
         }
         final var message = (DescriptionRequestMessageImpl) descReqSvc
@@ -203,9 +203,9 @@ class ArtifactRequestMessageBuilder
         URI artifactId = exchange.getProperty(ParameterUtils.ARTIFACT_ID_PARAM, URI.class);
         if (artifactId == null) {
             final var index = exchange.getProperty(Exchange.LOOP_INDEX, Integer.class);
-            final var artifacts = (List<URI>) exchange
+            final var artifacts = exchange
                     .getProperty(ParameterUtils.ARTIFACTS_PARAM, List.class);
-            artifactId = artifacts.get(index);
+            artifactId = (URI) artifacts.get(index);
         }
 
         final var message = (ArtifactRequestMessageImpl) artifactReqSvc
@@ -244,11 +244,9 @@ class ContractRequestMessageBuilder
     @Override
     protected Request<ContractRequestMessageImpl, ContractRequest, Optional<Jws<Claims>>>
     processInternal(final Exchange exchange) {
-        final var ruleList = (List<Rule>) exchange
-                .getProperty(ParameterUtils.RULE_LIST_PARAM, List.class);
-        final var recipient = exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class);
-
-        final var request = contractManager.buildContractRequest(ruleList);
+        final var recipient = (URI)  exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class);
+        final var ruleList = exchange.getProperty(ParameterUtils.RULE_LIST_PARAM, List.class);
+        final var request = contractManager.buildContractRequest(toRuleList(ruleList));
         exchange.setProperty("contractRequest", request);
 
         final var message = (ContractRequestMessageImpl) contractReqSvc
@@ -257,6 +255,10 @@ class ContractRequestMessageBuilder
         return new Request<>(message, request, Optional.empty());
     }
 
+    @SuppressWarnings("unchecked")
+    private static List<Rule> toRuleList(final List<?> list) {
+        return (List<Rule>) list;
+    }
 }
 
 /**
