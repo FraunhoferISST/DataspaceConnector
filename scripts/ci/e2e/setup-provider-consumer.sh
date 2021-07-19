@@ -21,7 +21,7 @@ echo "Setup provider and consumer"
 helm install consumer charts/dataspace-connector --set env.config.SPRING_APPLICATION_NAME="Consumer Connector"
 
 # Provider setup
-#sed -i "s/^appVersion:.*$/appVersion: ci/" charts/dataspace-connector/Chart.yaml
+sed -i "s/^appVersion:.*$/appVersion: ci/" charts/dataspace-connector/Chart.yaml
 helm install provider charts/dataspace-connector --set env.config.SPRING_APPLICATION_NAME="Producer Connector"
 
 echo "Waiting for readiness"
@@ -68,5 +68,5 @@ chmod +x ./scripts/tests/single_artifact_multiple_policies.py
 ./scripts/tests/single_artifact_multiple_policies.py "http://provider-dataspace-connector" "http://consumer-dataspace-connector"
 
 echo "Cleanup"
-#helm uninstall provider
-#helm uninstall consumer
+helm uninstall provider
+helm uninstall consumer
