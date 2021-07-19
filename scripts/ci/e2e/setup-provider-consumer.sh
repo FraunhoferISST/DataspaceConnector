@@ -53,6 +53,54 @@ chmod +x ./scripts/tests/contract_negotation_allow_access.py
 
 echo "
 ********************************************************************************
+Testing contract_negotation_connector_restricted_access.py
+********************************************************************************
+"
+chmod +x ./scripts/tests/contract_negotation_connector_restricted_access.py
+./scripts/tests/contract_negotation_connector_restricted_access.py "http://provider-dataspace-connector" "http://consumer-dataspace-connector"
+
+echo "
+********************************************************************************
+Testing contract_negotation_count_access.py
+********************************************************************************
+"
+chmod +x ./scripts/tests/contract_negotation_count_access.py
+./scripts/tests/contract_negotation_count_access.py "http://provider-dataspace-connector" "http://consumer-dataspace-connector"
+
+echo "
+********************************************************************************
+Testing contract_negotation_log_access.py
+********************************************************************************
+"
+chmod +x ./scripts/tests/contract_negotation_log_access.py
+./scripts/tests/contract_negotation_log_access.py "http://provider-dataspace-connector" "http://consumer-dataspace-connector"
+
+echo "
+********************************************************************************
+Testing contract_negotation_notify_access.py
+********************************************************************************
+"
+chmod +x ./scripts/tests/contract_negotation_notify_access.py
+./scripts/tests/contract_negotation_notify_access.py "http://provider-dataspace-connector" "http://consumer-dataspace-connector"
+
+echo "
+********************************************************************************
+Testing contract_negotation_prohibit_access.py
+********************************************************************************
+"
+chmod +x ./scripts/tests/contract_negotation_prohibit_access.py
+./scripts/tests/contract_negotation_prohibit_access.py "http://provider-dataspace-connector" "http://consumer-dataspace-connector"
+
+echo "
+********************************************************************************
+Testing contract_negotation_security_level_access.py
+********************************************************************************
+"
+chmod +x ./scripts/tests/contract_negotation_security_level_access.py
+./scripts/tests/contract_negotation_security_level_access.py "http://provider-dataspace-connector" "http://consumer-dataspace-connector"
+
+echo "
+********************************************************************************
 Testing multiple_artifacts.py
 ********************************************************************************
 "
