@@ -22,17 +22,12 @@ import sys
 from idsapi import IdsApi
 from resourceapi import ResourceApi
 
-#providerUrl = "http://localhost:8080"
-#consumerUrl = "http://localhost:8081"
-
-#provider_alias = "http://provider-dataspace-connector"
-#consumer_alias = "http://consumer-dataspace-connector"
-
 providerUrl = "http://localhost:8080"
-consumerUrl = "http://localhost:8080"
+consumerUrl = "http://localhost:8081"
 
-provider_alias = providerUrl
-consumer_alias = consumerUrl
+provider_alias = "http://provider-dataspace-connector"
+consumer_alias = "http://consumer-dataspace-connector"
+
 
 def main(argv):
     if len(argv) == 2:
@@ -60,8 +55,9 @@ offers = provider.create_offered_resource()
 representation = provider.create_representation()
 artifact = provider.create_artifact(data={"value": dataValue})
 contract = provider.create_contract()
-use_rule = provider.create_rule(data={
-    "value": """{
+use_rule = provider.create_rule(
+    data={
+        "value": """{
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
     "idsc" : "https://w3id.org/idsa/code/"
@@ -80,7 +76,8 @@ use_rule = provider.create_rule(data={
     "@id" : "idsc:USE"
   } ]
 }"""
-})
+    }
+)
 
 ## Link resources
 provider.add_resource_to_catalog(catalog, offers)
