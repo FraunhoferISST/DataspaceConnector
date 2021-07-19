@@ -61,9 +61,9 @@ use_rule = provider.create_rule(data={
     "idsc" : "https://w3id.org/idsa/code/"
   },
   "@type" : "ids:Permission",
-  "@id" : "https://w3id.org/idsa/autogen/permission/cbc802b1-03a7-4563-b6a3-688e9dd4ccdf",
+  "@id" : "https://w3id.org/idsa/autogen/permission/75050633-0762-47d2-8a06-6a318eaf4b76",
   "ids:description" : [ {
-    "@value" : "usage-logging",
+    "@value" : "usage-notification",
     "@type" : "http://www.w3.org/2001/XMLSchema#string"
   } ],
   "ids:title" : [ {
@@ -72,9 +72,23 @@ use_rule = provider.create_rule(data={
   } ],
   "ids:postDuty" : [ {
     "@type" : "ids:Duty",
-    "@id" : "https://w3id.org/idsa/autogen/duty/f022bf97-5601-4cb9-a241-638906100c18",
+    "@id" : "https://w3id.org/idsa/autogen/duty/6d7cc949-cdea-495a-b88b-6d902ddd017c",
     "ids:action" : [ {
-      "@id" : "idsc:LOG"
+      "@id" : "idsc:NOTIFY"
+    } ],
+    "ids:constraint" : [ {
+      "@type" : "ids:Constraint",
+      "@id" : "https://w3id.org/idsa/autogen/constraint/0f940426-d83e-4d2c-a59f-9d5f17ad5f4d",
+      "ids:rightOperand" : {
+        "@value" : "http://localhost:8080/api/ids/data",
+        "@type" : "http://www.w3.org/2001/XMLSchema#anyURI"
+      },
+      "ids:leftOperand" : {
+        "@id" : "idsc:ENDPOINT"
+      },
+      "ids:operator" : {
+        "@id" : "idsc:DEFINES_AS"
+      }
     } ]
   } ],
   "ids:action" : [ {
