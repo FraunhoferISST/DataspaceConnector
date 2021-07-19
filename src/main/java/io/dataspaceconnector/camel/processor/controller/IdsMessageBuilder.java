@@ -42,6 +42,7 @@ import de.fraunhofer.ids.messaging.broker.util.FullTextQueryTemplate;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Request;
 import io.dataspaceconnector.camel.util.ParameterUtils;
+import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
 import io.dataspaceconnector.model.message.ContractAgreementMessageDesc;
 import io.dataspaceconnector.model.message.ContractRequestMessageDesc;
@@ -174,7 +175,8 @@ class DescriptionRequestMessageBuilder extends
  */
 @Component("ArtifactRequestMessageBuilder")
 @RequiredArgsConstructor
-class ArtifactRequestMessageBuilder extends IdsMessageBuilder<ArtifactRequestMessageImpl, String> {
+class ArtifactRequestMessageBuilder
+        extends IdsMessageBuilder<ArtifactRequestMessageImpl, QueryInput> {
 
     /**
      * Service for artifact request message handling.
@@ -189,11 +191,14 @@ class ArtifactRequestMessageBuilder extends IdsMessageBuilder<ArtifactRequestMes
      * @return the {@link Request}.
      */
     @Override
-    protected Request<ArtifactRequestMessageImpl, String, Optional<Jws<Claims>>> processInternal(
+    protected Request<ArtifactRequestMessageImpl, QueryInput, Optional<Jws<Claims>>>
+    processInternal(
             final Exchange exchange) {
         final var recipient = exchange.getProperty(ParameterUtils.RECIPIENT_PARAM, URI.class);
         final var agreementId = exchange
                 .getProperty(ParameterUtils.TRANSFER_CONTRACT_PARAM, URI.class);
+        final var queryInput = exchange
+                .getProperty(ParameterUtils.QUERY_INPUT_PARAM, QueryInput.class);
 
         URI artifactId = exchange.getProperty(ParameterUtils.ARTIFACT_ID_PARAM, URI.class);
         if (artifactId == null) {
@@ -206,7 +211,7 @@ class ArtifactRequestMessageBuilder extends IdsMessageBuilder<ArtifactRequestMes
         final var message = (ArtifactRequestMessageImpl) artifactReqSvc
                 .buildMessage(new ArtifactRequestMessageDesc(recipient, artifactId, agreementId));
 
-        return new Request<>(message, "", Optional.empty());
+        return new Request<>(message, queryInput, Optional.empty());
     }
 
 }

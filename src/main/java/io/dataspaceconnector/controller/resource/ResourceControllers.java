@@ -245,6 +245,7 @@ public final class ResourceControllers {
                 final HttpServletRequest request) throws IOException {
             headers.remove("authorization");
             headers.remove("host");
+            params.remove("protocol");
 
             final var queryInput = new QueryInput();
             queryInput.setParams(params);

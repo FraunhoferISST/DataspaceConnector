@@ -43,7 +43,7 @@ public class ArtifactRequestControllerRoute extends RouteBuilder {
         from("direct:artifactRequestSender")
                 .routeId("artifactRequestSender")
                 .process("ArtifactRequestMessageBuilder")
-                .process("RequestWithoutPayloadPreparer")
+                .process("ArtifactRequestPreparer")
                 .toD(ParameterUtils.IDSCP_CLIENT_URI)
                 .process("ResponseToDtoConverter")
                 .process("ArtifactResponseValidator");

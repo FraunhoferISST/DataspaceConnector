@@ -15,9 +15,16 @@
  */
 package io.dataspaceconnector.service;
 
-import io.dataspaceconnector.camel.dto.Response;
-import io.dataspaceconnector.controller.util.CommunicationProtocol;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
+
 import de.fraunhofer.iais.eis.RejectionReason;
+import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.util.ParameterUtils;
+import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.exception.DataRetrievalException;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
@@ -34,12 +41,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * Performs an artifact request for an artifact. All functions will block till the request is
@@ -93,10 +94,10 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
         if (CommunicationProtocol.IDSCP_V2.equals(protocol)) {
             final var result = template.send("direct:artifactRequestSender",
                     ExchangeBuilder.anExchange(context)
-                            .withProperty("recipient", recipient)
-                            .withProperty("artifactId", artifact.getRemoteId())
-                            .withProperty("transferContract", transferContract)
-                            .withProperty("queryInput", queryInput)
+                            .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)
+                            .withProperty(ParameterUtils.ARTIFACT_ID_PARAM, artifact.getRemoteId())
+                            .withProperty(ParameterUtils.TRANSFER_CONTRACT_PARAM, transferContract)
+                            .withProperty(ParameterUtils.QUERY_INPUT_PARAM, queryInput)
                             .build());
 
             final var response = result.getIn().getBody(Response.class);

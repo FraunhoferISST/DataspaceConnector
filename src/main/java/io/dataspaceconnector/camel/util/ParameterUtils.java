@@ -138,4 +138,9 @@ public final class ParameterUtils {
      */
     public static final String DOWNLOAD_PARAM = "download";
 
+    /**
+     * Name of the parameter containing the query input.
+     */
+    public static final String QUERY_INPUT_PARAM = "queryInput";
+
 }

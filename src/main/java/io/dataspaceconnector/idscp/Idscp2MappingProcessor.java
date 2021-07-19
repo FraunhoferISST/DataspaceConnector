@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -31,6 +32,7 @@ import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.camel.dto.Request;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.util.ParameterUtils;
+import io.dataspaceconnector.model.QueryInput;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -64,7 +66,7 @@ public abstract class Idscp2MappingProcessor implements Processor {
      *
      * @param in the in-message of the exchange.
      */
-    protected abstract void processInternal(Message in);
+    protected abstract void processInternal(Message in) throws Exception;
 
 }
 
@@ -150,6 +152,41 @@ class ContractAgreementPreparer extends Idscp2MappingProcessor {
 
         in.setHeader(ParameterUtils.IDSCP_HEADER, request.getHeader());
         in.setBody(agreement.toRdf().getBytes(StandardCharsets.UTF_8));
+    }
+
+}
+
+/**
+ * Prepares an artifact request message for IDSCPv2 communication with a query input as payload.
+ */
+@Component("ArtifactRequestPreparer")
+class ArtifactRequestPreparer extends Idscp2MappingProcessor {
+
+    /**
+     * ObjectMapper for writing the query input to JSON.
+     */
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    /**
+     * Prepares a {@link Request} with an ArtifactRequestMessage as header and a query input as
+     * body for communication over IDSCPv2.
+     *
+     * @param in the in-message of the exchange.
+     * @throws JsonProcessingException if writing the query input to JSON fails.
+     */
+    @Override
+    protected void processInternal(final Message in) throws JsonProcessingException {
+        final var request = in.getBody(Request.class);
+        final var queryInput = (QueryInput) request.getBody();
+
+        in.setHeader(ParameterUtils.IDSCP_HEADER, request.getHeader());
+        if (queryInput != null) {
+            in.setBody(objectMapper
+                    .writeValueAsString(queryInput).getBytes(StandardCharsets.UTF_8));
+        } else {
+            in.setBody("".getBytes(StandardCharsets.UTF_8));
+        }
+
     }
 
 }
