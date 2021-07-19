@@ -60,7 +60,7 @@ public class SettingsControllerIT {
     @SpyBean
     private ConnectorConfiguration connectorConfig;
 
-    @MockBean
+    @SpyBean
     private DeserializationService idsService;
 
     @Autowired
