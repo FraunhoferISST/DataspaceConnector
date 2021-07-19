@@ -1,5 +1,7 @@
 package io.dataspaceconnector.service.message.subscription;
 
+import java.util.List;
+
 import io.dataspaceconnector.model.ArtifactDesc;
 import io.dataspaceconnector.model.ArtifactFactory;
 import io.dataspaceconnector.model.OfferedResource;
@@ -14,10 +16,7 @@ import io.dataspaceconnector.service.resource.TemplateBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -27,7 +26,7 @@ public class SubscriberNotificationServiceTest {
     @Autowired
     private SubscriberNotificationService subscriberNotificationSvc;
 
-    @MockBean
+    @SpyBean
     private TemplateBuilder<OfferedResource, OfferedResourceDesc> tmpBuilder;
 
     @SpyBean
@@ -43,9 +42,7 @@ public class SubscriberNotificationServiceTest {
         final var factory = new ArtifactFactory();
         final var artifact = factory.create(desc);
 
-        /* ACT */
-
-        /* ASSERT */
+        /* ACT && ASSERT */
         assertDoesNotThrow(() -> subscriberNotificationSvc.notifyOnUpdate(artifact));
     }
 
@@ -66,9 +63,7 @@ public class SubscriberNotificationServiceTest {
         final var offer = tmpBuilder.build(offerTemplate);
         final var artifact = offer.getRepresentations().get(0).getArtifacts().get(0);
 
-        /* ACT */
-
-        /* ASSERT */
+        /* ACT && ASSERT */
         assertDoesNotThrow(() -> subscriberNotificationSvc.notifyOnUpdate(artifact));
     }
 
