@@ -22,17 +22,11 @@ import sys
 from idsapi import IdsApi
 from resourceapi import ResourceApi
 
-#providerUrl = "http://localhost:8080"
-#consumerUrl = "http://localhost:8081"
-
-#provider_alias = "http://provider-dataspace-connector"
-#consumer_alias = "http://consumer-dataspace-connector"
-
 providerUrl = "http://localhost:8080"
-consumerUrl = "http://localhost:8080"
+consumerUrl = "http://localhost:8081"
 
-provider_alias = providerUrl
-consumer_alias = consumerUrl
+provider_alias = "http://provider-dataspace-connector"
+consumer_alias = "http://consumer-dataspace-connector"
 
 def main(argv):
     if len(argv) == 2:
@@ -66,15 +60,22 @@ use_rule = provider.create_rule(data={
     "ids" : "https://w3id.org/idsa/core/",
     "idsc" : "https://w3id.org/idsa/code/"
   },
-  "@type" : "ids:Prohibition",
-  "@id" : "https://w3id.org/idsa/autogen/prohibition/a838e2a5-d3e8-4891-af73-0f3bf39381ce",
+  "@type" : "ids:Permission",
+  "@id" : "https://w3id.org/idsa/autogen/permission/cbc802b1-03a7-4563-b6a3-688e9dd4ccdf",
   "ids:description" : [ {
-    "@value" : "prohibit-access",
+    "@value" : "usage-logging",
     "@type" : "http://www.w3.org/2001/XMLSchema#string"
   } ],
   "ids:title" : [ {
     "@value" : "Example Usage Policy",
     "@type" : "http://www.w3.org/2001/XMLSchema#string"
+  } ],
+  "ids:postDuty" : [ {
+    "@type" : "ids:Duty",
+    "@id" : "https://w3id.org/idsa/autogen/duty/f022bf97-5601-4cb9-a241-638906100c18",
+    "ids:action" : [ {
+      "@id" : "idsc:LOG"
+    } ]
   } ],
   "ids:action" : [ {
     "@id" : "idsc:USE"
@@ -104,7 +105,7 @@ offer = consumer.descriptionRequest(provider_alias + "/api/ids/data", offers)
 pprint.pprint(offer)
 
 # Negotiate contract
-obj = offer["ids:contractOffer"][0]["ids:prohibition"][0]
+obj = offer["ids:contractOffer"][0]["ids:permission"][0]
 obj["ids:target"] = artifact
 response = consumer.contractRequest(
     provider_alias + "/api/ids/data", offers, artifact, False, obj
