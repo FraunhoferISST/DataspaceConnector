@@ -48,7 +48,7 @@ requests.packages.urllib3.disable_warnings()
 provider = ResourceApi(providerUrl)
 
 ## Create resources
-dataValue = "SOME LONG VALUE";
+dataValue = "SOME LONG VALUE"
 catalog = provider.create_catalog()
 offers = provider.create_offered_resource()
 representation = provider.create_representation()
@@ -86,13 +86,13 @@ response = consumer.contractRequest(
 pprint.pprint(response)
 
 # Pull data
-agreement = response['_links']['self']['href']
+agreement = response["_links"]["self"]["href"]
 
 consumerResources = ResourceApi(consumerUrl)
 artifacts = consumerResources.get_artifacts_for_agreement(agreement)
 pprint.pprint(artifacts)
 
-first_artifact = artifacts['_embedded']['artifacts'][0]['_links']['self']['href']
+first_artifact = artifacts["_embedded"]["artifacts"][0]["_links"]["self"]["href"]
 pprint.pprint(first_artifact)
 
 data = consumerResources.get_data(first_artifact).text

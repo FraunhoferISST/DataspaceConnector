@@ -24,36 +24,48 @@ import tqdm
 requests.packages.urllib3.disable_warnings()
 
 s = requests.Session()
-s.auth = ('admin', 'password')
+s.auth = ("admin", "password")
 s.verify = False
+
 
 def create_catalog():
     response = s.post("https://localhost:8080/api/catalogs", json={})
-    return response.headers['Location']
+    return response.headers["Location"]
 
 
 def create_offered_resource():
     response = s.post("https://localhost:8080/api/offers", json={})
-    return response.headers['Location']
+    return response.headers["Location"]
 
 
 def create_representation():
     response = s.post("https://localhost:8080/api/representations", json={})
-    return response.headers['Location']
+    return response.headers["Location"]
 
 
 def create_artifact():
-    response = s.post("https://localhost:8080/api/artifacts", json={"value": "SOME LONG VALUE"})
-    return response.headers['Location']
+    response = s.post(
+        "https://localhost:8080/api/artifacts", json={"value": "SOME LONG VALUE"}
+    )
+    return response.headers["Location"]
 
 
 def create_contract():
-    response = s.post("https://localhost:8080/api/contracts", json={'start': '2021-04-06T13:33:44.995+02:00', 'end':'2021-12-06T13:33:44.995+02:00'})
-    return response.headers['Location']
+    response = s.post(
+        "https://localhost:8080/api/contracts",
+        json={
+            "start": "2021-04-06T13:33:44.995+02:00",
+            "end": "2021-12-06T13:33:44.995+02:00",
+        },
+    )
+    return response.headers["Location"]
 
 
 def create_rule_allow_access():
-    response = s.post("https://localhost:8080/api/rules", json={'value': """{
+    response = s.post(
+        "https://localhost:8080/api/rules",
+        json={
+            "value": """{
         "@context" : {
             "ids" : "https://w3id.org/idsa/core/",
             "idsc" : "https://w3id.org/idsa/code/"
@@ -77,29 +89,31 @@ def create_rule_allow_access():
             "@type": "http://www.w3.org/2001/XMLSchema#string"
             }
         ]
-        }"""})
-    return response.headers['Location']
+        }"""
+        },
+    )
+    return response.headers["Location"]
 
 
 def add_resource_to_catalog(catalog, resource):
     response = s.post(catalog + "/offers", json=[resource])
+
 
 def add_catalog_to_resource(resource, catalog):
     response = s.post(resource + "/catalogs", json=[catalog])
 
 
 def add_representation_to_resource(resource, representation):
-    response = s.post(resource + "/representations",
-                      json=[representation])
+    response = s.post(resource + "/representations", json=[representation])
 
 
 def add_artifact_to_representation(representation, artifact):
-    response = s.post(representation + "/artifacts",
-                      json=[artifact])
+    response = s.post(representation + "/artifacts", json=[artifact])
 
 
 def add_contract_to_resource(resource, contract):
     response = s.post(resource + "/contracts", json=[contract])
+
 
 def add_rule_to_contract(contract, rule):
     response = s.post(contract + "/rules", json=[rule])
@@ -110,9 +124,9 @@ def descriptionRequest(recipient, elementId):
     url = "https://localhost:8080/api/ids/description"
     params = {}
     if recipient is not None:
-        params['recipient'] = recipient
+        params["recipient"] = recipient
     if elementId is not None:
-        params['elementId'] = elementId
+        params["elementId"] = elementId
 
     return s.post(url, params=params)
 
@@ -121,15 +135,16 @@ def contractRequest(recipient, resourceId, artifactId, download, contract):
     url = "https://localhost:8080/api/ids/contract"
     params = {}
     if recipient is not None:
-        params['recipient'] = recipient
+        params["recipient"] = recipient
     if resourceId is not None:
-        params['resourceIds'] = resourceId
+        params["resourceIds"] = resourceId
     if artifactId is not None:
-        params['artifactIds'] = artifactId
+        params["artifactIds"] = artifactId
     if download is not None:
-        params['download'] = download
+        params["download"] = download
 
     return s.post(url, params=params, json=[contract])
+
 
 # Create resources
 catalog = create_catalog()
@@ -154,40 +169,60 @@ response = descriptionRequest("https://localhost:8080/api/ids/data", offers)
 offer = json.loads(response.text)
 
 # Negotiate contract
-obj = offer['ids:contractOffer'][0]['ids:permission'][0]
-obj['ids:target'] = artifact
-response = contractRequest("https://localhost:8080/api/ids/data", offers, artifact, False, obj)
+obj = offer["ids:contractOffer"][0]["ids:permission"][0]
+obj["ids:target"] = artifact
+response = contractRequest(
+    "https://localhost:8080/api/ids/data", offers, artifact, False, obj
+)
 pprint.pprint(str(response.content))
 
 # Collect stats
-numReqResources = json.loads(s.get("https://localhost:8080/api/requests").text)['page']['totalElements']
-numRepresentations = json.loads(s.get("https://localhost:8080/api/representations").text)['page']['totalElements']
-numArtifacts = json.loads(s.get("https://localhost:8080/api/artifacts").text)['page']['totalElements']
-numAgreements = json.loads(s.get("https://localhost:8080/api/agreements").text)['page']['totalElements']
+numReqResources = json.loads(s.get("https://localhost:8080/api/requests").text)["page"][
+    "totalElements"
+]
+numRepresentations = json.loads(
+    s.get("https://localhost:8080/api/representations").text
+)["page"]["totalElements"]
+numArtifacts = json.loads(s.get("https://localhost:8080/api/artifacts").text)["page"][
+    "totalElements"
+]
+numAgreements = json.loads(s.get("https://localhost:8080/api/agreements").text)["page"][
+    "totalElements"
+]
 
 # Negotiate over resource whose representations and artifacts are exactly the same
 response = descriptionRequest("https://localhost:8080/api/ids/data", anotherOffers)
 offer = json.loads(response.text)
 
-obj = offer['ids:contractOffer'][0]['ids:permission'][0]
-obj['ids:target'] = artifact
-response = contractRequest("https://localhost:8080/api/ids/data", offers, artifact, False, obj)
+obj = offer["ids:contractOffer"][0]["ids:permission"][0]
+obj["ids:target"] = artifact
+response = contractRequest(
+    "https://localhost:8080/api/ids/data", offers, artifact, False, obj
+)
 pprint.pprint(str(response.content))
 
 # Make sure only 2 resources exists all the rest is the same
-numReqResourcesAfter = json.loads(s.get("https://localhost:8080/api/requests").text)['page']['totalElements']
-numRepresentationsAfter = json.loads(s.get("https://localhost:8080/api/representations").text)['page']['totalElements']
-numArtifactsAfter = json.loads(s.get("https://localhost:8080/api/artifacts").text)['page']['totalElements']
-numAgreementsAfter = json.loads(s.get("https://localhost:8080/api/agreements").text)['page']['totalElements']
+numReqResourcesAfter = json.loads(s.get("https://localhost:8080/api/requests").text)[
+    "page"
+]["totalElements"]
+numRepresentationsAfter = json.loads(
+    s.get("https://localhost:8080/api/representations").text
+)["page"]["totalElements"]
+numArtifactsAfter = json.loads(s.get("https://localhost:8080/api/artifacts").text)[
+    "page"
+]["totalElements"]
+numAgreementsAfter = json.loads(s.get("https://localhost:8080/api/agreements").text)[
+    "page"
+]["totalElements"]
 
-if(numReqResources + 1 != numReqResourcesAfter):
+if numReqResources + 1 != numReqResourcesAfter:
     raise Exception("Wrong number of requested resources.")
 
-if(numRepresentations != numRepresentationsAfter):
+if numRepresentations != numRepresentationsAfter:
     raise Exception("Wrong number of representations")
 
-if(numArtifacts != numArtifactsAfter):
+if numArtifacts != numArtifactsAfter:
     raise Exception("Wrong number of artifacts")
 
-if(numAgreements + 2 != numAgreementsAfter): # +1 as consumer + 1 as provider
+if numAgreements + 2 != numAgreementsAfter:  # +1 as consumer + 1 as provider
     raise Exception("Wrong number of agreements")

@@ -181,39 +181,45 @@ consumer = IdsApi(consumerUrl)
 
 ##
 catalogResponse = consumer.descriptionRequest(provider_alias + "/api/ids/data", catalog)
-obj = catalogResponse['ids:offeredResource'][0]
-resourceId1 = obj['@id']
-contract = obj['ids:contractOffer'][0]
-contractId = contract['@id']
-representation = obj['ids:representation'][0]
-artifact = representation['ids:instance'][0]
-artifactId1 = artifact['@id']
+obj = catalogResponse["ids:offeredResource"][0]
+resourceId1 = obj["@id"]
+contract = obj["ids:contractOffer"][0]
+contractId = contract["@id"]
+representation = obj["ids:representation"][0]
+artifact = representation["ids:instance"][0]
+artifactId1 = artifact["@id"]
 
 ##
-contract1Response = consumer.descriptionRequest(provider_alias + "/api/ids/data", contractId)
+contract1Response = consumer.descriptionRequest(
+    provider_alias + "/api/ids/data", contractId
+)
 
-obj = catalogResponse['ids:offeredResource'][1]
-resourceId2 = obj['@id']
-contract = obj['ids:contractOffer'][0]
-contractId = contract['@id']
-representation = obj['ids:representation'][0]
-artifact = representation['ids:instance'][0]
-artifactId2 = artifact['@id']
-
-##
-contract2Response = consumer.descriptionRequest(provider_alias + "/api/ids/data", contractId)
-
-##
-notify = contract1Response['ids:permission'][0]
-notify['ids:target'] = artifactId1
+obj = catalogResponse["ids:offeredResource"][1]
+resourceId2 = obj["@id"]
+contract = obj["ids:contractOffer"][0]
+contractId = contract["@id"]
+representation = obj["ids:representation"][0]
+artifact = representation["ids:instance"][0]
+artifactId2 = artifact["@id"]
 
 ##
-count = contract2Response['ids:permission'][0]
-count['ids:target'] = artifactId2
+contract2Response = consumer.descriptionRequest(
+    provider_alias + "/api/ids/data", contractId
+)
+
+##
+notify = contract1Response["ids:permission"][0]
+notify["ids:target"] = artifactId1
+
+##
+count = contract2Response["ids:permission"][0]
+count["ids:target"] = artifactId2
 
 ##
 body = [notify, count]
 resources = [resourceId1, resourceId2]
 artifacts = [artifactId1, artifactId2]
-response = consumer.contractRequest(provider_alias + "/api/ids/data", resources, artifacts, True, body)
+response = consumer.contractRequest(
+    provider_alias + "/api/ids/data", resources, artifacts, True, body
+)
 pprint.pprint(response)
