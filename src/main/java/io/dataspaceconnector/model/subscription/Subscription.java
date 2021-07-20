@@ -34,7 +34,7 @@ import java.net.URI;
  */
 @Entity
 @Table(name = "subscription")
-@SQLDelete(sql = "UPDATE resource SET deleted=true WHERE id=?")
+@SQLDelete(sql = "UPDATE subscription SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
 @Getter
 @Setter(AccessLevel.PACKAGE)
