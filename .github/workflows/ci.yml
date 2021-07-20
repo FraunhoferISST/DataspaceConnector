@@ -195,11 +195,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push
-          id: docker_build
-          uses: docker/build-push-action@v2
-          with:
-            push: true
-            tags: ${{ secrets.IMAGE_REGISTRY }}/${{ secrets.REPO_USER }}/dataspace-connector:ci
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: ${{ secrets.IMAGE_REGISTRY }}/${{ secrets.REPO_USER }}/dataspace-connector:ci
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
       - name: Run vulnerability scanner
