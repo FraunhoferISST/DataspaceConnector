@@ -25,6 +25,7 @@ import de.fraunhofer.iais.eis.QueryTarget;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.broker.util.FullTextQueryTemplate;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.camel.dto.Request;
 import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.service.ids.ConnectorService;
@@ -53,6 +54,7 @@ public class QueryMessageBuilder extends IdsMessageBuilder<QueryMessageImpl, Str
      * @param exchange the exchange.
      * @return the {@link Request}.
      */
+    @SuppressFBWarnings(value = "FORMAT_STRING_MANIPULATION")
     @Override
     protected Request<QueryMessageImpl, String, Optional<Jws<Claims>>> processInternal(
             final Exchange exchange) {

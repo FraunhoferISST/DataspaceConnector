@@ -63,11 +63,32 @@ public class ProxyFactory extends AbstractFactory<Proxy, ProxyDesc> {
             return false;
         }
 
-        if (new BasicAuth(auth).equals(proxy.getAuthentication())) {
+        if (auth == null) {
+            proxy.setAuthentication(null);
+            return true;
+        }
+
+        if (auth.getKey() == null && auth.getValue() == null) {
             return false;
         }
 
-        proxy.setAuthentication(new BasicAuth(auth));
+        BasicAuth newAuth;
+        if (proxy.getAuthentication() != null) {
+            newAuth = new BasicAuth(auth.getKey() == null
+                                            ? proxy.getAuthentication().getUsername()
+                                            : auth.getKey(),
+                                    auth.getValue() == null
+                                            ? proxy.getAuthentication().getPassword()
+                                            : auth.getValue());
+        } else {
+            newAuth = new BasicAuth(auth);
+        }
+
+        if (newAuth.equals(proxy.getAuthentication())) {
+            return false;
+        }
+
+        proxy.setAuthentication(newAuth);
         return true;
     }
 

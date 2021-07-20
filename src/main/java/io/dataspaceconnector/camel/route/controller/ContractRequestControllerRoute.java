@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import javax.persistence.PersistenceException;
 
+import de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.camel.exception.InvalidResponseException;
 import io.dataspaceconnector.camel.util.ParameterUtils;
@@ -66,6 +67,8 @@ public class ContractRequestControllerRoute extends RouteBuilder {
                         + "exception=(${exception.message})]");
         onException(SocketTimeoutException.class)
                 .to("direct:handleSocketTimeout");
+        onException(Idscp2Exception.class)
+                .to("direct:handleIdscp2Exception");
 
         from("direct:contractRequestSender")
                 .routeId("contractRequestSender")

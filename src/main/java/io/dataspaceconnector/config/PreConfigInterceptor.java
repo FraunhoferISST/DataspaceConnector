@@ -34,6 +34,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Intercepts {@link de.fraunhofer.ids.messaging.core.config.ConfigProducer} and changes how the
@@ -42,7 +43,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @AllArgsConstructor
-public final class PreConfigInterceptor implements PreConfigProducerInterceptor {
+@Transactional
+public class PreConfigInterceptor implements PreConfigProducerInterceptor {
 
     /**
      * Service for ids deserialization.
@@ -59,6 +61,14 @@ public final class PreConfigInterceptor implements PreConfigProducerInterceptor 
      */
     private final IdsConfigModelBuilder configModelBuilder;
 
+    /**
+     * Loads the connector configuration from the database, if it exists, and from the config.json
+     * file otherwise.
+     *
+     * @param properties the configuration properties.
+     * @return the loaded config.
+     * @throws ConfigProducerInterceptorException if loading the config fails.
+     */
     @Override
     public ConfigurationModel perform(final ConfigProperties properties)
             throws ConfigProducerInterceptorException {

@@ -15,6 +15,25 @@
  */
 package io.dataspaceconnector.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.UUID;
+
+import de.fraunhofer.iais.eis.ArtifactBuilder;
+import de.fraunhofer.iais.eis.ContractAgreementBuilder;
+import de.fraunhofer.iais.eis.ContractOffer;
+import de.fraunhofer.iais.eis.ContractOfferBuilder;
+import de.fraunhofer.iais.eis.RepresentationBuilder;
+import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.ResourceBuilder;
+import de.fraunhofer.iais.eis.ResourceCatalog;
+import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
+import io.dataspaceconnector.exception.InvalidResourceException;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
@@ -23,6 +42,8 @@ import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.ids.builder.IdsArtifactBuilder;
@@ -38,6 +59,8 @@ import io.dataspaceconnector.service.resource.RepresentationService;
 import io.dataspaceconnector.service.resource.ResourceService;
 import io.dataspaceconnector.service.resource.RuleService;
 import io.dataspaceconnector.service.usagecontrol.AllowAccessVerifier;
+import io.dataspaceconnector.util.IdsUtils;
+import io.dataspaceconnector.util.QueryInput;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -46,13 +69,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.net.URI;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {EntityResolver.class})
 public class EntityResolverTest {
@@ -65,6 +89,9 @@ public class EntityResolverTest {
 
     @MockBean
     private ResourceService<OfferedResource, OfferedResourceDesc> offerService;
+
+    @MockBean
+    private ResourceService<RequestedResource, RequestedResourceDesc> requestedService;
 
     @MockBean
     private CatalogService catalogService;
@@ -235,6 +262,170 @@ public class EntityResolverTest {
         assertFalse(result.isPresent());
     }
 
+    // get entityAsRdfString
+
+    @Test
+    public void getEntityAsRdfString_null_throwInvalidResourceException() {
+        /* ACT && ASSERT */
+        assertThrows(InvalidResourceException.class, () -> resolver.getEntityAsRdfString(null));
+    }
+
+    @Test
+    public void getEntityAsRdfString_exceptionInBuilder_throwInvalidResourceException() {
+        /* ARRANGE */
+        final var artifact = getArtifact();
+        when(artifactBuilder.create(artifact)).thenThrow(ConstraintViolationException.class);
+
+        /* ACT && ASSERT */
+        assertThrows(InvalidResourceException.class, () -> resolver.getEntityAsRdfString(artifact));
+    }
+
+    @Test
+    public void getEntityAsRdfString_artifact_returnRdfString() {
+        /* ARRANGE */
+        final var artifact = getArtifact();
+        final var idsArtifact = getIdsArtifact();
+        when(artifactBuilder.create(artifact)).thenReturn(idsArtifact);
+
+        /* ACT */
+        final var result = resolver.getEntityAsRdfString(artifact);
+
+        /* ASSERT */
+        assertNotNull(result);
+        assertFalse(result.isBlank());
+    }
+
+    @Test
+    public void getEntityAsRdfString_offeredResource_returnRdfString() {
+        /* ARRANGE */
+        final var resource = getOfferedResource();
+        final var idsResource = getIdsResource();
+        when(offerBuilder.create(resource)).thenReturn(idsResource);
+
+        /* ACT */
+        final var result = resolver.getEntityAsRdfString(resource);
+
+        /* ASSERT */
+        assertNotNull(result);
+        assertFalse(result.isBlank());
+    }
+
+    @Test
+    public void getEntityAsRdfString_representation_returnRdfString() {
+        /* ARRANGE */
+        final var representation = getRepresentation();
+        final var idsRepresentation = getIdsRepresentation();
+        when(representationBuilder.create(representation)).thenReturn(idsRepresentation);
+
+        /* ACT */
+        final var result = resolver.getEntityAsRdfString(representation);
+
+        /* ASSERT */
+        assertNotNull(result);
+        assertFalse(result.isBlank());
+    }
+
+    @Test
+    public void getEntityAsRdfString_catalog_returnRdfString() {
+        /* ARRANGE */
+        final var catalog = getCatalog();
+        final var idsCatalog = getIdsCatalog();
+        when(catalogBuilder.create(catalog)).thenReturn(idsCatalog);
+
+        /* ACT */
+        final var result = resolver.getEntityAsRdfString(catalog);
+
+        /* ASSERT */
+        assertNotNull(result);
+        assertFalse(result.isBlank());
+    }
+
+    @Test
+    public void getEntityAsRdfString_contract_returnRdfString() {
+        /* ARRANGE */
+        final var contract = getContract();
+        final var idsContract = getIdsContract();
+        when(contractBuilder.create(contract)).thenReturn(idsContract);
+
+        /* ACT */
+        final var result = resolver.getEntityAsRdfString(contract);
+
+        /* ASSERT */
+        assertNotNull(result);
+        assertFalse(result.isBlank());
+    }
+
+    @Test
+    public void getEntityAsRdfString_agreement_returnRdfString() {
+        /* ARRANGE */
+        final var value = "agreement value";
+        final var agreement = getAgreement(value);
+
+        /* ACT */
+        final var result = resolver.getEntityAsRdfString(agreement);
+
+        /* ASSERT */
+        assertNotNull(result);
+        assertEquals(value, result);
+    }
+
+    @Test
+    public void getEntityAsRdfString_contractRule_returnRdfString() {
+        /* ARRANGE */
+        final var value = "rule value";
+        final var rule = getRule(value);
+
+        /* ACT */
+        final var result = resolver.getEntityAsRdfString(rule);
+
+        /* ASSERT */
+        assertNotNull(result);
+        assertEquals(value, result);
+    }
+
+    // getDataByArtifactId & getContractAgreementsByTarget
+    @Test
+    void getDataByArtifactId_validArtifactEmptyQuery_willReturnData() throws IOException {
+        /* ARRANGE */
+        final var endpointId = UUID.randomUUID();
+        final var requestedArtifact = URI.create("https://requested/" + endpointId);
+        final var queryInput = new QueryInput();
+        final var expect = new ByteArrayInputStream(new byte[]{});
+
+        Mockito.doReturn(expect).when(artifactService).getData(any(), any(), eq(endpointId), eq(queryInput));
+
+        /* ACT */
+        final var result = resolver.getDataByArtifactId(requestedArtifact, queryInput);
+
+        /* ASSERT */
+        assertEquals(expect, result);
+    }
+
+    @Test
+    void getContractAgreementsByTarget_validTarget_returnAgreementList() {
+        /* ARRANGE */
+        final var endpointId = UUID.randomUUID();
+        final var target = URI.create("https://requested/" + endpointId);
+        final var agreement = new Agreement();
+        ReflectionTestUtils.setField(agreement, "value", "AGREEMENT");
+        final var artifact = new ArtifactImpl();
+        ReflectionTestUtils.setField(artifact, "agreements", List.of(agreement));
+
+        Mockito.doReturn(artifact).when(artifactService).get(eq(endpointId));
+
+        final var idsAgreement = new ContractAgreementBuilder()
+                ._contractStart_(IdsUtils.getGregorianOf(ZonedDateTime.now()))
+                .build();
+
+        Mockito.doReturn(idsAgreement).when(deserializationService).getContractAgreement(eq(agreement.getValue()));
+
+        /* ACT */
+        final var result = resolver.getContractAgreementsByTarget(target);
+
+        /* ASSERT */
+        assertEquals(List.of(idsAgreement), result);
+    }
+
 
     /***********************************************************************************************
      * Utilities.                                                                                  *
@@ -289,6 +480,16 @@ public class EntityResolverTest {
     }
 
     @SneakyThrows
+    private ContractRule getRule(final String value) {
+        final var constructor = ContractRule.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        final var output = constructor.newInstance();
+        ReflectionTestUtils.setField(output, "id", resourceId);
+        ReflectionTestUtils.setField(output, "value", value);
+        return output;
+    }
+
+    @SneakyThrows
     private Agreement getAgreement() {
         final var constructor = Agreement.class.getDeclaredConstructor();
         constructor.setAccessible(true);
@@ -296,4 +497,38 @@ public class EntityResolverTest {
         ReflectionTestUtils.setField(output, "id", resourceId);
         return output;
     }
+
+    @SneakyThrows
+    private Agreement getAgreement(final String value) {
+        final var constructor = Agreement.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        final var output = constructor.newInstance();
+        ReflectionTestUtils.setField(output, "id", resourceId);
+        ReflectionTestUtils.setField(output, "value", value);
+        return output;
+    }
+
+    private de.fraunhofer.iais.eis.Artifact getIdsArtifact() {
+        return new ArtifactBuilder()
+                ._creationDate_(IdsMessageUtils.getGregorianNow())
+                ._fileName_("ARTIFACT")
+                .build();
+    }
+
+    private Resource getIdsResource() {
+        return new ResourceBuilder().build();
+    }
+
+    private de.fraunhofer.iais.eis.Representation getIdsRepresentation() {
+        return new RepresentationBuilder().build();
+    }
+
+    private ResourceCatalog getIdsCatalog() {
+        return new ResourceCatalogBuilder().build();
+    }
+
+    private ContractOffer getIdsContract() {
+        return new ContractOfferBuilder().build();
+    }
+
 }

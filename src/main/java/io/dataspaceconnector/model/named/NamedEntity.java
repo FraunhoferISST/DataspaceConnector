@@ -16,15 +16,18 @@
 package io.dataspaceconnector.model.named;
 
 import io.dataspaceconnector.model.base.Entity;
-import lombok.Data;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.MappedSuperclass;
 
 /**
  * The entity class which holds additional information like title, description.
  */
-@Data
+@Getter
+@Setter(AccessLevel.PACKAGE)
 @MappedSuperclass
 @EqualsAndHashCode(callSuper = true)
 public class NamedEntity extends Entity {

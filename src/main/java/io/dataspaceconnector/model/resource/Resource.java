@@ -92,7 +92,7 @@ public class Resource extends NamedEntity {
      * The license of the resource.
      */
     @Convert(converter = UriConverter.class)
-    @Column(length = URI_COLUMN_LENGTH, name = "licence")
+    @Column(length = URI_COLUMN_LENGTH)
     private URI license;
 
     /**
