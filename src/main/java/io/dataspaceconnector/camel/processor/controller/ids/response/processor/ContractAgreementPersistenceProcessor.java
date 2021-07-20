@@ -46,6 +46,7 @@ public class ContractAgreementPersistenceProcessor extends IdsResponseProcessor 
                 .getProperty(ParameterUtils.CONTRACT_AGREEMENT_PARAM, ContractAgreement.class);
         final var agreementId = persistenceSvc.saveContractAgreement(agreement);
         exchange.setProperty(ParameterUtils.AGREEMENT_ID_PARAM, agreementId);
+        exchange.setProperty(ParameterUtils.TRANSFER_CONTRACT_PARAM, agreement.getId());
     }
 
 }
