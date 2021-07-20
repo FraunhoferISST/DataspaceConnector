@@ -15,7 +15,9 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import de.fraunhofer.iais.eis.RejectionMessage;
+import java.net.URI;
+import java.util.Objects;
+
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfiguration;
@@ -45,9 +47,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
-import java.util.Objects;
 
 /**
  * Controller for sending description request messages.
@@ -115,9 +114,6 @@ public class DescriptionRequestMessageController {
 
             final var response = result.getIn().getBody(Response.class);
             if (response != null) {
-                if (response.getHeader() instanceof RejectionMessage) {
-                    return new ResponseEntity<>(response.getBody(), HttpStatus.EXPECTATION_FAILED);
-                }
                 payload = response.getBody();
             } else {
                 final var responseEntity =
