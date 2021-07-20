@@ -149,7 +149,7 @@ jobs:
       run: mvn -B -U verify --file pom.xml -Prelease
 
   mutation-tests:
-    needs: [style, license, linting]
+    needs: unit-and-integration-tests
     timeout-minutes: 30
     runs-on: ubuntu-latest
     strategy:
@@ -171,7 +171,7 @@ jobs:
       run: mvn -B -U -Dmaven.javadoc.skip=true test org.pitest:pitest-maven:mutationCoverage --file pom.xml
 
   build-test-image:
-    needs: [style, license, linting]
+    needs: unit-and-integration-tests
     timeout-minutes: 15
     runs-on: ubuntu-latest
     concurrency:
