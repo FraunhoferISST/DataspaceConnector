@@ -15,14 +15,6 @@
  */
 package io.dataspaceconnector.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.QueryInput;
 import io.dataspaceconnector.util.Utils;
@@ -32,12 +24,25 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import org.springframework.stereotype.Service;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class builds up http or httpS endpoint connections and sends GET requests.
  */
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class HttpService {
@@ -71,9 +76,13 @@ public class HttpService {
     @Data
     @AllArgsConstructor
     public static class Pair {
-        /** First element. */
+        /**
+         * First element.
+         */
         private String first;
-        /** Second element. */
+        /**
+         * Second element.
+         */
         private String second;
     }
 
@@ -105,6 +114,7 @@ public class HttpService {
     public interface Authentication {
         /**
          * Add the authentication to the http args.
+         *
          * @param args The http args.
          */
         void setAuth(HttpArgs args);
@@ -126,6 +136,43 @@ public class HttpService {
          * The response body.
          */
         private InputStream body;
+    }
+
+    /**
+     * Send post requests using the http service of the messaging services.
+     *
+     * @param target The target url.
+     * @param args   Request arguments.
+     * @param data   The data that should be sent.
+     * @return The response.
+     * @throws IOException if the request failed.
+     */
+    public Response post(final URL target, final HttpArgs args, final InputStream data) throws IOException {
+        Utils.requireNonNull(target, ErrorMessage.URI_NULL);
+        Utils.requireNonNull(args, ErrorMessage.HTTP_ARGS_NULL);
+
+        final var urlBuilder = createUrlBuilder(target);
+
+        if (args.getParams() != null) {
+            for (final var key : args.getParams().keySet()) {
+                urlBuilder.addQueryParameter(key, args.getParams().get(key));
+            }
+        }
+
+        final var targetUrl = urlBuilder.build();
+
+        final var body = RequestBody.create(data.readAllBytes(), MediaType.get("application/octet" +
+                "-stream"));
+        final var request = new Request.Builder().url(targetUrl).post(body).build();
+
+        final var response = httpSvc.send(request);
+
+        final var output = new Response();
+        output.setCode(response.code());
+        output.setBody(getBody(response));
+        response.close();
+
+        return output;
     }
 
     /**
