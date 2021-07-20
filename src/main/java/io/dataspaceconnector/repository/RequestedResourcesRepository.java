@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.repository;
 
-import io.dataspaceconnector.model.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResource;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 

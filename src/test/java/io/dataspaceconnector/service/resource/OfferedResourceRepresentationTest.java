@@ -15,19 +15,20 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.Representation;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.representation.Representation;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -84,20 +85,9 @@ class OfferedResourceRepresentationTest {
         constructor.setAccessible(true);
 
         final var resource = constructor.newInstance();
-
-        final var titleField = resource.getClass().getSuperclass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(resource, "Hello");
-
-        final var representationField = resource.getClass().getSuperclass().getDeclaredField(
-                "representations");
-        representationField.setAccessible(true);
-        representationField.set(resource, new ArrayList<Contract>());
-
-        final var idField = resource.getClass().getSuperclass().getSuperclass().getDeclaredField(
-                "id");
-        idField.setAccessible(true);
-        idField.set(resource, UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
+        ReflectionTestUtils.setField(resource, "title", "Hello");
+        ReflectionTestUtils.setField(resource, "representations", new ArrayList<Contract>());
+        ReflectionTestUtils.setField(resource, "id", UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
 
         return resource;
     }
@@ -108,14 +98,8 @@ class OfferedResourceRepresentationTest {
         constructor.setAccessible(true);
 
         final var representation = constructor.newInstance();
-
-        final var titleField = representation.getClass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(representation, "Hello");
-
-        final var idField = representation.getClass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(representation, UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
+        ReflectionTestUtils.setField(resource, "title", "Hello");
+        ReflectionTestUtils.setField(resource, "id", UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
 
         return representation;
     }

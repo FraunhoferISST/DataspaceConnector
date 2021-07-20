@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.camel.route.controller.error;
 
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
@@ -36,8 +37,8 @@ public class ResourceNotFoundForControllerRoute extends RouteBuilder {
                 .routeId("resourceNotFoundForController")
                 .log(LoggingLevel.DEBUG,
                         "Error route for handling resource not found called.")
-                .to("bean:io.dataspaceconnector.controller.util.ControllerUtils?"
-                        + "method=respondResourceNotFound(${exchangeProperty.resourceId})");
+                .to(ParameterUtils.CONTROLLER_UTILS_BEAN
+                        + "respondResourceNotFound(${exchangeProperty.resourceId})");
     }
 
 }

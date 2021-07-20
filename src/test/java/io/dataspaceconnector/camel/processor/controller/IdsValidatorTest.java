@@ -30,6 +30,8 @@ import de.fraunhofer.iais.eis.PermissionBuilder;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.processor.controller.ids.validator.ContractAgreementValidator;
+import io.dataspaceconnector.camel.processor.controller.ids.validator.RuleListInputValidator;
 import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
 import lombok.SneakyThrows;
@@ -49,7 +51,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {ContractAgreementValidator.class, RuleListInputValidator.class})
+@SpringBootTest(classes = { ContractAgreementValidator.class, RuleListInputValidator.class})
 public class IdsValidatorTest {
 
     @Mock

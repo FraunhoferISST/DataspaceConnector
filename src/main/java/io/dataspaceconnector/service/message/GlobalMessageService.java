@@ -33,6 +33,9 @@ import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedExcepti
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import io.dataspaceconnector.controller.util.ControllerUtils;
+import io.dataspaceconnector.model.base.RegistrationStatus;
+import io.dataspaceconnector.service.configuration.BrokerService;
+import io.dataspaceconnector.service.message.processing.BrokerCommunication;
 import io.dataspaceconnector.service.message.type.NotificationService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -60,61 +63,24 @@ public class GlobalMessageService {
     private final @NotNull IDSBrokerService brokerSvc;
 
     /**
+     * Service for the broker.
+     */
+    private final @NotNull BrokerService brokerService;
+
+    /**
      * Service for sending notification messages.
      */
     private final @NonNull NotificationService notificationSvc;
 
     /**
-     * Send connector update message.
-     *
-     * @param recipient The recipient.
-     * @return Optional of message container providing the received ids response.
-     * @throws MultipartParseException     if response could not be parsed to header and payload.
-     * @throws ClaimsException             if an errors occur while validating a DAT from response.
-     * @throws DapsTokenManagerException   if the DAT for building the message cannot be acquired.
-     * @throws IOException                 if any other problem in establishing a connection occurs.
-     * @throws ShaclValidatorException     if received header did not pass SHACL validation.
-     * @throws SerializeException          if serializing an outgoing message fails.
-     * @throws RejectionException          if the response is a rejection message.
-     * @throws UnknownResponseException    if response header cannot be cast to known message type.
-     * @throws SendMessageException        if recipient could not be reached.
-     * @throws NoTemplateProvidedException if not matching template for message building was found.
-     * @throws UnexpectedPayloadException  if payload could not be processed.
-     * @throws DeserializeException        if serializing an incoming response message fails.
+     * Service for handling broker communication.
      */
-    public Optional<MessageContainer<?>> sendConnectorUpdateMessage(final URI recipient)
-            throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
-            NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
-            UnexpectedPayloadException, SerializeException, DeserializeException,
-            RejectionException, UnknownResponseException {
-        return Optional.of(brokerSvc.updateSelfDescriptionAtBroker(recipient));
-    }
+    private final @NonNull BrokerCommunication brokerCommunication;
 
     /**
      * Send connector update message and validate received response.
      *
-     * @param recipient The recipient.
-     * @return True if the message was successfully processed by the recipient, false if not.
-     */
-    public boolean sendAndValidateConnectorUpdateMessage(final URI recipient) {
-        try {
-            final var response = sendConnectorUpdateMessage(recipient);
-            if (response.isPresent()) {
-                if (log.isInfoEnabled()) {
-                    log.info(String.format("Successfully registered connector. [url=(%s)]",
-                            recipient));
-                }
-                return true;
-            }
-        } catch (Exception ignored) {
-        }
-        return false;
-    }
-
-    /**
-     * Send connector unavailable message.
-     *
-     * @param recipient The recipient.
+     * @param input The input uri.
      * @return Optional of message container providing the received ids response.
      * @throws MultipartParseException     if response could not be parsed to header and payload.
      * @throws ClaimsException             if an errors occur while validating a DAT from response.
@@ -129,19 +95,70 @@ public class GlobalMessageService {
      * @throws UnexpectedPayloadException  if payload could not be processed.
      * @throws DeserializeException        if serializing an incoming response message fails.
      */
-    public Optional<MessageContainer<?>> sendConnectorUnavailableMessage(final URI recipient)
+    public Optional<MessageContainer<?>> sendConnectorUpdateMessage(final URI input)
             throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
             NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
             UnexpectedPayloadException, SerializeException, DeserializeException,
             RejectionException, UnknownResponseException {
-        return Optional.of(brokerSvc.unregisterAtBroker(recipient));
+        // Check if input was a broker id or an url.
+        final var address = brokerCommunication.checkInput(input);
+        final var response = brokerSvc.updateSelfDescriptionAtBroker(address);
+
+        // Validate response.
+        final var result = checkResponse(Optional.ofNullable(response));
+        if (result) {
+            if (log.isInfoEnabled()) {
+                log.info("Successfully updated connector. [url=({}})]", input);
+            }
+            brokerService.setRegistrationStatus(address, RegistrationStatus.REGISTERED);
+        }
+
+        return Optional.ofNullable(response);
+    }
+
+    /**
+     * Send connector unavailable message and validate received response.
+     *
+     * @param input The recipient or a broker id.
+     * @return Optional of message container providing the received ids response.
+     * @throws MultipartParseException     if response could not be parsed to header and payload.
+     * @throws ClaimsException             if an errors occur while validating a DAT from response.
+     * @throws DapsTokenManagerException   if the DAT for building the message cannot be acquired.
+     * @throws IOException                 if any other problem in establishing a connection occurs.
+     * @throws ShaclValidatorException     if received header did not pass SHACL validation.
+     * @throws SerializeException          if serializing an outgoing message fails.
+     * @throws RejectionException          if the response is a rejection message.
+     * @throws UnknownResponseException    if response header cannot be cast to known message type.
+     * @throws SendMessageException        if recipient could not be reached.
+     * @throws NoTemplateProvidedException if not matching template for message building was found.
+     * @throws UnexpectedPayloadException  if payload could not be processed.
+     * @throws DeserializeException        if serializing an incoming response message fails.
+     */
+    public Optional<MessageContainer<?>> sendConnectorUnavailableMessage(final URI input)
+            throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
+            NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
+            UnexpectedPayloadException, SerializeException, DeserializeException,
+            RejectionException, UnknownResponseException {
+        // Check if input was a broker id or an url.
+        final var address = brokerCommunication.checkInput(input);
+        final var response = brokerSvc.unregisterAtBroker(address);
+
+        // Validate response.
+        final var result = checkResponse(Optional.ofNullable(response));
+        if (result) {
+            if (log.isInfoEnabled()) {
+                log.info("Successfully unregistered connector. [url=({}})]", input);
+            }
+            brokerService.setRegistrationStatus(address, RegistrationStatus.UNREGISTERED);
+        }
+        return Optional.ofNullable(response);
     }
 
     /**
      * Send resource update message.
      *
-     * @param recipient The recipient.
-     * @param resource  The ids resource that should be updated.
+     * @param input    The recipient or a broker id.
+     * @param resource The ids resource that should be updated.
      * @return Optional of message container providing the received ids response.
      * @throws MultipartParseException     if response could not be parsed to header and payload.
      * @throws ClaimsException             if an errors occur while validating a DAT from response.
@@ -156,43 +173,34 @@ public class GlobalMessageService {
      * @throws UnexpectedPayloadException  if payload could not be processed.
      * @throws DeserializeException        if serializing an incoming response message fails.
      */
-    public Optional<MessageContainer<?>> sendResourceUpdateMessage(final URI recipient,
+    public Optional<MessageContainer<?>> sendResourceUpdateMessage(final URI input,
                                                                    final Resource resource)
             throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
             NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
             UnexpectedPayloadException, SerializeException, DeserializeException,
             RejectionException, UnknownResponseException {
-        return Optional.of(brokerSvc.updateResourceAtBroker(recipient, resource));
-    }
+        // Check if input was a broker id or an url.
+        final var address = brokerCommunication.checkInput(input);
+        final var response = brokerSvc.updateResourceAtBroker(address, resource);
 
-    /**
-     * Send resource update message and validate received response.
-     *
-     * @param recipient The recipient.
-     * @param resource  The ids resource that should be updated.
-     * @return True if the message was successfully processed by the recipient, false if not.
-     */
-    public boolean sendAndValidateResourceUpdateMessage(final URI recipient,
-                                                        final Resource resource) {
-        try {
-            final var response = sendResourceUpdateMessage(recipient, resource);
-            if (response.isPresent()) {
-                if (log.isInfoEnabled()) {
-                    log.info(String.format("Successfully registered resource. [resourceId=(%s), "
-                            + "url=(%s)]", resource.getId(), recipient));
-                }
-                return true;
+        // Validate response.
+        final var result = checkResponse(Optional.ofNullable(response));
+        if (result) {
+            if (log.isInfoEnabled()) {
+                log.info("Successfully updated resource. [resourceId=({}}), url=({}})]",
+                        resource.getId(), input);
             }
-        } catch (Exception ignored) {
+            // TODO Does this causes errors on subscription update?
+            brokerCommunication.updateOfferedResourceBrokerList(address, resource);
         }
-        return false;
+        return Optional.ofNullable(response);
     }
 
     /**
-     * Send resource unavailable message.
+     * Send resource unavailable message and validate received response.
      *
-     * @param recipient The recipient.
-     * @param resource  The ids resource that should be updated.
+     * @param input    The input uri.
+     * @param resource The ids resource that should be updated.
      * @return Optional of message container providing the received ids response.
      * @throws MultipartParseException     if response could not be parsed to header and payload.
      * @throws ClaimsException             if an errors occur while validating a DAT from response.
@@ -207,20 +215,33 @@ public class GlobalMessageService {
      * @throws UnexpectedPayloadException  if payload could not be processed.
      * @throws DeserializeException        if serializing an incoming response message fails.
      */
-    public Optional<MessageContainer<?>> sendResourceUnavailableMessage(final URI recipient,
+    public Optional<MessageContainer<?>> sendResourceUnavailableMessage(final URI input,
                                                                         final Resource resource)
             throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
             NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
             UnexpectedPayloadException, SerializeException, DeserializeException,
             RejectionException, UnknownResponseException {
-        return Optional.of(brokerSvc.removeResourceFromBroker(recipient, resource));
+        // Check if input was a broker id or an url.
+        final var address = brokerCommunication.checkInput(input);
+        final var response = brokerSvc.removeResourceFromBroker(address, resource);
+
+        // Validate response.
+        final var result = checkResponse(Optional.ofNullable(response));
+        if (result) {
+            if (log.isInfoEnabled()) {
+                log.info("Successfully unregistered resource. [resourceId=({}}), url=({}})]",
+                        resource.getId(), input);
+            }
+            brokerCommunication.removeBrokerFromOfferedResourceBrokerList(address, resource);
+        }
+        return Optional.ofNullable(response);
     }
 
     /**
      * Send query message and validate received response.
      *
-     * @param recipient The recipient.
-     * @param query     The query statement.
+     * @param input The recipient or a broker id.
+     * @param query The query statement.
      * @return Optional of message container providing the received ids response.
      * @throws MultipartParseException     if response could not be parsed to header and payload.
      * @throws ClaimsException             if an errors occur while validating a DAT from response.
@@ -235,22 +256,27 @@ public class GlobalMessageService {
      * @throws UnexpectedPayloadException  if payload could not be processed.
      * @throws DeserializeException        if serializing an incoming response message fails.
      */
-    public Optional<MessageContainer<?>> sendQueryMessage(final URI recipient, final String query)
+    public Optional<MessageContainer<?>> sendQueryMessage(final URI input, final String query)
             throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
             NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
             UnexpectedPayloadException, SerializeException, DeserializeException,
             RejectionException, UnknownResponseException {
-        return Optional.of(brokerSvc.queryBroker(recipient, query, QueryLanguage.SPARQL,
-                QueryScope.ALL, QueryTarget.BROKER));
+        // Check if input was a broker id or an url.
+        final var address = brokerCommunication.checkInput(input);
+        final var response = brokerSvc.queryBroker(address, query,
+                QueryLanguage.SPARQL, QueryScope.ALL, QueryTarget.BROKER);
+
+
+        return Optional.of(response);
     }
 
     /**
      * Send query message and validate received response.
      *
-     * @param recipient The recipient.
-     * @param term      The search term.
-     * @param limit     The limit value.
-     * @param offset    The offset value.
+     * @param input  The recipient or a broker id.
+     * @param term   The search term.
+     * @param limit  The limit value.
+     * @param offset The offset value.
      * @return Optional of message container providing the received ids response.
      * @throws MultipartParseException     if response could not be parsed to header and payload.
      * @throws ClaimsException             if an errors occur while validating a DAT from response.
@@ -266,19 +292,22 @@ public class GlobalMessageService {
      * @throws DeserializeException        if serializing an incoming response message fails.
      */
     public Optional<MessageContainer<?>> sendFullTextSearchMessage(
-            final URI recipient, final String term, final int limit, final int offset)
+            final URI input, final String term, final int limit, final int offset)
             throws MultipartParseException, ClaimsException, DapsTokenManagerException, IOException,
             NoTemplateProvidedException, ShaclValidatorException, SendMessageException,
             UnexpectedPayloadException, SerializeException, DeserializeException,
             RejectionException, UnknownResponseException {
-        return Optional.of(brokerSvc.fullTextSearchBroker(recipient, term, QueryScope.ALL,
-                QueryTarget.BROKER, limit, offset));
+        // Check if input was a broker id or an url.
+        final var address = brokerCommunication.checkInput(input);
+        final var response = brokerSvc.fullTextSearchBroker(address, term,
+                QueryScope.ALL, QueryTarget.BROKER, limit, offset);
+        return Optional.of(response);
     }
 
     /**
-     * Validates response. Returns response entity with status code 200 if a
-     * MessageProcessedNotificationMessage has been received, responds with the message's content
-     * if not.
+     * Check if a request was successfully processed by the recipient. Validates response.
+     * Returns response entity with status code 200 if a MessageProcessedNotificationMessage has
+     * been received, responds with the message's content if not.
      *
      * @param response The response container.
      * @param msgType  Expected message type.
@@ -299,5 +328,18 @@ public class GlobalMessageService {
         // If response message is not of predefined type.
         final var content = notificationSvc.getResponseContent(header, payload);
         return ControllerUtils.respondWithContent(content);
+    }
+
+    /**
+     * @param response The response container.
+     * @return true, if response is successful.
+     */
+    public boolean checkResponse(final Optional<MessageContainer<?>> response) {
+        if (response.isEmpty()) {
+            return false;
+        }
+        final var resp = response.get();
+        return !resp.isRejection() && resp.getUnderlyingMessage() != null;
+        // If response message is empty of rejection.
     }
 }

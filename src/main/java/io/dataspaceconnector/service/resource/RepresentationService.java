@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.RepresentationDesc;
+import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.representation.RepresentationDesc;
 import io.dataspaceconnector.repository.RepresentationRepository;
 import org.springframework.stereotype.Service;
 

@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.controller;
 
+import io.dataspaceconnector.controller.configuration.BrokerControllers;
+import io.dataspaceconnector.controller.configuration.DataSourceController;
+import io.dataspaceconnector.controller.configuration.EndpointController;
+import io.dataspaceconnector.controller.configuration.RouteControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -37,7 +41,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * This class provides endpoints for basic connector services.
  */
 @RestController
-@Tag(name = "Connector", description = "Endpoints for connector information and configuration")
+@Tag(name = "Connector", description = "Endpoints for connector information")
 @RequiredArgsConstructor
 public class MainController {
 
@@ -54,7 +58,8 @@ public class MainController {
     @GetMapping(value = {"/", ""}, produces = "application/ld+json")
     @Operation(summary = "Public IDS self-description")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok")})
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @ResponseBody
     public ResponseEntity<Object> getPublicSelfDescription() {
         return ResponseEntity.ok(connectorService.getConnectorWithoutResources().toRdf());
@@ -69,6 +74,7 @@ public class MainController {
     @Operation(summary = "Private IDS self-description")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @ResponseBody
     public ResponseEntity<Object> getPrivateSelfDescription() {
@@ -82,6 +88,9 @@ public class MainController {
      */
     @Hidden
     @GetMapping("/api")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Ok"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized")})
     public ResponseEntity<RepresentationModel<?>> root() {
         final var model = new RepresentationModel<>();
 
@@ -90,14 +99,22 @@ public class MainController {
                 .getAll(null, null)).withRel("agreements"));
         model.add(linkTo(methodOn(ResourceControllers.ArtifactController.class)
                 .getAll(null, null)).withRel("artifacts"));
+        model.add(linkTo(methodOn(BrokerControllers.BrokerController.class)
+                .getAll(null, null)).withRel("brokers"));
         model.add(linkTo(methodOn(ResourceControllers.CatalogController.class)
                 .getAll(null, null)).withRel("catalogs"));
         model.add(linkTo(methodOn(ResourceControllers.ContractController.class)
                 .getAll(null, null)).withRel("contracts"));
+        model.add(linkTo(methodOn(DataSourceController.class)
+                .getAll(null, null)).withRel("datasources"));
+        model.add(linkTo(methodOn(EndpointController.class)
+                .getAll(null, null)).withRel("endpoints"));
         model.add(linkTo(methodOn(ResourceControllers.OfferedResourceController.class)
                 .getAll(null, null)).withRel("offers"));
         model.add(linkTo(methodOn(ResourceControllers.RepresentationController.class)
                 .getAll(null, null)).withRel("representations"));
+        model.add(linkTo(methodOn(RouteControllers.RouteController.class)
+                .getAll(null, null)).withRel("routes"));
         model.add(linkTo(methodOn(ResourceControllers.RequestedResourceController.class)
                 .getAll(null, null)).withRel("requests"));
         model.add(linkTo(methodOn(ResourceControllers.RuleController.class)

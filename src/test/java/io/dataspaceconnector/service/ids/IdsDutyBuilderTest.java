@@ -21,10 +21,10 @@ import de.fraunhofer.iais.eis.Constraint;
 import de.fraunhofer.iais.eis.DutyImpl;
 import de.fraunhofer.iais.eis.LeftOperand;
 import de.fraunhofer.ids.messaging.util.SerializerProvider;
-import io.dataspaceconnector.model.AbstractEntity;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.ContractRuleDesc;
-import io.dataspaceconnector.model.ContractRuleFactory;
+import io.dataspaceconnector.model.base.Entity;
+import io.dataspaceconnector.model.rule.ContractRule;
+import io.dataspaceconnector.model.rule.ContractRuleDesc;
+import io.dataspaceconnector.model.rule.ContractRuleFactory;
 import io.dataspaceconnector.service.ids.builder.IdsDutyBuilder;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -165,11 +165,11 @@ public class IdsDutyBuilderTest {
         ruleDesc.setValue(value);
         final var rule = contractRuleFactory.create(ruleDesc);
 
-        final var idField = AbstractEntity.class.getDeclaredField("id");
+        final var idField = Entity.class.getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(rule, UUID.randomUUID());
 
-        final var creationDateField = AbstractEntity.class.getDeclaredField("creationDate");
+        final var creationDateField = Entity.class.getDeclaredField("creationDate");
         creationDateField.setAccessible(true);
         creationDateField.set(rule, date);
 

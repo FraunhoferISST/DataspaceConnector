@@ -17,7 +17,7 @@ package io.dataspaceconnector.controller.resource.view;
 
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers.RequestedResourceController;
-import io.dataspaceconnector.model.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResource;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;

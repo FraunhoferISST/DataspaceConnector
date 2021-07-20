@@ -16,7 +16,7 @@
 package io.dataspaceconnector.service.ids.updater;
 
 import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.model.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.service.resource.RequestedResourceService;
 import io.dataspaceconnector.util.MappingUtils;
 import lombok.NonNull;

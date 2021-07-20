@@ -17,6 +17,7 @@ package io.dataspaceconnector.camel.route.controller;
 
 import java.net.SocketTimeoutException;
 
+import de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception;
 import io.dataspaceconnector.camel.exception.InvalidResponseException;
 import io.dataspaceconnector.camel.util.ParameterUtils;
 import org.apache.camel.builder.RouteBuilder;
@@ -39,6 +40,8 @@ public class ArtifactRequestControllerRoute extends RouteBuilder {
                 .process("PolicyRestrictionProcessor");
         onException(SocketTimeoutException.class)
                 .to("direct:handleSocketTimeout");
+        onException(Idscp2Exception.class)
+                .to("direct:handleIdscp2Exception");
 
         from("direct:artifactRequestSender")
                 .routeId("artifactRequestSender")

@@ -37,6 +37,7 @@ import java.util.Properties;
 @SpringBootApplication
 @ComponentScan({
     "io.dataspaceconnector",
+    "io.configmanager",
     "de.fraunhofer.ids.*",
     "de.fraunhofer.ids.messaging.*"
 })
@@ -44,6 +45,7 @@ public class ConnectorApplication {
 
     /**
      * The main method.
+     *
      * @param args List of arguments.
      */
     public static void main(final String[] args) {
@@ -61,25 +63,25 @@ public class ConnectorApplication {
     public OpenAPI customOpenAPI() throws IOException {
         final var properties = new Properties();
         try (InputStream inputStream = Thread.currentThread().getContextClassLoader()
-                                             .getResourceAsStream("application.properties")) {
+                .getResourceAsStream("application.properties")) {
             // This function may crash (e.g. ill-formatted file). Let it bubble up.
             properties.load(inputStream);
         }
 
         return new OpenAPI()
-            .components(new Components())
-            .info(new Info()
-                .title(properties.getProperty("title"))
-                .description(properties.getProperty("project_desc"))
-                .version(properties.getProperty("version"))
-                .contact(new Contact()
-                    .name(properties.getProperty("organization_name"))
-                    .url(properties.getProperty("contact_url"))
-                    .email(properties.getProperty("contact_email"))
-                )
-                .license(new License()
-                    .name(properties.getProperty("license"))
-                    .url(properties.getProperty("license_url")))
-            );
+                .components(new Components())
+                .info(new Info()
+                        .title(properties.getProperty("title"))
+                        .description(properties.getProperty("project_desc"))
+                        .version(properties.getProperty("version"))
+                        .contact(new Contact()
+                                .name(properties.getProperty("organization_name"))
+                                .url(properties.getProperty("contact_url"))
+                                .email(properties.getProperty("contact_email"))
+                        )
+                        .license(new License()
+                                .name(properties.getProperty("license"))
+                                .url(properties.getProperty("license_url")))
+                );
     }
 }

@@ -18,7 +18,7 @@ package io.dataspaceconnector.service.usagecontrol;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.PolicyExecutionException;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
-import io.dataspaceconnector.model.Artifact;
+import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.util.ContractUtils;
 import io.dataspaceconnector.util.RuleUtils;

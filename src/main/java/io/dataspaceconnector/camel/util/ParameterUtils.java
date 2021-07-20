@@ -143,4 +143,10 @@ public final class ParameterUtils {
      */
     public static final String QUERY_INPUT_PARAM = "queryInput";
 
+    /**
+     * Reference for calling a method on ControllerUtils from a route.
+     */
+    public static final String CONTROLLER_UTILS_BEAN = "bean:io.dataspaceconnector.controller"
+            + ".util.ControllerUtils?method=";
+
 }

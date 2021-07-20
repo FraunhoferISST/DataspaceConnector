@@ -37,14 +37,14 @@ import io.dataspaceconnector.camel.exception.UnconfirmedAgreementException;
 import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.model.QueryInput;
-import io.dataspaceconnector.model.Subscription;
-import io.dataspaceconnector.model.SubscriptionDesc;
+import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.message.ArtifactResponseMessageDesc;
 import io.dataspaceconnector.model.message.ContractAgreementMessageDesc;
 import io.dataspaceconnector.model.message.ContractRejectionMessageDesc;
 import io.dataspaceconnector.model.message.DescriptionResponseMessageDesc;
 import io.dataspaceconnector.model.message.MessageProcessedNotificationMessageDesc;
+import io.dataspaceconnector.model.subscription.Subscription;
+import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.service.EntityPersistenceService;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.EntityUpdateService;
@@ -57,9 +57,10 @@ import io.dataspaceconnector.service.message.type.DescriptionResponseService;
 import io.dataspaceconnector.service.message.type.MessageProcessedNotificationService;
 import io.dataspaceconnector.service.resource.SubscriptionService;
 import io.dataspaceconnector.util.ContractUtils;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.IdsUtils;
 import io.dataspaceconnector.util.MessageUtils;
+import io.dataspaceconnector.util.QueryInput;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -79,7 +80,7 @@ import java.util.Optional;
  *
  * @param <I> the expected input type (body of the Camel {@link Exchange}).
  */
-public abstract class IdsProcessor<I> implements Processor {
+public abstract class IdsProcessor<I extends RouteMsg<?, ?>> implements Processor {
 
     /**
      * Override of the {@link Processor}'s process method. Calls the implementing class's
@@ -89,6 +90,7 @@ public abstract class IdsProcessor<I> implements Processor {
      * @throws Exception if an error occurs.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public void process(final Exchange exchange) throws Exception {
         exchange.getIn().setBody(processInternal((I) exchange.getIn().getBody(Request.class)));
     }
@@ -108,7 +110,6 @@ public abstract class IdsProcessor<I> implements Processor {
  * element was given.
  */
 @Component("ResourceDescription")
-@Log4j2
 @RequiredArgsConstructor
 class ResourceDescriptionProcessor extends IdsProcessor<
         RouteMsg<DescriptionRequestMessageImpl, MessagePayload>> {
@@ -142,7 +143,7 @@ class ResourceDescriptionProcessor extends IdsProcessor<
         final var entity = entityResolver.getEntityById(requested);
 
         if (entity.isEmpty()) {
-            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString());
+            throw new ResourceNotFoundException(ErrorMessage.EMTPY_ENTITY.toString());
         }
 
         // If the element has been found, build the ids response message.
@@ -256,7 +257,7 @@ class DataRequestProcessor extends IdsProcessor<
             throws InvalidInputException {
         try {
             final var payload = MessageUtils.getStreamAsString(messagePayload);
-            if (payload.equals("")) {
+            if (payload.equals("") || payload.equals("null")) {
                 // Query input is optional, so no rejection message will be sent. Query input will
                 // be checked for null value in HttpService.class.
                 return null;
@@ -494,9 +495,13 @@ class AgreementComparisonProcessor extends IdsProcessor<
     protected Response processInternal(
             final RouteMsg<ContractAgreementMessageImpl, ContractAgreement> msg) throws Exception {
         final var agreement = msg.getBody();
-        final var storedAgreement = entityResolver.getAgreementByUri(agreement.getId());
-        final var storedIdsAgreement = deserializationService
-                .getContractAgreement(storedAgreement.getValue());
+        final var entity = entityResolver.getEntityById(agreement.getId());
+        if (entity.isEmpty()) {
+            throw new ResourceNotFoundException(ErrorMessage.EMTPY_ENTITY.toString());
+        }
+        final var storedAgreement = (Agreement) entity.get();
+        final var storedIdsAgreement =
+                deserializationService.getContractAgreement(storedAgreement.getValue());
 
         if (!ContractUtils.compareContractAgreements(agreement, storedIdsAgreement)) {
             throw new ContractException("Received agreement does not match stored agreement.");
@@ -558,10 +563,10 @@ class SubscriptionProcessor extends IdsProcessor<RouteMsg<RequestMessageImpl, ?>
 
             // Create new subscription.
             final var desc = new SubscriptionDesc();
-            desc.setSubscriber(subscription.getSubscriber());
+            desc.setSubscriber(issuer);
             desc.setTarget(subscription.getTarget());
             desc.setPushData(subscription.isPushData());
-            desc.setUrl(subscription.getUrl());
+            desc.setLocation(subscription.getLocation());
 
             // Set boolean to true as this subscription has been created via ids message.
             desc.setIdsProtocol(true);
@@ -594,7 +599,7 @@ class SubscriptionProcessor extends IdsProcessor<RouteMsg<RequestMessageImpl, ?>
             throws InvalidInputException {
         try {
             final var payload = MessageUtils.getStreamAsString(messagePayload);
-            if (payload.equals("")) {
+            if (payload.equals("") || payload.equals("null")) {
                 return Optional.empty();
             } else {
                 final var subscription = new ObjectMapper().readValue(payload, Subscription.class);

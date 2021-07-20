@@ -15,7 +15,12 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import de.fraunhofer.iais.eis.RejectionMessage;
+import java.net.URI;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+import javax.persistence.PersistenceException;
+
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.camel.dto.Response;
@@ -42,7 +47,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
@@ -57,17 +61,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-
 /**
  * This controller provides the endpoint for sending a contract request message and starting the
  * metadata and data exchange.
  */
-@Log4j2
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
@@ -165,12 +162,10 @@ public class ContractRequestMessageController {
 
             final var response = result.getIn().getBody(Response.class);
             if (response != null) {
-                if (response.getHeader() instanceof RejectionMessage) {
-                    return new ResponseEntity<>(response.getBody(), HttpStatus.EXPECTATION_FAILED);
-                }
                 agreementId = result.getProperty(ParameterUtils.AGREEMENT_ID_PARAM, UUID.class);
             } else {
-                final var responseEntity = result.getIn().getBody(ResponseEntity.class);
+                final var responseEntity =
+                    toObjectResponse(result.getIn().getBody(ResponseEntity.class));
                 return Objects.requireNonNullElseGet(responseEntity,
                         () -> new ResponseEntity<Object>("An internal server error occurred.",
                                 HttpStatus.INTERNAL_SERVER_ERROR));
@@ -243,4 +238,8 @@ public class ContractRequestMessageController {
         return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
     }
 
+    @SuppressWarnings("unchecked")
+    private static ResponseEntity<Object> toObjectResponse(final ResponseEntity<?> response) {
+        return (ResponseEntity<Object>) response;
+    }
 }

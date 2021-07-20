@@ -17,25 +17,37 @@ package io.dataspaceconnector.util;
 
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Catalog;
+import de.fraunhofer.iais.eis.ConfigurationModel;
+import de.fraunhofer.iais.eis.ConnectorDeployMode;
 import de.fraunhofer.iais.eis.ConnectorEndpoint;
+import de.fraunhofer.iais.eis.ConnectorEndpointImpl;
 import de.fraunhofer.iais.eis.Contract;
+import de.fraunhofer.iais.eis.Proxy;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
-import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.CatalogDesc;
-import io.dataspaceconnector.model.ContractDesc;
-import io.dataspaceconnector.model.ContractRuleDesc;
-import io.dataspaceconnector.model.OfferedResourceDesc;
-import io.dataspaceconnector.model.RepresentationDesc;
-import io.dataspaceconnector.model.RequestedResourceDesc;
-import io.dataspaceconnector.model.ResourceDesc;
+import io.dataspaceconnector.model.artifact.ArtifactDesc;
+import io.dataspaceconnector.model.auth.AuthenticationDesc;
+import io.dataspaceconnector.model.catalog.CatalogDesc;
+import io.dataspaceconnector.model.configuration.ConfigurationDesc;
+import io.dataspaceconnector.model.configuration.DeployMode;
+import io.dataspaceconnector.model.configuration.LogLevel;
+import io.dataspaceconnector.model.configuration.SecurityProfile;
+import io.dataspaceconnector.model.contract.ContractDesc;
+import io.dataspaceconnector.model.keystore.KeystoreDesc;
+import io.dataspaceconnector.model.proxy.ProxyDesc;
+import io.dataspaceconnector.model.representation.RepresentationDesc;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
+import io.dataspaceconnector.model.resource.ResourceDesc;
+import io.dataspaceconnector.model.rule.ContractRuleDesc;
 import io.dataspaceconnector.model.template.ArtifactTemplate;
 import io.dataspaceconnector.model.template.CatalogTemplate;
 import io.dataspaceconnector.model.template.ContractTemplate;
 import io.dataspaceconnector.model.template.RepresentationTemplate;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
+import io.dataspaceconnector.model.truststore.TruststoreDesc;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -45,6 +57,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Maps ids resources to internal resources.
@@ -66,7 +79,7 @@ public final class MappingUtils {
      * @throws IllegalArgumentException if the passed resource is null.
      */
     public static CatalogTemplate fromIdsCatalog(final Catalog catalog) {
-        Utils.requireNonNull(catalog, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(catalog, ErrorMessage.ENTITY_NULL);
 
         final var additional = new HashMap<String, String>();
         if (catalog.getProperties() != null) {
@@ -77,13 +90,13 @@ public final class MappingUtils {
         catalogDesc.setAdditional(additional);
         catalogDesc.setTitle("IDS Catalog");
         catalogDesc.setDescription("This catalog is created from an IDS infomodel catalog.");
-        catalogDesc.setBootstrapId(catalog.getId().toString());
+        catalogDesc.setBootstrapId(catalog.getId());
 
         return new CatalogTemplate(catalogDesc, null, null);
     }
 
     private static Map<String, String> buildAdditionalForResource(final Resource resource) {
-        Utils.requireNonNull(resource, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(resource, ErrorMessage.ENTITY_NULL);
 
         final var additional = propertiesToAdditional(resource.getProperties());
 
@@ -181,8 +194,7 @@ public final class MappingUtils {
         return additional;
     }
 
-    private static <T extends io.dataspaceconnector.model.Resource> void
-    fillResourceDesc(final ResourceDesc<T> desc, final Resource resource) {
+    private static void fillResourceDesc(final ResourceDesc desc, final Resource resource) {
         final var description = resource.getDescription();
         final var keywords = IdsUtils.getKeywordsAsString(resource.getKeyword());
         final var language = resource.getLanguage();
@@ -199,12 +211,12 @@ public final class MappingUtils {
         desc.setSovereign(sovereign);
 
         if (description != null) {
-            desc.setDescription(description.size() == 1 ? description.get(0).toString()
+            desc.setDescription(description.size() == 1 ? description.get(0).getValue()
                     : description.toString());
         }
 
         if (title != null) {
-            desc.setTitle(title.size() == 1 ? title.get(0).toString() : title.toString());
+            desc.setTitle(title.size() == 1 ? title.get(0).getValue() : title.toString());
         }
 
         if (language != null) {
@@ -227,12 +239,12 @@ public final class MappingUtils {
      */
     public static ResourceTemplate<OfferedResourceDesc> fromIdsOfferedResource(
             final Resource resource) {
-        Utils.requireNonNull(resource, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(resource, ErrorMessage.ENTITY_NULL);
 
         final var desc = new OfferedResourceDesc();
         fillResourceDesc(desc, resource);
 
-        return new ResourceTemplate<>(null, desc, null, null);
+        return new ResourceTemplate<>(desc);
     }
 
     /**
@@ -243,13 +255,13 @@ public final class MappingUtils {
      * @throws IllegalArgumentException if the passed resource is null.
      */
     public static ResourceTemplate<RequestedResourceDesc> fromIdsResource(final Resource resource) {
-        Utils.requireNonNull(resource, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(resource, ErrorMessage.ENTITY_NULL);
 
         final var desc = new RequestedResourceDesc();
         desc.setRemoteId(resource.getId());
         fillResourceDesc(desc, resource);
 
-        return new ResourceTemplate<>(null, desc, null, null);
+        return new ResourceTemplate<>(desc);
     }
 
     /**
@@ -263,7 +275,11 @@ public final class MappingUtils {
     private static void addListToAdditional(final List<?> list,
                                             final Map<String, String> additional,
                                             final String key) {
-        additional.put(key, list.size() == 1 ? list.get(0).toString() : list.toString());
+        if (list.size() >= 1 && list.get(0) instanceof ConnectorEndpointImpl) {
+            additional.put(key, ((ConnectorEndpointImpl) list.get(0)).getAccessURL().toString());
+        } else {
+            additional.put(key, list.size() == 1 ? list.get(0).toString() : list.toString());
+        }
     }
 
     /**
@@ -275,7 +291,7 @@ public final class MappingUtils {
      */
     public static RepresentationTemplate fromIdsRepresentation(
             final Representation representation) {
-        Utils.requireNonNull(representation, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(representation, ErrorMessage.ENTITY_NULL);
 
         final var created = representation.getCreated();
         final var representationId = representation.getId();
@@ -315,7 +331,7 @@ public final class MappingUtils {
             desc.setMediaType(mediaType.getFilenameExtension());
         }
 
-        return new RepresentationTemplate(null, desc, null);
+        return new RepresentationTemplate(desc);
     }
 
     /**
@@ -329,7 +345,7 @@ public final class MappingUtils {
      */
     public static ArtifactTemplate fromIdsArtifact(final Artifact artifact,
                                                    final boolean download, final URI remoteUrl) {
-        Utils.requireNonNull(artifact, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(artifact, ErrorMessage.ENTITY_NULL);
 
         final var artifactId = artifact.getId();
         final var byteSize = artifact.getByteSize();
@@ -364,7 +380,7 @@ public final class MappingUtils {
         desc.setAutomatedDownload(download);
         desc.setRemoteAddress(remoteUrl);
         if (artifactId != null) {
-            desc.setBootstrapId(artifactId.toString());
+            desc.setBootstrapId(URI.create(artifactId.toString()));
         }
 
         return new ArtifactTemplate(desc);
@@ -378,7 +394,7 @@ public final class MappingUtils {
      * @throws IllegalArgumentException if the passed contract is null.
      */
     public static ContractTemplate fromIdsContract(final Contract contract) {
-        Utils.requireNonNull(contract, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(contract, ErrorMessage.ENTITY_NULL);
 
         final var consumer = contract.getConsumer();
         final var date = contract.getContractDate();
@@ -416,7 +432,7 @@ public final class MappingUtils {
             }
         }
 
-        return new ContractTemplate(null, desc, null);
+        return new ContractTemplate(desc);
     }
 
     /**
@@ -424,12 +440,12 @@ public final class MappingUtils {
      *
      * @param rule The ids rule.
      * @return The rule template.
-     * @throws IllegalArgumentException                             if the rule is null.
+     * @throws IllegalArgumentException                            if the rule is null.
      * @throws io.dataspaceconnector.exception.RdfBuilderException if the rule cannot be
-     * converted to string.
+     *                                                             converted to string.
      */
     public static RuleTemplate fromIdsRule(final Rule rule) {
-        Utils.requireNonNull(rule, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(rule, ErrorMessage.ENTITY_NULL);
 
         final var value = IdsUtils.toRdf(rule);
         final var desc = new ContractRuleDesc();
@@ -469,8 +485,9 @@ public final class MappingUtils {
      *
      * @param calendar The time as string.
      * @return The new ZonedDateTime object.
+     * @throws DateTimeParseException if its not a time.
      */
-    public static ZonedDateTime getDateOf(final String calendar) {
+    public static ZonedDateTime getDateOf(final String calendar) throws DateTimeParseException {
         return ZonedDateTime.parse(calendar);
     }
 
@@ -494,5 +511,98 @@ public final class MappingUtils {
         }
 
         return output;
+    }
+
+    /**
+     * Get dsc log level from ids log level.
+     *
+     * @param logLevel The ids log level.
+     * @return The internal log level.
+     */
+    public static LogLevel fromIdsLogLevel(final de.fraunhofer.iais.eis.LogLevel logLevel) {
+        switch (logLevel) {
+            // TODO infomodel has less log levels than DSC, info will get lost
+            case MINIMAL_LOGGING:
+                return LogLevel.WARN;
+            case DEBUG_LEVEL_LOGGING:
+                return LogLevel.DEBUG;
+            default:
+                return LogLevel.OFF;
+        }
+    }
+
+    /**
+     * Get dsc security profile from ids security profile.
+     *
+     * @param securityProfile The ids security profile.
+     * @return The internal security profile.
+     */
+    public static SecurityProfile fromIdsSecurityProfile(
+            final de.fraunhofer.iais.eis.SecurityProfile securityProfile) {
+        switch (securityProfile) {
+            case TRUST_SECURITY_PROFILE:
+                return SecurityProfile.TRUST_SECURITY;
+            case TRUST_PLUS_SECURITY_PROFILE:
+                return SecurityProfile.TRUST_PLUS_SECURITY;
+            default:
+                return SecurityProfile.BASE_SECURITY;
+        }
+    }
+
+    /**
+     * Build internal configuration desc from ids configModel.
+     *
+     * @param configModel The ids configuration model.
+     * @return The internal configuration desc.
+     */
+    public static ConfigurationDesc fromIdsConfig(final ConfigurationModel configModel) {
+        final var description = new ConfigurationDesc();
+        if (!configModel.getConnectorDescription().getTitle().isEmpty()) {
+            description.setTitle(
+                    configModel.getConnectorDescription().getTitle().get(0).getValue());
+        }
+        if (!configModel.getConnectorDescription().getDescription().isEmpty()) {
+            description.setDescription(
+                    configModel.getConnectorDescription().getDescription().get(0).getValue()
+            );
+        }
+        description.setDeployMode(fromIdsDeployMode(configModel.getConnectorDeployMode()));
+        description.setCurator(configModel.getConnectorDescription().getCurator());
+        description.setConnectorEndpoint(
+                configModel.getConnectorDescription().getHasDefaultEndpoint().getAccessURL());
+        description.setInboundModelVersion(
+                configModel.getConnectorDescription().getInboundModelVersion());
+        description.setOutboundModelVersion(
+                configModel.getConnectorDescription().getOutboundModelVersion());
+        description.setKeystoreSettings(new KeystoreDesc(
+                configModel.getKeyStore(),
+                configModel.getKeyStorePassword()));
+        description.setLogLevel(fromIdsLogLevel(configModel.getConfigurationModelLogLevel()));
+        description.setMaintainer(configModel.getConnectorDescription().getMaintainer());
+        description.setProxySettings(fromIdsProxy(configModel.getConnectorProxy()));
+        description.setSecurityProfile(
+                fromIdsSecurityProfile(configModel.getConnectorDescription().getSecurityProfile()));
+        description.setTruststoreSettings(new TruststoreDesc(
+                configModel.getTrustStore(), configModel.getTrustStorePassword()));
+        return description;
+    }
+
+    private static DeployMode fromIdsDeployMode(final ConnectorDeployMode deployMode) {
+        return deployMode == ConnectorDeployMode.TEST_DEPLOYMENT ? DeployMode.TEST
+                : DeployMode.PRODUCTIVE;
+    }
+
+    private static ProxyDesc fromIdsProxy(final List<Proxy> proxyList) {
+        if (proxyList == null || proxyList.isEmpty()) {
+            return null;
+        }
+
+        final var proxy = proxyList.get(0);
+        final var auth = proxy.getProxyAuthentication();
+        return new ProxyDesc(proxy.getProxyURI(), proxy.getNoProxy()
+                .stream()
+                .map(URI::toString)
+                .collect(Collectors.toList()),
+                new AuthenticationDesc(auth.getAuthUsername(), auth.getAuthPassword()));
     }
 }

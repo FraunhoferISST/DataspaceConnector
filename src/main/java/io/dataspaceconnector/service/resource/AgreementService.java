@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.AgreementDesc;
+import io.dataspaceconnector.model.agreement.Agreement;
+import io.dataspaceconnector.model.agreement.AgreementDesc;
 import io.dataspaceconnector.repository.AgreementRepository;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;

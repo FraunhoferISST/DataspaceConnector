@@ -229,6 +229,18 @@ public class IdsUtilsTest {
     }
 
     @Test
+    public void getLanguage_languageValueIt_returnLanguageItalian() {
+        /* ACT && ASSERT */
+        assertEquals(Language.IT, IdsUtils.getLanguage("it"));
+    }
+
+    @Test
+    public void getLanguage_languageValueIT_returnLanguageItalian() {
+        /* ACT && ASSERT */
+        assertEquals(Language.IT, IdsUtils.getLanguage("IT"));
+    }
+
+    @Test
     public void getKeywordsAsString_keywordsNull_returnEmptyList() {
         /* ARRANGE */
         // Nothing to arrange here.

@@ -25,7 +25,6 @@ import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
 import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
 import de.fraunhofer.ids.messaging.protocol.multipart.UnknownResponseException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
-import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
@@ -42,6 +41,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
@@ -127,41 +127,36 @@ public class QueryMessageController {
 
             final var response = result.getIn().getBody(Response.class);
             if (response != null) {
-                if (response.getHeader() instanceof RejectionMessage) {
-                    return new ResponseEntity<>(response.getBody(), HttpStatus.EXPECTATION_FAILED);
-                }
                 return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
             } else {
-                final var responseEntity = result.getIn().getBody(ResponseEntity.class);
+                final var responseEntity =
+                    toObjectResponse(result.getIn().getBody(ResponseEntity.class));
                 return Objects.requireNonNullElseGet(responseEntity,
                         () -> new ResponseEntity<Object>("An internal server error occurred.",
                                 HttpStatus.INTERNAL_SERVER_ERROR));
             }
         } else {
-            Optional<MessageContainer<?>> response = Optional.empty();
             try {
                 // Send the query message.
-                response = messageService.sendQueryMessage(recipient, query);
+                final var response = messageService.sendQueryMessage(recipient, query);
+                return messageService.validateResponse(response, ResultMessageImpl.class);
             } catch (SocketTimeoutException exception) {
                 // If a timeout has occurred.
                 return ControllerUtils.respondConnectionTimedOut(exception);
             } catch (MultipartParseException | UnknownResponseException | ShaclValidatorException
-                    | DeserializeException | UnexpectedPayloadException
-                    | ClaimsException exception) {
+                    | DeserializeException | UnexpectedPayloadException | ClaimsException e) {
                 // If the response was invalid.
-                return ControllerUtils.respondReceivedInvalidResponse(exception);
+                return ControllerUtils.respondReceivedInvalidResponse(e);
             } catch (RejectionException ignored) {
                 // If the response is a rejection message. Error is ignored.
-            } catch (SendMessageException | SerializeException
-                    | DapsTokenManagerException exception) {
+            } catch (SendMessageException | SerializeException | DapsTokenManagerException e) {
                 // If the message could not be built or sent.
-                return ControllerUtils.respondMessageSendingFailed(exception);
+                return ControllerUtils.respondMessageSendingFailed(e);
             } catch (NoTemplateProvidedException | IOException exception) {
                 // If any other error occurred.
                 return ControllerUtils.respondIdsMessageFailed(exception);
             }
-
-            return messageService.validateResponse(response, ResultMessageImpl.class);
+            return messageService.validateResponse(Optional.empty(), ResultMessageImpl.class);
         }
     }
 
@@ -210,36 +205,40 @@ public class QueryMessageController {
                 }
                 return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
             } else {
-                final var responseEntity = result.getIn().getBody(ResponseEntity.class);
+                final var responseEntity =
+                    toObjectResponse(result.getIn().getBody(ResponseEntity.class));
                 return Objects.requireNonNullElseGet(responseEntity,
                         () -> new ResponseEntity<Object>("An internal server error occurred.",
                                 HttpStatus.INTERNAL_SERVER_ERROR));
             }
         } else {
-            Optional<MessageContainer<?>> response = Optional.empty();
             try {
                 // Send the query message for full text search.
-                response = messageService.sendFullTextSearchMessage(recipient, term, limit, offset);
+                final var response = messageService.sendFullTextSearchMessage(recipient, term,
+                                                                                limit, offset);
+                return messageService.validateResponse(response, ResultMessageImpl.class);
             } catch (SocketTimeoutException exception) {
                 // If a timeout has occurred.
                 return ControllerUtils.respondConnectionTimedOut(exception);
             } catch (MultipartParseException | UnknownResponseException | ShaclValidatorException
-                    | DeserializeException | UnexpectedPayloadException
-                    | ClaimsException exception) {
+                    | DeserializeException | UnexpectedPayloadException | ClaimsException e) {
                 // If the response was invalid.
-                return ControllerUtils.respondReceivedInvalidResponse(exception);
+                return ControllerUtils.respondReceivedInvalidResponse(e);
             } catch (RejectionException ignored) {
                 // If the response is a rejection message. Error is ignored.
-            } catch (SendMessageException | SerializeException
-                    | DapsTokenManagerException exception) {
+            } catch (SendMessageException | SerializeException | DapsTokenManagerException e) {
                 // If the message could not be built or sent.
-                return ControllerUtils.respondMessageSendingFailed(exception);
+                return ControllerUtils.respondMessageSendingFailed(e);
             } catch (NoTemplateProvidedException | IOException exception) {
                 // If any other error occurred.
                 return ControllerUtils.respondIdsMessageFailed(exception);
             }
-
-            return messageService.validateResponse(response, ResultMessageImpl.class);
+            return messageService.validateResponse(Optional.empty(), ResultMessageImpl.class);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static ResponseEntity<Object> toObjectResponse(final ResponseEntity<?> response) {
+        return (ResponseEntity<Object>) response;
     }
 }

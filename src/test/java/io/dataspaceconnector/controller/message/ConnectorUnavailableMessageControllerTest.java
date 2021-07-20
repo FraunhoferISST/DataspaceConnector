@@ -31,8 +31,9 @@ import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.controller.util.CommunicationProtocol;
+import io.dataspaceconnector.service.configuration.BrokerService;
 import io.dataspaceconnector.service.ids.ConnectorService;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import lombok.SneakyThrows;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -81,6 +82,9 @@ public class ConnectorUnavailableMessageControllerTest {
 
     @MockBean
     private ConnectorService connectorService;
+
+    @MockBean
+    private BrokerService dataBrokerService;
 
     @MockBean
     private ProducerTemplate producerTemplate;
@@ -195,7 +199,7 @@ public class ConnectorUnavailableMessageControllerTest {
 
         /* ASSERT */
         assertEquals(502, result.getResponse().getStatus());
-        final var msg = ErrorMessages.INVALID_MESSAGE.toString();
+        final var msg = ErrorMessage.INVALID_MESSAGE.toString();
         assertEquals(msg, result.getResponse().getContentAsString());
     }
 
@@ -212,7 +216,7 @@ public class ConnectorUnavailableMessageControllerTest {
 
         /* ASSERT */
         assertEquals(500, result.getResponse().getStatus());
-        final var msg = ErrorMessages.MESSAGE_SENDING_FAILED.toString();
+        final var msg = ErrorMessage.MESSAGE_SENDING_FAILED.toString();
         assertEquals(msg, result.getResponse().getContentAsString());
     }
 

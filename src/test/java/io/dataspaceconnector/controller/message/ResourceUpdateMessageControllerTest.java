@@ -31,7 +31,7 @@ import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.service.ids.ConnectorService;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import lombok.SneakyThrows;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -165,7 +165,7 @@ public class ResourceUpdateMessageControllerTest {
                 .andReturn();
 
         /* ASSERT */
-        final var msg = ErrorMessages.MESSAGE_HANDLING_FAILED.toString();
+        final var msg = ErrorMessage.MESSAGE_HANDLING_FAILED.toString();
         assertEquals(msg, result.getResponse().getContentAsString());
     }
 
@@ -186,7 +186,7 @@ public class ResourceUpdateMessageControllerTest {
                 .andReturn();
 
         /* ASSERT */
-        final var msg = ErrorMessages.MESSAGE_HANDLING_FAILED.toString();
+        final var msg = ErrorMessage.MESSAGE_HANDLING_FAILED.toString();
         assertEquals(msg, result.getResponse().getContentAsString());
     }
 

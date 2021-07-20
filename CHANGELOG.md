@@ -1,24 +1,36 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [6.0.0] - XXXX-XX-XX
+## [6.0.0] - 2021-07-20
 
 ### Added
 - Provide REST endpoint for full-text search at the IDS Broker: `/ids/search`.
 - Check if the issuer connector of an artifact request does correspond to the signed consumer of the
   transfer contract.
 - Integrate Camel-Spring-Boot version 3.10.0.
-- Provide REST endpoints for adding and removing Camel routes and Spring beans at runtime.
-- Add Camel error handler for propagating errors in routes to the Configuration Manager.
+- Integrate [DSC Camel Instance repository](https://github.com/International-Data-Spaces-Association/DSC-Camel-Instance).
+  * Provide REST endpoints for adding and removing Camel routes and Spring beans at runtime.
 - Send `ArtifactRequest` and `ArtifactResponse` messages to the Clearing House.
 - Allow artifacts pointing to backend systems to be created with both BasicAuth and API key
   authentication.
 - Integrate IDSCPv2 for IDS communication.
-  * Add parameter for protocol to all controller endpoints for IDS messages
-    (`MULTIPART` or `IDSCP2`).
-  * Add property `idscp2.enabled` for enabling and disabling IDSCPv2 server.
+  * Add property `idscp2.enabled` for enabling and disabling IDSCPv2 server. Is disabled by default.
   * Add properties for configuring keystore and truststore for IDSCPv2.
   * When enabling IDSCPv2, a valid IDS certificate is required!
+- Implement subscription transfer pattern.
+  * Add user profile for apps/services with access to subscription REST endpoints.
+  * Allow subscriptions for offered & requested resources, representations, and artifacts via REST
+    endpoints.
+  * Create `PUT /notify` endpoint to manually notify subscribers (ids & non-ids).
+  * Automatically notify subscribers on entity updates.
+  * Create REST endpoints for sending (un-)subscriptions via ids messages.
+- Integrate [IDS ConfigManager repository](https://github.com/International-Data-Spaces-Association/IDS-ConfigurationManager).
+  * Extend data model and REST API by entities: auth, broker, configuration, datasource, endpoint,
+    keystore, proxy, route, and truststore.
+  * Add Camel error handler for propagating errors in routes.
+- Persist connector configuration to database.
+  * Load configuration from database.
+  * Choose active configuration from list of configurations.
 
 ### Changed
 - Replace IDS Connector Framework v5.0.4 by IDS Messaging Services v2.0.0.
@@ -28,11 +40,12 @@ All notable changes to this project will be documented in this file.
   `GlobalMessageService`.
 - Handle DAT retrieving errors in `PRODUCTIVE_DEPLOYMENT` with status code 500 and a corresponding
   message.
+- Artifact PUT `/api/data` changed response code from Ok (200) to NoContent (204).
 - Change naming of the resource's license attribute from `licence` to `license`.
+- Change `AbstractEntity` to `Entity` and `NamedEntity`.
 - Refactor message handlers using Camel routes.
 - Increase postgres version to 42.2.23.
 - Increase jackson version to 2.12.4.
-- Increase camel version from 3.10.0 to 3.11.0.
 - Increase equalsverifier from 3.6.1 to 3.7.0.
 - Increase spotbugs from 4.2.3 to 4.3.0.
 

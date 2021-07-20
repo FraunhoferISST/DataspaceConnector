@@ -30,13 +30,6 @@
         ${body.getHeader().getId()})"/>
     </route>
 
-    <route id="selfLinkCreationException">
-        <from uri="direct:handleSelfLinkCreationException"/>
-        <log loggingLevel="DEBUG" message="Error route for handling SelfLinkCreationException called."/>
-        <to uri="bean:messageResponseService?method=handleSelfLinkCreationException(${exception},
-        ${body.getHeader().getRequestedArtifact()})"/>
-    </route>
-
     <route id="noAffectedResourceException">
         <from uri="direct:handleNoAffectedResourceException"/>
         <log loggingLevel="DEBUG" message="Error route for handling missing affected resource called."/>

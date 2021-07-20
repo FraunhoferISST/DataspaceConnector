@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.camel.exception;
 
-import io.dataspaceconnector.model.Agreement;
+import io.dataspaceconnector.model.agreement.Agreement;
 import lombok.Getter;
 
 /**

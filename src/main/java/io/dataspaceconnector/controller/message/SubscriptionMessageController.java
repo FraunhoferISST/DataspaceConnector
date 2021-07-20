@@ -15,12 +15,13 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import java.net.URI;
+
 import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
-import io.dataspaceconnector.model.Subscription;
+import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.service.message.type.SubscriptionRequestService;
 import io.dataspaceconnector.util.MessageUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,8 +40,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
-
 /**
  * Controller for sending ids subscription (request) messages.
  */
@@ -54,11 +53,6 @@ public class SubscriptionMessageController {
      * Service for message handling.
      */
     private final @NonNull SubscriptionRequestService subscriptionReqSvc;
-
-    /**
-     * Service for handle application.properties settings.
-     */
-    private final @NonNull ConnectorConfiguration connectorConfig;
 
     /**
      * Subscribe to updates of an provided ids element.
@@ -81,7 +75,7 @@ public class SubscriptionMessageController {
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The subscription object.")
-            @RequestBody final Subscription subscription) {
+            @RequestBody final SubscriptionDesc subscription) {
         // TODO IDSCPv2
         try {
             // Send and validate request/response message.

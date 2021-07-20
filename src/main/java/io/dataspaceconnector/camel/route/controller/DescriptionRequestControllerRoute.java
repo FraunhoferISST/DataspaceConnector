@@ -17,7 +17,9 @@ package io.dataspaceconnector.camel.route.controller;
 
 import java.net.SocketTimeoutException;
 
+import de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception;
 import io.dataspaceconnector.camel.exception.InvalidResponseException;
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import org.apache.camel.builder.RouteBuilder;
@@ -44,14 +46,14 @@ public class DescriptionRequestControllerRoute extends RouteBuilder {
                 .to("direct:handleInvalidResponseException");
         onException(SocketTimeoutException.class)
                 .to("direct:handleSocketTimeout");
+        onException(Idscp2Exception.class)
+                .to("direct:handleIdscp2Exception");
 
         from("direct:descriptionRequestSender")
                 .routeId("descriptionRequestSender")
                 .process("DescriptionRequestMessageBuilder")
                 .process("RequestWithoutPayloadPreparer")
-                .toD("idscp2client://${exchangeProperty.recipient}?"
-                        + "awaitResponse=true&sslContextParameters=#serverSslContext"
-                        + "&useIdsMessages=true")
+                .toD(ParameterUtils.IDSCP_CLIENT_URI)
                 .process("ResponseToDtoConverter")
                 .process("DescriptionResponseValidator");
     }

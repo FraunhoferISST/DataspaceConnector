@@ -17,13 +17,13 @@ package io.dataspaceconnector.service.ids.builder;
 
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import io.dataspaceconnector.model.ContractRule;
+import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 /**
- * The base class for constructing an ids rule from a DSC rule.
+ * The base class for constructing an ids rule from a dsc rule.
  *
  * @param <T> The ids rule type.
  */

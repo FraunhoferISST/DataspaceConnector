@@ -15,17 +15,17 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.AgreementFactory;
+import java.util.Optional;
+import java.util.UUID;
+
+import io.dataspaceconnector.model.agreement.Agreement;
+import io.dataspaceconnector.model.agreement.AgreementFactory;
 import io.dataspaceconnector.repository.AgreementRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;

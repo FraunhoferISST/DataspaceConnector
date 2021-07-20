@@ -22,11 +22,11 @@ import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.DataRetrievalException;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
-import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
 import io.dataspaceconnector.service.resource.ArtifactService;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.MessageUtils;
+import io.dataspaceconnector.util.QueryInput;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -118,19 +118,18 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
                     log.debug("Data could not be loaded. [content=({})]", content);
                 }
 
-                if (content.containsKey("reason")) {
-                    final var reason = content.get("reason");
-                    if (reason.equals(RejectionReason.NOT_AUTHORIZED)) {
-                        throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
-                    }
+            if (content.containsKey("reason")) {
+                final var reason = content.get("reason");
+                if (reason.equals(RejectionReason.NOT_AUTHORIZED)) {
+                    throw new PolicyRestrictionException(ErrorMessage.POLICY_RESTRICTION);
                 }
+            }
 
                 throw new DataRetrievalException(content.toString());
             }
 
             data = MessageUtils.extractPayloadFromMultipartMessage(response);
         }
-
 
         return new ByteArrayInputStream(Base64Utils.decodeFromString(data));
     }

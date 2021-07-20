@@ -18,7 +18,7 @@ package io.dataspaceconnector.view;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
 import io.dataspaceconnector.controller.resource.view.SubscriptionViewAssembler;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
-import io.dataspaceconnector.model.Subscription;
+import io.dataspaceconnector.model.subscription.Subscription;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -96,7 +96,7 @@ public class SubscriptionViewAssemblerTest {
 
         /* ASSERT */
         assertNotNull(result);
-        assertEquals(subscriber.getUrl(), result.getUrl());
+        assertEquals(subscriber.getLocation(), result.getLocation());
         assertEquals(subscriber.getCreationDate(), result.getCreationDate());
         assertEquals(subscriber.getModificationDate(), result.getModificationDate());
         assertEquals(subscriber.getAdditional(), result.getAdditional());
@@ -112,13 +112,13 @@ public class SubscriptionViewAssemblerTest {
      *************************************************************************/
 
     private Subscription getSubscriber() {
-        final var url = URI.create("http://valid-url.com");
+        final var location = URI.create("http://valid-url.com");
         final var date = ZonedDateTime.now(ZoneOffset.UTC);
         final var additional = new HashMap<String, String>();
         additional.put("key", "value");
 
         final var subscriber = new Subscription();
-        ReflectionTestUtils.setField(subscriber, "url", url);
+        ReflectionTestUtils.setField(subscriber, "location", location);
         ReflectionTestUtils.setField(subscriber, "id", UUID.randomUUID());
         ReflectionTestUtils.setField(subscriber, "creationDate", date);
         ReflectionTestUtils.setField(subscriber, "modificationDate", date);

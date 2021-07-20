@@ -47,16 +47,6 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
@@ -196,54 +186,48 @@ class ResourceUpdateMessageHandlerTest {
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
     }
 
-//    @SneakyThrows
-//    @Test
-//    public void handleMessage_failToUpdateResource_returnMessageProcessNotification() throws IOException {
-//        /* ARRANGE */
-//
-//        final var message = getResourceUpdateMessage();
-//        final var validInput = new Serializer().serialize(new ResourceBuilder(URI.create("https://localhost:8080/resources/someId"))
-//                                                                    .build());
-//        final InputStream stream = new ByteArrayInputStream(validInput.getBytes(StandardCharsets.UTF_8));
-//
-//        // Mockito.doThrow(ResourceNotFoundException.class).when(updateService).updateResource(Mockito.any());
-//
-//        /* ACT */
-//        final var result = (BodyResponse<?>) handler.handleMessage((ResourceUpdateMessageImpl) message,
-//                                                                new MessagePayloadInputstream(stream, new ObjectMapper()));
-//
-//        /* ASSERT */
-//        assertTrue(result.getHeader() instanceof MessageProcessedNotificationMessage);
-//    }
+    // @Test
+    // public void handleMessage_failToUpdateResource_returnMessageProcessNotification() throws IOException {
+    //     /* ARRANGE */
+    //     final var message = getResourceUpdateMessage();
+    //     final var validInput = new Serializer().serialize(new ResourceBuilder(URI.create("https://localhost:8080/resources/someId"))
+    //                                                                 .build());
+    //     final InputStream stream = new ByteArrayInputStream(validInput.getBytes(StandardCharsets.UTF_8));
+
+    //     // Mockito.doThrow(ResourceNotFoundException.class).when(updateService).updateResource(Mockito.any());
+
+    //     /* ACT */
+    //     final var result = (BodyResponse<?>) handler.handleMessage((ResourceUpdateMessageImpl) message,
+    //                                                             new MessagePayloadInputstream(stream, new ObjectMapper()));
+
+    //     /* ASSERT */
+    //     assertTrue(result.getHeader() instanceof MessageProcessedNotificationMessage);
+    // }
 
 
-//    @SneakyThrows
-//    @Test
-//    public void handleMessage_validUpdate_returnMessageProcessNotification() throws IOException {
-//        /* ARRANGE */
-//        final var message = getResourceUpdateMessage();
-//
-//        final var artifact =new ArtifactBuilder(URI.create("https://localhost:8080/artifacts/someId")).build();
-//        final var representation = new RepresentationBuilder(URI.create("https://localhost:8080/representations/someId"))
-//                ._instance_(Util.asList(artifact))
-//                .build();
-//        final var resource = new ResourceBuilder(URI.create("https://localhost:8080/resources/someId"))
-//                ._representation_(Util.asList(representation)).build();
-//
-//        final var validInput = new Serializer().serialize(resource);
-//        final InputStream stream = new ByteArrayInputStream(validInput.getBytes(StandardCharsets.UTF_8));
-//
-//
-//        /* ACT */
-//        final var result = (BodyResponse<?>) handler.handleMessage((ResourceUpdateMessageImpl) message,
-//                                                                new MessagePayloadInputstream(stream, new ObjectMapper()));
-//
-//        /* ASSERT TODO*/
-//        // Mockito.verify(updateService).updateResource(Mockito.argThat(x -> x.getId().equals(resource.getId())));
-//        // Mockito.verify(updateService).updateRepresentation(Mockito.argThat(x -> x.getId().equals(representation.getId())));
-//        // Mockito.verify(updateService).updateArtifact(Mockito.argThat(x -> x.getId().equals(artifact.getId())));
-//        assertTrue(result.getHeader() instanceof MessageProcessedNotificationMessage);
-//    }
+    // @Test
+    // public void handleMessage_validUpdate_returnMessageProcessNotification() throws IOException {
+    //     /* ARRANGE */
+    //     final var message = getResourceUpdateMessage();
+
+    //     final var artifact =new ArtifactBuilder(URI.create("https://localhost:8080/artifacts/someId")).build();
+    //     final var representation = new RepresentationBuilder(URI.create("https://localhost:8080/representations/someId"))
+    //             ._instance_(Util.asList(artifact))
+    //             .build();
+    //     final var resource = new ResourceBuilder(URI.create("https://localhost:8080/resources/someId"))
+    //             ._representation_(Util.asList(representation)).build();
+
+    //     final var validInput = new Serializer().serialize(resource);
+    //     final InputStream stream = new ByteArrayInputStream(validInput.getBytes(StandardCharsets.UTF_8));
+
+
+    //     /* ACT */
+    //     final var result = (BodyResponse<?>) handler.handleMessage((ResourceUpdateMessageImpl) message,
+    //                                                             new MessagePayloadInputstream(stream, new ObjectMapper()));
+
+    //     /* ASSERT */
+    //     assertTrue(result.getHeader() instanceof MessageProcessedNotificationMessage);
+    // }
 
     @SneakyThrows
     private ResourceUpdateMessage getResourceUpdateMessage() {

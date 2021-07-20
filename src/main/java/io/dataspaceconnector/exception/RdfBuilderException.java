@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.exception;
 
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 
 /**
  * Thrown to indicate that the rdf string could not be built.
@@ -31,7 +31,7 @@ public class RdfBuilderException extends RuntimeException {
      *
      * @param msg The detail message.
      */
-    public RdfBuilderException(final ErrorMessages msg) {
+    public RdfBuilderException(final ErrorMessage msg) {
         super(msg.toString());
     }
 }

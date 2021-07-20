@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
-import io.dataspaceconnector.model.Artifact;
+import io.dataspaceconnector.model.artifact.Artifact;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

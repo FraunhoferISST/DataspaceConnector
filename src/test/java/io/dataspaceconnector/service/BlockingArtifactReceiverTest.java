@@ -17,8 +17,8 @@ package io.dataspaceconnector.service;
 
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.DataRetrievalException;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.ArtifactImpl;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
 import io.dataspaceconnector.service.resource.ArtifactService;
 import lombok.SneakyThrows;

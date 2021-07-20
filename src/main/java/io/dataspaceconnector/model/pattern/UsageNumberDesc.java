@@ -30,6 +30,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class UsageNumberDesc extends PatternDesc {
+
     /**
      * The number of usages.
      */

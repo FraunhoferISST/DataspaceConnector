@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.model.Resource;
-import io.dataspaceconnector.model.ResourceDesc;
+import io.dataspaceconnector.model.resource.Resource;
+import io.dataspaceconnector.model.resource.ResourceDesc;
 import lombok.NoArgsConstructor;
 
 /**
@@ -26,6 +26,6 @@ import lombok.NoArgsConstructor;
  * @param <D> The resource description type.
  */
 @NoArgsConstructor
-public class ResourceService<T extends Resource, D extends ResourceDesc<T>>
+public class ResourceService<T extends Resource, D extends ResourceDesc>
         extends BaseEntityService<T, D> {
 }

@@ -17,6 +17,7 @@ package io.dataspaceconnector.service;
 
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
+import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
 import io.dataspaceconnector.service.resource.AgreementService;
@@ -25,6 +26,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.PersistenceException;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
@@ -73,12 +76,14 @@ public class ArtifactDataDownloader {
             // Read and process the response message.
             try {
                 persistenceSvc.saveData(response, artifact);
-            } catch (Exception e) {
+            } catch (IOException | ResourceNotFoundException
+                    | MessageResponseException e) {
                 // Ignore that the data saving failed. Another try can take place later.
                 if (log.isWarnEnabled()) {
                     log.warn("Could not save data for artifact. [artifact=({}), "
                             + "exception=({})]", artifact, e.getMessage());
                 }
+                throw new PersistenceException(e);
             }
         }
     }

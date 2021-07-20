@@ -27,16 +27,22 @@ import io.dataspaceconnector.controller.resource.view.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.SubscriptionViewAssembler;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.exception.UnreachableLineException;
-import io.dataspaceconnector.model.AbstractEntity;
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.model.Subscription;
+import io.dataspaceconnector.model.agreement.Agreement;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.base.Entity;
+import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
+import io.dataspaceconnector.model.endpoint.GenericEndpoint;
+import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.route.Route;
+import io.dataspaceconnector.model.rule.ContractRule;
+import io.dataspaceconnector.model.subscription.Subscription;
+import io.dataspaceconnector.view.endpoint.ConnectorEndpointViewAssembler;
+import io.dataspaceconnector.view.endpoint.GenericEndpointViewAssembler;
+import io.dataspaceconnector.view.route.RouteViewAssembler;
 
 import java.net.URI;
 
@@ -88,6 +94,23 @@ public final class SelfLinkHelper {
     private static final AgreementViewAssembler AGREEMENT_ASSEMBLER = new AgreementViewAssembler();
 
     /**
+     * View assembler for generic endpoints.
+     */
+    private static final GenericEndpointViewAssembler GENERIC_ENDPOINT_ASSEMBLER =
+            new GenericEndpointViewAssembler();
+
+    /**
+     * View assembler for connector endpoints.
+     */
+    private static final ConnectorEndpointViewAssembler CONNECTOR_ENDPOINT_ASSEMBLER =
+            new ConnectorEndpointViewAssembler();
+
+    /**
+     * View assembler for routes.
+     */
+    private static final RouteViewAssembler ROUTE_VIEW_ASSEMBLER = new RouteViewAssembler();
+
+    /**
      * View assembler for subscriptions.
      */
     private static final SubscriptionViewAssembler SUBSCRIPTION_ASSEMBLER =
@@ -108,7 +131,7 @@ public final class SelfLinkHelper {
      * @param <T>    Generic type of database entity.
      * @return The abstract entity.
      */
-    public static <T extends AbstractEntity> URI getSelfLink(final T entity) {
+    public static <T extends Entity> URI getSelfLink(final T entity) {
         if (entity instanceof Catalog) {
             return getSelfLink((Catalog) entity);
         } else if (entity instanceof OfferedResource) {
@@ -125,11 +148,17 @@ public final class SelfLinkHelper {
             return getSelfLink((ContractRule) entity);
         } else if (entity instanceof Agreement) {
             return getSelfLink((Agreement) entity);
+        } else if (entity instanceof GenericEndpoint) {
+            return getSelfLink((GenericEndpoint) entity);
+        } else if (entity instanceof ConnectorEndpoint) {
+            return getSelfLink((ConnectorEndpoint) entity);
+        } else if (entity instanceof Route) {
+            return getSelfLink((Route) entity);
         } else if (entity instanceof Subscription) {
             return getSelfLink((Subscription) entity);
         }
 
-        throw new UnreachableLineException(ErrorMessages.UNKNOWN_TYPE);
+        throw new UnreachableLineException(ErrorMessage.UNKNOWN_TYPE);
     }
 
     /**
@@ -142,12 +171,12 @@ public final class SelfLinkHelper {
      * @return The abstract entity and its self-link.
      * @throws ResourceNotFoundException If the entity could not be found.
      */
-    public static <T extends AbstractEntity, S extends SelfLinking> URI getSelfLink(
+    public static <T extends Entity, S extends SelfLinking> URI getSelfLink(
             final T entity, final S describer) throws ResourceNotFoundException {
         try {
             return describer.getSelfLink(entity.getId()).toUri();
         } catch (IllegalStateException exception) {
-            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
+            throw new ResourceNotFoundException(ErrorMessage.EMTPY_ENTITY.toString(), exception);
         }
     }
 
@@ -239,6 +268,41 @@ public final class SelfLinkHelper {
      */
     public static URI getSelfLink(final Agreement agreement) throws ResourceNotFoundException {
         return getSelfLink(agreement, AGREEMENT_ASSEMBLER);
+    }
+
+    /**
+     * Get self-link of generic endpoint.
+     *
+     * @param endpoint the generic endpoint.
+     * @return the self-link of the generic endpoint.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    private static URI getSelfLink(final GenericEndpoint endpoint)
+            throws ResourceNotFoundException {
+        return getSelfLink(endpoint, GENERIC_ENDPOINT_ASSEMBLER);
+    }
+
+    /**
+     * Get self-link of connector endpoint.
+     *
+     * @param endpoint the connector endpoint.
+     * @return the self-link to the connector endpoint.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    private static URI getSelfLink(final ConnectorEndpoint endpoint)
+            throws ResourceNotFoundException {
+        return getSelfLink(endpoint, CONNECTOR_ENDPOINT_ASSEMBLER);
+    }
+
+    /**
+     * Get self-link of route.
+     *
+     * @param route the route.
+     * @return the self-link to the route.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    private static URI getSelfLink(final Route route) throws ResourceNotFoundException {
+        return getSelfLink(route, ROUTE_VIEW_ASSEMBLER);
     }
 
     /**

@@ -18,11 +18,14 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/international-data-spaces-association/dataspace-connector
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
-env: {}
-  # config:
-    # CONFIGURATION_PATH: "file:///connector-certs/config.json"
+env:
+  config:
+    CONFIGURATION_PATH: "/etc/dataspace-connector/config.json"
+    SERVER_SSL_ENABLED: "false"
+    SERVER_SSL_KEY-STORE: "/var/run/certs/keystore.p12"
+    LOGGING_CONFIG: "file:///etc/dataspace-connector/log4j2.xml"
   # secrets:
     # Some secrets
 

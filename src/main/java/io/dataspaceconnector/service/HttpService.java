@@ -15,16 +15,19 @@
  */
 package io.dataspaceconnector.service;
 
-import io.dataspaceconnector.model.QueryInput;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
+import io.dataspaceconnector.util.QueryInput;
 import io.dataspaceconnector.util.Utils;
-import kotlin.NotImplementedError;
-import kotlin.Pair;
+import io.dataspaceconnector.util.exception.NotImplemented;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -66,6 +69,22 @@ public class HttpService {
 
 
     /**
+     * Pair of strings.
+     */
+    @Data
+    @AllArgsConstructor
+    public static class Pair {
+        /**
+         * First element.
+         */
+        private String first;
+        /**
+         * Second element.
+         */
+        private String second;
+    }
+
+    /**
      * The http request arguments.
      */
     @Data
@@ -83,7 +102,7 @@ public class HttpService {
         /**
          * Authentication information. Will overwrite entry in headers.
          */
-        private Pair<String, String> auth;
+        private Pair auth;
     }
 
 
@@ -93,6 +112,7 @@ public class HttpService {
     public interface Authentication {
         /**
          * Add the authentication to the http args.
+         *
          * @param args The http args.
          */
         void setAuth(HttpArgs args);
@@ -117,6 +137,44 @@ public class HttpService {
     }
 
     /**
+     * Send post requests using the http service of the messaging services.
+     *
+     * @param target The target url.
+     * @param args   Request arguments.
+     * @param data   The data that should be sent.
+     * @return The response.
+     * @throws IOException if the request failed.
+     */
+    public Response post(final URL target, final HttpArgs args, final InputStream data)
+            throws IOException {
+        Utils.requireNonNull(target, ErrorMessage.URI_NULL);
+        Utils.requireNonNull(args, ErrorMessage.HTTP_ARGS_NULL);
+
+        final var urlBuilder = createUrlBuilder(target);
+
+        if (args.getParams() != null) {
+            for (final var key : args.getParams().keySet()) {
+                urlBuilder.addQueryParameter(key, args.getParams().get(key));
+            }
+        }
+
+        final var targetUrl = urlBuilder.build();
+
+        final var body = RequestBody.create(data.readAllBytes(),
+                MediaType.get("application/octet-stream"));
+        final var request = new Request.Builder().url(targetUrl).post(body).build();
+
+        final var response = httpSvc.send(request);
+
+        final var output = new Response();
+        output.setCode(response.code());
+        output.setBody(getBody(response));
+        response.close();
+
+        return output;
+    }
+
+    /**
      * Perform a get request.
      *
      * @param target The recipient of the request.
@@ -126,10 +184,10 @@ public class HttpService {
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     public Response get(final URL target, final HttpArgs args) throws IOException {
-        Utils.requireNonNull(target, ErrorMessages.URI_NULL);
-        Utils.requireNonNull(args, ErrorMessages.HTTP_ARGS_NULL);
+        Utils.requireNonNull(target, ErrorMessage.URI_NULL);
+        Utils.requireNonNull(args, ErrorMessage.HTTP_ARGS_NULL);
 
-        final var urlBuilder = HttpUrl.parse(target.toString()).newBuilder();
+        final var urlBuilder = createUrlBuilder(target);
 
         if (args.getParams() != null) {
             for (final var key : args.getParams().keySet()) {
@@ -157,12 +215,21 @@ public class HttpService {
 
         final var output = new Response();
         output.setCode(response.code());
-        output.setBody(response.body() == null
-                ? InputStream.nullInputStream()
-                : new ByteArrayInputStream(response.body().bytes()));
+        output.setBody(getBody(response));
         response.close();
 
         return output;
+    }
+
+    private InputStream getBody(final okhttp3.Response response) throws IOException {
+        final var body = response.body();
+        if (body != null) {
+            final var tmp = body.bytes();
+            body.close();
+            return new ByteArrayInputStream(tmp);
+        }
+
+        return InputStream.nullInputStream();
     }
 
     /**
@@ -196,12 +263,25 @@ public class HttpService {
     }
 
     private URL buildTargetUrl(final URL target, final String optional) {
-        final var urlBuilder = HttpUrl.parse(target.toString()).newBuilder();
+        final var urlBuilder = createUrlBuilder(target);
         if (optional != null) {
             urlBuilder.addPathSegments(optional.startsWith("/") ? optional.substring(1) : optional);
         }
 
         return urlBuilder.build().url();
+    }
+
+    private HttpUrl.Builder createUrlBuilder(final URL target) {
+        return toUrl(target).newBuilder();
+    }
+
+    private HttpUrl toUrl(final URL target) {
+        final var url = HttpUrl.get(target);
+        if (url == null) {
+            throw new IllegalArgumentException();
+        }
+
+        return url;
     }
 
     /**
@@ -219,7 +299,7 @@ public class HttpService {
             return get(target, args);
         }
 
-        throw new NotImplementedError();
+        throw new NotImplemented();
     }
 
     /**

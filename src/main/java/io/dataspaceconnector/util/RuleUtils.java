@@ -29,12 +29,10 @@ import de.fraunhofer.iais.eis.Prohibition;
 import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
-import io.dataspaceconnector.model.TimeInterval;
 import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
 import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;
-import java.text.ParseException;
 import java.time.Duration;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -234,9 +232,9 @@ public final class RuleUtils {
      *
      * @param rule the policy rule object.
      * @return the time interval.
-     * @throws ParseException if the parsing fails.
+     * @throws DateTimeParseException if the parsing fails.
      */
-    public static TimeInterval getTimeInterval(final Rule rule) throws ParseException {
+    public static TimeInterval getTimeInterval(final Rule rule) throws DateTimeParseException {
         final var interval = new TimeInterval();
 
         for (final var constraint : rule.getConstraint()) {
@@ -290,7 +288,7 @@ public final class RuleUtils {
         final var constraint = rule.getConstraint().get(0);
         final var type = ((ConstraintImpl) constraint).getRightOperand().getType();
 
-        if ("xsd:duration".equals(type)) {
+        if ("http://www.w3.org/2001/XMLSchema#duration".equals(type)) {
             final var duration = ((ConstraintImpl) constraint).getRightOperand().getValue();
             return Duration.parse(duration);
         } else {
@@ -336,7 +334,7 @@ public final class RuleUtils {
     public static void validateRuleContent(final Contract oldContract,
                                            final Contract newContract) throws ContractException {
         if (oldContract == null || newContract == null) {
-            throw new ContractException(ErrorMessages.EMPTY_CONTRACT.toString());
+            throw new ContractException(ErrorMessage.EMPTY_CONTRACT.toString());
         }
 
         if (!comparePermissions(oldContract.getPermission(), newContract.getPermission())) {

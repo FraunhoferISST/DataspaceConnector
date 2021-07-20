@@ -15,9 +15,12 @@
  */
 package io.dataspaceconnector.camel.errorhandler;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.configmanager.extensions.routes.api.controller.RoutesController;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,13 +28,13 @@ import org.springframework.stereotype.Component;
  * Configuration Manager endpoint defined in application.properties.
  */
 @Component
+@RequiredArgsConstructor
 public class DeadLetterChannel extends RouteBuilder {
 
     /**
-     * The Configuration Manager endpoint for logging errors.
+     * The controller offering the route error API.
      */
-    @Value("${config-manager.error-api.url}")
-    private String errorLogEndpoint;
+    private final @NonNull RoutesController routesController;
 
     /**
      * Configures the error route. The error route uses a processor to create an {@link RouteError}
@@ -39,18 +42,23 @@ public class DeadLetterChannel extends RouteBuilder {
      */
     @Override
     public void configure() {
-        onException(Exception.class).process(exchange -> {
-            final var cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
-            if (log.isWarnEnabled()) {
-                log.warn("Failed to send error logs to Configuration Manager. [exception=({})]",
-                        cause.getMessage());
-            }
-        }).handled(true);
+        onException(Exception.class)
+                .process(this::processException)
+                .handled(true);
 
         from("direct:deadLetterChannel")
                 .process("dlcProcessor")
-                .setHeader(Exchange.HTTP_METHOD, constant("POST"))
-                .to(errorLogEndpoint);
+                .bean(routesController, "addRouteErrors(${body})");
+    }
+
+    @SuppressFBWarnings("CRLF_INJECTION_LOGS")
+    private void processException(final Exchange exchange) {
+        if (log.isWarnEnabled()) {
+            final var cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT,
+                                                   Exception.class);
+            log.warn("Failed to store error logs at RoutesController. "
+                     + "[exception=({})]", cause.getMessage());
+        }
     }
 
 }

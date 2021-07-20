@@ -16,7 +16,7 @@
 package io.dataspaceconnector.controller.exceptionhandler;
 
 import io.dataspaceconnector.exception.InvalidEntityException;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONObject;
 import org.springframework.core.annotation.Order;
@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  */
 @ControllerAdvice
 @Log4j2
-@Order
+@Order(1)
 public class InvalidEntityExceptionHandler {
 
     /**
@@ -53,7 +53,7 @@ public class InvalidEntityExceptionHandler {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         final var body = new JSONObject();
-        body.put("message", ErrorMessages.INVALID_ENTITY_INPUT.toString());
+        body.put("message", ErrorMessage.INVALID_ENTITY_INPUT.toString());
 
         return new ResponseEntity<>(body, headers, HttpStatus.BAD_REQUEST);
     }

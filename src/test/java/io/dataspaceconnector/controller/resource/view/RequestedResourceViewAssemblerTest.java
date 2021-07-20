@@ -17,9 +17,9 @@ package io.dataspaceconnector.controller.resource.view;
 
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.model.RequestedResourceDesc;
-import io.dataspaceconnector.model.RequestedResourceFactory;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResourceFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

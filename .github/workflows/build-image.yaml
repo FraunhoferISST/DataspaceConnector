@@ -54,6 +54,7 @@ jobs:
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
          BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
+         DOCKER_BUILDKIT: 1
       - name: Run vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
@@ -136,6 +137,7 @@ jobs:
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
          BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
+         DOCKER_BUILDKIT: 1
       - name: Run vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:

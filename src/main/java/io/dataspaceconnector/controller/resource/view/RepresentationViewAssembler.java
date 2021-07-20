@@ -18,10 +18,10 @@ package io.dataspaceconnector.controller.resource.view;
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers.RepresentationController;
 import io.dataspaceconnector.exception.UnreachableLineException;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.util.ErrorMessage;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
@@ -80,7 +80,7 @@ public class RepresentationViewAssembler
                                        .getResource(representation.getId(), null, null))
                                 .withRel("requests");
             } else {
-                throw new UnreachableLineException(ErrorMessages.UNKNOWN_TYPE);
+                throw new UnreachableLineException(ErrorMessage.UNKNOWN_TYPE);
             }
         }
 

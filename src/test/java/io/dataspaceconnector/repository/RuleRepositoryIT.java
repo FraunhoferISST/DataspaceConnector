@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.repository;
 
-import io.dataspaceconnector.model.ContractRule;
+import io.dataspaceconnector.model.rule.ContractRule;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

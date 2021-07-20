@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.controller;
 
+import java.net.URI;
+
 import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.message.subscription.SubscriberNotificationService;
@@ -28,13 +30,11 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
 
 /**
  * Controller for sending notifications to subscribers.
@@ -66,11 +66,11 @@ public class NotificationController {
      * @param elementId The entity id.
      * @return The response entity.
      */
-    @GetMapping("/notify")
+    @PutMapping("/notify")
     @Operation(summary = "Notify all subscribers", description = "Can be used to manually notify "
             + "all subscribers about a resource offer, representation, or artifact update.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "204", description = "No Content"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
@@ -78,24 +78,19 @@ public class NotificationController {
     public ResponseEntity<Object> sendMessage(
             @Parameter(description = "The element id.", required = true)
             @RequestParam("elementId") final URI elementId) {
-        try {
-            final var entity = entityResolver.getEntityById(elementId);
-            if (entity.isEmpty()) {
-                return ControllerUtils.respondResourceNotFound(elementId);
-            }
-
-            final var subscriptions = subscriptionSvc.getByTarget(elementId);
-            if (subscriptions.isEmpty()) {
-                return ControllerUtils.respondNoSubscriptionsFound(elementId);
-            }
-
-            // Notify all subscribers.
-            subscriberNotificationSvc.notifyAll(subscriptions, elementId, entity.get());
-
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception exception) {
-            return new ResponseEntity<>("Notification of subscribers failed.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+        final var entity = entityResolver.getEntityById(elementId);
+        if (entity.isEmpty()) {
+            return ControllerUtils.respondResourceNotFound(elementId);
         }
+
+        final var subscriptions = subscriptionSvc.getByTarget(elementId);
+        if (subscriptions.isEmpty()) {
+            return ControllerUtils.respondNoSubscriptionsFound(elementId);
+        }
+
+        // Notify all subscribers.
+        subscriberNotificationSvc.notifyAll(subscriptions, elementId, entity.get());
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

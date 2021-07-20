@@ -24,8 +24,8 @@ import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
-import io.dataspaceconnector.model.RequestedResourceDesc;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.template.ArtifactTemplate;
 import io.dataspaceconnector.model.template.CatalogTemplate;
 import io.dataspaceconnector.model.template.ContractTemplate;
@@ -99,7 +99,7 @@ public final class TemplateUtils {
         final var representationList = resource.getRepresentation();
         try {
             for (final var representation : Utils.requireNonNull(representationList,
-                    ErrorMessages.LIST_NULL)) {
+                    ErrorMessage.LIST_NULL)) {
                 final var template = MappingUtils.fromIdsRepresentation(representation);
                 final var artifactTemplates = getArtifactTemplates(representation,
                         artifacts, download, accessUrl);
@@ -139,7 +139,7 @@ public final class TemplateUtils {
         final var artifactList = representation.getInstance();
 
         try {
-            for (final var artifact : Utils.requireNonNull(artifactList, ErrorMessages.LIST_NULL)) {
+            for (final var artifact : Utils.requireNonNull(artifactList, ErrorMessage.LIST_NULL)) {
                 // Artifact is only saved if it has been requested.
                 if (requestedArtifacts.contains(artifact.getId())) {
                     final var template = MappingUtils.fromIdsArtifact((Artifact) artifact,

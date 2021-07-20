@@ -55,7 +55,7 @@ public class SubscriptionView extends RepresentationModel<SubscriptionView> {
     /**
      * The URL to use when notifying the subscriber about updates to a resource.
      */
-    private URI url;
+    private URI location;
 
     /**
      * A connector or backend system identifier.
@@ -66,6 +66,11 @@ public class SubscriptionView extends RepresentationModel<SubscriptionView> {
      * Indicates whether the subscriber wants the data to be pushed.
      */
     private boolean pushData;
+
+    /**
+     * Indicates whether the subscriber is an ids participant or not.
+     */
+    private boolean idsProtocol;
 
     /**
      * Additional properties.

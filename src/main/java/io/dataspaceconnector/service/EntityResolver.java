@@ -17,18 +17,17 @@ package io.dataspaceconnector.service;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.exception.InvalidResourceException;
-import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.exception.SelfLinkCreationException;
-import io.dataspaceconnector.model.AbstractEntity;
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
-import io.dataspaceconnector.model.QueryInput;
-import io.dataspaceconnector.model.Representation;
+import io.dataspaceconnector.model.agreement.Agreement;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.base.Entity;
+import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
+import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.ids.builder.IdsArtifactBuilder;
 import io.dataspaceconnector.service.ids.builder.IdsCatalogBuilder;
@@ -44,8 +43,9 @@ import io.dataspaceconnector.service.resource.ResourceService;
 import io.dataspaceconnector.service.resource.RuleService;
 import io.dataspaceconnector.service.usagecontrol.AllowAccessVerifier;
 import io.dataspaceconnector.service.util.EndpointUtils;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.IdsUtils;
+import io.dataspaceconnector.util.QueryInput;
 import io.dataspaceconnector.util.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -82,6 +82,11 @@ public class EntityResolver {
      * Service for offered resources.
      */
     private final @NonNull ResourceService<OfferedResource, OfferedResourceDesc> offerService;
+
+    /**
+     * Service for requested resources.
+     */
+    private final @NonNull ResourceService<RequestedResource, RequestedResourceDesc> requestService;
 
     /**
      * Service for catalogs.
@@ -148,11 +153,10 @@ public class EntityResolver {
      *
      * @param elementId The entity id.
      * @return The respective object.
-     * @throws ResourceNotFoundException If the resource could not be found.
      * @throws IllegalArgumentException  If the resource is null or the elementId.
      */
-    public Optional<AbstractEntity> getEntityById(final URI elementId) {
-        Utils.requireNonNull(elementId, ErrorMessages.URI_NULL);
+    public Optional<Entity> getEntityById(final URI elementId) {
+        Utils.requireNonNull(elementId, ErrorMessage.URI_NULL);
 
         try {
             final var endpointId = EndpointUtils.getEndpointIdFromPath(elementId);
@@ -177,6 +181,8 @@ public class EntityResolver {
                     return Optional.of(ruleService.get(entityId));
                 case AGREEMENTS:
                     return Optional.of(agreementService.get(entityId));
+                case REQUESTS:
+                    return Optional.of(requestService.get(entityId));
                 default:
                     return Optional.empty();
             }
@@ -192,7 +198,7 @@ public class EntityResolver {
      * @param entity The connector's entity.
      * @return A rdf string of an ids object.
      */
-    public <T extends AbstractEntity> String getEntityAsRdfString(final T entity)
+    public <T extends Entity> String getEntityAsRdfString(final T entity)
             throws InvalidResourceException {
         // NOTE Maybe the builder class could be found without the ugly if array?
         try {
@@ -218,12 +224,6 @@ public class EntityResolver {
                 final var rule = (ContractRule) entity;
                 return rule.getValue();
             }
-        } catch (SelfLinkCreationException exception) {
-            if (log.isWarnEnabled()) {
-                log.warn("Could not create self-link. [entity=({}), exception=({})]",
-                        entity, exception.getMessage(), exception);
-            }
-            throw exception;
         } catch (Exception exception) {
             // If we do not allow requesting an object type, respond with exception.
             if (log.isWarnEnabled()) {
@@ -253,17 +253,6 @@ public class EntityResolver {
             throws IOException {
         final var endpoint = EndpointUtils.getUUIDFromPath(requestedArtifact);
         return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint, queryInput);
-    }
-
-    /**
-     * Get agreement by remote id.
-     *
-     * @param agreementUri The remote id (at provider side).
-     * @return The artifact of the database.
-     * @throws ResourceNotFoundException If the resource could not be found.
-     */
-    public Agreement getAgreementByUri(final URI agreementUri) throws ResourceNotFoundException {
-        return agreementService.get(EndpointUtils.getUUIDFromPath(agreementUri));
     }
 
     /**

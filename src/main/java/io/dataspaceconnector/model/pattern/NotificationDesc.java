@@ -30,6 +30,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class NotificationDesc extends PatternDesc {
+
     /**
      * The recipient's address.
      */

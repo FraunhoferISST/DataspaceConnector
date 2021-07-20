@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.repository;
 
-import io.dataspaceconnector.model.Subscription;
+import io.dataspaceconnector.model.subscription.Subscription;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 

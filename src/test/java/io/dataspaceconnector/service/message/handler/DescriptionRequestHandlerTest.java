@@ -37,8 +37,8 @@ import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import de.fraunhofer.ids.messaging.response.MessageResponse;
 import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.ArtifactFactory;
+import io.dataspaceconnector.model.artifact.ArtifactDesc;
+import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.model.message.DescriptionResponseMessageDesc;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.ids.ConnectorService;
@@ -52,12 +52,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.annotation.DirtiesContext;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -115,13 +109,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
         Mockito.doReturn(connector).when(connectorService).getConnectorWithOfferedResources();
 
-        /* ACT */
-        final var result =
-                (BodyResponse) handler.handleMessage((DescriptionRequestMessageImpl) message, null);
+         /* ACT */
+         final var result =
+                 (BodyResponse<?>) handler.handleMessage((DescriptionRequestMessageImpl) message, null);
 
-        /* ASSERT */
-        final var expected = (BodyResponse) constructSelfDescription(
-                message.getIssuerConnector(), message.getId());
+         /* ASSERT */
+         final var expected = (BodyResponse<?>) constructSelfDescription(
+                 message.getIssuerConnector(), message.getId());
 
         // Compare payload
         assertEquals(expected.getPayload(), result.getPayload());
@@ -177,13 +171,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
                 .thenReturn(Optional.of(artifact));
         Mockito.when(resolver.getEntityAsRdfString(artifact)).thenReturn(getArtifact().toRdf());
 
-        /* ACT */
-        final var result =
-                (BodyResponse) handler.handleMessage((DescriptionRequestMessageImpl) message, null);
+         /* ACT */
+         final var result =
+                 (BodyResponse<?>) handler.handleMessage((DescriptionRequestMessageImpl) message, null);
 
-        /* ASSERT */
-        final var expected = (BodyResponse) constructResourceDescription(
-                message.getRequestedElement(), message.getIssuerConnector(), message.getId());
+         /* ASSERT */
+         final var expected = (BodyResponse<?>) constructResourceDescription(
+                 message.getRequestedElement(), message.getIssuerConnector(), message.getId());
 
         // Compare payload
         assertEquals(expected.getPayload(), result.getPayload());

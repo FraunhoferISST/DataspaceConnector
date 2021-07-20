@@ -16,6 +16,9 @@
 package io.dataspaceconnector.model;
 
 import io.dataspaceconnector.exception.InvalidEntityException;
+import io.dataspaceconnector.model.subscription.Subscription;
+import io.dataspaceconnector.model.subscription.SubscriptionDesc;
+import io.dataspaceconnector.model.subscription.SubscriptionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -56,19 +59,13 @@ public class SubscriptionFactoryTest {
 
         /* ASSERT */
         assertEquals(Subscription.class, result.getClass());
-        assertEquals(desc.getUrl(), result.getUrl());
+        assertEquals(desc.getLocation(), result.getLocation());
         assertEquals(desc.getSubscriber(), result.getSubscriber());
         assertEquals(desc.getTarget(), result.getTarget());
         assertEquals(desc.isIdsProtocol(), result.isIdsProtocol());
         assertEquals(desc.isPushData(), result.isPushData());
         assertNull(result.getCreationDate());
         assertNull(result.getModificationDate());
-    }
-
-    @Test
-    public void create_descUrlNull_throwInvalidEntityException() {
-        /* ACT  && ASSERT */
-        assertThrows(InvalidEntityException.class, () -> factory.create(new SubscriptionDesc()));
     }
 
     @Test
@@ -86,19 +83,19 @@ public class SubscriptionFactoryTest {
     }
 
     @Test
-    public void update_newUrl_returnTrueAndSubscriberUpdates() {
+    public void update_newLocation_returnTrueAndSubscriberUpdates() {
         /* ACT */
         final var subscriber = getSubscriber();
         final var desc = getValidDesc();
 
-        final var url = subscriber.getUrl();
+        final var location = subscriber.getLocation();
 
         /* ACT */
         factory.update(subscriber, desc);
 
         /* ASSERT */
-        assertNotEquals(url, subscriber.getUrl());
-        assertEquals(desc.getUrl(), subscriber.getUrl());
+        assertNotEquals(location, subscriber.getLocation());
+        assertEquals(desc.getLocation(), subscriber.getLocation());
     }
 
     @Test
@@ -115,7 +112,7 @@ public class SubscriptionFactoryTest {
     private SubscriptionDesc getValidDesc() {
         final var desc = new SubscriptionDesc();
         desc.setTarget(newUrl);
-        desc.setUrl(newUrl);
+        desc.setLocation(newUrl);
         desc.setSubscriber(newUrl);
         desc.setPushData(true);
         desc.setIdsProtocol(false);
@@ -124,7 +121,7 @@ public class SubscriptionFactoryTest {
 
     private Subscription getSubscriber() {
         final var subscriber = new Subscription();
-        ReflectionTestUtils.setField(subscriber, "url", initialUrl);
+        ReflectionTestUtils.setField(subscriber, "location", initialUrl);
         return subscriber;
     }
 

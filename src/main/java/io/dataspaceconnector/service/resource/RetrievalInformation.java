@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.model.QueryInput;
+import java.net.URI;
+
+import io.dataspaceconnector.util.QueryInput;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-
-import java.net.URI;
 
 
 /**

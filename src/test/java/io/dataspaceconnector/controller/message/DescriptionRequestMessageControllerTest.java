@@ -23,8 +23,6 @@ import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.KeyType;
 import de.fraunhofer.iais.eis.PublicKeyBuilder;
-import de.fraunhofer.iais.eis.RejectionMessage;
-import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
@@ -32,6 +30,9 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.exception.MessageException;
+import io.dataspaceconnector.exception.MessageResponseException;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
 import lombok.SneakyThrows;
@@ -41,6 +42,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -111,27 +113,76 @@ public class DescriptionRequestMessageControllerTest {
                 .getInfrastructureComponent(responsePayload);
     }
 
-//    @Test
-//    @SneakyThrows
-//    public void sendDescriptionRequestMessage_invalidResponse_returnResponsePayloadWithCode417() {
-//        /* ARRANGE */
-//        final var recipient = URI.create("https://recipient.com");
-//        final var responsePayload = "some payload";
-//        final var response = getResponse(responsePayload);
-//        final var responseContent = getResponseContent(responsePayload);
-//
-//        when(messageService.sendMessage(any(), any())).thenReturn(response);
-//        when(messageService.validateResponse(any())).thenReturn(false);
-//        when(messageService.getResponseContent(any())).thenReturn(responseContent);
-//
-//        /* ACT */
-//        final var result = controller.sendMessage(recipient, null);
-//
-//        /* ASSERT */
-//        assertEquals(HttpStatus.EXPECTATION_FAILED, result.getStatusCode());
-//        assertNotNull(result.getBody());
-//        assertEquals(responseContent.toString(), result.getBody().toString());
-//    }
+    @Test
+    @SneakyThrows
+    public void sendDescriptionRequestMessage_elementIdNull_returnDeserializedResponsePayloadButCannotIdentityPayload() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient.com");
+        final var responsePayload = "{ This is not an infrastructure component. }";
+        final var response = getResponse(responsePayload);
+
+        when(messageService.sendMessage(any(), any())).thenReturn(response);
+        when(messageService.validateResponse(any())).thenReturn(true);
+        Mockito.doThrow(IllegalArgumentException.class).when(deserializationService).getInfrastructureComponent(any());
+
+        /* ACT */
+        final var result = controller.sendMessage(recipient, null);
+
+        /* ASSERT */
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertNotNull(result.getBody());
+        assertEquals(responsePayload, result.getBody().toString());
+
+        verify(messageService, times(1)).sendMessage(recipient, null);
+        verify(deserializationService, times(1))
+                .getInfrastructureComponent(responsePayload);
+    }
+
+    @Test
+    @SneakyThrows
+    public void sendDescriptionRequestMessage_messageException_respondWithIdsFailed() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient.com");
+
+        when(messageService.sendMessage(any(), any())).thenThrow(MessageException.class);
+
+        /* ACT */
+        final var result = controller.sendMessage(recipient, null);
+
+        /* ASSERT */
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+    }
+
+    @Test
+    @SneakyThrows
+    public void sendDescriptionRequestMessage_messageException_respondWithInvalidResponse() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient.com");
+
+        when(messageService.sendMessage(any(), any())).thenThrow(MessageResponseException.class);
+
+        /* ACT */
+        final var result = controller.sendMessage(recipient, null);
+
+        /* ASSERT */
+        assertEquals(HttpStatus.BAD_GATEWAY, result.getStatusCode());
+    }
+
+    @Test
+    @SneakyThrows
+    public void sendDescriptionRequestMessage_messageException_respondWithUnexpectedResponse() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient.com");
+
+        when(messageService.sendMessage(any(), any())).thenThrow(UnexpectedResponseException.class);
+
+        /* ACT */
+        final var result = controller.sendMessage(recipient, null);
+
+        /* ASSERT */
+        assertEquals(HttpStatus.EXPECTATION_FAILED, result.getStatusCode());
+    }
+
 
     @Test
     public void sendMessage_protocolIdscp_parseResponseFromRoute() {
@@ -205,14 +256,6 @@ public class DescriptionRequestMessageControllerTest {
                         ._accessURL_(URI.create("/api/ids/data"))
                         .build())
                 .build();
-    }
-
-    private Map<String, Object> getResponseContent(final String payload) {
-        final var map = new HashMap<String, Object>();
-        map.put("type", RejectionMessage.class);
-        map.put("reason", RejectionReason.INTERNAL_RECIPIENT_ERROR);
-        map.put("payload", payload);
-        return map;
     }
 
     private DescriptionRequestMessage getMessage() {

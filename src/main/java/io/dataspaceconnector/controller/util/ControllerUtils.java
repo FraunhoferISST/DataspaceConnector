@@ -15,13 +15,14 @@
  */
 package io.dataspaceconnector.controller.util;
 
-import io.dataspaceconnector.util.ErrorMessages;
+import java.net.URI;
+import java.util.Map;
+
+import de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception;
+import io.dataspaceconnector.util.ErrorMessage;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.net.URI;
-import java.util.Map;
 
 /**
  * Contains utility methods for creating ResponseEntities with different status codes and custom
@@ -45,7 +46,7 @@ public final class ControllerUtils {
      * @return ResponseEntity with status code 500.
      */
     public static ResponseEntity<Object> respondIdsMessageFailed(final Exception e) {
-        final var msg = ErrorMessages.MESSAGE_HANDLING_FAILED;
+        final var msg = ErrorMessage.MESSAGE_HANDLING_FAILED;
         if (log.isDebugEnabled()) {
             log.debug("{} [exception=({})]", msg, e.getMessage(), e);
         }
@@ -60,7 +61,7 @@ public final class ControllerUtils {
      * @return ResponseEntity with status code 500.
      */
     public static ResponseEntity<Object> respondMessageSendingFailed(final Exception e) {
-        final var msg = ErrorMessages.MESSAGE_SENDING_FAILED;
+        final var msg = ErrorMessage.MESSAGE_SENDING_FAILED;
         if (log.isDebugEnabled()) {
             log.debug("{} [exception=({})]", msg, e.getMessage(), e);
         }
@@ -121,7 +122,7 @@ public final class ControllerUtils {
      * @return ResponseEntity with status code 400.
      */
     public static ResponseEntity<Object> respondInvalidInput(final Exception e) {
-        final var msg = ErrorMessages.INVALID_INPUT;
+        final var msg = ErrorMessage.INVALID_INPUT;
         if (log.isWarnEnabled()) {
             log.warn("{} [exception=({})]", msg, e.getMessage(), e);
         }
@@ -168,7 +169,7 @@ public final class ControllerUtils {
      * @return ResponseEntity with status code 504.
      */
     public static ResponseEntity<Object> respondConnectionTimedOut(final Exception exception) {
-        final var msg = ErrorMessages.GATEWAY_TIMEOUT;
+        final var msg = ErrorMessage.GATEWAY_TIMEOUT;
         if (log.isWarnEnabled()) {
             log.warn("{} [exception=({})]", msg, exception.getMessage(), exception);
         }
@@ -183,7 +184,7 @@ public final class ControllerUtils {
      * @return ResponseEntity with status code 502.
      */
     public static ResponseEntity<Object> respondReceivedInvalidResponse(final Exception exception) {
-        final var msg = ErrorMessages.INVALID_MESSAGE;
+        final var msg = ErrorMessage.INVALID_MESSAGE;
         if (log.isDebugEnabled()) {
             log.debug("{} [exception=({})]", msg, exception.getMessage(), exception);
         }
@@ -197,10 +198,11 @@ public final class ControllerUtils {
      * @return ResponseEntity with status code 502.
      */
     public static ResponseEntity<Object> respondReceivedInvalidResponse() {
-        final var msg = ErrorMessages.INVALID_MESSAGE;
+        final var msg = ErrorMessage.INVALID_MESSAGE;
         if (log.isDebugEnabled()) {
-            log.debug(msg.toString());
+            log.debug("{}", msg.toString());
         }
+
         return new ResponseEntity<>(msg.toString(), HttpStatus.BAD_GATEWAY);
     }
 
@@ -232,16 +234,34 @@ public final class ControllerUtils {
     }
 
     /**
-     * Creates a ResponseEntity with status code 200 and a message indicating that no subscription
+     * Creates a ResponseEntity with status code 204 and a message indicating that no subscription
      * could be found for the targeted entity.
      *
      * @param target The target element.
-     * @return ResponseEntity with status code 200.
+     * @return ResponseEntity with status code 204.
      */
     public static ResponseEntity<Object> respondNoSubscriptionsFound(final URI target) {
         if (log.isDebugEnabled()) {
             log.debug("No subscriptions found. [target=({})]", target);
         }
-        return new ResponseEntity<>("No subscriptions found.", HttpStatus.OK);
+        return new ResponseEntity<>("No subscriptions found.", HttpStatus.NO_CONTENT);
+    }
+
+    /**
+     * Creates a ResponseEntity with status code 500 and a message indicating that IDSCP2
+     * communication failed.
+     *
+     * @param recipient the intended recipient.
+     * @param exception the Idscp2Exception.
+     * @return ResponseEntity with status code 500.
+     */
+    public static ResponseEntity<Object> respondIdscp2Error(final URI recipient,
+                                                            final Idscp2Exception exception) {
+        final var msg = "IDSCP2 communication failed.";
+        if (log.isDebugEnabled()) {
+            log.debug("{} [recipient=({})] [exception=({})]", msg, recipient,
+                    exception.getMessage());
+        }
+        return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

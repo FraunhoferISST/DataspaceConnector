@@ -24,11 +24,10 @@ import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
 import io.dataspaceconnector.exception.MessageEmptyException;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
-import io.dataspaceconnector.exception.SelfLinkCreationException;
 import io.dataspaceconnector.exception.VersionNotSupportedException;
-import io.dataspaceconnector.model.Agreement;
+import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.service.ids.ConnectorService;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -59,7 +58,7 @@ public class MessageResponseService {
      * @throws IllegalArgumentException if exception is null.
      */
     public MessageResponse handleMessageEmptyException(final MessageEmptyException exception) {
-        Utils.requireNonNull(exception, ErrorMessages.EXCEPTION_NULL);
+        Utils.requireNonNull(exception, ErrorMessage.EXCEPTION_NULL);
 
         if (log.isDebugEnabled()) {
             log.debug("Cannot respond when there is no request. [exception=({})]",
@@ -81,7 +80,7 @@ public class MessageResponseService {
      */
     public MessageResponse handleInfoModelNotSupportedException(
             final VersionNotSupportedException exception, final String version) {
-        Utils.requireNonNull(exception, ErrorMessages.EXCEPTION_NULL);
+        Utils.requireNonNull(exception, ErrorMessage.EXCEPTION_NULL);
 
         if (log.isDebugEnabled()) {
             log.debug("Information Model version of requesting connector is not supported. "
@@ -104,7 +103,7 @@ public class MessageResponseService {
     public MessageResponse handleResponseMessageBuilderException(final Exception exception,
                                                                  final URI issuerConnector,
                                                                  final URI messageId) {
-        Utils.requireNonNull(exception, ErrorMessages.EXCEPTION_NULL);
+        Utils.requireNonNull(exception, ErrorMessage.EXCEPTION_NULL);
 
         if (log.isWarnEnabled()) {
             log.warn("Failed to convert ids object to string. [exception=({}), "
@@ -562,25 +561,6 @@ public class MessageResponseService {
         }
         return ErrorResponse.withDefaultHeader(RejectionReason.MALFORMED_MESSAGE,
                 "Invalid rules in message payload.",
-                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
-    }
-
-    /**
-     * Handle exception when creating self links for the requested element and its children.
-     *
-     * @param exception        Exception that was thrown when the self links could not be created.
-     * @param requestedElement The requested element that could not be constructed.
-     * @return A message response.
-     */
-    public MessageResponse handleSelfLinkCreationException(
-            final SelfLinkCreationException exception, final URI requestedElement) {
-        if (log.isDebugEnabled()) {
-            log.debug("Could not construct self links for requested element and its "
-                            + "children. [exception=({}), requestedElement=({})]",
-                    exception.getMessage(), requestedElement, exception);
-        }
-        return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
-                "Internal error when constructing requested element.",
                 connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 

@@ -25,7 +25,7 @@ import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.model.message.DescriptionRequestMessageDesc;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.Utils;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +47,7 @@ public final class DescriptionRequestService
     @Override
     public Message buildMessage(final DescriptionRequestMessageDesc desc)
             throws ConstraintViolationException {
-        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+        Utils.requireNonNull(desc, ErrorMessage.DESC_NULL);
 
         final var connectorId = getConnectorService().getConnectorId();
         final var modelVersion = getConnectorService().getOutboundModelVersion();

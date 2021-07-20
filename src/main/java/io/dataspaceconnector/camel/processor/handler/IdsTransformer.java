@@ -16,9 +16,7 @@
 package io.dataspaceconnector.camel.processor.handler;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,6 +44,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
+
+import java.nio.charset.Charset;
 
 /**
  * Superclass for Camel processors that transform an incoming message's payload, e.g. by
@@ -92,7 +92,8 @@ class ContractRequestTransformer extends IdsTransformer<
     /**
      * Service for ids deserialization.
      */
-    private final @NonNull DeserializationService deserializationService;
+    private final @NonNull
+    DeserializationService deserializationService;
 
     /**
      * Deserializes the payload of a ContractRequestMessage to a ContractRequest.
@@ -125,7 +126,8 @@ class ResourceTransformer extends IdsTransformer<
     /**
      * Service for ids deserialization.
      */
-    private final @NonNull DeserializationService deserializationService;
+    private final @NonNull
+    DeserializationService deserializationService;
 
     /**
      * Deserializes the payload of a ResourceUpdateMessage to a Resource.
@@ -175,7 +177,8 @@ class ContractAgreementTransformer extends IdsTransformer<
     /**
      * Service for ids deserialization.
      */
-    private final @NonNull DeserializationService deserializationService;
+    private final @NonNull
+    DeserializationService deserializationService;
 
     /**
      * Deserializes the payload of a ContractAgreementMessage to a ContractAgreement.
@@ -279,15 +282,10 @@ class PayloadStreamReader extends IdsTransformer<
         // Reset the stream so it can be read again.
         inputStream.reset();
 
-        String payload;
-        try (var streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-             var bufferedReader = new BufferedReader(streamReader)) {
-            payload = bufferedReader
-                    .lines()
-                    .parallel()
-                    .collect(Collectors.joining("\n"));
-        } catch (IOException e) {
-            payload = "Payload could not be read from request.";
+        var payload = "Payload could not be read from request.";
+        try (var reader = new BufferedReader(new InputStreamReader(inputStream,
+                Charset.defaultCharset()))) {
+            payload = reader.lines().parallel().collect(Collectors.joining("\n"));
         }
 
         return new Request<>(msg.getHeader(), payload, msg.getClaims());

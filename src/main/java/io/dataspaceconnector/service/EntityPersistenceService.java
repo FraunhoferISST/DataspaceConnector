@@ -17,11 +17,12 @@ package io.dataspaceconnector.service;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.model.AgreementDesc;
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.model.RequestedResourceDesc;
+import io.dataspaceconnector.model.agreement.AgreementDesc;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.AgreementService;
 import io.dataspaceconnector.service.resource.ArtifactService;
@@ -132,6 +133,7 @@ public class EntityPersistenceService {
      * @return The id of the stored contract agreement.
      * @throws PersistenceException If the contract agreement could not be saved.
      */
+    @SuppressFBWarnings("REC_CATCH_EXCEPTION")
     public ContractAgreement buildAndSaveContractAgreement(
             final ContractRequest request, final List<URI> targetList, final URI issuer)
             throws PersistenceException {

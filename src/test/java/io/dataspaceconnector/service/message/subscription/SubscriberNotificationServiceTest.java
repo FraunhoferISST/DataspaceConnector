@@ -15,10 +15,10 @@
  */
 package io.dataspaceconnector.service.message.subscription;
 
-import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.ArtifactFactory;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
+import io.dataspaceconnector.model.artifact.ArtifactDesc;
+import io.dataspaceconnector.model.artifact.ArtifactFactory;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.service.resource.AbstractResourceContractLinker;
 import io.dataspaceconnector.service.resource.AbstractResourceRepresentationLinker;
 import io.dataspaceconnector.service.resource.TemplateBuilder;

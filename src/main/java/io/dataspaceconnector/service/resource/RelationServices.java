@@ -15,15 +15,17 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.model.Subscription;
+import io.dataspaceconnector.model.subscription.Subscription;
+import io.dataspaceconnector.model.agreement.Agreement;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.broker.Broker;
+import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.rule.ContractRule;
+import io.dataspaceconnector.service.configuration.BrokerService;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -138,6 +140,21 @@ public final class RelationServices {
         @Override
         protected final List<Catalog> getInternal(final OfferedResource owner) {
             return owner.getCatalogs();
+        }
+    }
+
+    /**
+     * Handles the relation between offered resources and brokers.
+     */
+    @Service
+    @NoArgsConstructor
+    public static class OfferedResourceBrokerLinker
+            extends OwningRelationService<OfferedResource, Broker, OfferedResourceService,
+            BrokerService> {
+
+        @Override
+        protected final List<Broker> getInternal(final OfferedResource owner) {
+            return owner.getBrokers();
         }
     }
 

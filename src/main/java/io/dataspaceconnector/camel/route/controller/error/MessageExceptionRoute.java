@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.camel.route.controller.error;
 
+import io.dataspaceconnector.camel.util.ParameterUtils;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
@@ -35,8 +36,8 @@ public class MessageExceptionRoute extends RouteBuilder {
         from("direct:handleMessageException")
                 .routeId("messageException")
                 .log(LoggingLevel.DEBUG, "Error route for handling MessageException called.")
-                .to("bean:io.dataspaceconnector.controller.util.ControllerUtils?"
-                        + "method=respondIdsMessageFailed(${exception})");
+                .to(ParameterUtils.CONTROLLER_UTILS_BEAN
+                        + "respondIdsMessageFailed(${exception})");
     }
 
 }

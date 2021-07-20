@@ -15,19 +15,22 @@
  */
 package io.dataspaceconnector.service.message.type;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
 import de.fraunhofer.iais.eis.RequestMessageBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
+import io.dataspaceconnector.exception.InvalidInputException;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.message.SubscriptionMessageDesc;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.model.subscription.SubscriptionDesc;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.Utils;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -38,7 +41,6 @@ import java.util.Map;
  * An generic ids request message will be used. For an unsubscription message, a separate service
  * would have to be added in this package.
  */
-@Log4j2
 @Service
 public final class SubscriptionRequestService
         extends AbstractMessageService<SubscriptionMessageDesc> {
@@ -51,7 +53,7 @@ public final class SubscriptionRequestService
     @Override
     public Message buildMessage(final SubscriptionMessageDesc desc)
             throws ConstraintViolationException {
-        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+        Utils.requireNonNull(desc, ErrorMessage.DESC_NULL);
 
         final var connectorId = getConnectorService().getConnectorId();
         final var modelVersion = getConnectorService().getOutboundModelVersion();
@@ -80,17 +82,24 @@ public final class SubscriptionRequestService
     /**
      * Send a request message. Allow the access only if that operation was successful.
      *
-     * @param recipient The message's recipient.
-     * @param target    The target element id.
-     * @param payload   The message's payload.
+     * @param recipient    The message's recipient.
+     * @param target       The target element id.
+     * @param subscription The message's payload.
      * @return The response map.
      * @throws MessageException            if message handling failed.
      * @throws MessageResponseException    if the response could not be processed.
      * @throws UnexpectedResponseException if the response is not as expected.
      */
     public Map<String, String> sendMessage(final URI recipient, final URI target,
-                                           final Object payload)
+                                           final SubscriptionDesc subscription)
             throws MessageException, MessageResponseException, UnexpectedResponseException {
+        String payload = "";
+        try {
+            final var objectMapper = new ObjectMapper();
+            payload = objectMapper.writeValueAsString(subscription);
+        } catch (JsonProcessingException e) {
+            throw new InvalidInputException("No valid subscription input.");
+        }
         final var desc = new SubscriptionMessageDesc(recipient, target);
         final var response = send(desc, payload);
         try {

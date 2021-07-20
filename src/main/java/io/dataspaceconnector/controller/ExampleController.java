@@ -15,20 +15,9 @@
  */
 package io.dataspaceconnector.controller;
 
-import de.fraunhofer.iais.eis.BaseConnectorBuilder;
-import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
-import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
-import de.fraunhofer.iais.eis.ConnectorDeployMode;
-import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
-import de.fraunhofer.iais.eis.ConnectorStatus;
-import de.fraunhofer.iais.eis.KeyType;
-import de.fraunhofer.iais.eis.LogLevel;
-import de.fraunhofer.iais.eis.ProxyBuilder;
-import de.fraunhofer.iais.eis.PublicKeyBuilder;
-import de.fraunhofer.iais.eis.SecurityProfile;
-import de.fraunhofer.iais.eis.util.TypedLiteral;
-import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.exception.ContractException;
+import io.dataspaceconnector.model.pattern.ConnectorRestrictionDesc;
 import io.dataspaceconnector.model.pattern.DeletionDesc;
 import io.dataspaceconnector.model.pattern.DurationDesc;
 import io.dataspaceconnector.model.pattern.IntervalDesc;
@@ -37,14 +26,11 @@ import io.dataspaceconnector.model.pattern.NotificationDesc;
 import io.dataspaceconnector.model.pattern.PatternDesc;
 import io.dataspaceconnector.model.pattern.PermissionDesc;
 import io.dataspaceconnector.model.pattern.ProhibitionDesc;
-import io.dataspaceconnector.model.pattern.ConnectorRestrictionDesc;
 import io.dataspaceconnector.model.pattern.SecurityRestrictionDesc;
 import io.dataspaceconnector.model.pattern.UsageNumberDesc;
 import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.util.PatternUtils;
 import io.dataspaceconnector.util.RuleUtils;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -54,17 +40,11 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * This class provides endpoints exposing example resources and configurations.
@@ -79,64 +59,6 @@ public class ExampleController {
     private final @NonNull DeserializationService deserializationService;
 
     /**
-     * Get an example configuration for the config.json.
-     *
-     * @return a {@link org.springframework.http.ResponseEntity} object.
-     */
-    @Hidden
-    @Operation(summary = "Get sample connector configuration",
-            description = "Get a sample connector configuration for the config.json.")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    @GetMapping("/configuration")
-    @ResponseBody
-    public ResponseEntity<Object> getConnectorConfiguration() {
-        return ResponseEntity.ok(
-                new ConfigurationModelBuilder(URI.create("configId"))
-                        ._configurationModelLogLevel_(LogLevel.NO_LOGGING)
-                        ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
-                        ._connectorProxy_(Util.asList(
-                                new ProxyBuilder(URI.create("proxiId"))
-                                        ._noProxy_(new ArrayList<>(Collections.singletonList(
-                                                URI.create("https://localhost:8080/"))))
-                                        ._proxyAuthentication_(
-                                                new BasicAuthenticationBuilder(
-                                                        URI.create("basicAuthId")).build())
-                                        ._proxyURI_(URI.create(
-                                                "proxy.dortmund.isst.fraunhofer.de:3128"))
-                                        .build()))
-                        ._connectorStatus_(ConnectorStatus.CONNECTOR_ONLINE)
-                        ._connectorDescription_(
-                                new BaseConnectorBuilder(URI.create("connectorId"))
-                                        ._maintainer_(URI.create("https://example.com"))
-                                        ._curator_(URI.create("https://example.com"))
-                                        ._securityProfile_(SecurityProfile.BASE_SECURITY_PROFILE)
-                                        ._outboundModelVersion_("4.0.0")
-                                        ._inboundModelVersion_(Util.asList("4.0.0"))
-                                        ._title_(Util.asList(
-                                                new TypedLiteral("Dataspace Connector")))
-                                        ._description_(Util.asList(new TypedLiteral(
-                                                "IDS Connector with static example resources "
-                                                        + "hosted by the Fraunhofer ISST.")))
-                                        ._version_("v3.0.0")
-                                        ._publicKey_(
-                                                new PublicKeyBuilder(URI.create("keyId"))
-                                                        ._keyType_(KeyType.RSA)
-                                                        ._keyValue_(
-                                                                "Your daps token here.".getBytes(
-                                                                        StandardCharsets.UTF_8))
-                                                        .build())
-                                        ._hasDefaultEndpoint_(
-                                                new ConnectorEndpointBuilder(
-                                                        URI.create("endpointId"))
-                                                        ._accessURL_(URI.create("/api/ids/data"))
-                                                        .build())
-                                        .build())
-                        ._keyStore_(URI.create("file:///conf/keystore.p12"))
-                        ._trustStore_(URI.create("file:///conf/truststore.p12"))
-                        .build().toRdf());
-    }
-
-    /**
      * Validate a rule and get the policy pattern.
      *
      * @param ruleAsString Policy as string.
@@ -147,7 +69,8 @@ public class ExampleController {
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "400", description = "Internal server error")})
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @PostMapping("/validation")
     @ResponseBody
     public ResponseEntity<Object> getPolicyPattern(
@@ -172,7 +95,8 @@ public class ExampleController {
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "400", description = "Bad Request")})
+            @ApiResponse(responseCode = "400", description = "Bad Request"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @PostMapping("/policy")
     @ResponseBody
     public ResponseEntity<Object> getExampleUsagePolicy(@RequestBody final PatternDesc input) {

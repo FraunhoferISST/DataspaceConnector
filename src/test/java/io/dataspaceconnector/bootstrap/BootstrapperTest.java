@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.bootstrap;
 
+import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,9 +33,6 @@ import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
 import io.dataspaceconnector.model.template.CatalogTemplate;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.service.resource.CatalogService;

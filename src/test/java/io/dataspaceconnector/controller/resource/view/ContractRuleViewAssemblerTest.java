@@ -17,9 +17,9 @@ package io.dataspaceconnector.controller.resource.view;
 
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.ContractRuleDesc;
-import io.dataspaceconnector.model.ContractRuleFactory;
+import io.dataspaceconnector.model.rule.ContractRule;
+import io.dataspaceconnector.model.rule.ContractRuleDesc;
+import io.dataspaceconnector.model.rule.ContractRuleFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

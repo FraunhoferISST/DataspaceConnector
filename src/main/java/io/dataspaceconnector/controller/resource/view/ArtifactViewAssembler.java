@@ -17,8 +17,8 @@ package io.dataspaceconnector.controller.resource.view;
 
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers.ArtifactController;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.QueryInput;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.util.QueryInput;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.modelmapper.ModelMapper;

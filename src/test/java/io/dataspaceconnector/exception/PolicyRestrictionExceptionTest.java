@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.exception;
 
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +24,7 @@ public class PolicyRestrictionExceptionTest {
     @Test
     public void constructor_someMsg_holdsMsg() {
         /* ARRANGE */
-        final var msg = ErrorMessages.CONTRACT_NULL;
+        final var msg = ErrorMessage.CONTRACT_NULL;
 
         /* ACT */
         final var exception = new PolicyRestrictionException(msg);
@@ -36,7 +36,7 @@ public class PolicyRestrictionExceptionTest {
     @Test
     public void constructor_someMsgAndsSomeException_holdsMsgAndException() {
         /* ARRANGE */
-        final var msg = ErrorMessages.CONTRACT_NULL;
+        final var msg = ErrorMessage.CONTRACT_NULL;
         final var someError = new RuntimeException("WELL?");
 
         /* ACT */

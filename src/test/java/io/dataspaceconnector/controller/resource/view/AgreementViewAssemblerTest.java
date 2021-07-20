@@ -17,9 +17,9 @@ package io.dataspaceconnector.controller.resource.view;
 
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.AgreementDesc;
-import io.dataspaceconnector.model.AgreementFactory;
+import io.dataspaceconnector.model.agreement.Agreement;
+import io.dataspaceconnector.model.agreement.AgreementDesc;
+import io.dataspaceconnector.model.agreement.AgreementFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

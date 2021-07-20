@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.config;
 
+import io.dataspaceconnector.config.util.UsageControlFramework;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import java.net.URI;
-
 /**
  * This class handles policy settings: negotiation, pattern support, and usage control framework.
  */

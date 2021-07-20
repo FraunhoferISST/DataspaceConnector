@@ -17,18 +17,17 @@ package io.dataspaceconnector.service.resource;
 
 import io.dataspaceconnector.camel.exception.SubscriptionProcessingException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.model.Subscription;
-import io.dataspaceconnector.model.SubscriptionDesc;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.subscription.Subscription;
+import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.repository.SubscriptionRepository;
 import io.dataspaceconnector.service.EntityResolver;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.Utils;
 import lombok.NoArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,7 +39,6 @@ import java.util.Set;
 /**
  * Handles the basic logic for subscriptions.
  */
-@Log4j2
 @Service
 @NoArgsConstructor
 public class SubscriptionService extends BaseEntityService<Subscription, SubscriptionDesc> {
@@ -58,16 +56,16 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
     private RelationServices.RepresentationSubscriptionLinker repSubLinker;
 
     /**
+     * Service for linking requested resources and subscriptions.
+     */
+    @Autowired
+    private RelationServices.RequestedResourceSubscriptionLinker requestSubLinker;
+
+    /**
      * Service for linking offered resources and subscriptions.
      */
     @Autowired
     private RelationServices.OfferedResourceSubscriptionLinker offerSubLinker;
-
-    /**
-     * Service for linking requested resources and subscriptions.
-     */
-    @Autowired
-    private RelationServices.RequestedResourceSubscriptionLinker reqSubLinker;
 
     /**
      * Service for resolving database entities by id.
@@ -81,7 +79,7 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
      */
     @Override
     public Subscription create(final SubscriptionDesc desc) {
-        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+        Utils.requireNonNull(desc, ErrorMessage.DESC_NULL);
 
         final var subscription = persist(getFactory().create(desc));
         final var target = subscription.getTarget();
@@ -100,8 +98,8 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
      * @throws IllegalArgumentException if a passed parameter is null.
      */
     public List<Subscription> getBySubscriber(final Pageable pageable, final URI subscriber) {
-        Utils.requireNonNull(pageable, ErrorMessages.PAGEABLE_NULL);
-        Utils.requireNonNull(subscriber, ErrorMessages.ENTITYID_NULL);
+        Utils.requireNonNull(pageable, ErrorMessage.PAGEABLE_NULL);
+        Utils.requireNonNull(subscriber, ErrorMessage.ENTITYID_NULL);
         return ((SubscriptionRepository) getRepository()).findAllBySubscriber(subscriber);
     }
 
@@ -114,8 +112,8 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
      * @throws IllegalArgumentException if a passed parameter is null.
      */
     public List<Subscription> getBySubscriberAndTarget(final URI subscriber, final URI target) {
-        Utils.requireNonNull(subscriber, ErrorMessages.ENTITYID_NULL);
-        Utils.requireNonNull(target, ErrorMessages.ENTITYID_NULL);
+        Utils.requireNonNull(subscriber, ErrorMessage.ENTITYID_NULL);
+        Utils.requireNonNull(target, ErrorMessage.ENTITYID_NULL);
         return ((SubscriptionRepository) getRepository()).findAllBySubscriberAndTarget(subscriber,
                 target);
     }
@@ -128,7 +126,7 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
      * @throws IllegalArgumentException if a passed parameter is null.
      */
     public List<Subscription> getByTarget(final URI target) {
-        Utils.requireNonNull(target, ErrorMessages.ENTITYID_NULL);
+        Utils.requireNonNull(target, ErrorMessage.ENTITYID_NULL);
         return ((SubscriptionRepository) getRepository()).findAllByTarget(target);
     }
 
@@ -172,7 +170,7 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
         // Check if target exists.
         final var entity = entityResolver.getEntityById(target);
         if (entity.isEmpty()) {
-            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString());
+            throw new ResourceNotFoundException(ErrorMessage.EMTPY_ENTITY.toString());
         }
 
         // Link subscription to entity.
@@ -185,7 +183,7 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
         } else if (value instanceof OfferedResource) {
             offerSubLinker.add(value.getId(), Set.of(subscriptionId));
         } else if (value instanceof RequestedResource) {
-            repSubLinker.add(value.getId(), Set.of(subscriptionId));
+            requestSubLinker.add(value.getId(), Set.of(subscriptionId));
         } else {
             throw new SubscriptionProcessingException("No subscription offered for this target.");
         }

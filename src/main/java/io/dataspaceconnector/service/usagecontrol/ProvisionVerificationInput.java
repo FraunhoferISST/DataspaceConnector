@@ -50,5 +50,6 @@ public class ProvisionVerificationInput {
     /**
      * The security profile.
      */
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private Optional<SecurityProfile> securityProfile;
 }

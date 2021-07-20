@@ -17,20 +17,21 @@ package io.dataspaceconnector.service.message.subscription;
 
 import de.fraunhofer.iais.eis.Resource;
 import io.dataspaceconnector.controller.util.Event;
-import io.dataspaceconnector.controller.util.Notification;
-import io.dataspaceconnector.model.AbstractEntity;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.QueryInput;
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.Subscription;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.base.Entity;
+import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
+import io.dataspaceconnector.service.HttpService;
 import io.dataspaceconnector.service.ids.builder.IdsResourceBuilder;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.service.resource.ArtifactService;
 import io.dataspaceconnector.service.resource.SubscriptionService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
+import io.dataspaceconnector.util.QueryInput;
 import io.dataspaceconnector.util.SelfLinkHelper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +42,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -84,64 +86,88 @@ public class SubscriberNotificationService {
     private final @NonNull IdsResourceBuilder<OfferedResource> resourceBuilder;
 
     /**
+     * Service for executing http requests.
+     */
+    private final @NonNull HttpService httpService;
+
+    /**
      * Notify subscribers on database update event.
      *
      * @param entity The updated entity.
      */
-    public void notifyOnUpdate(final AbstractEntity entity) {
+    public void notifyOnUpdate(final Entity entity) {
         final var uri = SelfLinkHelper.getSelfLink(entity);
         final var subscriptions = subscriptionSvc.getByTarget(uri);
+
+        // Notify subscribers of child elements.
+        if (entity instanceof OfferedResource || entity instanceof RequestedResource) {
+            final var representations =
+                    ((io.dataspaceconnector.model.resource.Resource) entity).getRepresentations();
+            for (final var rep : representations) {
+                notifyOnUpdate(rep);
+            }
+        } else if (entity instanceof Representation) {
+            final var artifacts = ((Representation) entity).getArtifacts();
+            for (final var artifact : artifacts) {
+                notifyOnUpdate(artifact);
+            }
+        }
 
         notifyAll(subscriptions, uri, entity);
     }
 
     /**
-     * Notifies all backend systems and ids participants that subscribed for updates to an entity
-     * using a {@link SubscriberNotificationRunner}. The backends are notified in parallel and
-     * asynchronously. If a request to one of the subscribed URLs results in a status code 5xx,
-     * the request is retried 5 times with a delay of 5 seconds each.
+     * Notifies all backend systems and ids participants that subscribed for updates to an entity.
      *
      * @param subscriptions List of subscriptions for a certain target.
      * @param target        The target of the subscriptions.
      * @param entity        The target entity of the subscriptions.
      */
     public void notifyAll(final List<Subscription> subscriptions, final URI target,
-                          final AbstractEntity entity) {
+                          final Entity entity) {
         notifySubscribers(subscriptions, target, entity);
         notifyIdsSubscribers(subscriptions, entity);
     }
 
 
     private void notifySubscribers(final List<Subscription> subscriptions, final URI target,
-                                   final AbstractEntity entity) {
+                                   final Entity entity) {
         // Get list of non-ids subscribers.
         final var recipients = subscriptions.stream()
                 .filter(subscription -> !subscription.isIdsProtocol() && !subscription.isPushData())
-                .map(Subscription::getUrl)
+                .map(Subscription::getLocation)
                 .collect(Collectors.toList());
 
         // Get list of non-ids subscribers with isPushData == true.
         final var recipientsWithData = subscriptions.stream()
                 .filter(subscription -> !subscription.isIdsProtocol() && subscription.isPushData())
-                .map(Subscription::getUrl)
+                .map(Subscription::getLocation)
                 .collect(Collectors.toList());
 
         // Update non-ids subscribers.
-        final var notification = new Notification(new Date(), target, Event.UPDATED);
+        // final var notification = new Notification(new Date(), target, Event.UPDATED);
+        final var notification = new HashMap<String, String>() {{
+            put("ids-target", target.toString());
+            put("ids-event", Event.UPDATED.toString());
+        }};
         if (!recipients.isEmpty()) {
-            new Thread(new SubscriberNotificationRunner(notification, recipients, null)).start();
+            sendNotification(recipients, notification, InputStream.nullInputStream());
         }
+
+        // Only send data if entity is of type artifact.
         if (!recipientsWithData.isEmpty()) {
-            new Thread(new SubscriberNotificationRunner(notification, recipients,
-                    retrieveDataByArtifact(entity))).start();
+            if (entity instanceof Artifact) {
+                sendNotification(recipientsWithData, notification, retrieveDataByArtifact(entity));
+            } else {
+                sendNotification(recipientsWithData, notification, InputStream.nullInputStream());
+            }
         }
     }
 
-    private void notifyIdsSubscribers(final List<Subscription> subscriptions,
-                                      final AbstractEntity entity) {
+    private void notifyIdsSubscribers(final List<Subscription> subscriptions, final Entity entity) {
         final var idsRecipients = subscriptions.stream()
                 .filter(Subscription::isIdsProtocol)
-                .map(Subscription::getUrl)
+                .map(Subscription::getLocation)
                 .collect(Collectors.toList());
 
         final var resources = getIdsResourcesFromEntity(entity);
@@ -151,29 +177,29 @@ public class SubscriberNotificationService {
             // Send update message for every found resource.
             for (final var resource : resources) {
                 try {
-                    if (messageSvc.sendAndValidateResourceUpdateMessage(recipient, resource)) {
+                    final var response = messageSvc.sendResourceUpdateMessage(recipient, resource);
+                    if (response.isPresent()) {
                         if (log.isDebugEnabled()) {
                             log.debug("Successfully sent update message. [url=({})]", recipient);
                         }
                     } else {
                         if (log.isDebugEnabled()) {
-                            log.debug("{} [url=({})]", ErrorMessages.UPDATE_MESSAGE_FAILED,
+                            log.debug("{} [url=({})]", ErrorMessage.UPDATE_MESSAGE_FAILED,
                                     recipient);
                         }
                     }
                 } catch (Exception e) {
                     if (log.isWarnEnabled()) {
                         log.debug("{} [url=({}), exception=({})]",
-                                ErrorMessages.UPDATE_MESSAGE_FAILED, recipient, e.getMessage());
+                                ErrorMessage.UPDATE_MESSAGE_FAILED, recipient, e.getMessage());
                     }
                 }
             }
-
         }
     }
 
     // TODO refactor to recursive method calls
-    private List<Resource> getIdsResourcesFromEntity(final AbstractEntity entity) {
+    private List<Resource> getIdsResourcesFromEntity(final Entity entity) {
         var updatedResources = new ArrayList<Resource>();
         if (entity instanceof OfferedResource) {
             updatedResources.add(resourceBuilder.create((OfferedResource) entity));
@@ -210,7 +236,7 @@ public class SubscriberNotificationService {
      * @param entity The database entity.
      * @return Data as input stream.
      */
-    private InputStream retrieveDataByArtifact(final AbstractEntity entity) {
+    private InputStream retrieveDataByArtifact(final Entity entity) {
         if (entity instanceof Artifact) {
             final var id = entity.getId();
             try {
@@ -219,6 +245,21 @@ public class SubscriberNotificationService {
                 log.debug("Failed to retrieve data. [exception=({})]", exception.getMessage());
             }
         }
-        return null;
+        return InputStream.nullInputStream();
+    }
+
+    private void sendNotification(final List<URI> recipients,
+                                  final Map<String, String> notification, final InputStream data) {
+        for (final var recipient : recipients) {
+            final var args = new HttpService.HttpArgs();
+            args.setHeaders(notification);
+            try {
+                httpService.post(recipient.toURL(), args, data);
+            } catch (IOException exception) {
+                if (log.isWarnEnabled()) {
+                    log.warn("Could not notify subscriber. [url=({})]", recipient);
+                }
+            }
+        }
     }
 }

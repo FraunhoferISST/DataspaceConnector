@@ -15,7 +15,9 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import de.fraunhofer.iais.eis.RejectionMessage;
+import java.net.URI;
+import java.util.Objects;
+
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfiguration;
@@ -45,9 +47,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
-import java.util.Objects;
 
 /**
  * Controller for sending description request messages.
@@ -115,12 +114,10 @@ public class DescriptionRequestMessageController {
 
             final var response = result.getIn().getBody(Response.class);
             if (response != null) {
-                if (response.getHeader() instanceof RejectionMessage) {
-                    return new ResponseEntity<>(response.getBody(), HttpStatus.EXPECTATION_FAILED);
-                }
                 payload = response.getBody();
             } else {
-                final var responseEntity = result.getIn().getBody(ResponseEntity.class);
+                final var responseEntity =
+                    toObjectResponse(result.getIn().getBody(ResponseEntity.class));
                 return Objects.requireNonNullElseGet(responseEntity,
                         () -> new ResponseEntity<Object>("An internal server error occurred.",
                                 HttpStatus.INTERNAL_SERVER_ERROR));
@@ -130,7 +127,7 @@ public class DescriptionRequestMessageController {
                 // Send and validate description request/response message.
                 final var response = descriptionReqSvc.sendMessage(recipient, elementId);
 
-                // Read the response message.
+                // Read and process the response message.
                 payload = MessageUtils.extractPayloadFromMultipartMessage(response);
             } catch (MessageException exception) {
                 // If the message could not be built.
@@ -143,21 +140,25 @@ public class DescriptionRequestMessageController {
                 return ControllerUtils.respondWithContent(e.getContent());
             }
         }
+        return new ResponseEntity<>(convertToAnswer(elementId, payload), HttpStatus.OK);
+    }
 
-        // Process the response message.
-        if (!Utils.isEmptyOrNull(elementId)) {
-            return new ResponseEntity<>(payload, HttpStatus.OK);
-        } else {
-            try {
-                // Get payload as component.
-                final var component =
-                        deserializationSvc.getInfrastructureComponent(payload);
-                return ResponseEntity.ok(component.toRdf());
-            } catch (IllegalArgumentException e) {
-                // If the response is not of type base connector.
-                return new ResponseEntity<>(payload, HttpStatus.OK);
-            }
+    private String convertToAnswer(final URI elementId, final String payload) {
+        return Utils.isEmptyOrNull(elementId) ? unwrapResponse(payload) : payload;
+    }
+
+    private String unwrapResponse(final String payload) {
+        try {
+            // Get payload as component.
+            return deserializationSvc.getInfrastructureComponent(payload).toRdf();
+        } catch (IllegalArgumentException ignored) {
+            // If the response is not of type base connector.
+            return payload;
         }
+    }
 
+    @SuppressWarnings("unchecked")
+    private static ResponseEntity<Object> toObjectResponse(final ResponseEntity<?> response) {
+        return (ResponseEntity<Object>) response;
     }
 }

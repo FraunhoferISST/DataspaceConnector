@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.util;
 
-import io.dataspaceconnector.model.QueryInput;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

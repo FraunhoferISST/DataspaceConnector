@@ -17,6 +17,8 @@ package io.dataspaceconnector.service.message.processing;
 
 import de.fraunhofer.iais.eis.Message;
 import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.exception.PolicyExecutionException;
+import io.dataspaceconnector.exception.UUIDFormatException;
 import io.dataspaceconnector.service.message.type.LogMessageService;
 import io.dataspaceconnector.util.UUIDUtils;
 import lombok.NonNull;
@@ -26,7 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-
 
 /**
  * Service for communication with the clearing house.
@@ -66,12 +67,13 @@ public class ClearingHouseService {
      * @param idsMessage the message that should be logged.
      */
     public void logIdsMessage(final Message idsMessage) {
-        final var transferContractId = UUIDUtils.uuidFromUri(idsMessage.getTransferContract());
         if (isClearingHouseEnabled()) {
             try {
+                final var transferContractId =
+                                    UUIDUtils.uuidFromUri(idsMessage.getTransferContract());
                 final var url = buildDestination(URI.create(transferContractId.toString()));
                 logMessageSvc.sendMessage(url, idsMessage.toRdf());
-            } catch (Exception exception) {
+            } catch (UUIDFormatException | PolicyExecutionException exception) {
                 if (log.isWarnEnabled()) {
                     log.warn("Failed to log message to clearing house. [exception=({})]",
                             exception.getMessage());

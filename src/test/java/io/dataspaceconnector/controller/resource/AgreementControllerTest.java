@@ -16,9 +16,9 @@
 package io.dataspaceconnector.controller.resource;
 
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.AgreementDesc;
 import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;
+import io.dataspaceconnector.model.agreement.Agreement;
+import io.dataspaceconnector.model.agreement.AgreementDesc;
 import io.dataspaceconnector.service.resource.AgreementService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

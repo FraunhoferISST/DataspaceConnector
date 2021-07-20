@@ -34,6 +34,10 @@ import de.fraunhofer.iais.eis.ResourceUpdateMessage;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.TokenFormat;
 import io.dataspaceconnector.camel.dto.Request;
+import io.dataspaceconnector.camel.processor.controller.messagebuilder.ConnectorUnavailableMessageBuilder;
+import io.dataspaceconnector.camel.processor.controller.messagebuilder.ConnectorUpdateMessageBuilder;
+import io.dataspaceconnector.camel.processor.controller.messagebuilder.ResourceUnavailableMessageBuilder;
+import io.dataspaceconnector.camel.processor.controller.messagebuilder.ResourceUpdateMessageBuilder;
 import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import lombok.SneakyThrows;
@@ -56,7 +60,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {ConnectorUnavailableMessageBuilder.class,
+@SpringBootTest(classes = { ConnectorUnavailableMessageBuilder.class,
         ConnectorUpdateMessageBuilder.class, ResourceUnavailableMessageBuilder.class,
         ResourceUpdateMessageBuilder.class})
 public class IdsMessageBuilderTest {
@@ -71,7 +75,7 @@ public class IdsMessageBuilderTest {
     private ConnectorService connectorService;
 
     @Captor
-    private ArgumentCaptor<Request> captor;
+    private ArgumentCaptor<Request<?, ?, ?>> captor;
 
     @Autowired
     private ConnectorUnavailableMessageBuilder connectorUnavailableBuilder;

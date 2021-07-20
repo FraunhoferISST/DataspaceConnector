@@ -17,7 +17,7 @@ package io.dataspaceconnector.controller.resource.view;
 
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers.OfferedResourceController;
-import io.dataspaceconnector.model.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResource;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
@@ -71,6 +71,12 @@ public class OfferedResourceViewAssembler
                         .getResource(resource.getId(), null, null))
                         .withRel("subscriptions");
         view.add(subscriptionLink);
+
+        final var brokerLink =
+                linkTo(methodOn(RelationControllers.OfferedResourcesToBrokers.class)
+                        .getResource(resource.getId(), null, null))
+                        .withRel("brokers");
+        view.add(brokerLink);
 
         return view;
     }
