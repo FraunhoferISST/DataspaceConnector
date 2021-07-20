@@ -15,7 +15,8 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import java.net.URI;
+
 import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
@@ -39,8 +40,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
-
 /**
  * Controller for sending ids subscription (request) messages.
  */
@@ -54,11 +53,6 @@ public class SubscriptionMessageController {
      * Service for message handling.
      */
     private final @NonNull SubscriptionRequestService subscriptionReqSvc;
-
-    /**
-     * Service for handle application.properties settings.
-     */
-    private final @NonNull ConnectorConfiguration connectorConfig;
 
     /**
      * Subscribe to updates of an provided ids element.
