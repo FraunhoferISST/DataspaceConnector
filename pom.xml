@@ -916,6 +916,9 @@
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
 						<version>${jacoco.version}</version>
+						<configuration>
+							<exclude>io.dataspaceconnector.service.message.subscription</exclude>
+						</configuration>
 						<executions>
 							<execution>
 								<id>default-prepare-agent</id>
