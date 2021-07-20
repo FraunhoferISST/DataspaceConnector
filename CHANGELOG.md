@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [6.0.0] - XXXX-XX-XX
+## [6.0.0] - 2021-07-20
 
 ### Added
 - Provide REST endpoint for full-text search at the IDS Broker: `/ids/search`.
@@ -21,7 +21,8 @@ All notable changes to this project will be documented in this file.
   * When enabling IDSCPv2, a valid IDS certificate is required!
 - Implement subscription transfer pattern.
   * Add user profile for apps/services with access to subscription REST endpoints.
-  * Allow subscriptions for offered & requested resources, representations, and artifacts.
+  * Allow subscriptions for offered & requested resources, representations, and artifacts via REST
+    endpoints.
   * Create `PUT /notify` endpoint to manually notify subscribers (ids & non-ids).
   * Automatically notify subscribers on entity updates.
   * Create REST endpoints for sending (un-)subscriptions via ids messages.
@@ -39,7 +40,6 @@ All notable changes to this project will be documented in this file.
 - Refactor message handlers using Camel routes.
 - Increase postgres version to 42.2.23.
 - Increase jackson version to 2.12.4.
-- Increase camel version from 3.10.0 to 3.11.0.
 - Increase equalsverifier from 3.6.1 to 3.7.0.
 - Increase spotbugs from 4.2.3 to 4.3.0.
 
