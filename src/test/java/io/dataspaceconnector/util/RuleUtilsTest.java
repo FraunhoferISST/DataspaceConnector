@@ -971,7 +971,7 @@ class RuleUtilsTest {
         final var constraint = new ConstraintBuilder()
                 ._leftOperand_(LeftOperand.ELAPSED_TIME)
                 ._operator_(BinaryOperator.SHORTER_EQ)
-                ._rightOperand_(new RdfResource(duration, URI.create("xsd:duration")))
+                ._rightOperand_(new RdfResource(duration, URI.create("http://www.w3.org/2001/XMLSchema#duration")))
                 .build();
 
         final var permission = new PermissionBuilder()
@@ -1015,7 +1015,7 @@ class RuleUtilsTest {
                 ._leftOperand_(LeftOperand.ELAPSED_TIME)
                 ._operator_(BinaryOperator.SHORTER_EQ)
                 ._rightOperand_(new RdfResource(
-                        "I am not a duration.", URI.create("xsd:duration")))
+                        "I am not a duration.", URI.create("http://www.w3.org/2001/XMLSchema#duration")))
                 .build();
 
         final var permission = new PermissionBuilder()
