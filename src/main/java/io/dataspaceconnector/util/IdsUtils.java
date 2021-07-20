@@ -15,9 +15,25 @@
  */
 package io.dataspaceconnector.util;
 
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.net.URI;
+import java.text.Normalizer;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.TimeZone;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
+import de.fraunhofer.iais.eis.BasicAuthentication;
 import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
 import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.Connector;
@@ -40,24 +56,10 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.exception.RdfBuilderException;
+import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.DeployMode;
 import lombok.SneakyThrows;
-
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.net.URI;
-import java.text.Normalizer;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.TimeZone;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -401,20 +403,24 @@ public final class IdsUtils {
      */
     public static Proxy getProxy(final io.dataspaceconnector.model.proxy.Proxy proxy) {
         // TODO auth from DSC has ID field, not available in InfoModel. Create auth build service.
-        final var auth = proxy.getAuthentication();
-        final var idsAuth = new BasicAuthenticationBuilder()
-                ._authPassword_(auth.getPassword())
-                ._authUsername_(auth.getUsername())
-                .build();
-
         return new ProxyBuilder()._noProxy_(proxy.getExclusions()
                 .stream()
                 .map(URI::create)
                 .collect(Collectors.toList()))
-                ._proxyAuthentication_(idsAuth)
+                ._proxyAuthentication_(proxy.getAuthentication() == null
+                                               ? null
+                                               : getBasicAuthHeader(proxy.getAuthentication()))
                 ._proxyURI_(proxy.getLocation())
                 .build();
     }
+
+    private static BasicAuthentication getBasicAuthHeader(final BasicAuth auth) {
+        return new BasicAuthenticationBuilder()
+                ._authPassword_(auth.getPassword())
+                ._authUsername_(auth.getUsername())
+                .build();
+    }
+
 
     /**
      * Fill ids connector with config properties.
