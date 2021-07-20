@@ -23,7 +23,7 @@ echo "Setup provider and consumer"
 helm install consumer charts/dataspace-connector --set env.config.SPRING_APPLICATION_NAME="Consumer Connector"
 
 # Provider setup
-# sed -i "s/^appVersion:.*$/appVersion: ci/" charts/dataspace-connector/Chart.yaml
+sed -i "s/^appVersion:.*$/appVersion: ci/" charts/dataspace-connector/Chart.yaml
 helm install provider charts/dataspace-connector --set env.config.SPRING_APPLICATION_NAME="Producer Connector"
 
 echo "Waiting for readiness"
@@ -45,9 +45,77 @@ echo "Consumer name: $CONSUMER_POD_NAME"
 echo "Consumer port: $CONSUMER_CONTAINER_PORT"
 
 echo "Run scripts"
+echo "
+********************************************************************************
+Testing contract_negotation_allow_access.py
+********************************************************************************
+"
+chmod +x ./scripts/tests/contract_negotation_allow_access.py
+./scripts/tests/contract_negotation_allow_access.py "http://provider-dataspace-connector" "http://consumer-dataspace-connector"
 
-chmod +x ./scripts/ci/e2e/testing.sh
-./scripts/ci/e2e/testing.sh
+echo "
+********************************************************************************
+Testing contract_negotation_connector_restricted_access.py
+********************************************************************************
+"
+chmod +x ./scripts/tests/contract_negotation_connector_restricted_access.py
+./scripts/tests/contract_negotation_connector_restricted_access.py "http://provider-dataspace-connector" "http://consumer-dataspace-connector"
+
+echo "
+********************************************************************************
+Testing contract_negotation_count_access.py
+********************************************************************************
+"
+chmod +x ./scripts/tests/contract_negotation_count_access.py
+./scripts/tests/contract_negotation_count_access.py "http://provider-dataspace-connector" "http://consumer-dataspace-connector"
+
+echo "
+********************************************************************************
+Testing contract_negotation_log_access.py
+********************************************************************************
+"
+chmod +x ./scripts/tests/contract_negotation_log_access.py
+./scripts/tests/contract_negotation_log_access.py "http://provider-dataspace-connector" "http://consumer-dataspace-connector"
+
+echo "
+********************************************************************************
+Testing contract_negotation_notify_access.py
+********************************************************************************
+"
+chmod +x ./scripts/tests/contract_negotation_notify_access.py
+./scripts/tests/contract_negotation_notify_access.py "http://provider-dataspace-connector" "http://consumer-dataspace-connector"
+
+echo "
+********************************************************************************
+Testing contract_negotation_prohibit_access.py
+********************************************************************************
+"
+chmod +x ./scripts/tests/contract_negotation_prohibit_access.py
+./scripts/tests/contract_negotation_prohibit_access.py "http://provider-dataspace-connector" "http://consumer-dataspace-connector"
+
+echo "
+********************************************************************************
+Testing contract_negotation_security_level_access.py
+********************************************************************************
+"
+chmod +x ./scripts/tests/contract_negotation_security_level_access.py
+./scripts/tests/contract_negotation_security_level_access.py "http://provider-dataspace-connector" "http://consumer-dataspace-connector"
+
+echo "
+********************************************************************************
+Testing multiple_artifacts.py
+********************************************************************************
+"
+chmod +x ./scripts/tests/multiple_artifacts.py
+./scripts/tests/multiple_artifacts.py "http://provider-dataspace-connector" "http://consumer-dataspace-connector"
+
+echo "
+********************************************************************************
+Testing single_artifact_multiple_policies.py
+********************************************************************************
+"
+chmod +x ./scripts/tests/single_artifact_multiple_policies.py
+./scripts/tests/single_artifact_multiple_policies.py "http://provider-dataspace-connector" "http://consumer-dataspace-connector"
 
 echo "Cleanup"
 helm uninstall provider
