@@ -18,8 +18,8 @@ package io.dataspaceconnector.service.resource;
 import io.dataspaceconnector.camel.exception.SubscriptionProcessingException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.artifact.Artifact;
-import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
@@ -54,6 +54,12 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
      */
     @Autowired
     private RelationServices.RepresentationSubscriptionLinker repSubLinker;
+
+    /**
+     * Service for linking requested resources and subscriptions.
+     */
+    @Autowired
+    private RelationServices.RequestedResourceSubscriptionLinker requestSubLinker;
 
     /**
      * Service for linking offered resources and subscriptions.
@@ -177,7 +183,7 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
         } else if (value instanceof OfferedResource) {
             offerSubLinker.add(value.getId(), Set.of(subscriptionId));
         } else if (value instanceof RequestedResource) {
-            repSubLinker.add(value.getId(), Set.of(subscriptionId));
+            requestSubLinker.add(value.getId(), Set.of(subscriptionId));
         } else {
             throw new SubscriptionProcessingException("No subscription offered for this target.");
         }

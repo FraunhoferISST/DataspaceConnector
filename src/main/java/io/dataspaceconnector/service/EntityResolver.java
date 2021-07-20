@@ -25,6 +25,8 @@ import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.ids.builder.IdsArtifactBuilder;
@@ -80,6 +82,11 @@ public class EntityResolver {
      * Service for offered resources.
      */
     private final @NonNull ResourceService<OfferedResource, OfferedResourceDesc> offerService;
+
+    /**
+     * Service for requested resources.
+     */
+    private final @NonNull ResourceService<RequestedResource, RequestedResourceDesc> requestService;
 
     /**
      * Service for catalogs.
@@ -146,7 +153,6 @@ public class EntityResolver {
      *
      * @param elementId The entity id.
      * @return The respective object.
-     * @throws ResourceNotFoundException If the resource could not be found.
      * @throws IllegalArgumentException  If the resource is null or the elementId.
      */
     public Optional<Entity> getEntityById(final URI elementId) {
@@ -175,6 +181,8 @@ public class EntityResolver {
                     return Optional.of(ruleService.get(entityId));
                 case AGREEMENTS:
                     return Optional.of(agreementService.get(entityId));
+                case REQUESTS:
+                    return Optional.of(requestService.get(entityId));
                 default:
                     return Optional.empty();
             }

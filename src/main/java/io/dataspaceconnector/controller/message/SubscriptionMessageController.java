@@ -20,7 +20,7 @@ import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
-import io.dataspaceconnector.model.subscription.Subscription;
+import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.service.message.type.SubscriptionRequestService;
 import io.dataspaceconnector.util.MessageUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -81,7 +81,7 @@ public class SubscriptionMessageController {
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The subscription object.")
-            @RequestBody final Subscription subscription) {
+            @RequestBody final SubscriptionDesc subscription) {
         // TODO IDSCPv2
         try {
             // Send and validate request/response message.
