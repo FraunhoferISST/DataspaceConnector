@@ -15,25 +15,14 @@
  */
 package io.dataspaceconnector.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static de.fraunhofer.ids.messaging.util.IdsMessageUtils.getGregorianNow;
-
-import org.junit.jupiter.api.Test;
-
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import java.net.URI;
 import java.text.ParseException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
 
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
@@ -51,7 +40,16 @@ import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.model.contract.Contract;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import static de.fraunhofer.ids.messaging.util.IdsMessageUtils.getGregorianNow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RuleUtilsTest {
 
