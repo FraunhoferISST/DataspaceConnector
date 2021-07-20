@@ -54,7 +54,7 @@ public class GenericEndpointViewAssembler
         view.add(getSelfLink(genericEndpoint.getId()));
 
         if (genericEndpoint.getDataSource() != null) {
-            view.add(dataSourceViewAssembler.getSelfLink(genericEndpoint.getId())
+            view.add(dataSourceViewAssembler.getSelfLink(genericEndpoint.getDataSource().getId())
                                             .withRel("dataSource"));
         }
 
