@@ -19,6 +19,12 @@ All notable changes to this project will be documented in this file.
   * Add property `idscp2.enabled` for enabling and disabling IDSCPv2 server.
   * Add properties for configuring keystore and truststore for IDSCPv2.
   * When enabling IDSCPv2, a valid IDS certificate is required!
+- Implement subscription transfer pattern.
+  * Add user profile for apps/services with access to subscription REST endpoints.
+  * Allow subscriptions for offered & requested resources, representations, and artifacts.
+  * Create `PUT /notify` endpoint to manually notify subscribers (ids & non-ids).
+  * Automatically notify subscribers on entity updates.
+  * Create REST endpoints for sending (un-)subscriptions via ids messages.
 
 ### Changed
 - Replace IDS Connector Framework v5.0.4 by IDS Messaging Services v2.0.0.
