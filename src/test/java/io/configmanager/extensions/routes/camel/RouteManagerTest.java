@@ -15,6 +15,9 @@
  */
 package io.configmanager.extensions.routes.camel;
 
+import java.net.URI;
+import java.util.UUID;
+
 import de.fraunhofer.iais.eis.AppRouteBuilder;
 import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
 import de.fraunhofer.iais.eis.GenericEndpointBuilder;
@@ -25,8 +28,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -42,8 +43,9 @@ public class RouteManagerTest {
     void testCreateAndDeployXMLRoute() throws RouteCreationException {
         final var authenticationBuilder = new BasicAuthenticationBuilder();
         final var authentication = authenticationBuilder._authPassword_("test")._authUsername_("test").build();
+        final var uuid = UUID.randomUUID();
 
-        final var appRoute = new AppRouteBuilder(URI.create("http://approute"))
+        final var appRoute = new AppRouteBuilder(URI.create("http://approute/" + uuid))
                 ._routeDeployMethod_("CAMEL")
                 ._appRouteStart_(Util.asList(new GenericEndpointBuilder()
                         ._genericEndpointAuthentication_(authentication)
@@ -54,6 +56,6 @@ public class RouteManagerTest {
                         ._accessURL_(URI.create("http://test")).build()))
                 .build();
         routeManager.createAndDeployXMLRoute(appRoute);
-        assertTrue(camelContext.getRouteDefinitions().get(0).toString().startsWith("Route(app-route_approute)"));
+        assertTrue(camelContext.getRouteDefinitions().get(0).toString().startsWith("Route(app-route_" + uuid + ")"));
     }
 }
