@@ -15,7 +15,12 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import de.fraunhofer.iais.eis.RejectionMessage;
+import java.net.URI;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+import javax.persistence.PersistenceException;
+
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.camel.dto.Response;
@@ -55,12 +60,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 
 /**
  * This controller provides the endpoint for sending a contract request message and starting the
@@ -163,9 +162,6 @@ public class ContractRequestMessageController {
 
             final var response = result.getIn().getBody(Response.class);
             if (response != null) {
-                if (response.getHeader() instanceof RejectionMessage) {
-                    return new ResponseEntity<>(response.getBody(), HttpStatus.EXPECTATION_FAILED);
-                }
                 agreementId = result.getProperty(ParameterUtils.AGREEMENT_ID_PARAM, UUID.class);
             } else {
                 final var responseEntity =

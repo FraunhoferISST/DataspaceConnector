@@ -34,6 +34,7 @@ All notable changes to this project will be documented in this file.
   `GlobalMessageService`.
 - Handle DAT retrieving errors in `PRODUCTIVE_DEPLOYMENT` with status code 500 and a corresponding
   message.
+- Artifact PUT `/api/data` changed reponse code from Ok (200) to NoContent (204).
 - Change naming of the resource's license attribute from `licence` to `license`.
 - Refactor message handlers using Camel routes.
 - Increase postgres version to 42.2.23.

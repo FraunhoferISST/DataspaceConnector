@@ -127,9 +127,6 @@ public class QueryMessageController {
 
             final var response = result.getIn().getBody(Response.class);
             if (response != null) {
-                if (response.getHeader() instanceof RejectionMessage) {
-                    return new ResponseEntity<>(response.getBody(), HttpStatus.EXPECTATION_FAILED);
-                }
                 return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
             } else {
                 final var responseEntity =

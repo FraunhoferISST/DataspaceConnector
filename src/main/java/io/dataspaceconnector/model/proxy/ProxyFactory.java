@@ -63,8 +63,7 @@ public class ProxyFactory extends AbstractFactory<Proxy, ProxyDesc> {
             return false;
         }
 
-        if (proxy.getAuthentication() != null
-                && !proxy.getAuthentication().equals(new BasicAuth(auth))) {
+        if (new BasicAuth(auth).equals(proxy.getAuthentication())) {
             return false;
         }
 

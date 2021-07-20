@@ -100,16 +100,14 @@ public class RouteHelperTest {
         /* ARRANGE */
         final var endpoint = getConnectorEndpoint();
         final var route = getRoute(endpoint, endpoint);
-        final var appRoute = getAppRoute();
 
-        when(appRouteBuilder.create(route)).thenReturn(appRoute);
-        doNothing().when(routeManager).deleteRoute(appRoute);
+        doNothing().when(routeManager).deleteRoute(route);
 
         /* ACT */
         routeHelper.delete(route);
 
         /* ASSERT */
-        verify(routeManager, times(1)).deleteRoute(appRoute);
+        verify(routeManager, times(1)).deleteRoute(route);
     }
 
     /**************************************************************************
