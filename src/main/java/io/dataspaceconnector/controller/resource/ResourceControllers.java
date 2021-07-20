@@ -15,6 +15,15 @@
  */
 package io.dataspaceconnector.controller.resource;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
+
 import de.fraunhofer.ids.messaging.protocol.UnexpectedResponseException;
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
 import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
@@ -86,15 +95,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * This class contains all implementations of the {@link BaseResourceController}.
@@ -351,7 +351,7 @@ public final class ResourceControllers {
                 @Valid @PathVariable(name = "id") final UUID artifactId,
                 @RequestBody final byte[] inputStream) throws IOException {
             artifactSvc.setData(artifactId, new ByteArrayInputStream(inputStream));
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         }
     }
 

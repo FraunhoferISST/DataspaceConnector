@@ -24,7 +24,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.Request;
@@ -42,7 +41,6 @@ import java.util.Map;
 /**
  * This class builds up http or httpS endpoint connections and sends GET requests.
  */
-@Log4j2
 @Service
 @RequiredArgsConstructor
 public class HttpService {
@@ -147,7 +145,8 @@ public class HttpService {
      * @return The response.
      * @throws IOException if the request failed.
      */
-    public Response post(final URL target, final HttpArgs args, final InputStream data) throws IOException {
+    public Response post(final URL target, final HttpArgs args, final InputStream data)
+            throws IOException {
         Utils.requireNonNull(target, ErrorMessage.URI_NULL);
         Utils.requireNonNull(args, ErrorMessage.HTTP_ARGS_NULL);
 
