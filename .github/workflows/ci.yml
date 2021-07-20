@@ -193,7 +193,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build image
         run: |
-          echo docker --version
           docker build . -t $IMAGE:ci
         env:
           IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
