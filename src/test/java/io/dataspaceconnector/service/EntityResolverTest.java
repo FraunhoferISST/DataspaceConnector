@@ -15,9 +15,14 @@
  */
 package io.dataspaceconnector.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URI;
+import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
 
+import de.fraunhofer.iais.eis.ContractAgreementBuilder;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
@@ -26,6 +31,8 @@ import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.ids.builder.IdsArtifactBuilder;
@@ -41,6 +48,8 @@ import io.dataspaceconnector.service.resource.RepresentationService;
 import io.dataspaceconnector.service.resource.ResourceService;
 import io.dataspaceconnector.service.resource.RuleService;
 import io.dataspaceconnector.service.usagecontrol.AllowAccessVerifier;
+import io.dataspaceconnector.util.IdsUtils;
+import io.dataspaceconnector.util.QueryInput;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -53,6 +62,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 @SpringBootTest(classes = {EntityResolver.class})
 public class EntityResolverTest {
@@ -65,6 +76,9 @@ public class EntityResolverTest {
 
     @MockBean
     private ResourceService<OfferedResource, OfferedResourceDesc> offerService;
+
+    @MockBean
+    private ResourceService<RequestedResource, RequestedResourceDesc> requestedService;
 
     @MockBean
     private CatalogService catalogService;
@@ -240,7 +254,47 @@ public class EntityResolverTest {
 
 
     // getDataByArtifactId & getContractAgreementsByTarget
+    @Test
+    void getDataByArtifactId_validArtifactEmptyQuery_willReturnData() throws IOException {
+        /* ARRANGE */
+        final var endpointId = UUID.randomUUID();
+        final var requestedArtifact = URI.create("https://requested/" + endpointId);
+        final var queryInput = new QueryInput();
+        final var expect = new ByteArrayInputStream(new byte[]{});
 
+        Mockito.doReturn(expect).when(artifactService).getData(any(), any(), eq(endpointId), eq(queryInput));
+
+        /* ACT */
+        final var result = resolver.getDataByArtifactId(requestedArtifact, queryInput);
+
+        /* ASSERT */
+        assertEquals(expect, result);
+    }
+
+    @Test
+    void getContractAgreementsByTarget_validTarget_returnAgreementList() {
+        /* ARRANGE */
+        final var endpointId = UUID.randomUUID();
+        final var target = URI.create("https://requested/" + endpointId);
+        final var agreement = new Agreement();
+        ReflectionTestUtils.setField(agreement, "value", "AGREEMENT");
+        final var artifact = new ArtifactImpl();
+        ReflectionTestUtils.setField(artifact, "agreements", List.of(agreement));
+
+        Mockito.doReturn(artifact).when(artifactService).get(eq(endpointId));
+
+        final var idsAgreement = new ContractAgreementBuilder()
+                ._contractStart_(IdsUtils.getGregorianOf(ZonedDateTime.now()))
+                .build();
+
+        Mockito.doReturn(idsAgreement).when(deserializationService).getContractAgreement(eq(agreement.getValue()));
+
+        /* ACT */
+        final var result = resolver.getContractAgreementsByTarget(target);
+
+        /* ASSERT */
+        assertEquals(List.of(idsAgreement), result);
+    }
 
 
     /***********************************************************************************************
