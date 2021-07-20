@@ -917,7 +917,9 @@
 						<artifactId>jacoco-maven-plugin</artifactId>
 						<version>${jacoco.version}</version>
 						<configuration>
-							<exclude>io/dataspaceconnector/service/message/subscription/*</exclude>
+							<excludes>
+								<exclude>io/dataspaceconnector/service/message/subscription/*</exclude>
+							</excludes>
 						</configuration>
 						<executions>
 							<execution>
