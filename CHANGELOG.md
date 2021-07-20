@@ -33,7 +33,7 @@ All notable changes to this project will be documented in this file.
   * Choose active configuration from list of configurations.
 
 ### Changed
-- Replace IDS Connector Framework v5.0.4 by IDS Messaging Services v2.0.0.
+- Replace IDS Connector Framework v5.0.4 by IDS Messaging Services v2.0.1.
 - Edit response codes and response content for the following endpoints: `/ids/connector/unavailable`,
   `/ids/connector/update`, `/ids/resource/unavailable`, `/ids/resource/update`, `/ids/query`.
 - Move implementation for sending IDS query, connector, and resource messages to
