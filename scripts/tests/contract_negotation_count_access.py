@@ -62,10 +62,10 @@ use_rule = provider.create_rule(
     "ids" : "https://w3id.org/idsa/core/",
     "idsc" : "https://w3id.org/idsa/code/"
   },
-  "@type" : "ids:Prohibition",
-  "@id" : "https://w3id.org/idsa/autogen/prohibition/a838e2a5-d3e8-4891-af73-0f3bf39381ce",
+  "@type" : "ids:Permission",
+  "@id" : "https://w3id.org/idsa/autogen/permission/4ad88c11-a00c-4479-94f6-2a68cce005ea",
   "ids:description" : [ {
-    "@value" : "prohibit-access",
+    "@value" : "n-times-usage",
     "@type" : "http://www.w3.org/2001/XMLSchema#string"
   } ],
   "ids:title" : [ {
@@ -74,6 +74,20 @@ use_rule = provider.create_rule(
   } ],
   "ids:action" : [ {
     "@id" : "idsc:USE"
+  } ],
+  "ids:constraint" : [ {
+    "@type" : "ids:Constraint",
+    "@id" : "https://w3id.org/idsa/autogen/constraint/a5d77dcd-f838-48e9-bdc1-4b219946f8ac",
+    "ids:rightOperand" : {
+      "@value" : "2",
+      "@type" : "http://www.w3.org/2001/XMLSchema#double"
+    },
+    "ids:leftOperand" : {
+      "@id" : "idsc:COUNT"
+    },
+    "ids:operator" : {
+      "@id" : "idsc:LTEQ"
+    }
   } ]
 }"""
     }
@@ -101,7 +115,7 @@ offer = consumer.descriptionRequest(provider_alias + "/api/ids/data", offers)
 pprint.pprint(offer)
 
 # Negotiate contract
-obj = offer["ids:contractOffer"][0]["ids:prohibition"][0]
+obj = offer["ids:contractOffer"][0]["ids:permission"][0]
 obj["ids:target"] = artifact
 response = consumer.contractRequest(
     provider_alias + "/api/ids/data", offers, artifact, False, obj
@@ -117,6 +131,18 @@ pprint.pprint(artifacts)
 
 first_artifact = artifacts["_embedded"]["artifacts"][0]["_links"]["self"]["href"]
 pprint.pprint(first_artifact)
+
+data = consumerResources.get_data(first_artifact).text
+pprint.pprint(data)
+
+if data != dataValue:
+    exit(1)
+
+data = consumerResources.get_data(first_artifact).text
+pprint.pprint(data)
+
+if data != dataValue:
+    exit(1)
 
 data = consumerResources.get_data(first_artifact).text
 pprint.pprint(data)

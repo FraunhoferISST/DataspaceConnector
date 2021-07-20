@@ -62,10 +62,10 @@ use_rule = provider.create_rule(
     "ids" : "https://w3id.org/idsa/core/",
     "idsc" : "https://w3id.org/idsa/code/"
   },
-  "@type" : "ids:Prohibition",
-  "@id" : "https://w3id.org/idsa/autogen/prohibition/a838e2a5-d3e8-4891-af73-0f3bf39381ce",
+  "@type" : "ids:Permission",
+  "@id" : "https://w3id.org/idsa/autogen/permission/d504b82f-79dd-4c93-969d-937ab6a1d676",
   "ids:description" : [ {
-    "@value" : "prohibit-access",
+    "@value" : "connector-restriction",
     "@type" : "http://www.w3.org/2001/XMLSchema#string"
   } ],
   "ids:title" : [ {
@@ -74,6 +74,20 @@ use_rule = provider.create_rule(
   } ],
   "ids:action" : [ {
     "@id" : "idsc:USE"
+  } ],
+  "ids:constraint" : [ {
+    "@type" : "ids:Constraint",
+    "@id" : "https://w3id.org/idsa/autogen/constraint/572c96ec-dd86-4b20-a849-a0ce8c255eee",
+    "ids:rightOperand" : {
+      "@value" : "https://w3id.org/idsa/autogen/baseConnector/7b934432-a85e-41c5-9f65-669219dde4ea",
+      "@type" : "http://www.w3.org/2001/XMLSchema#anyURI"
+    },
+    "ids:leftOperand" : {
+      "@id" : "idsc:SYSTEM"
+    },
+    "ids:operator" : {
+      "@id" : "idsc:SAME_AS"
+    }
   } ]
 }"""
     }
@@ -101,7 +115,7 @@ offer = consumer.descriptionRequest(provider_alias + "/api/ids/data", offers)
 pprint.pprint(offer)
 
 # Negotiate contract
-obj = offer["ids:contractOffer"][0]["ids:prohibition"][0]
+obj = offer["ids:contractOffer"][0]["ids:permission"][0]
 obj["ids:target"] = artifact
 response = consumer.contractRequest(
     provider_alias + "/api/ids/data", offers, artifact, False, obj
@@ -121,8 +135,7 @@ pprint.pprint(first_artifact)
 data = consumerResources.get_data(first_artifact).text
 pprint.pprint(data)
 
-expectedErorMessage = """{"message":"A policy restriction has been detected."}"""
-if data != expectedErorMessage:
+if data != dataValue:
     exit(1)
 
 exit(0)

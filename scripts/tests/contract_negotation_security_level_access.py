@@ -59,21 +59,36 @@ use_rule = provider.create_rule(
     data={
         "value": """{
   "@context" : {
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
     "ids" : "https://w3id.org/idsa/core/",
     "idsc" : "https://w3id.org/idsa/code/"
   },
-  "@type" : "ids:Prohibition",
-  "@id" : "https://w3id.org/idsa/autogen/prohibition/a838e2a5-d3e8-4891-af73-0f3bf39381ce",
+  "@type" : "ids:Permission",
+  "@id" : "https://w3id.org/idsa/autogen/permission/0c01b27b-8bf8-4844-bd2b-c8ebccd59676",
   "ids:description" : [ {
-    "@value" : "prohibit-access",
+    "@value" : "security-level-restriction",
     "@type" : "http://www.w3.org/2001/XMLSchema#string"
   } ],
   "ids:title" : [ {
     "@value" : "Example Usage Policy",
     "@type" : "http://www.w3.org/2001/XMLSchema#string"
   } ],
+  "ids:constraint" : [ {
+    "@type" : "ids:Constraint",
+    "@id" : "https://w3id.org/idsa/autogen/constraint/a2d9ac86-d3fc-4c28-b076-3ddcf0f7a371",
+    "ids:operator" : {
+      "@id" : "https://w3id.org/idsa/code/EQUALS"
+    },
+    "ids:leftOperand" : {
+      "@id" : "https://w3id.org/idsa/code/SECURITY_LEVEL"
+    },
+    "ids:rightOperand" : {
+      "@value" : "https://w3id.org/idsa/code/TRUST_SECURITY_PROFILE",
+      "@type" : "xsd:string"
+    }
+  } ],
   "ids:action" : [ {
-    "@id" : "idsc:USE"
+    "@id" : "https://w3id.org/idsa/code/USE"
   } ]
 }"""
     }
@@ -101,7 +116,7 @@ offer = consumer.descriptionRequest(provider_alias + "/api/ids/data", offers)
 pprint.pprint(offer)
 
 # Negotiate contract
-obj = offer["ids:contractOffer"][0]["ids:prohibition"][0]
+obj = offer["ids:contractOffer"][0]["ids:permission"][0]
 obj["ids:target"] = artifact
 response = consumer.contractRequest(
     provider_alias + "/api/ids/data", offers, artifact, False, obj

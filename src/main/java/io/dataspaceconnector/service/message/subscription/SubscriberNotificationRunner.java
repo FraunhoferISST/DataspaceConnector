@@ -95,7 +95,7 @@ public class SubscriberNotificationRunner implements Runnable {
                 .uri(uri)
                 .header("ids:target", notification.getTarget().toString())
                 .header("ids:event", notification.getEvent().toString())
-                .bodyValue(data)
+                .body(Mono.just(data), InputStream.class)
                 .retrieve().bodyToMono(String.class)
                 .retryWhen(Retry.fixedDelay(MAX_RETRIES, Duration.ofSeconds(RETRY_DELAY))
                         .filter(this::shouldRetry))

@@ -18,11 +18,10 @@ package io.dataspaceconnector.service.message.subscription;
 import de.fraunhofer.iais.eis.Resource;
 import io.dataspaceconnector.controller.util.Event;
 import io.dataspaceconnector.controller.util.Notification;
-import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.artifact.Artifact;
-import io.dataspaceconnector.model.resource.OfferedResource;
-import io.dataspaceconnector.util.QueryInput;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
 import io.dataspaceconnector.service.ids.builder.IdsResourceBuilder;
@@ -31,12 +30,14 @@ import io.dataspaceconnector.service.resource.ArtifactService;
 import io.dataspaceconnector.service.resource.SubscriptionService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
 import io.dataspaceconnector.util.ErrorMessage;
+import io.dataspaceconnector.util.QueryInput;
 import io.dataspaceconnector.util.SelfLinkHelper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -129,11 +130,19 @@ public class SubscriberNotificationService {
         // Update non-ids subscribers.
         final var notification = new Notification(new Date(), target, Event.UPDATED);
         if (!recipients.isEmpty()) {
-            new Thread(new SubscriberNotificationRunner(notification, recipients, null)).start();
-        }
-        if (!recipientsWithData.isEmpty()) {
             new Thread(new SubscriberNotificationRunner(notification, recipients,
-                    retrieveDataByArtifact(entity))).start();
+                    new ByteArrayInputStream("".getBytes()))).start();
+        }
+
+        // Only send data if entity is of type artifact.
+        if (!recipientsWithData.isEmpty()) {
+            if (entity instanceof Artifact) {
+                new Thread(new SubscriberNotificationRunner(notification, recipientsWithData,
+                        retrieveDataByArtifact(entity))).start();
+            } else {
+                new Thread(new SubscriberNotificationRunner(notification, recipientsWithData,
+                        new ByteArrayInputStream("".getBytes()))).start();
+            }
         }
     }
 
@@ -219,6 +228,6 @@ public class SubscriberNotificationService {
                 log.debug("Failed to retrieve data. [exception=({})]", exception.getMessage());
             }
         }
-        return null;
+        return new ByteArrayInputStream("".getBytes()); // TODO Check if this works
     }
 }

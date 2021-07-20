@@ -62,15 +62,22 @@ use_rule = provider.create_rule(
     "ids" : "https://w3id.org/idsa/core/",
     "idsc" : "https://w3id.org/idsa/code/"
   },
-  "@type" : "ids:Prohibition",
-  "@id" : "https://w3id.org/idsa/autogen/prohibition/a838e2a5-d3e8-4891-af73-0f3bf39381ce",
+  "@type" : "ids:Permission",
+  "@id" : "https://w3id.org/idsa/autogen/permission/cbc802b1-03a7-4563-b6a3-688e9dd4ccdf",
   "ids:description" : [ {
-    "@value" : "prohibit-access",
+    "@value" : "usage-logging",
     "@type" : "http://www.w3.org/2001/XMLSchema#string"
   } ],
   "ids:title" : [ {
     "@value" : "Example Usage Policy",
     "@type" : "http://www.w3.org/2001/XMLSchema#string"
+  } ],
+  "ids:postDuty" : [ {
+    "@type" : "ids:Duty",
+    "@id" : "https://w3id.org/idsa/autogen/duty/f022bf97-5601-4cb9-a241-638906100c18",
+    "ids:action" : [ {
+      "@id" : "idsc:LOG"
+    } ]
   } ],
   "ids:action" : [ {
     "@id" : "idsc:USE"
@@ -101,7 +108,7 @@ offer = consumer.descriptionRequest(provider_alias + "/api/ids/data", offers)
 pprint.pprint(offer)
 
 # Negotiate contract
-obj = offer["ids:contractOffer"][0]["ids:prohibition"][0]
+obj = offer["ids:contractOffer"][0]["ids:permission"][0]
 obj["ids:target"] = artifact
 response = consumer.contractRequest(
     provider_alias + "/api/ids/data", offers, artifact, False, obj
@@ -121,8 +128,7 @@ pprint.pprint(first_artifact)
 data = consumerResources.get_data(first_artifact).text
 pprint.pprint(data)
 
-expectedErorMessage = """{"message":"A policy restriction has been detected."}"""
-if data != expectedErorMessage:
+if data != dataValue:
     exit(1)
 
 exit(0)

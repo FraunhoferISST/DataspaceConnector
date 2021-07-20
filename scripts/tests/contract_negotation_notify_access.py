@@ -62,15 +62,36 @@ use_rule = provider.create_rule(
     "ids" : "https://w3id.org/idsa/core/",
     "idsc" : "https://w3id.org/idsa/code/"
   },
-  "@type" : "ids:Prohibition",
-  "@id" : "https://w3id.org/idsa/autogen/prohibition/a838e2a5-d3e8-4891-af73-0f3bf39381ce",
+  "@type" : "ids:Permission",
+  "@id" : "https://w3id.org/idsa/autogen/permission/75050633-0762-47d2-8a06-6a318eaf4b76",
   "ids:description" : [ {
-    "@value" : "prohibit-access",
+    "@value" : "usage-notification",
     "@type" : "http://www.w3.org/2001/XMLSchema#string"
   } ],
   "ids:title" : [ {
     "@value" : "Example Usage Policy",
     "@type" : "http://www.w3.org/2001/XMLSchema#string"
+  } ],
+  "ids:postDuty" : [ {
+    "@type" : "ids:Duty",
+    "@id" : "https://w3id.org/idsa/autogen/duty/6d7cc949-cdea-495a-b88b-6d902ddd017c",
+    "ids:action" : [ {
+      "@id" : "idsc:NOTIFY"
+    } ],
+    "ids:constraint" : [ {
+      "@type" : "ids:Constraint",
+      "@id" : "https://w3id.org/idsa/autogen/constraint/0f940426-d83e-4d2c-a59f-9d5f17ad5f4d",
+      "ids:rightOperand" : {
+        "@value" : "http://localhost:8080/api/ids/data",
+        "@type" : "http://www.w3.org/2001/XMLSchema#anyURI"
+      },
+      "ids:leftOperand" : {
+        "@id" : "idsc:ENDPOINT"
+      },
+      "ids:operator" : {
+        "@id" : "idsc:DEFINES_AS"
+      }
+    } ]
   } ],
   "ids:action" : [ {
     "@id" : "idsc:USE"
@@ -101,7 +122,7 @@ offer = consumer.descriptionRequest(provider_alias + "/api/ids/data", offers)
 pprint.pprint(offer)
 
 # Negotiate contract
-obj = offer["ids:contractOffer"][0]["ids:prohibition"][0]
+obj = offer["ids:contractOffer"][0]["ids:permission"][0]
 obj["ids:target"] = artifact
 response = consumer.contractRequest(
     provider_alias + "/api/ids/data", offers, artifact, False, obj
@@ -121,8 +142,7 @@ pprint.pprint(first_artifact)
 data = consumerResources.get_data(first_artifact).text
 pprint.pprint(data)
 
-expectedErorMessage = """{"message":"A policy restriction has been detected."}"""
-if data != expectedErorMessage:
+if data != dataValue:
     exit(1)
 
 exit(0)

@@ -131,7 +131,6 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
             data = MessageUtils.extractPayloadFromMultipartMessage(response);
         }
 
-
         return new ByteArrayInputStream(Base64Utils.decodeFromString(data));
     }
 }
