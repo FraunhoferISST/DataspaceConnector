@@ -93,7 +93,7 @@ public final class SubscriptionRequestService
     public Map<String, String> sendMessage(final URI recipient, final URI target,
                                            final SubscriptionDesc subscription)
             throws MessageException, MessageResponseException, UnexpectedResponseException {
-        String payload;
+        String payload = "";
         try {
             final var objectMapper = new ObjectMapper();
             payload = objectMapper.writeValueAsString(subscription);

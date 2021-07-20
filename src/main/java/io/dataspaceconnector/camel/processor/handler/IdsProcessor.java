@@ -257,7 +257,7 @@ class DataRequestProcessor extends IdsProcessor<
             throws InvalidInputException {
         try {
             final var payload = MessageUtils.getStreamAsString(messagePayload);
-            if (payload.equals("")) {
+            if (payload.equals("") || payload.equals("null")) {
                 // Query input is optional, so no rejection message will be sent. Query input will
                 // be checked for null value in HttpService.class.
                 return null;
@@ -563,7 +563,7 @@ class SubscriptionProcessor extends IdsProcessor<RouteMsg<RequestMessageImpl, ?>
 
             // Create new subscription.
             final var desc = new SubscriptionDesc();
-            desc.setSubscriber(subscription.getSubscriber());
+            desc.setSubscriber(issuer);
             desc.setTarget(subscription.getTarget());
             desc.setPushData(subscription.isPushData());
             desc.setLocation(subscription.getLocation());
@@ -599,7 +599,7 @@ class SubscriptionProcessor extends IdsProcessor<RouteMsg<RequestMessageImpl, ?>
             throws InvalidInputException {
         try {
             final var payload = MessageUtils.getStreamAsString(messagePayload);
-            if (payload.equals("")) {
+            if (payload.equals("") || payload.equals("null")) {
                 return Optional.empty();
             } else {
                 final var subscription = new ObjectMapper().readValue(payload, Subscription.class);

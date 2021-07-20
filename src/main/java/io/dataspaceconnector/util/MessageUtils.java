@@ -232,7 +232,7 @@ public final class MessageUtils {
     }
 
     /**
-     * Read string from stream.
+     * Read string from stream. TODO Handle null payloads.
      *
      * @param payload The message payload as stream.
      * @return The stream's content.
