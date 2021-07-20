@@ -33,10 +33,10 @@ import org.springframework.stereotype.Component;
 public class ContractRequestHandler extends AbstractMessageHandler<ContractRequestMessageImpl> {
 
     /**
-     * Constructs an ContractRequestHandler with the required super class parameters.
+     * Constructs a ContractRequestHandler with the required super class parameters.
      *
-     * @param template Template for triggering Camel routes.
-     * @param context The CamelContext required for constructing the {@link ProducerTemplate}.
+     * @param template         Template for triggering Camel routes.
+     * @param context          Camel Context required for constructing the {@link ProducerTemplate}.
      * @param connectorService Service for the current connector configuration.
      */
     public ContractRequestHandler(final ProducerTemplate template,

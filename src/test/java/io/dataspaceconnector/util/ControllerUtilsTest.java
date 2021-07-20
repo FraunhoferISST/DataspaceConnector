@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.util;
 
+import io.dataspaceconnector.controller.util.ControllerUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -33,7 +34,7 @@ class ControllerUtilsTest {
     @Test
     public void respondIdsMessageFailed_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var msg = ErrorMessages.MESSAGE_HANDLING_FAILED.toString();
+        final var msg = ErrorMessage.MESSAGE_HANDLING_FAILED.toString();
         final var expectedResponse = new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
 
         /* ACT */
@@ -47,8 +48,6 @@ class ControllerUtilsTest {
     @Test
     public void respondReceivedInvalidResponse_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var msg = ErrorMessages.INVALID_MESSAGE;
-        final var expectedResponse = new ResponseEntity<>(msg, HttpStatus.BAD_GATEWAY);
 
         /* ACT */
         final var response = ControllerUtils.respondReceivedInvalidResponse(exception);
@@ -146,7 +145,7 @@ class ControllerUtilsTest {
     @Test
     public void respondConnectionTimedOut_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>(ErrorMessages.GATEWAY_TIMEOUT.toString(),
+        final var expectedResponse = new ResponseEntity<>(ErrorMessage.GATEWAY_TIMEOUT.toString(),
                 HttpStatus.GATEWAY_TIMEOUT);
 
         /* ACT */
@@ -160,8 +159,6 @@ class ControllerUtilsTest {
     @Test
     public void respondReceivedInvalidResponse_null_returnValidResponseEntity() {
         /* ARRANGE */
-        final var msg = ErrorMessages.INVALID_MESSAGE;
-        final var expectedResponse = new ResponseEntity<>(msg, HttpStatus.BAD_GATEWAY);
 
         /* ACT */
         final var response = ControllerUtils.respondReceivedInvalidResponse();

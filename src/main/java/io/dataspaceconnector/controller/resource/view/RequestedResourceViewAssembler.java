@@ -15,16 +15,16 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers.RequestedResourceController;
-import io.dataspaceconnector.model.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResource;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
@@ -51,21 +51,27 @@ public class RequestedResourceViewAssembler
 
         final var contractsLink =
                 linkTo(methodOn(RelationControllers.RequestedResourcesToContracts.class)
-                                .getResource(resource.getId(), null, null))
+                        .getResource(resource.getId(), null, null))
                         .withRel("contracts");
         view.add(contractsLink);
 
         final var representationLink =
                 linkTo(methodOn(RelationControllers.RequestedResourcesToRepresentations.class)
-                               .getResource(resource.getId(), null, null))
+                        .getResource(resource.getId(), null, null))
                         .withRel("representations");
         view.add(representationLink);
 
         final var catalogLink =
                 linkTo(methodOn(RelationControllers.RequestedResourcesToCatalogs.class)
-                               .getResource(resource.getId(), null, null))
+                        .getResource(resource.getId(), null, null))
                         .withRel("catalogs");
         view.add(catalogLink);
+
+        final var subscriptionLink =
+                linkTo(methodOn(RelationControllers.RequestedResourcesToSubscriptions.class)
+                        .getResource(resource.getId(), null, null))
+                        .withRel("subscriptions");
+        view.add(subscriptionLink);
 
         return view;
     }

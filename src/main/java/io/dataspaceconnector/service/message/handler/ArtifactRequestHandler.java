@@ -36,8 +36,8 @@ public class ArtifactRequestHandler extends AbstractMessageHandler<ArtifactReque
     /**
      * Constructs an ArtifactRequestHandler with the required super class parameters.
      *
-     * @param template Template for triggering Camel routes.
-     * @param context The CamelContext required for constructing the {@link ProducerTemplate}.
+     * @param template         Template for triggering Camel routes.
+     * @param context          Camel context required for constructing the {@link ProducerTemplate}.
      * @param connectorService Service for the current connector configuration.
      */
     public ArtifactRequestHandler(final ProducerTemplate template,

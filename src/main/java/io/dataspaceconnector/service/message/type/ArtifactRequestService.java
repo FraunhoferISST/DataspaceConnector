@@ -26,12 +26,12 @@ import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
-import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.message.processing.ClearingHouseService;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.MessageUtils;
+import io.dataspaceconnector.util.QueryInput;
 import io.dataspaceconnector.util.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -68,7 +68,7 @@ public final class ArtifactRequestService
     @Override
     public Message buildMessage(final ArtifactRequestMessageDesc desc)
             throws ConstraintViolationException {
-        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+        Utils.requireNonNull(desc, ErrorMessage.DESC_NULL);
 
         final var connectorId = getConnectorService().getConnectorId();
         final var modelVersion = getConnectorService().getOutboundModelVersion();
@@ -89,8 +89,10 @@ public final class ArtifactRequestService
                 ._transferContract_(contractId)
                 .build();
 
-            // Log outgoing ArtifactRequestMessages in ClearingHouse
+        // Log outgoing ArtifactRequestMessages in ClearingHouse
+        // TODO Message might not have been sent.
         clearingHouseService.logIdsMessage(message);
+
         return message;
     }
 

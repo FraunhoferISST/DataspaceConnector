@@ -22,7 +22,7 @@ import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.protocol.http.IdsHttpService;
-import io.dataspaceconnector.camel.ClearingHouseLoggingProcessor;
+import io.dataspaceconnector.camel.processor.ClearingHouseLoggingProcessor;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = {ArtifactRequestService.class, ClearingHouseService.class,
-        ConnectorConfiguration.class, LogMessageService.class })
+        ConnectorConfiguration.class })
 class ArtifactRequestServiceTest {
 
     @MockBean
@@ -57,6 +57,9 @@ class ArtifactRequestServiceTest {
 
     @MockBean
     private IdsHttpService idsHttpService;
+
+    @MockBean
+    private LogMessageService logMessageService;
 
     @MockBean
     private DeserializationService deserializationService;

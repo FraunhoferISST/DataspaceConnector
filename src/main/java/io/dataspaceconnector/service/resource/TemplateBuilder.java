@@ -15,24 +15,24 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.model.RequestedResourceDesc;
-import io.dataspaceconnector.model.Resource;
-import io.dataspaceconnector.model.ResourceDesc;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
+import io.dataspaceconnector.model.resource.Resource;
+import io.dataspaceconnector.model.resource.ResourceDesc;
+import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.template.ArtifactTemplate;
 import io.dataspaceconnector.model.template.CatalogTemplate;
 import io.dataspaceconnector.model.template.ContractTemplate;
 import io.dataspaceconnector.model.template.RepresentationTemplate;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +51,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 @Transactional
-public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc<T>> {
+public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc> {
 
     /**
      * Spring application context.
@@ -133,7 +133,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
      * @throws IllegalArgumentException if the passed template is null.
      */
     public Catalog build(final CatalogTemplate template) {
-        Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(template, ErrorMessage.ENTITY_NULL);
 
         final var templateBuilderOfferedResource = (TemplateBuilderOfferedResource)
                 applicationContext.getBean("templateBuilderOfferedResource");
@@ -166,7 +166,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
      * @throws IllegalArgumentException if the passed template is null.
      */
     public T build(final ResourceTemplate<D> template) {
-        Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(template, ErrorMessage.ENTITY_NULL);
 
         final var representationIds =
                 Utils.toStream(template.getRepresentations()).map(x -> build(x).getId())
@@ -197,7 +197,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
      * @throws IllegalArgumentException if the passed template is null.
      */
     public Representation build(final RepresentationTemplate template) {
-        Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(template, ErrorMessage.ENTITY_NULL);
 
         final var artifactIds = Utils.toStream(template.getArtifacts()).map(x -> build(x).getId())
                 .collect(Collectors.toSet());
@@ -223,7 +223,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
      * @throws IllegalArgumentException if the passed template is null.
      */
     public Contract build(final ContractTemplate template) {
-        Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(template, ErrorMessage.ENTITY_NULL);
 
         final var ruleIds = Utils.toStream(template.getRules()).map(x -> build(x).getId())
                 .collect(Collectors.toSet());
@@ -241,7 +241,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
      * @throws IllegalArgumentException if the passed template is null.
      */
     public Artifact build(final ArtifactTemplate template) {
-        Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(template, ErrorMessage.ENTITY_NULL);
 
         Artifact artifact;
         final var contractId = artifactService.identifyByRemoteId(template.getDesc().getRemoteId());
@@ -262,7 +262,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
      * @throws IllegalArgumentException if the passed template is null.
      */
     public ContractRule build(final RuleTemplate template) {
-        Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(template, ErrorMessage.ENTITY_NULL);
         return ruleService.create(template.getDesc());
     }
 
@@ -354,30 +354,14 @@ class TemplateBuilderRequestedResource
             final ResourceTemplate<RequestedResourceDesc> template) {
         final var resourceService = getResourceService();
 
-        RequestedResource resource;
         if (resourceService instanceof RemoteResolver) {
             final var resourceId = ((RemoteResolver) resourceService)
-                    .identifyByRemoteId(template.getOldRemoteId());
+                    .identifyByRemoteId(template.getDesc().getRemoteId());
             if (resourceId.isPresent()) {
-                if (template.getOldRemoteId().equals(template.getDesc().getRemoteId())) {
-                    resource = resourceService.update(resourceId.get(), template.getDesc());
-                } else {
-                    final var doesExist = ((RemoteResolver) resourceService)
-                            .identifyByRemoteId(template.getDesc().getRemoteId()).isPresent();
-                    if (doesExist) {
-                        throw new IllegalStateException();
-                    } else {
-                        resource = resourceService.update(resourceId.get(), template.getDesc());
-                    }
-                }
-
-            } else {
-                resource = resourceService.create(template.getDesc());
+                return resourceService.update(resourceId.get(), template.getDesc());
             }
-        } else {
-            resource = resourceService.create(template.getDesc());
         }
 
-        return resource;
+        return resourceService.create(template.getDesc());
     }
 }

@@ -15,9 +15,9 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.CatalogDesc;
-import io.dataspaceconnector.model.CatalogFactory;
+import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.catalog.CatalogDesc;
+import io.dataspaceconnector.model.catalog.CatalogFactory;
 import io.dataspaceconnector.repository.CatalogRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -125,16 +126,13 @@ public class CatalogServiceUpdateTest {
         return desc;
     }
 
-    private Catalog getNewCatalog(final CatalogDesc desc) {
+    private Catalog getNewCatalog( final CatalogDesc desc ) {
         return factory.create(desc);
     }
 
     @SneakyThrows
-    private Catalog getCatalogFromValidDesc(final UUID id, final Catalog catalog) {
-        final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(catalog, id);
-
+    private Catalog getCatalogFromValidDesc( final UUID id, final Catalog catalog ) {
+        ReflectionTestUtils.setField(catalog, "id", id);
         return catalog;
     }
 }

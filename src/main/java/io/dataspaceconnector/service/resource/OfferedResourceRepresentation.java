@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.model.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResource;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 

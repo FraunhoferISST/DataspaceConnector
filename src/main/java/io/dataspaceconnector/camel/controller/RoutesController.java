@@ -44,7 +44,7 @@ import javax.xml.bind.Unmarshaller;
 @Log4j2
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/routes")
+@RequestMapping("/api/camel/routes")
 public class RoutesController {
 
     /**

@@ -15,16 +15,13 @@
  */
 package io.dataspaceconnector.controller.resource;
 
-import javax.validation.Valid;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.AbstractDescription;
-import io.dataspaceconnector.model.AbstractEntity;
-import io.dataspaceconnector.service.resource.BaseEntityService;
+import io.dataspaceconnector.service.resource.EntityService;
 import io.dataspaceconnector.util.Utils;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.dataspaceconnector.controller.base.CRUDController;
+import io.dataspaceconnector.model.base.Entity;
+import io.dataspaceconnector.model.base.Description;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,14 +34,6 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Offers REST-Api endpoints for REST resource handling.
@@ -56,9 +45,9 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.NONE)
-public class BaseResourceController<T extends AbstractEntity, D extends AbstractDescription<T>, V
-        extends RepresentationModel<V>, S
-        extends BaseEntityService<T, D>> {
+public class BaseResourceController<T extends Entity, D extends Description, V
+        extends RepresentationModel<V>, S extends EntityService<T, D>>
+        implements CRUDController<T, D, V> {
     /**
      * The service for the resource logic.
      **/
@@ -93,39 +82,24 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
         resourceType = (Class<T>) resolved[2];
     }
 
-    /**
-     * Creates a new resource. Endpoint for POST requests.
-     * @param desc The resource description.
-     * @return Response with code 201 (Created).
-     * @throws IllegalArgumentException if the description is null.
-     */
-    @PostMapping
-    @Operation(summary = "Create a base resource")
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Created")})
-    public ResponseEntity<V> create(@RequestBody final D desc) {
-        final var obj = service.create(desc);
+    private ResponseEntity<V> respondCreated(final T obj) {
         final var entity = assembler.toModel(obj);
-
         final var headers = new HttpHeaders();
         headers.setLocation(entity.getRequiredLink("self").toUri());
 
         return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
     }
 
-    /**
-     * Get a list of all resources endpoints of this type.
-     * Endpoint for GET requests.
-     * @param page The page index.
-     * @param size The page size.
-     * @return Response with code 200 (Ok) and the list of all endpoints of this resource type.
-     */
+    /** {@inheritDoc} */
+    @Override
+    public ResponseEntity<V> create(final D desc) {
+        return respondCreated(service.create(desc));
+    }
+
+    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
-    @RequestMapping(method = RequestMethod.GET)
-    @Operation(summary = "Get a list of base resources with pagination")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    public PagedModel<V> getAll(
-            @RequestParam(required = false, defaultValue = "0") final Integer page,
-            @RequestParam(required = false, defaultValue = "30") final Integer size) {
+    @Override
+    public PagedModel<V> getAll(final Integer page, final Integer size) {
         final var pageable = Utils.toPageRequest(page, size);
         final var entities = service.getAll(pageable);
         PagedModel<V> model;
@@ -138,67 +112,30 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
         return model;
     }
 
-    /**
-     * Get a resource. Endpoint for GET requests.
-     * @param resourceId The id of the resource.
-     * @return The resource.
-     * @throws IllegalArgumentException if the resourceId is null.
-     * @throws io.dataspaceconnector.exception.ResourceNotFoundException
-     *          if the resourceId is unknown.
-     */
-    @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    @Operation(summary = "Get a base resource by id")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    public V get(@Valid @PathVariable(name = "id") final UUID resourceId) {
+
+    /** {@inheritDoc} */
+    @Override
+    public V get(final UUID resourceId) {
         return assembler.toModel(service.get(resourceId));
     }
 
-    /**
-     * Update a resource details. Endpoint for PUT requests.
-     *
-     * @param resourceId The id of the resource to be updated.
-     * @param desc       The new description of the resource.
-     * @return Response with code (No_Content) when the resource has been updated or response with
-     * code (201) if the resource has been updated and been moved to a new endpoint.
-     * @throws IllegalArgumentException if the any of the parameters is null.
-     * @throws io.dataspaceconnector.exception.ResourceNotFoundException
-     *          if the resourceId is unknown.
-     */
-    @PutMapping("{id}")
-    @Operation(summary = "Update a base resource by id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Created"),
-            @ApiResponse(responseCode = "204", description = "No Content")})
-    public ResponseEntity<Object> update(
-            @Valid @PathVariable(name = "id") final UUID resourceId, @RequestBody final D desc) {
+    /** {@inheritDoc} */
+    @Override
+    public ResponseEntity<V> update(final UUID resourceId, final D desc) {
         final var resource = service.update(resourceId, desc);
 
-        ResponseEntity<Object> response;
         if (resource.getId().equals(resourceId)) {
             // The resource was not moved
-            response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             // The resource has been moved
-            final var entity = assembler.toModel(resource);
-            final var headers = new HttpHeaders();
-            headers.setLocation(entity.getRequiredLink("self").toUri());
-
-            response = new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
+            return respondCreated(resource);
         }
-
-        return response;
     }
 
-    /**
-     * Delete a resource. Endpoint for DELETE requests.
-     * @param resourceId The id of the resource to be deleted.
-     * @return Response with code 204 (No_Content).
-     * @throws IllegalArgumentException if the resourceId is null.
-     */
-    @DeleteMapping("{id}")
-    @Operation(summary = "Delete a base resource by id")
-    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No Content")})
-    public ResponseEntity<Void> delete(@Valid @PathVariable(name = "id") final UUID resourceId) {
+    /** {@inheritDoc} */
+    @Override
+    public ResponseEntity<Void> delete(final UUID resourceId) {
         service.delete(resourceId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

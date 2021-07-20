@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.CatalogDesc;
-import io.dataspaceconnector.model.OfferedResource;
+import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.catalog.CatalogDesc;
+import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.service.resource.CatalogService;
 import io.dataspaceconnector.controller.resource.view.CatalogViewAssembler;
 import lombok.SneakyThrows;
@@ -360,11 +360,11 @@ class CatalogControllerTest {
 
         final var catalog = constructor.newInstance();
 
-        final var titleField = catalog.getClass().getDeclaredField("title");
+        final var titleField = catalog.getClass().getSuperclass().getDeclaredField("title");
         titleField.setAccessible(true);
         titleField.set(catalog, desc.getTitle());
 
-        final var descriptionField = catalog.getClass().getDeclaredField("description");
+        final var descriptionField = catalog.getClass().getSuperclass().getDeclaredField("description");
         descriptionField.setAccessible(true);
         descriptionField.set(catalog, desc.getDescription());
 
@@ -372,7 +372,7 @@ class CatalogControllerTest {
         offeredResourcesField.setAccessible(true);
         offeredResourcesField.set(catalog, new ArrayList<OfferedResource>());
 
-        final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
+        final var idField = catalog.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(catalog, UUID.fromString("554ed409-03e9-4b41-a45a-4b7a8c0aa499"));
 
@@ -387,11 +387,11 @@ class CatalogControllerTest {
 
         final var catalog = constructor.newInstance();
 
-        final var titleField = catalog.getClass().getDeclaredField("title");
+        final var titleField = catalog.getClass().getSuperclass().getDeclaredField("title");
         titleField.setAccessible(true);
         titleField.set(catalog, desc.getTitle());
 
-        final var descriptionField = catalog.getClass().getDeclaredField("description");
+        final var descriptionField = catalog.getClass().getSuperclass().getDeclaredField("description");
         descriptionField.setAccessible(true);
         descriptionField.set(catalog, desc.getDescription());
 
@@ -399,7 +399,7 @@ class CatalogControllerTest {
         offeredResourcesField.setAccessible(true);
         offeredResourcesField.set(catalog, new ArrayList<OfferedResource>());
 
-        final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
+        final var idField = catalog.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(catalog, UUID.fromString("554ed409-03e9-4b41-a45a-4b7a8c0aa499"));
 

@@ -33,5 +33,6 @@ FROM gcr.io/distroless/java-debian10:11
 COPY --from=maven /app/target/*.jar /app/app.jar
 WORKDIR /app
 EXPOSE 8080
+EXPOSE 29292
 USER nonroot
 ENTRYPOINT ["java","-jar","app.jar"]

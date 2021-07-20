@@ -18,14 +18,14 @@ package io.dataspaceconnector.service.ids.builder;
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.OfferedResource;
+import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.resource.OfferedResource;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
- * Converts DSC artifacts to ids artifacts.
+ * Converts dsc catalogs to ids catalogs.
  */
 @Component
 @RequiredArgsConstructor

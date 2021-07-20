@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.controller;
 
+import java.net.URI;
+
 import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
@@ -27,9 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,6 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class MainControllerIT {
 
     @MockBean
@@ -67,7 +69,7 @@ class MainControllerIT {
     private BaseConnector getConnectorWithoutResources() {
         return new BaseConnectorBuilder()
                 ._curator_(URI.create("https://someBody"))
-                ._maintainer_(URI.create("https:://someoneElse"))
+                ._maintainer_(URI.create("https://someoneElse"))
                 ._outboundModelVersion_("4.0.0")
                 ._inboundModelVersion_(de.fraunhofer.iais.eis.util.Util.asList("4.0.0"))
                 ._securityProfile_(SecurityProfile.BASE_SECURITY_PROFILE)

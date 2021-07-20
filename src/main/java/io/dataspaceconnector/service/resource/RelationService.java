@@ -18,7 +18,7 @@ package io.dataspaceconnector.service.resource;
 import java.util.Set;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -30,8 +30,8 @@ import org.springframework.data.domain.Pageable;
  * @param <T> Type of owning entity service.
  * @param <X> Type of child entity service.
  */
-public interface RelationService<K extends AbstractEntity, W extends AbstractEntity,
-        T extends BaseEntityService<K, ?>, X extends BaseEntityService<W, ?>> {
+public interface RelationService<K extends Entity, W extends Entity,
+        T extends BaseEntityService<K, ?>, X extends EntityService<W, ?>> {
 
     /**
      * Get all children of an entity.

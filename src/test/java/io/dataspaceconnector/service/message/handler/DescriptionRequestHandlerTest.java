@@ -15,6 +15,12 @@
  */
 package io.dataspaceconnector.service.message.handler;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import javax.xml.datatype.DatatypeFactory;
+
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
@@ -29,9 +35,10 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import de.fraunhofer.ids.messaging.response.MessageResponse;
+import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.ArtifactFactory;
+import io.dataspaceconnector.model.artifact.ArtifactDesc;
+import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.model.message.DescriptionResponseMessageDesc;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.ids.ConnectorService;
@@ -43,17 +50,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.annotation.DirtiesContext;
 
-import javax.xml.datatype.DatatypeFactory;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
-class DescriptionRequestHandlerTest {
+ @SpringBootTest
+ @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+ class DescriptionRequestHandlerTest {
+
+     @MockBean
+     private IdscpServerRoute idscpServerRoute;
 
     @Autowired
     DescriptionResponseService messageService;
@@ -101,13 +109,13 @@ class DescriptionRequestHandlerTest {
 
         Mockito.doReturn(connector).when(connectorService).getConnectorWithOfferedResources();
 
-        /* ACT */
-        final var result =
-                (BodyResponse) handler.handleMessage((DescriptionRequestMessageImpl) message, null);
+         /* ACT */
+         final var result =
+                 (BodyResponse<?>) handler.handleMessage((DescriptionRequestMessageImpl) message, null);
 
-        /* ASSERT */
-        final var expected = (BodyResponse) constructSelfDescription(
-                message.getIssuerConnector(), message.getId());
+         /* ASSERT */
+         final var expected = (BodyResponse<?>) constructSelfDescription(
+                 message.getIssuerConnector(), message.getId());
 
         // Compare payload
         assertEquals(expected.getPayload(), result.getPayload());
@@ -160,16 +168,16 @@ class DescriptionRequestHandlerTest {
                         .build();
 
         Mockito.when(resolver.getEntityById(Mockito.eq(message.getRequestedElement())))
-                .thenReturn(artifact);
+                .thenReturn(Optional.of(artifact));
         Mockito.when(resolver.getEntityAsRdfString(artifact)).thenReturn(getArtifact().toRdf());
 
-        /* ACT */
-        final var result =
-                (BodyResponse) handler.handleMessage((DescriptionRequestMessageImpl) message, null);
+         /* ACT */
+         final var result =
+                 (BodyResponse<?>) handler.handleMessage((DescriptionRequestMessageImpl) message, null);
 
-        /* ASSERT */
-        final var expected = (BodyResponse) constructResourceDescription(
-                message.getRequestedElement(), message.getIssuerConnector(), message.getId());
+         /* ASSERT */
+         final var expected = (BodyResponse<?>) constructResourceDescription(
+                 message.getRequestedElement(), message.getIssuerConnector(), message.getId());
 
         // Compare payload
         assertEquals(expected.getPayload(), result.getPayload());
@@ -296,7 +304,7 @@ class DescriptionRequestHandlerTest {
             // If the element has been found, build the ids response message.
             final var desc = new DescriptionResponseMessageDesc(issuer, messageId);
             final var header = messageService.buildMessage(desc);
-            final var payload = resolver.getEntityAsRdfString(entity);
+            final var payload = resolver.getEntityAsRdfString(entity.get());
 
             // Send ids response message.
             return BodyResponse.create(header, payload);
@@ -306,7 +314,6 @@ class DescriptionRequestHandlerTest {
     }
 
     private Artifact getArtifact() {
-        return new ArtifactBuilder(URI.create("http://id.com"))
-                .build();
+        return new ArtifactBuilder(URI.create("http://id.com")).build();
     }
 }

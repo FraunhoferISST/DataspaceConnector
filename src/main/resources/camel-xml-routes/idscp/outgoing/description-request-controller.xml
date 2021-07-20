@@ -1,0 +1,32 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="descriptionRequestSender">
+
+        <onException>
+            <exception>io.dataspaceconnector.exception.MessageException</exception>
+            <to uri="direct:handleMessageException"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.exception.MessageResponseException</exception>
+            <to uri="direct:handleMessageResponseException"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.camel.exception.InvalidResponseException</exception>
+            <to uri="direct:handleInvalidResponseException"/>
+        </onException>
+
+        <onException>
+            <exception>javax.persistence.PersistenceException</exception>
+            <to uri="direct:handlePersistenceException"/>
+        </onException>
+
+        <from uri="direct:descriptionRequestSender"/>
+        <process ref="DescriptionRequestMessageBuilder"/>
+        <process ref="RequestWithoutPayloadPreparer"/>
+        <toD uri="idscp2client://${exchangeProperty.recipient}?awaitResponse=true&amp;sslContextParameters=#serverSslContext&amp;useIdsMessages=true"/>
+        <process ref="ResponseToDtoConverter"/>
+        <process ref="DescriptionResponseValidator"/>
+
+    </route>
+</routes>

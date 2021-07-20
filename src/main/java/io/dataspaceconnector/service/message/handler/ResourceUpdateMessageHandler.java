@@ -35,10 +35,10 @@ public class ResourceUpdateMessageHandler
         extends AbstractMessageHandler<ResourceUpdateMessageImpl> {
 
     /**
-     * Constructs an ResourceUpdateMessageHandler with the required super class parameters.
+     * Constructs a ResourceUpdateMessageHandler with the required super class parameters.
      *
-     * @param template Template for triggering Camel routes.
-     * @param context The CamelContext required for constructing the {@link ProducerTemplate}.
+     * @param template         Template for triggering Camel routes.
+     * @param context          Camel Context required for constructing the {@link ProducerTemplate}.
      * @param connectorService Service for the current connector configuration.
      */
     public ResourceUpdateMessageHandler(final ProducerTemplate template,

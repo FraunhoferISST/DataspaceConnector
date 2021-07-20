@@ -15,10 +15,10 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.ContractRuleDesc;
+import io.dataspaceconnector.model.rule.ContractRule;
+import io.dataspaceconnector.model.rule.ContractRuleDesc;
 import io.dataspaceconnector.repository.RuleRepository;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.Utils;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class RuleService extends BaseEntityService<ContractRule, ContractRuleDes
      * @return list of all rules in the contract
      */
     public List<ContractRule> getAllByContract(final UUID contractId) {
-        Utils.requireNonNull(contractId, ErrorMessages.ENTITYID_NULL);
+        Utils.requireNonNull(contractId, ErrorMessage.ENTITYID_NULL);
         return ((RuleRepository) getRepository()).findAllByContract(contractId);
     }
 

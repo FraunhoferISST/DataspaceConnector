@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
- * Contains information for swagger tags.
+ * Classes for resource controller tags.
  */
 package io.dataspaceconnector.controller.resource.tag;

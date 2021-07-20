@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.service;
 
-import io.dataspaceconnector.model.QueryInput;
+import io.dataspaceconnector.util.QueryInput;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -41,9 +41,8 @@ public interface ArtifactRetriever {
      * @param artifactId       The artifact whose data should be updated.
      * @param recipient        The target connector holding the artifact's data.
      * @param transferContract The contract authorizing the data transfer.
-     * @param queryInput       The data query for specifying the requested data.
+     * @param query            The data query for specifying the requested data.
      * @return The artifact's data.
      */
-    InputStream retrieve(UUID artifactId, URI recipient, URI transferContract,
-                         QueryInput queryInput);
+    InputStream retrieve(UUID artifactId, URI recipient, URI transferContract, QueryInput query);
 }

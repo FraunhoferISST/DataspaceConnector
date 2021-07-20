@@ -120,14 +120,13 @@ class TemplateUtilsTest {
         /* ASSERT */
         assertEquals(1, result.size());
         final var template = result.get(0);
-        assertNull(template.getOldRemoteId());
         final var desc = template.getDesc();
         assertEquals(requestedArtifact, desc.getRemoteId());
         assertEquals(remoteUrl, desc.getRemoteAddress());
         assertNull(desc.getTitle());
         assertNull(desc.getAccessUrl());
-        assertNull(desc.getUsername());
-        assertNull(desc.getPassword());
+        assertNull(desc.getBasicAuth());
+        assertNull(desc.getApiKey());
         assertNull(desc.getValue());
         assertEquals(download, desc.isAutomatedDownload());
         assertEquals(0, desc.getAdditional().size());

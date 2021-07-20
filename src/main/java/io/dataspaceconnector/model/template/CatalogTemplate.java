@@ -15,9 +15,9 @@
  */
 package io.dataspaceconnector.model.template;
 
-import io.dataspaceconnector.model.CatalogDesc;
-import io.dataspaceconnector.model.OfferedResourceDesc;
-import io.dataspaceconnector.model.RequestedResourceDesc;
+import io.dataspaceconnector.model.catalog.CatalogDesc;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;

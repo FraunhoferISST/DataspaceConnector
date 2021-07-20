@@ -15,9 +15,9 @@
  */
 package io.dataspaceconnector.config;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -35,7 +35,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationEn
 @Log4j2
 @Configuration
 @Getter(AccessLevel.PUBLIC)
-@Setter(AccessLevel.PRIVATE)
 public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
     /**
@@ -45,15 +44,16 @@ public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
     private boolean isH2ConsoleEnabled;
 
     @Override
+    @SuppressFBWarnings("SPRING_CSRF_PROTECTION_DISABLED")
     protected final void configure(final HttpSecurity http) throws Exception {
         http
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                 .authorizeRequests()
-                .antMatchers("/api/ids/data").anonymous()
-                .antMatchers("/").anonymous()
-                .antMatchers("/api/**").authenticated()
+                .antMatchers("/", "/api/ids/data").anonymous()
+                .antMatchers("/api/subscriptions/**").authenticated()
+                .antMatchers("/api/**").hasRole("ADMIN")
                 .antMatchers("/actuator/**").hasRole("ADMIN")
                 .antMatchers("/database/**").hasRole("ADMIN")
                 .anyRequest().authenticated()

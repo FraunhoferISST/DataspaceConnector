@@ -17,8 +17,8 @@ package io.dataspaceconnector.service.resource;
 
 import java.util.List;
 
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.Resource;
+import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.resource.Resource;
 import lombok.NoArgsConstructor;
 
 /**

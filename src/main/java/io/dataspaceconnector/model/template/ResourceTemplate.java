@@ -15,10 +15,9 @@
  */
 package io.dataspaceconnector.model.template;
 
-import java.net.URI;
 import java.util.List;
 
-import io.dataspaceconnector.model.AbstractDescription;
+import io.dataspaceconnector.model.base.Description;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,12 +34,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class ResourceTemplate<D extends AbstractDescription<?>> {
-
-    /**
-     * Old remote id.
-     */
-    private URI oldRemoteId;
+public class ResourceTemplate<D extends Description> {
 
     /**
      * Resource parameters.

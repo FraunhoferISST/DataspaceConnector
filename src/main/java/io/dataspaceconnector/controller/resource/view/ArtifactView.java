@@ -33,7 +33,7 @@ import org.springframework.hateoas.server.core.Relation;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @Relation(collectionRelation = "artifacts", itemRelation = "artifact")
-public class ArtifactView  extends RepresentationModel<ArtifactView> {
+public class ArtifactView extends RepresentationModel<ArtifactView> {
     /**
      * The creation date.
      */

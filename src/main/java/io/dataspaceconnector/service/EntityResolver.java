@@ -17,19 +17,17 @@ package io.dataspaceconnector.service;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.exception.InvalidResourceException;
-import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.exception.SelfLinkCreationException;
-import io.dataspaceconnector.exception.UnexpectedResponseException;
-import io.dataspaceconnector.model.AbstractEntity;
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
-import io.dataspaceconnector.model.QueryInput;
-import io.dataspaceconnector.model.Representation;
+import io.dataspaceconnector.model.agreement.Agreement;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.base.Entity;
+import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
+import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.ids.builder.IdsArtifactBuilder;
 import io.dataspaceconnector.service.ids.builder.IdsCatalogBuilder;
@@ -45,7 +43,9 @@ import io.dataspaceconnector.service.resource.ResourceService;
 import io.dataspaceconnector.service.resource.RuleService;
 import io.dataspaceconnector.service.usagecontrol.AllowAccessVerifier;
 import io.dataspaceconnector.service.util.EndpointUtils;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
+import io.dataspaceconnector.util.IdsUtils;
+import io.dataspaceconnector.util.QueryInput;
 import io.dataspaceconnector.util.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +58,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This service offers methods for finding entities by their identifying URI.
@@ -70,103 +71,92 @@ public class EntityResolver {
     /**
      * Service for artifacts.
      */
-    private final @NonNull
-    ArtifactService artifactService;
+    private final @NonNull ArtifactService artifactService;
 
     /**
      * Service for representations.
      */
-    private final @NonNull
-    RepresentationService representationService;
+    private final @NonNull RepresentationService representationService;
 
     /**
      * Service for offered resources.
      */
-    private final @NonNull
-    ResourceService<OfferedResource, OfferedResourceDesc> offerService;
+    private final @NonNull ResourceService<OfferedResource, OfferedResourceDesc> offerService;
+
+    /**
+     * Service for requested resources.
+     */
+    private final @NonNull ResourceService<RequestedResource, RequestedResourceDesc> requestService;
 
     /**
      * Service for catalogs.
      */
-    private final @NonNull
-    CatalogService catalogService;
+    private final @NonNull CatalogService catalogService;
 
     /**
      * Service for contract offers.
      */
-    private final @NonNull
-    ContractService contractService;
+    private final @NonNull ContractService contractService;
 
     /**
      * Service for contract rules.
      */
-    private final @NonNull
-    RuleService ruleService;
+    private final @NonNull RuleService ruleService;
 
     /**
      * Service for contract agreements.
      */
-    private final @NonNull
-    AgreementService agreementService;
+    private final @NonNull AgreementService agreementService;
 
     /**
      * Service for building ids objects.
      */
-    private final @NonNull
-    IdsCatalogBuilder catalogBuilder;
+    private final @NonNull IdsCatalogBuilder catalogBuilder;
 
     /**
      * Service for building ids resource.
      */
-    private final @NonNull
-    IdsResourceBuilder<OfferedResource> offerBuilder;
+    private final @NonNull IdsResourceBuilder<OfferedResource> offerBuilder;
 
     /**
      * Service for building ids artifact.
      */
-    private final @NonNull
-    IdsArtifactBuilder artifactBuilder;
+    private final @NonNull IdsArtifactBuilder artifactBuilder;
 
     /**
      * Service for building ids representation.
      */
-    private final @NonNull
-    IdsRepresentationBuilder representationBuilder;
+    private final @NonNull IdsRepresentationBuilder representationBuilder;
 
     /**
      * Service for building ids contract.
      */
-    private final @NonNull
-    IdsContractBuilder contractBuilder;
+    private final @NonNull IdsContractBuilder contractBuilder;
 
     /**
      * Skips the data access verification.
      */
-    private final @NonNull
-    AllowAccessVerifier allowAccessVerifier;
+    private final @NonNull AllowAccessVerifier allowAccessVerifier;
 
     /**
      * Performs a artifact requests.
      */
-    private final @NonNull
-    BlockingArtifactReceiver artifactReceiver;
+    private final @NonNull BlockingArtifactReceiver artifactReceiver;
 
     /**
      * Service for deserialization.
      */
-    private final @NonNull
-    DeserializationService deserializationService;
+    private final @NonNull DeserializationService deserializationService;
 
     /**
      * Return any connector entity by its id.
      *
      * @param elementId The entity id.
      * @return The respective object.
-     * @throws ResourceNotFoundException If the resource could not be found.
      * @throws IllegalArgumentException  If the resource is null or the elementId.
      */
-    public AbstractEntity getEntityById(final URI elementId) throws ResourceNotFoundException {
-        Utils.requireNonNull(elementId, ErrorMessages.URI_NULL);
+    public Optional<Entity> getEntityById(final URI elementId) {
+        Utils.requireNonNull(elementId, ErrorMessage.URI_NULL);
 
         try {
             final var endpointId = EndpointUtils.getEndpointIdFromPath(elementId);
@@ -178,28 +168,26 @@ public class EntityResolver {
             // Find the right service and return the requested element.
             switch (Objects.requireNonNull(pathEnum)) {
                 case ARTIFACTS:
-                    return artifactService.get(entityId);
+                    return Optional.of(artifactService.get(entityId));
                 case REPRESENTATIONS:
-                    return representationService.get(entityId);
+                    return Optional.of(representationService.get(entityId));
                 case OFFERS:
-                    return offerService.get(entityId);
+                    return Optional.of(offerService.get(entityId));
                 case CATALOGS:
-                    return catalogService.get(entityId);
+                    return Optional.of(catalogService.get(entityId));
                 case CONTRACTS:
-                    return contractService.get(entityId);
+                    return Optional.of(contractService.get(entityId));
                 case RULES:
-                    return ruleService.get(entityId);
+                    return Optional.of(ruleService.get(entityId));
                 case AGREEMENTS:
-                    return agreementService.get(entityId);
+                    return Optional.of(agreementService.get(entityId));
+                case REQUESTS:
+                    return Optional.of(requestService.get(entityId));
                 default:
-                    return null;
+                    return Optional.empty();
             }
         } catch (Exception exception) {
-            if (log.isDebugEnabled()) {
-                log.debug("Resource not found. [exception=({}), elementId=({})]",
-                        exception.getMessage(), elementId, exception);
-            }
-            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
+            return Optional.empty();
         }
     }
 
@@ -210,25 +198,25 @@ public class EntityResolver {
      * @param entity The connector's entity.
      * @return A rdf string of an ids object.
      */
-    public <T extends AbstractEntity> String getEntityAsRdfString(final T entity)
+    public <T extends Entity> String getEntityAsRdfString(final T entity)
             throws InvalidResourceException {
         // NOTE Maybe the builder class could be found without the ugly if array?
         try {
             if (entity instanceof Artifact) {
                 final var artifact = artifactBuilder.create((Artifact) entity);
-                return Objects.requireNonNull(artifact).toRdf();
+                return IdsUtils.toRdf(Objects.requireNonNull(artifact));
             } else if (entity instanceof OfferedResource) {
                 final var resource = offerBuilder.create((OfferedResource) entity);
-                return Objects.requireNonNull(resource).toRdf();
+                return IdsUtils.toRdf(Objects.requireNonNull(resource));
             } else if (entity instanceof Representation) {
                 final var representation = representationBuilder.create((Representation) entity);
-                return Objects.requireNonNull(representation).toRdf();
+                return IdsUtils.toRdf(Objects.requireNonNull(representation));
             } else if (entity instanceof Catalog) {
                 final var catalog = catalogBuilder.create((Catalog) entity);
-                return Objects.requireNonNull(catalog).toRdf();
+                return IdsUtils.toRdf(Objects.requireNonNull(catalog));
             } else if (entity instanceof Contract) {
-                final var catalog = contractBuilder.create((Contract) entity);
-                return Objects.requireNonNull(catalog).toRdf();
+                final var contractOffer = contractBuilder.create((Contract) entity);
+                return IdsUtils.toRdf(Objects.requireNonNull(contractOffer));
             } else if (entity instanceof Agreement) {
                 final var agreement = (Agreement) entity;
                 return agreement.getValue();
@@ -236,12 +224,6 @@ public class EntityResolver {
                 final var rule = (ContractRule) entity;
                 return rule.getValue();
             }
-        } catch (SelfLinkCreationException exception) {
-            if (log.isWarnEnabled()) {
-                log.warn("Could not create self-link. [entity=({}), exception=({})]",
-                        entity, exception.getMessage(), exception);
-            }
-            throw exception;
         } catch (Exception exception) {
             // If we do not allow requesting an object type, respond with exception.
             if (log.isWarnEnabled()) {
@@ -268,20 +250,9 @@ public class EntityResolver {
      */
     public InputStream getDataByArtifactId(final URI requestedArtifact,
                                            final QueryInput queryInput)
-            throws IOException, UnexpectedResponseException {
+            throws IOException {
         final var endpoint = EndpointUtils.getUUIDFromPath(requestedArtifact);
         return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint, queryInput);
-    }
-
-    /**
-     * Get agreement by remote id.
-     *
-     * @param agreementUri The remote id (at provider side).
-     * @return The artifact of the database.
-     * @throws ResourceNotFoundException If the resource could not be found.
-     */
-    public Agreement getAgreementByUri(final URI agreementUri) throws ResourceNotFoundException {
-        return agreementService.get(EndpointUtils.getUUIDFromPath(agreementUri));
     }
 
     /**

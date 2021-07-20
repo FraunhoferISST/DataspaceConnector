@@ -34,11 +34,12 @@ import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractDesc;
-import io.dataspaceconnector.model.ContractFactory;
-import io.dataspaceconnector.model.ContractRuleDesc;
-import io.dataspaceconnector.model.ContractRuleFactory;
+import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.contract.ContractDesc;
+import io.dataspaceconnector.model.contract.ContractFactory;
+import io.dataspaceconnector.model.rule.ContractRuleDesc;
+import io.dataspaceconnector.model.rule.ContractRuleFactory;
+import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.service.EntityPersistenceService;
 import io.dataspaceconnector.service.resource.EntityDependencyResolver;
 import lombok.SneakyThrows;
@@ -49,6 +50,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.annotation.DirtiesContext;
 
 import javax.persistence.PersistenceException;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -68,7 +70,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class ContractRequestHandlerTest {
+
+    @MockBean
+    private IdscpServerRoute idscpServerRoute;
 
     @MockBean
     EntityPersistenceService persistenceService;

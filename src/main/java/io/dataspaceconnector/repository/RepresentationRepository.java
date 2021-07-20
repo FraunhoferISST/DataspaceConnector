@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.repository;
 
-import io.dataspaceconnector.model.Representation;
+import io.dataspaceconnector.model.representation.Representation;
 import org.springframework.stereotype.Repository;
 
 /**

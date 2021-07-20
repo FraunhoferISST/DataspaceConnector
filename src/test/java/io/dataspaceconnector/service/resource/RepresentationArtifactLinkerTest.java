@@ -16,9 +16,9 @@
 package io.dataspaceconnector.service.resource;
 
 import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.ArtifactImpl;
-import io.dataspaceconnector.model.Representation;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.artifact.ArtifactImpl;
+import io.dataspaceconnector.model.representation.Representation;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +29,7 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.data.domain.Pageable;
 
 import java.time.ZonedDateTime;
@@ -631,41 +632,14 @@ public class RepresentationArtifactLinkerTest {
         constructor.setAccessible(true);
 
         final var representation = constructor.newInstance();
-
-        final var titleField = representation.getClass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(representation, "Hello");
-
-        final var mediaTypeField = representation.getClass().getDeclaredField("mediaType");
-        mediaTypeField.setAccessible(true);
-        mediaTypeField.set(representation, "application/json");
-
-        final var languageField = representation.getClass().getDeclaredField("language");
-        languageField.setAccessible(true);
-        languageField.set(representation, "en");
-
-        final var artifactsField = representation.getClass().getDeclaredField("artifacts");
-        artifactsField.setAccessible(true);
-        artifactsField.set(representation, new ArrayList<ArtifactImpl>());
-
-        final var idField = representation.getClass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(representation, UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
-
-        final var creationDateField = representation.getClass().getSuperclass().getDeclaredField(
-                "creationDate");
-        creationDateField.setAccessible(true);
-        creationDateField.set(representation, ZonedDateTime.parse("2021-02-14T12:13:14+01:00"));
-
-        final var modificationDateField =
-                representation.getClass().getSuperclass().getDeclaredField("modificationDate");
-        modificationDateField.setAccessible(true);
-        modificationDateField.set(representation, ZonedDateTime.parse("2021-02-14T12:13:14+01:00"));
-
-        final var additionalField = representation.getClass().getSuperclass().getDeclaredField(
-                "additional");
-        additionalField.setAccessible(true);
-        additionalField.set(representation, new HashMap<>());
+        ReflectionTestUtils.setField(representation, "title", "Hello");
+        ReflectionTestUtils.setField(representation, "mediaType", "application/json");
+        ReflectionTestUtils.setField(representation, "language", "en");
+        ReflectionTestUtils.setField(representation, "artifacts", new ArrayList<ArtifactImpl>());
+        ReflectionTestUtils.setField(representation, "id", UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
+        ReflectionTestUtils.setField(representation, "creationDate", ZonedDateTime.parse("2021-02-14T12:13:14+01:00"));
+        ReflectionTestUtils.setField(representation, "modificationDate", ZonedDateTime.parse("2021-02-14T12:13:14+01:00"));
+        ReflectionTestUtils.setField(representation, "additional", new HashMap<>());
 
         return representation;
     }
@@ -676,15 +650,8 @@ public class RepresentationArtifactLinkerTest {
         constructor.setAccessible(true);
 
         final var artifact = constructor.newInstance();
-
-        final var titleField = artifact.getClass().getSuperclass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(artifact, "ArtifactOne");
-
-        final var idField = artifact.getClass().getSuperclass().getSuperclass().getDeclaredField(
-                "id");
-        idField.setAccessible(true);
-        idField.set(artifact, UUID.fromString("554ed409-03e9-4b41-a45a-4b7a8c0aa499"));
+        ReflectionTestUtils.setField(artifact, "title", "ArtifactOne");
+        ReflectionTestUtils.setField(artifact, "id", UUID.fromString("554ed409-03e9-4b41-a45a-4b7a8c0aa499"));
 
         return artifact;
     }
@@ -695,15 +662,8 @@ public class RepresentationArtifactLinkerTest {
         constructor.setAccessible(true);
 
         final var artifact = constructor.newInstance();
-
-        final var titleField = artifact.getClass().getSuperclass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(artifact, "ArtifactTwo");
-
-        final var idField = artifact.getClass().getSuperclass().getSuperclass().getDeclaredField(
-                "id");
-        idField.setAccessible(true);
-        idField.set(artifact, UUID.fromString("1d853fc2-91a8-4a01-9e59-dfb742eee849"));
+        ReflectionTestUtils.setField(artifact, "title", "ArtifactTwo");
+        ReflectionTestUtils.setField(artifact, "id", UUID.fromString("1d853fc2-91a8-4a01-9e59-dfb742eee849"));
 
         return artifact;
     }
@@ -714,15 +674,8 @@ public class RepresentationArtifactLinkerTest {
         constructor.setAccessible(true);
 
         final var artifact = constructor.newInstance();
-
-        final var titleField = artifact.getClass().getSuperclass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(artifact, "ArtifactThree");
-
-        final var idField = artifact.getClass().getSuperclass().getSuperclass().getDeclaredField(
-                "id");
-        idField.setAccessible(true);
-        idField.set(artifact, UUID.fromString("afb43170-b8d4-4872-b923-3490de99a53b"));
+        ReflectionTestUtils.setField(artifact, "title", "ArtifactThree");
+        ReflectionTestUtils.setField(artifact, "id", UUID.fromString("afb43170-b8d4-4872-b923-3490de99a53b"));
 
         return artifact;
     }

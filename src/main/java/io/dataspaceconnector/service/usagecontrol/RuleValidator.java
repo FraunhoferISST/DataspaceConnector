@@ -18,20 +18,19 @@ package io.dataspaceconnector.service.usagecontrol;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.TimeInterval;
+import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.EntityDependencyResolver;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.RuleUtils;
+import io.dataspaceconnector.util.TimeInterval;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
-import java.text.ParseException;
 import java.time.Duration;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -109,12 +108,12 @@ public class RuleValidator {
                 validateSecurityProfile(rule, profile);
                 break;
             case PROHIBIT_ACCESS:
-                throw new PolicyRestrictionException(ErrorMessages.NOT_ALLOWED);
+                throw new PolicyRestrictionException(ErrorMessage.NOT_ALLOWED);
             default:
                 if (log.isDebugEnabled()) {
                     log.debug("No pattern detected. [target=({})]", target);
                 }
-                throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
+                throw new PolicyRestrictionException(ErrorMessage.POLICY_RESTRICTION);
         }
     }
 
@@ -180,11 +179,11 @@ public class RuleValidator {
         TimeInterval timeInterval;
         try {
             timeInterval = RuleUtils.getTimeInterval(rule);
-        } catch (ParseException e) {
+        } catch (DateTimeParseException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not read time interval. [exception=({})]", e.getMessage());
             }
-            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL, e);
+            throw new PolicyRestrictionException(ErrorMessage.DATA_ACCESS_INVALID_INTERVAL, e);
         }
 
         final var current = RuleUtils.getCurrentDate();
@@ -192,7 +191,7 @@ public class RuleValidator {
             if (log.isWarnEnabled()) {
                 log.warn("Invalid time interval. [timeInterval=({})]", timeInterval);
             }
-            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL);
+            throw new PolicyRestrictionException(ErrorMessage.DATA_ACCESS_INVALID_INTERVAL);
         }
     }
 
@@ -216,21 +215,21 @@ public class RuleValidator {
                 log.warn("Could not read duration. [target=({}), exception=({})]",
                         target, e.getMessage(), e);
             }
-            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL, e);
+            throw new PolicyRestrictionException(ErrorMessage.DATA_ACCESS_INVALID_INTERVAL, e);
         }
 
         if (duration == null) {
             if (log.isWarnEnabled()) {
                 log.warn("Duration is null. [target=({})]", target);
             }
-            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL);
+            throw new PolicyRestrictionException(ErrorMessage.DATA_ACCESS_INVALID_INTERVAL);
         }
 
         if (RuleUtils.isExpired(RuleUtils.getCalculatedDate(created, duration))) {
             if (log.isDebugEnabled()) {
                 log.debug("Invalid date time. [target=({})]", target);
             }
-            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL);
+            throw new PolicyRestrictionException(ErrorMessage.DATA_ACCESS_INVALID_INTERVAL);
         }
     }
 
@@ -244,15 +243,12 @@ public class RuleValidator {
     private void validateAccessNumber(final Rule rule, final URI target)
             throws PolicyRestrictionException {
         final var max = RuleUtils.getMaxAccess(rule);
-        // final var endpoint = PolicyUtils.getPipEndpoint(rule);
-        // NOTE: might be used later
-
         final var accessed = informationService.getAccessNumber(target);
         if (accessed >= max) {
             if (log.isDebugEnabled()) {
                 log.debug("Access number reached. [target=({})]", target);
             }
-            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_NUMBER_REACHED);
+            throw new PolicyRestrictionException(ErrorMessage.DATA_ACCESS_NUMBER_REACHED);
         }
     }
 
@@ -271,7 +267,7 @@ public class RuleValidator {
             if (log.isDebugEnabled()) {
                 log.debug("Invalid consumer connector. [issuer=({})]", issuerConnector);
             }
-            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_CONSUMER);
+            throw new PolicyRestrictionException(ErrorMessage.DATA_ACCESS_INVALID_CONSUMER);
         }
     }
 
@@ -285,7 +281,7 @@ public class RuleValidator {
     private void validateSecurityProfile(final Rule rule, final Optional<SecurityProfile> profile)
             throws PolicyRestrictionException {
         if (profile.isEmpty()) {
-            throw new PolicyRestrictionException(ErrorMessages.MISSING_SECURITY_PROFILE_CLAIM);
+            throw new PolicyRestrictionException(ErrorMessage.MISSING_SECURITY_PROFILE_CLAIM);
         }
 
         try {
@@ -293,11 +289,11 @@ public class RuleValidator {
             final var securityProfile = profile.get();
             if (!allowedProfile.equals(securityProfile.toString())) {
                 throw new PolicyRestrictionException(
-                        ErrorMessages.DATA_ACCESS_INVALID_SECURITY_PROFILE);
+                        ErrorMessage.DATA_ACCESS_INVALID_SECURITY_PROFILE);
             }
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             throw new PolicyRestrictionException(
-                    ErrorMessages.DATA_ACCESS_INVALID_SECURITY_PROFILE);
+                    ErrorMessage.DATA_ACCESS_INVALID_SECURITY_PROFILE);
         }
     }
 }

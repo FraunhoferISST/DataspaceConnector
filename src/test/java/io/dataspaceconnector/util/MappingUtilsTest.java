@@ -15,6 +15,17 @@
  */
 package io.dataspaceconnector.util;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.URI;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
@@ -43,17 +54,6 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.net.URI;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -101,11 +101,11 @@ public class MappingUtilsTest {
 
         /* ASSERT */
         assertEquals(resource.getKeyword().get(0).getValue(), result.getDesc().getKeywords().get(0));
-        assertEquals(resource.getDescription().get(0).toString(), result.getDesc().getDescription());
+        assertEquals(resource.getDescription().get(0).getValue(), result.getDesc().getDescription());
         assertEquals(resource.getPublisher(), result.getDesc().getPublisher());
         assertEquals(resource.getStandardLicense(), result.getDesc().getLicense());
         assertEquals(resource.getLanguage().get(0).toString(), result.getDesc().getLanguage());
-        assertEquals(resource.getTitle().get(0).toString(), result.getDesc().getTitle());
+        assertEquals(resource.getTitle().get(0).getValue(), result.getDesc().getTitle());
         assertEquals(resource.getSovereign(), result.getDesc().getSovereign());
         assertEquals(resource.getResourceEndpoint().get(0).getEndpointDocumentation().get(0), result.getDesc().getEndpointDocumentation());
 
@@ -149,11 +149,11 @@ public class MappingUtilsTest {
         /* ASSERT */
         assertEquals(resource.getId(), result.getDesc().getRemoteId());
         assertEquals(resource.getKeyword().get(0).getValue(), result.getDesc().getKeywords().get(0));
-        assertEquals(resource.getDescription().get(0).toString(), result.getDesc().getDescription());
+        assertEquals(resource.getDescription().get(0).getValue(), result.getDesc().getDescription());
         assertEquals(resource.getPublisher(), result.getDesc().getPublisher());
         assertEquals(resource.getStandardLicense(), result.getDesc().getLicense());
         assertEquals(resource.getLanguage().get(0).toString(), result.getDesc().getLanguage());
-        assertEquals(resource.getTitle().get(0).toString(), result.getDesc().getTitle());
+        assertEquals(resource.getTitle().get(0).getValue(), result.getDesc().getTitle());
         assertEquals(resource.getSovereign(), result.getDesc().getSovereign());
         assertEquals(resource.getResourceEndpoint().get(0).getEndpointDocumentation().get(0), result.getDesc().getEndpointDocumentation());
 

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.Catalog;
+import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.service.resource.CatalogService;
 import io.dataspaceconnector.util.Utils;
 import io.dataspaceconnector.controller.resource.view.CatalogViewAssembler;
@@ -157,11 +157,11 @@ class CatalogControllerTest_getAll {
 
         final var catalog = constructor.newInstance();
 
-        final var titleField = catalog.getClass().getDeclaredField("title");
+        final var titleField = catalog.getClass().getSuperclass().getDeclaredField("title");
         titleField.setAccessible(true);
         titleField.set(catalog, title);
 
-        final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
+        final var idField = catalog.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(catalog, UUID.randomUUID());
 

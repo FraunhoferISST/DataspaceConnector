@@ -15,16 +15,17 @@
  */
 package io.dataspaceconnector.repository;
 
-import io.dataspaceconnector.model.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.util.UUID;
 
 /**
- * The base repository for all entities of type {@link AbstractEntity}.
+ * The base repository for all entities of type {@link Entity}.
+ *
  * @param <T> The entity type.
  */
 @NoRepositoryBean
-public interface BaseEntityRepository<T extends AbstractEntity> extends JpaRepository<T, UUID> {
+public interface BaseEntityRepository<T extends Entity> extends JpaRepository<T, UUID> {
 }

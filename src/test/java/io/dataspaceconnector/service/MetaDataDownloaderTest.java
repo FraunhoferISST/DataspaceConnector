@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.service;
 
+import java.net.URI;
+import java.util.Arrays;
+import java.util.HashMap;
+
 import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
 import org.junit.jupiter.api.Test;
@@ -22,10 +26,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.net.URI;
-import java.util.Arrays;
-import java.util.HashMap;
 
 import static org.mockito.ArgumentMatchers.eq;
 
@@ -53,13 +53,13 @@ class MetaDataDownloaderTest {
         final var download = false;
 
         Mockito.when(descReqSvc.sendMessage(eq(recipient), eq(resourceList.get(0))))
-                .thenReturn(response);
+               .thenReturn(response);
 
         /* ACT */
         downloader.download(recipient, resourceList, artifactList, download);
 
         /* ASSERT */
         Mockito.verify(persistenceSvc, Mockito.atLeastOnce())
-                .saveMetadata(eq(response), eq(artifactList), eq(download), eq(recipient));
+               .saveMetadata(eq(response), eq(artifactList), eq(download), eq(recipient));
     }
 }

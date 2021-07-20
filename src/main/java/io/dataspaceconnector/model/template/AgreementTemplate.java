@@ -15,9 +15,7 @@
  */
 package io.dataspaceconnector.model.template;
 
-import java.net.URI;
-
-import io.dataspaceconnector.model.AgreementDesc;
+import io.dataspaceconnector.model.agreement.AgreementDesc;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -30,11 +28,6 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class AgreementTemplate {
-
-    /**
-     * Old remote id.
-     */
-    private URI oldRemoteId;
 
     /**
      * Agreement parameters.

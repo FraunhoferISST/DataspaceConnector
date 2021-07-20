@@ -18,13 +18,13 @@ package io.dataspaceconnector.repository;
 import java.util.List;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.Contract;
+import io.dataspaceconnector.model.contract.Contract;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
  * The repository containing all objects of type {@link
- * io.dataspaceconnector.model.Catalog}.
+ * io.dataspaceconnector.model.catalog.Catalog}.
  */
 @Repository
 public interface ContractRepository extends BaseEntityRepository<Contract> {
@@ -32,8 +32,8 @@ public interface ContractRepository extends BaseEntityRepository<Contract> {
     /**
      * Finds all contracts applicable for a specific artifact.
      *
-     * @param artifactId ID of the artifact
-     * @return list of contracts applicable for the artifact
+     * @param artifactId ID of the artifact.
+     * @return list of contracts applicable for the artifact.
      */
     @Query("SELECT c "
             + "FROM Contract c INNER JOIN OfferedResource o ON c MEMBER OF o.contracts "

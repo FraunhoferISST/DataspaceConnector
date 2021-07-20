@@ -32,6 +32,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class SecurityRestrictionDesc extends PatternDesc {
+
     /**
      * The security profile.
      */

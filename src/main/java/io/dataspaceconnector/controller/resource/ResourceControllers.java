@@ -15,9 +15,21 @@
  */
 package io.dataspaceconnector.controller.resource;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
+
+import de.fraunhofer.ids.messaging.protocol.UnexpectedResponseException;
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
-import io.dataspaceconnector.controller.resource.tag.ResourceDescriptions;
-import io.dataspaceconnector.controller.resource.tag.ResourceNames;
+import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
+import io.dataspaceconnector.controller.resource.swagger.response.ResponseDescription;
+import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
+import io.dataspaceconnector.controller.resource.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.AgreementView;
 import io.dataspaceconnector.controller.resource.view.ArtifactView;
 import io.dataspaceconnector.controller.resource.view.CatalogView;
@@ -26,25 +38,27 @@ import io.dataspaceconnector.controller.resource.view.ContractView;
 import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
 import io.dataspaceconnector.controller.resource.view.RepresentationView;
 import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
-import io.dataspaceconnector.exception.UnexpectedResponseException;
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.AgreementDesc;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.CatalogDesc;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractDesc;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.ContractRuleDesc;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
-import io.dataspaceconnector.model.QueryInput;
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.RepresentationDesc;
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.model.RequestedResourceDesc;
+import io.dataspaceconnector.controller.resource.view.SubscriptionView;
+import io.dataspaceconnector.model.agreement.Agreement;
+import io.dataspaceconnector.model.agreement.AgreementDesc;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.artifact.ArtifactDesc;
+import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.catalog.CatalogDesc;
+import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.contract.ContractDesc;
+import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.representation.RepresentationDesc;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
+import io.dataspaceconnector.model.rule.ContractRule;
+import io.dataspaceconnector.model.rule.ContractRuleDesc;
+import io.dataspaceconnector.model.subscription.Subscription;
+import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
+import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.resource.AgreementService;
 import io.dataspaceconnector.service.resource.ArtifactService;
 import io.dataspaceconnector.service.resource.CatalogService;
@@ -53,7 +67,10 @@ import io.dataspaceconnector.service.resource.RepresentationService;
 import io.dataspaceconnector.service.resource.ResourceService;
 import io.dataspaceconnector.service.resource.RetrievalInformation;
 import io.dataspaceconnector.service.resource.RuleService;
+import io.dataspaceconnector.service.resource.SubscriptionService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
+import io.dataspaceconnector.util.QueryInput;
+import io.dataspaceconnector.util.Utils;
 import io.dataspaceconnector.util.ValidationUtils;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -62,7 +79,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,15 +96,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
-
 /**
  * This class contains all implementations of the {@link BaseResourceController}.
  */
@@ -95,7 +106,7 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/catalogs")
-    @Tag(name = ResourceNames.CATALOGS, description = ResourceDescriptions.CATALOGS)
+    @Tag(name = ResourceName.CATALOGS, description = ResourceDescription.CATALOGS)
     public static class CatalogController
             extends BaseResourceController<Catalog, CatalogDesc, CatalogView, CatalogService> {
     }
@@ -105,7 +116,7 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/rules")
-    @Tag(name = ResourceNames.RULES, description = ResourceDescriptions.RULES)
+    @Tag(name = ResourceName.RULES, description = ResourceDescription.RULES)
     public static class RuleController extends BaseResourceController<ContractRule,
             ContractRuleDesc, ContractRuleView, RuleService> {
     }
@@ -115,9 +126,10 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/representations")
-    @Tag(name = ResourceNames.REPRESENTATIONS, description = ResourceDescriptions.REPRESENTATIONS)
-    public static class RepresentationController extends BaseResourceController<Representation,
-            RepresentationDesc, RepresentationView, RepresentationService> {
+    @Tag(name = ResourceName.REPRESENTATIONS, description = ResourceDescription.REPRESENTATIONS)
+    public static class RepresentationController
+            extends BaseResourceNotificationController<Representation, RepresentationDesc,
+            RepresentationView, RepresentationService> {
     }
 
     /**
@@ -125,7 +137,7 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/contracts")
-    @Tag(name = ResourceNames.CONTRACTS, description = ResourceDescriptions.CONTRACTS)
+    @Tag(name = ResourceName.CONTRACTS, description = ResourceDescription.CONTRACTS)
     public static class ContractController
             extends BaseResourceController<Contract, ContractDesc, ContractView, ContractService> {
     }
@@ -135,9 +147,9 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/offers")
-    @Tag(name = ResourceNames.OFFERS, description = ResourceDescriptions.OFFERS)
+    @Tag(name = ResourceName.OFFERS, description = ResourceDescription.OFFERS)
     public static class OfferedResourceController
-            extends BaseResourceController<OfferedResource, OfferedResourceDesc,
+            extends BaseResourceNotificationController<OfferedResource, OfferedResourceDesc,
             OfferedResourceView, ResourceService<OfferedResource, OfferedResourceDesc>> {
     }
 
@@ -146,14 +158,16 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/requests")
-    @Tag(name = ResourceNames.REQUESTS, description = ResourceDescriptions.REQUESTS)
+    @RequiredArgsConstructor
+    @Tag(name = ResourceName.REQUESTS, description = ResourceDescription.REQUESTS)
     public static class RequestedResourceController
             extends BaseResourceController<RequestedResource, RequestedResourceDesc,
-            RequestedResourceView,
-            ResourceService<RequestedResource, RequestedResourceDesc>> {
+            RequestedResourceView, ResourceService<RequestedResource, RequestedResourceDesc>> {
+
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = ResponseDescription.METHOD_NOT_ALLOWED)})
         public final ResponseEntity<RequestedResourceView> create(
                 final RequestedResourceDesc desc) {
             throw new MethodNotAllowed();
@@ -165,27 +179,30 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/agreements")
-    @Tag(name = ResourceNames.AGREEMENTS, description = ResourceDescriptions.AGREEMENTS)
+    @Tag(name = ResourceName.AGREEMENTS, description = ResourceDescription.AGREEMENTS)
     public static class AgreementController extends BaseResourceController<Agreement, AgreementDesc,
             AgreementView, AgreementService> {
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = ResponseDescription.METHOD_NOT_ALLOWED)})
         public final ResponseEntity<AgreementView> create(final AgreementDesc desc) {
             throw new MethodNotAllowed();
         }
 
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
-        public final ResponseEntity<Object> update(@Valid final UUID resourceId,
-                                                   final AgreementDesc desc) {
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = ResponseDescription.METHOD_NOT_ALLOWED)})
+        public final ResponseEntity<AgreementView> update(@Valid final UUID resourceId,
+                                                          final AgreementDesc desc) {
             throw new MethodNotAllowed();
         }
 
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = ResponseDescription.METHOD_NOT_ALLOWED)})
         public final ResponseEntity<Void> delete(@Valid final UUID resourceId) {
             throw new MethodNotAllowed();
         }
@@ -196,10 +213,11 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/artifacts")
-    @Tag(name = ResourceNames.ARTIFACTS, description = ResourceDescriptions.ARTIFACTS)
+    @Tag(name = ResourceName.ARTIFACTS, description = ResourceDescription.ARTIFACTS)
     @RequiredArgsConstructor
     public static class ArtifactController
-            extends BaseResourceController<Artifact, ArtifactDesc, ArtifactView, ArtifactService> {
+            extends BaseResourceNotificationController<Artifact, ArtifactDesc, ArtifactView,
+            ArtifactService> {
 
         /**
          * The service managing artifacts.
@@ -232,7 +250,8 @@ public final class ResourceControllers {
          */
         @GetMapping("{id}/data/**")
         @Operation(summary = "Get data by artifact id with query input")
-        @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.OK,
+                description = ResponseDescription.OK)})
         public ResponseEntity<StreamingResponseBody> getData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
                 @RequestParam(required = false) final Boolean download,
@@ -262,13 +281,10 @@ public final class ResourceControllers {
                 If no agreement information has been passed the connector needs
                 to check if the data access is restricted by the usage control.
              */
-            // TODO: Check what happens when this connector is the provider and one of its provided
-            //  agreements is passed.
             final var data = (agreementUri == null)
                     ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput)
                     : artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
-                    new RetrievalInformation(agreementUri, download,
-                            queryInput));
+                    new RetrievalInformation(agreementUri, download, queryInput));
 
             return returnData(artifactId, data);
         }
@@ -281,15 +297,19 @@ public final class ResourceControllers {
          * @param artifactId Artifact id.
          * @param queryInput Query input containing headers, query parameters, and path variables.
          * @return The data object.
-         * @throws IOException if the data could not be stored.
+         * @throws IOException                 if the data could not be stored.
+         * @throws UnexpectedResponseException if the ids response message has been unexpected.
          */
         @PostMapping("{id}/data")
         @Operation(summary = "Get data by artifact id with query input")
-        @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.OK,
+                description = ResponseDescription.OK)})
         public ResponseEntity<StreamingResponseBody> getData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
                 @RequestBody(required = false) final QueryInput queryInput)
-                throws IOException, UnexpectedResponseException {
+                throws IOException,
+                UnexpectedResponseException,
+                io.dataspaceconnector.exception.UnexpectedResponseException {
             ValidationUtils.validateQueryInput(queryInput);
             final var data =
                     artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput);
@@ -331,7 +351,77 @@ public final class ResourceControllers {
                 @Valid @PathVariable(name = "id") final UUID artifactId,
                 @RequestBody final byte[] inputStream) throws IOException {
             artifactSvc.setData(artifactId, new ByteArrayInputStream(inputStream));
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
+        }
+    }
+
+    /**
+     * Offers the endpoints for managing subscriptions.
+     */
+    @RestController
+    @RequestMapping("/api/subscriptions")
+    @RequiredArgsConstructor
+    @Tag(name = ResourceName.SUBSCRIPTIONS, description = ResourceDescription.SUBSCRIPTIONS)
+    public static class SubscriptionController extends BaseResourceController<Subscription,
+            SubscriptionDesc, SubscriptionView, SubscriptionService> {
+
+        /**
+         * The service for managing connector settings.
+         */
+        private final @NonNull ConnectorService connectorSvc;
+
+        /**
+         * Create subscription and set ids protocol value to false as this subscription has been
+         * created via a REST API call.
+         *
+         * @param desc The resource description.
+         * @return Response with code 201 (Created).
+         */
+        @Override
+        @PostMapping
+        @Operation(summary = "Create a base resource")
+        @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Created")})
+        public ResponseEntity<SubscriptionView> create(@RequestBody final SubscriptionDesc desc) {
+            // Set boolean to false as this subscription has been created via a REST API call.
+            desc.setIdsProtocol(false);
+
+            final var obj = getService().create(desc);
+            final var entity = getAssembler().toModel(obj);
+
+            final var headers = new HttpHeaders();
+            headers.setLocation(entity.getRequiredLink("self").toUri());
+
+            return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
+        }
+
+        /**
+         * Get a list of all resources endpoints of subscription selected by a given filter.
+         *
+         * @param page The page index.
+         * @param size The page size.
+         * @return Response with code 200 (Ok) and the list of all endpoints of this resource type.
+         */
+        @GetMapping("owning")
+        @SuppressWarnings("unchecked")
+        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        public final PagedModel<SubscriptionView> getAllFiltered(
+                @RequestParam(required = false, defaultValue = "0") final Integer page,
+                @RequestParam(required = false, defaultValue = "30") final Integer size) {
+            final var pageable = Utils.toPageRequest(page, size);
+
+            final var connectorId = connectorSvc.getConnectorId();
+            final var list = getService().getBySubscriber(pageable, connectorId);
+
+            final var entities = new PageImpl<>(list);
+            PagedModel<SubscriptionView> model;
+            if (entities.hasContent()) {
+                model = getPagedAssembler().toModel(entities, getAssembler());
+            } else {
+                model = (PagedModel<SubscriptionView>) getPagedAssembler().toEmptyModel(entities,
+                        getResourceType());
+            }
+
+            return model;
         }
     }
 }

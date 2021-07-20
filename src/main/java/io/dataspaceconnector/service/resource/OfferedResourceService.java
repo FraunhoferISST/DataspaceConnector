@@ -15,15 +15,13 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
-import lombok.NoArgsConstructor;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import org.springframework.stereotype.Service;
 
 /**
  * Handles the basic logic for offered resources.
  */
 @Service
-@NoArgsConstructor
 public class OfferedResourceService extends ResourceService<OfferedResource, OfferedResourceDesc> {
 }

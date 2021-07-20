@@ -15,18 +15,18 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers.ArtifactController;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.QueryInput;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.util.QueryInput;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -57,8 +57,8 @@ public class ArtifactViewAssembler
         view.add(dataLink);
 
         final var repLink = linkTo(methodOn(RelationControllers.ArtifactsToRepresentations.class)
-                                           .getResource(artifact.getId(), null, null))
-                                    .withRel("representations");
+                .getResource(artifact.getId(), null, null))
+                .withRel("representations");
         view.add(repLink);
 
         final var agreementLink =
@@ -66,6 +66,12 @@ public class ArtifactViewAssembler
                         .getResource(artifact.getId(), null, null))
                         .withRel("agreements");
         view.add(agreementLink);
+
+        final var subscriptionLink =
+                linkTo(methodOn(RelationControllers.ArtifactsToSubscriptions.class)
+                        .getResource(artifact.getId(), null, null))
+                        .withRel("subscriptions");
+        view.add(subscriptionLink);
 
         return view;
     }

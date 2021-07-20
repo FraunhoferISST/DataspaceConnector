@@ -15,11 +15,12 @@
  */
 package io.dataspaceconnector.config;
 
-import java.net.URI;
-
+import io.dataspaceconnector.config.util.UsageControlFramework;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+
+import java.net.URI;
 /**
  * This class handles policy settings: negotiation, pattern support, and usage control framework.
  */
@@ -49,4 +50,10 @@ public class ConnectorConfiguration {
      */
     @Value("${policy.framework}")
     private UsageControlFramework ucFramework;
+
+    /**
+     * Indicates whether IDSCP protocol is enabled or not.
+     */
+    @Value("${idscp2.enabled}")
+    private boolean idscpEnabled;
 }

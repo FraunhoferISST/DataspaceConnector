@@ -27,7 +27,7 @@ import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.RdfBuilderException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.message.ContractRequestMessageDesc;
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.IdsUtils;
 import io.dataspaceconnector.util.Utils;
 import org.springframework.stereotype.Service;
@@ -50,7 +50,7 @@ public final class ContractRequestService
     @Override
     public Message buildMessage(final ContractRequestMessageDesc desc)
             throws ConstraintViolationException {
-        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+        Utils.requireNonNull(desc, ErrorMessage.DESC_NULL);
 
         final var connectorId = getConnectorService().getConnectorId();
         final var modelVersion = getConnectorService().getOutboundModelVersion();
@@ -90,7 +90,7 @@ public final class ContractRequestService
     public Map<String, String> sendMessage(final URI recipient, final ContractRequest request)
             throws MessageException, MessageResponseException, UnexpectedResponseException,
             RdfBuilderException {
-        Utils.requireNonNull(request, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(request, ErrorMessage.ENTITY_NULL);
 
         final var contractRdf = IdsUtils.toRdf(request);
         final var desc = new ContractRequestMessageDesc(recipient, request.getId());

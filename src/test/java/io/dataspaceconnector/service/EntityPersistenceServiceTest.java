@@ -24,12 +24,12 @@ import java.util.UUID;
 
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.ArtifactImpl;
-import io.dataspaceconnector.model.LocalData;
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.model.RequestedResourceDesc;
-import io.dataspaceconnector.model.RequestedResourceFactory;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.artifact.ArtifactImpl;
+import io.dataspaceconnector.model.artifact.LocalData;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResourceFactory;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.AgreementService;
@@ -75,6 +75,7 @@ public class EntityPersistenceServiceTest {
     private EntityPersistenceService entityPersistenceService;
 
     @Test
+    @SuppressWarnings("unchecked")
     public void saveMetadata_validResource_persistEntities() {
         /* ARRANGE */
         final var response = new HashMap<String, String>();

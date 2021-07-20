@@ -15,10 +15,9 @@
  */
 package io.dataspaceconnector.model.template;
 
-import java.net.URI;
 import java.util.List;
 
-import io.dataspaceconnector.model.RepresentationDesc;
+import io.dataspaceconnector.model.representation.RepresentationDesc;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,11 +34,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class RepresentationTemplate {
-
-    /**
-     * Old remote id.
-     */
-    private URI oldRemoteId;
 
     /**
      * Representation parameters.

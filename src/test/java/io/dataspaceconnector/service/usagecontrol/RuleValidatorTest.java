@@ -15,27 +15,211 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
+import de.fraunhofer.iais.eis.Action;
+import de.fraunhofer.iais.eis.BinaryOperator;
+import de.fraunhofer.iais.eis.ConstraintBuilder;
+import de.fraunhofer.iais.eis.LeftOperand;
+import de.fraunhofer.iais.eis.PermissionBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
+import de.fraunhofer.iais.eis.util.RdfResource;
+import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.model.pattern.SecurityRestrictionDesc;
+import io.dataspaceconnector.service.ids.DeserializationService;
+import io.dataspaceconnector.service.resource.EntityDependencyResolver;
+import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.PatternUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.eq;
 
-@SpringBootTest(classes = RuleValidator.class)
-public class RuleValidatorTest {
+
+@SpringBootTest(classes = { RuleValidator.class })
+class RuleValidatorTest {
 
     @MockBean
-    RuleValidator ruleValidator;
+    private PolicyExecutionService executionService;
 
     @MockBean
-    PolicyExecutionService executionService;
+    private PolicyInformationService informationService;
+
+    @MockBean
+    private EntityDependencyResolver dependencyResolver;
+
+    @MockBean
+    private DeserializationService deserializationService;
+
+    @Autowired
+    private RuleValidator validator;
+
+    @Test
+    public void validatePolicy_USAGE_DURING_INTERVAL_doNothing() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient");
+        final var rule = new PermissionBuilder()
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(new ConstraintBuilder()
+                                                  ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                                                  ._operator_(BinaryOperator.AFTER)
+                                                  ._rightOperand_(new RdfResource("2009-05-07T17:05:45.678Z",
+                                                                                  URI.create("xsd:dateTimeStamp")))
+                                                  .build(), new ConstraintBuilder()
+                                                  ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                                                  ._operator_(BinaryOperator.BEFORE)
+                                                  ._rightOperand_(new RdfResource("2029-05-07T17:05:45.678Z", URI.create("xsd:dateTimeStamp")))
+                                                  .build()))
+                .build();
+        final var target = URI.create("https://target");
+        final var agreementId = URI.create("https://target");
+
+        /* ACT && ASSERT */
+        assertDoesNotThrow(() -> validator.validatePolicy( PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient, Optional.empty(), agreementId));
+    }
+
+    @Test
+    public void validatePolicy_USAGE_DURING_INTERVAL_notATimeFail() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient");
+        final var rule = new PermissionBuilder()
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(new ConstraintBuilder()
+                                                  ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                                                  ._operator_(BinaryOperator.AFTER)
+                                                  ._rightOperand_(new RdfResource("some long long time ago",
+                                                                                  URI.create("xsd:dateTimeStamp")))
+                                                  .build(), new ConstraintBuilder()
+                                                  ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                                                  ._operator_(BinaryOperator.BEFORE)
+                                                  ._rightOperand_(new RdfResource("2029-05-07T17:05:45.678Z", URI.create("xsd:dateTimeStamp")))
+                                                  .build()))
+                .build();
+        final var target = URI.create("https://target");
+        final var agreementId = URI.create("https://target");
+
+        /* ACT && ASSERT */
+        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy( PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient, Optional.empty(), agreementId));
+        assertEquals(ErrorMessage.DATA_ACCESS_INVALID_INTERVAL.toString(), result.getMessage());
+    }
+
+    @Test
+    public void validatePolicy_USAGE_DURING_INTERVAL_EndAlreadyPassedFails() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient");
+        final var rule = new PermissionBuilder()
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(new ConstraintBuilder()
+                                                  ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                                                  ._operator_(BinaryOperator.AFTER)
+                                                  ._rightOperand_(new RdfResource("2009-05-07T17:05:45.678Z",
+                                                                                  URI.create("xsd:dateTimeStamp")))
+                                                  .build(), new ConstraintBuilder()
+                                                  ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                                                  ._operator_(BinaryOperator.BEFORE)
+                                                  ._rightOperand_(new RdfResource("2019-05-07T17:05:45.678Z", URI.create("xsd:dateTimeStamp")))
+                                                  .build()))
+                .build();
+        final var target = URI.create("https://target");
+        final var agreementId = URI.create("https://target");
+
+        /* ACT && ASSERT */
+        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy(PolicyPattern.USAGE_DURING_INTERVAL, rule, target, recipient, Optional.empty(), agreementId));
+        assertEquals(ErrorMessage.DATA_ACCESS_INVALID_INTERVAL.toString(), result.getMessage());
+    }
+
+    @Test
+    public void validatePolicy_N_TIMES_USAGE_doNothing() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient");
+        final var rule = new PermissionBuilder()
+                ._action_(List.of(Action.USE))
+                ._constraint_(Util.asList(new ConstraintBuilder()
+                                                  ._leftOperand_(LeftOperand.COUNT)
+                                                  ._operator_(BinaryOperator.EQ)
+                                                  ._rightOperand_(new RdfResource("5"))
+                                                  .build()))
+                .build();
+        final var target = URI.create("https://target");
+        final var agreementId = URI.create("https://target");
+
+        Mockito.when(informationService.getAccessNumber(eq(target))).thenReturn(0L);
+
+        /* ACT && ASSERT */
+        assertDoesNotThrow(() -> validator.validatePolicy( PolicyPattern.N_TIMES_USAGE, rule, target, recipient, Optional.empty(),agreementId));
+    }
+
+    @Test
+    public void validatePolicy_N_TIMES_USAGE_failsOnExceededUsage() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient");
+        final var rule = new PermissionBuilder()
+                ._action_(List.of(Action.USE))
+                ._constraint_(Util.asList(new ConstraintBuilder()
+                                                  ._leftOperand_(LeftOperand.COUNT)
+                                                  ._operator_(BinaryOperator.EQ)
+                                                  ._rightOperand_(new RdfResource("5"))
+                                                  .build()))
+                .build();
+        final var target = URI.create("https://target");
+        final var agreementId = URI.create("https://target");
+
+        Mockito.when(informationService.getAccessNumber(eq(target))).thenReturn(6L);
+
+        /* ACT && ASSERT */
+        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy(PolicyPattern.N_TIMES_USAGE, rule, target, recipient, Optional.empty(), agreementId));
+        assertEquals(ErrorMessage.DATA_ACCESS_NUMBER_REACHED.toString(), result.getMessage());
+    }
+
+    @Test
+    public void validatePolicy_CONNECTOR_RESTRICTED_USAGE_doNothing() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient");
+        final var rule = new PermissionBuilder()
+                ._action_(List.of(Action.USE))
+                ._constraint_(Util.asList(new ConstraintBuilder()
+                                      ._leftOperand_(LeftOperand.ENDPOINT)
+                                      ._operator_(BinaryOperator.DEFINES_AS)
+                                      ._rightOperand_(new RdfResource(recipient.toString(), URI.create("xsd:anyURI")))
+                                      .build()))
+                                  .build();
+        final var target = URI.create("https://target");
+        final var agreementId = URI.create("https://target");
+
+        /* ACT && ASSERT */
+        assertDoesNotThrow(() -> validator.validatePolicy( PolicyPattern.CONNECTOR_RESTRICTED_USAGE, rule, target, recipient, Optional.empty(), agreementId));
+    }
+
+    @Test
+    public void validatePolicy_CONNECTOR_RESTRICTED_USAGE_failsOnDifferentConsumer() {
+        /* ARRANGE */
+        final var consumer = "https://consumer";
+        final var rule = new PermissionBuilder()
+                ._action_(List.of(Action.USE))
+                ._constraint_(Util.asList(new ConstraintBuilder()
+                                                  ._leftOperand_(LeftOperand.ENDPOINT)
+                                                  ._operator_(BinaryOperator.DEFINES_AS)
+                                                  ._rightOperand_(new RdfResource(consumer, URI.create("xsd:anyURI")))
+                                                  .build()))
+                .build();
+        final var recipient = URI.create("https://recipient");
+        final var target = URI.create("https://target");
+        final var agreementId = URI.create("https://target");
+
+        /* ACT && ASSERT */
+        final var result = assertThrows(PolicyRestrictionException.class, () -> validator.validatePolicy(PolicyPattern.CONNECTOR_RESTRICTED_USAGE, rule, target, recipient, Optional.empty(), agreementId));
+        assertEquals(ErrorMessage.DATA_ACCESS_INVALID_CONSUMER.toString(), result.getMessage());
+    }
 
     @SneakyThrows
     @Test
@@ -51,7 +235,7 @@ public class RuleValidatorTest {
         final var agreementId = URI.create("https://agreementId");
 
         /* ACT & ASSERT */
-        assertDoesNotThrow(() -> ruleValidator.validatePolicy(
+        assertDoesNotThrow(() -> validator.validatePolicy(
                 PolicyPattern.SECURITY_PROFILE_RESTRICTED_USAGE, rule, target, issuer,
                 Optional.of(profile), agreementId));
     }

@@ -18,21 +18,37 @@ package io.dataspaceconnector.controller.message;
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
+import de.fraunhofer.iais.eis.DescriptionRequestMessage;
+import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
+import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.KeyType;
 import de.fraunhofer.iais.eis.PublicKeyBuilder;
-import de.fraunhofer.iais.eis.RejectionMessage;
-import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.SecurityProfile;
+import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
+import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.exception.MessageException;
+import io.dataspaceconnector.exception.MessageResponseException;
+import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
 import lombok.SneakyThrows;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -41,12 +57,20 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {DescriptionRequestMessageController.class})
+@SpringBootTest(classes = {DescriptionRequestMessageController.class, DefaultCamelContext.class})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class DescriptionRequestMessageControllerTest {
+
+    @Mock
+    private Exchange exchange;
+
+    @Mock
+    private Message in;
 
     @MockBean
     private DescriptionRequestService messageService;
@@ -54,8 +78,14 @@ public class DescriptionRequestMessageControllerTest {
     @MockBean
     private DeserializationService deserializationService;
 
+    @MockBean
+    private ProducerTemplate producerTemplate;
+
     @Autowired
     private DescriptionRequestMessageController controller;
+
+    @MockBean
+    private ConnectorConfiguration connectorConfiguration;
 
     @Test
     @SneakyThrows
@@ -83,27 +113,117 @@ public class DescriptionRequestMessageControllerTest {
                 .getInfrastructureComponent(responsePayload);
     }
 
-//    @Test
-//    @SneakyThrows
-//    public void sendDescriptionRequestMessage_invalidResponse_returnResponsePayloadWithCode417() {
-//        /* ARRANGE */
-//        final var recipient = URI.create("https://recipient.com");
-//        final var responsePayload = "some payload";
-//        final var response = getResponse(responsePayload);
-//        final var responseContent = getResponseContent(responsePayload);
-//
-//        when(messageService.sendMessage(any(), any())).thenReturn(response);
-//        when(messageService.validateResponse(any())).thenReturn(false);
-//        when(messageService.getResponseContent(any())).thenReturn(responseContent);
-//
-//        /* ACT */
-//        final var result = controller.sendMessage(recipient, null);
-//
-//        /* ASSERT */
-//        assertEquals(HttpStatus.EXPECTATION_FAILED, result.getStatusCode());
-//        assertNotNull(result.getBody());
-//        assertEquals(responseContent.toString(), result.getBody().toString());
-//    }
+    @Test
+    @SneakyThrows
+    public void sendDescriptionRequestMessage_elementIdNull_returnDeserializedResponsePayloadButCannotIdentityPayload() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient.com");
+        final var responsePayload = "{ This is not an infrastructure component. }";
+        final var response = getResponse(responsePayload);
+
+        when(messageService.sendMessage(any(), any())).thenReturn(response);
+        when(messageService.validateResponse(any())).thenReturn(true);
+        Mockito.doThrow(IllegalArgumentException.class).when(deserializationService).getInfrastructureComponent(any());
+
+        /* ACT */
+        final var result = controller.sendMessage(recipient, null);
+
+        /* ASSERT */
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertNotNull(result.getBody());
+        assertEquals(responsePayload, result.getBody().toString());
+
+        verify(messageService, times(1)).sendMessage(recipient, null);
+        verify(deserializationService, times(1))
+                .getInfrastructureComponent(responsePayload);
+    }
+
+    @Test
+    @SneakyThrows
+    public void sendDescriptionRequestMessage_messageException_respondWithIdsFailed() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient.com");
+
+        when(messageService.sendMessage(any(), any())).thenThrow(MessageException.class);
+
+        /* ACT */
+        final var result = controller.sendMessage(recipient, null);
+
+        /* ASSERT */
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+    }
+
+    @Test
+    @SneakyThrows
+    public void sendDescriptionRequestMessage_messageException_respondWithInvalidResponse() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient.com");
+
+        when(messageService.sendMessage(any(), any())).thenThrow(MessageResponseException.class);
+
+        /* ACT */
+        final var result = controller.sendMessage(recipient, null);
+
+        /* ASSERT */
+        assertEquals(HttpStatus.BAD_GATEWAY, result.getStatusCode());
+    }
+
+    @Test
+    @SneakyThrows
+    public void sendDescriptionRequestMessage_messageException_respondWithUnexpectedResponse() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://recipient.com");
+
+        when(messageService.sendMessage(any(), any())).thenThrow(UnexpectedResponseException.class);
+
+        /* ACT */
+        final var result = controller.sendMessage(recipient, null);
+
+        /* ASSERT */
+        assertEquals(HttpStatus.EXPECTATION_FAILED, result.getStatusCode());
+    }
+
+
+    @Test
+    public void sendMessage_protocolIdscp_parseResponseFromRoute() {
+        /* ARRANGE */
+        final var connector = getConnector();
+        final var payload = connector.toRdf();
+        final var response = new Response(getMessage(), payload);
+
+        when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
+        when(exchange.getIn()).thenReturn(in);
+        when(in.getBody(Response.class)).thenReturn(response);
+        when(deserializationService.getInfrastructureComponent(any())).thenReturn(connector);
+        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
+
+        /* ACT */
+        final var responseEntity = controller
+                .sendMessage(URI.create("https://recipient.com"), null);
+
+        /* ASSERT */
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(payload, responseEntity.getBody());
+    }
+
+    @Test
+    public void sendMessage_protocolIdscp_returnResponseEntityFromErrorRoute() {
+        /* ARRANGE */
+        final var errorMessage = "Error message.";
+        final var response = new ResponseEntity<Object>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
+        when(exchange.getIn()).thenReturn(in);
+        when(in.getBody(ResponseEntity.class)).thenReturn(response);
+        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
+
+        /* ACT */
+        final var responseEntity = controller
+                .sendMessage(URI.create("https://recipient.com"), null);
+
+        /* ASSERT */
+        assertEquals(response, responseEntity);
+    }
 
     /**************************************************************************
      * Utilities.
@@ -138,11 +258,16 @@ public class DescriptionRequestMessageControllerTest {
                 .build();
     }
 
-    private Map<String, Object> getResponseContent(final String payload) {
-        final var map = new HashMap<String, Object>();
-        map.put("type", RejectionMessage.class);
-        map.put("reason", RejectionReason.INTERNAL_RECIPIENT_ERROR);
-        map.put("payload", payload);
-        return map;
+    private DescriptionRequestMessage getMessage() {
+        return new DescriptionRequestMessageBuilder()
+                ._issuerConnector_(URI.create("https://connector.com"))
+                ._issued_(IdsMessageUtils.getGregorianNow())
+                ._securityToken_(new DynamicAttributeTokenBuilder()
+                        ._tokenValue_("value")
+                        ._tokenFormat_(TokenFormat.JWT)
+                        .build())
+                ._modelVersion_("version")
+                ._senderAgent_(URI.create("https://connector.com"))
+                .build();
     }
 }

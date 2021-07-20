@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.exception;
 
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +24,7 @@ public class MessageExceptionTest {
     @Test
     public void constructor_someMsgAndsSomeException_holdsMsgAndException() {
         /* ARRANGE */
-        final var msg = ErrorMessages.GATEWAY_TIMEOUT;
+        final var msg = ErrorMessage.GATEWAY_TIMEOUT;
         final var someError = new RuntimeException("WELL?");
 
         /* ACT */

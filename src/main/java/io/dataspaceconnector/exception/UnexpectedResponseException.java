@@ -33,7 +33,7 @@ public class UnexpectedResponseException extends Exception {
     /**
      * The content of the invalid response.
      */
-    private final transient Map<String, Object> content;
+    private final Map<String, Object> content;
 
     /**
      * Create a new invalid response.

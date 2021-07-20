@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.exception;
 
-import io.dataspaceconnector.util.ErrorMessages;
+import io.dataspaceconnector.util.ErrorMessage;
 
 /**
  * Thrown to indicate that the self link for an entity could not be created.
@@ -32,7 +32,7 @@ public class SelfLinkCreationException extends RuntimeException {
      *
      * @param msg The detail message.
      */
-    public SelfLinkCreationException(final ErrorMessages msg) {
+    public SelfLinkCreationException(final ErrorMessage msg) {
         super(msg.toString());
     }
 }

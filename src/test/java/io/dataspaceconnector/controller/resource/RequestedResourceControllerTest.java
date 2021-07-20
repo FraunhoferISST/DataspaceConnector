@@ -16,32 +16,22 @@
 package io.dataspaceconnector.controller.resource;
 
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.model.RequestedResourceDesc;
-import io.dataspaceconnector.controller.resource.view.RequestedResourceViewAssembler;
-import io.dataspaceconnector.service.resource.ResourceService;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
+import io.dataspaceconnector.service.message.subscription.SubscriberNotificationService;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.web.PagedResourcesAssembler;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest(classes = {ResourceControllers.RequestedResourceController.class})
+@SpringBootTest()
 class RequestedResourceControllerTest {
-    @MockBean
-    private ResourceService<RequestedResource, RequestedResourceDesc> service;
 
     @MockBean
-    private RequestedResourceViewAssembler assembler;
-
-    @MockBean
-    private PagedResourcesAssembler<RequestedResource> pagedAssembler;
+    private SubscriberNotificationService subscriberNotificationService;
 
     @Autowired
-    @InjectMocks
     private ResourceControllers.RequestedResourceController controller;
 
     @Test
@@ -61,4 +51,5 @@ class RequestedResourceControllerTest {
         /* ACT && ASSERT */
         assertThrows(MethodNotAllowed.class, () -> controller.create(new RequestedResourceDesc()));
     }
+
 }

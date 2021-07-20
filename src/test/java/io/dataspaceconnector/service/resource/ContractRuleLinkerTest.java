@@ -15,18 +15,19 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractRule;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.rule.ContractRule;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -82,18 +83,8 @@ class ContractRuleLinkerTest {
         constructor.setAccessible(true);
 
         final var contract = constructor.newInstance();
-
-        final var titleField = contract.getClass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(contract, "Catalog");
-
-        final var rulesField = contract.getClass().getDeclaredField("rules");
-        rulesField.setAccessible(true);
-        rulesField.set(contract, new ArrayList<ContractRule>());
-
-        final var idField = contract.getClass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(contract, UUID.fromString("554ed409-03e9-4b41-a45a-4b7a8c0aa499"));
+        ReflectionTestUtils.setField(contract,"rules", new ArrayList<ContractRule>());
+        ReflectionTestUtils.setField(contract, "id", UUID.fromString("554ed409-03e9-4b41-a45a-4b7a8c0aa499"));
 
         return contract;
     }
@@ -104,14 +95,8 @@ class ContractRuleLinkerTest {
         constructor.setAccessible(true);
 
         final var rule = constructor.newInstance();
-
-        final var titleField = rule.getClass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(rule, "Hello");
-
-        final var idField = rule.getClass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(rule, UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
+        ReflectionTestUtils.setField(contract,"title", "Hello");
+        ReflectionTestUtils.setField(contract, "id", UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
 
         return rule;
     }

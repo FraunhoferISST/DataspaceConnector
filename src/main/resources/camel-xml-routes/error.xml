@@ -1,0 +1,244 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+
+    <route id="versionNotSupportedException">
+        <from uri="direct:handleVersionNotSupportedException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling VersionNotSupportedException called."/>
+        <to uri="bean:messageResponseService?method=handleInfoModelNotSupportedException(${exception},
+        ${body.getHeader().getModelVersion()})"/>
+    </route>
+
+    <route id="messageEmptyException">
+        <from uri="direct:handleMessageEmptyException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling MessageEmptyException called."/>
+        <to uri="bean:messageResponseService?method=handleMessageEmptyException(${exception})"/>
+    </route>
+
+    <route id="resourceNotFoundException">
+        <from uri="direct:handleResourceNotFoundException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling ResourceNotFoundException called."/>
+        <to uri="bean:messageResponseService?method=handleResourceNotFoundException(${exception},
+        ${body.getHeader().getRequestedElement()},
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
+    </route>
+
+    <route id="responseMessageBuilderException">
+        <from uri="direct:handleResponseMessageBuilderException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling ResponseMessageBuilderException called."/>
+        <to uri="bean:messageResponseService?method=handleResponseMessageBuilderException(${exception},
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
+    </route>
+
+    <route id="noAffectedResourceException">
+        <from uri="direct:handleNoAffectedResourceException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling missing affected resource called."/>
+        <to uri="bean:messageResponseService?method=handleMissingAffectedResource(
+        ${body.getHeader().getAffectedResource()},
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
+    </route>
+
+    <route id="invalidAffectedResourceException">
+        <from uri="direct:handleInvalidAffectedResourceException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling invalid affected resource called."/>
+        <to uri="bean:messageResponseService?method=handleInvalidAffectedResource(
+        ${body.getBody().getId()},
+        ${body.getHeader().getAffectedResource()},
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
+    </route>
+
+    <route id="illegalArgumentException">
+        <from uri="direct:handleIllegalArgumentException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling IllegalArgumentException called."/>
+        <to uri="bean:messageResponseService?method=handleIllegalArgumentException(${exception},
+        ${body.getBody().toString()},
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
+    </route>
+
+    <route id="illegalArgumentExceptionWithTransformer">
+        <from uri="direct:handleIllegalArgumentExceptionWithTransformer"/>
+        <log loggingLevel="DEBUG" message="Error route for handling IllegalArgumentException called."/>
+        <process ref="PayloadStreamReader"/>
+        <to uri="bean:messageResponseService?method=handleIllegalArgumentException(${exception},
+        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getBody().toString()},
+        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getHeader().getId()})"/>
+    </route>
+
+    <route id="wrappedIllegalArgumentException">
+        <from uri="direct:handleWrappedIllegalArgumentException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling IllegalArgumentException called."/>
+        <process ref="PayloadStreamReader"/>
+        <to uri="bean:messageResponseService?method=handleIllegalArgumentException(${exception.cause},
+        ${body.getBody()},
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
+    </route>
+
+    <route id="messagePayloadException">
+        <from uri="direct:handleMessagePayloadException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling MessagePayloadException called."/>
+        <to uri="bean:messageResponseService?method=handleMessagePayloadException(${exception},
+        ${body.getHeader().getId()},
+        ${body.getHeader().getIssuerConnector()})"/>
+    </route>
+
+    <route id="contractException">
+        <from uri="direct:handleContractException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling ContractException called."/>
+        <to uri="bean:messageResponseService?method=handleContractException(${exception},
+        ${body.getBody().toRdf()},
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
+    </route>
+
+    <route id="unconfirmedAgreementException">
+        <from uri="direct:handleUnconfirmedAgreementException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling unconfirmed agreement called."/>
+        <to uri="bean:messageResponseService?method=handleUnconfirmedAgreement(${exception.getAgreement()},
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
+    </route>
+
+    <route id="noRequestedArtifactException">
+        <from uri="direct:handleNoRequestedArtifactException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling missing requested artifact called."/>
+        <to uri="bean:messageResponseService?method=handleMissingRequestedArtifact(
+        ${body.getHeader().getRequestedArtifact()},
+        ${body.getHeader().getTransferContract()},
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
+    </route>
+
+    <route id="invalidInputException">
+        <from uri="direct:handleInvalidInputException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling invalid query input called."/>
+        <to uri="bean:messageResponseService?method=handleInvalidQueryInput(${exception},
+        ${body.getHeader().getRequestedArtifact()},
+        ${body.getHeader().getTransferContract()},
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
+    </route>
+
+    <route id="noTransferContractException">
+        <from uri="direct:handleNoTransferContractException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling missing transfer contract called."/>
+        <to uri="bean:messageResponseService?method=handleMissingTransferContract(
+        ${body.getHeader().getRequestedArtifact()},
+        ${body.getHeader().getTransferContract()},
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
+    </route>
+
+    <route id="messageProcessingFailedForArtifact">
+        <from uri="direct:handleMessageProcessingFailedForArtifact"/>
+        <log loggingLevel="DEBUG" message="Error route for handling failed message processing called."/>
+        <to uri="bean:messageResponseService?method=handleMessageProcessingFailed(${exception},
+        ${body.getHeader().getRequestedArtifact()},
+        ${body.getHeader().getTransferContract()},
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
+    </route>
+
+    <route id="messageProcessingFailedForAgreement">
+        <from uri="direct:handleMessageProcessingFailedForAgreement"/>
+        <log loggingLevel="DEBUG" message="Error route for handling failed message processing called."/>
+        <to uri="bean:messageResponseService?method=handleMessageProcessingFailed(${exception},
+        ${body.getBody().toRdf(),
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
+    </route>
+
+    <route id="messageProcessingFailedForSubscription">
+        <from uri="direct:handleMessageProcessingFailedForSubscription"/>
+        <log loggingLevel="DEBUG" message="Error route for handling failed message processing called."/>
+        <to uri="bean:messageResponseService?method=handleMessageProcessingFailed(${exception},
+        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getBody().toRdf(),
+        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getHeader().getId()})"/>
+    </route>
+
+    <route id="policyRestrictionException">
+        <from uri="direct:handlePolicyRestrictionException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling PolicyRestrictionException called."/>
+        <to uri="bean:messageResponseService?method=handlePolicyRestrictionException(${exception},
+        ${body.getHeader().getRequestedArtifact()},
+        ${body.getHeader().getTransferContract()},
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
+    </route>
+
+    <route id="invalidTransferContract">
+        <from uri="direct:handleInvalidTransferContract"/>
+        <log loggingLevel="DEBUG" message="Error route for handling invalid transfer contract called."/>
+        <to uri="bean:messageResponseService?method=handleInvalidTransferContract(${exception},
+        ${body.getHeader().getRequestedArtifact()},
+        ${body.getHeader().getTransferContract()},
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
+    </route>
+
+    <route id="dataRetrievalError">
+        <from uri="direct:handleDataRetrievalError"/>
+        <log loggingLevel="DEBUG" message="Error route for handling failed data retrieval called."/>
+        <to uri="bean:messageResponseService?method=handleFailedToRetrieveData(${exception},
+        ${body.getHeader().getRequestedArtifact()},
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
+    </route>
+
+    <route id="contractListEmpty">
+        <from uri="direct:handleContractListEmptyException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling missing contract offers called."/>
+        <to uri="bean:messageResponseService?method=handleMissingContractOffers(${exception.getContractRequest()},
+        ${body.getHeader().getId()},
+        ${body.getHeader().getIssuerConnector()})"/>
+    </route>
+
+    <route id="malformedRules">
+        <from uri="direct:handleMalformedRules"/>
+        <log loggingLevel="DEBUG" message="Error route for handling malformed rules called."/>
+        <to uri="bean:messageResponseService?method=handleMalformedRules(${exception.cause},
+        ${body.getBody().getContractRequest().toRdf()},
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
+    </route>
+
+    <route id="missingRulesException">
+        <from uri="direct:handleMissingRulesException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling missing rules called."/>
+        <to uri="bean:messageResponseService?method=handleMissingRules(${exception.getContractRequest()},
+        ${body.getHeader().getId()},
+        ${body.getHeader().getIssuerConnector()})"/>
+    </route>
+
+    <route id="missingTargetInRuleException">
+        <from uri="direct:handleMissingTargetInRuleException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling missing target in rules called."/>
+        <to uri="bean:messageResponseService?method=handleMissingTargetInRules(${exception.getContractRequest()},
+        ${body.getHeader().getId()},
+        ${body.getHeader().getIssuerConnector()})"/>
+    </route>
+
+    <route id="agreementPersistenceException">
+        <from uri="direct:handleAgreementPersistenceException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling AgreementPersistenceException called."/>
+        <to uri="bean:messageResponseService?method=handleAgreementPersistenceException(${exception.getCause()},
+        null,
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
+    </route>
+
+    <route id="missingPayloadException">
+        <from uri="direct:handleMissingPayloadException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling missing payload called."/>
+        <to uri="bean:messageResponseService?method=handleMissingPayload(
+        ${body.getHeader().getAffectedResource()},
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
+    </route>
+
+</routes>

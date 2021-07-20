@@ -15,22 +15,22 @@
  */
 package io.dataspaceconnector.service.ids.builder;
 
-import java.math.BigInteger;
-
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import io.dataspaceconnector.model.Artifact;
+import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.util.IdsUtils;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.math.BigInteger;
+
 /**
- * Converts DSC Artifacts to Infomodel Artifacts.
+ * Converts dsc artifacts to ids artifacts.
  */
 @Component
 @NoArgsConstructor
-public final class IdsArtifactBuilder
-        extends AbstractIdsBuilder<Artifact, de.fraunhofer.iais.eis.Artifact> {
+public final class IdsArtifactBuilder extends AbstractIdsBuilder<Artifact,
+        de.fraunhofer.iais.eis.Artifact> {
 
     @Override
     protected de.fraunhofer.iais.eis.Artifact createInternal(final Artifact artifact,

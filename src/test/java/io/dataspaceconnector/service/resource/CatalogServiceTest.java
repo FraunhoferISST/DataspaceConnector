@@ -16,9 +16,9 @@
 package io.dataspaceconnector.service.resource;
 
 import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.CatalogDesc;
-import io.dataspaceconnector.model.CatalogFactory;
+import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.catalog.CatalogDesc;
+import io.dataspaceconnector.model.catalog.CatalogFactory;
 import io.dataspaceconnector.repository.CatalogRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +35,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,9 +108,7 @@ class CatalogServiceTest {
     @SneakyThrows
     private Catalog saveAndFlushMock(final InvocationOnMock invocation) {
         final var obj = (Catalog) invocation.getArgument(0);
-        final var idField = obj.getClass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(obj, UUID.randomUUID());
+        ReflectionTestUtils.setField(obj, "id", UUID.randomUUID());
 
         catalogList.add(obj);
         return obj;
@@ -364,14 +363,8 @@ class CatalogServiceTest {
         final var catalogConstructor = Catalog.class.getConstructor();
 
         final var catalog = catalogConstructor.newInstance();
-
-        final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(catalog, UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
-
-        final var titleField = catalog.getClass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(catalog, desc.getTitle());
+        ReflectionTestUtils.setField(catalog, "id", UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
+        ReflectionTestUtils.setField(catalog, "title", desc.getTitle());
 
         return catalog;
     }
@@ -383,14 +376,8 @@ class CatalogServiceTest {
         final var catalogConstructor = Catalog.class.getConstructor();
 
         final var catalog = catalogConstructor.newInstance();
-
-        final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(catalog, UUID.fromString("afb43170-b8d4-4872-b923-3490de99a53b"));
-
-        final var titleField = catalog.getClass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(catalog, desc.getTitle());
+        ReflectionTestUtils.setField(catalog, "id", UUID.fromString("afb43170-b8d4-4872-b923-3490de99a53b"));
+        ReflectionTestUtils.setField(catalog, "title", desc.getTitle());
 
         return catalog;
     }

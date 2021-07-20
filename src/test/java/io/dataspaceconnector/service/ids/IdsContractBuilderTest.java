@@ -17,13 +17,13 @@ package io.dataspaceconnector.service.ids;
 
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.ids.messaging.util.SerializerProvider;
-import io.dataspaceconnector.model.AbstractEntity;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractDesc;
-import io.dataspaceconnector.model.ContractFactory;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.ContractRuleDesc;
-import io.dataspaceconnector.model.ContractRuleFactory;
+import io.dataspaceconnector.model.base.Entity;
+import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.contract.ContractDesc;
+import io.dataspaceconnector.model.contract.ContractFactory;
+import io.dataspaceconnector.model.rule.ContractRule;
+import io.dataspaceconnector.model.rule.ContractRuleDesc;
+import io.dataspaceconnector.model.rule.ContractRuleFactory;
 import io.dataspaceconnector.service.ids.builder.IdsContractBuilder;
 import io.dataspaceconnector.service.ids.builder.IdsDutyBuilder;
 import io.dataspaceconnector.service.ids.builder.IdsPermissionBuilder;
@@ -195,11 +195,11 @@ public class IdsContractBuilderTest {
         ruleDesc.setValue(value);
         final var rule = ruleFactory.create(ruleDesc);
 
-        final var idField = AbstractEntity.class.getDeclaredField("id");
+        final var idField = Entity.class.getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(rule, UUID.randomUUID());
 
-        final var creationDateField = AbstractEntity.class.getDeclaredField("creationDate");
+        final var creationDateField = Entity.class.getDeclaredField("creationDate");
         creationDateField.setAccessible(true);
         creationDateField.set(rule, date);
 
@@ -217,15 +217,15 @@ public class IdsContractBuilderTest {
 
         final var contract = contractFactory.create(contractDesc);
 
-        final var idField = AbstractEntity.class.getDeclaredField("id");
+        final var idField = Entity.class.getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(contract, UUID.randomUUID());
 
-        final var creationDateField = AbstractEntity.class.getDeclaredField("creationDate");
+        final var creationDateField = Entity.class.getDeclaredField("creationDate");
         creationDateField.setAccessible(true);
         creationDateField.set(contract, date);
 
-        final var modificationDateField = AbstractEntity.class.getDeclaredField("modificationDate");
+        final var modificationDateField = Entity.class.getDeclaredField("modificationDate");
         modificationDateField.setAccessible(true);
         modificationDateField.set(contract, date);
 
@@ -242,7 +242,7 @@ public class IdsContractBuilderTest {
         final var additional = new HashMap<String, String>();
         additional.put("key", "value");
 
-        final var additionalField = AbstractEntity.class.getDeclaredField("additional");
+        final var additionalField = Entity.class.getDeclaredField("additional");
         additionalField.setAccessible(true);
         additionalField.set(contract, additional);
 

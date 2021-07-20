@@ -81,3 +81,14 @@ Set environment variables
       key: {{ $key }}
 {{- end }}
 {{- end }}
+
+{{/*
+Generate ssl certificates
+*/}}
+{{- define "dataspace-connector.gen-certs" -}}
+{{- $altNames := list ( printf "%s.%s" (include "dataspace-connector.name" .) .Release.Namespace ) ( printf "%s.%s.svc" (include "dataspace-connector.name" .) .Release.Namespace ) -}}
+{{- $ca := genCA "dataspace-connector-ca" 1 -}}
+{{- $cert := genSignedCert ( include "dataspace-connector.name" . ) nil $altNames 1 $ca -}}
+tls.crt: {{ $cert.Cert | b64enc }}
+tls.key: {{ $cert.Key | b64enc }}
+{{- end -}}

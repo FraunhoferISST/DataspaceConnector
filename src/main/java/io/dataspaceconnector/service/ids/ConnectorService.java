@@ -28,7 +28,7 @@ import de.fraunhofer.ids.messaging.core.daps.ConnectorMissingCertExtensionExcept
 import de.fraunhofer.ids.messaging.core.daps.DapsConnectionException;
 import de.fraunhofer.ids.messaging.core.daps.DapsEmptyResponseException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenProvider;
-import io.dataspaceconnector.model.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.service.ids.builder.IdsCatalogBuilder;
 import io.dataspaceconnector.service.ids.builder.IdsResourceBuilder;
 import io.dataspaceconnector.service.resource.CatalogService;

@@ -24,4 +24,20 @@
         <!-- Way too many false positives and no easy way to satisfy spotbugs without modifing the code -->
         <Bug pattern="BC_UNCONFIRMED_CAST_OF_RETURN_VALUE"/>
     </Match>
+    <Match>
+        <!-- Fixed in java 8, project requires java 11, thus disabled -->
+        <Bug pattern="WEAK_FILENAMEUTILS"/>
+    </Match>
+    <Match>
+        <!-- Too many warnings, needs too be evaluated some time. -->
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+    <Match>
+        <!-- Too many warnings, needs too be evaluated some time. -->
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+    <Match>
+        <!-- Does not work with IDS Messaging Service, too many false positives -->
+        <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+    </Match>
 </FindBugsFilter>

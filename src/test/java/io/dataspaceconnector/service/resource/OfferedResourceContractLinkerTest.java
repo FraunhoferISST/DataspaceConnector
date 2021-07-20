@@ -15,19 +15,20 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -83,20 +84,9 @@ class OfferedResourceContractLinkerTest {
         constructor.setAccessible(true);
 
         final var resource = constructor.newInstance();
-
-        final var titleField = resource.getClass().getSuperclass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(resource, "Hello");
-
-        final var contractsField = resource.getClass().getSuperclass().getDeclaredField(
-                "contracts");
-        contractsField.setAccessible(true);
-        contractsField.set(resource, new ArrayList<Contract>());
-
-        final var idField = resource.getClass().getSuperclass().getSuperclass().getDeclaredField(
-                "id");
-        idField.setAccessible(true);
-        idField.set(resource, UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
+        ReflectionTestUtils.setField(resource, "title", "Hello");
+        ReflectionTestUtils.setField(resource, "contracts", new ArrayList<Contract>());
+        ReflectionTestUtils.setField(resource, "id", UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
 
         return resource;
     }
@@ -107,14 +97,8 @@ class OfferedResourceContractLinkerTest {
         constructor.setAccessible(true);
 
         final var contract = constructor.newInstance();
-
-        final var titleField = contract.getClass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(contract, "Contract");
-
-        final var idField = contract.getClass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(contract, UUID.fromString("554ed409-03e9-4b41-a45a-4b7a8c0aa499"));
+        ReflectionTestUtils.setField(resource, "title", "Contract");
+        ReflectionTestUtils.setField(resource, "id", UUID.fromString("554ed409-03e9-4b41-a45a-4b7a8c0aa499"));
 
         return contract;
     }

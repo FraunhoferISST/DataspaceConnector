@@ -17,16 +17,28 @@ package io.dataspaceconnector.bootstrap;
 
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
+import de.fraunhofer.ids.messaging.common.DeserializeException;
+import de.fraunhofer.ids.messaging.common.SerializeException;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
+import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
+import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
+import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
+import de.fraunhofer.ids.messaging.protocol.multipart.UnknownResponseException;
+import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
+import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
+import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
+import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import io.dataspaceconnector.bootstrap.util.BootstrapUtils;
-import io.dataspaceconnector.service.message.GlobalMessageService;
-import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
-import io.dataspaceconnector.model.RequestedResourceDesc;
+import io.dataspaceconnector.model.artifact.ArtifactDesc;
+import io.dataspaceconnector.model.auth.AuthenticationDesc;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.ids.DeserializationService;
+import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.service.resource.CatalogService;
 import io.dataspaceconnector.service.resource.TemplateBuilder;
 import io.dataspaceconnector.util.TemplateUtils;
@@ -49,6 +61,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -180,8 +193,8 @@ public class Bootstrapper {
      * @return true if all resources could be registered.
      */
     private boolean registerAtBroker(final Properties properties,
-                                     final Map<URI, Resource> resources) {
-        final var knownBrokers = new HashSet<URL>();
+                                    final Map<URI, Resource> resources) {
+        final var knownBrokers = new HashSet<String>();
         // Iterate over all registered resources.
         for (final var entry : resources.entrySet()) {
             final var propertyKey = "broker.register." + entry.getKey().toString();
@@ -198,18 +211,26 @@ public class Bootstrapper {
                 final var broker = brokerUrl.get();
 
                 try {
-                    if (!knownBrokers.contains(broker)) {
-                        knownBrokers.add(broker);
-                        if (!brokerSvc.sendAndValidateConnectorUpdateMessage(broker.toURI())) {
+                    if (!knownBrokers.contains(broker.toString())) {
+                        knownBrokers.add(broker.toString());
+                        var connectorResponse = brokerSvc
+                                .sendConnectorUpdateMessage(broker.toURI());
+                        if (!brokerSvc.checkResponse(connectorResponse)) {
                             return false;
                         }
                     }
 
-                    if (!brokerSvc.sendAndValidateResourceUpdateMessage(broker.toURI(),
-                            entry.getValue())) {
+                    var resourceResponse = brokerSvc
+                            .sendResourceUpdateMessage(broker.toURI(), entry.getValue());
+                    if (!brokerSvc.checkResponse(resourceResponse)) {
                         return false;
                     }
-                } catch (Exception e) {
+                } catch (MultipartParseException | ClaimsException | DapsTokenManagerException
+                        | IOException | URISyntaxException | NoTemplateProvidedException
+                        | ShaclValidatorException | SendMessageException
+                        | UnexpectedPayloadException | SerializeException
+                        | DeserializeException | RejectionException
+                        | UnknownResponseException e) {
                     if (log.isDebugEnabled()) {
                         log.debug("Could not register resource at broker [resourceId=({}), "
                                 + "broker=({})].", entry.getKey().toString(), broker, e);
@@ -229,7 +250,7 @@ public class Bootstrapper {
             }
 
             return files;
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | NullPointerException e) {
             if (log.isDebugEnabled()) {
                 log.debug("No catalog files for bootstrapping found. [exception=({})]",
                         e.getMessage(), e);
@@ -334,6 +355,7 @@ public class Bootstrapper {
      * @param idsResources (IDS ID, IDS-Resource) Map that contains bootstrapped elements.
      * @return true if the catalog could be registered, false otherwise.
      */
+    @Transactional
     protected boolean registerCatalog(final ResourceCatalog catalog,
                                       final Properties properties,
                                       final Map<URI, Resource> idsResources) {
@@ -377,7 +399,7 @@ public class Bootstrapper {
                                       final Properties properties,
                                       final Resource resource) {
         // Add ids id to additional fields.
-        resourceTemplate.getDesc().setBootstrapId(resource.getId().toString());
+        resourceTemplate.getDesc().setBootstrapId(resource.getId());
 
         // Collect all artifact IDs from artifacts inside representations.
         resourceTemplate.setRepresentations(TemplateUtils.getRepresentationTemplates(
@@ -416,12 +438,8 @@ public class Bootstrapper {
             }
         }
 
-        if (username != null) {
-            desc.setUsername(username);
-        }
-
-        if (password != null) {
-            desc.setPassword(password);
+        if (username != null || password != null) {
+            desc.setBasicAuth(new AuthenticationDesc(username, password));
         }
 
         if (value != null) {

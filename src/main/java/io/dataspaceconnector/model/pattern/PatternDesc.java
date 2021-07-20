@@ -17,14 +17,13 @@ package io.dataspaceconnector.model.pattern;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.dataspaceconnector.model.AbstractDescription;
+import io.dataspaceconnector.model.named.NamedDescription;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
  * Class for inputs of a policy pattern.
  */
-@SuppressWarnings("rawtypes")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
@@ -42,5 +41,5 @@ import lombok.EqualsAndHashCode;
         @JsonSubTypes.Type(value = SecurityRestrictionDesc.class,
                 names = {"SECURITY_PROFILE_RESTRICTED_USAGE"})}
 )
-public class PatternDesc extends AbstractDescription {
+public class PatternDesc extends NamedDescription {
 }

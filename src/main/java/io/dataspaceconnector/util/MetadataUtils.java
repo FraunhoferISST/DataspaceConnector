@@ -55,6 +55,40 @@ public final class MetadataUtils {
     }
 
     /**
+     * Update integer.
+     *
+     * @param oldPort Old port.
+     * @param newPort New port.
+     * @return New port, if new port is different from the old port.
+     */
+    public static Integer updateInteger(final int oldPort, final int newPort) {
+        if (oldPort != newPort) {
+            return newPort;
+        }
+
+        return oldPort;
+    }
+
+    /**
+     * Update boolean.
+     *
+     * @param oldBoolean     Old value.
+     * @param newBoolean     New value.
+     * @param defaultBoolean Default value.
+     * @return Optional with the new value or without a value.
+     */
+    public static Optional<Boolean> updateBoolean(final Boolean oldBoolean,
+                                                  final Boolean newBoolean,
+                                                  final Boolean defaultBoolean) {
+        final var newValue = newBoolean == null ? defaultBoolean : newBoolean;
+        if (oldBoolean == null || !oldBoolean.equals(newValue)) {
+            return Optional.of(newValue);
+        }
+
+        return Optional.empty();
+    }
+
+    /**
      * Update uri.
      *
      * @param oldUri     Old uri.
@@ -113,6 +147,27 @@ public final class MetadataUtils {
     }
 
     /**
+     * Update list of uris.
+     *
+     * @param oldList     Old list.
+     * @param newList     New list.
+     * @param defaultList Default values.
+     * @return Optional with the new value or without a value.
+     */
+    public static Optional<List<URI>> updateUriList(
+            final List<URI> oldList,
+            final List<URI> newList,
+            final List<URI> defaultList) {
+        final var newValues = cleanUriList(newList == null ? defaultList : newList);
+
+        if (oldList == null || !oldList.equals(newValues)) {
+            return Optional.of(newValues);
+        }
+
+        return Optional.empty();
+    }
+
+    /**
      * Update map of strings.
      *
      * @param oldMap     Old map.
@@ -141,6 +196,16 @@ public final class MetadataUtils {
         var result = removeNullFromList(list);
         result = removeEmptyStringFromList(result);
         return result;
+    }
+
+    /**
+     * Clean list of uris.
+     *
+     * @param list List of uris.
+     * @return Cleared list.
+     */
+    public static List<URI> cleanUriList(final List<URI> list) {
+        return removeNullFromList(list);
     }
 
     /**

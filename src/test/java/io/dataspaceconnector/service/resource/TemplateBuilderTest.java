@@ -15,12 +15,13 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.ArtifactImpl;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
-import io.dataspaceconnector.model.RequestedResource;
+import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.artifact.ArtifactDesc;
+import io.dataspaceconnector.model.artifact.ArtifactImpl;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.template.ArtifactTemplate;
 import io.dataspaceconnector.model.template.CatalogTemplate;
 import io.dataspaceconnector.model.template.ResourceTemplate;
@@ -31,12 +32,17 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class TemplateBuilderTest {
+
+    @MockBean
+    private IdscpServerRoute idscpServerRoute;
 
     @MockBean
     private ArtifactService artifactService;
@@ -169,7 +175,7 @@ class TemplateBuilderTest {
         final var artifactConstructor = ArtifactImpl.class.getConstructor();
         final var artifact = artifactConstructor.newInstance();
 
-        final var titleField = artifact.getClass().getSuperclass().getDeclaredField("title");
+        final var titleField = artifact.getClass().getSuperclass().getSuperclass().getDeclaredField("title");
         titleField.setAccessible(true);
         titleField.set(artifact, desc.getTitle());
 

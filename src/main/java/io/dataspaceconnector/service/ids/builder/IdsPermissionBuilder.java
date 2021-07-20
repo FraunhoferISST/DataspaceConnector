@@ -20,7 +20,7 @@ import io.dataspaceconnector.service.ids.DeserializationService;
 import org.springframework.stereotype.Component;
 
 /**
- * Converts DSC rule to ids permission.
+ * Converts dsc rule to ids permission.
  */
 @Component
 public class IdsPermissionBuilder extends IdsRuleBuilder<Permission> {

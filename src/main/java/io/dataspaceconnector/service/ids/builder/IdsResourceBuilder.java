@@ -20,21 +20,21 @@ import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.model.Resource;
+import io.dataspaceconnector.model.resource.Resource;
 import io.dataspaceconnector.util.IdsUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
- * Converts DSC resource to ids resource.
+ * Converts dsc resource to ids resource.
  *
  * @param <T> The resource type.
  */
 @Component
 @RequiredArgsConstructor
-public final class IdsResourceBuilder<T extends Resource>
-        extends AbstractIdsBuilder<T, de.fraunhofer.iais.eis.Resource> {
+public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBuilder<T,
+        de.fraunhofer.iais.eis.Resource> {
 
     /**
      * The builder for ids representation.

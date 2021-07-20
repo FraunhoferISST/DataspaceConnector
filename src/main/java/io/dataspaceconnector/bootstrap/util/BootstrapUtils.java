@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.bootstrap.util;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -28,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -65,6 +65,7 @@ public final class BootstrapUtils {
      * @param name      The (optional) name of the bootstrapping file.
      * @param extension The extension of the bootstrapping file.
      * @return Properties that contain the merged content of all bootstrap config files.
+     * @throws FileNotFoundException Could not open properties file.
      */
     public static Properties retrieveBootstrapConfig(final String path,
                                                      final String name,
@@ -150,10 +151,12 @@ public final class BootstrapUtils {
      * @return A list of all files that are stored at given path (and subdirectories) with required
      * extension and optional required filename.
      * @throws FileNotFoundException if the given path does not exist.
+     * @throws NullPointerException  if the directory does not contain child files.
      */
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     public static List<File> findFilesByExtension(final String path, final String filename,
                                                   final String extension)
-            throws FileNotFoundException {
+            throws FileNotFoundException, NullPointerException {
         // Validate input.
         final var base = new File(path);
         if (!base.exists()) {
@@ -163,7 +166,7 @@ public final class BootstrapUtils {
         final var files = new ArrayList<File>();
         if (base.isDirectory()) {
             // If the base file is a directory, iterate all child files.
-            for (final var child : Objects.requireNonNull(base.listFiles())) {
+            for (final var child : getContainedFiles(base)) {
                 if (child.isDirectory()) {
                     files.addAll(findFilesByExtension(child.getPath(), filename, extension));
                 } else {
@@ -180,6 +183,11 @@ public final class BootstrapUtils {
         }
 
         return files;
+    }
+
+    private static File[] getContainedFiles(final File file) {
+        final var out = file.listFiles();
+        return out == null ? new File[] {} : out;
     }
 
     /**
