@@ -89,8 +89,10 @@ public final class ArtifactRequestService
                 ._transferContract_(contractId)
                 .build();
 
-            // Log outgoing ArtifactRequestMessages in ClearingHouse
+        // Log outgoing ArtifactRequestMessages in ClearingHouse
+        // TODO Message might not have been sent.
         clearingHouseService.logIdsMessage(message);
+
         return message;
     }
 
