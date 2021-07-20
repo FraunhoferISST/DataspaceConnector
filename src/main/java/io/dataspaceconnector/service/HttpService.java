@@ -161,8 +161,8 @@ public class HttpService {
 
         final var targetUrl = urlBuilder.build();
 
-        final var body = RequestBody.create(data.readAllBytes(), MediaType.get("application/octet" +
-                "-stream"));
+        final var body = RequestBody.create(data.readAllBytes(),
+                MediaType.get("application/octet-stream"));
         final var request = new Request.Builder().url(targetUrl).post(body).build();
 
         final var response = httpSvc.send(request);
