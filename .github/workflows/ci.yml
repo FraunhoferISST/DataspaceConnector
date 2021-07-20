@@ -192,7 +192,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build image
-        run: docker build . -t $IMAGE:ci
+        run: |
+          echo docker --version
+          docker build . -t $IMAGE:ci
         env:
           IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
           DOCKER_BUILDKIT: 1
