@@ -299,7 +299,12 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
             return true;
         }
 
-        configuration.setProxy(proxyFactory.create(desc));
+        if (configuration.getProxy() != null) {
+            proxyFactory.update(configuration.getProxy(), desc);
+        } else {
+            configuration.setProxy(proxyFactory.create(desc));
+        }
+
         return true;
     }
 }
