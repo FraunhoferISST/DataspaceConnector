@@ -171,7 +171,6 @@ jobs:
       run: mvn -B -U -Dmaven.javadoc.skip=true test org.pitest:pitest-maven:mutationCoverage --file pom.xml
 
   build-test-image:
-    needs: [style, license, linting]
     timeout-minutes: 15
     runs-on: ubuntu-latest
     concurrency:
@@ -185,23 +184,24 @@ jobs:
       - name: Build registry path
         id: get_repo
         run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspace-connector"
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
       - name: Login to registry
         uses: docker/login-action@v1
         with:
           registry: ${{ secrets.IMAGE_REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build image
-        run: |
-          docker --version
-          docker build . -t $IMAGE:ci
-        env:
-          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
-          DOCKER_BUILDKIT: 1
-      - name: Push image
-        run: docker push $IMAGE:ci
-        env:
-          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
+      - name: Build and push
+          id: docker_build
+          uses: docker/build-push-action@v2
+          with:
+            push: true
+            tags: ${{ secrets.IMAGE_REGISTRY }}/${{ secrets.REPO_USER }}/dataspace-connector:ci
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
       - name: Run vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
