@@ -15,13 +15,14 @@
  */
 package io.dataspaceconnector.controller.util;
 
+import java.net.URI;
+import java.util.Map;
+
+import de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception;
 import io.dataspaceconnector.util.ErrorMessage;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.net.URI;
-import java.util.Map;
 
 /**
  * Contains utility methods for creating ResponseEntities with different status codes and custom
@@ -244,5 +245,23 @@ public final class ControllerUtils {
             log.debug("No subscriptions found. [target=({})]", target);
         }
         return new ResponseEntity<>("No subscriptions found.", HttpStatus.NO_CONTENT);
+    }
+
+    /**
+     * Creates a ResponseEntity with status code 500 and a message indicating that IDSCP2
+     * communication failed.
+     *
+     * @param recipient the intended recipient.
+     * @param exception the Idscp2Exception.
+     * @return ResponseEntity with status code 500.
+     */
+    public static ResponseEntity<Object> respondIdscp2Error(final URI recipient,
+                                                            final Idscp2Exception exception) {
+        final var msg = "IDSCP2 communication failed.";
+        if (log.isDebugEnabled()) {
+            log.debug("{} [recipient=({})] [exception=({})]", msg, recipient,
+                    exception.getMessage());
+        }
+        return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

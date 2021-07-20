@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.camel.route.controller;
+package io.dataspaceconnector.camel.route.controller.error;
 
-import java.net.SocketTimeoutException;
-
-import de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception;
 import io.dataspaceconnector.camel.util.ParameterUtils;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
 /**
- * Builds the route for sending a query message over IDSCP_v2.
+ * Builds the route for handling Idscp2Exceptions. When an Idscp2Exception occurs, it's always
+ * wrapped by an ExecutionException.
  */
 @Component
-public class QueryControllerRoute extends RouteBuilder {
+public class Idscp2ExceptionRoute extends RouteBuilder {
 
     /**
      * Configures the route.
@@ -35,17 +34,12 @@ public class QueryControllerRoute extends RouteBuilder {
      */
     @Override
     public void configure() throws Exception {
-        onException(SocketTimeoutException.class)
-                .to("direct:handleSocketTimeout");
-        onException(Idscp2Exception.class)
-                .to("direct:handleIdscp2Exception");
-
-        from("direct:querySender")
-                .routeId("querySender")
-                .process("QueryMessageBuilder")
-                .process("QueryPreparer")
-                .toD(ParameterUtils.IDSCP_CLIENT_URI)
-                .process("ResponseToDtoConverter");
+        from("direct:handleIdscp2Exception")
+                .routeId("idscp2Exception")
+                .log(LoggingLevel.DEBUG,
+                        "Error route for handling IDSCP2 exception called.")
+                .to(ParameterUtils.CONTROLLER_UTILS_BEAN
+                        + "respondIdscp2Error(${exchangeProperty.recipient}, "
+                        + "${exception.getCause})");
     }
-
 }
