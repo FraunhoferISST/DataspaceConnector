@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.service;
 
+import java.net.URI;
+import java.util.UUID;
+
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
@@ -45,9 +48,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.net.URI;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -234,6 +234,13 @@ public class EntityResolverTest {
         /* ASSERT */
         assertFalse(result.isPresent());
     }
+
+    // get entityAsRdfString
+
+
+
+    // getDataByArtifactId & getContractAgreementsByTarget
+
 
 
     /***********************************************************************************************
