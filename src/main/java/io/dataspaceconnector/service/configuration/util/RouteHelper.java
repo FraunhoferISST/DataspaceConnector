@@ -64,7 +64,7 @@ public class RouteHelper {
      * @throws RouteDeletionException if the Camel route cannot be deleted.
      */
     public void delete(final Route route) throws RouteDeletionException {
-        routeManager.deleteRoute(appRouteBuilder.create(route));
+        routeManager.deleteRoute(route);
     }
 
 }

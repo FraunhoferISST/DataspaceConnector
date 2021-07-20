@@ -22,6 +22,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import javax.xml.bind.Unmarshaller;
 
 import de.fraunhofer.iais.eis.AppEndpoint;
@@ -35,6 +36,7 @@ import io.configmanager.extensions.routes.camel.dto.RouteStepEndpoint;
 import io.configmanager.extensions.routes.camel.exceptions.NoSuitableTemplateException;
 import io.configmanager.extensions.routes.camel.exceptions.RouteCreationException;
 import io.configmanager.extensions.routes.camel.exceptions.RouteDeletionException;
+import io.dataspaceconnector.model.route.Route;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -336,14 +338,37 @@ public class RouteManager {
 
     /**
      * Deletes the Camel route for a given {@link AppRoute}. The route is stopped at and removed
-     * from the Camel application.
+     * from the Camel context.
      *
      * @param appRoute the AppRoute
      * @throws RouteDeletionException if the Camel route cannot be deleted
      */
     public void deleteRoute(final AppRoute appRoute) throws RouteDeletionException {
-        final var camelRouteId = getCamelRouteId(appRoute);
+        final var appRouteId = UUID.fromString(appRoute.getId().toString()
+                .split("/")[appRoute.getId().toString().split("/").length - 1]);
+        final var camelRouteId = getCamelRouteId(appRouteId);
+        deleteRouteById(camelRouteId);
+    }
 
+    /**
+     * Deletes the Camel route for a given {@link Route}. The route is stopped at and removed
+     * from the Camel context.
+     *
+     * @param route the route
+     * @throws RouteDeletionException if the Camel route cannot be deleted
+     */
+    public void deleteRoute(final Route route) {
+        final var camelRouteId = getCamelRouteId(route.getId());
+        deleteRouteById(camelRouteId);
+    }
+
+    /**
+     * Deletes a Camel route by ID. The route is stopped at and removed from the Camel context.
+     *
+     * @param camelRouteId the ID of the Camel route.
+     * @throws RouteDeletionException if the Camel route cannot be deleted
+     */
+    private void deleteRouteById(final String camelRouteId) {
         if (camelContext.getRoute(camelRouteId) != null) {
             try {
                 camelContext.stopRoute(camelRouteId);
@@ -353,7 +378,7 @@ public class RouteManager {
                 }
             } catch (Exception e) {
                 throw new RouteDeletionException("Error deleting Camel route for AppRoute with ID '"
-                        + appRoute.getId() + "'", e);
+                        + camelRouteId + "'", e);
             }
         }
     }
@@ -362,13 +387,24 @@ public class RouteManager {
      * Generates the ID of the Camel route for a given {@link AppRoute}. The Camel route ID consists
      * of the String 'app-route_' followed by the UUID from the AppRoute's ID.
      *
-     * @param appRoute the AppRoute
+     * @param appRoute the AppRoute.
      * @return the Camel route ID
      */
     private String getCamelRouteId(final AppRoute appRoute) {
-        final var appRouteId = appRoute.getId().toString()
-                .split("/")[appRoute.getId().toString().split("/").length - 1];
-        return "app-route_" + appRouteId;
+        final var appRouteId = UUID.fromString(appRoute.getId().toString()
+                .split("/")[appRoute.getId().toString().split("/").length - 1]);
+        return getCamelRouteId(appRouteId);
+    }
+
+    /**
+     * Generates the ID of the Camel route for a given UUID. The Camel route ID consists
+     * of the String 'app-route_' followed by the route's UUID.
+     *
+     * @param uuid the uuid of the route.
+     * @return the Camel route ID
+     */
+    private String getCamelRouteId(final UUID uuid) {
+        return "app-route_" + uuid;
     }
 
 }

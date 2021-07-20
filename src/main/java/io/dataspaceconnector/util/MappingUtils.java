@@ -15,21 +15,12 @@
  */
 package io.dataspaceconnector.util;
 
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.iais.eis.ConnectorDeployMode;
 import de.fraunhofer.iais.eis.ConnectorEndpoint;
+import de.fraunhofer.iais.eis.ConnectorEndpointImpl;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Proxy;
 import de.fraunhofer.iais.eis.Representation;
@@ -57,6 +48,16 @@ import io.dataspaceconnector.model.template.RepresentationTemplate;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
+
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Maps ids resources to internal resources.
@@ -210,12 +211,12 @@ public final class MappingUtils {
         desc.setSovereign(sovereign);
 
         if (description != null) {
-            desc.setDescription(description.size() == 1 ? description.get(0).toString()
+            desc.setDescription(description.size() == 1 ? description.get(0).getValue()
                     : description.toString());
         }
 
         if (title != null) {
-            desc.setTitle(title.size() == 1 ? title.get(0).toString() : title.toString());
+            desc.setTitle(title.size() == 1 ? title.get(0).getValue() : title.toString());
         }
 
         if (language != null) {
@@ -274,7 +275,11 @@ public final class MappingUtils {
     private static void addListToAdditional(final List<?> list,
                                             final Map<String, String> additional,
                                             final String key) {
-        additional.put(key, list.size() == 1 ? list.get(0).toString() : list.toString());
+        if (list.size() >= 1 && list.get(0) instanceof ConnectorEndpointImpl) {
+            additional.put(key, ((ConnectorEndpointImpl) list.get(0)).getAccessURL().toString());
+        } else {
+            additional.put(key, list.size() == 1 ? list.get(0).toString() : list.toString());
+        }
     }
 
     /**
