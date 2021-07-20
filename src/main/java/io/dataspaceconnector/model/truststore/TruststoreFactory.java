@@ -57,6 +57,10 @@ public class TruststoreFactory extends AbstractFactory<Truststore, TruststoreDes
     }
 
     private boolean updatePassword(final Truststore truststore, final String password) {
+        if (truststore.getPassword() != null && password == null) {
+            return false;
+        }
+
         final var newPassword = MetadataUtils.updateString(truststore.getPassword(),
                 password, DEFAULT_PASSWORD);
         newPassword.ifPresent(truststore::setPassword);
