@@ -15,6 +15,15 @@
  */
 package io.dataspaceconnector.controller.resource;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
+
 import de.fraunhofer.ids.messaging.protocol.UnexpectedResponseException;
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
 import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
@@ -30,8 +39,6 @@ import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
 import io.dataspaceconnector.controller.resource.view.RepresentationView;
 import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
 import io.dataspaceconnector.controller.resource.view.SubscriptionView;
-import io.dataspaceconnector.model.subscription.Subscription;
-import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.agreement.AgreementDesc;
 import io.dataspaceconnector.model.artifact.Artifact;
@@ -48,6 +55,8 @@ import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.rule.ContractRuleDesc;
+import io.dataspaceconnector.model.subscription.Subscription;
+import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.resource.AgreementService;
@@ -87,15 +96,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
-
 /**
  * This class contains all implementations of the {@link BaseResourceController}.
  */
@@ -127,8 +127,9 @@ public final class ResourceControllers {
     @RestController
     @RequestMapping("/api/representations")
     @Tag(name = ResourceName.REPRESENTATIONS, description = ResourceDescription.REPRESENTATIONS)
-    public static class RepresentationController extends BaseResourceController<Representation,
-            RepresentationDesc, RepresentationView, RepresentationService> {
+    public static class RepresentationController
+            extends BaseResourceNotificationController<Representation, RepresentationDesc,
+            RepresentationView, RepresentationService> {
     }
 
     /**
@@ -148,7 +149,7 @@ public final class ResourceControllers {
     @RequestMapping("/api/offers")
     @Tag(name = ResourceName.OFFERS, description = ResourceDescription.OFFERS)
     public static class OfferedResourceController
-            extends BaseResourceController<OfferedResource, OfferedResourceDesc,
+            extends BaseResourceNotificationController<OfferedResource, OfferedResourceDesc,
             OfferedResourceView, ResourceService<OfferedResource, OfferedResourceDesc>> {
     }
 
@@ -157,11 +158,12 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/requests")
+    @RequiredArgsConstructor
     @Tag(name = ResourceName.REQUESTS, description = ResourceDescription.REQUESTS)
     public static class RequestedResourceController
             extends BaseResourceController<RequestedResource, RequestedResourceDesc,
-            RequestedResourceView,
-            ResourceService<RequestedResource, RequestedResourceDesc>> {
+            RequestedResourceView, ResourceService<RequestedResource, RequestedResourceDesc>> {
+
         @Override
         @Hidden
         @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
@@ -193,7 +195,7 @@ public final class ResourceControllers {
         @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
                 description = ResponseDescription.METHOD_NOT_ALLOWED)})
         public final ResponseEntity<AgreementView> update(@Valid final UUID resourceId,
-                                                   final AgreementDesc desc) {
+                                                          final AgreementDesc desc) {
             throw new MethodNotAllowed();
         }
 
@@ -214,7 +216,8 @@ public final class ResourceControllers {
     @Tag(name = ResourceName.ARTIFACTS, description = ResourceDescription.ARTIFACTS)
     @RequiredArgsConstructor
     public static class ArtifactController
-            extends BaseResourceController<Artifact, ArtifactDesc, ArtifactView, ArtifactService> {
+            extends BaseResourceNotificationController<Artifact, ArtifactDesc, ArtifactView,
+            ArtifactService> {
 
         /**
          * The service managing artifacts.
@@ -348,7 +351,7 @@ public final class ResourceControllers {
                 @Valid @PathVariable(name = "id") final UUID artifactId,
                 @RequestBody final byte[] inputStream) throws IOException {
             artifactSvc.setData(artifactId, new ByteArrayInputStream(inputStream));
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         }
     }
 

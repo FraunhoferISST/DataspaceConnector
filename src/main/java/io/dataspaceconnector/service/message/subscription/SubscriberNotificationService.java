@@ -17,13 +17,13 @@ package io.dataspaceconnector.service.message.subscription;
 
 import de.fraunhofer.iais.eis.Resource;
 import io.dataspaceconnector.controller.util.Event;
-import io.dataspaceconnector.controller.util.Notification;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
+import io.dataspaceconnector.service.HttpService;
 import io.dataspaceconnector.service.ids.builder.IdsResourceBuilder;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.service.resource.ArtifactService;
@@ -37,13 +37,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -85,6 +85,11 @@ public class SubscriberNotificationService {
     private final @NonNull IdsResourceBuilder<OfferedResource> resourceBuilder;
 
     /**
+     * Service for executing http requests.
+     */
+    private final @NonNull HttpService httpService;
+
+    /**
      * Notify subscribers on database update event.
      *
      * @param entity The updated entity.
@@ -97,10 +102,7 @@ public class SubscriberNotificationService {
     }
 
     /**
-     * Notifies all backend systems and ids participants that subscribed for updates to an entity
-     * using a {@link SubscriberNotificationRunner}. The backends are notified in parallel and
-     * asynchronously. If a request to one of the subscribed URLs results in a status code 5xx,
-     * the request is retried 5 times with a delay of 5 seconds each.
+     * Notifies all backend systems and ids participants that subscribed for updates to an entity.
      *
      * @param subscriptions List of subscriptions for a certain target.
      * @param target        The target of the subscriptions.
@@ -128,20 +130,21 @@ public class SubscriberNotificationService {
                 .collect(Collectors.toList());
 
         // Update non-ids subscribers.
-        final var notification = new Notification(new Date(), target, Event.UPDATED);
+        // final var notification = new Notification(new Date(), target, Event.UPDATED);
+        final var notification = new HashMap<String, String>() {{
+            put("ids-target", target.toString());
+            put("ids-event", Event.UPDATED.toString());
+        }};
         if (!recipients.isEmpty()) {
-            new Thread(new SubscriberNotificationRunner(notification, recipients,
-                    new ByteArrayInputStream("".getBytes()))).start();
+            sendNotification(recipients, notification, InputStream.nullInputStream());
         }
 
         // Only send data if entity is of type artifact.
         if (!recipientsWithData.isEmpty()) {
             if (entity instanceof Artifact) {
-                new Thread(new SubscriberNotificationRunner(notification, recipientsWithData,
-                        retrieveDataByArtifact(entity))).start();
+                sendNotification(recipientsWithData, notification, retrieveDataByArtifact(entity));
             } else {
-                new Thread(new SubscriberNotificationRunner(notification, recipientsWithData,
-                        new ByteArrayInputStream("".getBytes()))).start();
+                sendNotification(recipientsWithData, notification, InputStream.nullInputStream());
             }
         }
     }
@@ -228,6 +231,21 @@ public class SubscriberNotificationService {
                 log.debug("Failed to retrieve data. [exception=({})]", exception.getMessage());
             }
         }
-        return new ByteArrayInputStream("".getBytes()); // TODO Check if this works
+        return InputStream.nullInputStream();
+    }
+
+    private void sendNotification(final List<URI> recipients,
+                                  final Map<String, String> notification, final InputStream data) {
+        for (final var recipient : recipients) {
+            final var args = new HttpService.HttpArgs();
+            args.setHeaders(notification);
+            try {
+                httpService.post(recipient.toURL(), args, data);
+            } catch (IOException exception) {
+                if (log.isWarnEnabled()) {
+                    log.warn("Could not notify subscriber. [url=({})]", recipient);
+                }
+            }
+        }
     }
 }

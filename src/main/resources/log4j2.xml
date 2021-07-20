@@ -23,24 +23,11 @@
         <Root level="info">
             <AppenderRef ref="ConsoleAppender"/>
         </Root>
-        <!-- <Logger name="org.springframework" level="info">
-            <AppenderRef ref="ConsoleAppender"/>
-        </Logger> -->
-        <Logger name="org.hibernate" level="error">
-            <AppenderRef ref="ConsoleAppender"/>
-        </Logger>
-        <!-- <Logger name="io.dataspaceconnector" level="info">
-            <AppenderRef ref="ConsoleAppender"/>
-        </Logger> -->
-<!--        <Logger name="camel-route-logger" level="info"/>-->
-<!--        <Logger name="de.fhg.aisec.ids.idscp2" level="TRACE">-->
-<!--            <AppenderRef ref="ConsoleAppender"/>-->
-<!--        </Logger>-->
-<!--        <Logger name="de.fhg.aisec.ids.camel.idscp2" level="TRACE">-->
-<!--            <AppenderRef ref="ConsoleAppender"/>-->
-<!--        </Logger>-->
-        <Logger name="de.fhg.aisec.ids.camel.idscp2.processors" level="INFO">
-            <AppenderRef ref="ConsoleAppender"/>
-        </Logger>
+<!--        <Logger name="org.springframework" level="info" /> -->
+        <Logger name="org.hibernate" level="error"/>
+<!--        <Logger name="io.dataspaceconnector" level="info" /> -->
+        <Logger name="camel-route-logger" level="debug"/>
+<!--        <Logger name="de.fhg.aisec.ids.idscp2" level="TRACE" />-->
+<!--        <Logger name="de.fhg.aisec.ids.camel.idscp2" level="TRACE" />-->
     </Loggers>
 </Configuration>
