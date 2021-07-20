@@ -15,16 +15,18 @@
  */
 package io.dataspaceconnector.view.endpoint;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.controller.configuration.EndpointController;
 import io.dataspaceconnector.controller.resource.view.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
+import io.dataspaceconnector.view.datasource.DataSourceViewAssembler;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 /**
  * Assembles the REST resource for a generic endpoint.
@@ -32,6 +34,12 @@ import java.util.UUID;
 @Component
 public class GenericEndpointViewAssembler
         implements RepresentationModelAssembler<GenericEndpoint, GenericEndpointView>, SelfLinking {
+
+    /**
+     * Assembler for getting the url of the endpoint's datasource.
+     */
+    @Autowired
+    private DataSourceViewAssembler dataSourceViewAssembler;
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
@@ -44,6 +52,11 @@ public class GenericEndpointViewAssembler
         final var view = modelMapper.map(genericEndpoint,
                 GenericEndpointView.class);
         view.add(getSelfLink(genericEndpoint.getId()));
+
+        if (genericEndpoint.getDataSource() != null) {
+            view.add(dataSourceViewAssembler.getSelfLink(genericEndpoint.getDataSource().getId())
+                                            .withRel("dataSource"));
+        }
 
         return view;
     }
