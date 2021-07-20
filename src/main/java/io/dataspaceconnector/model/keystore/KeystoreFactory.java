@@ -51,6 +51,10 @@ public class KeystoreFactory extends AbstractFactory<Keystore, KeystoreDesc> {
     }
 
     private boolean updatePassword(final Keystore keystore, final String password) {
+        if (keystore.getPassword() != null && password == null) {
+            return false;
+        }
+
         final var newPassword = MetadataUtils.updateString(keystore.getPassword(),
                 password, DEFAULT_PASSWORD);
         newPassword.ifPresent(keystore::setPassword);
