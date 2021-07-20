@@ -21,6 +21,7 @@ import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
 import io.dataspaceconnector.service.HttpService;
@@ -97,6 +98,20 @@ public class SubscriberNotificationService {
     public void notifyOnUpdate(final Entity entity) {
         final var uri = SelfLinkHelper.getSelfLink(entity);
         final var subscriptions = subscriptionSvc.getByTarget(uri);
+
+        // Notify subscribers of child elements.
+        if (entity instanceof OfferedResource || entity instanceof RequestedResource) {
+            final var representations =
+                    ((io.dataspaceconnector.model.resource.Resource) entity).getRepresentations();
+            for (final var rep : representations) {
+                notifyOnUpdate(rep);
+            }
+        } else if (entity instanceof Representation) {
+            final var artifacts = ((Representation) entity).getArtifacts();
+            for (final var artifact : artifacts) {
+                notifyOnUpdate(artifact);
+            }
+        }
 
         notifyAll(subscriptions, uri, entity);
     }
@@ -180,7 +195,6 @@ public class SubscriberNotificationService {
                     }
                 }
             }
-
         }
     }
 

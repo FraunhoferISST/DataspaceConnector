@@ -40,6 +40,7 @@ public class SubscriptionRequestHandlerRoute extends RouteBuilder {
                 .to("direct:handleInvalidInputException");
         onException(SubscriptionProcessingException.class)
                 .to("direct:handleMessageProcessingFailedForSubscription");
+        // TODO Test shows that an issuer receives INTERNAL SERVER ERROR instead
         onException(ResourceNotFoundException.class)
                 .to("direct:handleResourceNotFoundException");
 
