@@ -129,8 +129,9 @@ public final class MessageUtils {
      */
     public static URI extractTargetId(final Message message) {
         Utils.requireNonNull(message, ErrorMessage.MESSAGE_NULL);
-        message.getProperties().get("ids:target");
-        return message.getId();
+        final var target =
+                message.getProperties().get("https://w3id.org/idsa/core/target").toString();
+        return URI.create(target.substring(5, target.length() - 1));
     }
 
     /**
