@@ -5,7 +5,6 @@ nav_order: 2
 description: ""
 permalink: /CommunicationGuide/v6/Consumer
 parent: Communication Guide
-version: 2
 ---
 
 # Consuming Data

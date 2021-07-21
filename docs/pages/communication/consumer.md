@@ -1,11 +1,9 @@
 ---
 layout: default
 title: Consumer
-nav_order: 2
 description: ""
-permalink: /CommunicationGuide/v4/Consumer
+permalink: /CommunicationGuide/v5/Consumer
 parent: Communication Guide
-version: 1
 ---
 
 # Consuming Data
