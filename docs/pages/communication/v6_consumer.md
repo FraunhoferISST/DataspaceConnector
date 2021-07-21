@@ -13,6 +13,8 @@ parent: Communication Guide
 See how to consume data with the Dataspace Connector.
 {: .fs-6 .fw-300 }
 
+old versions: [v5](consumer.md)
+
 ---
 
 The connector provides an endpoint for requesting its self-description.
