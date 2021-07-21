@@ -4,8 +4,7 @@ title: Consumer
 nav_order: 2
 description: ""
 permalink: /CommunicationGuide/v6/Consumer
-parent: Version 6
-grand_parent: Communication Guide
+parent: Communication Guide
 ---
 
 # Consuming Data
@@ -14,7 +13,7 @@ grand_parent: Communication Guide
 See how to consume data with the Dataspace Connector.
 {: .fs-6 .fw-300 }
 
-old versions: [v5](pages/communication/v5/consumer.md)
+[previous version](../v5/consumer.md)
 
 ---
 
