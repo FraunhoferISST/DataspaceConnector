@@ -1,7 +1,5 @@
 ---
 layout: default
-title: Consumer
-description: ""
 permalink: /CommunicationGuide/v5/Consumer
 ---
 
