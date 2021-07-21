@@ -3,7 +3,6 @@ layout: default
 title: Consumer
 description: ""
 permalink: /CommunicationGuide/v5/Consumer
-parent: Communication Guide
 ---
 
 # Consuming Data
