@@ -24,7 +24,7 @@ the resource catalog. At the public endpoint `/`, the resource catalog is not di
 be accessed with admin credentials at `GET /api/connector` or by sending an IDS description request
 message as explained [here](pages/communication/v5/consumer.md#step-1-request-a-connectors-self-description)).
 
-![Selfservice Endpoints](assets/images/swagger_connector.png)
+![Selfservice Endpoints](../../../assets/images/swagger_connector.png)
 
 ## Step by Step
 
