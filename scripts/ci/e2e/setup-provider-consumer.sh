@@ -29,7 +29,7 @@ sed -i "s/^appVersion:.*$/appVersion: ci/" charts/dataspace-connector/Chart.yaml
 helm install provider charts/dataspace-connector --set env.config.SPRING_APPLICATION_NAME="Producer Connector" 2>&1 > /dev/null
 
 echo "Waiting for readiness"
-kubectl rollout status deployments/provider-dataspace-connector --timeout=240s 2>&1 > /dev/null
+kubectl rollout status deployments/provider-dataspace-connector --timeout=360s 2>&1 > /dev/null
 kubectl rollout status deployments/consumer-dataspace-connector --timeout=60s  2>&1 > /dev/null
 
 # Make sure the deployments are really ready and the rollout did not just timeout
