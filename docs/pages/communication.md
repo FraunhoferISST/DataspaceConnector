@@ -29,4 +29,5 @@ data with a connector and how to consume this from another one.
 **Note**: The Dataspace Connector's repository comes with a `scripts/tests` folder that provides
 some Python scripts. They contain the creation of a full data offering and its consumption by a
 consumer: for a single resource with a single usage policy, a single resource with multiple usage
-policies, and providing and requesting multiple artifacts at once.
+policies, and providing and requesting multiple artifacts at once. Feel free to use or modify them
+when setting up a data exchange example deployment.

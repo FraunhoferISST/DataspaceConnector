@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Consumer
+nav_order: 2
 description: ""
 permalink: /CommunicationGuide/v5/Consumer
 parent: Version 5

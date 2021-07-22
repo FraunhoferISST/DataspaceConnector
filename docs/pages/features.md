@@ -27,27 +27,37 @@ extensible software that encapsulates the IDS information model from connected s
 
 * Identity management: Central Identity Provider/[DAPS](https://github.com/International-Data-Spaces-Association/IDS-G/tree/master/core/DAPS), IDS certificates (X.509v3)
 * API for (meta) data management and IDS communication
-    * Partially support of HATEOAS
-    * Management of metadata (optionally also data) in local database (e.g. PostgreSQL)
-    * Connection of remote data sources (possibility of queries on data sets)
+  * Partially support of HATEOAS
+  * Management of metadata (optionally also data) in local database (e.g. PostgreSQL)
+  * Connection of remote data sources (possibility of queries on data sets)
 * Clear interfaces between data model and the IDS Infomodel
-    * Strict implementation of MVC pattern for data management
-    * Strict access control to backend, information can only be read and changed by services
-    * Strict state validation for entities via factory classes
-    * Storage of remote IDs and addresses to objects for origin tracking
-* Interaction with other IDS components (as data provider & consumer).
-    * TLS encrypted communication: IDS Multipart Messages
-    * Automated messaging sequence
-    * IDS Metadata Broker (Clearing House, AppStore, ParIS)
-* IDS Usage Control Language: eight supported Usage Control Patterns, Policy Negotiation
-* Resource Update Messages for receiving latest data
+  * Strict implementation of MVC pattern for data management
+  * Strict access control to backend, information can only be read and changed by services
+  * Strict state validation for entities via factory classes
+  * Storage of remote IDs and addresses to objects for origin tracking
+* Communication via IDS protocols
+  * Interaction with other IDS participants as data provider & consumer
+  * TLS encrypted communication via IDS Multipart Messages
+  * Camel-base communication via IDSCPv2
+  * Automated messaging sequence
+  * IDS Metadata Broker: un/register connector, un/register resources, query offers
+  * Clearing House: log contract agreements, data usage, artifact requests, and artifact responses
+* IDS Usage Control Language: ten supported Usage Control Patterns and policy negotiation
+* Subscription transfer pattern
+  * Un-/Subscribe to requests, representations, and artifacts as a non-IDS system/app
+  * Un-/Subscribe to offers, representations, and artifacts as an IDS connector via IDS messages
+  * Manually and automatically sending Resource Update Messages for receiving latest metadata and
+    data changes
 * Integration and configuration of Jaeger for using open telemetry
 * Optional http tracing for transparent information and data flow
 * Optional bootstrapping for registering resource offers on start-up
+* Apps and Routes
+  * Manage routes via REST API
+  * Deploy Camel routes at runtime
 * Security
-    * Prevent leaking of technology stack in case of errors/exceptions
-    * Logger sanitizes inputs to prevent CRLF injections
-    * Common CVE patches
+  * Prevent leaking of technology stack in case of errors/exceptions
+  * Logger sanitizes inputs to prevent CRLF injections
+  * Common CVE patches
 
 
 ## Libraries
@@ -64,12 +74,10 @@ part of the IDS Connector and aim to facilitate the configuration of the Dataspa
 further IDS Connector implementations. Both projects are also open source and licensed under
 Apache 2.0.
 
-The table below will document the compatibility of the component's versions.
-
-| DSC Core Version | ConfigManager | ConfigManager GUI |
-|:-----------------|:--------------|:------------------|
-| v4.x.x           | v6.0.0        | v5.0.0            |
-| v5.x.x           | -             | -                 |
+**Update**: The IDS Configuration Manager has been directly integrated into the Dataspace Connector
+core and thus will be maintained in the Dataspace Connector repository. The GUI interacts with all
+given interfaces to provide all functionality that can also be directly triggered at the
+Connector's REST API.
 
 
 ## IDS Communication

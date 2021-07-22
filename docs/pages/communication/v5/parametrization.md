@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Parametrized Backend Calls
+title: Parametrization
 nav_order: 3
 description: ""
 permalink: /CommunicationGuide/v5/Parametrization
