@@ -31,6 +31,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -116,6 +117,13 @@ public class ConfigurationController extends BaseResourceController<Configuratio
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @ResponseBody
     public ResponseEntity<Object> getIdsConfiguration() {
-        return ResponseEntity.ok(configContainer.getConfigurationModel().toRdf());
+        //Loads the configuration from the IDS-Messaging-Services that hold sensitive data.
+        //These must be removed before output via the API.
+        final var completeConfig = configContainer.getConfigurationModel().toRdf();
+        final var completeConfigJson = new JSONObject(completeConfig);
+        completeConfigJson.remove("ids:keyStorePassword");
+        completeConfigJson.remove("ids:trustStorePassword");
+
+        return ResponseEntity.ok(completeConfigJson.toString());
     }
 }
