@@ -1,0 +1,13 @@
+sequenceDiagram
+    User->>+Connector: POST /api/entityType(Description)
+    Connector->>+Controller: create(Description)
+    Controller->>+Service: create(Description)
+    Service->>+Factory: create(Description)
+    Factory-->>-Service: new Entity
+    Service->>+Database: persist(new Entity)
+    Database-->>-Service: persisted Entity
+    Service-->>-Controller: Entity
+    Controller->>+ViewAssembler: toModel(Entity)
+    ViewAssembler-->>-Controller: EntityView
+    Controller-->>-Connector: EntityView
+    Connector->>-User: HttpResponse<EntityView>

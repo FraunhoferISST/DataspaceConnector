@@ -3,7 +3,7 @@ layout: default
 title: Provider
 nav_order: 1
 description: ""
-permalink: /CommunicationGuide/Provider
+permalink: /CommunicationGuide/v6/Provider
 parent: Communication Guide
 ---
 
@@ -20,14 +20,14 @@ The self-description is returned as JSON-LD and contains several information abo
 connector instance. This includes e.g. the title, the maintainer, the IDS Informodel version, and
 the resource catalog. At the public endpoint `/`, the resource catalog is not displayed. It can only
 be accessed with admin credentials at `GET /api/connector` or by sending an IDS description request
-message as explained [here](consumer.md#step-1-request-a-connectors-self-description).
+message as explained [here](pages/communication/v5/consumer.md#step-1-request-a-connectors-self-description).
 
-![Selfservice Endpoints](../../assets/images/swagger_connector.png)
+![Selfservice Endpoints](assets/images/swagger_connector.png)
 
 ## Step by Step
 
 To understand the structure of a resource, please first take a look at the
-[data model section](../documentation/data-model.md) and the [REST API explanation](../documentation/rest-api.md).
+[data model section](pages/documentation/data-model.md) and the [REST API explanation](pages/documentation/rest-api.md).
 For adding resources to the running connector as a data provider, have a look at the following
 steps.
 
@@ -144,14 +144,14 @@ entity change, as well as the creation and modification date.
 
 The endpoints `PUT`, `GET`, and`DELETE` `/offers/{id}` provide standard CRUD functions to read,
 update, and delete the metadata, respectively the data resource - as described
-[here](../documentation/data-model.md).
+[here](pages/documentation/data-model.md).
 
 Next to the resource, we need a catalog as a parent for the offer. Use `POST /api/catalogs` to
 create one. Its location is: [https://localhost:8080/api/catalogs/5ac012e1-ffa5-43b3-af41-9707d2a9137d](https://localhost:8080/api/catalogs/5ac012e1-ffa5-43b3-af41-9707d2a9137d).
 Then, we need to link both objects to each other via another endpoint. Therefore, we execute a `POST`
 catalog's id extended by `/offers` and the resource's id as part of the list in the request body.
 
-![Example Offer Catalog](../../assets/images/swagger_example_catalogs_offer.png)
+![Example Offer Catalog](assets/images/swagger_example_catalogs_offer.png)
 
 ```
 curl -X 'POST' \
@@ -163,7 +163,7 @@ curl -X 'POST' \
 ]'
 ```
 
-As stated [here](../documentation/data-model.md), **an offered resource is only complete if it
+As stated [here](pages/documentation/data-model.md), **an offered resource is only complete if it
 contains at least one contract offer and at least one representation with at least one artifact.
 Otherwise, it will not be listed in the IDS self-description because there is no complete data offer.**
 
@@ -176,7 +176,7 @@ policies (`POST /api/examples/validation`).
 By adding multiple rules to one contract offer, you are now able to add multiple usage policies to
 one resource (e.g. the data usage can be logged and the data should be deleted at a given date).
 
-![Policy Endpoints](../../assets/images/swagger_policy.png)
+![Policy Endpoints](assets/images/swagger_policy.png)
 
 ### Step 2: Add Local Data
 
@@ -249,7 +249,7 @@ local data. The Dataspace Connector automatically classifies an artifact as `rem
 
 Currently, the Dataspace Connector can natively establish a connection via http, https, and https
 with basic authentication. To connect to other backends, take a look at how to integrate
-routing frameworks as explained [here](../deployment/camel.md).
+routing frameworks as explained [here](pages/deployment/camel.md).
 
 ---
 
@@ -295,7 +295,7 @@ the data provider returns the data. If not, it will respond with a `RejectionRea
 ---
 
 **Note**: The contract negotiation is enabled by default. To disable it, have a look at the
-[configurations](../deployment/configuration.md#ids-settings).
+[configurations](pages/deployment/configuration.md#ids-settings).
 
 ---
 
@@ -305,4 +305,4 @@ Currently, a data consumer cannot subscribe to a resource, and the Dataspace Con
 provider does not automatically send `ResourceUpdateMessages` to every data consumer on metadata
 changes. Instead, the data provider has to trigger update messages by using the respective endpoint.
 
-![Resource Update](../../assets/images/swagger_resource_updates.png)
+![Resource Update](assets/images/swagger_resource_updates.png)

@@ -1,9 +1,9 @@
 ---
 layout: default
-title: Parametrized Backend Calls
-nav_order: 3
+title: Parametrization
+nav_order: 4
 description: ""
-permalink: /CommunicationGuide/ParametrizedBackendCalls
+permalink: /CommunicationGuide/v6/Parametrization
 parent: Communication Guide
 ---
 

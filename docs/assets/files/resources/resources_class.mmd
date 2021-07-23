@@ -1,0 +1,17 @@
+classDiagram
+    Description <|-- Factory
+    Entity <|-- Factory
+
+    Entity <|-- Service
+    Description <|-- Service
+    Factory <|-- Service
+
+    Entity <|-- ViewAssembler
+    View <|-- ViewAssembler
+
+    Entity <|.. View
+
+    Service <|-- Controller
+    View <|-- Controller
+    ViewAssembler <|-- Controller
+    Description <|-- Controller

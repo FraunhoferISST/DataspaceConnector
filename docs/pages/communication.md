@@ -16,12 +16,12 @@ This page explains how to use the APIs of the connector.
 
 ---
 
-You have configured and deployed your Dataspace Connector as described [here](deployment.md)? Then 
+You have configured and deployed your Dataspace Connector as described [here](deployment.md)? Then
 check out our step-by-step guide to see the Connector in action.
 
-To interact with the running application, the provided 
-[endpoints](deployment/build.md#maven) can be used - either automated by an application or manually 
-by interacting with the Swagger UI. In this section, it is explained how to provide local and remote 
+To interact with the running application, the provided
+[endpoints](deployment/build.md#maven) can be used - either automated by an application or manually
+by interacting with the Swagger UI. In this section, it is explained how to provide local and remote
 data with a connector and how to consume this from another one.
 
 ---
