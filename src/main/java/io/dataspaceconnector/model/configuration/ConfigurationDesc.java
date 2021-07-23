@@ -16,6 +16,7 @@
 package io.dataspaceconnector.model.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.fraunhofer.iais.eis.ConnectorStatus;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.named.NamedDescription;
 import io.dataspaceconnector.model.proxy.ProxyDesc;
@@ -75,6 +76,11 @@ public class ConfigurationDesc extends NamedDescription {
      * The log level.
      */
     private LogLevel logLevel;
+
+    /**
+     * The status of the connector.
+     */
+    private ConnectorStatus status;
 
     /**
      * The deploy mode of the connector.

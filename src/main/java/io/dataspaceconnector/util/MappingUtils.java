@@ -584,6 +584,7 @@ public final class MappingUtils {
                 fromIdsSecurityProfile(configModel.getConnectorDescription().getSecurityProfile()));
         description.setTruststoreSettings(new TruststoreDesc(
                 configModel.getTrustStore(), configModel.getTrustStorePassword()));
+        description.setStatus(configModel.getConnectorStatus());
         return description;
     }
 

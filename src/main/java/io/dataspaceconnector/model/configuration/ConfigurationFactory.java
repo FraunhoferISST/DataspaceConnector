@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model.configuration;
 
+import de.fraunhofer.iais.eis.ConnectorStatus;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
@@ -130,6 +131,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
         final var hasUpdatedTrustStore = updateTrustStore(config, desc.getTruststoreSettings());
         final var hasUpdatedKeyStore = updateKeyStore(config, desc.getKeystoreSettings());
         final var hasUpdatedProxy = updateProxy(config, desc.getProxySettings());
+        final var hasUpdatedStatus = updateStatus(config, desc.getStatus());
 
         return hasUpdatedDefaultEndpoint
                 || hasUpdatedVersion
@@ -142,7 +144,8 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
                 || hasUpdatedDeployMode
                 || hasUpdatedTrustStore
                 || hasUpdatedKeyStore
-                || hasUpdatedProxy;
+                || hasUpdatedProxy
+                || hasUpdatedStatus;
     }
 
     /**
@@ -303,6 +306,16 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
         } else {
             configuration.setProxy(proxyFactory.create(desc));
         }
+
+        return true;
+    }
+
+    private boolean updateStatus(final Configuration configuration, final ConnectorStatus status) {
+        if (status == null) {
+            return false;
+        }
+
+        configuration.setStatus(status);
 
         return true;
     }
