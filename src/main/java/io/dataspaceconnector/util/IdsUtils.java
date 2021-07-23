@@ -440,6 +440,7 @@ public final class IdsUtils {
                         .build())
                 ._outboundModelVersion_(config.getOutboundModelVersion())
                 ._inboundModelVersion_(config.getInboundModelVersion())
+                ._version_(config.getVersion())
                 .build();
     }
 
