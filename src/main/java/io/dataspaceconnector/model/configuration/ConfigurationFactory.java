@@ -292,11 +292,14 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     }
 
     private boolean updateProxy(final Configuration configuration, final ProxyDesc desc) {
-        if (configuration.getProxy() == null && desc == null) {
+        //ProxyDesc may not be null but all its fields may have empty contents
+        final var proxyDescIsEmpty = (desc == null || desc.getLocation().toString().isEmpty());
+
+        if (configuration.getProxy() == null && proxyDescIsEmpty) {
             return false;
         }
 
-        if (configuration.getProxy() != null && desc == null) {
+        if (configuration.getProxy() != null && proxyDescIsEmpty) {
             configuration.setProxy(null);
             return true;
         }
