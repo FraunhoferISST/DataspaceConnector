@@ -55,7 +55,7 @@ public class ConfigurationViewAssemblerTest {
         assertEquals(after.getCurator(), shouldLookLike.getCurator());
         assertEquals(after.getMaintainer(), shouldLookLike.getMaintainer());
         assertEquals(after.getDeployMode(), shouldLookLike.getDeployMode());
-        assertEquals(after.getConnectorEndpoint(), shouldLookLike.getConnectorEndpoint());
+        assertEquals(after.getConnectorEndpoint(), shouldLookLike.getDefaultEndpoint());
         assertEquals(after.getLogLevel(), shouldLookLike.getLogLevel());
         assertTrue(after.getInboundModelVersion().isEmpty());
         assertEquals(after.getOutboundModelVersion(), shouldLookLike.getOutboundModelVersion());
@@ -89,7 +89,7 @@ public class ConfigurationViewAssemblerTest {
         desc.setCurator(URI.create("https://ids.com"));
         desc.setMaintainer(URI.create("https://ids.com"));
         desc.setDeployMode(DeployMode.TEST);
-        desc.setConnectorEndpoint(URI.create("https://localhost:8080/api/ids/data"));
+        desc.setDefaultEndpoint(URI.create("https://localhost:8080/api/ids/data"));
         desc.setLogLevel(LogLevel.OFF);
         desc.setInboundModelVersion(new ArrayList<>());
         desc.setOutboundModelVersion("4.1.0");
