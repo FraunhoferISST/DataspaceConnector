@@ -36,7 +36,7 @@ import org.springframework.stereotype.Component;
  * Builds the route for sending a contract request, a description request and an optional artifact
  * request over IDSCP_v2.
  */
-@Component
+
 public class ContractRequestControllerRoute extends RouteBuilder {
 
     /**

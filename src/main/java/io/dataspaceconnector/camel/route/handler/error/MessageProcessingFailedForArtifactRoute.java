@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling MessageProcessingFailedExceptions during the artifact request.
  */
-@Component
+
 public class MessageProcessingFailedForArtifactRoute extends RouteBuilder {
 
     /**

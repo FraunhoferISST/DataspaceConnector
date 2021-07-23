@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for sending a description request over IDSCP_v2.
  */
-@Component
+
 public class DescriptionRequestControllerRoute extends RouteBuilder {
 
     /**

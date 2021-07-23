@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling ConfigUpdateExceptions.
  */
-@Component
+
 public class ConfigUpdateExceptionRoute extends RouteBuilder {
 
     /**

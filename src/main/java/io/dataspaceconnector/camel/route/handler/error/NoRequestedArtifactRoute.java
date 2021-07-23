@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling a missing requested artifact.
  */
-@Component
+
 public class NoRequestedArtifactRoute extends RouteBuilder {
 
     /**

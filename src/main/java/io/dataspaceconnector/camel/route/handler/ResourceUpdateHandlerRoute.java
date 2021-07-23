@@ -22,12 +22,11 @@ import io.dataspaceconnector.camel.exception.InvalidAffectedResourceException;
 import io.dataspaceconnector.camel.exception.MissingPayloadException;
 import io.dataspaceconnector.camel.exception.NoAffectedResourceException;
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.stereotype.Component;
 
 /**
  * Builds the route for handling a ResourceUpdateMessage.
  */
-@Component
+
 public class ResourceUpdateHandlerRoute extends RouteBuilder {
 
     /**

@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling InvalidResponseExceptions.
  */
-@Component
+
 public class InvalidResponseExceptionRoute extends RouteBuilder {
 
     /**

@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling a missing affected resource.
  */
-@Component
+
 public class NoAffectedResourceRoute extends RouteBuilder {
 
     /**

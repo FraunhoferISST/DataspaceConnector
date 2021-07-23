@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling a missing payload.
  */
-@Component
+
 public class MissingPayloadRoute extends RouteBuilder {
 
     /**

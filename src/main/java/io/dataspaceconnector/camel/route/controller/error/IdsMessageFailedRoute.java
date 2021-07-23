@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling failed IDS messages.
  */
-@Component
+
 public class IdsMessageFailedRoute extends RouteBuilder {
 
     /**

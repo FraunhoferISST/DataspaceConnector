@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling ResponseMessageBuilderExceptions.
  */
-@Component
+
 public class ResponseMessageBuilderExceptionRoute extends RouteBuilder {
 
     /**

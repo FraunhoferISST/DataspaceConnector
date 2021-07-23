@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling MessageProcessingFailedExceptions during the agreement exchange.
  */
-@Component
+
 public class MessageProcessingFailedForAgreementRoute extends RouteBuilder {
 
     /**

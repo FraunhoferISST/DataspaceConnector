@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling invalid query input.
  */
-@Component
+
 public class InvalidQueryInputRoute extends RouteBuilder {
 
     /**

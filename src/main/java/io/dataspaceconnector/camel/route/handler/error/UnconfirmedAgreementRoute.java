@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling UnconfirmedAgreementExceptions.
  */
-@Component
+
 public class UnconfirmedAgreementRoute extends RouteBuilder {
 
     /**

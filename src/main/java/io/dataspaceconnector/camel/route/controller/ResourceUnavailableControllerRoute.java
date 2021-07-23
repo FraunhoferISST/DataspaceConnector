@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for sending a resource unavailable message over IDSCP_v2.
  */
-@Component
+
 public class ResourceUnavailableControllerRoute extends RouteBuilder {
 
     /**

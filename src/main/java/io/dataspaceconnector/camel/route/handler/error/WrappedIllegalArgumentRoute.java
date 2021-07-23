@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling an IllegalArgumentException wrapped by another exception.
  */
-@Component
+
 public class WrappedIllegalArgumentRoute extends RouteBuilder {
 
     /**

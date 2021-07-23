@@ -18,12 +18,11 @@ package io.dataspaceconnector.camel.route.controller.error;
 import io.dataspaceconnector.camel.util.ParameterUtils;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.stereotype.Component;
 
 /**
  * Builds the route for handling a errors during contract request building.
  */
-@Component
+
 public class FailedToBuildContractRequestRoute extends RouteBuilder {
 
     /**

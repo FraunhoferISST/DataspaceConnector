@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling SocketTimeoutExceptions.
  */
-@Component
+
 public class SocketTimeoutRoute extends RouteBuilder {
 
     /**

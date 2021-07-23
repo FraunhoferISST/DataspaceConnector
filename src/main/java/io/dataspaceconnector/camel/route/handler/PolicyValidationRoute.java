@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for performing policy validation before data provision.
  */
-@Component
+
 public class PolicyValidationRoute extends RouteBuilder {
 
     /**

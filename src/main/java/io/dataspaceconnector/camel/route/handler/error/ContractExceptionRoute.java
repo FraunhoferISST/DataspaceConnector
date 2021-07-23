@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling ContractExceptions.
  */
-@Component
+
 public class ContractExceptionRoute extends RouteBuilder {
 
     /**

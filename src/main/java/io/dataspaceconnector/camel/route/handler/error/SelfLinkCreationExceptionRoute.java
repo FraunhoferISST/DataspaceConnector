@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling SelfLinkCreationExceptions.
  */
-@Component
+
 public class SelfLinkCreationExceptionRoute extends RouteBuilder {
 
     /**

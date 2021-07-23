@@ -20,12 +20,11 @@ import java.net.SocketTimeoutException;
 import de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception;
 import io.dataspaceconnector.camel.util.ParameterUtils;
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.stereotype.Component;
 
 /**
  * Builds the route for sending a query message over IDSCP_v2.
  */
-@Component
+
 public class QueryControllerRoute extends RouteBuilder {
 
     /**

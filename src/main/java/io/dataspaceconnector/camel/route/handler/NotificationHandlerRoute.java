@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling a NotificationMessage.
  */
-@Component
+
 public class NotificationHandlerRoute extends RouteBuilder {
 
     /**

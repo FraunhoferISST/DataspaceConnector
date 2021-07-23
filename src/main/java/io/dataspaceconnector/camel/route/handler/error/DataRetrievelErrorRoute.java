@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling errors during data retrieval.
  */
-@Component
+
 public class DataRetrievelErrorRoute extends RouteBuilder {
 
     /**

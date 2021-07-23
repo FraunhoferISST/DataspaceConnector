@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling VersionNotSupportedExceptions.
  */
-@Component
+
 public class VersionNotSupportedRoute extends RouteBuilder {
 
     /**

@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling empty messages.
  */
-@Component
+
 public class MessageEmptyRoute extends RouteBuilder {
 
     /**

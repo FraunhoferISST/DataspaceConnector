@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling invalid input.
  */
-@Component
+
 public class InvalidInputRoute extends RouteBuilder {
 
     /**

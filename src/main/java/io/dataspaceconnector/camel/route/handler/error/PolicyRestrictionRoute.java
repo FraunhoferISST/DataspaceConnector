@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling PolicyRestrictionExceptions.
  */
-@Component
+
 public class PolicyRestrictionRoute extends RouteBuilder {
 
     /**

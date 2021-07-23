@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
  * Builds the route for handling Idscp2Exceptions. When an Idscp2Exception occurs, it's always
  * wrapped by an ExecutionException.
  */
-@Component
+
 public class Idscp2ExceptionRoute extends RouteBuilder {
 
     /**

@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling ResourceNotFoundExceptions.
  */
-@Component
+
 public class ResourceNotFoundRoute extends RouteBuilder {
 
     /**

@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for requesting an artifact over IDSCPv2.
  */
-@Component
+
 public class ArtifactRequestControllerRoute extends RouteBuilder {
 
     /**

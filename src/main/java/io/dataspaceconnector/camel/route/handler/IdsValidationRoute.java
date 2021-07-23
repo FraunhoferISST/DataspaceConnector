@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for validating the header of an incoming IDS message.
  */
-@Component
+
 public class IdsValidationRoute extends RouteBuilder {
 
     /**

@@ -17,12 +17,11 @@ package io.dataspaceconnector.camel.route.handler.error;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.stereotype.Component;
 
 /**
  * Builds the route for handling an invalid transfer contract.
  */
-@Component
+
 public class InvalidTransferContract extends RouteBuilder {
 
     /**

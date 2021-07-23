@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for sending a resource update over IDSCP_v2.
  */
-@Component
+
 public class ResourceUpdateControllerRoute extends RouteBuilder {
 
     /**

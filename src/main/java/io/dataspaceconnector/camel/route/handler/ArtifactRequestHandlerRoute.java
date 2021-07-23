@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling an ArtifactRequestMessage.
  */
-@Component
+
 public class ArtifactRequestHandlerRoute extends RouteBuilder {
 
     /**

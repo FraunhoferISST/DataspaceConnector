@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling AgreementPersistenceExceptions.
  */
-@Component
+
 public class AgreementPersistenceExceptionRoute extends RouteBuilder {
 
     /**

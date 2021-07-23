@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling a DescriptionRequestMessage.
  */
-@Component
+
 public class DescriptionRequestHandlerRoute extends RouteBuilder {
 
     /**

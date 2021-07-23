@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling PersistenceExceptions.
  */
-@Component
+
 public class PersistenceExceptionRoute extends RouteBuilder {
 
     /**

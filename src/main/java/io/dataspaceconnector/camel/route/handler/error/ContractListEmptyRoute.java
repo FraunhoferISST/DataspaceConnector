@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling missing contract offers.
  */
-@Component
+
 public class ContractListEmptyRoute extends RouteBuilder {
 
     /**

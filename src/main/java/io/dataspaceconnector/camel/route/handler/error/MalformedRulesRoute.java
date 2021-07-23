@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling malformed rules.
  */
-@Component
+
 public class MalformedRulesRoute extends RouteBuilder {
 
     /**

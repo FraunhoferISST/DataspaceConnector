@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling MessagePayloadExceptions.
  */
-@Component
+
 public class MessagePayloadExceptionRoute extends RouteBuilder {
 
     /**

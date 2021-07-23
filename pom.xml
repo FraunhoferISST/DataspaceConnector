@@ -496,6 +496,7 @@
 				<filtering>true</filtering>
 				<includes>
 					<include>conf/**/*.*</include>
+					<include>camel-routes/**/*.xml</include>
 					<include>log4j2.xml</include>
 					<include>camel-templates/**/*.vm</include>
 					<include>application.properties</include>

@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling a missing transfer contract.
  */
-@Component
+
 public class NoTransferContractRoute extends RouteBuilder {
 
     /**

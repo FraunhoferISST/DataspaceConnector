@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling an invalid affected resource.
  */
-@Component
+
 public class InvalidAffectedResourceRoute extends RouteBuilder {
 
     /**

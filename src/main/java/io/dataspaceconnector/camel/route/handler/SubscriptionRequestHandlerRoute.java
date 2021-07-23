@@ -20,12 +20,11 @@ import io.dataspaceconnector.exception.InvalidEntityException;
 import io.dataspaceconnector.exception.InvalidInputException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.stereotype.Component;
 
 /**
  * Builds the route for handling a SubscriptionRequestMessage.
  */
-@Component
+
 public class SubscriptionRequestHandlerRoute extends RouteBuilder {
 
     /**

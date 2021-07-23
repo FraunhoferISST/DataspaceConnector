@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling missing targets in rules.
  */
-@Component
+
 public class MissingTargetInRuleRoute extends RouteBuilder {
 
     /**

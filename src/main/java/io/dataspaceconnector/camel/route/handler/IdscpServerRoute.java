@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
  * {@link io.dataspaceconnector.camel.dto.RouteMsg} DTOs and delegated to the appropriate message
  * handler route.
  */
-@Component
+
 @ConditionalOnProperty(name = "idscp2.enabled", havingValue = "true")
 public class IdscpServerRoute extends RouteBuilder {
 

@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 /**
  * Builds the route for handling a ContractAgreementMessage.
  */
-@Component
+
 public class ContractAgreementHandlerRoute extends RouteBuilder {
 
     /**
