@@ -2,13 +2,13 @@ sequenceDiagram
     participant User
     participant Controller
     participant ViewAssembler
-    User ->> Controller: POST /api/entityType(Description)
-    Controller ->> Service: create(Description)
-    Service ->> Factory: create(Description)
-    Factory -->> Service: new Entity
-    Service ->> Database: persist(new Entity)
-    Database -->> Service: persisted Entity
-    Service -->> Controller: Entity
-    Controller ->> ViewAssembler: toModel(Entity)
-    ViewAssembler -->> Controller: EntityView
-    Controller -->> User: EntityView
+    User->>+Controller: POST /api/entityType(Description)
+    Controller->>+Service: create(Description)
+    Service->>+Factory: create(Description)
+    Factory-->>-Service: new Entity
+    Service->>+Database: persist(new Entity)
+    Database-->>-Service: persisted Entity
+    Service-->>-Controller: Entity
+    Controller->>+ViewAssembler: toModel(Entity)
+    ViewAssembler-->>-Controller: EntityView
+    Controller-->>-User: EntityView
