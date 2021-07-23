@@ -40,7 +40,6 @@ public final class IdsConfigModelBuilder extends AbstractIdsBuilder<Configuratio
                                                                        final int maxDepth)
             throws ConstraintViolationException {
         // Prepare configuration attributes.
-        // TODO: keystore/truststore don't have alias fields
         final var deployMode = IdsUtils.getConnectorDeployMode(config.getDeployMode());
         final var logLevel = IdsUtils.getLogLevel(config.getLogLevel());
         final var connector = IdsUtils.getConnectorFromConfiguration(config);
@@ -49,10 +48,8 @@ public final class IdsConfigModelBuilder extends AbstractIdsBuilder<Configuratio
                 ._connectorDeployMode_(deployMode)
                 ._keyStore_(config.getKeystore().getLocation())
                 ._keyStorePassword_(config.getKeystore().getPassword())
-                ._keyStoreAlias_("")
                 ._trustStore_(config.getTruststore().getLocation())
                 ._trustStorePassword_(config.getTruststore().getPassword())
-                ._trustStoreAlias_("")
                 ._configurationModelLogLevel_(logLevel)
                 ._connectorStatus_(config.getStatus() != null ? config.getStatus()
                         : ConnectorStatus.CONNECTOR_ONLINE)
