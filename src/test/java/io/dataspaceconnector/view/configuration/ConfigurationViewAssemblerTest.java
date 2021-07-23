@@ -55,7 +55,7 @@ public class ConfigurationViewAssemblerTest {
         assertEquals(after.getCurator(), shouldLookLike.getCurator());
         assertEquals(after.getMaintainer(), shouldLookLike.getMaintainer());
         assertEquals(after.getDeployMode(), shouldLookLike.getDeployMode());
-        assertEquals(after.getConnectorEndpoint(), shouldLookLike.getDefaultEndpoint());
+        assertEquals(after.getDefaultEndpoint(), shouldLookLike.getDefaultEndpoint());
         assertEquals(after.getLogLevel(), shouldLookLike.getLogLevel());
         assertTrue(after.getInboundModelVersion().isEmpty());
         assertEquals(after.getOutboundModelVersion(), shouldLookLike.getOutboundModelVersion());
