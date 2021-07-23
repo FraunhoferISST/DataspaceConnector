@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.model.configuration;
 
-import java.net.URI;
-import java.util.List;
-
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
@@ -29,6 +26,9 @@ import io.dataspaceconnector.util.MetadataUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.List;
 
 /**
  * Creates and updates a configuration.
@@ -114,8 +114,8 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
      */
     @Override
     protected boolean updateInternal(final Configuration config, final ConfigurationDesc desc) {
-        final var hasUpdatedConnectorEndpoint = updateConnectorEndpoint(config,
-                desc.getConnectorEndpoint());
+        final var hasUpdatedDefaultEndpoint = updateDefaultEndpoint(config,
+                desc.getDefaultEndpoint());
         final var hasUpdatedVersion = updateVersion(config, desc.getVersion());
         final var hasUpdatedCurator = updateCurator(config, desc.getCurator());
         final var hasUpdatedMaintainer = updateMaintainer(config, desc.getMaintainer());
@@ -131,7 +131,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
         final var hasUpdatedKeyStore = updateKeyStore(config, desc.getKeystoreSettings());
         final var hasUpdatedProxy = updateProxy(config, desc.getProxySettings());
 
-        return hasUpdatedConnectorEndpoint
+        return hasUpdatedDefaultEndpoint
                 || hasUpdatedVersion
                 || hasUpdatedCurator
                 || hasUpdatedMaintainer
@@ -185,7 +185,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
                                               final List<String> inboundModelVersion) {
         final var newInboundModelVersionList =
                 MetadataUtils.updateStringList(config.getInboundModelVersion(), inboundModelVersion,
-                                               DEFAULT_INBOUND_VERSION);
+                        DEFAULT_INBOUND_VERSION);
         newInboundModelVersionList.ifPresent(config::setInboundModelVersion);
 
         return newInboundModelVersionList.isPresent();
@@ -234,16 +234,15 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     }
 
     /**
-     * @param config            The configuration
-     * @param connectorEndpoint The new connector endpoint.
+     * @param config          The configuration
+     * @param defaultEndpoint The new connector endpoint.
      * @return True, if connector endpoint is updated.
      */
-    private boolean updateConnectorEndpoint(final Configuration config,
-                                            final URI connectorEndpoint) {
-        final var newUri =
-                MetadataUtils.updateUri(config.getConnectorEndpoint(), connectorEndpoint,
-                        DEFAULT_CONNECTOR_ENDPOINT);
-        newUri.ifPresent(config::setConnectorEndpoint);
+    private boolean updateDefaultEndpoint(final Configuration config,
+                                          final URI defaultEndpoint) {
+        final var newUri = MetadataUtils.updateUri(config.getDefaultEndpoint(),
+                defaultEndpoint, DEFAULT_CONNECTOR_ENDPOINT);
+        newUri.ifPresent(config::setDefaultEndpoint);
 
         return newUri.isPresent();
     }

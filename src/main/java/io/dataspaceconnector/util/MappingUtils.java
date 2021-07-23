@@ -568,7 +568,7 @@ public final class MappingUtils {
         }
         description.setDeployMode(fromIdsDeployMode(configModel.getConnectorDeployMode()));
         description.setCurator(configModel.getConnectorDescription().getCurator());
-        description.setConnectorEndpoint(
+        description.setDefaultEndpoint(
                 configModel.getConnectorDescription().getHasDefaultEndpoint().getAccessURL());
         description.setInboundModelVersion(
                 configModel.getConnectorDescription().getInboundModelVersion());
