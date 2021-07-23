@@ -22,7 +22,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.2</version>
+		<version>2.5.3</version>
 		<relativePath/>
 		<!-- lookup parent from repository -->
 	</parent>
@@ -686,6 +686,7 @@
 								<exclude>**/README</exclude>
 								<exclude>src/test/resources/**</exclude>
 								<exclude>src/main/resources/**</exclude>
+								<exclude>scripts/ci/e2e/active-tests.txt</exclude>
 								<exclude>**/*.env</exclude>
 								<exclude>**/lombok.config</exclude>
 								<exclude>**/.dockerignore</exclude>

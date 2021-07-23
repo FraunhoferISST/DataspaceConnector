@@ -48,6 +48,7 @@ All notable changes to this project will be documented in this file.
 - Increase jackson version to 2.12.4.
 - Increase equalsverifier from 3.6.1 to 3.7.0.
 - Increase spotbugs from 4.2.3 to 4.3.0.
+- Increase spring version from 2.5.2 to 2.5.3.
 
 ## [5.2.1] - 2021-07-02
 
