@@ -15,11 +15,55 @@
  */
 package io.dataspaceconnector.model.appstore;
 
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
+import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.ArrayList;
 
 /**
  * Creates and updates an app store.
  */
 @Component
-public class AppStoreFactory {
+public class AppStoreFactory extends AbstractNamedFactory<AppStore, AppStoreDesc> {
+
+    /**
+     * Default access url.
+     */
+    public static final URI DEFAULT_URI = URI.create("https://appstore.com");
+
+    /**
+     * @param desc The description of the entity.
+     * @return The new app store entity.
+     */
+    @Override
+    protected AppStore initializeEntity(final AppStoreDesc desc) {
+        final var appstore = new AppStore();
+        appstore.setApps(new ArrayList<>());
+
+        return appstore;
+    }
+
+    /**
+     * @param appStore The entity to be updated.
+     * @param desc   The description of the new entity.
+     * @return True, if app store is updated.
+     */
+    @Override
+    protected boolean updateInternal(final AppStore appStore, final AppStoreDesc desc) {
+        return updateLocation(appStore, desc.getLocation());
+    }
+
+    /**
+     * @param appStore The entity to be updated.
+     * @param location The new location url of the entity.
+     * @return True, if app store is updated.
+     */
+    private boolean updateLocation(final AppStore appStore, final URI location) {
+        final var newLocation = MetadataUtils.updateUri(appStore.getLocation(), location,
+                DEFAULT_URI);
+        newLocation.ifPresent(appStore::setLocation);
+        return newLocation.isPresent();
+    }
 }
