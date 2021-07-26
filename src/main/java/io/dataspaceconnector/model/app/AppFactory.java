@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
  * Creates and updates a data app.
  */
 @Component
-public class DataAppFactory extends AbstractNamedFactory<DataApp, DataAppDesc> {
+public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
 
     //TODO implement
 
@@ -30,7 +30,7 @@ public class DataAppFactory extends AbstractNamedFactory<DataApp, DataAppDesc> {
      * {@inheritDoc}
      */
     @Override
-    protected DataApp initializeEntity(final DataAppDesc desc) {
+    protected App initializeEntity(final AppDesc desc) {
         return null;
     }
 

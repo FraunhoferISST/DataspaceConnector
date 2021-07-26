@@ -24,7 +24,7 @@ import org.hibernate.annotations.Where;
 import javax.persistence.Entity;
 
 /**
- * Endpoint of {@link io.dataspaceconnector.model.app.DataApp}.
+ * Endpoint of {@link io.dataspaceconnector.model.app.App}.
  */
 @SQLDelete(sql = "UPDATE endpoint SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")

@@ -42,7 +42,7 @@ import java.util.List;
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class DataApp extends NamedEntity {
+public class App extends NamedEntity {
 
     /**
      * Serial version uid.

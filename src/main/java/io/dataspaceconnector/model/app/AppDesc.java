@@ -16,11 +16,17 @@
 package io.dataspaceconnector.model.app;
 
 import io.dataspaceconnector.model.named.NamedDescription;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * Describes a data app. Use this structure to create
  * or update a data app.
  */
-public class DataAppDesc extends NamedDescription {
+@AllArgsConstructor
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class AppDesc extends NamedDescription {
     //TODO implement
 }

@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.model.representation;
 
-import io.dataspaceconnector.model.app.DataApp;
+import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -55,7 +55,7 @@ public class AppRepresentation extends Representation {
      * Data app represented by this.
      */
     @OneToOne
-    private DataApp dataApp;
+    private App app;
 
     /**
      * Distribution service, where the represented app can be downloaded.
