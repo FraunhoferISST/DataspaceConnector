@@ -24,6 +24,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
+/**
+ * Component that loads Camel routes from XML files located in a directory specified in
+ * application.properties at application start.
+ */
 @Component
 @RequiredArgsConstructor
 @Log4j2
@@ -70,6 +74,7 @@ public class XmlRouteLoader {
     public void loadRoutes() {
         try {
             Objects.requireNonNull(directory);
+            log.debug("Loading Camel routes from: {}", directory);
             loadRoutes(directory);
         } catch (Exception exception) {
             log.error("Failed to load Camel routes. [exception=({})] Closing application...",
@@ -88,7 +93,8 @@ public class XmlRouteLoader {
      */
     private void loadRoutes(final String directoryPath) throws Exception {
         if (directoryPath.startsWith("classpath")) {
-            final var files = patternResolver.getResources(directoryPath);
+            final var pattern = getPatternForPath(directoryPath);
+            final var files = patternResolver.getResources(pattern);
             loadRoutes(files);
         } else {
             final var file = new File(directoryPath);
@@ -168,6 +174,17 @@ public class XmlRouteLoader {
             log.error("Failed to add routes to context. [exception=({})]", exception.getMessage());
             throw exception;
         }
+    }
+
+    /**
+     * Creates the pattern used for finding all XML files under a given directory by appending
+     * wildcards for sub directories and file names.
+     *
+     * @param path the path to the directory.
+     * @return the pattern for finding all XML files in the specified directory.
+     */
+    private String getPatternForPath(final String path) {
+        return path.endsWith("/") ? path.concat("**/*.xml") : path.concat("/**/*.xml");
     }
 
     /**
