@@ -39,10 +39,10 @@ public class AppStoreFactory extends AbstractNamedFactory<AppStore, AppStoreDesc
      */
     @Override
     protected AppStore initializeEntity(final AppStoreDesc desc) {
-        final var appstore = new AppStore();
-        appstore.setApps(new ArrayList<>());
+        final var appStore = new AppStore();
+        appStore.setApps(new ArrayList<>());
 
-        return appstore;
+        return appStore;
     }
 
     /**
