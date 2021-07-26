@@ -16,9 +16,14 @@
 package io.dataspaceconnector.model.app;
 
 import io.dataspaceconnector.model.named.NamedDescription;
+import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.net.URI;
+import java.util.List;
+
 
 /**
  * Describes a data app. Use this structure to create
@@ -28,5 +33,82 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class AppDesc extends NamedDescription {
-    //TODO implement
+
+    //App attributes
+
+    /**
+     * Text documentation of the data app.
+     */
+    private String appDocumentation;
+
+    /**
+     * Environment variables of the data app.
+     */
+    private String appEnvironmentVariables;
+
+    /**
+     * Storage configuration of the data app (e.g. path in the file system or volume name).
+     */
+    private String appStorageConfiguration;
+
+    /**
+     * Usage policy patterns supported by the data app.
+     */
+    private List<PolicyPattern> supportedUsagePolicies;
+
+    //AppResource attributes
+
+    /**
+     * The keywords of the resource.
+     */
+    private List<String> keywords;
+
+    /**
+     * The publisher of the resource.
+     */
+    private URI publisher;
+
+    /**
+     * The owner of the resource.
+     */
+    private URI sovereign;
+
+    /**
+     * The language of the resource.
+     */
+    private String language;
+
+    /**
+     * The license of the resource.
+     */
+    private URI license;
+
+    /**
+     * The endpoint of the resource.
+     */
+    private URI endpointDocumentation;
+
+    //AppRepresentation attributes
+
+    /**
+     * Distribution service, where the represented app can be downloaded.
+     */
+    private URI dataAppDistributionService;
+
+    /**
+     * "Runtime environment of a data app, e.g., software (or hardware) required to run the app.
+     */
+    private String dataAppRuntimeEnvironment;
+
+    //AppArtifact attributes
+
+    /**
+     * The artifact id on provider side.
+     */
+    private URI remoteId;
+
+    /**
+     * The provider's address for artifact request messages.
+     */
+    private URI remoteAddress;
 }

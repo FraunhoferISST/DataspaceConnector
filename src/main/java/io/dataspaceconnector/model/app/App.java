@@ -17,6 +17,7 @@ package io.dataspaceconnector.model.app;
 
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.named.NamedEntity;
+import io.dataspaceconnector.model.util.UriConverter;
 import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -25,11 +26,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.data.annotation.Version;
 
+import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Column;
+import java.net.URI;
 import java.util.List;
+
+import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
  * Data app, which is distributed via the App Store and can be deployed inside the Connector.
@@ -48,6 +55,8 @@ public class App extends NamedEntity {
      * Serial version uid.
      **/
     private static final long serialVersionUID = 1L;
+
+    //App attributes
 
     /**
      * Text documentation of the data app.
@@ -76,4 +85,80 @@ public class App extends NamedEntity {
     @ElementCollection
     private List<PolicyPattern> supportedUsagePolicies;
 
+    //Resource attributes
+
+    /**
+     * The keywords of the resource.
+     */
+    @ElementCollection
+    private List<String> keywords;
+
+    /**
+     * The publisher of the resource.
+     */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private URI publisher;
+
+    /**
+     * The owner of the resource.
+     */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private URI sovereign;
+
+    /**
+     * The language of the resource.
+     */
+    private String language;
+
+    /**
+     * The license of the resource.
+     */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private URI license;
+
+    /**
+     * The endpoint of the resource.
+     */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private URI endpointDocumentation;
+
+    /**
+     * The version of the resource.
+     */
+    @Version
+    private long version;
+
+    //Representation attributes
+
+    /**
+     * Distribution service, where the represented app can be downloaded.
+     */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private URI dataAppDistributionService;
+
+    /**
+     * "Runtime environment of a data app, e.g., software (or hardware) required to run the app.
+     */
+    private String dataAppRuntimeEnvironment;
+
+    //Artifact attributes
+
+    /**
+     * The artifact id on provider side.
+     */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private URI remoteId;
+
+    /**
+     * The provider's address for artifact request messages.
+     */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private URI remoteAddress;
 }
