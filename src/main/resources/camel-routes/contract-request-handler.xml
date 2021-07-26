@@ -47,7 +47,7 @@
 
         <from uri="direct:contractRequestHandler"/>
         <transacted ref="transactionPolicy"/>
-        <to uri="direct:ids-validation"/>
+        <to uri="direct:idsValidation"/>
         <process ref="ContractDeserializer"/>
         <process ref="ContractRuleListTransformer"/>
         <process ref="RuleListValidator"/>

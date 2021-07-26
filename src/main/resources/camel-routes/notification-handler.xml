@@ -10,7 +10,7 @@
 
         <from uri="direct:notificationMsgHandler"/>
         <transacted ref="transactionPolicy"/>
-        <to uri="direct:ids-validation"/>
+        <to uri="direct:idsValidation"/>
         <process ref="ProcessedNotification"/>
 
     </route>

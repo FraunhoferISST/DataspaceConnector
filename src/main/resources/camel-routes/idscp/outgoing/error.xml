@@ -6,16 +6,11 @@
         <to uri="bean:io.dataspaceconnector.controller.util.ControllerUtils?method=respondIdsMessageFailed(${exception})"/>
     </route>
 
-    <route id="messageResponseException">
-        <from uri="direct:handleMessageResponseException"/>
-        <log loggingLevel="DEBUG" message="Error route for handling MessageResponseException called."/>
-        <to uri="bean:io.dataspaceconnector.controller.util.ControllerUtils?method=respondReceivedInvalidResponse(${exception})"/>
-    </route>
-
     <route id="invalidResponseException">
         <from uri="direct:handleInvalidResponseException"/>
         <log loggingLevel="DEBUG" message="Error route for handling invalid response called."/>
-        <to uri="bean:io.dataspaceconnector.controller.util.ControllerUtils?method=respondWithMessageContent(${exception.getResponse()})"/>
+        <process ref="ResponseMapCreator"/>
+        <to uri="bean:io.dataspaceconnector.controller.util.ControllerUtils?method=respondWithContent(${body})"/>
     </route>
 
     <route id="invalidInputException">
@@ -48,8 +43,8 @@
         <to uri="bean:io.dataspaceconnector.controller.util.ControllerUtils?method=respondIdsMessageFailed(${exception})"/>
     </route>
 
-    <route id="resourceNotFound">
-        <from uri="direct:handleResourceNotFound"/>
+    <route id="resourceNotFoundForController">
+        <from uri="direct:handleResourceNotFoundForController"/>
         <log loggingLevel="DEBUG" message="Error route for handling resource not found called."/>
         <to uri="bean:io.dataspaceconnector.controller.util.ControllerUtils?method=respondResourceNotFound(${exchangeProperty.resourceId})"/>
     </route>
@@ -58,6 +53,14 @@
         <from uri="direct:handleConfigUpdateException"/>
         <log loggingLevel="DEBUG" message="Error route for handling ConfigUpdateException called."/>
         <to uri="bean:io.dataspaceconnector.controller.util.ControllerUtils?method=respondConfigurationUpdateError(${exception})"/>
+    </route>
+
+    <route id="idscp2Exception">
+        <from uri="direct:handleIdscp2Exception"/>
+        <log loggingLevel="DEBUG" message="Error route for handling IDSCP2 exception called."/>
+        <to uri="bean:io.dataspaceconnector.controller.util.ControllerUtils?method=respondIdscp2Error(
+        ${exchangeProperty.recipient},
+        ${exception.cause})"/>
     </route>
 
 </routes>

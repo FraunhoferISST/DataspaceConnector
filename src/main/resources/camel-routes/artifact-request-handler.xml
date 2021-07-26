@@ -28,7 +28,7 @@
 
         <from uri="direct:artifactRequestHandler"/>
         <transacted ref="transactionPolicy"/>
-        <to uri="direct:ids-validation"/>
+        <to uri="direct:idsValidation"/>
         <process ref="RequestedArtifactValidator"/>
         <process ref="ClearingHouseLoggingProcessor"/>
         <choice>

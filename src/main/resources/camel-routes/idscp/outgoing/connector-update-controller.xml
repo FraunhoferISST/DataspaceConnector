@@ -6,6 +6,12 @@
             <to uri="direct:handleConfigUpdateException"/>
         </onException>
 
+        <!-- an error occurred in IDSCP2 communication -->
+        <onException>
+            <exception>de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception</exception>
+            <to uri="direct:handleIdscp2Exception"/>
+        </onException>
+
         <from uri="direct:connectorUpdateSender"/>
         <process ref="ConfigurationUpdater"/>
         <process ref="ConnectorUnavailableMessageBuilder"/>

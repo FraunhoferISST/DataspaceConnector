@@ -18,7 +18,7 @@
 
         <onException>
             <exception>io.dataspaceconnector.exception.MessageException</exception>
-            <to uri="direct:handleIdsMessageFailed"/>
+            <to uri="direct:handleMessageException"/>
         </onException>
 
         <onException>
@@ -33,11 +33,23 @@
             <to uri="direct:handlePersistenceException"/>
         </onException>
 
+        <!-- an error occurred in IDSCP2 communication -->
+        <onException>
+            <exception>de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception</exception>
+            <to uri="direct:handleIdscp2Exception"/>
+        </onException>
+
         <onException>
             <exception>java.io.IOException</exception>
             <exception>io.dataspaceconnector.exception.ResourceNotFoundException</exception>
             <exception>io.dataspaceconnector.exception.MessageResponseException</exception>
             <log loggingLevel="DEBUG" message="Could not save data for artifact. [artifact=(${exchangeProperty.currentArtifact}), exception=(${exception.message})]"/>
+        </onException>
+
+        <!-- an error occurred in IDSCP2 communication -->
+        <onException>
+            <exception>de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception</exception>
+            <to uri="direct:handleIdscp2Exception"/>
         </onException>
 
         <from uri="direct:contractRequestSender"/>

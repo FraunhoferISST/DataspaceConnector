@@ -3,7 +3,13 @@
 
         <onException>
             <exception>io.dataspaceconnector.exception.ResourceNotFoundException</exception>
-            <to uri="direct:handleResourceNotFound"/>
+            <to uri="direct:handleResourceNotFoundForController"/>
+        </onException>
+
+        <!-- an error occurred in IDSCP2 communication -->
+        <onException>
+            <exception>de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception</exception>
+            <to uri="direct:handleIdscp2Exception"/>
         </onException>
 
         <from uri="direct:resourceUnavailableSender"/>

@@ -28,7 +28,7 @@
         </onException>
 
         <from uri="direct:subscriptionMsgHandler"/>
-        <to uri="direct:ids-validation"/>
+        <to uri="direct:idsValidation"/>
         <process ref="ProcessedSubscription"/>
 
     </route>

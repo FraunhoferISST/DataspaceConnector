@@ -8,7 +8,7 @@
 
         <onException>
             <exception>io.dataspaceconnector.exception.MessageResponseException</exception>
-            <to uri="direct:handleMessageResponseException"/>
+            <to uri="direct:handleReceivedInvalidResponse"/>
         </onException>
 
         <onException>
@@ -16,9 +16,10 @@
             <to uri="direct:handleInvalidResponseException"/>
         </onException>
 
+        <!-- an error occurred in IDSCP2 communication -->
         <onException>
-            <exception>javax.persistence.PersistenceException</exception>
-            <to uri="direct:handlePersistenceException"/>
+            <exception>de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception</exception>
+            <to uri="direct:handleIdscp2Exception"/>
         </onException>
 
         <from uri="direct:descriptionRequestSender"/>

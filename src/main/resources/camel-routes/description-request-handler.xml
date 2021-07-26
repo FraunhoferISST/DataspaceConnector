@@ -15,9 +15,14 @@
             <to uri="direct:handleResponseMessageBuilderException"/>
         </onException>
 
+        <onException>
+            <exception>io.dataspaceconnector.exception.SelfLinkCreationException</exception>
+            <to uri="direct:handleSelfLinkCreationException"/>
+        </onException>
+
         <from uri="direct:descriptionRequestHandler"/>
         <transacted ref="transactionPolicy"/>
-        <to uri="direct:ids-validation"/>
+        <to uri="direct:idsValidation"/>
         <choice>
             <when>
                 <simple>${body.getHeader().getRequestedElement()} == null</simple>

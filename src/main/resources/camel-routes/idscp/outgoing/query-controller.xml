@@ -1,6 +1,12 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
     <route id="querySender">
 
+        <!-- an error occurred in IDSCP2 communication -->
+        <onException>
+            <exception>de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception</exception>
+            <to uri="direct:handleIdscp2Exception"/>
+        </onException>
+
         <from uri="direct:querySender"/>
         <process ref="QueryMessageBuilder"/>
         <process ref="QueryPreparer"/>

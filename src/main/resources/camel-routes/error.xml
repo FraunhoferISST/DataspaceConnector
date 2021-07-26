@@ -113,8 +113,8 @@
         ${body.getHeader().getId()})"/>
     </route>
 
-    <route id="invalidInputException">
-        <from uri="direct:handleInvalidInputException"/>
+    <route id="invalidQueryInput">
+        <from uri="direct:handleInvalidQueryInputException"/>
         <log loggingLevel="DEBUG" message="Error route for handling invalid query input called."/>
         <to uri="bean:messageResponseService?method=handleInvalidQueryInput(${exception},
         ${body.getHeader().getRequestedArtifact()},
@@ -156,9 +156,9 @@
         <from uri="direct:handleMessageProcessingFailedForSubscription"/>
         <log loggingLevel="DEBUG" message="Error route for handling failed message processing called."/>
         <to uri="bean:messageResponseService?method=handleMessageProcessingFailed(${exception},
-        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getBody().toRdf(),
-        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getHeader().getIssuerConnector()},
-        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getHeader().getId()})"/>
+        ${body.getBody().toRdf(),
+        ${body.getHeader().getIssuerConnector()},
+        ${body.getHeader().getId()})"/>
     </route>
 
     <route id="policyRestrictionException">
@@ -239,6 +239,13 @@
         ${body.getHeader().getAffectedResource()},
         ${body.getHeader().getIssuerConnector()},
         ${body.getHeader().getId()})"/>
+    </route>
+
+    <route id="SelfLinkCreationException">
+        <from uri="direct:handleSelfLinkCreationException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling SelfLinkCreationException called."/>
+        <to uri="bean:messageResponseService?method=handleSelfLinkCreationException(${exception},
+        ${body.getHeader().getRequestedArtifact()})"/>
     </route>
 
 </routes>
