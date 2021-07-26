@@ -20,6 +20,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.net.URI;
+
 /**
  * Describes an app store's property.
  */
@@ -27,4 +29,9 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class AppStoreDesc extends NamedDescription {
+
+    /**
+     * App store location.
+     */
+    private URI location;
 }
