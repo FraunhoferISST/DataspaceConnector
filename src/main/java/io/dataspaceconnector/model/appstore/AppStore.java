@@ -45,6 +45,11 @@ import java.util.List;
 public class AppStore extends NamedEntity {
 
     /**
+     * Serial version uid.
+     **/
+    private static final long serialVersionUID = 1L;
+
+    /**
      * App store location.
      */
     private URI location;
