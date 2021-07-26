@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.service.ids.builder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
