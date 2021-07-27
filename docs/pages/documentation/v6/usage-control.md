@@ -13,6 +13,8 @@ parent: Documentation
 Usage policies are an important aspect of IDS, further details are explained on this page.
 {: .fs-6 .fw-300 }
 
+[previous version](../v5/usage-control.md)
+
 ---
 
 The Dataspace Connector supports usage policies written in the `IDS Usage Control Language` based on

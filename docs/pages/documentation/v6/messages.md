@@ -13,6 +13,8 @@ parent: Documentation
 See what IDS message types can be sent and received.
 {: .fs-6 .fw-300 }
 
+[previous version](../v5/messages.md)
+
 ---
 
 ## Message Types

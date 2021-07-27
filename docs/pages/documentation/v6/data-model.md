@@ -13,6 +13,8 @@ parent: Documentation
 An explanation of the Dataspace Connector's data model.
 {: .fs-6 .fw-300 }
 
+[previous version](../v5/data-model.md)
+
 ---
 
 The data model of the Dataspace Connector is based on the structure of the IDS Infomodel. On the top

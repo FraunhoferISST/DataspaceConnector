@@ -13,6 +13,8 @@ parent: Documentation
 Have a look at the Dataspace Connector's architecture.
 {: .fs-6 .fw-300 }
 
+[previous version](../v5/architecture.md)
+
 ---
 
 Updated architecture overview will be added asap.

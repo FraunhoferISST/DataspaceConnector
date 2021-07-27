@@ -13,6 +13,8 @@ parent: Documentation
 Get to know the Dataspace Connector's REST API to automated resource handling.
 {: .fs-6 .fw-300 }
 
+[previous version](../v5/rest-api.md)
+
 ---
 
 If you haven't already checked it out, please first take a look at the Dataspace Connector data
