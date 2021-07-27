@@ -15,8 +15,10 @@
  */
 package io.dataspaceconnector.service.configuration;
 
+import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.broker.Broker;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.service.resource.ArtifactService;
@@ -71,6 +73,20 @@ public final class EntityLinkerService {
         @Override
         protected final List<Artifact> getInternal(final Route owner) {
             return owner.getOutput();
+        }
+    }
+
+    /**
+     * Handles the relation between the app and app endpoints.
+     */
+    @Service
+    @NoArgsConstructor
+    public static class AppEndpointLinker extends OwningRelationService<App, AppEndpoint,
+            AppService, AppEndpointService> {
+
+        @Override
+        protected final List<AppEndpoint> getInternal(final App owner) {
+            return owner.getAppEndpoints();
         }
     }
 }

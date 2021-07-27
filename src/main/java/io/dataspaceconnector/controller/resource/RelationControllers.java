@@ -33,16 +33,19 @@ import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.subscription.Subscription;
+import io.dataspaceconnector.service.configuration.EntityLinkerService;
 import io.dataspaceconnector.service.resource.AbstractCatalogResourceLinker;
 import io.dataspaceconnector.service.resource.AbstractResourceContractLinker;
 import io.dataspaceconnector.service.resource.AbstractResourceRepresentationLinker;
 import io.dataspaceconnector.service.resource.RelationServices;
 import io.dataspaceconnector.view.broker.BrokerView;
+import io.dataspaceconnector.view.endpoint.AppEndpointView;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -84,6 +87,16 @@ public final class RelationControllers {
             RelationServices.ArtifactRepresentationLinker, Representation, RepresentationView> {
     }
 
+    /**
+     * Offers the endpoints for managing the relations between apps and app endpoints.
+     */
+    @RestController
+    @RequestMapping("/api/apps/{id}/endpoints")
+    @Tag(name = ResourceName.APPS, description = ResourceDescription.APPS)
+    public static class AppToEndpoints extends BaseResourceChildController<
+            EntityLinkerService.AppEndpointLinker, AppEndpoint, AppEndpointView> {
+
+    }
     /**
      * Offers the endpoints for managing the relations between artifacts and subscriptions.
      */

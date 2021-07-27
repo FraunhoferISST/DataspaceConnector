@@ -15,13 +15,17 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
+import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
 import io.dataspaceconnector.model.app.App;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 import java.util.UUID;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * Assembles the REST resource for an app.
@@ -33,7 +37,12 @@ public class AppViewAssembler implements RepresentationModelAssembler<App, AppVi
         final var modelMapper = new ModelMapper();
         final var view = modelMapper.map(app, AppView.class);
         view.add(getSelfLink(app.getId()));
-        //TODO implement link to Endpoints
+
+        final var endpointLink = WebMvcLinkBuilder
+                .linkTo(methodOn(RelationControllers.AppToEndpoints.class)
+                        .getResource(app.getId(), null, null))
+                .withRel("apps");
+        view.add(endpointLink);
         return view;
     }
 
