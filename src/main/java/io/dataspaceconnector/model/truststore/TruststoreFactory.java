@@ -39,6 +39,11 @@ public class TruststoreFactory extends AbstractFactory<Truststore, TruststoreDes
     public static final URI DEFAULT_LOCATION = URI.create("file:///conf/truststore.p12");
 
     /**
+     * The default alias.
+     */
+    public static final String DEFAULT_ALIAS = "1";
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -84,7 +89,7 @@ public class TruststoreFactory extends AbstractFactory<Truststore, TruststoreDes
         }
 
         final var newAlias = MetadataUtils.updateString(truststore.getAlias(),
-                alias, "");
+                alias, DEFAULT_ALIAS);
         newAlias.ifPresent(truststore::setAlias);
 
         return newAlias.isPresent();

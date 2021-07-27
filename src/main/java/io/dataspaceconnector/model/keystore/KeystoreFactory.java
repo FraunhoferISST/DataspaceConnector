@@ -37,6 +37,11 @@ public class KeystoreFactory extends AbstractFactory<Keystore, KeystoreDesc> {
      */
     public static final URI DEFAULT_LOCATION = URI.create("file:///conf/keystore-localhost.p12");
 
+    /**
+     * The default alias.
+     */
+    public static final String DEFAULT_ALIAS = "1";
+
     @Override
     protected final Keystore initializeEntity(final KeystoreDesc desc) {
         return new Keystore();
@@ -77,7 +82,7 @@ public class KeystoreFactory extends AbstractFactory<Keystore, KeystoreDesc> {
         }
 
         final var newAlias = MetadataUtils.updateString(keystore.getAlias(),
-                alias, "");
+                alias, DEFAULT_ALIAS);
         newAlias.ifPresent(keystore::setAlias);
 
         return newAlias.isPresent();
