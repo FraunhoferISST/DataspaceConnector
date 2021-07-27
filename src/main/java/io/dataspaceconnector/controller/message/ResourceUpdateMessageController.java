@@ -126,7 +126,7 @@ public class ResourceUpdateMessageController {
 
             final var response = result.getIn().getBody(Response.class);
             if (response != null) {
-                return new ResponseEntity<>(HttpStatus.OK);
+                return ResponseEntity.ok(response.getBody());
             } else {
                 final var responseEntity =
                     toObjectResponse(result.getIn().getBody(ResponseEntity.class));
