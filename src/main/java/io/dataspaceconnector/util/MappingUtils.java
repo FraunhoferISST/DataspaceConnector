@@ -114,11 +114,8 @@ public final class MappingUtils {
     public static AppTemplate fromIdsApp(final AppResource resource, final URI remoteUrl) {
         final var representation = (AppRepresentation) resource.getRepresentation().get(0);
         final var dataApp = representation.getDataAppInformation();
-        final var additional = new HashMap<String, String>();
-        if (representation.getProperties() != null) {
-            representation.getProperties()
-                    .forEach((key, value) -> additional.put(key, value.toString()));
-        }
+        final var additional = propertiesToAdditional(representation.getProperties());
+
         final var appDesc = new AppDesc();
         appDesc.setAppDocumentation(dataApp.getAppDocumentation());
         appDesc.setAppEnvironmentVariables(dataApp.getAppEnvironmentVariables());
@@ -190,12 +187,7 @@ public final class MappingUtils {
     }
 
     private static AppEndpointTemplate fromIdsAppEndpoint(final AppEndpoint appEndpoint) {
-        final var additional = new HashMap<String, String>();
-        if (appEndpoint.getProperties() != null) {
-            appEndpoint.getProperties().forEach(
-                    (key, value) -> additional.put(key, value.toString())
-            );
-        }
+        final var additional = propertiesToAdditional(appEndpoint.getProperties());
 
         final var appEndpointDesc = new AppEndpointDesc();
         appEndpointDesc.setEndpointPort(appEndpoint.getAppEndpointPort().intValue());
