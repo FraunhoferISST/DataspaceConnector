@@ -392,8 +392,6 @@ your backend applications technically enforce the usage policies instead.
 
 ---
 
-#### IDS Messaging Services
-
 The Messaging Services dependency comes with some further settings. For example you can specify what
 DAPS you want to connect to and whether incoming messages should be, in addition, processed by a
 SHACL validator.
@@ -402,8 +400,6 @@ SHACL validator.
 daps.mode=aisec
 shacl.validation=true
 ```
-
-#### IDSCPv2
 
 As the Messaging Services provide the connector with the ability to communicate via IDS multipart
 messages, the IDSCPv2 dependency allows to send and receive the same messages via the IDSCP
