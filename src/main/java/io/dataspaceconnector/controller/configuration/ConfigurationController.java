@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.controller.configuration;
 
+import de.fraunhofer.iais.eis.ConfigurationModelImpl;
+import de.fraunhofer.iais.eis.Proxy;
+import de.fraunhofer.iais.eis.ProxyImpl;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.controller.resource.BaseResourceController;
@@ -31,7 +34,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +44,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.LinkedList;
 import java.util.UUID;
 
 /**
@@ -119,11 +122,26 @@ public class ConfigurationController extends BaseResourceController<Configuratio
     public ResponseEntity<Object> getIdsConfiguration() {
         //Loads the configuration from the IDS-Messaging-Services that hold sensitive data.
         //These must be removed before output via the API.
-        final var completeConfig = configContainer.getConfigurationModel().toRdf();
-        final var completeConfigJson = new JSONObject(completeConfig);
-        completeConfigJson.remove("ids:keyStorePassword");
-        completeConfigJson.remove("ids:trustStorePassword");
+        final var completeConfig = (ConfigurationModelImpl) configContainer.getConfigurationModel();
 
-        return ResponseEntity.ok(completeConfigJson.toString());
+        if (completeConfig.getKeyStorePassword() != null) {
+            completeConfig.setKeyStorePassword("");
+        }
+
+        if (completeConfig.getTrustStorePassword() != null) {
+            completeConfig.setTrustStorePassword("");
+        }
+
+        if (completeConfig.getConnectorProxy() != null) {
+            final var proxyList = new LinkedList<Proxy>();
+            for (var proxy : completeConfig.getConnectorProxy()) {
+                var proxyimpl = (ProxyImpl) proxy;
+                proxyimpl.setProxyAuthentication(null);
+                proxyList.add(proxyimpl);
+            }
+            completeConfig.setConnectorProxy(proxyList);
+        }
+
+        return ResponseEntity.ok(completeConfig.toRdf());
     }
 }
