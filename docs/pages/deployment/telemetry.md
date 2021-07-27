@@ -15,8 +15,11 @@ You want to have insights into a running Dataspace Connector? See what you have 
 
 ---
 
-To enable the telemetry collection via Jaeger, set `opentracing.jaeger.enabled=true` in the
-`application.properties`.
+To enable the telemetry collection via Jaeger, modify the corresponding value in the
+`application.properties`:
+```properties
+opentracing.jaeger.enabled=true
+```
 
 The Dataspace Connector will now send telemetry data via UDP to `localhost:6831`. The name of the
 Dataspace Connector displayed in the logs is defined in `spring.application.name`.

@@ -16,7 +16,7 @@ Take a look at the more detailed instructions to deploy the Dataspace Connector.
 ---
 
 If you want to set up the Dataspace Connector yourself, follow the instructions below. If you
-encounter any problems, please have a look at the [FAQ](../faq.md).
+encounter any problems, please have a look at the [FAQ](pages/faq.md).
 
 Clone the project: `git clone https://github.com/International-Data-Spaces-Association/DataspaceConnector.git`
 
@@ -36,7 +36,7 @@ steps:
 If everything worked fine, the connector is available at
 [https://localhost:8080/](https://localhost:8080/) and its API can be accessed at
 [https://localhost:8080/api](https://localhost:8080/api). By default, the Dataspace Connector is
-running with an h2 database.
+running with an H2 database that is non persistent. See how to change that [here]
 
 ---
 
@@ -46,22 +46,23 @@ at `/target/apidocs`. Open the `index.html` in a browser of your choice.
 ---
 
 The OpenApi documentation can be viewed at [https://localhost:8080/api/docs](https://localhost:8080/api/docs).
-The JSON representation is available at [https://localhost:8080/v3/api-docs](https://localhost:8080/v3/api-docs).
-The .yaml file can be downloaded at [https://localhost:8080/v3/api-docs.yaml](https://localhost:8080/v3/api-docs.yaml).
+The `.json` representation is available at [https://localhost:8080/v3/api-docs](https://localhost:8080/v3/api-docs).
+The `.yaml` file can be downloaded at [https://localhost:8080/v3/api-docs.yaml](https://localhost:8080/v3/api-docs.yaml).
 
 The connector provides several endpoints for resource database handling and IDS messaging. Details
-on how to interact with them can be found [here](../communication.md).
+on how to interact with them can be found [here](pages/communication.md).
 
 *  `Connector` and `Usage Control` provide information about the running connector and settings for
    contract negotiation and policy enforcement behaviour.
-*  `IDS Messages` provides endpoints for requesting artifact (data) and descriptions (metadata) from
+*  `Messages` provides endpoints for requesting artifact (data) and descriptions (metadata) from
    an external connector, and negotiate contracts. On top of that, endpoints for sending IDS
    multipart messages to e.g. the IDS Metadata Broker are provided.
 *  All other sections provide endpoints for metadata and data management and entity relations
    (`POST`, `PUT`, `GET`, and `DELETE`).
 
-Next to the endpoint implemented by the connector, an endpoint for handling incoming IDS messages
-at `/api/ids/data` is provided by the IDS Messaging Services.
+**Next to the endpoint implemented by the connector, an endpoint for handling incoming IDS messages
+at `/api/ids/data` is provided by the IDS Messaging Services. This endpoint is the one listening to
+incoming IDS messages.**
 
 The database can be accessed via [https://localhost:8080/database](https://localhost:8080/database).
 
@@ -75,9 +76,20 @@ tests. The `release` profile shows all warnings and errors. To run a profile, pl
 
 | Plugin | Command | Description |
 |:-------|:--------|:------------|
-| Checkstyle | mvn checkstyle:check | With this, a codestyle check is executed. |
-| Statistics | mvn verify site | With this, project statistics are generated. |
-| License | mvn license:format | With this, a license header is added to all projects files that are missing one. |
+| Jacoco | `mvn jacoco:report` | With this, a full software report is generated. |
+| Checkstyle | `mvn checkstyle:check` | With this, a code style check is executed. |
+| Spotbugs | `mvn spotbug:check` | With this, a SpotBugs check is executed. |
+| Statistics | `mvn verify site` | With this, project statistics are generated. |
+| License | `mvn license:format` | With this, a license header is added to all projects files that are missing one. |
+
+### Tests
+
+Tests will be executed automatically when running Maven commands `package`, `verify`, `install`,
+`site`, or `deploy`. To run tests manually, execute the following commands in the root directory of
+the project:
+* Run all tests: `mvn test`
+* Run specific test class: `mvn test -Dtest=[full class name]`
+* Run a specific test case (single method): `mvn test -Dtest=[full class name]#[method name]`
 
 ## Docker
 
@@ -103,15 +115,12 @@ steps:
 
 ---
 
+If you want to create a custom Docker setup, note that we provide Docker images. These can be found
+[here](https://github.com/orgs/International-Data-Spaces-Association/packages/container/package/dataspace-connector).
+The GitHub Container Registry (GHCR) allows to download Docker images without credentials.
+You will find an image for each release tag with the corresponding version. In addition, an image of
+the main branch is automatically provided as soon as changes are identified.
+
 ## Kubernetes
 
-For a deployment with Kubernetes, have a look at [this](kubernetes.md) documentation.
-
-## Tests
-
-Tests will be executed automatically when running Maven commands `package`, `verify`, `install`,
-`site`, or `deploy`. To run tests manually, execute the following commands in the root directory of
-the project:
-* Run all tests: `mvn test`
-* Run specific test class: `mvn test -Dtest=[full class name]`
-* Run a specific test case (single method): `mvn test -Dtest=[full class name]#[method name]`
+For a deployment with Kubernetes, have a look at [this](https://github.com/International-Data-Spaces-Association/IDS-Deployment-Examples/tree/main/dataspace-connector/slim/k8s) documentation.

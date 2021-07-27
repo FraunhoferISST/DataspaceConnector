@@ -16,7 +16,7 @@ Customize the Dataspace Connector to fit your use case.
 ---
 
 If you want to set up the Dataspace Connector yourself, follow the instructions below. If you
-encounter any problems, please have a look at the [FAQ](../faq.md).
+encounter any problems, please have a look at the [FAQ](pages/faq.md).
 
 At first, clone the repository:
 ```commandline
@@ -168,14 +168,18 @@ certificate, public certificates, and any IDS keystore that was provided by the 
 
 In the provided `config.json`, the `ids:connectorDeployMode` is set to `idsc:TEST_DEPLOYMENT`. This
 allows to use the `keystore-localhost.p12` as an IDS certificate. For testing purpose, the existing
-cert can be used, as on application start, the IDS Messaging Services will not get a valid [DAT](https://github.com/International-Data-Spaces-Association/IDS-G/blob/master/core/DAPS/README.md#dynamic-attribute-token-content) from
-the [DAPS](https://github.com/International-Data-Spaces-Association/IDS-G/blob/master/core/DAPS/README.md) and for received messages, the sent [DAT](https://github.com/International-Data-Spaces-Association/IDS-G/blob/master/core/DAPS/README.md#dynamic-attribute-token-content) will not be checked.
+cert can be used, as on application start, the IDS Messaging Services will not request a valid
+[DAT](https://github.com/International-Data-Spaces-Association/IDS-G/blob/master/core/DAPS/README.md#dynamic-attribute-token-content)
+from the [DAPS](https://github.com/International-Data-Spaces-Association/IDS-G/blob/master/core/DAPS/README.md)
+and for received messages, the sent [DAT](https://github.com/International-Data-Spaces-Association/IDS-G/blob/master/core/DAPS/README.md#dynamic-attribute-token-content)
+will not be checked.
 
-To turn on the [DAT](https://github.com/International-Data-Spaces-Association/IDS-G/blob/master/core/DAPS/README.md#dynamic-attribute-token-content) checking, you need to set the `ids:connectorDeployMode` to
-`idsc:PRODUCTIVE_DEPLOYMENT`. For getting a trusted certificate, contact
-[Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de). Add the keystore with the IDS certificate
-inside to the `resources/conf` and change the filename at `ids:keyStore` accordingly. In addition,
-set your connector id to uniquely identify your connector towards e.g. the IDS Metadata Broker:
+To turn on the [DAT](https://github.com/International-Data-Spaces-Association/IDS-G/blob/master/core/DAPS/README.md#dynamic-attribute-token-content)
+checking, you need to set the `ids:connectorDeployMode` to`idsc:PRODUCTIVE_DEPLOYMENT`. For getting
+a trusted certificate, contact[Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de). Add the keystore
+with the IDS certificate inside to the `resources/conf` and change the filename at `ids:keyStore`
+accordingly. In addition, set your connector id to uniquely identify your connector towards e.g. the
+IDS Metadata Broker:
 
 ```json
 "ids:connectorDescription" : {
@@ -277,6 +281,14 @@ spring.datasource.password
 spring.h2.console.enabled=false
 spring.h2.console.path=/database
 spring.h2.console.settings.web-allow-others=true
+```
+
+By default, the Dataspace Connector is running with an H2 database that is non persistent. On every
+start-up, it thus will be empty again. To change this behaviour, add the following lines to the
+`application.properties`.
+
+```properties
+spring.datasource.url=jdbc:h2:file:./target/db/resources
 ```
 
 ### Logging

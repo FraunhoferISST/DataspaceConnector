@@ -19,7 +19,7 @@ The Dataspace Connector provides multiple ways for logging and accessing informa
 
 ## Static Configuration
 
-You may configure logging setting in the `log4j2.xml` at `src/main/resources`. There, you will find 
+You may configure logging setting in the `log4j2.xml` at `src/main/resources`. There, you will find
 the different loggers and the target outputs used within the Dataspace Connector.
 
 To change the logging level of the Dataspace Connector, modify the attribute `level` of the logger
@@ -45,15 +45,12 @@ or to file use `RollingFile` as values for the `ref` attribute.
 </Logger>
 ```
 
-Note that the root logger is already logging to file by default. This logger already contains all
-logs of the `io.dataspaceconnector` logger.
-
 To add additional logging outputs or change the logging format consult
 [here](https://logging.apache.org/log4j/2.x/manual/appenders.html) or for more information
 see [here](https://logging.apache.org/log4j/2.x/manual/configuration.html#XML).
 
 ## Runtime Configuration
-The Dataspace Connector allows the modification of logging levels at runtime. To enable this 
+The Dataspace Connector allows the modification of logging levels at runtime. To enable this
 feature, you will need to locate `application.properties` under `src/main/resources`.
 
 Enable or add the following lines:
@@ -63,14 +60,14 @@ management.endpoints.web.exposure.include=loggers
 management.endpoint.loggers.enabled=true
 ```
 
-A list of all available loggers and their current logging level will be exposed under 
+A list of all available loggers and their current logging level will be exposed under
 `/actuator/loggers`.
 
-To change the logging level at runtime, you will need to perform a `POST` request against the 
+To change the logging level at runtime, you will need to perform a `POST` request against the
 logger. Here is an example using curl:
 
 ```commandline
-curl -i -k -X POST -H 'Content-Type: application/json' 
+curl -i -k -X POST -H 'Content-Type: application/json'
     -d '{"configuredLevel": "OFF"}' https://localhost:8080/actuator/loggers/io.dataspaceconnector
 ```
 
@@ -88,5 +85,5 @@ management.endpoint.logfile.external-file=./log/dataspaceconnector.log
 
 The logfile will be available by performing a pull request on `/actuator/logfile`.
 
-For more information, see 
+For more information, see
 [here](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html).
