@@ -23,14 +23,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpointDesc> {
 
-    //TODO implement
-
     /**
      * {@inheritDoc}
      */
     @Override
     protected AppEndpoint initializeEntity(final AppEndpointDesc desc) {
-        return null;
+        final var appEndpoint = new AppEndpoint();
+        appEndpoint.setEndpointPort(desc.getEndpointPort());
+        appEndpoint.setEndpointType(desc.getEndpointType());
+        appEndpoint.setLanguage(desc.getLanguage());
+        appEndpoint.setProtocol(desc.getProtocol());
+        appEndpoint.setMediaType(desc.getMediaType());
+        appEndpoint.setDocs(desc.getDocs());
+        appEndpoint.setInfo(desc.getInfo());
+        appEndpoint.setLocation(desc.getLocation());
+        return appEndpoint;
     }
 
 }

@@ -15,10 +15,42 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 /**
  * Describes an app endpoint. Use this structure to create
  * or update an app endpoint.
  */
+@AllArgsConstructor
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class AppEndpointDesc extends EndpointDesc {
-    //TODO implement
+
+    /**
+     * Holds the information about the endpoint type.
+     */
+    private String endpointType;
+
+    /**
+     * Port of the Endpoint.
+     */
+    private int endpointPort;
+
+    /**
+     * Endpoint accepted mediatype.
+     */
+    private String mediaType;
+
+    /**
+     * Protocol used by endpoint.
+     */
+    private String protocol;
+
+    /**
+     * Language of the endpoint.
+     */
+    private String language;
+
 }
