@@ -61,6 +61,11 @@ public final class ResourceName {
     public static final String ARTIFACTS = "Artifacts";
 
     /**
+     * Tag name for apps.
+     */
+    public static final String APPS = "Apps";
+
+    /**
      * Tag name for brokers.
      */
     public static final String BROKERS = "Brokers";

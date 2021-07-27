@@ -39,5 +39,4 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
         appEndpoint.setLocation(desc.getLocation());
         return appEndpoint;
     }
-
 }

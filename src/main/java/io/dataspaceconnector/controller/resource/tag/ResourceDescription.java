@@ -56,6 +56,10 @@ public final class ResourceDescription {
     public static final String AGREEMENTS = "Endpoints for contract agreement handling";
 
     /**
+     * Tag description for app handling.
+     */
+    public static final String APPS = "Endpoints for app handling";
+    /**
      * Tag description for artifacts.
      */
     public static final String ARTIFACTS = "Endpoints for operations on artifacts";
