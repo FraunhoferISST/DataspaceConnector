@@ -121,6 +121,8 @@ public class MainController {
                 .getAll(null, null)).withRel("rules"));
         model.add(linkTo(methodOn(ResourceControllers.SubscriptionController.class)
                 .getAll(null, null)).withRel("subscriptions"));
+        model.add(linkTo(methodOn(ResourceControllers.AppController.class)
+                .getAll(null, null)).withRel("apps"));
 
         return ResponseEntity.ok(model);
     }
