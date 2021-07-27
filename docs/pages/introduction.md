@@ -56,7 +56,7 @@ provides a user-friendly interaction with the Connector's REST API. Find more de
 The Dataspace Connector is designed to provide an easy entry point into the IDS Ecosystem, enabling
 projects and companies to connect to data spaces and exchange data in a sovereign way. Thereby, the
 defined usage policies are not only transferred between the IDS participants, but also directly
-enforced. How the architecture is designed can be seen [here](documentation/architecture.md).
+enforced. How the architecture is designed can be seen [here](pages/documentation/v5/architecture.md).
 
 
 ## Links

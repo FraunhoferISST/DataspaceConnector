@@ -3,8 +3,9 @@ layout: default
 title: Architecture
 nav_order: 1
 description: ""
-permalink: /Documentation/Architecture
-parent: Documentation
+permalink: /Documentation/v5/Architecture
+parent: Version 5
+grand_parent: Documentation
 ---
 
 # Architecture
@@ -35,7 +36,7 @@ the data flow between different systems and apps. A monitoring system, e.g. Yach
 the Configuration Manager), helps to monitor and manage the loads of the individual components,
 download images, and start or stop pods/containers.
 
-![Connector Setup](../../assets/images/dsc_architecture.png)
+![Connector Setup](../../../assets/images/dsc_architecture.png)
 
 All functionalities and architectural decisions aim at providing a maintainable and easily
 extensible software that encapsulates the IDS information model from connected systems.
@@ -61,4 +62,4 @@ The Dataspace Connector will support a segmented network. Every running containe
 to a different network zone by providing its own virtual network stack. The Connector as the core
 container will have root rights and be able to manage network and firewall configurations for all
 separated containers and their networks. As root namespace, it provides an external IP and can be
-reached from an external network. Details can be found [here](../roadmap/concept.md).
+reached from an external network. Details can be found [here](pages/roadmap/concept.md).

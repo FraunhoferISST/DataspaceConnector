@@ -3,8 +3,9 @@ layout: default
 title: Usage Control
 nav_order: 5
 description: ""
-permalink: /Documentation/UsageControl
-parent: Documentation
+permalink: /Documentation/v5/UsageControl
+parent: Version 5
+grand_parent: Documentation
 ---
 
 # IDS Usage Control Policies

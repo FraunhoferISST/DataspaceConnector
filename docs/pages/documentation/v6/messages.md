@@ -3,7 +3,7 @@ layout: default
 title: Messages
 nav_order: 4
 description: ""
-permalink: /Documentation/Messages
+permalink: /Documentation/v6/Messages
 parent: Documentation
 ---
 
@@ -17,10 +17,10 @@ See what IDS message types can be sent and received.
 
 ## Message Types
 
-IDS messages and their content are defined 
+IDS messages and their content are defined
 [here](http://htmlpreview.github.io/?https://github.com/IndustrialDataSpace/InformationModel/blob/feature/message_taxonomy_description/model/communication/Message_Description.htm).
 The table below lists the supported message types. Thereby, it is to be distinguished whether the
-Dataspace Connector provides functionality for sending messages as request or response, or for 
+Dataspace Connector provides functionality for sending messages as request or response, or for
 processing incoming messages.
 
 | IDS Message Type                    | Outgoing           | Incoming | Description              |
@@ -46,9 +46,9 @@ processing incoming messages.
 
 ## Sequences
 
-![Automated IDS Messaging Sequence](../../assets/images/message_sequence_1.png)
+![Automated IDS Messaging Sequence](assets/images/message_sequence_1.png)
 
-![Automated Data Updates](../../assets/images/message_sequence_2.png)
+![Automated Data Updates](assets/images/message_sequence_2.png)
 
 ## Examples
 

@@ -28,7 +28,7 @@ message as explained [here](pages/communication/v5/consumer.md#step-1-request-a-
 ## Step by Step
 
 To understand the structure of a resource, please first take a look at the
-[data model section](pages/documentation/data-model.md) and the [REST API explanation](pages/documentation/rest-api.md).
+[data model section](pages/documentation/v5/data-model.md) and the [REST API explanation](pages/documentation/v5/rest-api.md).
 For adding resources to the running connector as a data provider, have a look at the following
 steps.
 
@@ -145,7 +145,7 @@ entity change, as well as the creation and modification date.
 
 The endpoints `PUT`, `GET`, and`DELETE` `/offers/{id}` provide standard CRUD functions to read,
 update, and delete the metadata, respectively the data resource - as described
-[here](pages/documentation/data-model.md).
+[here](pages/documentation/v5/data-model.md).
 
 Next to the resource, we need a catalog as a parent for the offer. Use `POST /api/catalogs` to
 create one. Its location is: [https://localhost:8080/api/catalogs/5ac012e1-ffa5-43b3-af41-9707d2a9137d](https://localhost:8080/api/catalogs/5ac012e1-ffa5-43b3-af41-9707d2a9137d).
@@ -164,7 +164,7 @@ curl -X 'POST' \
 ]'
 ```
 
-As stated [here](pages/documentation/data-model.md), **an offered resource is only complete if it
+As stated [here](pages/documentation/v5/data-model.md), **an offered resource is only complete if it
 contains at least one contract offer and at least one representation with at least one artifact.
 Otherwise, it will not be listed in the IDS self-description because there is no complete data offer.**
 

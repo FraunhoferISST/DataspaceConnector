@@ -13,6 +13,8 @@ parent: Communication Guide
 See how to use query parameters, path segments, and headers for the backend request on data retrieval.
 {: .fs-6 .fw-300 }
 
+[previous version](../v5/parametrization.md)
+
 ---
 
 The Dataspace Connector supports the usage of custom headers, query parameters, and path segments

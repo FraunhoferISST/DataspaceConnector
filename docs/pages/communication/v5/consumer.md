@@ -21,9 +21,9 @@ The self-description is returned as JSON-LD and contains several information abo
 connector instance. This includes e.g. the title, the maintainer, the IDS Infomodel version, and
 the resource catalog. At the public endpoint `/`, the resource catalog is not displayed. It can only
 be accessed with admin credentials at `GET /api/connector` or by sending an IDS description request
-message as explained [here](pages/communication/v5/consumer.mdnication/v5/consumer.md#step-1-request-a-connectors-self-description)).
+message as explained [here](#step-1-request-a-connectors-self-description).
 
-![Selfservice Endpoints](assets/images/swagger_connector.png)
+![Selfservice Endpoints](../../../assets/images/swagger_connector.png)
 
 ## Step by Step
 
@@ -31,7 +31,7 @@ For requesting data and metadata as a data consumer, two endpoints are provided.
 request is used for requesting the metadata and a contract request is used for handling out
 contract agreements as a condition to retrieve raw data from a data provider.
 
-![Connector Communication Endpoints](assets/images/swagger_communication_endpoints.png)
+![Connector Communication Endpoints](../../../assets/images/swagger_communication_endpoints.png)
 
 ---
 
@@ -47,7 +47,7 @@ For sending a `POST` request, two parameters have to be set: the recipient and t
 As the data consumer needs to access the self-description of a data provider to know all resource
 offers, the requested element should be empty.
 
-![Description Request](assets/images/swagger_description_request.png)
+![Description Request](../../../assets/images/swagger_description_request.png)
 
 If the request is successful, the response body will contain a `BaseConnector` with a single catalog
 or list of catalogs.
@@ -125,8 +125,8 @@ rejection reason from the provider connector. E.g.:
 With this, you can navigate yourself through the data offers of the provider and choose the artifact
 whose data you want to retrieve. A response will never contain the raw data.
 
-Following the example data, that was provided within the [provider guide](pages/communication/v5/provider.md), we would end
-up with the following information when requesting
+Following the example data, that was provided within the [provider guide](pages/communication/v5/provider.md),
+we would end up with the following information when requesting
 [https://localhost:8080/api/catalogs/eda0cda2-10f2-4b39-b462-5d4f2b1bb758](https://localhost:8080/api/catalogs/eda0cda2-10f2-4b39-b462-5d4f2b1bb758)
 and its resource offer [https://localhost:8080/api/offers/98d6818b-a1b7-4171-a318-a0e11837bf10](https://localhost:8080/api/offers/98d6818b-a1b7-4171-a318-a0e11837bf10):
 
@@ -279,7 +279,7 @@ to add the artifact id as `ids:target` to the rule.
 
 If you provide wrong inputs, you will get a response body with a hint on what went wrong.
 
-![Contract Request](assets/images/swagger_contract_request.png)
+![Contract Request](../../../assets/images/swagger_contract_request.png)
 
 With the `download` value you may specify whether you want the Dataspace Connector to download the
 data immediately or later.

@@ -72,22 +72,15 @@ Responsible for this are mainly developers from the Fraunhofer ISST.
 Please find some detailed explanation of the aforementioned roadmap items below.
 
 * Ids-ready Test: The test for the IDS-ready label comprises different requirements, which are
-  assigned to the 3 levels base, trust and trust+. The last plugfest has shown that these 3 possible
-  levels will be extended. With the DSC, we are aiming for the base profile. Currently, we are
-  writing a concept for the IDS-ready label test. This includes exactly the criteria that will also
-  be checked during the later certification. At that time, however, the connector has to actually
-  implement the requirements.
-* ConfigManager Integration: The Configuration Manager (CM) provides a user-friendly
-  interaction with the Dataspace Connector's endpoints by using a GUI. For compatibility, some
-  further endpoints may need to be implemented and the structure of individual functionalities has
-  to be modularized.
-* Routing (e.g. Apache Camel): As described [here](../documentation/architecture.md), the
+  assigned to the 3 levels base, trust and trust+. The last IDSA Plugfest has shown that these 3
+  possible levels will be extended. With the DSC, we are aiming for the base profile. Currently, we
+  are writing a concept for the IDS-ready label test. This includes exactly the criteria that will
+  also be checked during the later certification. At that time, however, the connector has to
+  actually implement the requirements.
+* Routing (e.g. Apache Camel): As described [here](pages/documentation/v5/architecture.md), the
   integration of a routing framework as e.g. Apache Camel will improve and extend the data flow and
   its interception.
-* Integration of IDSCPv2: To support higher security profiles, the IDSCP 2.0 communication library
-  is integrated into the IDS Messaging Services used by the DSC. Possibly some modifications of the
-  DSC will be necessary.
-* Usage Control Extension: Currently, the Dataspace Connector supports eight policy patterns out
+* Usage Control Extension: Currently, the Dataspace Connector supports ten policy patterns out
   of 21. Policy enforcement should be configurable. For this, the current access and usage control
   must be modular and interchangeable. As a possible alternative, MyData and a corresponding
   interceptor for the data flow will be integrated into the DSC. On top of that, the Connector
