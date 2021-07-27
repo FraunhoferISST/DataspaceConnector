@@ -20,6 +20,7 @@ import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
 import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.AgreementView;
+import io.dataspaceconnector.controller.resource.view.AppView;
 import io.dataspaceconnector.controller.resource.view.ArtifactView;
 import io.dataspaceconnector.controller.resource.view.CatalogView;
 import io.dataspaceconnector.controller.resource.view.ContractRuleView;
@@ -29,6 +30,7 @@ import io.dataspaceconnector.controller.resource.view.RepresentationView;
 import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
 import io.dataspaceconnector.controller.resource.view.SubscriptionView;
 import io.dataspaceconnector.model.agreement.Agreement;
+import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.catalog.Catalog;
@@ -97,6 +99,18 @@ public final class RelationControllers {
             EntityLinkerService.AppEndpointLinker, AppEndpoint, AppEndpointView> {
 
     }
+
+    /**
+     * Offers the endpoints for managing the relations between apps and app endpoints.
+     */
+    @RestController
+    @RequestMapping("/api/appstore/{id}/apps")
+    @Tag(name = ResourceName.APPS, description = ResourceDescription.APPS)
+    public static class AppstoreToApps extends BaseResourceChildController<
+            EntityLinkerService.AppLinker, App, AppView> {
+
+    }
+
     /**
      * Offers the endpoints for managing the relations between artifacts and subscriptions.
      */

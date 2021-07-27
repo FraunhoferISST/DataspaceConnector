@@ -59,6 +59,12 @@ public final class ResourceDescription {
      * Tag description for app handling.
      */
     public static final String APPS = "Endpoints for app handling";
+
+    /**
+     * Tag description for app handling.
+     */
+    public static final String APPSTORE = "Endpoints for app store handling";
+
     /**
      * Tag description for artifacts.
      */

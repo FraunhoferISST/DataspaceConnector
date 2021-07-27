@@ -66,6 +66,11 @@ public final class ResourceName {
     public static final String APPS = "Apps";
 
     /**
+     * Tag name for app stores.
+     */
+    public static final String APPSTORE = "App stores";
+
+    /**
      * Tag name for brokers.
      */
     public static final String BROKERS = "Brokers";

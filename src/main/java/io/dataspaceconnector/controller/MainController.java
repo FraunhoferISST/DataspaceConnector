@@ -123,6 +123,8 @@ public class MainController {
                 .getAll(null, null)).withRel("subscriptions"));
         model.add(linkTo(methodOn(ResourceControllers.AppController.class)
                 .getAll(null, null)).withRel("apps"));
+        model.add(linkTo(methodOn(ResourceControllers.AppStoreController.class)
+                .getAll(null, null)).withRel("appstores"));
 
         return ResponseEntity.ok(model);
     }
