@@ -13,10 +13,13 @@
         </onException>
 
         <from uri="direct:resourceUnavailableSender"/>
+        <setProperty name="idscp2-client-uri">
+            <simple>${bean:io.dataspaceconnector.camel.util.ParameterUtils?method=getIdscp2ClientUri(${exchangeProperty.recipient})}</simple>
+        </setProperty>
         <process ref="ResourceFinder"/>
         <process ref="ResourceUnavailableMessageBuilder"/>
         <process ref="RequestWithResourcePayloadPreparer"/>
-        <toD uri="idscp2client://${exchangeProperty.recipient}?awaitResponse=true&amp;sslContextParameters=#serverSslContext&amp;useIdsMessages=true"/>
+        <toD uri="${exchangeProperty.idscp2-client-uri}"/>
         <process ref="ResponseToDtoConverter"/>
 
     </route>

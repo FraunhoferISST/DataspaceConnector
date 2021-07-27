@@ -149,4 +149,15 @@ public final class ParameterUtils {
     public static final String CONTROLLER_UTILS_BEAN = "bean:io.dataspaceconnector.controller"
             + ".util.ControllerUtils?method=";
 
+    /**
+     * Inserts the specified recipient into the URI used to make IDSCP2 client calls.
+     *
+     * @param recipient the recipient
+     * @return the IDSCP2 client URI with the recipient.
+     */
+    public static String getIdscp2ClientUri(final String recipient) {
+        return "idscp2client://" + recipient + "?awaitResponse=true&sslContextParameters=#serverSslContext"
+                + "&useIdsMessages=true";
+    }
+
 }
