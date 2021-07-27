@@ -18,7 +18,7 @@ Get to know the Dataspace Connector's REST API to automated resource handling.
 ---
 
 If you haven't already checked it out, please first take a look at the Dataspace Connector data
-model [here](../../../pages/documentation/v5/data-model.md). As mentioned there, the
+model [here](../../../pages/documentation/v6/data-model.md). As mentioned there, the
 data model of the Connector is very modular. Relations between objects are predefined and via the
 REST API, a data offer can thus be created very dynamically. Individual objects can be detached from
 each other, attached to other objects, and modified at any time.
