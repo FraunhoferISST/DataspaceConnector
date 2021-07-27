@@ -41,4 +41,9 @@ public class KeystoreDesc extends Description {
      * The key store password.
      */
     private String password;
+
+    /**
+     * Alias for the key store.
+     */
+    private String alias;
 }
