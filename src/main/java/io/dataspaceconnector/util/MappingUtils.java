@@ -114,9 +114,11 @@ public final class MappingUtils {
     public static AppTemplate fromIdsApp(final AppResource resource, final URI remoteUrl) {
         final var representation = (AppRepresentation) resource.getRepresentation().get(0);
         final var dataApp = representation.getDataAppInformation();
-        final var additional = propertiesToAdditional(representation.getProperties());
 
         final var appDesc = new AppDesc();
+
+        appDesc.setAdditional(buildAdditionalForRepresentation(representation));
+
         appDesc.setAppDocumentation(dataApp.getAppDocumentation());
         appDesc.setAppEnvironmentVariables(dataApp.getAppEnvironmentVariables());
         appDesc.setAppStorageConfiguration(dataApp.getAppStorageConfiguration());
@@ -132,7 +134,6 @@ public final class MappingUtils {
         appDesc.setSovereign(resource.getSovereign());
         setResourceEndpoint(resource, appDesc);
         appDesc.setDescription("This app is created from an IDS data app.");
-        appDesc.setAdditional(additional);
         appDesc.setTitle("IDS APP");
         appDesc.setRemoteAddress(remoteUrl);
         appDesc.setSupportedUsagePolicies(
@@ -148,6 +149,40 @@ public final class MappingUtils {
         }
         return new AppTemplate(appDesc, endpoints);
     }
+
+    private static Map<String, String> buildAdditionalForRepresentation(
+            final AppRepresentation representation) {
+        final var additional = propertiesToAdditional(representation.getProperties());
+
+        final var dataAppInformation = representation.getDataAppInformation();
+        final var instance = representation.getInstance();
+        final var language = representation.getLanguage();
+        final var mediaType = representation.getMediaType();
+        final var representationStandard = representation.getRepresentationStandard();
+        final var shapesGraph = representation.getShapesGraph();
+
+        if(dataAppInformation != null) {
+            additional.put("ids:dataAppInformation", dataAppInformation.toRdf());
+        }
+        if(instance != null) {
+            addListToAdditional(instance, additional, "ids:instance");
+        }
+        if(language != null) {
+            additional.put("ids:language", language.toString());
+        }
+        if(mediaType != null) {
+            additional.put("ids:mediaType", mediaType.getFilenameExtension());
+        }
+        if(representationStandard != null) {
+            additional.put("ids:representationStandard", representationStandard.toString());
+        }
+        if(shapesGraph != null) {
+            additional.put("ids:shapesGraph", shapesGraph.toString());
+        }
+
+        return additional;
+    }
+
 
     private static void setResourceEndpoint(final AppResource resource, final AppDesc appDesc) {
         if (resource.getResourceEndpoint() == null || resource.getResourceEndpoint().isEmpty()) {
@@ -187,16 +222,16 @@ public final class MappingUtils {
     }
 
     private static AppEndpointTemplate fromIdsAppEndpoint(final AppEndpoint appEndpoint) {
-        final var additional = propertiesToAdditional(appEndpoint.getProperties());
-
         final var appEndpointDesc = new AppEndpointDesc();
+
+        appEndpointDesc.setAdditional(buildAdditionalForAppEndpoint(appEndpoint));
+
         appEndpointDesc.setEndpointPort(appEndpoint.getAppEndpointPort().intValue());
         appEndpointDesc.setEndpointType(appEndpoint.getAppEndpointType().name());
         appEndpointDesc.setLanguage(appEndpoint.getLanguage().toString());
         appEndpointDesc.setMediaType(appEndpoint.getAppEndpointMediaType().getFilenameExtension());
         appEndpointDesc.setProtocol(appEndpoint.getAppEndpointProtocol());
         appEndpointDesc.setBootstrapId(appEndpoint.getId());
-        appEndpointDesc.setAdditional(additional);
         appEndpointDesc.setDocs(
                 appEndpoint.getEndpointDocumentation() != null
                         && !appEndpoint.getEndpointDocumentation().isEmpty()
@@ -209,7 +244,34 @@ public final class MappingUtils {
         return new AppEndpointTemplate(appEndpointDesc);
     }
 
-    private static Map<String, String> buildAdditionalForResource(final Resource resource) {
+    private static Map<String, String> buildAdditionalForAppEndpoint(final AppEndpoint appEndpoint)
+    {
+        Utils.requireNonNull(appEndpoint, ErrorMessage.ENTITY_NULL);
+        final var additional = propertiesToAdditional(appEndpoint.getProperties());
+
+        final var inboundPath = appEndpoint.getInboundPath();
+        final var outboundPath = appEndpoint.getOutboundPath();
+        final var language = appEndpoint.getLanguage();
+        final var path = appEndpoint.getPath();
+
+        if (inboundPath != null) {
+            additional.put("ids:inboundPath", inboundPath);
+        }
+        if (outboundPath != null) {
+            additional.put("ids:outboundPath", outboundPath);
+        }
+        if (language!=null) {
+            additional.put("ids:language", language.toString());
+        }
+        if (path != null) {
+            additional.put("ids:path", path);
+        }
+
+        return additional;
+    }
+
+
+        private static Map<String, String> buildAdditionalForResource(final Resource resource) {
         Utils.requireNonNull(resource, ErrorMessage.ENTITY_NULL);
 
         final var additional = propertiesToAdditional(resource.getProperties());
