@@ -47,9 +47,9 @@ processing incoming messages.
 
 ## Sequences
 
-![Automated IDS Messaging Sequence](assets/images/message_sequence_1.png)
+![Automated IDS Messaging Sequence](../../../assets/images/message_sequence_1.png)
 
-![Automated Data Updates](assets/images/message_sequence_2.png)
+![Automated Data Updates](../../../assets/images/message_sequence_2.png)
 
 ## Examples
 
@@ -90,7 +90,7 @@ Request Message:
 ```
 
 Response Message:
-```
+```json
 --
 Content-Disposition: form-data; name="header"
 Content-Type: text/plain;charset=UTF-8
@@ -148,7 +148,7 @@ Content-Length: 4051
 ### Description Request: Metadata
 
 Request Message:
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -186,7 +186,7 @@ Request Message:
 
 Response Message:
 
-```
+```json
 --
 Content-Disposition: form-data; name="header"
 Content-Type: text/plain;charset=UTF-8

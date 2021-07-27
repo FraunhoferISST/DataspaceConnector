@@ -68,7 +68,7 @@ runtime.
 ## Pattern Examples
 
 ### Provide Access
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -92,7 +92,7 @@ runtime.
 ```
 
 ### Prohibit Access
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -116,7 +116,7 @@ runtime.
 ```
 
 ### N Times Usage
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -154,7 +154,7 @@ runtime.
 ```
 
 ### Duration Usage
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -192,7 +192,7 @@ runtime.
 ```
 
 ### Usage During Interval
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -243,7 +243,7 @@ runtime.
 ```
 
 ### Usage Until Deletion
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -315,7 +315,7 @@ runtime.
 ```
 
 ### Usage Logging
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -346,7 +346,7 @@ runtime.
 ```
 
 ### Usage Notification
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -391,7 +391,7 @@ runtime.
 ```
 
 ### Connector Restricted Usage
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
