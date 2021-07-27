@@ -15,7 +15,8 @@
  */
 package io.dataspaceconnector.model.truststore;
 
-import io.dataspaceconnector.model.base.CertStore;
+import io.dataspaceconnector.model.base.Entity;
+import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,7 +25,12 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Table;
+import java.net.URI;
+
+import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
  * The entity class for the trust store.
@@ -37,10 +43,27 @@ import javax.persistence.Table;
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class Truststore extends CertStore {
+public class Truststore extends Entity {
 
     /**
      * Serial version uid.
      **/
     private static final long serialVersionUID = 1L;
+
+    /**
+     * The trust store.
+     */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private URI location;
+
+    /**
+     * The password of the trust store.
+     */
+    private String password;
+
+    /**
+     * Alias for the trust store.
+     */
+    private String alias;
 }
