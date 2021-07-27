@@ -13,46 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model.endpoint;
+package io.dataspaceconnector.model.template;
 
+import io.dataspaceconnector.model.app.AppDesc;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.NonNull;
+
+import java.util.List;
 
 /**
- * Describes an app endpoint. Use this structure to create
- * or update an app endpoint.
+ * Describes an app and all its dependencies.
  */
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
-@Data
-@EqualsAndHashCode(callSuper = true)
-public class AppEndpointDesc extends EndpointDesc {
+public class AppTemplate {
 
     /**
-     * Holds the information about the endpoint type.
+     * App parameters.
      */
-    private String endpointType;
+    private @NonNull AppDesc desc;
 
     /**
-     * Port of the Endpoint.
+     * App endpoint templates.
      */
-    private int endpointPort;
-
-    /**
-     * Endpoint accepted mediatype.
-     */
-    private String mediaType;
-
-    /**
-     * Protocol used by endpoint.
-     */
-    private String protocol;
-
-    /**
-     * Language of the endpoint.
-     */
-    private String language;
-
+    private List<AppEndpointTemplate> endpoints;
 }

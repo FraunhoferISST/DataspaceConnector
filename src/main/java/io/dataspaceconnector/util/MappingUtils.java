@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.util;
 
+import de.fraunhofer.iais.eis.AppEndpoint;
+import de.fraunhofer.iais.eis.AppRepresentation;
+import de.fraunhofer.iais.eis.AppResource;
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.ConfigurationModel;
@@ -26,6 +29,9 @@ import de.fraunhofer.iais.eis.Proxy;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
+import de.fraunhofer.iais.eis.UsagePolicyClass;
+import de.fraunhofer.iais.eis.util.TypedLiteral;
+import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
@@ -34,6 +40,7 @@ import io.dataspaceconnector.model.configuration.DeployMode;
 import io.dataspaceconnector.model.configuration.LogLevel;
 import io.dataspaceconnector.model.configuration.SecurityProfile;
 import io.dataspaceconnector.model.contract.ContractDesc;
+import io.dataspaceconnector.model.endpoint.AppEndpointDesc;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.proxy.ProxyDesc;
 import io.dataspaceconnector.model.representation.RepresentationDesc;
@@ -41,6 +48,8 @@ import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.resource.ResourceDesc;
 import io.dataspaceconnector.model.rule.ContractRuleDesc;
+import io.dataspaceconnector.model.template.AppEndpointTemplate;
+import io.dataspaceconnector.model.template.AppTemplate;
 import io.dataspaceconnector.model.template.ArtifactTemplate;
 import io.dataspaceconnector.model.template.CatalogTemplate;
 import io.dataspaceconnector.model.template.ContractTemplate;
@@ -48,10 +57,12 @@ import io.dataspaceconnector.model.template.RepresentationTemplate;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
+import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,6 +104,95 @@ public final class MappingUtils {
         catalogDesc.setBootstrapId(catalog.getId());
 
         return new CatalogTemplate(catalogDesc, null, null);
+    }
+
+    public static AppTemplate fromIdsApp(final AppResource resource, final URI remoteUrl) {
+        final var representation = (AppRepresentation) resource.getRepresentation().get(0);
+        final var dataApp = representation.getDataAppInformation();
+        final var additional = new HashMap<String, String>();
+        if (representation.getProperties() != null) {
+            representation.getProperties().forEach((key, value) -> additional.put(key, value.toString()));
+        }
+        final var appDesc = new AppDesc();
+        appDesc.setAppDocumentation(dataApp.getAppDocumentation());
+        appDesc.setAppEnvironmentVariables(dataApp.getAppEnvironmentVariables());
+        appDesc.setAppStorageConfiguration(dataApp.getAppStorageConfiguration());
+        appDesc.setKeywords(resource.getKeyword().stream().map(TypedLiteral::toString).collect(Collectors.toList()));
+        appDesc.setLanguage(representation.getLanguage().toString());
+        appDesc.setLicense(appDesc.getLicense());
+        appDesc.setPublisher(resource.getPublisher());
+        appDesc.setDataAppDistributionService(representation.getDataAppDistributionService());
+        appDesc.setDataAppRuntimeEnvironment(representation.getDataAppRuntimeEnvironment());
+        appDesc.setRemoteId(resource.getId());
+        appDesc.setSovereign(resource.getSovereign());
+        appDesc.setEndpointDocumentation(resource.getResourceEndpoint().get(0).getEndpointDocumentation().get(0));
+        appDesc.setDescription("This app is created from an IDS data app.");
+        appDesc.setAdditional(additional);
+        appDesc.setTitle("IDS APP");
+        appDesc.setRemoteAddress(remoteUrl);
+        appDesc.setSupportedUsagePolicies(
+                dataApp.getSupportedUsagePolicies().stream()
+                        .map(MappingUtils::fromIdsUsagePolicyClass)
+                        .collect(Collectors.toList())
+        );
+        appDesc.setBootstrapId(representation.getId());
+
+        var endpoints = new ArrayList<AppEndpointTemplate>();
+        for (final var endpoint : dataApp.getAppEndpoint()) {
+            endpoints.add(fromIdsAppEndpoint(endpoint));
+        }
+        return new AppTemplate(appDesc, endpoints);
+    }
+
+    public static PolicyPattern fromIdsUsagePolicyClass(final UsagePolicyClass policyClass) {
+        switch (policyClass) {
+            case CONNECTOR_RESTRICTED_DATA_USAGE:
+                return PolicyPattern.CONNECTOR_RESTRICTED_USAGE;
+            case DURATION_RESTRICTED_DATA_USAGE:
+                return PolicyPattern.DURATION_USAGE;
+            case INTERVAL_RESTRICTED_DATA_USAGE:
+                return PolicyPattern.USAGE_DURING_INTERVAL;
+            case LOCAL_LOGGING:
+                return PolicyPattern.USAGE_LOGGING;
+            case ALLOW_DATA_USAGE:
+                return PolicyPattern.PROVIDE_ACCESS;
+            case REMOTE_NOTIFICATION:
+                return PolicyPattern.USAGE_NOTIFICATION;
+            case RESTRICTED_NUMBER_OF_USAGES:
+                return PolicyPattern.N_TIMES_USAGE;
+            case USE_DATA_AND_DELETE_AFTER:
+                return PolicyPattern.DURATION_USAGE;
+            default:
+                return PolicyPattern.PROHIBIT_ACCESS;
+        }
+    }
+
+    public static AppEndpointTemplate fromIdsAppEndpoint(final AppEndpoint appEndpoint) {
+        final var additional = new HashMap<String, String>();
+        if (appEndpoint.getProperties() != null) {
+            appEndpoint.getProperties().forEach(
+                    (key, value) -> additional.put(key, value.toString())
+            );
+        }
+
+        final var appEndpointDesc = new AppEndpointDesc();
+        appEndpointDesc.setEndpointPort(appEndpoint.getAppEndpointPort().intValue());
+        appEndpointDesc.setEndpointType(appEndpoint.getAppEndpointType().name());
+        appEndpointDesc.setLanguage(appEndpoint.getLanguage().toString());
+        appEndpointDesc.setMediaType(appEndpoint.getAppEndpointMediaType().getFilenameExtension());
+        appEndpointDesc.setProtocol(appEndpoint.getAppEndpointProtocol());
+        appEndpointDesc.setBootstrapId(appEndpoint.getId());
+        appEndpointDesc.setAdditional(additional);
+        appEndpointDesc.setDocs(
+                appEndpoint.getEndpointDocumentation() != null
+                && !appEndpoint.getEndpointDocumentation().isEmpty()
+                ? appEndpoint.getEndpointDocumentation().get(0)
+                : null
+        );
+        appEndpointDesc.setInfo(appEndpoint.getEndpointInformation().toString());
+        appEndpointDesc.setLocation(appEndpoint.getAccessURL());
+
+        return new AppEndpointTemplate(appEndpointDesc);
     }
 
     private static Map<String, String> buildAdditionalForResource(final Resource resource) {

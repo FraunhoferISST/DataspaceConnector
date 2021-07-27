@@ -20,6 +20,7 @@ import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.net.URI;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.List;
  * Describes a data app. Use this structure to create
  * or update a data app.
  */
+@NoArgsConstructor
 @AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
