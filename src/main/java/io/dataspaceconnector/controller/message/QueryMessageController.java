@@ -18,7 +18,6 @@ package io.dataspaceconnector.controller.message;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
-import java.util.Objects;
 import java.util.Optional;
 
 import de.fraunhofer.iais.eis.ResultMessageImpl;
@@ -33,7 +32,6 @@ import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseExcep
 import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
-import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.util.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.controller.util.ControllerUtils;
@@ -49,7 +47,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -123,16 +120,7 @@ public class QueryMessageController {
                             .withProperty(ParameterUtils.QUERY_PARAM, query)
                             .build());
 
-            final var response = result.getIn().getBody(Response.class);
-            if (response != null) {
-                return ResponseEntity.ok(response.getBody());
-            } else {
-                final var responseEntity =
-                    toObjectResponse(result.getIn().getBody(ResponseEntity.class));
-                return Objects.requireNonNullElseGet(responseEntity,
-                        () -> new ResponseEntity<Object>("An internal server error occurred.",
-                                HttpStatus.INTERNAL_SERVER_ERROR));
-            }
+            return ControllerUtils.respondWithExchangeContent(result);
         } else {
             try {
                 // Send the query message.
@@ -196,16 +184,7 @@ public class QueryMessageController {
                             .withProperty(ParameterUtils.QUERY_TERM_PARAM, term)
                             .build());
 
-            final var response = result.getIn().getBody(Response.class);
-            if (response != null) {
-                return ResponseEntity.ok(response.getBody());
-            } else {
-                final var responseEntity =
-                    toObjectResponse(result.getIn().getBody(ResponseEntity.class));
-                return Objects.requireNonNullElseGet(responseEntity,
-                        () -> new ResponseEntity<Object>("An internal server error occurred.",
-                                HttpStatus.INTERNAL_SERVER_ERROR));
-            }
+            return ControllerUtils.respondWithExchangeContent(result);
         } else {
             try {
                 // Send the query message for full text search.
@@ -230,10 +209,5 @@ public class QueryMessageController {
             }
             return messageService.validateResponse(Optional.empty(), ResultMessageImpl.class);
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static ResponseEntity<Object> toObjectResponse(final ResponseEntity<?> response) {
-        return (ResponseEntity<Object>) response;
     }
 }
