@@ -84,7 +84,6 @@ public final class MappingUtils {
 
     /**
      * Map ids catalog to connector catalog.
-     *
      * @param catalog The ids catalog.
      * @return The connector catalog.
      * @throws IllegalArgumentException if the passed resource is null.
@@ -106,18 +105,27 @@ public final class MappingUtils {
         return new CatalogTemplate(catalogDesc, null, null);
     }
 
+    /**
+     * Map ids app resource to resource.
+     * @param resource  The app resource.
+     * @param remoteUrl The recipient id.
+     * @return app template.
+     */
     public static AppTemplate fromIdsApp(final AppResource resource, final URI remoteUrl) {
         final var representation = (AppRepresentation) resource.getRepresentation().get(0);
         final var dataApp = representation.getDataAppInformation();
         final var additional = new HashMap<String, String>();
         if (representation.getProperties() != null) {
-            representation.getProperties().forEach((key, value) -> additional.put(key, value.toString()));
+            representation.getProperties()
+                    .forEach((key, value) -> additional.put(key, value.toString()));
         }
         final var appDesc = new AppDesc();
         appDesc.setAppDocumentation(dataApp.getAppDocumentation());
         appDesc.setAppEnvironmentVariables(dataApp.getAppEnvironmentVariables());
         appDesc.setAppStorageConfiguration(dataApp.getAppStorageConfiguration());
-        appDesc.setKeywords(resource.getKeyword().stream().map(TypedLiteral::toString).collect(Collectors.toList()));
+        appDesc.setKeywords(resource.getKeyword()
+                .stream()
+                .map(TypedLiteral::toString).collect(Collectors.toList()));
         appDesc.setLanguage(representation.getLanguage().toString());
         appDesc.setLicense(appDesc.getLicense());
         appDesc.setPublisher(resource.getPublisher());
@@ -125,7 +133,7 @@ public final class MappingUtils {
         appDesc.setDataAppRuntimeEnvironment(representation.getDataAppRuntimeEnvironment());
         appDesc.setRemoteId(resource.getId());
         appDesc.setSovereign(resource.getSovereign());
-        appDesc.setEndpointDocumentation(resource.getResourceEndpoint().get(0).getEndpointDocumentation().get(0));
+        setResourceEndpoint(resource, appDesc);
         appDesc.setDescription("This app is created from an IDS data app.");
         appDesc.setAdditional(additional);
         appDesc.setTitle("IDS APP");
@@ -144,7 +152,21 @@ public final class MappingUtils {
         return new AppTemplate(appDesc, endpoints);
     }
 
-    public static PolicyPattern fromIdsUsagePolicyClass(final UsagePolicyClass policyClass) {
+    private static void setResourceEndpoint(final AppResource resource, final AppDesc appDesc) {
+        if (resource.getResourceEndpoint() == null || resource.getResourceEndpoint().isEmpty()) {
+            appDesc.setEndpointDocumentation(null);
+        } else {
+            if (resource.getResourceEndpoint().get(0).getEndpointDocumentation() == null
+                    || resource.getResourceEndpoint().get(0).getEndpointDocumentation().isEmpty()) {
+                appDesc.setEndpointDocumentation(null);
+            } else {
+                appDesc.setEndpointDocumentation(
+                        resource.getResourceEndpoint().get(0).getEndpointDocumentation().get(0));
+            }
+        }
+    }
+
+    private static PolicyPattern fromIdsUsagePolicyClass(final UsagePolicyClass policyClass) {
         switch (policyClass) {
             case CONNECTOR_RESTRICTED_DATA_USAGE:
                 return PolicyPattern.CONNECTOR_RESTRICTED_USAGE;
@@ -161,13 +183,13 @@ public final class MappingUtils {
             case RESTRICTED_NUMBER_OF_USAGES:
                 return PolicyPattern.N_TIMES_USAGE;
             case USE_DATA_AND_DELETE_AFTER:
-                return PolicyPattern.DURATION_USAGE;
+                return PolicyPattern.USAGE_UNTIL_DELETION;
             default:
                 return PolicyPattern.PROHIBIT_ACCESS;
         }
     }
 
-    public static AppEndpointTemplate fromIdsAppEndpoint(final AppEndpoint appEndpoint) {
+    private static AppEndpointTemplate fromIdsAppEndpoint(final AppEndpoint appEndpoint) {
         final var additional = new HashMap<String, String>();
         if (appEndpoint.getProperties() != null) {
             appEndpoint.getProperties().forEach(
@@ -185,9 +207,9 @@ public final class MappingUtils {
         appEndpointDesc.setAdditional(additional);
         appEndpointDesc.setDocs(
                 appEndpoint.getEndpointDocumentation() != null
-                && !appEndpoint.getEndpointDocumentation().isEmpty()
-                ? appEndpoint.getEndpointDocumentation().get(0)
-                : null
+                        && !appEndpoint.getEndpointDocumentation().isEmpty()
+                        ? appEndpoint.getEndpointDocumentation().get(0)
+                        : null
         );
         appEndpointDesc.setInfo(appEndpoint.getEndpointInformation().toString());
         appEndpointDesc.setLocation(appEndpoint.getAccessURL());
@@ -332,7 +354,6 @@ public final class MappingUtils {
 
     /**
      * Map ids resource to connector resource.
-     *
      * @param resource The ids resource.
      * @return The connector resource.
      * @throws IllegalArgumentException if the passed resource is null.
@@ -349,7 +370,6 @@ public final class MappingUtils {
 
     /**
      * Map ids resource to connector resource.
-     *
      * @param resource The ids resource.
      * @return The connector resource.
      * @throws IllegalArgumentException if the passed resource is null.
@@ -367,7 +387,6 @@ public final class MappingUtils {
     /**
      * Adds the string value of a given list as an additional property. If the list only contains
      * one element, the string value will not contain brackets.
-     *
      * @param list       the list.
      * @param additional the map of additional properties.
      * @param key        the map key to use.
@@ -384,7 +403,6 @@ public final class MappingUtils {
 
     /**
      * Map ids representation to connector representation.
-     *
      * @param representation The ids representation.
      * @return The connector representation.
      * @throws IllegalArgumentException if the passed representation is null.
@@ -436,7 +454,6 @@ public final class MappingUtils {
 
     /**
      * Build template from ids artifact.
-     *
      * @param artifact  The ids artifact.
      * @param download  Whether the artifact will be downloaded automatically.
      * @param remoteUrl The provider's url for receiving artifact request messages.
@@ -488,7 +505,6 @@ public final class MappingUtils {
 
     /**
      * Build template from ids contract.
-     *
      * @param contract The ids contract offer.
      * @return The contract template.
      * @throws IllegalArgumentException if the passed contract is null.
@@ -537,7 +553,6 @@ public final class MappingUtils {
 
     /**
      * Build template from ids rule.
-     *
      * @param rule The ids rule.
      * @return The rule template.
      * @throws IllegalArgumentException                            if the rule is null.
@@ -562,7 +577,6 @@ public final class MappingUtils {
     /**
      * Map ids property map to additional map for the internal data model.
      * If the argument is null an empty map will be returned.
-     *
      * @param properties A string object map.
      * @return A map containing all properties that could be extracted.
      */
@@ -582,7 +596,6 @@ public final class MappingUtils {
 
     /**
      * Convert a string to a {@link ZonedDateTime}.
-     *
      * @param calendar The time as string.
      * @return The new ZonedDateTime object.
      * @throws DateTimeParseException if its not a time.
@@ -593,7 +606,6 @@ public final class MappingUtils {
 
     /**
      * Returns the first endpoint documentations of the first endpoint.
-     *
      * @param endpoints The list of endpoints.
      * @return The endpoint documentation.
      */
@@ -615,7 +627,6 @@ public final class MappingUtils {
 
     /**
      * Get dsc log level from ids log level.
-     *
      * @param logLevel The ids log level.
      * @return The internal log level.
      */
@@ -633,7 +644,6 @@ public final class MappingUtils {
 
     /**
      * Get dsc security profile from ids security profile.
-     *
      * @param securityProfile The ids security profile.
      * @return The internal security profile.
      */
@@ -651,7 +661,6 @@ public final class MappingUtils {
 
     /**
      * Build internal configuration desc from ids configModel.
-     *
      * @param configModel The ids configuration model.
      * @return The internal configuration desc.
      */
