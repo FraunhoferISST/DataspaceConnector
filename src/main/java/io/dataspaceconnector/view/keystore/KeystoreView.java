@@ -34,4 +34,9 @@ public class KeystoreView extends RepresentationModel<KeystoreView> {
      * The location information.
      */
     private URI location;
+
+    /**
+     * Alias for the key store.
+     */
+    private String alias;
 }
