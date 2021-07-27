@@ -1,10 +1,11 @@
 ---
 layout: default
 title: Telemetry
-nav_order: 7
+nav_order: 3
 description: ""
-permalink: /Deployment/Telemetry
-parent: Deployment
+permalink: /Deployment/Configuration/Telemetry
+parent: Configuration
+grand_parent: Deployment
 ---
 
 # Telemetry

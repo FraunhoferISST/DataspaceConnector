@@ -28,14 +28,14 @@ processing incoming messages.
 | ArtifactRequestMessage              | request            | x        | message asking for retrieving a specified artifact  |
 | DescriptionRequestMessage           | request            | x        | message requesting metadata (If no URI is supplied via the ids:requestedElement field, this messages is treated like a self-description request.) |
 | ContractRequestMessage              | request            | x        | message containing a contract offer |
-| ArtifactResponseMessage             | response           |          | message that contains the artifact's data in the payload |
-| DescriptionResponseMessage          | response           |          | message containing the metadata of a requested object |
-| ContractAgreementMessage            | request + response |          | message containing a contract agreement |
-| ContractRejectionMessage            | response           |          | message indicating rejection of a contract |
-| RejectionMessage                    | response           |          | message that notifies the issuer that processing the request message has failed |
+| ArtifactResponseMessage             | response           | x        | message that contains the artifact's data in the payload |
+| DescriptionResponseMessage          | response           | x        | message containing the metadata of a requested object |
+| ContractAgreementMessage            | request + response | x        | message containing a contract agreement |
+| ContractRejectionMessage            | response           | x        | message indicating rejection of a contract |
+| RejectionMessage                    | response           | x        | message that notifies the issuer that processing the request message has failed |
 | NotificationMessage                 | request            | x        | message is informative and no response is expected |
-| LogMessage                          | request            |          | message that is used to transfer logs e.g. to the clearing house |
-| MessageProcessedNotificationMessage | response           |          | message that notifies whether a message has been received and successfully processed |
+| LogMessage                          | request            | x        | message that is used to transfer logs e.g. to the clearing house |
+| MessageProcessedNotificationMessage | response           | x        | message that notifies whether a message has been received and successfully processed |
 | ConnectorUpdateMessage              | request            |          | message notifying the recipient(s) about the availability and current configuration of a connector |
 | ConnectorUnavailableMessage         | request            |          | message indicating that a specific connector is unavailable |
 | ResourceUpdateMessage               | request            | x        | message indicating the availability and current description of a specific resource |
@@ -46,16 +46,16 @@ processing incoming messages.
 
 ## Sequences
 
-![Automated IDS Messaging Sequence](assets/images/message_sequence_1.png)
+![Automated IDS Messaging Sequence](../../../assets/images/message_sequence_1.png)
 
-![Automated Data Updates](assets/images/message_sequence_2.png)
+![Automated Data Updates](../../../assets/images/message_sequence_2.png)
 
 ## Examples
 
 ### Description Request: Self-description
 
 Request Message:
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -89,7 +89,7 @@ Request Message:
 ```
 
 Response Message:
-```
+```json
 --
 Content-Disposition: form-data; name="header"
 Content-Type: text/plain;charset=UTF-8
@@ -147,7 +147,7 @@ Content-Length: 4051
 ### Description Request: Metadata
 
 Request Message:
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -185,7 +185,7 @@ Request Message:
 
 Response Message:
 
-```
+```json
 --
 Content-Disposition: form-data; name="header"
 Content-Type: text/plain;charset=UTF-8

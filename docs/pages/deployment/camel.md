@@ -1,7 +1,7 @@
 ---
 layout: default
-title: Routing
-nav_order: 7
+title: Camel
+nav_order: 4
 description: ""
 permalink: /Deployment/Routing
 parent: Deployment
@@ -158,5 +158,3 @@ route's end.
 ---
 
 **Note**: In this case the URL specified for the generic endpoint will be called using HTTP POST.
-
----

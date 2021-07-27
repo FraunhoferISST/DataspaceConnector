@@ -5,6 +5,8 @@ nav_order: 1
 description: ""
 permalink: /Deployment/Configuration
 parent: Deployment
+has_children: true
+has_toc: true
 ---
 
 # Configuration

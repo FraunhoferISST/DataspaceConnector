@@ -1,10 +1,11 @@
 ---
 layout: default
 title: Logging
-nav_order: 6
+nav_order: 2
 description: ""
-permalink: /Deployment/Logging
-parent: Deployment
+permalink: /Deployment/Configuration/Logging
+parent: Configuration
+grand_parent: Deployment
 ---
 
 # Logging
