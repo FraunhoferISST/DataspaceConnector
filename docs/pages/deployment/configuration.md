@@ -214,7 +214,10 @@ You can change Swagger properties by changing the following settings:
 ```properties
 springdoc.swagger-ui.path=/api/docs
 springdoc.swagger-ui.operationsSorter=alpha
+springdoc.swagger-ui.tagsSorter=alpha
 springdoc.swagger-ui.disable-swagger-default-url=true
+springdoc.swagger-ui.doc-expansion= none
+springdoc.writer-with-default-pretty-printer=true
 ```
 
 ### SSL
@@ -261,8 +264,16 @@ Have a look at the blocked endpoints in the `ConfigurationAdapter` class to add 
 yourself. In case you don't want to provide authentication for your backend maintenance, feel free
 to remove the corresponding lines.
 
-For changing the default credentials, the properties are located at `spring.security.user.name`
-and `spring.security.user.password`.
+For changing the default credentials, the properties are located at
+```properties
+spring.security.user.name
+spring.security.user.password
+```
+and
+```properties
+spring.security.app.name
+spring.security.app.password
+```
 
 ### Database
 
@@ -286,7 +297,7 @@ spring.h2.console.settings.web-allow-others=true
 ```
 
 By default, the Dataspace Connector is running with an H2 database that is non persistent. On every
-start-up, it thus will be empty again. To change this behaviour, add the following lines to the
+start-up, it thus will be empty again. To change this behaviour, define a file location in the
 `application.properties`.
 
 ```properties
@@ -312,7 +323,7 @@ Http tracing is disabled by default: `httptrace.enabled=false`.
 
 ### Jaeger
 
-If your want to access open telemetry, have a look at [this guide](build.md#docker). You can
+If your want to access open telemetry, have a look at [this guide](telemetry.md). You can
 customize the deployment with these lines:
 
 ```properties
@@ -321,23 +332,31 @@ opentracing.jaeger.udp-sender.port=6831
 opentracing.jaeger.log-spans=true
 ```
 
+Open tracing is disabled by default: `opentracing.jaeger.enabled=false`.
+
 ### Bootstrapping
 
-If you want to change the base path, which will be used to find properties and catalogs for bootstrapping,
-you can customize the following line:
+If you want to change the base path, which will be used to find properties and catalogs for
+bootstrapping, you can customize the following line:
 
 ```properties
 bootstrap.path=.
+bootstrap.enabled=false
 ```
+
+Bootstrapping is disabled by default: `bootstrap.enabled=false`.
 
 ### IDS Settings
 
-URLs of the [DAPS](https://github.com/International-Data-Spaces-Association/IDS-G/blob/master/core/DAPS/README.md) for IDS identity management and the Clearing House for contract agreement and data
+URLs of the [DAPS](https://github.com/International-Data-Spaces-Association/IDS-G/blob/master/core/DAPS/README.md)
+for IDS identity management and the Clearing House for contract agreement and data
 usage logging can be changed within the following lines:
 
 ```properties
-daps.token.url=https://daps.aisec.fraunhofer.de
+daps.url=https://daps.aisec.fraunhofer.de
+daps.token.url=https://daps.aisec.fraunhofer.de/v2/token
 daps.key.url=https://daps.aisec.fraunhofer.de/v2/.well-known/jwks.json
+daps.key.url.kid={'https://daps.aisec.fraunhofer.de/v2/.well-known/jwks.json':'default'}
 clearing.house.url=https://ch-ids.aisec.fraunhofer.de/logs/messages/
 ```
 
@@ -358,7 +377,9 @@ or the corresponding line within the `application.properties`.
 
 ![Policy Negotiation Settings](../../assets/images/negotiation_settings.png)
 
-Note that the Dataspace Connector is able to received resources with usage policies that follow
+---
+
+**Note**: The Dataspace Connector is able to received resources with usage policies that follow
 the IDS policy language but not one of the supported patterns. As, by default, the policy check on
 the data consumer side would not allow accessing data whose policies cannot be enforced, you are
 able to ignore unsupported patterns with setting the boolean at the endpoint
@@ -368,3 +389,35 @@ agreements that are technically mapped to IDS usage policies. Therefore, you hav
 your backend applications technically enforce the usage policies instead.
 
 ![Unsupported Pattern Settings](../../assets/images/pattern_settings.png)
+
+---
+
+#### IDS Messaging Services
+
+The Messaging Services dependency comes with some further settings. For example you can specify what
+DAPS you want to connect to and whether incoming messages should be, in addition, processed by a
+SHACL validator.
+
+```properties
+daps.mode=aisec
+shacl.validation=true
+```
+
+#### IDSCPv2
+
+As the Messaging Services provide the connector with the ability to communicate via IDS multipart
+messages, the IDSCPv2 dependency allows to send and receive the same messages via the IDSCP
+protocol. For this and the underlying Camel, some more settings need to be set and can be modified
+accordingly:
+
+```properties
+## Camel
+camel.springboot.main-run-controller=true
+camel.truststore.path=classpath:conf/truststore.p12
+
+## IDSCP
+application.http.base-url=https://localhost:8080
+idscp2.enabled=false
+idscp2.keystore=./src/main/resources/conf/keystore-localhost.p12
+idscp2.truststore=./src/main/resources/conf/truststore.p12
+```
