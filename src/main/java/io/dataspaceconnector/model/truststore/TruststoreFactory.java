@@ -18,6 +18,7 @@ package io.dataspaceconnector.model.truststore;
 import java.net.URI;
 
 import io.dataspaceconnector.model.base.AbstractFactory;
+import io.dataspaceconnector.model.keystore.Keystore;
 import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
 
@@ -52,8 +53,9 @@ public class TruststoreFactory extends AbstractFactory<Truststore, TruststoreDes
     public final boolean updateInternal(final Truststore truststore, final TruststoreDesc desc) {
         final var hasUpdatedLocation = updateLocation(truststore, desc.getLocation());
         final var hasUpdatedPassword = updatePassword(truststore, desc.getPassword());
+        final var hasUpdatedAlias = updateAlias(truststore, desc.getAlias());
 
-        return hasUpdatedLocation || hasUpdatedPassword;
+        return hasUpdatedLocation || hasUpdatedPassword || hasUpdatedAlias;
     }
 
     private boolean updatePassword(final Truststore truststore, final String password) {
@@ -74,5 +76,17 @@ public class TruststoreFactory extends AbstractFactory<Truststore, TruststoreDes
         newLocation.ifPresent(truststore::setLocation);
 
         return newLocation.isPresent();
+    }
+
+    private boolean updateAlias(final Truststore truststore, final String alias) {
+        if (truststore.getAlias() != null && alias == null) {
+            return false;
+        }
+
+        final var newAlias = MetadataUtils.updateString(truststore.getAlias(),
+                alias, "");
+        newAlias.ifPresent(truststore::setAlias);
+
+        return newAlias.isPresent();
     }
 }
