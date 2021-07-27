@@ -15,16 +15,19 @@
  */
 package io.dataspaceconnector.service.ids;
 
+import de.fraunhofer.iais.eis.AppResource;
 import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
+import de.fraunhofer.iais.eis.DataApp;
 import de.fraunhofer.iais.eis.InfrastructureComponent;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.ids.messaging.util.SerializerProvider;
+import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -97,6 +100,25 @@ public class DeserializationService {
         } catch (IOException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Could not deserialize resource. [exception=({})]", e.getMessage(), e);
+            }
+            throw new IllegalArgumentException("Could not deserialize input.", e);
+        }
+    }
+
+    /**
+     * Deserialize string to ids resource.
+     *
+     * @param appResource The data app string.
+     * @return The ids object.
+     * @throws IllegalArgumentException If deserialization fails.
+     */
+    public AppResource getAppResource(final String appResource) throws IllegalArgumentException {
+        try {
+            return serProvider.getSerializer().deserialize(appResource, AppResource.class);
+        } catch (IOException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Could not deserialize app resource. [exception=({})]",
+                        e.getMessage(), e);
             }
             throw new IllegalArgumentException("Could not deserialize input.", e);
         }

@@ -67,4 +67,11 @@ public class MetadataDownloader {
             persistenceSvc.saveMetadata(response, artifacts, download, recipient);
         }
     }
+
+    public void downloadAppResource(final URI recipient,
+                                    final URI appResource) throws UnexpectedResponseException {
+        Map<String, String> response;
+        response = descReqSvc.sendMessage(recipient, appResource);
+        persistenceSvc.saveAppResource(response, recipient);
+    }
 }

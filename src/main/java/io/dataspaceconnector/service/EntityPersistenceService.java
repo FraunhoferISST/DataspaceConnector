@@ -15,8 +15,10 @@
  */
 package io.dataspaceconnector.service;
 
+import de.fraunhofer.iais.eis.AppRepresentation;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
+import de.fraunhofer.iais.eis.DataApp;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
@@ -233,6 +235,24 @@ public class EntityPersistenceService {
 
             // Save all entities.
             tempBuilder.build(resourceTemplate);
+        } catch (Exception e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Could not store resource. [exception=({})]", e.getMessage(), e);
+            }
+            throw new PersistenceException("Could not store resource.", e);
+        }
+    }
+
+    public void saveAppResource(final Map<String, String> response, final URI remoteUrl) {
+        final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
+        final var appResource = deserializationService.getAppResource(payload);
+
+        try {
+            final var appResourceTemplate =
+                    TemplateUtils.getAppResourceTemplate(appResource, remoteUrl);
+
+            // Save all entities.
+//            tempBuilder.build(resourceTemplate);
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not store resource. [exception=({})]", e.getMessage(), e);

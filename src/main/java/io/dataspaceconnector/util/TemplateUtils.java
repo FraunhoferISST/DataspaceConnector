@@ -19,13 +19,16 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.fraunhofer.iais.eis.AppResource;
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.Contract;
+import de.fraunhofer.iais.eis.DataApp;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
+import io.dataspaceconnector.model.template.AppTemplate;
 import io.dataspaceconnector.model.template.ArtifactTemplate;
 import io.dataspaceconnector.model.template.CatalogTemplate;
 import io.dataspaceconnector.model.template.ContractTemplate;
@@ -194,5 +197,10 @@ public final class TemplateUtils {
         }
 
         return list;
+    }
+
+    public static AppTemplate getAppResourceTemplate(final AppResource appResource,
+                                                     final URI remoteUrl) {
+        return MappingUtils.fromIdsApp(appResource, remoteUrl);
     }
 }
