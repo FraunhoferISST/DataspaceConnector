@@ -161,22 +161,22 @@ public final class MappingUtils {
         final var representationStandard = representation.getRepresentationStandard();
         final var shapesGraph = representation.getShapesGraph();
 
-        if(dataAppInformation != null) {
+        if (dataAppInformation != null) {
             additional.put("ids:dataAppInformation", dataAppInformation.toRdf());
         }
-        if(instance != null) {
+        if (instance != null) {
             addListToAdditional(instance, additional, "ids:instance");
         }
-        if(language != null) {
+        if (language != null) {
             additional.put("ids:language", language.toString());
         }
-        if(mediaType != null) {
+        if (mediaType != null) {
             additional.put("ids:mediaType", mediaType.getFilenameExtension());
         }
-        if(representationStandard != null) {
+        if (representationStandard != null) {
             additional.put("ids:representationStandard", representationStandard.toString());
         }
-        if(shapesGraph != null) {
+        if (shapesGraph != null) {
             additional.put("ids:shapesGraph", shapesGraph.toString());
         }
 
@@ -244,8 +244,8 @@ public final class MappingUtils {
         return new AppEndpointTemplate(appEndpointDesc);
     }
 
-    private static Map<String, String> buildAdditionalForAppEndpoint(final AppEndpoint appEndpoint)
-    {
+    private static Map<String, String> buildAdditionalForAppEndpoint(
+             final AppEndpoint appEndpoint) {
         Utils.requireNonNull(appEndpoint, ErrorMessage.ENTITY_NULL);
         final var additional = propertiesToAdditional(appEndpoint.getProperties());
 
@@ -260,7 +260,7 @@ public final class MappingUtils {
         if (outboundPath != null) {
             additional.put("ids:outboundPath", outboundPath);
         }
-        if (language!=null) {
+        if (language != null) {
             additional.put("ids:language", language.toString());
         }
         if (path != null) {
