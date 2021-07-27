@@ -34,7 +34,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RoutesDefinition;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Component;
@@ -82,8 +81,8 @@ public class XmlRouteLoader {
     /**
      * Loads all Camel routes defined in the XML files in the directory specified in
      * application.properties into the Camel context. If any error occurs and the routes cannot be
-     * loaded, the application will be shut down, as Camel routes are required for message handling
-     * and IDSCP2 communication.
+     * loaded, an IllegalStateException will be thrown, as Camel routes are required for message
+     * handling and IDSCP2 communication.
      */
     @PostConstruct
     public void loadRoutes() {
@@ -94,8 +93,7 @@ public class XmlRouteLoader {
         } catch (Exception exception) {
             log.error("Failed to load Camel routes. [exception=({})] Closing application...",
                     exception.getMessage());
-            ((ConfigurableApplicationContext) applicationContext).close();
-            System.exit(1);
+            throw new IllegalStateException("Failed to load Camel routes.", exception);
         }
     }
 
@@ -144,8 +142,8 @@ public class XmlRouteLoader {
         Objects.requireNonNull(file);
 
         if (file.isDirectory()) {
-            final var subFiles = file.listFiles(new XmlAndDirectoryFilter());
-            Objects.requireNonNull(subFiles);
+            final var subFiles = Objects.requireNonNull(
+                    file.listFiles(new XmlAndDirectoryFilter()));
             for (var subFile : subFiles) {
                 loadRoutes(subFile);
             }
@@ -207,11 +205,11 @@ public class XmlRouteLoader {
      */
     static class XmlAndDirectoryFilter implements FileFilter {
         @Override
-        public boolean accept(final File pathname) {
-            if (pathname.isDirectory()) {
+        public boolean accept(final File path) {
+            if (path.isDirectory()) {
                 return true;
             } else {
-                return pathname.getName().toLowerCase().endsWith("xml");
+                return path.getName().toLowerCase().endsWith("xml");
             }
         }
     }
