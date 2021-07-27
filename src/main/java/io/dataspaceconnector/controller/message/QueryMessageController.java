@@ -15,7 +15,12 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import de.fraunhofer.iais.eis.RejectionMessage;
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.util.Objects;
+import java.util.Optional;
+
 import de.fraunhofer.iais.eis.ResultMessageImpl;
 import de.fraunhofer.ids.messaging.common.DeserializeException;
 import de.fraunhofer.ids.messaging.common.SerializeException;
@@ -41,7 +46,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
@@ -54,12 +58,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Controller for sending ids query messages.
@@ -200,9 +198,6 @@ public class QueryMessageController {
 
             final var response = result.getIn().getBody(Response.class);
             if (response != null) {
-                if (response.getHeader() instanceof RejectionMessage) {
-                    return new ResponseEntity<>(response.getBody(), HttpStatus.EXPECTATION_FAILED);
-                }
                 return new ResponseEntity<>(response.getBody(), HttpStatus.OK);
             } else {
                 final var responseEntity =

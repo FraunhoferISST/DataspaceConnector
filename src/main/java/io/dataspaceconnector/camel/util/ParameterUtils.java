@@ -144,6 +144,11 @@ public final class ParameterUtils {
     public static final String QUERY_INPUT_PARAM = "queryInput";
 
     /**
+     * Name of the parameter for the subscription description.
+     */
+    public static final String SUBSCRIPTION_DESC_PARAM = "subscriptionDesc";
+
+    /**
      * Reference for calling a method on ControllerUtils from a route.
      */
     public static final String CONTROLLER_UTILS_BEAN = "bean:io.dataspaceconnector.controller"
@@ -156,7 +161,8 @@ public final class ParameterUtils {
      * @return the IDSCP2 client URI with the recipient.
      */
     public static String getIdscp2ClientUri(final String recipient) {
-        return "idscp2client://" + recipient + "?awaitResponse=true&sslContextParameters=#serverSslContext"
+        return "idscp2client://" + recipient + "?awaitResponse=true"
+                + "&sslContextParameters=#serverSslContext"
                 + "&useIdsMessages=true";
     }
 
