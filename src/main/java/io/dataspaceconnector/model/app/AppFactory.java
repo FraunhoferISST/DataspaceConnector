@@ -15,11 +15,13 @@
  */
 package io.dataspaceconnector.model.app;
 
+import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 /**
@@ -78,6 +80,8 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
                 updateRemoteId(app, desc.getRemoteId());
         final var hasUpdatedRemoteAddress =
                 updateRemoteAddress(app, desc.getRemoteAddress());
+        final var hasUpdatedData = updateData((AppImpl) app, desc.getValue());
+
 
         final var hasUpdated =
                 hasUpdatedAppDocumentation || hasUpdatedAppEnvironmentVariables
@@ -86,13 +90,33 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
                         || hasUpdatedLicense || hasUpdatedEndpointDocumentation
                         || hasUpdatedDataAppDistributionService
                         || hasUpdatedDataAppRuntimeEnvironment
-                        || hasUpdatedRemoteId || hasUpdatedRemoteAddress;
+                        || hasUpdatedRemoteId || hasUpdatedRemoteAddress
+                        || hasUpdatedData;
 
 
         if (hasUpdated) {
             app.setVersion(app.getVersion() + 1);
         }
         return hasUpdated;
+    }
+
+    private boolean updateData(final AppImpl app, final String value) {
+        final var newData = new LocalData();
+        final var data = value == null ? null : value.getBytes(StandardCharsets.UTF_16);
+        newData.setValue(data);
+
+        final var oldData = app.getData();
+        if (oldData instanceof LocalData) {
+            if (!oldData.equals(newData)) {
+                app.setData(newData);
+                return true;
+            }
+        } else {
+            app.setData(newData);
+            return true;
+        }
+
+        return false;
     }
 
     private boolean updateRemoteAddress(final App app, final URI remoteAddress) {

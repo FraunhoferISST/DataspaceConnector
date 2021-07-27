@@ -113,4 +113,9 @@ public class AppDesc extends NamedDescription {
      * The provider's address for artifact request messages.
      */
     private URI remoteAddress;
+
+    /**
+     * Some value for storing data locally.
+     */
+    private String value;
 }
