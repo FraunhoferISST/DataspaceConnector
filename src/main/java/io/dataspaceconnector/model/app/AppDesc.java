@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model.app;
 
+import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.model.named.NamedDescription;
 import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
 import lombok.AllArgsConstructor;
@@ -58,7 +59,7 @@ public class AppDesc extends NamedDescription {
      */
     private List<PolicyPattern> supportedUsagePolicies;
 
-    //AppResource attributes
+    //Resource attributes
 
     /**
      * The keywords of the resource.
@@ -90,7 +91,7 @@ public class AppDesc extends NamedDescription {
      */
     private URI endpointDocumentation;
 
-    //AppRepresentation attributes
+    //Representation attributes
 
     /**
      * Distribution service, where the represented app can be downloaded.
@@ -102,7 +103,7 @@ public class AppDesc extends NamedDescription {
      */
     private String dataAppRuntimeEnvironment;
 
-    //AppArtifact attributes
+    //Artifact attributes
 
     /**
      * The artifact id on provider side.
@@ -113,4 +114,9 @@ public class AppDesc extends NamedDescription {
      * The provider's address for artifact request messages.
      */
     private URI remoteAddress;
+
+    /**
+     * The data.
+     */
+    private LocalData data;
 }

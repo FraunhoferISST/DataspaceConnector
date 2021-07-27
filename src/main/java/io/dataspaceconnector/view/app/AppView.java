@@ -16,6 +16,7 @@
 package io.dataspaceconnector.view.app;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -122,5 +123,10 @@ public class AppView extends RepresentationModel<AppView> {
      * Usage policy patterns supported by the data app.
      */
     private List<PolicyPattern> supportedUsagePolicies;
+
+    /**
+     * The data.
+     */
+    private LocalData data;
 
 }
