@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model.truststore;
 
+import io.dataspaceconnector.model.base.CertStore;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
@@ -43,27 +44,10 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class Truststore extends Entity {
+public class Truststore extends CertStore {
 
     /**
      * Serial version uid.
      **/
     private static final long serialVersionUID = 1L;
-
-    /**
-     * The trust store.
-     */
-    @Convert(converter = UriConverter.class)
-    @Column(length = URI_COLUMN_LENGTH)
-    private URI location;
-
-    /**
-     * The password of the trust store.
-     */
-    private String password;
-
-    /**
-     * Alias for the trust store.
-     */
-    private String alias;
 }
