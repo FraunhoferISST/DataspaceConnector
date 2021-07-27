@@ -576,14 +576,17 @@ public final class MappingUtils {
                 configModel.getConnectorDescription().getOutboundModelVersion());
         description.setKeystoreSettings(new KeystoreDesc(
                 configModel.getKeyStore(),
-                configModel.getKeyStorePassword()));
+                configModel.getKeyStorePassword(),
+                configModel.getKeyStoreAlias()));
         description.setLogLevel(fromIdsLogLevel(configModel.getConfigurationModelLogLevel()));
         description.setMaintainer(configModel.getConnectorDescription().getMaintainer());
         description.setProxySettings(fromIdsProxy(configModel.getConnectorProxy()));
         description.setSecurityProfile(
                 fromIdsSecurityProfile(configModel.getConnectorDescription().getSecurityProfile()));
         description.setTruststoreSettings(new TruststoreDesc(
-                configModel.getTrustStore(), configModel.getTrustStorePassword()));
+                configModel.getTrustStore(),
+                configModel.getTrustStorePassword(),
+                configModel.getTrustStoreAlias()));
         description.setStatus(configModel.getConnectorStatus());
         return description;
     }
