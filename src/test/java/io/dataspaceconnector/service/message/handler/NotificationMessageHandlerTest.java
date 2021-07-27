@@ -29,7 +29,6 @@ import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
-import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.model.message.MessageProcessedNotificationMessageDesc;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.type.MessageProcessedNotificationService;
@@ -38,7 +37,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -47,9 +45,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class NotificationMessageHandlerTest {
-
-    @MockBean
-    private IdscpServerRoute idscpServerRoute;
 
     @SpyBean
     private ConnectorService connectorService;

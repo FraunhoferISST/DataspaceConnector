@@ -30,7 +30,6 @@ import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.camel.processor.ClearingHouseLoggingProcessor;
-import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +42,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class ArtifactRequestHandlerTest {
-
-    @MockBean
-    private IdscpServerRoute idscpServerRoute;
 
     @MockBean
     ClearingHouseLoggingProcessor clearingHouseLoggingProcessor;

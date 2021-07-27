@@ -15,9 +15,9 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import javax.xml.datatype.DatatypeFactory;
 import java.io.IOException;
 import java.net.URI;
+import javax.xml.datatype.DatatypeFactory;
 
 import de.fraunhofer.iais.eis.DescriptionRequestMessage;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
@@ -28,14 +28,13 @@ import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
-import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
-import io.dataspaceconnector.service.configuration.BrokerService;
 import de.fraunhofer.ids.messaging.requests.MessageContainer;
+import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Response;
-import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.controller.util.CommunicationProtocol;
+import io.dataspaceconnector.service.configuration.BrokerService;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import lombok.SneakyThrows;
@@ -73,9 +72,6 @@ public class ConnectorUpdateMessageControllerTest {
 
     @Mock
     private Message in;
-
-    @MockBean
-    private IdscpServerRoute idscpServerRoute;
 
     @MockBean
     private IDSBrokerService brokerService;

@@ -34,7 +34,6 @@ import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Response;
-import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.service.ids.ConnectorService;
@@ -76,9 +75,6 @@ public class ResourceUnavailableMessageControllerTest {
 
     @Mock
     private Message in;
-
-    @MockBean
-    private IdscpServerRoute idscpServerRoute;
 
     @MockBean
     private IDSBrokerService brokerService;
