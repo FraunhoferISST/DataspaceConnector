@@ -22,7 +22,7 @@ The self-description is returned as JSON-LD and contains several information abo
 connector instance. This includes e.g. the title, the maintainer, the IDS Infomodel version, and
 the resource catalog. At the public endpoint `/`, the resource catalog is not displayed. It can only
 be accessed with admin credentials at `GET /api/connector` or by sending an IDS description request
-message as explained [here](pages/communication/v5/consumer.md#step-1-request-a-connectors-self-description)).
+message as explained [here](pages/communication/v6/consumer.md#step-1-request-a-connectors-self-description)).
 
 ![Selfservice Endpoints](../../../assets/images/swagger_connector.png)
 
@@ -126,7 +126,7 @@ rejection reason from the provider connector. E.g.:
 With this, you can navigate yourself through the data offers of the provider and choose the artifact
 whose data you want to retrieve. A response will never contain the raw data.
 
-Following the example data, that was provided within the [provider guide](pages/communication/v5/provider.md), we would end
+Following the example data, that was provided within the [provider guide](pages/communication/v6/provider.md), we would end
 up with the following information when requesting
 [https://localhost:8080/api/catalogs/eda0cda2-10f2-4b39-b462-5d4f2b1bb758](https://localhost:8080/api/catalogs/eda0cda2-10f2-4b39-b462-5d4f2b1bb758)
 and its resource offer [https://localhost:8080/api/offers/98d6818b-a1b7-4171-a318-a0e11837bf10](https://localhost:8080/api/offers/98d6818b-a1b7-4171-a318-a0e11837bf10):
@@ -398,7 +398,7 @@ policies of the requested data resource are checked for the following patterns:
 `USAGE_NOTIFICATION`, and `N_TIMES_USAGE`. The policy is then implemented using the detected
 pattern.
 
-As described [here](pages/communication/v5/provider.md#policy-enforcement), depending on the rule values, the access
+As described [here](pages/communication/v6/provider.md#policy-enforcement), depending on the rule values, the access
 permission will be set to true or false, and correspondingly, the data is either returned or not.
 
 On top of that, the Dataspace Connector performs a periodic policy check. If a duty within a

@@ -107,13 +107,13 @@ parameters that should be forwarded.
    `GET /api/artifacts/{id}/data` (optionally with the URI of the referring contract agreement
    as the `agreementUri` and`download` set to `true`), and adds the query parameters to the request.
     1) only the required parameter
-        ```
-        GET /api/artifacts/{id}/data?name=John
-        ```
+         ```
+         GET /api/artifacts/{id}/data?name=John
+         ```
     2) the required and the optional parameter
-        ```
-        GET /api/artifacts/{id}/data?name=John&number=3
-        ```
+         ```
+         GET /api/artifacts/{id}/data?name=John&number=3
+         ```
 6. The consumer connector sends the additional query parameters specified in the request to
    `GET /api/artifacts/{id}/data` to the provider connector as the payload of the
    `ArtifactRequestMessage`. After receiving the message, the provider connector fetches the data
@@ -134,10 +134,10 @@ consumer decide what path segment(s) should be forwarded.
    ```
 2. Provider provides a link to the REST API documentation as the `endpointDocumentation` attribute
    of a resource offer.
-    ```
-    Path segments according to API documentation:
-         required: name (any string), number (any positive integer)
-    ```
+   ```
+   Path segments according to API documentation:
+        required: name (any string), number (any positive integer)
+   ```
 3. Consumer follows the link to the REST API documentation after requesting the resource's metadata
    (using `POST /api/ids/description`).
 4. Consumer negotiates a contract with the provider for the desired artifact
@@ -156,6 +156,6 @@ consumer decide what path segment(s) should be forwarded.
    `GET /api/artifacts/{id}/data` to the provider connector as the payload of the
    `ArtifactRequestMessage`. After receiving the message, the provider connector fetches the data
    from the backend system after appending the specified path segments to the pre-defined URL.
-    ```
-    http://example-backend.com/John/3
-    ```
+   ```
+   http://example-backend.com/John/3
+   ```
