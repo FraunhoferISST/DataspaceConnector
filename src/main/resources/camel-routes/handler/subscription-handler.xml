@@ -17,7 +17,7 @@
         <!-- an element for the target id could not be found -->
         <onException>
             <exception>io.dataspaceconnector.exception.ResourceNotFoundException</exception>
-            <to uri="direct:handleResourceNotFoundException"/>
+            <to uri="direct:handleResourceNotFoundExceptionForSubscription"/>
         </onException>
 
         <!-- the response could not be built -->

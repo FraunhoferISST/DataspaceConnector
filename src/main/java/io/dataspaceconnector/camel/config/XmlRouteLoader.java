@@ -170,11 +170,11 @@ public class XmlRouteLoader {
                 if ("idscp2Server".equals(route.getRouteId())) {
                     if (connectorConfig.isIdscpEnabled()) {
                         context.addRouteDefinition(route);
-                        log.debug("Loaded additional route from XML file: {}", route.getRouteId());
+                        log.debug("Loaded route from XML file: {}", route.getRouteId());
                     }
                 } else {
                     context.addRouteDefinition(route);
-                    log.debug("Loaded additional route from XML file: {}", route.getRouteId());
+                    log.debug("Loaded route from XML file: {}", route.getRouteId());
                 }
             }
 
