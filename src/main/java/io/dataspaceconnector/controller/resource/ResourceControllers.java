@@ -31,8 +31,8 @@ import io.dataspaceconnector.controller.resource.swagger.response.ResponseDescri
 import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.AgreementView;
-import io.dataspaceconnector.controller.resource.view.AppStoreView;
-import io.dataspaceconnector.controller.resource.view.AppView;
+import io.dataspaceconnector.view.appstore.AppStoreView;
+import io.dataspaceconnector.view.app.AppView;
 import io.dataspaceconnector.controller.resource.view.ArtifactView;
 import io.dataspaceconnector.controller.resource.view.CatalogView;
 import io.dataspaceconnector.controller.resource.view.ContractRuleView;

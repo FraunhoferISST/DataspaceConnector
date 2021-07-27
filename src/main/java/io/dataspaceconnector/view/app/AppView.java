@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.resource.view;
+package io.dataspaceconnector.view.app;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dataspaceconnector.service.usagecontrol.PolicyPattern;

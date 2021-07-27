@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.resource.view;
+package io.dataspaceconnector.view.appstore;
 
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.view.SelfLinking;
+import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.appstore.AppStore;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
