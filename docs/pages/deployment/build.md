@@ -80,7 +80,7 @@ tests. The `release` profile shows all warnings and errors. To run a profile, pl
 | Checkstyle | `mvn checkstyle:check` | With this, a code style check is executed. |
 | Spotbugs | `mvn spotbug:check` | With this, a SpotBugs check is executed. |
 | Statistics | `mvn verify site` | With this, project statistics are generated. |
-| License | `mvn license:format` | With this, a license header is added to all projects files that are missing one. |
+| License | `mvn license:format` | With this, a license header is added to all projects files. |
 
 ### Tests
 
