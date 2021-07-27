@@ -15,12 +15,11 @@
  */
 package io.dataspaceconnector.model.truststore;
 
-import java.net.URI;
-
 import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.model.keystore.Keystore;
 import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
 
 /**
  * Factory class for the trust store.
