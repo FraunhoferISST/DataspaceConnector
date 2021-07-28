@@ -280,7 +280,7 @@ to add the artifact id as `ids:target` to the rule.
 
 If you provide wrong inputs, you will get a response body with a hint on what went wrong.
 
-![Contract Request](assets/images/swagger_contract_request.png)
+![Contract Request](../../../assets/images/swagger_contract_request.png)
 
 With the `download` value you may specify whether you want the Dataspace Connector to download the
 data immediately or later.
@@ -357,13 +357,13 @@ If we change e.g. the `ids:action` from `idsc:USE` to `idsc:MODIFY`, we will rec
 
 ---
 
-**Note**: As the endpoint for a contract request expects a list of resource IDs, artifact IDS, and
+**Note**: As the endpoint for a contract request expects a list of resource IDs, artifact IDs, and
 rules, you are able to handle out contract agreements for multiple artifacts at once.
 
 ---
 
 The Dataspace Connector will automatically start sending `DescriptionRequestMessages` and
-`ArtifactRequestMessages` for the requested elements and save metadata and data to its database.
+`ArtifactRequestMessages` for the requested elements and store metadata and data to its database.
 
 ### Step 4: Access the Data
 
@@ -376,7 +376,7 @@ the data from the consumer.
 You may also set the `download` value manually on a data request or specify what agreement should be
 used.
 
-![Data Request](assets/images/swagger_artifact_data.png)
+![Data Request](../../../assets/images/v6/swagger_artifact_data_get.png)
 
 Either way, the requested and downloaded data will be stored in the database as a bytestream and
 is automatically decoded on an API call.
@@ -388,6 +388,8 @@ If the provider allows to query the data that you want to consume, you are able 
 `GET` requests on `/api/artifacts/{id}/data/**`. Any request headers, parameters, or path variables
 will be forwarded to the provider and you will only receive a snapshot of the offered data string.
 
+Find a detailed description [here](parametrization.md).
+
 ---
 
 ## Policy Enforcement
@@ -398,8 +400,9 @@ policies of the requested data resource are checked for the following patterns:
 `USAGE_NOTIFICATION`, and `N_TIMES_USAGE`. The policy is then implemented using the detected
 pattern.
 
-As described [here](pages/communication/v6/provider.md#policy-enforcement), depending on the rule values, the access
-permission will be set to true or false, and correspondingly, the data is either returned or not.
+As described [here](pages/communication/v6/provider.md#policy-enforcement), depending on the rule
+values, the access permission will be set to true or false, and correspondingly, the data is either
+returned or not.
 
 On top of that, the Dataspace Connector performs a periodic policy check. If a duty within a
 contract agreement determines the deletion date and time, as in `USAGE_UNTIL_DELETION`, is detected,
@@ -411,41 +414,4 @@ If the Dataspace Connector receives a `ResourceUpdateMessage` for a known reques
 automatically sends a `DescriptionRequestMessage` and an `ArtifactRequestMessage` to retrieve the
 latest metadata and data.
 
----
-
-## Test Instances
-
-An instance of the Dataspace Connector is currently available in the IDS Lab at
-[https://simpleconnector.ids.isst.fraunhofer.de/](https://simpleconnector.ids.isst.fraunhofer.de/).
-It can only be reached from inside a VPN network. To get your IP address unblocked, please contact
-[us](mailto:info@dataspace-connector.de).
-* The connector self-description is available at [https://simpleconnector.ids.isst.fraunhofer.de/](https://simpleconnector.ids.isst.fraunhofer.de/) (GET).
-* The open endpoint for IDS communication is
-  [https://simpleconnector.ids.isst.fraunhofer.de/api/ids/data](https://simpleconnector.ids.isst.fraunhofer.de/api/ids/data) (POST).
-* The backend API and its endpoints (`/api/**`) are only accessible to users with admin rights.
-
-### Connector Communication
-When requesting the connector's self-description, the included catalog gives information about
-available resources. The resource id is essential for requesting an artifact or description.
-
-The open endpoint at `/api/ids/data` expects an `ArtifactRequestMessage` with a known artifact id
-as `RequestedArtifact` (for requesting data) or a `DescriptionRequestMessage` with a known
-element id as `RequestedElement` (for requesting metadata).
-* If this parameter is not known to the connector, you will receive a `RejectionMessage` as
-  response.
-* If the `RequestedElement` is missing at a `DescriptionRequestMessage`, you will receive the
-  connector's self-description.
-
-Possible rejection messages:
-* `RejectionMessage` with `RejectionReason.VERSION_NOT_SUPPORTED` if you are not using
-  Infomodel v4.x.x.
-* `RejectionMessage` with `RejectionReason.NOT_AUTHENTICATED` if the requesting connector has no
-  valid DAT.
-* `RejectionMessage` with `RejectionReason.BAD_PARAMETERS` if the request contains missing/wrong
-  parameters.
-* `RejectionMessage` with `RejectionReason.INTERNAL_RECIPIENT_ERROR` if message processing failed.
-* `RejectionMessage` with `RejectionReason.NOT_FOUND` if the requested element/artifact could not
-  be found.
-* `RejectionMessage` with `RejectionReason.NOT_AUTHORIZED` if a policy restriction was detected.
-* `ContractRejectionMessage` with `RejectionReason.BAD_PARAMETERS` if the contract request was not
-  accepted.
+How this is used in a subscription use case, is described [here](subscription.md).

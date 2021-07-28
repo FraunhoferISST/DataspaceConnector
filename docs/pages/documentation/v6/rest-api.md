@@ -61,9 +61,9 @@ explained [here](pages/deployment/build.md#maven).
 The entry point for the REST API is located at `/api`. From there, you can easily navigate through
 the data model.
 
-![REST API](../../../assets/images/rest_api.png)
+![REST API](../../../assets/images/v6/rest_api.png)
 
-The API supports pagination and each REST resource provides meta information about
-itself. This includes for example the self-link or parent and child information.
+The API supports pagination and each REST resource provides meta information about itself. This
+includes for example the self-link or parent and child information.
 
-![REST Example Offer](../../../assets/images/rest_offer.png)
+![REST Example Offer](../../../assets/images/v6/rest_offer.png)

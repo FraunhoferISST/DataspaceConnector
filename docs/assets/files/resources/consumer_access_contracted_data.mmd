@@ -1,8 +1,8 @@
 sequenceDiagram
-    User->>+Connector: POST /api/artifacts/artifacId/data
-    Connector->>+ArtifactController: getData(artifacId, agreementId, queryInput)
+    User->>+Connector: POST /api/artifacts/{id}/data
+    Connector->>+ArtifactController: getData(artifactId, agreementId, queryInput)
     ArtifactController->>+ArtifactService: getData(AccessVerifier, ArtifactRetriever, agreementId, artifactId, queryInput)
-    ArtifactService->>+Database: get(artifacId)
+    ArtifactService->>+Database: get(artifactId)
     Database-->>-ArtifactService: artifact
     ArtifactService->>+AccessVerifier: verifyDataAccess(agreementId, artifact)
     AccessVerifier-->>-ArtifactService: ok
@@ -10,7 +10,7 @@ sequenceDiagram
     ArtifactRetriever->>+ArtifactRequestService: sendMessage(recipient, artifact.remoteId, agreementId, queryInput)
     ArtifactRequestService-->>-ArtifactRetriever: response
     ArtifactRetriever-->>-ArtifactService: dataStream
-    ArtifactService->>+Database: setData(artifacId, dataStream)
+    ArtifactService->>+Database: setData(artifactId, dataStream)
     Database-->>-ArtifactService: ok
     ArtifactService->>-ArtifactController: dataStream
     ArtifactController->>-Connector: dataStream

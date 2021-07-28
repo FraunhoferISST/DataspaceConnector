@@ -37,11 +37,6 @@ enforcement of data sovereignty." (p.22, [IDSA Position Paper Usage Control in t
 Following the specifications of the IDSA Position Paper about Usage Control, the IDS defines 21
 policy classes. The Dataspace Connector currently implements nine of these.
 
-Examples for each of them can be found by using the endpoint `POST /api/examples/policy`.
-The usage policy is added to the metadata of a resource. The classes at
-`io.dataspaceconnector.service.usagecontrol` read, classify, verify, and enforce the policies at
-runtime.
-
 | No. | Title                                          | Support | Implementation |
 |:----|:-----------------------------------------------|:-------:|:-------|
 | 1   | Allow the Usage of the Data                    | x       | provides data usage without any restrictions
@@ -65,6 +60,16 @@ runtime.
 | 19  | Attach Policy when Distribute to a Third-party | -       |
 | 20  | Distribute only if Encrypted                   | -       |
 | 21  | State Restricted Policy                        | -       |
+
+
+Examples for each of them can be found by using the endpoint `POST /api/examples/policy`.
+
+![Swagger Policy Endpoints](../../../assets/images/v6/swagger_policies.png)
+
+The usage policy is added to the metadata of a resource. The classes at
+`io.dataspaceconnector.service.usagecontrol` read, classify, verify, and enforce the policies at
+runtime. See how this works on the [provider-side](../../communication/v6/provider.md) and
+[consumer-side](../../communication/v6/consumer.md) in the communication guide.
 
 ## Example Endpoint
 
