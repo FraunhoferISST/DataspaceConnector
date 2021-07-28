@@ -15,21 +15,6 @@
  */
 package io.dataspaceconnector.util;
 
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.net.URI;
-import java.text.Normalizer;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.TimeZone;
-import java.util.stream.Collectors;
-
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
@@ -60,6 +45,21 @@ import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.DeployMode;
 import lombok.SneakyThrows;
+
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.net.URI;
+import java.text.Normalizer;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -430,15 +430,13 @@ public final class IdsUtils {
      */
     public static Connector getConnectorFromConfiguration(final Configuration config) {
         return new BaseConnectorBuilder()
-                ._title_(Util.asList(
-                        new TypedLiteral(config.getTitle())))
-                ._description_(Util.asList(
-                        new TypedLiteral(config.getDescription())))
+                ._title_(Util.asList(new TypedLiteral(config.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(config.getDescription())))
                 ._curator_(config.getCurator())
                 ._maintainer_(config.getMaintainer())
                 ._securityProfile_(getSecurityProfile(config.getSecurityProfile()))
                 ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()
-                        ._accessURL_(config.getConnectorEndpoint())
+                        ._accessURL_(config.getDefaultEndpoint())
                         .build())
                 ._outboundModelVersion_(config.getOutboundModelVersion())
                 ._inboundModelVersion_(config.getInboundModelVersion())

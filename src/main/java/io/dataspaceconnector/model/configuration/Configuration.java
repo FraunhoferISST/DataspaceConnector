@@ -15,18 +15,6 @@
  */
 package io.dataspaceconnector.model.configuration;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.ElementCollection;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import java.net.URI;
-import java.util.List;
-
 import de.fraunhofer.iais.eis.ConnectorStatus;
 import io.dataspaceconnector.model.keystore.Keystore;
 import io.dataspaceconnector.model.named.NamedEntity;
@@ -42,6 +30,18 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.net.URI;
+import java.util.List;
 
 /**
  * The configuration describes the configuration of a connector.
@@ -65,7 +65,7 @@ public class Configuration extends NamedEntity {
      * The access url of the connector.
      */
     @Convert(converter = UriConverter.class)
-    private URI connectorEndpoint;
+    private URI defaultEndpoint;
 
     /**
      * The project version.
