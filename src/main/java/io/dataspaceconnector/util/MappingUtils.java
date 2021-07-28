@@ -141,7 +141,9 @@ public final class MappingUtils {
                 final var representation = appRepresenmtations.get(0);
                 appDesc.setAdditional(buildAdditionalForRepresentation(representation));
                 appDesc.setLanguage(String.valueOf(representation.getLanguage()));
-                appDesc.setDataAppDistributionService(representation.getDataAppDistributionService());
+                appDesc.setDataAppDistributionService(
+                        representation.getDataAppDistributionService()
+                );
                 appDesc.setDataAppRuntimeEnvironment(representation.getDataAppRuntimeEnvironment());
                 appDesc.setBootstrapId(representation.getId());
 
@@ -151,7 +153,7 @@ public final class MappingUtils {
                     appDesc.setAppDocumentation(dataApp.getAppDocumentation());
                     appDesc.setAppEnvironmentVariables(dataApp.getAppEnvironmentVariables());
                     appDesc.setAppStorageConfiguration(dataApp.getAppStorageConfiguration());
-                    if(dataApp.getSupportedUsagePolicies() != null) {
+                    if (dataApp.getSupportedUsagePolicies() != null) {
                         appDesc.setSupportedUsagePolicies(
                                 dataApp.getSupportedUsagePolicies().stream()
                                         .map(MappingUtils::fromIdsUsagePolicyClass)
