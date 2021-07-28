@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model.app;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -92,6 +93,57 @@ public class AppFactoryTest {
 
         /* ASSERT */
         assertNull(result.getId());
+    }
+
+    @Test
+    public void update_sameDesc_returnFalse() {
+        /* ARRANGE */
+        final var app = factory.create(new AppDesc());
+
+        /* ACT */
+        final var result = factory.update(app, new AppDesc());
+
+        /* ASSERT */
+        Assertions.assertFalse(result);
+    }
+
+    @Test
+    public void update_differentLanguage_setLanguage() {
+        /* ARRANGE */
+        final var desc = new AppDesc();
+        desc.setLanguage("DE");
+
+        final var app = factory.create(new AppDesc());
+
+        /* ACT */
+        factory.update(app, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getLanguage(), app.getLanguage());
+    }
+
+    @Test
+    public void update_sameLanguage_returnFalse() {
+        /* ARRANGE */
+        final var desc = new AppDesc();
+        desc.setLanguage("DE");
+
+        final var app = factory.create(desc);
+
+        /* ACT */
+        final var result = factory.update(app, desc);
+
+        /* ASSERT */
+        Assertions.assertFalse(result);
+    }
+
+    @Test
+    public void update_nullDesc_throwIllegalArgumentException() {
+        /* ARRANGE */
+        final var app = factory.create(new AppDesc());
+
+        /* ACT && ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> factory.update(app, null));
     }
 
 }
