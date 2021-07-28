@@ -90,7 +90,6 @@ sample files are provided at `test/resources/bootstrap`.
             }
           ],
           "ids:language": {
-            "properties": null,
             "@id": "idsc:EN"
           },
           "ids:created": "2016-10-03T15:10:40.000Z",

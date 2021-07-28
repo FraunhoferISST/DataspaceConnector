@@ -35,8 +35,15 @@ steps:
 
 If everything worked fine, the connector is available at
 [https://localhost:8080/](https://localhost:8080/) and its API can be accessed at
-[https://localhost:8080/api](https://localhost:8080/api). By default, the Dataspace Connector is
-running with an H2 database that is non persistent. See how to change that [here]
+[https://localhost:8080/api](https://localhost:8080/api).
+
+The OpenApi documentation can be viewed at [https://localhost:8080/api/docs](https://localhost:8080/api/docs).
+The `.json` representation is available at [https://localhost:8080/v3/api-docs](https://localhost:8080/v3/api-docs).
+The `.yaml` file can be downloaded at [https://localhost:8080/v3/api-docs.yaml](https://localhost:8080/v3/api-docs.yaml).
+
+By default, the Dataspace Connector is running with an H2 database that is non persistent. See how
+to change that [here](database.md).
+The database can be accessed via [https://localhost:8080/database](https://localhost:8080/database).
 
 ---
 
@@ -44,10 +51,6 @@ running with an H2 database that is non persistent. See how to change that [here
 at `/target/apidocs`. Open the `index.html` in a browser of your choice.
 
 ---
-
-The OpenApi documentation can be viewed at [https://localhost:8080/api/docs](https://localhost:8080/api/docs).
-The `.json` representation is available at [https://localhost:8080/v3/api-docs](https://localhost:8080/v3/api-docs).
-The `.yaml` file can be downloaded at [https://localhost:8080/v3/api-docs.yaml](https://localhost:8080/v3/api-docs.yaml).
 
 The connector provides several endpoints for resource database handling and IDS messaging. Details
 on how to interact with them can be found [here](pages/communication.md).
@@ -64,9 +67,8 @@ on how to interact with them can be found [here](pages/communication.md).
 at `/api/ids/data` is provided by the IDS Messaging Services. This endpoint is the one listening to
 incoming IDS messages.**
 
-The database can be accessed via [https://localhost:8080/database](https://localhost:8080/database).
-
 ### Profiles
+
 The `pom.xml` provides three Maven profiles: `no-documentation`, `no-tests`, and
 `release`. The first one skips the Javadocs generation, the second one skips the execution of
 tests. The `release` profile shows all warnings and errors. To run a profile, please have a look at
