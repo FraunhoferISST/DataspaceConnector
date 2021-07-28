@@ -177,7 +177,7 @@ public class MainControllerTest {
                         "\"templated\":true}," +
                         "\"apps\":{\"href\":\"http://localhost/api/apps{?page,size}\"," +
                         "\"templated\":true}," +
-                        "\"appstores\":{\"href\":\"http://localhost/api/appstore{?page,size}\"," +
+                        "\"appstores\":{\"href\":\"http://localhost/api/appstores{?page,size}\"," +
                         "\"templated\":true}}}",
                 result.getResponse().getContentAsString());
         assertEquals("application/hal+json", result.getResponse().getContentType());
