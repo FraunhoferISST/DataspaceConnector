@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [6.1.0] - XXXX-XX-XX
+
+### Added
+- Add value `securityprofile` to GUI helper endpoint.
+
 ## [6.0.0] - 2021-07-20
 
 ### Added
@@ -31,6 +36,7 @@ All notable changes to this project will be documented in this file.
 - Persist connector configuration to database.
   * Load configuration from database.
   * Choose active configuration from list of configurations.
+- Add policy pattern for security profile restricted data usage.
 
 ### Changed
 - Replace IDS Connector Framework v5.0.4 by IDS Messaging Services v2.0.1.
