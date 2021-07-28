@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Diagrams
-nav_order: 5
+nav_order: 6
 description: ""
 permalink: /Documentation/v6/Diagrams
 parent: Documentation
