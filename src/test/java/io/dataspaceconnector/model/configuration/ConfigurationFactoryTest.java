@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.model.configuration;
 
-import java.net.URI;
-import java.util.List;
-
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
 import io.dataspaceconnector.model.proxy.ProxyDesc;
@@ -25,6 +22,9 @@ import io.dataspaceconnector.model.proxy.ProxyFactory;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
 import io.dataspaceconnector.model.truststore.TruststoreFactory;
 import org.junit.jupiter.api.Test;
+
+import java.net.URI;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -50,7 +50,7 @@ public class ConfigurationFactoryTest {
         final var result = factory.create(new ConfigurationDesc());
 
         /* ASSERT */
-        assertEquals(ConfigurationFactory.DEFAULT_CONNECTOR_ENDPOINT, result.getConnectorEndpoint());
+        assertEquals(ConfigurationFactory.DEFAULT_CONNECTOR_ENDPOINT, result.getDefaultEndpoint());
         assertEquals(ConfigurationFactory.DEFAULT_DEPLOY_MODE, result.getDeployMode());
         assertEquals(ConfigurationFactory.DEFAULT_VERSION, result.getVersion());
         assertEquals(ConfigurationFactory.DEFAULT_CURATOR, result.getCurator());
@@ -63,7 +63,7 @@ public class ConfigurationFactoryTest {
     void create_validDesc_returnNew() {
         /* ARRANGE */
         final var desc = new ConfigurationDesc();
-        desc.setConnectorEndpoint(URI.create("https://endpoint"));
+        desc.setDefaultEndpoint(URI.create("https://endpoint"));
         desc.setSecurityProfile(SecurityProfile.TRUST_PLUS_SECURITY);
         desc.setOutboundModelVersion("fred");
         desc.setInboundModelVersion(List.of("Model", "Version"));
@@ -77,7 +77,7 @@ public class ConfigurationFactoryTest {
         final var result = factory.create(desc);
 
         /* ASSERT */
-        assertEquals(desc.getConnectorEndpoint(), result.getConnectorEndpoint());
+        assertEquals(desc.getDefaultEndpoint(), result.getDefaultEndpoint());
         assertEquals(desc.getDeployMode(), result.getDeployMode());
         assertEquals(desc.getVersion(), result.getVersion());
         assertEquals(desc.getCurator(), result.getCurator());
@@ -91,14 +91,14 @@ public class ConfigurationFactoryTest {
         /* ARRANGE */
         final var config = factory.create(new ConfigurationDesc());
         final var desc = new ConfigurationDesc();
-        desc.setConnectorEndpoint(URI.create("https://endpoint"));
+        desc.setDefaultEndpoint(URI.create("https://endpoint"));
 
         /* ACT */
         final var result = factory.update(config, desc);
 
         /* ASSERT */
         assertTrue(result);
-        assertEquals(desc.getConnectorEndpoint(), config.getConnectorEndpoint());
+        assertEquals(desc.getDefaultEndpoint(), config.getDefaultEndpoint());
     }
 
     @Test
@@ -261,7 +261,7 @@ public class ConfigurationFactoryTest {
     void update_sameConnectorEndpoint_willNotUpdate() {
         /* ARRANGE */
         final var desc = new ConfigurationDesc();
-        desc.setConnectorEndpoint(URI.create("https://endpoint"));
+        desc.setDefaultEndpoint(URI.create("https://endpoint"));
         final var config = factory.create(desc);
 
         /* ACT */
@@ -269,7 +269,7 @@ public class ConfigurationFactoryTest {
 
         /* ASSERT */
         assertFalse(result);
-        assertEquals(desc.getConnectorEndpoint(), config.getConnectorEndpoint());
+        assertEquals(desc.getDefaultEndpoint(), config.getDefaultEndpoint());
     }
 
     @Test
