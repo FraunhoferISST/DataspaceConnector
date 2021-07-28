@@ -15,6 +15,6 @@ Some information about internal data and information flow is visualized in this 
 
 ---
 
-## Consumer accesses data with valid contract agreement
+## Consumer Accesses Data with Valid Contract Agreement
 
 ![Swagger API Offers](../../../assets/images/sequence/consumer_access_contracted_data.jpg)
