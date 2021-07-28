@@ -19,12 +19,14 @@ import io.dataspaceconnector.model.named.NamedDescription;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.net.URI;
 
 /**
  * Describes an app store's property.
  */
+@NoArgsConstructor
 @AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
