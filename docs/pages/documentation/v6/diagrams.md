@@ -1,9 +1,9 @@
 ---
 layout: default
-title: Sequences
+title: Diagrams
 nav_order: 5
 description: ""
-permalink: /Documentation/v6/Sequences
+permalink: /Documentation/v6/Diagrams
 parent: Documentation
 ---
 
