@@ -103,7 +103,7 @@
 		<postgres.version>42.2.23</postgres.version>
 		<springdoc-ui.version>1.5.9</springdoc-ui.version>
 		<springdoc-security.version>1.5.9</springdoc-security.version>
-		<springdoc-hateoas.version>1.5.9</springdoc-hateoas.version>
+		<springdoc-hateoas.version>1.5.10</springdoc-hateoas.version>
 		<jsonld-java.version>0.13.3</jsonld-java.version>
 		<equalsverifier.version>3.7</equalsverifier.version>
 		<h2database.version>1.4.200</h2database.version>
