@@ -22,3 +22,7 @@ Some information about internal data and information flow is visualized in this 
 ## Data Transfer Sequence on Data Access as Owner
 
 ![Swagger API Offers](../../../assets/images/sequence/owner_access_own_data_data_transfer_sequence.svg)
+
+## Add a Resource via REST API
+
+![Swagger API Offers](../../../assets/images/sequence/resource_sequence.svg)
