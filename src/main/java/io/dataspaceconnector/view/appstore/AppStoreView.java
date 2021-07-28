@@ -53,12 +53,12 @@ public class AppStoreView extends RepresentationModel<AppStoreView> {
     private URI location;
 
     /**
-     * The title of the broker.
+     * The title of the app store.
      */
     private String title;
 
     /**
-     * The description of the broker.
+     * The description of the app store.
      */
     private String description;
 }
