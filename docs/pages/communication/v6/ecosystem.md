@@ -15,6 +15,14 @@ Find a concept on how to exchange data via different protocols in this section.
 
 ---
 
+## IDS Metadata Broker
+
+- `POST /api/ids/connector/update`: send a `ConnectorUpdateMessage` with the connector's
+  self-description as `payload`
+- `POST /api/ids/connector/unavailable`: send a `ConnectorUnavailableMessage` to unregister the connector
+- `POST /api/ids/resource/update`: update a previously created resource offer
+- `POST /api/ids/resource/unavailable`: remove a previously registered resource offer
+- `POST /api/ids/query`: send a `QueryMessage` with a SPARQL command (request parameter) as `payload`
 
 ### More IDS
 

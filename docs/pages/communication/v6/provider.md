@@ -24,14 +24,14 @@ the resource catalog. At the public endpoint `/`, the resource catalog is not di
 be accessed with admin credentials at `GET /api/connector` or by sending an IDS description request
 message as explained [here](pages/communication/v5/consumer.md#step-1-request-a-connectors-self-description).
 
-![Selfservice Endpoints](assets/images/swagger_connector.png)
+![Selfservice Endpoints](../../../assets/images/v6/swagger_connector.png)
 
 ## Step by Step
 
 To understand the structure of a resource, please first take a look at the
 [data model section](pages/documentation/v5/data-model.md) and the [REST API explanation](pages/documentation/v5/rest-api.md).
 For adding resources to the running connector as a data provider, have a look at the following
-steps.
+steps. How resources can be bootstrapped is explained [here](pages/deployment/bootstrapping.md).
 
 In the following example, we want to provide the raw
 [data](https://samples.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=439d4b804bc8187953eb36d2a8c26a02)
@@ -153,7 +153,7 @@ create one. Its location is: [https://localhost:8080/api/catalogs/5ac012e1-ffa5-
 Then, we need to link both objects to each other via another endpoint. Therefore, we execute a `POST`
 catalog's id extended by `/offers` and the resource's id as part of the list in the request body.
 
-![Example Offer Catalog](assets/images/swagger_example_catalogs_offer.png)
+![Example Offer Catalog](../../../assets/images/swagger_example_catalogs_offer.png)
 
 ```
 curl -X 'POST' \
@@ -172,13 +172,14 @@ Otherwise, it will not be listed in the IDS self-description because there is no
 Next, create a contract and one rule, that you add to the contract. The rule is the
 object, that contains the usage policy as `value`. Since the IDS Usage Control Language is
 rather complicated and it is not trivial to manually create a valid policy, endpoints are provided
-to obtain example policies(`POST /api/examples/policy`) or to validate created and modified usage
-policies (`POST /api/examples/validation`).
+to obtain example policies (`POST /api/examples/policy`) or to validate created and modified usage
+policies (`POST /api/examples/validation`). How these can be used, is explained
+[here](pages/documentation/v6/usage-control.md#example-endpoint).
+
+![Policy Endpoints](../../../assets/images/swagger_policy.png)
 
 By adding multiple rules to one contract offer, you are now able to add multiple usage policies to
 one resource (e.g. the data usage can be logged and the data should be deleted at a given date).
-
-![Policy Endpoints](assets/images/swagger_policy.png)
 
 ### Step 2: Add Local Data
 
@@ -229,9 +230,13 @@ Response body:
 
 In this case, the data will be stored within and loaded from the internal database.
 
+Another endpoint is provided to add data via PUT request.
+
+![Swagger PUT data](../../../assets/images/v6/swagger_data_put.png)
+
 ---
 
-**Note**: The Dataspace Connector automatically calculates the bytesize and checksum.
+**Note**: The Dataspace Connector automatically calculates the bytesize and checksum for local data.
 
 ---
 
@@ -275,13 +280,8 @@ Dataspace Connector to the provider backend.
 
 ### Step 4: Publish Resources at an IDS Broker (optional)
 
-For communicating with an IDS metadata broker, some endpoints are provided.
-- `POST /api/ids/connector/update`: send a `ConnectorUpdateMessage` with the connector's
-  self-description as `payload`
-- `POST /api/ids/connector/unavailable`: send a `ConnectorUnavailableMessage` to unregister the connector
-- `POST /api/ids/resource/update`: update a previously created resource offer
-- `POST /api/ids/resource/unavailable`: remove a previously registered resource offer
-- `POST /api/ids/query`: send a `QueryMessage` with a SPARQL command (request parameter) as `payload`
+For communicating with an IDS metadata broker, some endpoints are provided. For a detailed
+description, see [here](ecosystem.md).
 
 ## Policy Enforcement
 
@@ -289,7 +289,7 @@ When the data provider receives an `ArtifactRequestMessage` from an external con
 `ArtifactMessageHandler` iterates through all contracts of a resource offer and all of its rules
 to check the policy pattern. If the pattern matches one of the following five, an appropriate policy
 check is performed:`PROVIDE_ACCESS`, `PROHIBIT_ACCESS`, `USAGE_DURING_INTERVAL`,
-`USAGE_UNTIL_DELETION`, or`CONNECTOR_RESTRICTED_USAGE`.
+`USAGE_UNTIL_DELETION`, `CONNECTOR_RESTRICTED_USAGE`, and `SECURITY_PROFILE_RESTRICTED_USAGE`.
 
 Depending on the specified rules, the access permission will be set to true or false. If it is true,
 the data provider returns the data. If not, it will respond with a `RejectionReason.NOT_AUTHORIZED`.
@@ -303,8 +303,9 @@ the data provider returns the data. If not, it will respond with a `RejectionRea
 
 ## Resource Updates
 
-Currently, a data consumer cannot subscribe to a resource, and the Dataspace Connector as a data
-provider does not automatically send `ResourceUpdateMessages` to every data consumer on metadata
-changes. Instead, the data provider has to trigger update messages by using the respective endpoint.
+If your setup or use case does not covers a consumer subscribing to a resource offer, you can
+trigger the sending of `ResourceUpdateMessages` manually by using the respective endpoint.
 
-![Resource Update](assets/images/swagger_resource_updates.png)
+![Resource Update](../../../assets/images/swagger_resource_updates.png)
+
+How subscriptions can be used, is described [here](subscription.md).

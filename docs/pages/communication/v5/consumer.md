@@ -318,7 +318,7 @@ resource's) contract offers, and return either a `ContractRejectionMessage` or a
 
 As a response, we now receive the closed contract agreement:
 
-```
+```json
 {
   "creationDate": "2021-05-17T21:16:01.050+0200",
   "modificationDate": "2021-05-17T21:16:01.050+0200",
@@ -343,7 +343,7 @@ consumer's and provider's internal database for later access and usage control.
 If we change e.g. the `ids:action` from `idsc:USE` to `idsc:MODIFY`, we will receive a
 `RejectionMessage` from the provider:
 
-```
+```json
 {
   "reason": {
     "properties": null,
@@ -375,7 +375,7 @@ the data from the consumer.
 You may also set the `download` value manually on a data request or specify what agreement should be
 used.
 
-![Data Request](assets/images/swagger_artifact_data.png)
+![Data Request](../../../assets/images/swagger_artifact_data.png)
 
 Either way, the requested and downloaded data will be stored in the database as a bytestream and
 is automatically decoded on an API call.

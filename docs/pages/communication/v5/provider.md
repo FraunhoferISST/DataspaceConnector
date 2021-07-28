@@ -23,7 +23,7 @@ the resource catalog. At the public endpoint `/`, the resource catalog is not di
 be accessed with admin credentials at `GET /api/connector` or by sending an IDS description request
 message as explained [here](pages/communication/v5/consumer.md#step-1-request-a-connectors-self-description).
 
-![Selfservice Endpoints](assets/images/swagger_connector.png)
+![Selfservice Endpoints](../../../assets/images/swagger_connector.png)
 
 ## Step by Step
 
@@ -57,7 +57,7 @@ curl -X 'POST' \
   ],
   "publisher": "https://openweathermap.org/",
   "language": "EN",
-  "license": "http://opendatacommons.org/licenses/odbl/1.0/",
+  "licence": "http://opendatacommons.org/licenses/odbl/1.0/",
   "sovereign": "https://openweathermap.org/",
   "endpointDocumentation": "https://example.com",
   "key": "value"
@@ -112,7 +112,7 @@ Response body:
   ],
   "publisher": "https://openweathermap.org/",
   "language": "EN",
-  "license": "http://opendatacommons.org/licenses/odbl/1.0/",
+  "licence": "http://opendatacommons.org/licenses/odbl/1.0/",
   "version": 1,
   "sovereign": "https://openweathermap.org/",
   "endpointDocumentation": "https://example.com",
@@ -152,7 +152,7 @@ create one. Its location is: [https://localhost:8080/api/catalogs/5ac012e1-ffa5-
 Then, we need to link both objects to each other via another endpoint. Therefore, we execute a `POST`
 catalog's id extended by `/offers` and the resource's id as part of the list in the request body.
 
-![Example Offer Catalog](assets/images/swagger_example_catalogs_offer.png)
+![Example Offer Catalog](../../../assets/images/swagger_example_catalogs_offer.png)
 
 ```
 curl -X 'POST' \
@@ -177,7 +177,7 @@ policies (`POST /api/examples/validation`).
 By adding multiple rules to one contract offer, you are now able to add multiple usage policies to
 one resource (e.g. the data usage can be logged and the data should be deleted at a given date).
 
-![Policy Endpoints](assets/images/swagger_policy.png)
+![Policy Endpoints](../../../assets/images/swagger_policy.png)
 
 ### Step 2: Add Local Data
 
@@ -306,4 +306,4 @@ Currently, a data consumer cannot subscribe to a resource, and the Dataspace Con
 provider does not automatically send `ResourceUpdateMessages` to every data consumer on metadata
 changes. Instead, the data provider has to trigger update messages by using the respective endpoint.
 
-![Resource Update](assets/images/swagger_resource_updates.png)
+![Resource Update](../../../assets/images/swagger_resource_updates.png)

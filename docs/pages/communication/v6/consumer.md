@@ -24,7 +24,7 @@ the resource catalog. At the public endpoint `/`, the resource catalog is not di
 be accessed with admin credentials at `GET /api/connector` or by sending an IDS description request
 message as explained [here](pages/communication/v6/consumer.md#step-1-request-a-connectors-self-description)).
 
-![Selfservice Endpoints](../../../assets/images/swagger_connector.png)
+![Selfservice Endpoints](../../../assets/images/v6/swagger_connector.png)
 
 ## Step by Step
 
@@ -42,7 +42,7 @@ advance.
 
 ---
 
-### Step 1: Request a Connector's Self-description
+### Step 1: Query Provider - Request a Connector's Self-description
 
 For sending a `POST` request, two parameters have to be set: the recipient and the requested element.
 As the data consumer needs to access the self-description of a data provider to know all resource
@@ -103,7 +103,7 @@ or list of catalogs.
 }
 ````
 
-### Step 2: Request Metadata
+### Step 2: Query Provider - Request Resource Metadata
 
 To request the metadata of a specific catalog, resource, representation, artifact, or contract, use
 the same description request endpoint and put the value of `@id` as requested element.
@@ -319,7 +319,7 @@ resource's) contract offers, and return either a `ContractRejectionMessage` or a
 
 As a response, we now receive the closed contract agreement:
 
-```
+```json
 {
   "creationDate": "2021-05-17T21:16:01.050+0200",
   "modificationDate": "2021-05-17T21:16:01.050+0200",
@@ -344,7 +344,7 @@ consumer's and provider's internal database for later access and usage control.
 If we change e.g. the `ids:action` from `idsc:USE` to `idsc:MODIFY`, we will receive a
 `RejectionMessage` from the provider:
 
-```
+```json
 {
   "reason": {
     "properties": null,
