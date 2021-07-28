@@ -17,4 +17,8 @@ Some information about internal data and information flow is visualized in this 
 
 ## Consumer Accesses Data with Valid Contract Agreement
 
-![Swagger API Offers](../../../assets/images/sequence/consumer_access_contracted_data.jpg)
+![Swagger API Offers](../../../assets/images/sequence/consumer_access_contracted_data.svg)
+
+## Data Transfer Sequence on Data Access as Owner
+
+![Swagger API Offers](../../../assets/images/sequence/owner_access_own_data_data_transfer_sequence.svg)
