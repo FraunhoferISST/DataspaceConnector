@@ -23,7 +23,6 @@ import de.fraunhofer.iais.eis.AppResource;
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.Contract;
-import de.fraunhofer.iais.eis.DataApp;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
@@ -199,6 +198,13 @@ public final class TemplateUtils {
         return list;
     }
 
+    /**
+     * Build an app template from an AppResource.
+     *
+     * @param appResource the app resource.
+     * @param remoteUrl remoteURL of the app.
+     * @return AppTemplate from AppResource.
+     */
     public static AppTemplate getAppResourceTemplate(final AppResource appResource,
                                                      final URI remoteUrl) {
         return MappingUtils.fromIdsApp(appResource, remoteUrl);

@@ -68,6 +68,11 @@ public class MetadataDownloader {
         }
     }
 
+    /**
+     * @param recipient The recipient connector.
+     * @param appResource The app resource.
+     * @throws UnexpectedResponseException if the response type is not as expected.
+     */
     public void downloadAppResource(final URI recipient,
                                     final URI appResource) throws UnexpectedResponseException {
         Map<String, String> response;

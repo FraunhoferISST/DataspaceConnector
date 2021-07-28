@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.dataspaceconnector.controller.message;
 
 import io.dataspaceconnector.camel.dto.Response;
@@ -7,10 +22,7 @@ import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
-import io.dataspaceconnector.service.MetadataDownloader;
-import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
 import io.dataspaceconnector.util.MessageUtils;
 import io.dataspaceconnector.util.Utils;
@@ -24,7 +36,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,11 +45,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.persistence.PersistenceException;
 import java.net.URI;
-import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * This controller provides the endpoint for sending an app request message and starting the
@@ -76,13 +84,20 @@ public class AppRequestMessageController {
     private final @NonNull ConnectorConfiguration connectorConfig;
 
 
+    /**
+     * Add an apps metadata to an app object.
+     *
+     * @param recipient The recipient url
+     * @param app The app ID.
+     * @return Success, when App can be found and created from recipient response.
+     */
     @PostMapping("/app")
     @Operation(summary = "Send IDS App request message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok")})
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     @ResponseBody
-    public ResponseEntity<Object> sendMessage(
+    public final ResponseEntity<Object> sendMessage(
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The app url.", required = true)
