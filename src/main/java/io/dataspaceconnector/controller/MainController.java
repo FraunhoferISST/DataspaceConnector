@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller;
 
+import io.dataspaceconnector.controller.configuration.AppStoreControllers;
 import io.dataspaceconnector.controller.configuration.BrokerControllers;
 import io.dataspaceconnector.controller.configuration.DataSourceController;
 import io.dataspaceconnector.controller.configuration.EndpointController;
@@ -123,7 +124,7 @@ public class MainController {
                 .getAll(null, null)).withRel("subscriptions"));
         model.add(linkTo(methodOn(ResourceControllers.AppController.class)
                 .getAll(null, null)).withRel("apps"));
-        model.add(linkTo(methodOn(ResourceControllers.AppStoreController.class)
+        model.add(linkTo(methodOn(AppStoreControllers.AppStoreController.class)
                 .getAll(null, null)).withRel("appstores"));
 
         return ResponseEntity.ok(model);

@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.view.appstore;
 
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.configuration.AppStoreControllers;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.appstore.AppStoreDesc;
@@ -37,7 +37,7 @@ public class AppStoreViewAssemblerTest {
         final var shouldLookLike = getAppStore();
         final var link = ViewAssemblerHelper.
                 getSelfLink(shouldLookLike.getId(),
-                        ResourceControllers.AppStoreController.class);
+                        AppStoreControllers.AppStoreController.class);
 
         /* ACT */
         final var after = getAppStoreView();

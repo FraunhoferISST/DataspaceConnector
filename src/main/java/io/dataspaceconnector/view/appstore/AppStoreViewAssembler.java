@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.view.appstore;
 
+import io.dataspaceconnector.controller.configuration.AppStoreControllers;
 import io.dataspaceconnector.controller.resource.RelationControllers;
-import io.dataspaceconnector.controller.resource.ResourceControllers;
 import io.dataspaceconnector.controller.resource.view.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.appstore.AppStore;
@@ -41,7 +41,7 @@ public class AppStoreViewAssembler implements RepresentationModelAssembler<AppSt
     public final Link getSelfLink(final UUID entityId) {
         return ViewAssemblerHelper.getSelfLink(
                 entityId,
-                ResourceControllers.AppStoreController.class
+                AppStoreControllers.AppStoreController.class
         );
     }
 

@@ -209,16 +209,6 @@ public final class ResourceControllers {
     }
 
     /**
-     * Offers the endpoints for managing app stores.
-     */
-    @RestController
-    @RequestMapping("/api/appstore")
-    @Tag(name = ResourceName.APPSTORE, description = ResourceDescription.APPSTORE)
-    public static class AppStoreController extends BaseResourceController<AppStore, AppStoreDesc,
-            AppStoreView, AppStoreService> {
-    }
-
-    /**
      * Offers the endpoints for managing agreements.
      */
     @RestController
