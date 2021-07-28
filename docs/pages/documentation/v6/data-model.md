@@ -43,8 +43,6 @@ inputs have a predefined default value. For a domain specific usage of the Datas
 database entity has an `additional` attributes field that allows storing custom key value pairs
 into the database.
 
-![Swagger API Offers](../../../assets/images/sequence/resources_class.svg)
-
 An overview of all entities and its attributes are listed in the table below. Between all parent and
 child entities n to m relations are provided.
 
