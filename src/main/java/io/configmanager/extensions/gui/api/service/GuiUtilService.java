@@ -31,6 +31,7 @@ package io.configmanager.extensions.gui.api.service;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.Language;
+import de.fraunhofer.iais.eis.SecurityProfile;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.configmanager.util.enums.BrokerRegistrationStatus;
 import io.configmanager.util.enums.RouteDeployMethod;
@@ -79,10 +80,28 @@ public class GuiUtilService {
             case "language": sortedJsonArray = getLanguage(); break;
             case "deploymethod": sortedJsonArray = getDeployMethod(); break;
             case "brokerstatus": sortedJsonArray = getBrokerStatus(); break;
+            case "securityprofile": sortedJsonArray = getSecurityProfile(); break;
             default: break;
         }
 
         return sortedJsonArray != null ? sortedJsonArray.toJSONString() : null;
+    }
+
+    private JSONArray getSecurityProfile() {
+        JSONArray sortedJsonArray;
+
+        final var jsonArray = new JSONArray();
+        final var securityProfiles = SecurityProfile.values();
+
+        for (final var securityProfile : securityProfiles) {
+            var jsonObject = new JSONObject();
+            jsonObject.put("originalName", securityProfile.name());
+            jsonObject.put("displayName", securityProfile.getLabel().get(0).getValue());
+            jsonArray.add(jsonObject);
+        }
+
+        sortedJsonArray = sortJsonArray(jsonArray);
+        return sortedJsonArray;
     }
 
     private JSONArray getBrokerStatus() {
