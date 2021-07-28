@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Add value `securityprofile` to GUI helper endpoint.
+- Add property for specifying the path from which Camel routes are loaded.
+  * Defaults to the `camel-routes` directory in the `resources` folder.
+  * Allows for changing Camel routes without recompilation if an external directory is used.
+
+### Changed
+- Use XML DSL instead of Java DSL for definition of Camel routes.
 
 ## [6.0.0] - 2021-07-20
 
