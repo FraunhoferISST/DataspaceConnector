@@ -112,40 +112,58 @@ public final class MappingUtils {
      * @return app template.
      */
     public static AppTemplate fromIdsApp(final AppResource resource, final URI remoteUrl) {
-        final var representation = (AppRepresentation) resource.getRepresentation().get(0);
-        final var dataApp = representation.getDataAppInformation();
-
+        Utils.requireNonNull(resource, ErrorMessage.ENTITY_NULL);
         final var appDesc = new AppDesc();
+        final var endpoints = new ArrayList<AppEndpointTemplate>();
 
-        appDesc.setAdditional(buildAdditionalForRepresentation(representation));
-
-        appDesc.setAppDocumentation(dataApp.getAppDocumentation());
-        appDesc.setAppEnvironmentVariables(dataApp.getAppEnvironmentVariables());
-        appDesc.setAppStorageConfiguration(dataApp.getAppStorageConfiguration());
-        appDesc.setKeywords(resource.getKeyword()
-                .stream()
-                .map(TypedLiteral::toString).collect(Collectors.toList()));
-        appDesc.setLanguage(representation.getLanguage().toString());
-        appDesc.setLicense(appDesc.getLicense());
-        appDesc.setPublisher(resource.getPublisher());
-        appDesc.setDataAppDistributionService(representation.getDataAppDistributionService());
-        appDesc.setDataAppRuntimeEnvironment(representation.getDataAppRuntimeEnvironment());
-        appDesc.setRemoteId(resource.getId());
-        appDesc.setSovereign(resource.getSovereign());
-        setResourceEndpoint(resource, appDesc);
+        //set appdesc fields
         appDesc.setDescription("This app is created from an IDS data app.");
         appDesc.setTitle("IDS APP");
         appDesc.setRemoteAddress(remoteUrl);
-        appDesc.setSupportedUsagePolicies(
-                dataApp.getSupportedUsagePolicies().stream()
-                        .map(MappingUtils::fromIdsUsagePolicyClass)
-                        .collect(Collectors.toList())
-        );
-        appDesc.setBootstrapId(representation.getId());
+        setResourceEndpoint(resource, appDesc);
+        if (resource.getKeyword() != null) {
+            appDesc.setKeywords(resource.getKeyword()
+                    .stream()
+                    .map(TypedLiteral::toString).collect(Collectors.toList()));
+        }
+        appDesc.setLicense(resource.getStandardLicense());
+        appDesc.setPublisher(resource.getPublisher());
+        appDesc.setRemoteId(resource.getId());
+        appDesc.setSovereign(resource.getSovereign());
 
-        var endpoints = new ArrayList<AppEndpointTemplate>();
-        for (final var endpoint : dataApp.getAppEndpoint()) {
-            endpoints.add(fromIdsAppEndpoint(endpoint));
+        //set representation fields
+        if (resource.getRepresentation() != null) {
+            var appRepresenmtations = resource.getRepresentation().stream()
+                    .filter(x -> x instanceof AppRepresentation)
+                    .map(x -> (AppRepresentation) x)
+                    .collect(Collectors.toList());
+            if (!appRepresenmtations.isEmpty()) {
+                final var representation = appRepresenmtations.get(0);
+                appDesc.setAdditional(buildAdditionalForRepresentation(representation));
+                appDesc.setLanguage(String.valueOf(representation.getLanguage()));
+                appDesc.setDataAppDistributionService(representation.getDataAppDistributionService());
+                appDesc.setDataAppRuntimeEnvironment(representation.getDataAppRuntimeEnvironment());
+                appDesc.setBootstrapId(representation.getId());
+
+                if (representation.getDataAppInformation() != null) {
+                    //set dataApp fields
+                    final var dataApp = representation.getDataAppInformation();
+                    appDesc.setAppDocumentation(dataApp.getAppDocumentation());
+                    appDesc.setAppEnvironmentVariables(dataApp.getAppEnvironmentVariables());
+                    appDesc.setAppStorageConfiguration(dataApp.getAppStorageConfiguration());
+                    if(dataApp.getSupportedUsagePolicies() != null) {
+                        appDesc.setSupportedUsagePolicies(
+                                dataApp.getSupportedUsagePolicies().stream()
+                                        .map(MappingUtils::fromIdsUsagePolicyClass)
+                                        .collect(Collectors.toList())
+                        );
+                    }
+                    for (final var endpoint : dataApp.getAppEndpoint()) {
+                        endpoints.add(fromIdsAppEndpoint(endpoint));
+                    }
+
+                }
+            }
         }
         return new AppTemplate(appDesc, endpoints);
     }
@@ -225,7 +243,6 @@ public final class MappingUtils {
         final var appEndpointDesc = new AppEndpointDesc();
 
         appEndpointDesc.setAdditional(buildAdditionalForAppEndpoint(appEndpoint));
-
         appEndpointDesc.setEndpointPort(appEndpoint.getAppEndpointPort().intValue());
         appEndpointDesc.setEndpointType(appEndpoint.getAppEndpointType().name());
         appEndpointDesc.setLanguage(appEndpoint.getLanguage().toString());
