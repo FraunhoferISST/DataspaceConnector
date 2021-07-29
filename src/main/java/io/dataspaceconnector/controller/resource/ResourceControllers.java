@@ -31,8 +31,6 @@ import io.dataspaceconnector.controller.resource.swagger.response.ResponseDescri
 import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.AgreementView;
-import io.dataspaceconnector.view.appstore.AppStoreView;
-import io.dataspaceconnector.view.app.AppView;
 import io.dataspaceconnector.controller.resource.view.ArtifactView;
 import io.dataspaceconnector.controller.resource.view.CatalogView;
 import io.dataspaceconnector.controller.resource.view.ContractRuleView;
@@ -43,10 +41,6 @@ import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
 import io.dataspaceconnector.controller.resource.view.SubscriptionView;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.agreement.AgreementDesc;
-import io.dataspaceconnector.model.app.App;
-import io.dataspaceconnector.model.app.AppDesc;
-import io.dataspaceconnector.model.appstore.AppStore;
-import io.dataspaceconnector.model.appstore.AppStoreDesc;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.catalog.Catalog;
@@ -64,8 +58,6 @@ import io.dataspaceconnector.model.rule.ContractRuleDesc;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
-import io.dataspaceconnector.service.configuration.AppService;
-import io.dataspaceconnector.service.configuration.AppStoreService;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.resource.AgreementService;
 import io.dataspaceconnector.service.resource.ArtifactService;
@@ -180,42 +172,6 @@ public final class ResourceControllers {
                 final RequestedResourceDesc desc) {
             throw new MethodNotAllowed();
         }
-    }
-
-    /**
-     * Offers the endpoints for managing apps.
-     */
-    @RestController
-    @RequestMapping("/api/apps")
-    @Tag(name = ResourceName.APPS, description = ResourceDescription.APPS)
-    public static class AppController extends BaseResourceController<App, AppDesc,
-            AppView, AppService> {
-
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                description = ResponseDescription.METHOD_NOT_ALLOWED)})
-        public final ResponseEntity<AppView> create(final AppDesc desc) {
-            throw new MethodNotAllowed();
-        }
-
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                description = ResponseDescription.METHOD_NOT_ALLOWED)})
-        public final ResponseEntity<AppView> update(final UUID resourceId, final AppDesc desc) {
-            throw new MethodNotAllowed();
-        }
-    }
-
-    /**
-     * Offers the endpoints for managing app stores.
-     */
-    @RestController
-    @RequestMapping("/api/appstore")
-    @Tag(name = ResourceName.APPSTORE, description = ResourceDescription.APPSTORE)
-    public static class AppStoreController extends BaseResourceController<AppStore, AppStoreDesc,
-            AppStoreView, AppStoreService> {
     }
 
     /**

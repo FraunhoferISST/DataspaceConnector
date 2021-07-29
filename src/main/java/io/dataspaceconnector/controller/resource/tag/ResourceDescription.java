@@ -66,6 +66,11 @@ public final class ResourceDescription {
     public static final String APPSTORE = "Endpoints for app store handling";
 
     /**
+     * Tag description for app handling.
+     */
+    public static final String APPSTORE_REGISTRY = "Endpoints for app store registry handling";
+
+    /**
      * Tag description for artifacts.
      */
     public static final String ARTIFACTS = "Endpoints for operations on artifacts";

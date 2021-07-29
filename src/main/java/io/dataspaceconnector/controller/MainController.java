@@ -19,6 +19,7 @@ import io.dataspaceconnector.controller.configuration.BrokerControllers;
 import io.dataspaceconnector.controller.configuration.DataSourceController;
 import io.dataspaceconnector.controller.configuration.EndpointController;
 import io.dataspaceconnector.controller.configuration.RouteControllers;
+import io.dataspaceconnector.controller.configuration.appstore.AppStoreControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -121,9 +122,9 @@ public class MainController {
                 .getAll(null, null)).withRel("rules"));
         model.add(linkTo(methodOn(ResourceControllers.SubscriptionController.class)
                 .getAll(null, null)).withRel("subscriptions"));
-        model.add(linkTo(methodOn(ResourceControllers.AppController.class)
+        model.add(linkTo(methodOn(AppStoreControllers.AppController.class)
                 .getAll(null, null)).withRel("apps"));
-        model.add(linkTo(methodOn(ResourceControllers.AppStoreController.class)
+        model.add(linkTo(methodOn(AppStoreControllers.AppStoreController.class)
                 .getAll(null, null)).withRel("appstores"));
 
         return ResponseEntity.ok(model);
