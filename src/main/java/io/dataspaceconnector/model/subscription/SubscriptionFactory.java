@@ -17,18 +17,27 @@ package io.dataspaceconnector.model.subscription;
 
 import java.net.URI;
 
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.InvalidEntityException;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.MetadataUtils;
 import io.dataspaceconnector.util.ValidationUtils;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates a subscription.
  */
 @Component
+@RequiredArgsConstructor
 public class SubscriptionFactory extends AbstractNamedFactory<Subscription, SubscriptionDesc> {
+
+    /**
+     * Service for the current connector configuration.
+     */
+    private final @NonNull ConnectorConfiguration connectorConfig;
 
     /** {@inheritDoc} */
     @Override
@@ -63,8 +72,14 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
      */
     private boolean updateLocation(final Subscription subscription, final URI url) {
         // TODO Should not throw?
-        if (url == null || ValidationUtils.isInvalidUri(String.valueOf(url))) {
-            throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT.toString());
+        if (connectorConfig.isIdscpEnabled()) {
+            if (url == null || url.toString().isBlank()) {
+                throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT.toString());
+            }
+        } else {
+            if (url == null || ValidationUtils.isInvalidUri(String.valueOf(url))) {
+                throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT.toString());
+            }
         }
 
         final var newUri = MetadataUtils.updateUri(subscription.getLocation(), url, null);

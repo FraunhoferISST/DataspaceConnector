@@ -1,6 +1,11 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
     <route id="subscriptionSender">
 
+        <onException>
+            <exception>io.dataspaceconnector.camel.exception.InvalidResponseException</exception>
+            <to uri="direct:handleInvalidResponseException"/>
+        </onException>
+
         <from uri="direct:subscriptionSender"/>
         <setProperty name="idscp2-client-uri">
             <simple>${bean:io.dataspaceconnector.camel.util.ParameterUtils?method=getIdscp2ClientUri(${exchangeProperty.recipient})}</simple>

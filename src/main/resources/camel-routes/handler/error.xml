@@ -128,7 +128,7 @@
     <route id="invalidQueryInput">
         <from uri="direct:handleInvalidQueryInputException"/>
         <log loggingLevel="DEBUG" message="Error route for handling invalid query input called."/>
-        <to uri="bean:messageResponseService?method=handleInvalidQueryInput(${exception},
+        <to uri="bean:messageResponseService?method=handleInvalidInput(${exception},
         ${body.getHeader().getRequestedArtifact()},
         ${body.getHeader().getTransferContract()},
         ${body.getHeader().getIssuerConnector()},
@@ -258,6 +258,13 @@
         <log loggingLevel="DEBUG" message="Error route for handling SelfLinkCreationException called."/>
         <to uri="bean:messageResponseService?method=handleSelfLinkCreationException(${exception},
         ${body.getHeader().getRequestedArtifact()})"/>
+    </route>
+
+    <route id="invalidSubscriptionInput">
+        <from uri="direct:handleInvalidSubscriptionInput"/>
+        <log loggingLevel="DEBUG" message="Error route for handling invalid subscription input called."/>
+        <process ref="PayloadStreamReader"/>
+        <to uri="bean:messageResponseService?method=handleInvalidSubscription(${exception}, ${body.getBody()})"/>
     </route>
 
 </routes>

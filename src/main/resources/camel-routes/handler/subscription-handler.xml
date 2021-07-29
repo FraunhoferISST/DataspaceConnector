@@ -5,7 +5,7 @@
         <onException>
             <exception>io.dataspaceconnector.exception.InvalidInputException</exception>
             <exception>io.dataspaceconnector.exception.InvalidEntityException</exception>
-            <to uri="direct:handleInvalidInputException"/>
+            <to uri="direct:handleInvalidSubscriptionInput"/>
         </onException>
 
         <!-- the un/subscription could not be processed -->
@@ -28,6 +28,7 @@
         </onException>
 
         <from uri="direct:subscriptionMsgHandler"/>
+        <transacted ref="transactionPolicy"/>
         <to uri="direct:idsValidation"/>
         <process ref="ProcessedSubscription"/>
 
