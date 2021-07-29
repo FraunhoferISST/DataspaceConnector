@@ -23,8 +23,8 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
-import io.dataspaceconnector.model.message.DescriptionRequestMessageDesc;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
+import io.dataspaceconnector.model.message.DescriptionRequestMessageDesc;
 import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.Utils;
 import org.springframework.stereotype.Service;
@@ -56,7 +56,7 @@ public final class DescriptionRequestService
         final var recipient = desc.getRecipient();
         final var elementId = desc.getRequestedElement();
 
-        return new DescriptionRequestMessageBuilder()
+        final var message = new DescriptionRequestMessageBuilder()
                 ._issued_(IdsMessageUtils.getGregorianNow())
                 ._modelVersion_(modelVersion)
                 ._issuerConnector_(connectorId)
@@ -65,6 +65,9 @@ public final class DescriptionRequestService
                 ._securityToken_(token)
                 ._recipientConnector_(Util.asList(recipient))
                 .build();
+        message.setProperty("ids:depth", "10");
+
+        return message;
     }
 
     @Override
