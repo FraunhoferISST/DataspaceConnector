@@ -70,5 +70,8 @@ class GuiUtilControllerTest {
         mockMvc.perform(
                 get("/api/configmanager/enum/brokerstatus"))
                 .andExpect(status().isOk()).andReturn();
+        mockMvc.perform(
+                get("/api/configmanager/enum/securityprofile"))
+                .andExpect(status().isOk()).andReturn();
     }
 }

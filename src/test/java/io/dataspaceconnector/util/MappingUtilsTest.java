@@ -26,30 +26,7 @@ import java.util.GregorianCalendar;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import de.fraunhofer.iais.eis.Action;
-import de.fraunhofer.iais.eis.Artifact;
-import de.fraunhofer.iais.eis.ArtifactBuilder;
-import de.fraunhofer.iais.eis.Catalog;
-import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
-import de.fraunhofer.iais.eis.ContentType;
-import de.fraunhofer.iais.eis.Contract;
-import de.fraunhofer.iais.eis.ContractAgreementBuilder;
-import de.fraunhofer.iais.eis.ContractOffer;
-import de.fraunhofer.iais.eis.ContractOfferBuilder;
-import de.fraunhofer.iais.eis.DutyBuilder;
-import de.fraunhofer.iais.eis.Frequency;
-import de.fraunhofer.iais.eis.GeoPointBuilder;
-import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
-import de.fraunhofer.iais.eis.Language;
-import de.fraunhofer.iais.eis.Permission;
-import de.fraunhofer.iais.eis.PermissionBuilder;
-import de.fraunhofer.iais.eis.Representation;
-import de.fraunhofer.iais.eis.RepresentationBuilder;
-import de.fraunhofer.iais.eis.Resource;
-import de.fraunhofer.iais.eis.ResourceBuilder;
-import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
-import de.fraunhofer.iais.eis.Rule;
-import de.fraunhofer.iais.eis.TemporalEntityBuilder;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import lombok.SneakyThrows;
@@ -237,6 +214,25 @@ public class MappingUtilsTest {
         assertEquals(artifact.getCreationDate().toXMLFormat(), additional.get("ids:creationDate"));
         assertEquals(artifact.getDuration().toString(), additional.get("ids:duration"));
         assertEquals("test", additional.get("test"));
+    }
+
+    @Test
+    public void fromIdsAppEndpoint_validInput_returnAppEndpointTemplate() {
+        /* ARRANGE */
+        final var app = getAppResource();
+        app.setProperty("test", "test");
+        final var remoteAddress = URI.create("https://someURL");
+
+        /* ACT */
+        final var result = MappingUtils.fromIdsApp(app, remoteAddress);
+        //TODO check more filled fields
+        assertEquals("IDS APP", result.getDesc().getTitle());
+    }
+
+    @Test
+    public void fromIdsAppEndpoint_inputNull_throwIllegalArgumentException() {
+        /* ACT && ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> MappingUtils.fromIdsApp(null, null));
     }
 
     @Test
@@ -433,4 +429,10 @@ public class MappingUtilsTest {
         return DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
     }
 
+    @SneakyThrows
+    private AppResource getAppResource() {
+        //TODO fill fields
+        return new AppResourceBuilder()
+                .build();
+    }
 }

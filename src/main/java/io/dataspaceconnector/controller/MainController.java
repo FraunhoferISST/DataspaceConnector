@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller;
 
+import io.dataspaceconnector.controller.configuration.AppStoreControllers;
 import io.dataspaceconnector.controller.configuration.BrokerControllers;
 import io.dataspaceconnector.controller.configuration.DataSourceController;
 import io.dataspaceconnector.controller.configuration.EndpointController;

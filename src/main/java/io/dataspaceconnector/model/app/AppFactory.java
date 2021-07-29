@@ -80,7 +80,10 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
                 updateRemoteId(app, desc.getRemoteId());
         final var hasUpdatedRemoteAddress =
                 updateRemoteAddress(app, desc.getRemoteAddress());
-        final var hasUpdatedData = updateData((AppImpl) app, desc.getValue());
+        boolean hasUpdatedData = false;
+        if (app instanceof AppImpl) {
+            hasUpdatedData = updateData((AppImpl) app, desc.getValue());
+        }
 
 
         final var hasUpdated =
