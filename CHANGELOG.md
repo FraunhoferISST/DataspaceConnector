@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Add value `securityprofile` to GUI helper endpoint.
+- Add default `ids:depth` to `DescriptionRequestMessage`.
 
 ### Changed
 - Increase pitest version from 1.6.7 to 1.6.8.
