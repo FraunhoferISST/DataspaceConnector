@@ -37,16 +37,16 @@ Some information about internal data and information flow is visualized in this 
 
 ### Base Entities
 
-![Base Entities](../../../assets/images/base_entities.png)
+![Base Entity Model](../../../assets/images/base_entities.png)
 
-### Package "Model" - Core Classes
+### Model Package Structure
 
 ![Core Model Package](../../../assets/images/package.png)
 
-### Core Classes
+### Core Model Classes
 
 ![Core Classes](../../../assets/images/core_classes.png)
 
-### Resource Structure
+### Resource Model Classes
 
 ![Resource Structure](../../../assets/images/resource_structure.png)
