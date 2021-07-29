@@ -19,7 +19,7 @@ info:
   title: Dataspace Connector
   description: IDS Connector originally developed by the Fraunhofer ISST
   contact:
-    name: Fraunhofer Institute for Software and Systems Engineering
+    name: Dataspace Connector
     url: https://www.dataspace-connector.io/
     email: info@dataspace-connector.de
   license:
@@ -1337,12 +1337,12 @@ paths:
           description: Unauthorized
         "204":
           description: No Content
-  /api/representations/{id}/subscriptions:
+  /api/representations/{id}/requests:
     get:
       tags:
         - Representations
       summary: Get all children of a base resource with pagination
-      operationId: getResource_7
+      operationId: getResource_8
       parameters:
         - name: id
           in: path
@@ -1370,13 +1370,13 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelSubscriptionView'
+                $ref: '#/components/schemas/PagedModelRequestedResourceView'
         "200":
           description: Ok
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelSubscriptionView'
+                $ref: '#/components/schemas/PagedModelRequestedResourceView'
     put:
       tags:
         - Representations
@@ -1430,144 +1430,18 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelSubscriptionView'
+                $ref: '#/components/schemas/PagedModelRequestedResourceView'
         "200":
           description: Ok
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelSubscriptionView'
+                $ref: '#/components/schemas/PagedModelRequestedResourceView'
     delete:
       tags:
         - Representations
       summary: Remove a list of children from a base resource
       operationId: removeResources_6
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-        "204":
-          description: No Content
-  /api/representations/{id}/requests:
-    get:
-      tags:
-        - Representations
-      summary: Get all children of a base resource with pagination
-      operationId: getResource_8
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
-      responses:
-        "401":
-          description: Unauthorized
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelRequestedResourceView'
-        "200":
-          description: Ok
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelRequestedResourceView'
-    put:
-      tags:
-        - Representations
-      summary: Replace the children of a base resource
-      operationId: replaceResources_7
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-        "204":
-          description: No Content
-    post:
-      tags:
-        - Representations
-      summary: Add a list of children to a base resource
-      operationId: addResources_7
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelRequestedResourceView'
-        "200":
-          description: Ok
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelRequestedResourceView'
-    delete:
-      tags:
-        - Representations
-      summary: Remove a list of children from a base resource
-      operationId: removeResources_7
       parameters:
         - name: id
           in: path
@@ -1633,7 +1507,7 @@ paths:
       tags:
         - Representations
       summary: Replace the children of a base resource
-      operationId: replaceResources_8
+      operationId: replaceResources_7
       parameters:
         - name: id
           in: path
@@ -1659,7 +1533,7 @@ paths:
       tags:
         - Representations
       summary: Add a list of children to a base resource
-      operationId: addResources_8
+      operationId: addResources_7
       parameters:
         - name: id
           in: path
@@ -1693,7 +1567,7 @@ paths:
       tags:
         - Representations
       summary: Remove a list of children from a base resource
-      operationId: removeResources_8
+      operationId: removeResources_7
       parameters:
         - name: id
           in: path
@@ -1759,7 +1633,7 @@ paths:
       tags:
         - Representations
       summary: Replace the children of a base resource
-      operationId: replaceResources_9
+      operationId: replaceResources_8
       parameters:
         - name: id
           in: path
@@ -1785,7 +1659,7 @@ paths:
       tags:
         - Representations
       summary: Add a list of children to a base resource
-      operationId: addResources_9
+      operationId: addResources_8
       parameters:
         - name: id
           in: path
@@ -1819,7 +1693,7 @@ paths:
       tags:
         - Representations
       summary: Remove a list of children from a base resource
-      operationId: removeResources_9
+      operationId: removeResources_8
       parameters:
         - name: id
           in: path
@@ -1965,7 +1839,7 @@ paths:
       tags:
         - Offered Resources
       summary: Replace the children of a base resource
-      operationId: replaceResources_10
+      operationId: replaceResources_9
       parameters:
         - name: id
           in: path
@@ -1991,7 +1865,7 @@ paths:
       tags:
         - Offered Resources
       summary: Add a list of children to a base resource
-      operationId: addResources_10
+      operationId: addResources_9
       parameters:
         - name: id
           in: path
@@ -2025,7 +1899,7 @@ paths:
       tags:
         - Offered Resources
       summary: Remove a list of children from a base resource
-      operationId: removeResources_10
+      operationId: removeResources_9
       parameters:
         - name: id
           in: path
@@ -2091,7 +1965,7 @@ paths:
       tags:
         - Offered Resources
       summary: Replace the children of a base resource
-      operationId: replaceResources_11
+      operationId: replaceResources_10
       parameters:
         - name: id
           in: path
@@ -2117,7 +1991,7 @@ paths:
       tags:
         - Offered Resources
       summary: Add a list of children to a base resource
-      operationId: addResources_11
+      operationId: addResources_10
       parameters:
         - name: id
           in: path
@@ -2151,7 +2025,7 @@ paths:
       tags:
         - Offered Resources
       summary: Remove a list of children from a base resource
-      operationId: removeResources_11
+      operationId: removeResources_10
       parameters:
         - name: id
           in: path
@@ -2217,7 +2091,7 @@ paths:
       tags:
         - Offered Resources
       summary: Replace the children of a base resource
-      operationId: replaceResources_12
+      operationId: replaceResources_11
       parameters:
         - name: id
           in: path
@@ -2243,7 +2117,7 @@ paths:
       tags:
         - Offered Resources
       summary: Add a list of children to a base resource
-      operationId: addResources_12
+      operationId: addResources_11
       parameters:
         - name: id
           in: path
@@ -2277,7 +2151,7 @@ paths:
       tags:
         - Offered Resources
       summary: Remove a list of children from a base resource
-      operationId: removeResources_12
+      operationId: removeResources_11
       parameters:
         - name: id
           in: path
@@ -2343,7 +2217,7 @@ paths:
       tags:
         - Offered Resources
       summary: Replace the children of a base resource
-      operationId: replaceResources_13
+      operationId: replaceResources_12
       parameters:
         - name: id
           in: path
@@ -2369,7 +2243,7 @@ paths:
       tags:
         - Offered Resources
       summary: Add a list of children to a base resource
-      operationId: addResources_13
+      operationId: addResources_12
       parameters:
         - name: id
           in: path
@@ -2403,7 +2277,7 @@ paths:
       tags:
         - Offered Resources
       summary: Remove a list of children from a base resource
-      operationId: removeResources_13
+      operationId: removeResources_12
       parameters:
         - name: id
           in: path
@@ -2775,7 +2649,7 @@ paths:
       tags:
         - Contracts
       summary: Replace the children of a base resource
-      operationId: replaceResources_14
+      operationId: replaceResources_13
       parameters:
         - name: id
           in: path
@@ -2801,7 +2675,7 @@ paths:
       tags:
         - Contracts
       summary: Add a list of children to a base resource
-      operationId: addResources_14
+      operationId: addResources_13
       parameters:
         - name: id
           in: path
@@ -2835,7 +2709,7 @@ paths:
       tags:
         - Contracts
       summary: Remove a list of children from a base resource
-      operationId: removeResources_14
+      operationId: removeResources_13
       parameters:
         - name: id
           in: path
@@ -2901,7 +2775,7 @@ paths:
       tags:
         - Contracts
       summary: Replace the children of a base resource
-      operationId: replaceResources_15
+      operationId: replaceResources_14
       parameters:
         - name: id
           in: path
@@ -2927,7 +2801,7 @@ paths:
       tags:
         - Contracts
       summary: Add a list of children to a base resource
-      operationId: addResources_15
+      operationId: addResources_14
       parameters:
         - name: id
           in: path
@@ -2961,7 +2835,7 @@ paths:
       tags:
         - Contracts
       summary: Remove a list of children from a base resource
-      operationId: removeResources_15
+      operationId: removeResources_14
       parameters:
         - name: id
           in: path
@@ -3027,7 +2901,7 @@ paths:
       tags:
         - Contracts
       summary: Replace the children of a base resource
-      operationId: replaceResources_16
+      operationId: replaceResources_15
       parameters:
         - name: id
           in: path
@@ -3053,7 +2927,7 @@ paths:
       tags:
         - Contracts
       summary: Add a list of children to a base resource
-      operationId: addResources_16
+      operationId: addResources_15
       parameters:
         - name: id
           in: path
@@ -3087,7 +2961,7 @@ paths:
       tags:
         - Contracts
       summary: Remove a list of children from a base resource
-      operationId: removeResources_16
+      operationId: removeResources_15
       parameters:
         - name: id
           in: path
@@ -3486,7 +3360,7 @@ paths:
       tags:
         - Catalogs
       summary: Replace the children of a base resource
-      operationId: replaceResources_17
+      operationId: replaceResources_16
       parameters:
         - name: id
           in: path
@@ -3512,7 +3386,7 @@ paths:
       tags:
         - Catalogs
       summary: Add a list of children to a base resource
-      operationId: addResources_17
+      operationId: addResources_16
       parameters:
         - name: id
           in: path
@@ -3546,7 +3420,7 @@ paths:
       tags:
         - Catalogs
       summary: Remove a list of children from a base resource
-      operationId: removeResources_17
+      operationId: removeResources_16
       parameters:
         - name: id
           in: path
@@ -3728,132 +3602,6 @@ paths:
           description: Unauthorized
         "204":
           description: No Content
-  /api/artifacts/{id}/subscriptions:
-    get:
-      tags:
-        - Artifacts
-      summary: Get all children of a base resource with pagination
-      operationId: getResource_21
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
-      responses:
-        "401":
-          description: Unauthorized
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelSubscriptionView'
-        "200":
-          description: Ok
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelSubscriptionView'
-    put:
-      tags:
-        - Artifacts
-      summary: Replace the children of a base resource
-      operationId: replaceResources_18
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-        "204":
-          description: No Content
-    post:
-      tags:
-        - Artifacts
-      summary: Add a list of children to a base resource
-      operationId: addResources_18
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelSubscriptionView'
-        "200":
-          description: Ok
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelSubscriptionView'
-    delete:
-      tags:
-        - Artifacts
-      summary: Remove a list of children from a base resource
-      operationId: removeResources_18
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-        "204":
-          description: No Content
   /api/artifacts/{id}/representations:
     get:
       tags:
@@ -3898,7 +3646,7 @@ paths:
       tags:
         - Artifacts
       summary: Replace the children of a base resource
-      operationId: replaceResources_19
+      operationId: replaceResources_17
       parameters:
         - name: id
           in: path
@@ -3924,7 +3672,7 @@ paths:
       tags:
         - Artifacts
       summary: Add a list of children to a base resource
-      operationId: addResources_19
+      operationId: addResources_17
       parameters:
         - name: id
           in: path
@@ -3958,7 +3706,7 @@ paths:
       tags:
         - Artifacts
       summary: Remove a list of children from a base resource
-      operationId: removeResources_19
+      operationId: removeResources_17
       parameters:
         - name: id
           in: path
@@ -5518,6 +5266,46 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/PagedModelSubscriptionView'
+  /api/representations/{id}/subscriptions:
+    get:
+      tags:
+        - Representations
+      summary: Get all children of a base resource with pagination
+      operationId: getResource_7
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 30
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelSubscriptionView'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelSubscriptionView'
   /api/offers/{id}/subscriptions:
     get:
       tags:
@@ -5642,6 +5430,46 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/PagedModelOfferedResourceView'
+  /api/artifacts/{id}/subscriptions:
+    get:
+      tags:
+        - Artifacts
+      summary: Get all children of a base resource with pagination
+      operationId: getResource_21
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 30
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelSubscriptionView'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelSubscriptionView'
   /api/artifacts/{id}/data/**:
     get:
       tags:
@@ -6655,20 +6483,6 @@ components:
           $ref: '#/components/schemas/Links'
         page:
           $ref: '#/components/schemas/PageMetadata'
-    PagedModelSubscriptionView:
-      type: object
-      properties:
-        _embedded:
-          type: object
-          properties:
-            subscriptions:
-              type: array
-              items:
-                $ref: '#/components/schemas/SubscriptionView'
-        _links:
-          $ref: '#/components/schemas/Links'
-        page:
-          $ref: '#/components/schemas/PageMetadata'
     PagedModelRequestedResourceView:
       type: object
       properties:
@@ -6721,11 +6535,11 @@ components:
           type: object
           additionalProperties:
             type: object
-        label:
+        comment:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
-        comment:
+        label:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
@@ -6749,6 +6563,31 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
+            ids:pipEndpoint:
+              type: string
+              format: uri
+            ids:leftOperand:
+              type: string
+              enum:
+                - https://w3id.org/idsa/code/ABSOLUTE_SPATIAL_POSITION
+                - https://w3id.org/idsa/code/COUNT
+                - https://w3id.org/idsa/code/DELAY
+                - https://w3id.org/idsa/code/ELAPSED_TIME
+                - https://w3id.org/idsa/code/ENDPOINT
+                - https://w3id.org/idsa/code/EVENT
+                - https://w3id.org/idsa/code/PATH
+                - https://w3id.org/idsa/code/PAYMENT
+                - https://w3id.org/idsa/code/PAY_AMOUNT
+                - https://w3id.org/idsa/code/POLICY_EVALUATION_TIME
+                - https://w3id.org/idsa/code/PURPOSE
+                - https://w3id.org/idsa/code/QUANTITY
+                - https://w3id.org/idsa/code/RECURRENCE_RATE
+                - https://w3id.org/idsa/code/SECURITY_LEVEL
+                - https://w3id.org/idsa/code/STATE
+                - https://w3id.org/idsa/code/SYSTEM
+                - https://w3id.org/idsa/code/USER
+            ids:rightOperand:
+              $ref: '#/components/schemas/RdfResource'
             ids:unit:
               type: string
               format: uri
@@ -6801,31 +6640,6 @@ components:
                 - https://w3id.org/idsa/code/STRING_IS_CONTAINED
                 - https://w3id.org/idsa/code/TEMPORAL_DISJOINT
                 - https://w3id.org/idsa/code/TEMPORAL_EQUALS
-            ids:leftOperand:
-              type: string
-              enum:
-                - https://w3id.org/idsa/code/ABSOLUTE_SPATIAL_POSITION
-                - https://w3id.org/idsa/code/COUNT
-                - https://w3id.org/idsa/code/DELAY
-                - https://w3id.org/idsa/code/ELAPSED_TIME
-                - https://w3id.org/idsa/code/ENDPOINT
-                - https://w3id.org/idsa/code/EVENT
-                - https://w3id.org/idsa/code/PATH
-                - https://w3id.org/idsa/code/PAYMENT
-                - https://w3id.org/idsa/code/PAY_AMOUNT
-                - https://w3id.org/idsa/code/POLICY_EVALUATION_TIME
-                - https://w3id.org/idsa/code/PURPOSE
-                - https://w3id.org/idsa/code/QUANTITY
-                - https://w3id.org/idsa/code/RECURRENCE_RATE
-                - https://w3id.org/idsa/code/SECURITY_LEVEL
-                - https://w3id.org/idsa/code/STATE
-                - https://w3id.org/idsa/code/SYSTEM
-                - https://w3id.org/idsa/code/USER
-            ids:rightOperand:
-              $ref: '#/components/schemas/RdfResource'
-            ids:pipEndpoint:
-              type: string
-              format: uri
             ids:rightOperandReference:
               type: string
               format: uri
@@ -6856,15 +6670,15 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
+            ids:and:
+              type: array
+              items:
+                $ref: '#/components/schemas/Constraint'
             ids:or:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
             ids:xone:
-              type: array
-              items:
-                $ref: '#/components/schemas/Constraint'
-            ids:and:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
@@ -6882,11 +6696,11 @@ components:
         - $ref: '#/components/schemas/Rule'
         - type: object
           properties:
-            ids:postDuty:
+            ids:preDuty:
               type: array
               items:
                 $ref: '#/components/schemas/Duty'
-            ids:preDuty:
+            ids:postDuty:
               type: array
               items:
                 $ref: '#/components/schemas/Duty'
@@ -6924,11 +6738,11 @@ components:
           type: object
           additionalProperties:
             type: object
-        label:
+        comment:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
-        comment:
+        label:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
@@ -6938,25 +6752,20 @@ components:
         ids:target:
           type: string
           format: uri
-        ids:assetRefinement:
-          oneOf:
-            - $ref: '#/components/schemas/LogicalConstraint'
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/Constraint'
-              - $ref: '#/components/schemas/LogicalConstraint'
-        ids:assigner:
-          type: array
-          items:
-            type: string
-            format: uri
         ids:assignee:
           type: array
           items:
             type: string
             format: uri
+        ids:constraint:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/LogicalConstraint'
+        ids:assetRefinement:
+          oneOf:
+            - $ref: '#/components/schemas/Constraint'
+            - $ref: '#/components/schemas/LogicalConstraint'
         ids:action:
           type: array
           items:
@@ -6978,6 +6787,11 @@ components:
               - https://w3id.org/idsa/code/TRACK_PROVENANCE
               - https://w3id.org/idsa/code/USE
               - https://w3id.org/idsa/code/WRITE
+        ids:assigner:
+          type: array
+          items:
+            type: string
+            format: uri
         ids:description:
           type: array
           items:
@@ -7161,6 +6975,20 @@ components:
         - $ref: '#/components/schemas/QueryInput'
     StreamingResponseBody:
       type: object
+    PagedModelSubscriptionView:
+      type: object
+      properties:
+        _embedded:
+          type: object
+          properties:
+            subscriptions:
+              type: array
+              items:
+                $ref: '#/components/schemas/SubscriptionView'
+        _links:
+          $ref: '#/components/schemas/Links'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
     PagedModelObject:
       type: object
       properties:
