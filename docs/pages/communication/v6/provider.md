@@ -135,6 +135,14 @@ Response body:
     "catalogs": {
       "href": "https://localhost:8080/api/offers/ca502fbc-fbeb-4125-bd65-97536647d623/catalogs{?page,size,sort}",
       "templated": true
+    },
+    "subscriptions": {
+      "href": "https://localhost:8080/api/offers/770138f0-3469-4dbd-bb56-8e5edbab987a/subscriptions{?page,size}",
+      "templated": true
+    },
+    "brokers": {
+      "href": "https://localhost:8080/api/offers/770138f0-3469-4dbd-bb56-8e5edbab987a/brokers{?page,size}",
+      "templated": true
     }
   }
 }
@@ -222,6 +230,10 @@ Response body:
     },
     "agreements": {
       "href": "https://localhost:8080/api/artifacts/911a0451-f93f-4850-9dc7-e1a70060b2d1/agreements{?page,size,sort}",
+      "templated": true
+    },
+    "subscriptions": {
+      "href": "https://localhost:8080/api/artifacts/874df41f-babc-47a8-b926-095a10ef7f4b/subscriptions{?page,size}",
       "templated": true
     }
   }

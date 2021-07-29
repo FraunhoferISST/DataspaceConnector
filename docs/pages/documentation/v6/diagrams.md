@@ -19,34 +19,34 @@ Some information about internal data and information flow is visualized in this 
 
 ### Consumer Accesses Data with Valid Contract Agreement
 
-![Access Data Sequence](../../../assets/images/sequence/consumer_access_contracted_data.svg)
+![Access Data Sequence](../../../assets/images/diagram/consumer_access_contracted_data.svg)
 
 ### Data Transfer Sequence on Data Access as Owner
 
-![Data Transfer Sequence](../../../assets/images/sequence/owner_access_own_data_data_transfer_sequence.svg)
+![Data Transfer Sequence](../../../assets/images/diagram/owner_access_own_data_data_transfer_sequence.svg)
 
 ### Add a Resource via REST API
 
-![Resource Sequence](../../../assets/images/sequence/resource_sequence.svg)
+![Resource Sequence](../../../assets/images/diagram/resource_sequence.svg)
 
 ## Class Diagrams
 
 ### Entity Classes
 
-![Entity Classes](../../../assets/images/sequence/resources_class.svg)
+![Entity Classes](../../../assets/images/diagram/resources_class.svg)
 
 ### Base Entities
 
-![Base Entity Model](../../../assets/images/base_entities.png)
+![Base Entity Model](../../../assets/images/diagram/base_entities.png)
 
 ### Model Package Structure
 
-![Core Model Package](../../../assets/images/package.png)
+![Core Model Package](../../../assets/images/diagram/package.png)
 
 ### Core Model Classes
 
-![Core Classes](../../../assets/images/core_classes.png)
+![Core Classes](../../../assets/images/diagram/core_classes.png)
 
 ### Resource Model Classes
 
-![Resource Structure](../../../assets/images/resource_structure.png)
+![Resource Structure](../../../assets/images/diagram/resource_structure.png)
