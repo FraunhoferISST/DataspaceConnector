@@ -148,6 +148,7 @@
                 </doTry>
             </when>
         </choice>
+        <process ref="DefaultErrorResponseProcessor"/>
         <process ref="OutgoingIdscpMessageParser"/>
     </route>
 
