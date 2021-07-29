@@ -36,10 +36,10 @@ import java.util.Properties;
 
 @SpringBootApplication
 @ComponentScan({
-    "io.dataspaceconnector",
-    "io.configmanager",
-    "de.fraunhofer.ids.*",
-    "de.fraunhofer.ids.messaging.*"
+        "io.dataspaceconnector",
+        "io.configmanager",
+        "de.fraunhofer.ids.*",
+        "de.fraunhofer.ids.messaging.*"
 })
 public class ConnectorApplication {
 
@@ -75,7 +75,7 @@ public class ConnectorApplication {
                         .description(properties.getProperty("project_desc"))
                         .version(properties.getProperty("version"))
                         .contact(new Contact()
-                                .name(properties.getProperty("organization_name"))
+                                .name(properties.getProperty("title"))
                                 .url(properties.getProperty("contact_url"))
                                 .email(properties.getProperty("contact_email"))
                         )
