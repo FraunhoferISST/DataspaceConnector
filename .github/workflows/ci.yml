@@ -206,7 +206,7 @@ jobs:
           docker build . -t $IMAGE:ci
         env:
           IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
-          DOCKER_BUILDKIT: 1
+#          DOCKER_BUILDKIT: 1
       - name: Push image
         run: docker push $IMAGE:ci
         env:
