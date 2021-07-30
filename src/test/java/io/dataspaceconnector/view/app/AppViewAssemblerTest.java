@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.view.app;
 
+import io.dataspaceconnector.controller.configuration.appstore.AppStoreControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.app.App;
@@ -34,7 +35,7 @@ class AppViewAssemblerTest {
         final var shouldLookLike = getApp();
         final var link = ViewAssemblerHelper.
                 getSelfLink(shouldLookLike.getId(),
-                        ResourceControllers.AppController.class);
+                        AppStoreControllers.AppController.class);
 
         /* ACT */
         final var after = getAppView();

@@ -78,7 +78,7 @@ public final class AppStoreControllers {
      */
     @RestController
     @RequestMapping("/api/appstore")
-    @Tag(name = ResourceName.APPSTORE, description = ResourceDescription.APPSTORE)
+    @Tag(name = ResourceName.APPSTORES, description = ResourceDescription.APPSTORE)
     public static class AppStoreController extends BaseResourceController<AppStore, AppStoreDesc,
             AppStoreView, AppStoreService> {
     }

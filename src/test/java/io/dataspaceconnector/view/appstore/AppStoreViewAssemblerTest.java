@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.view.appstore;
 
-import io.dataspaceconnector.controller.configuration.AppStoreControllers;
+import io.dataspaceconnector.controller.configuration.appstore.AppStoreControllers;
 import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.appstore.AppStoreDesc;
