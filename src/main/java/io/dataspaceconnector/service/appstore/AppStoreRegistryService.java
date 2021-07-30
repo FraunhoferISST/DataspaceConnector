@@ -155,7 +155,8 @@ public class AppStoreRegistryService {
     private boolean isExpired(final String jwtToken) {
         int i = jwtToken.lastIndexOf('.');
         String withoutSignature = jwtToken.substring(0, i + 1);
-        Jwt<Header, Claims> untrusted = Jwts.parser().parseClaimsJwt(withoutSignature);
+        var untrusted = Jwts.parserBuilder().build()
+                .parseClaimsJwt(withoutSignature);
         return untrusted.getBody().getExpiration().before(Date.from(Instant.now()));
     }
 
