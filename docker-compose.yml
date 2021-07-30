@@ -35,6 +35,7 @@ services:
     container_name: 'connector-container'
     ports:
       - 8080:8080
+      - 29292:29292
     env_file:
       - ./connector.env
     networks:
