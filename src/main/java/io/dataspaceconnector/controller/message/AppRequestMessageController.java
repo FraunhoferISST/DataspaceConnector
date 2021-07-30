@@ -22,6 +22,7 @@ import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
+import io.dataspaceconnector.service.appstore.AppStoreRequestService;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
 import io.dataspaceconnector.util.MessageUtils;
@@ -83,6 +84,10 @@ public class AppRequestMessageController {
      */
     private final @NonNull ConnectorConfiguration connectorConfig;
 
+    /**
+     * Service for sending requests to the AppStore.
+     */
+    private final @NonNull AppStoreRequestService appStoreRequestService;
 
     /**
      * Add an apps metadata to an app object.
