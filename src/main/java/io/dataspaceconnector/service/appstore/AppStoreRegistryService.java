@@ -16,9 +16,6 @@
 package io.dataspaceconnector.service.appstore;
 
 import de.fraunhofer.ids.messaging.protocol.http.HttpService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Header;
-import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
