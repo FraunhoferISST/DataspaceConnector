@@ -5,12 +5,17 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Add value `securityprofile` to GUI helper endpoint.
+- Add default `ids:depth` to `DescriptionRequestMessage`.
 - Add property for specifying the path from which Camel routes are loaded.
   * Defaults to the `camel-routes` directory in the `resources` folder.
   * Allows for changing Camel routes without recompilation if an external directory is used.
 
 ### Changed
+- Increase pitest version from 1.6.7 to 1.6.8.
 - Use XML DSL instead of Java DSL for definition of Camel routes.
+
+### Fixed
+- Restrict access to POST/PUT/DELETE `{entity}/subscriptions` for artifacts and representations.
 
 ## [6.0.0] - 2021-07-20
 
