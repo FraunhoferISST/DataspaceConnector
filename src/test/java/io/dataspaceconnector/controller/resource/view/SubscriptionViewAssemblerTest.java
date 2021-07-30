@@ -15,6 +15,13 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.UUID;
+
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
@@ -23,15 +30,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -43,6 +45,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
         SubscriptionFactory.class
 })
 public class SubscriptionViewAssemblerTest {
+
+    @MockBean
+    private ConnectorConfiguration connectorConfig;
 
     @Autowired
     private SubscriptionViewAssembler subscriptionViewAssembler;
