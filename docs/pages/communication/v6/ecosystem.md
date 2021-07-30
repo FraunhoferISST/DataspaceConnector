@@ -76,7 +76,6 @@ when sending messages. Therefore, follow these steps:
 ### Step 1: Create broker entity (optional)
 
 First, create a broker via `POST /api/brokers`:
-![Create Broker](../../../assets/images/v6/swagger_broker_post.png)
 
 ```
 curl -X 'POST' \
@@ -89,6 +88,8 @@ curl -X 'POST' \
   "location": "https://broker.ids.isst.fraunhofer.de/infrastructure"
 }'
 ```
+
+![Create Broker](../../../assets/images/v6/swagger_broker_post.png)
 
 Response:
 ```json
