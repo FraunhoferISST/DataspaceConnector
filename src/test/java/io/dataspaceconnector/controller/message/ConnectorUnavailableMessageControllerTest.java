@@ -30,7 +30,6 @@ import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.service.configuration.BrokerService;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.util.ErrorMessage;
@@ -266,8 +265,7 @@ public class ConnectorUnavailableMessageControllerTest {
 
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/connector/unavailable")
-                .param("recipient", recipient)
-                .param("protocol", CommunicationProtocol.IDSCP2.name()))
+                .param("recipient", recipient))
                 .andReturn();
 
         /* ASSERT */
@@ -291,8 +289,7 @@ public class ConnectorUnavailableMessageControllerTest {
 
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/connector/unavailable")
-                .param("recipient", recipient)
-                .param("protocol", CommunicationProtocol.IDSCP2.name()))
+                .param("recipient", recipient))
                 .andReturn();
 
         /* ASSERT */
