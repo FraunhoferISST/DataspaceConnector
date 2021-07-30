@@ -406,8 +406,8 @@ The Dataspace Connector has local logging, that can be changed following
 House:
 * finalized contract agreements,
 * data usage (if noted in a usage policy),
-* outgoing `ArtifactRequestMessages`,
-* and incoming `ArtifactResponseMessages`.
+* incoming and outgoing `ArtifactRequestMessages`,
+* and incoming and outgoing `ArtifactResponseMessages`.
 
 ## Participant Information System (ParIS)
 
