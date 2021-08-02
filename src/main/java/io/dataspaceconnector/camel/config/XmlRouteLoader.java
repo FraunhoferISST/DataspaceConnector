@@ -20,7 +20,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -99,16 +98,15 @@ public class XmlRouteLoader {
      */
     private void loadRoutes(final String directoryPath) throws Exception {
         if (directoryPath.startsWith("classpath")) {
-            final var pattern = getPatternForPath(directoryPath);
-            final var files = patternResolver.getResources(pattern);
-            loadRoutes(files);
+            loadRoutesFromClasspath(directoryPath);
         } else {
-            final var file = new File(directoryPath);
-            if (!file.exists()) {
-                throw new FileNotFoundException("Unable to find specified path: " + directoryPath);
-            }
-            loadRoutes(file);
+            loadRoutes(FileUtils.openFile(directoryPath));
         }
+    }
+
+    private void loadRoutesFromClasspath(final String directoryPath) throws Exception {
+        directoryPath.startsWith("classpath");
+        loadRoutes(patternResolver.getResources(getPatternForPath(directoryPath)));
     }
 
     /**

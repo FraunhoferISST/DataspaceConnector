@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.bootstrap.util;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import lombok.extern.log4j.Log4j2;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -33,6 +28,10 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import lombok.extern.log4j.Log4j2;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * Offers utility functions for bootstrapping data.
@@ -153,16 +152,11 @@ public final class BootstrapUtils {
      * @throws FileNotFoundException if the given path does not exist.
      * @throws NullPointerException  if the directory does not contain child files.
      */
-    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     public static List<File> findFilesByExtension(final String path, final String filename,
                                                   final String extension)
             throws FileNotFoundException, NullPointerException {
         // Validate input.
-        final var base = new File(path);
-        if (!base.exists()) {
-            throw new FileNotFoundException("File '" + path + "' does not exist.");
-        }
-
+        final var base = io.dataspaceconnector.util.FileUtils.openFile(path);
         final var files = new ArrayList<File>();
         if (base.isDirectory()) {
             // If the base file is a directory, iterate all child files.

@@ -16,6 +16,9 @@
 package io.dataspaceconnector.util;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Utility class for working with files.
@@ -38,5 +41,21 @@ public final class FileUtils {
         assert directory.isDirectory();
         final var out = directory.listFiles();
         return out == null ? new File[]{} : out;
+    }
+
+    /**
+     * Open a file.
+     * @param path The filepath.
+     * @return The file.
+     * @throws FileNotFoundException if the file does not exist.
+     */
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
+    public static File openFile(final String path) throws FileNotFoundException {
+        final var base = new File(path);
+        if (!base.exists()) {
+            throw new FileNotFoundException("File '" + path + "' does not exist.");
+        }
+
+        return base;
     }
 }
