@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.camel.config;
 
+import javax.annotation.PostConstruct;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -22,11 +25,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
-import javax.annotation.PostConstruct;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.util.FileUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -142,9 +143,7 @@ public class XmlRouteLoader {
         Objects.requireNonNull(file);
 
         if (file.isDirectory()) {
-            final var subFiles = Objects.requireNonNull(
-                    file.listFiles(new XmlAndDirectoryFilter()));
-            for (var subFile : subFiles) {
+            for (var subFile : FileUtils.getContainedFiles(file)) {
                 loadRoutes(subFile);
             }
         } else {
