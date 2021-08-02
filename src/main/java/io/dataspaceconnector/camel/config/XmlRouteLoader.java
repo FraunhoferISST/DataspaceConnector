@@ -105,7 +105,7 @@ public class XmlRouteLoader {
     }
 
     private void loadRoutesFromClasspath(final String directoryPath) throws Exception {
-        directoryPath.startsWith("classpath");
+        assert directoryPath.startsWith("classpath");
         loadRoutes(patternResolver.getResources(getPatternForPath(directoryPath)));
     }
 
