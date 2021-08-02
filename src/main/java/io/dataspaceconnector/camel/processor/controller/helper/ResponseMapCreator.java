@@ -38,8 +38,7 @@ public class ResponseMapCreator extends IdsHelperProcessor {
     protected void processInternal(final Exchange exchange) throws Exception {
         final var exception = exchange
                 .getProperty(Exchange.EXCEPTION_CAUGHT, InvalidResponseException.class);
-        final var map = exception.getResponse();
-        exchange.getIn().setBody(map);
+        exchange.getIn().setBody(exception.getResponse());
     }
 
 }
