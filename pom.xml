@@ -411,6 +411,14 @@
 			<version>3.2.2</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+		<!-- Override commons-io 2.2 in IDS Messaging Service affected by CVE-2021-29425 -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.11.0</version>
+			<scope>compile</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.camel.springboot</groupId>
