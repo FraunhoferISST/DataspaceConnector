@@ -46,7 +46,7 @@ processing incoming messages.
 
 `request` = initially send this kind of IDS message, `response` = response with this IDS message
 
-## Sequences
+## Messaging Sequence
 
 ![Automated IDS Messaging Sequence](../../../assets/images/diagram/messaging_sequence.png)
 
