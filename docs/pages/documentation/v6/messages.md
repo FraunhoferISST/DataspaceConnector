@@ -48,9 +48,7 @@ processing incoming messages.
 
 ## Sequences
 
-![Automated IDS Messaging Sequence](../../../assets/images/message_sequence_1.png)
-
-![Automated Data Updates](../../../assets/images/message_sequence_2.png)
+![Automated IDS Messaging Sequence](../../../assets/images/diagram/messaging_sequence.png)
 
 ## Examples
 
