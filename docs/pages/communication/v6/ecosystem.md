@@ -1,7 +1,7 @@
 ---
 layout: default
 title: IDS Ecosystem
-nav_order: 3
+nav_order: 2
 description: ""
 permalink: /CommunicationGuide/v6/IdsEcosystem
 parent: Communication Guide

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Subscription
-nav_order: 6
+nav_order: 5
 description: ""
 permalink: /CommunicationGuide/v6/Subscription
 parent: Communication Guide
