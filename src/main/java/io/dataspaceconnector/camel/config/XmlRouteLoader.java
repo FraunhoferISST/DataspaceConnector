@@ -32,6 +32,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -168,12 +169,10 @@ public class XmlRouteLoader {
             for (var route: routes.getRoutes()) {
                 if ("idscp2Server".equals(route.getRouteId())) {
                     if (connectorConfig.isIdscpEnabled()) {
-                        context.addRouteDefinition(route);
-                        log.debug("Loaded route from XML file: {}", route.getRouteId());
+                        addRouteToContext(route);
                     }
                 } else {
-                    context.addRouteDefinition(route);
-                    log.debug("Loaded route from XML file: {}", route.getRouteId());
+                    addRouteToContext(route);
                 }
             }
 
@@ -187,6 +186,14 @@ public class XmlRouteLoader {
         } catch (Exception exception) {
             log.error("Failed to add routes to context. [exception=({})]", exception.getMessage());
             throw exception;
+        }
+    }
+
+    private void addRouteToContext(final RouteDefinition route) throws Exception {
+        context.addRouteDefinition(route);
+
+        if (log.isDebugEnabled()) {
+            log.debug("Loaded route from XML file: {}", route.getRouteId());
         }
     }
 
