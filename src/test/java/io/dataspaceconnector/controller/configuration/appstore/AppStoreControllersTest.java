@@ -21,9 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
@@ -54,23 +52,5 @@ class AppStoreControllersTest {
 
         /* ACT && ASSERT */
         assertThrows(MethodNotAllowed.class, () -> appController.update(null, null));
-    }
-
-    @Test
-    public void getImages() {
-        /* ARRANGE */
-        // Nothing to arrange.
-
-        /* ACT && ASSERT */
-        assertEquals(HttpStatus.OK, appStoreRegistryController.getImages().getStatusCode());
-    }
-
-    @Test
-    public void getContainers() {
-        /* ARRANGE */
-        // Nothing to arrange.
-
-        /* ACT && ASSERT */
-        assertEquals(HttpStatus.OK, appStoreRegistryController.getContainers().getStatusCode());
     }
 }

@@ -24,6 +24,7 @@ import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -88,12 +89,10 @@ public class AppStoreRegistryService {
     }
 
     /**
-     * @return List of images.
+     * @return Return response of image request.
      */
-    public String getImages() {
-        String jwtTokenResponse = authenticate();
-        String jwt = jwtTokenResponse.substring(START_INDEX,
-                jwtTokenResponse.length() - LAST_INDEX);
+    public Response getImages() throws IOException {
+        String jwt = getJwtToken();
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
@@ -107,24 +106,14 @@ public class AppStoreRegistryService {
         builder.get();
 
         final var request = builder.build();
-        try {
-            final var response = httpService.send(request);
-            return response.body().string();
-        } catch (IOException exception) {
-            if (log.isWarnEnabled()) {
-                log.error(exception.getMessage(), exception);
-            }
-            return exception.getMessage();
-        }
+        return httpService.send(request);
     }
 
     /**
-     * @return List of containers.
+     * @return Response of container request.
      */
-    public String getContainers() {
-        String jwtTokenResponse = authenticate();
-        String jwt = jwtTokenResponse.substring(START_INDEX,
-                jwtTokenResponse.length() - LAST_INDEX);
+    public Response getContainers() throws IOException {
+        String jwt = getJwtToken();
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
@@ -138,23 +127,31 @@ public class AppStoreRegistryService {
         builder.get();
 
         final var request = builder.build();
-        try {
-            final var response = httpService.send(request);
-            return response.body().string();
-        } catch (IOException exception) {
-            if (log.isWarnEnabled()) {
-                log.error(exception.getMessage(), exception);
-            }
-            return exception.getMessage();
-        }
+        return httpService.send(request);
     }
 
-    private boolean isExpired(final String jwtToken) {
-        int i = jwtToken.lastIndexOf('.');
-        String withoutSignature = jwtToken.substring(0, i + 1);
-        var untrusted = Jwts.parserBuilder().build()
-                .parseClaimsJwt(withoutSignature);
-        return untrusted.getBody().getExpiration().before(Date.from(Instant.now()));
+    /**
+     *
+     * @param imageName The name of the image.
+     * @return Response of pulling an image.
+     * @throws IOException if an error occurs while pulling the image.
+     */
+    public Response pullImage(final String imageName) throws IOException {
+        String jwt = getJwtToken();
+        final var builder = getRequestBuilder();
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(appStoreRegistryConfig.getDockerHost())
+                .port(appStoreRegistryConfig.getDockerPort())
+                .addPathSegments("api/endpoints/1/docker/images/create")
+                .addQueryParameter("fromImage", imageName);
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.url(url);
+        builder.post(RequestBody.create(new byte[0], null));
+
+        final var request = builder.build();
+        return httpService.send(request);
     }
 
     private String createRequestBodyForAuthentication() {
@@ -165,8 +162,20 @@ public class AppStoreRegistryService {
         return jsonObject.toString();
     }
 
-
     private Request.Builder getRequestBuilder() {
         return new Request.Builder();
+    }
+
+    private String getJwtToken() {
+        String jwtTokenResponse = authenticate();
+        return jwtTokenResponse.substring(START_INDEX, jwtTokenResponse.length() - LAST_INDEX);
+    }
+
+    private boolean isExpired(final String jwtToken) {
+        int i = jwtToken.lastIndexOf('.');
+        String withoutSignature = jwtToken.substring(0, i + 1);
+        var untrusted = Jwts.parserBuilder().build()
+                .parseClaimsJwt(withoutSignature);
+        return untrusted.getBody().getExpiration().before(Date.from(Instant.now()));
     }
 }

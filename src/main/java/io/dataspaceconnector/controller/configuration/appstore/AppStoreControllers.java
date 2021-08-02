@@ -31,6 +31,7 @@ import io.dataspaceconnector.service.configuration.AppStoreService;
 import io.dataspaceconnector.view.app.AppView;
 import io.dataspaceconnector.view.appstore.AppStoreView;
 import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,9 +39,13 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.UUID;
 
 /**
@@ -101,18 +106,72 @@ public final class AppStoreControllers {
          * @return List of images.
          */
         @GetMapping("/images")
+        @Operation(summary = "Display all images", description = "Can be used for "
+                + "displaying all images.")
+        @ApiResponse(responseCode = "200", description = "Ok")
+        @ApiResponse(responseCode = "400", description = "Bad request")
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+        @ResponseBody
         public final ResponseEntity<String> getImages() {
-            String imagesList = appStoreRegistryService.getImages();
-            return ResponseEntity.ok(imagesList);
+            try {
+                final var response = appStoreRegistryService.getImages();
+                if (response.isSuccessful()) {
+                    return ResponseEntity.ok(response.body().string());
+                } else {
+                    return ResponseEntity.internalServerError().body(response.body().string());
+                }
+            } catch (IOException exception) {
+                return ResponseEntity.badRequest().body(exception.getMessage());
+            }
         }
 
         /**
          * @return List of containers.
          */
         @GetMapping("/containers")
+        @Operation(summary = "Display all containers", description = "Can be used for "
+                + "displaying all containers.")
+        @ApiResponse(responseCode = "200", description = "Ok")
+        @ApiResponse(responseCode = "400", description = "Bad request")
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+        @ResponseBody
         public final ResponseEntity<String> getContainers() {
-            String containerList = appStoreRegistryService.getContainers();
-            return ResponseEntity.ok(containerList);
+            try {
+                final var response = appStoreRegistryService.getContainers();
+                if (response.isSuccessful()) {
+                    return ResponseEntity.ok(response.body().string());
+                } else {
+                    return ResponseEntity.internalServerError().body(response.body().string());
+                }
+            } catch (IOException exception) {
+                return ResponseEntity.badRequest().body(exception.getMessage());
+            }
+        }
+
+        /**
+         * @param imageName The name of the image.
+         * @return Response message, whether image has been downloaded successfully or not.
+         */
+        @PostMapping("/images/pull")
+        @Operation(summary = "Pull an image from registry", description = "Can be used for "
+                + "pulling an specific image from the registry.")
+        @ApiResponse(responseCode = "200", description = "Ok")
+        @ApiResponse(responseCode = "400", description = "Bad request")
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+        @ResponseBody
+        public final ResponseEntity<String> pullImage(
+                final @RequestParam("imageName") String imageName) {
+            try {
+                final var response = appStoreRegistryService.pullImage(imageName);
+                if (response.isSuccessful()) {
+                    return ResponseEntity.ok("Image successfully downloaded from registry");
+                } else {
+                    final var message = response.body().string();
+                    return ResponseEntity.internalServerError().body(message);
+                }
+            } catch (IOException exception) {
+                return ResponseEntity.badRequest().body(exception.getMessage());
+            }
         }
     }
 }
