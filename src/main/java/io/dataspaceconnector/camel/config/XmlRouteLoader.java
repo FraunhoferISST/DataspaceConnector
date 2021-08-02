@@ -127,8 +127,9 @@ public class XmlRouteLoader {
      */
     private void loadRoutes(final Resource[] files) throws Exception {
         for (var file: files) {
-            final var inputStream = file.getInputStream();
-            loadRoutesFromInputStream(inputStream);
+            try (var inputStream = file.getInputStream()) {
+                loadRoutesFromInputStream(inputStream);
+            }
         }
     }
 
@@ -147,8 +148,9 @@ public class XmlRouteLoader {
                 loadRoutes(subFile);
             }
         } else {
-            final var inputStream = new FileInputStream(file);
-            loadRoutesFromInputStream(inputStream);
+            try (var inputStream = new FileInputStream(file)) {
+                loadRoutesFromInputStream(inputStream);
+            }
         }
     }
 
