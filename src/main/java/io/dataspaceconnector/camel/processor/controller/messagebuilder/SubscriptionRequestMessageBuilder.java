@@ -59,17 +59,17 @@ public class SubscriptionRequestMessageBuilder
         final var subscription = exchange
                 .getProperty(ParameterUtils.SUBSCRIPTION_DESC_PARAM, SubscriptionDesc.class);
 
-        URI target;
-        if (subscription != null) {
-            target = subscription.getTarget();
-        } else {
-            target = exchange.getProperty(ParameterUtils.ELEMENT_ID_PARAM, URI.class);
-        }
-
+        final var target = getTarget(exchange, subscription);
         final var messageDesc = new SubscriptionMessageDesc(recipient, target);
         final var message = (RequestMessageImpl) subscriptionReqSvc.buildMessage(messageDesc);
 
         return new Request<>(message, subscription, Optional.empty());
+    }
+
+    private URI getTarget(final Exchange exchange, final SubscriptionDesc subscription) {
+        return subscription == null
+                ? exchange.getProperty(ParameterUtils.ELEMENT_ID_PARAM, URI.class)
+                : subscription.getTarget();
     }
 
 }
