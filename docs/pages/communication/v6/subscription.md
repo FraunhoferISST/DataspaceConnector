@@ -320,6 +320,9 @@ object, as well as all subscribers of its children.
 
 ---
 
+Depending on how the subscription has reached the Dataspace Connector, the object is marked by the
+flag `idsProtocol`.
+
 #### IDS Notification
 
 The IDS subscribers will be notified via `ResourceUpdateMessage`. It contains the updated metadata
@@ -329,12 +332,9 @@ consuming connector as the newest data can automatically being retrieved via API
 
 #### Non-IDS Notification
 
-Depending on how the subscription has reached the Dataspace Connector, the object is marked by the
-flag `idsProtocol`. IDS subscribers are notified via `ResourceUpdateMessage`, non-IDS subscribers
-receive an http POST request with the following properties:
+Non-IDS subscribers will receive an http POST request with the following properties. If the
+`pushData` boolean is set to `true`, the notification request will contain the data. If not, this
+will remain empty. Header arguments help to process which event happened to which target.
 * method = POST
 * headers = {`ids-event=UPDATED`, `ids-target=https://...`}
 * body = `data` (mediaType = "application/octet-stream")
-
-If the `pushData` boolean was set to `true`, the notification request will contain the data. If not,
-this will stay empty.
