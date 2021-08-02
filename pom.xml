@@ -437,7 +437,13 @@
 			<groupId>de.fhg.aisec.ids</groupId>
 			<artifactId>camel-idscp2</artifactId>
 			<version>${idscp2.version}</version>
-		</dependency>
+            <exclusions>
+                <exclusion>
+                    <artifactId>camel-core</artifactId>
+                    <groupId>org.apache.camel</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
 	</dependencies>
 
