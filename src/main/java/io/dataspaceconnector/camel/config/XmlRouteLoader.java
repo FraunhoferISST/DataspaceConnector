@@ -78,12 +78,15 @@ public class XmlRouteLoader {
     public void loadRoutes() {
         try {
             Objects.requireNonNull(directory);
-            log.debug("Loading Camel routes from: {}", directory);
+            if (log.isDebugEnabled()) {
+                log.debug("Loading Camel routes from: {}", directory);
+            }
             loadRoutes(directory);
-        } catch (Exception exception) {
-            log.error("Failed to load Camel routes. [exception=({})] Closing application...",
-                    exception.getMessage());
-            throw new IllegalStateException("Failed to load Camel routes.", exception);
+        } catch (Exception e) {
+            if (log.isErrorEnabled()) {
+                log.error("Failed to load Camel routes. [exception=({})].", e.getMessage());
+            }
+            throw new IllegalStateException("Failed to load Camel routes.", e);
         }
     }
 
@@ -153,15 +156,21 @@ public class XmlRouteLoader {
     private void loadRoutesFromInputStream(final InputStream inputStream) throws Exception {
         try {
             camelRouteLoader.addRouteToContext(toRoutesDef(inputStream).getRoutes());
-        } catch (IOException exception) {
-            log.error("Failed to read route files. [exception=({})]", exception.getMessage());
-            throw exception;
-        } catch (JAXBException exception) {
-            log.error("Failed to parse route files. [exception=({})]", exception.getMessage());
-            throw exception;
-        } catch (Exception exception) {
-            log.error("Failed to add routes to context. [exception=({})]", exception.getMessage());
-            throw exception;
+        } catch (IOException e) {
+            if (log.isErrorEnabled()) {
+                log.error("Failed to read route files. [exception=({})]", e.getMessage());
+            }
+            throw e;
+        } catch (JAXBException e) {
+            if (log.isErrorEnabled()) {
+                log.error("Failed to parse route files. [exception=({})]", e.getMessage());
+            }
+            throw e;
+        } catch (Exception e) {
+            if (log.isErrorEnabled()) {
+                log.error("Failed to add routes to context. [exception=({})]", e.getMessage());
+            }
+            throw e;
         }
     }
 
