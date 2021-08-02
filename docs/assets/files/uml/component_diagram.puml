@@ -1,0 +1,38 @@
+@startuml
+left to right direction
+
+package "Dataspace Connector" {
+    () "HTTPS" as i3
+    () "HTTPS" as i4
+    () "IDSCP" as i5
+    i4 - [Core Container]
+
+    [GUI] --> i4: interact with
+
+    database "PostgreSQL"
+    [Core Container] --> PostgreSQL: manage
+
+    i3 - [Messaging Services]
+    [Core Container] ..> [Messaging Services]: use
+    [Messaging Services] ..> [Infomodel Library]: use
+
+    [Core Container] ..> [Apache Camel]: use
+    i5 - [Apache Camel]
+}
+
+cloud "IDS Ecosystem" {
+
+    () "IDSCP" as i7
+
+    i7 - [Connector]
+
+    () "HTTPS" as i1
+    i1 - [DAPS]
+
+}
+
+[Messaging Services] --> i1: send messages
+i5 <--> i7: open connection for data transfer
+[Connector] --> i3: send messages
+
+@enduml

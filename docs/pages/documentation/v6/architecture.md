@@ -17,4 +17,4 @@ Have a look at the Dataspace Connector's architecture.
 
 ---
 
-Updated architecture overview will be added asap.
+![Component Diagram](../../../assets/images/diagram/component_diagram.png)
