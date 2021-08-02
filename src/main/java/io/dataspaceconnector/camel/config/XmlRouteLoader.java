@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Objects;
 
 import io.dataspaceconnector.config.ConnectorConfiguration;
@@ -35,7 +36,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Component;
@@ -48,31 +48,20 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Log4j2
 public class XmlRouteLoader {
-
-    /**
-     * The Camel context.
-     */
-    private final @NonNull DefaultCamelContext context;
-
     /**
      * Unmarshaller for reading route definitions from XML.
      */
     private final @NonNull Unmarshaller unmarshaller;
 
     /**
-     * The current connector configuration.
+     * Loader for adding routes to the camel context.
      */
-    private final @NonNull ConnectorConfiguration connectorConfig;
+    private final @NonNull CamelRouteLoader camelRouteLoader;
 
     /**
      * Resolver for finding classpath resources with paths matching a given pattern.
      */
     private final @NonNull ResourcePatternResolver patternResolver;
-
-    /**
-     * The current application context.
-     */
-    private final @NonNull ApplicationContext applicationContext;
 
     /**
      * Directory where the XML routes are located.
@@ -164,19 +153,7 @@ public class XmlRouteLoader {
      */
     private void loadRoutesFromInputStream(final InputStream inputStream) throws Exception {
         try {
-            var routes = (RoutesDefinition) unmarshaller.unmarshal(inputStream);
-
-            for (var route: routes.getRoutes()) {
-                if ("idscp2Server".equals(route.getRouteId())) {
-                    if (connectorConfig.isIdscpEnabled()) {
-                        addRouteToContext(route);
-                    }
-                } else {
-                    addRouteToContext(route);
-                }
-            }
-
-            inputStream.close();
+            camelRouteLoader.addRouteToContext(toRoutesDef(inputStream).getRoutes());
         } catch (IOException exception) {
             log.error("Failed to read route files. [exception=({})]", exception.getMessage());
             throw exception;
@@ -189,11 +166,48 @@ public class XmlRouteLoader {
         }
     }
 
-    private void addRouteToContext(final RouteDefinition route) throws Exception {
-        context.addRouteDefinition(route);
+    private RoutesDefinition toRoutesDef(final InputStream stream) throws JAXBException {
+        return (RoutesDefinition) unmarshaller.unmarshal(stream);
+    }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Loaded route from XML file: {}", route.getRouteId());
+    /**
+     * Adds routes to the current camel context.
+     */
+    @Component
+    @RequiredArgsConstructor
+    private static class CamelRouteLoader {
+        /**
+         * The Camel context.
+         */
+        private final @NonNull DefaultCamelContext context;
+
+        /**
+         * The current connector configuration.
+         */
+        private final @NonNull ConnectorConfiguration connectorConfig;
+
+        public void addRouteToContext(final List<RouteDefinition> routes) throws Exception {
+            for (final var route : routes) {
+                addRouteToContext(route);
+            }
+        }
+
+        public void addRouteToContext(final RouteDefinition route) throws Exception {
+            if ("idscp2Server".equals(route.getRouteId())) {
+                if (connectorConfig.isIdscpEnabled()) {
+                    addToContext(route);
+                }
+            } else {
+                addToContext(route);
+            }
+        }
+
+        private void addToContext(final RouteDefinition route) throws Exception {
+            context.addRouteDefinition(route);
+
+            if (log.isDebugEnabled()) {
+                log.debug("Loaded route from XML file: {}", route.getRouteId());
+            }
         }
     }
 
