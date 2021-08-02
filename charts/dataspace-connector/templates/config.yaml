@@ -27,6 +27,6 @@ data:
   {{- if .Values.postgresql }}
     SPRING_DATASOURCE_PLATFORM: "postgres"
     SPRING_DATASOURCE_URL: "jdbc:postgresql://{{ include "dataspace-connector.fullname" . }}:{{ .Values.postgresql.service.port }}/{{ .Values.postgresql.postgresqlDatabase }}"
-    SPRING_DATASOURCE_DRIVER-CLASS-NAME: "org.postgresql.Driver"
-    SPRING_JPA_DATABASE-PLATFORM: "org.hibernate.dialect.PostgreSQLDialect"
+    SPRING_DATASOURCE_DRIVER_CLASS_NAME: "org.postgresql.Driver"
+    SPRING_JPA_DATABASE_PLATFORM: "org.hibernate.dialect.PostgreSQLDialect"
   {{- end}}
