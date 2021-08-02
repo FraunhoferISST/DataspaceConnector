@@ -28,8 +28,6 @@ import io.dataspaceconnector.exception.MessageEmptyException;
 import io.dataspaceconnector.exception.MessageRequestException;
 import io.dataspaceconnector.exception.VersionNotSupportedException;
 import okhttp3.MultipartBody;
-import org.apache.commons.io.IOUtils;
-
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -243,7 +241,8 @@ public final class MessageUtils {
     public static String getStreamAsString(final MessagePayload payload) throws IOException {
         Utils.requireNonNull(payload, ErrorMessage.MISSING_PAYLOAD);
         Utils.requireNonNull(payload.getUnderlyingInputStream(), ErrorMessage.MISSING_PAYLOAD);
-        return IOUtils.toString(payload.getUnderlyingInputStream(), StandardCharsets.UTF_8);
+        return new String(payload.getUnderlyingInputStream().readAllBytes(),
+                          StandardCharsets.UTF_8);
     }
 
     /**
