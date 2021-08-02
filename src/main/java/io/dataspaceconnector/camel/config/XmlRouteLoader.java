@@ -19,7 +19,6 @@ import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -220,19 +219,5 @@ public class XmlRouteLoader {
      */
     private String getPatternForPath(final String path) {
         return path.endsWith("/") ? path.concat("**/*.xml") : path.concat("/**/*.xml");
-    }
-
-    /**
-     * FileFilter implementation that finds all files that are either a directory or an XML file.
-     */
-    static class XmlAndDirectoryFilter implements FileFilter {
-        @Override
-        public boolean accept(final File path) {
-            if (path.isDirectory()) {
-                return true;
-            } else {
-                return path.getName().toLowerCase().endsWith("xml");
-            }
-        }
     }
 }
