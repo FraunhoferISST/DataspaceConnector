@@ -159,16 +159,4 @@ public class AppStoreRequestService {
         }
         return payload;
     }
-
-    /**
-     * Download an app image from the appstore.
-     *
-     * @param recipient app registry location.
-     * @param appResource app resource to download.
-     */
-    private void downloadApp(final URI recipient, final URI appResource) {
-        //TODO apps should be downloaded when they are started, not after the request
-//        metadataDownloader.downloadAppResource(recipient, appResource);
-    }
-
 }

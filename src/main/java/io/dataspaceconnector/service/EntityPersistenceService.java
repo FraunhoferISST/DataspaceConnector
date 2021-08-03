@@ -256,7 +256,7 @@ public class EntityPersistenceService {
                     TemplateUtils.getAppResourceTemplate(appResource, remoteUrl);
 
             // Save all entities.
-//            tempBuilder.build(resourceTemplate);
+            tempBuilder.build(appResourceTemplate);
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not store resource. [exception=({})]", e.getMessage(), e);
