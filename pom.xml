@@ -166,6 +166,11 @@
 					<groupId>org.bitbucket.b_c</groupId>
 					<artifactId>jose4j</artifactId>
 				</exclusion>
+				<exclusion>
+					<!-- Till IDS Messaging service updates -->
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-compress</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -403,6 +408,14 @@
 					<artifactId>commons-collections</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
+		<!-- Till IDS Messaging service updates -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+			<version>1.21</version>
 		</dependency>
 
 		<dependency>
