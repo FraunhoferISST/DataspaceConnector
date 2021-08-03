@@ -651,6 +651,8 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
+					<forkCount>0</forkCount>
+					<reuseForks>false</reuseForks>
 					<systemPropertyVariables>
 						<propertyName>license_type</propertyName>
 						<propertyName>license_url</propertyName>
