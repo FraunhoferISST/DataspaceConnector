@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.controller.resource;
 
-import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
-import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
 import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.AgreementView;
@@ -43,21 +41,9 @@ import io.dataspaceconnector.service.resource.AbstractResourceContractLinker;
 import io.dataspaceconnector.service.resource.AbstractResourceRepresentationLinker;
 import io.dataspaceconnector.service.resource.RelationServices;
 import io.dataspaceconnector.view.broker.BrokerView;
-import io.swagger.v3.oas.annotations.Hidden;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.hateoas.PagedModel;
-import org.springframework.http.HttpEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * This class contains all implementations of the {@link BaseResourceChildController}.
@@ -90,7 +76,7 @@ public final class RelationControllers {
     @RestController
     @RequestMapping("/api/artifacts/{id}/subscriptions")
     @Tag(name = ResourceName.ARTIFACTS, description = ResourceDescription.ARTIFACTS)
-    public static class ArtifactsToSubscriptions extends BaseResourceChildController<
+    public static class ArtifactsToSubscriptions extends BaseResourceChildRestrictedController<
             RelationServices.ArtifactSubscriptionLinker, Subscription, SubscriptionView> {
     }
 
@@ -144,7 +130,7 @@ public final class RelationControllers {
     @RestController
     @RequestMapping("/api/offers/{id}/brokers")
     @Tag(name = ResourceName.OFFERS, description = ResourceDescription.OFFERS)
-    public static class OfferedResourcesToBrokers extends BaseResourceChildController<
+    public static class OfferedResourcesToBrokers extends BaseResourceChildRestrictedController<
             RelationServices.OfferedResourceBrokerLinker, Broker, BrokerView> {
     }
 
@@ -185,37 +171,8 @@ public final class RelationControllers {
     @RestController
     @RequestMapping("/api/artifacts/{id}/agreements")
     @Tag(name = ResourceName.ARTIFACTS, description = ResourceDescription.ARTIFACTS)
-    public static class ArtifactsToAgreements extends BaseResourceChildController<
+    public static class ArtifactsToAgreements extends BaseResourceChildRestrictedController<
             RelationServices.ArtifactAgreementLinker, Agreement, AgreementView> {
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                description = "Not allowed")})
-        public final PagedModel<AgreementView> addResources(
-                @Valid @PathVariable(name = "id") final UUID ownerId,
-                @Valid @RequestBody final List<URI> resources) {
-            throw new MethodNotAllowed();
-        }
-
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                description = "No content")})
-        public final HttpEntity<Void> replaceResources(
-                @Valid @PathVariable(name = "id") final UUID ownerId,
-                @Valid @RequestBody final List<URI> resources) {
-            throw new MethodNotAllowed();
-        }
-
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                description = "No content")})
-        public final HttpEntity<Void> removeResources(
-                @Valid @PathVariable(name = "id") final UUID ownerId,
-                @Valid @RequestBody final List<URI> resources) {
-            throw new MethodNotAllowed();
-        }
     }
 
     /**
@@ -224,37 +181,8 @@ public final class RelationControllers {
     @RestController
     @RequestMapping("/api/agreements/{id}/artifacts")
     @Tag(name = ResourceName.AGREEMENTS, description = ResourceDescription.AGREEMENTS)
-    public static class AgreementsToArtifacts extends BaseResourceChildController<
+    public static class AgreementsToArtifacts extends BaseResourceChildRestrictedController<
             RelationServices.AgreementArtifactLinker, Artifact, ArtifactView> {
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                description = "Not allowed")})
-        public final PagedModel<ArtifactView> addResources(
-                @Valid @PathVariable(name = "id") final UUID ownerId,
-                @Valid @RequestBody final List<URI> resources) {
-            throw new MethodNotAllowed();
-        }
-
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                description = "No content")})
-        public final HttpEntity<Void> replaceResources(
-                @Valid @PathVariable(name = "id") final UUID ownerId,
-                @Valid @RequestBody final List<URI> resources) {
-            throw new MethodNotAllowed();
-        }
-
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                description = "No content")})
-        public final HttpEntity<Void> removeResources(
-                @Valid @PathVariable(name = "id") final UUID ownerId,
-                @Valid @RequestBody final List<URI> resources) {
-            throw new MethodNotAllowed();
-        }
     }
 
     /**
@@ -340,34 +268,9 @@ public final class RelationControllers {
     @RestController
     @RequestMapping("/api/requests/{id}/subscriptions")
     @Tag(name = ResourceName.REQUESTS, description = ResourceDescription.REQUESTS)
-    public static class RequestedResourcesToSubscriptions extends BaseResourceChildController<
+    public static class RequestedResourcesToSubscriptions
+            extends BaseResourceChildRestrictedController<
             RelationServices.RequestedResourceSubscriptionLinker, Subscription, SubscriptionView> {
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
-        public final PagedModel<SubscriptionView> addResources(
-                @Valid @PathVariable(name = "id") final UUID ownerId,
-                @Valid @RequestBody final List<URI> resources) {
-            throw new MethodNotAllowed();
-        }
-
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
-        public final HttpEntity<Void> replaceResources(
-                @Valid @PathVariable(name = "id") final UUID ownerId,
-                @Valid @RequestBody final List<URI> resources) {
-            throw new MethodNotAllowed();
-        }
-
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
-        public final HttpEntity<Void> removeResources(
-                @Valid @PathVariable(name = "id") final UUID ownerId,
-                @Valid @RequestBody final List<URI> resources) {
-            throw new MethodNotAllowed();
-        }
     }
 
     /**
@@ -377,33 +280,7 @@ public final class RelationControllers {
     @RequestMapping("/api/offers/{id}/subscriptions")
     @Tag(name = ResourceName.OFFERS, description = ResourceDescription.OFFERS)
     public static class OfferedResourcesToSubscriptions
-            extends BaseResourceChildController<RelationServices.OfferedResourceSubscriptionLinker,
-            Subscription, SubscriptionView> {
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
-        public final PagedModel<SubscriptionView> addResources(
-                @Valid @PathVariable(name = "id") final UUID ownerId,
-                @Valid @RequestBody final List<URI> resources) {
-            throw new MethodNotAllowed();
-        }
-
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
-        public final HttpEntity<Void> replaceResources(
-                @Valid @PathVariable(name = "id") final UUID ownerId,
-                @Valid @RequestBody final List<URI> resources) {
-            throw new MethodNotAllowed();
-        }
-
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
-        public final HttpEntity<Void> removeResources(
-                @Valid @PathVariable(name = "id") final UUID ownerId,
-                @Valid @RequestBody final List<URI> resources) {
-            throw new MethodNotAllowed();
-        }
+            extends BaseResourceChildRestrictedController<
+            RelationServices.OfferedResourceSubscriptionLinker, Subscription, SubscriptionView> {
     }
 }
