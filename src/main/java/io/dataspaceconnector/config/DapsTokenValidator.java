@@ -15,26 +15,27 @@
  */
 package io.dataspaceconnector.config;
 
+import java.io.Serializable;
+
 import io.dataspaceconnector.service.ids.ConnectorService;
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-
-import java.io.Serializable;
 
 /**
  * This class provides DAT validation.
  */
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public final class DapsTokenValidator implements PermissionEvaluator {
 
     /**
      * Service for providing connector information.
      */
-    private final @NonNull ConnectorService connectorService;
+    private final @NonNull ObjectFactory<ConnectorService> connectorService;
 
     @Override
     public boolean hasPermission(
@@ -57,6 +58,6 @@ public final class DapsTokenValidator implements PermissionEvaluator {
     }
 
     private boolean hasPrivilege() {
-        return connectorService.getCurrentDat() != null;
+        return connectorService.getObject().getCurrentDat() != null;
     }
 }
