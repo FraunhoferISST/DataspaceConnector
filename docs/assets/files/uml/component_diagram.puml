@@ -2,37 +2,30 @@
 left to right direction
 
 package "Dataspace Connector" {
-    () "HTTPS" as i3
-    () "HTTPS" as i4
-    () "IDSCP" as i5
-    i4 - [Core Container]
+        () "IDSCP" as i5
+        () "HTTPS" as i3
+        () "HTTPS" as i4
 
-    [GUI] --> i4: interact with
+        database "PostgreSQL"
 
-    database "PostgreSQL"
-    [Core Container] --> PostgreSQL: manage
+        node "Core Container" as core {
+            [Entity Service] --> PostgreSQL: manage
 
-    i3 - [Messaging Services]
-    [Core Container] ..> [Messaging Services]: use
-    [Messaging Services] ..> [Infomodel Library]: use
+            [Access Verifier] <-- [Entity Service]: validate usage
+            [Entity Controller] -> [Entity Service]: access
 
-    [Core Container] ..> [Apache Camel]: use
-    i5 - [Apache Camel]
-}
+            [Messaging Services] -- i3
+            [Messaging Services] ..> [Infomodel Library]: use
+            [Entity Service] .> [Infomodel Library]: use
 
-cloud "IDS Ecosystem" {
+            [Messaging Services] --> [Entity Service]: access
+            [Entity Controller] - i4
 
-    () "IDSCP" as i7
+            [Apache Camel] - i5
+            [Entity Service] --> [Apache Camel]: deploy
+        }
 
-    i7 - [Connector]
-
-    () "HTTPS" as i1
-    i1 - [DAPS]
-
-}
-
-[Messaging Services] --> i1: send messages
-i5 <--> i7: open connection for data transfer
-[Connector] --> i3: send messages
+        [GUI] ---> i4: interact with
+    }
 
 @enduml
