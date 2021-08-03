@@ -3,8 +3,8 @@ layout: default
 title: Camel
 nav_order: 6
 description: ""
-permalink: /Deployment/v6/Camel
-parent: Deployment
+permalink: /CommunicationGuide/v6/Camel
+parent: CommunicationGuide
 ---
 
 # Routing Frameworks
