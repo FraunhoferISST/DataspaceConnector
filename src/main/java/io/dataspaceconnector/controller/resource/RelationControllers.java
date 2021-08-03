@@ -35,7 +35,6 @@ import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;
-import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.RequestedResource;
@@ -47,7 +46,6 @@ import io.dataspaceconnector.service.resource.AbstractResourceContractLinker;
 import io.dataspaceconnector.service.resource.AbstractResourceRepresentationLinker;
 import io.dataspaceconnector.service.resource.RelationServices;
 import io.dataspaceconnector.view.broker.BrokerView;
-import io.dataspaceconnector.view.endpoint.AppEndpointView;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -93,21 +91,40 @@ public final class RelationControllers {
      * Offers the endpoints for managing the relations between apps and app endpoints.
      */
     @RestController
-    @RequestMapping("/api/apps/{id}/endpoints")
-    @Tag(name = ResourceName.APPS, description = ResourceDescription.APPS)
-    public static class AppToEndpoints extends BaseResourceChildController<
-            EntityLinkerService.AppEndpointLinker, AppEndpoint, AppEndpointView> {
-
-    }
-
-    /**
-     * Offers the endpoints for managing the relations between apps and app endpoints.
-     */
-    @RestController
-    @RequestMapping("/api/appstore/{id}/apps")
-    @Tag(name = ResourceName.APPS, description = ResourceDescription.APPS)
+    @RequestMapping("/api/appstores/{id}/apps")
+    @Tag(name = ResourceName.APPSTORES, description = ResourceDescription.APPSTORE)
     public static class AppstoreToApps extends BaseResourceChildController<
             EntityLinkerService.AppLinker, App, AppView> {
+
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = "Not allowed")})
+        public final PagedModel<AppView> addResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
+
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = "No content")})
+        public final HttpEntity<Void> replaceResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
+
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = "No content")})
+        public final HttpEntity<Void> removeResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
 
     }
 
