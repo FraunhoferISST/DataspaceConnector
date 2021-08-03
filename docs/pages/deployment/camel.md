@@ -3,158 +3,84 @@ layout: default
 title: Camel
 nav_order: 4
 description: ""
-permalink: /Deployment/Routing
+permalink: /Deployment/Camel
 parent: Deployment
 ---
 
-# Routing Frameworks
+# Customizing Camel Routes
 {: .fs-9 }
 
-Here, you can find instructions for using Camel with the Dataspace Connector.
+Here, you can find instructions on how to customize Camel within the Dataspace Connector.
 {: .fs-6 .fw-300 }
 
 ---
 
-The communication between the Dataspace Connector and data apps can be achieved by using an
-integration Framework like [Apache Camel](https://camel.apache.org/). This also provides the
-possibility to use all kinds of different backends for resources registered in the Connector, as no
-separate implementation has to be made for each possible protocol. To keep the Dataspace Connector
-lightweight and modular, no integration framework will be integrated directly, but rather be
-executed standalone in parallel to the Connector's core container.
+The Dataspace Connector uses Camel routes to execute the logic of message handlers - the components
+responsible for processing incoming IDS messages. The logic for each message handler is split into
+small steps, where each step is executed by its own Camel processor. Thus, the message handling
+process becomes modular. Therefore, custom steps, like e.g. sending a confirmed agreement to another
+service, can easily be integrated into this process. This documentation describes how to achieve
+this.
 
-_The repository [DSC Camel Instance](https://github.com/International-Data-Spaces-Association/DSC-Camel-Instance)
-describes how to use Apache Camel together with the Dataspace Connector and gives examples for
-connecting different backend types. - This repo is archived._
+## Adding a custom processor
 
-This page describes the steps necessary to create a route which will be deployed in Camel using the
-Dataspace Connector's API. The Camel routes are meant to transfer data from a backend to the
-connector or vice versa. The following example explains how to create a route that pushes data to
-the connector. At the bottom of this section, you can find a chapter explaining which steps need to
-be executed differently to create a route that fetches data from the connector.
+### Creating the processor
+
+To add custom logic to a route, you have to create your own implementation of a Camel processor.
+This is down by implementing the `org.apache.camel.Processor` interface and overriding the `process`
+method that is of type void and takes an `org.apache.camel.Exchange` as parameter. An exchange is
+used in Camel routes to transfer information between endpoints. It has a `getIn()` method that
+returns the message held by the exchange. Calling `getBody()` on that message returns the current
+body, `setBody(Object object)` sets a new body. In the `process` method, you can now execute custom
+logic based on the body and modify it, if desired.
+
+The processor implementations in the package `io.dataspaceconnector.camel.processor` can be used for
+reference.
 
 ---
 
-**Note**: The JSON used in the example's steps has been kept short and may contain more fields.
+**Note:** All processors already defined use `io.dataspaceconnector.camel.dto.Request` and
+`io.dataspaceconnector.camel.dto.Response` as the message bodies. So if you set any other object as
+the body in your processor's `process` method, the following processors in the route will fail!
 
 ---
 
-## How to create a route that pushes data to the connector
+### Using the processor in a route
 
-### Step 1: Create an artifact
+To be able to reference a processor in a route, it first has to be added as a Spring Bean. Simply
+annotate your processor class with `@Component("yourProcessorsName")` to achieve this. Afterwards,
+you can call it anywhere in a route using:
 
-As the Camel route's source or destination is always an artifact's `data`-endpoint, the first step
-is to create an artifact. This can be done by sending the following JSON to `POST /api/artifacts`:
-
-```json
-{
-  "title": "My artifact",
-  "value": "value to be overridden"
-}
+```xml
+<process ref="yourProcessorsName"/>
 ```
 
-As the response you will see the description of the artifact that has been created. The description
-contains a link with reference `data`. Copy this link, as you will need it in the following steps.
 
-### Step 2: Create the endpoints
+## Modifying routes without recompilation
 
-The endpoints called in the Camel routes are represented by `Endpoint` objects in the Dataspace
-Connector's data model. Therefore, at least two endpoint objects have to be created: one for the
-route's source and one for the route's destination.
+As the Dataspace Connector uses the Spring XML DSL instead of the Java DSL for defining Camel
+routes, routes can be modified without recompiling the code. All routes used by the connector reside
+in the directory `/src/main/resources/camel-routes` and are loaded from there at application start.
+The directory from which the routes are loaded can be changed in the `application.properties`, so
+that it is possible to load the routes from external directories residing somewhere in the file
+system.
 
-#### Step 2.1: Create a generic endpoint
-
-Generic endpoints represent backends. Therefore, you have to create a generic endpoint for the
-backend from which you want to fetch data. In this example, this will be a backend located at
-`https://backend.com`. Send a request to the endpoint `POST /api/endpoints` using the following
-JSON:
-
-```json
-{
-  "location": "https://backend.com",
-  "type": "GENERIC"
-}
+Default setting:
+```properties
+camel.xml-routes.directory=classpath:camel-routes
 ```
 
-The response will contain the description of the created endpoint, from which you copy and store the
-UUID found in the self-link.
+Example for using an external directory:
+```properties
+camel.xml-routes.directory=/some/directory
+```
+
+When using an external directory, the Camel routes can be modified and reloaded by just restarting
+the connector, instead of recompiling the whole project.
 
 ---
 
-**Note**: The specified URL will be called using HTTP GET.
-
----
-
-#### Step 2.2: Create a connector endpoint
-
-Connector endpoints represent the connector's endpoints where data can be pushed to or fetched from.
-So you need to create a connector endpoint that points to the previously created artifact's `data`
-endpoint. Therefore, make a request to `POST /api/endpoints` with the following JSON, where the
-`location` has to be replaced with the URI copied at the end of [Step 1](#step-1-create-an-artifact):
-
-```json
-{
-  "location": "https://localhost:8080/api/artifacts/f32d6aaa-ccfd-4b48-a305-ddb4222c89f0/data",
-  "type": "CONNECTOR"
-}
-```
-
-The response will contain the description of the created endpoint, from which you copy and store the
-UUID found in the self-link.
-
-### Step 3: Create a route
-
-After both required endpoints have been created, you can now create the route itself and then link
-it to the endpoints.
-
-#### Step 3.1: Create the route
-
-When creating a route, there are two different deploy modes for routes: `Camel` and `None`. When
-setting `Camel`, a Camel route will be created and deployed for this route. When setting `None`, no
-deployment will take place. To create a route that will be deployed in Camel, make a request to
-`POST /api/routes` with the following JSON:
-
-```json
-{
-  "title": "My route",
-  "deploy": "Camel"
-}
-```
-
-The response will contain the description of the created route, from which you copy and store the
-UUID found in the self-link.
-
-#### Step 3.2: Add the route's start
-
-The previously created route does not yet have a start defined. To set the start endpoint, make a
-request to`POST /api/routes/{id}/endpoint/start`, where `{id}` is replaced with the route's UUID
-copied in [Step 3.1](#step-31-create-the-route), and add the following input in the request body,
-where you insert the generic endpoint's UUID copied in
-[Step 2.1](#step-21-create-a-generic-endpoint): `930fcdae-af99-47a6-8bfa-e4aa645abcd6`.
-
-#### Step 3.3: Add the route's end
-
-The previously created route does not yet have an end defined. To set the end endpoint, make a
-request to`POST /api/routes/{id}/endpoint/end`, where `{id}` is replaced with the route's UUID
-copied in[Step 3.1](#step-31-create-the-route), and add the following input in the request body,
-where you insert the connector endpoint's UUID copied in
-[Step 2.2](#step-22-create-a-connector-endpoint): `75207cbc-6721-4209-9a76-1d1f5b30a157`.
-
-### Step 4: Request the artifact's data
-
-After the route's start and end have been added, a Camel route will automatically be generated and
-deployed. To see that the route is active and working, request the data of the artifact that has
-been created in[Step 1](#step-1-create-an-artifact) by making a `GET` request to the `data` endpoint
-URI copied in that step. The data returned by the connector will be the same data that you receive
-by making a direct call to the backend used in [Step 2.1](#step-21-create-a-generic-endpoint).
-
-## How to create a route that fetches data from the connector
-
-The above example shows how to create a route that pushes data from a backend to the connector. It
-is also possible to create a route that fetches data from the connector and pushes it to a backend.
-The steps to achieve this are essentially the same as in the example above. The only difference is
-that you have to set the connector endpoint as the route's start and the generic endpoint as the
-route's end.
-
----
-
-**Note**: In this case the URL specified for the generic endpoint will be called using HTTP POST.
+**Note**: The Dataspace Connector requires all routes present in the `camel-routes` directory to run
+correctly. If any of the routes or any steps in the routes are missing, this may lead to unforeseen
+errors! So if you want to load routes from a custom directory, the best way to do so is to copy all
+files from the `camel-routes` directory to the desired directory and then modify them there.

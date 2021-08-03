@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Streaming
-nav_order: 6
+nav_order: 7
 description: ""
 permalink: /CommunicationGuide/v6/Streaming
 parent: Communication Guide
