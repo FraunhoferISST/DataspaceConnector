@@ -110,7 +110,8 @@ public final class RelationControllers {
     @RestController
     @RequestMapping("/api/representations/{id}/subscriptions")
     @Tag(name = ResourceName.REPRESENTATIONS, description = ResourceDescription.REPRESENTATIONS)
-    public static class RepresentationsToSubscriptions extends BaseResourceChildRestrictedController<
+    public static class RepresentationsToSubscriptions
+            extends BaseResourceChildRestrictedController<
             RelationServices.RepresentationSubscriptionLinker, Subscription, SubscriptionView> {
     }
 
