@@ -66,6 +66,7 @@ alt valid ContractRequest
             ProviderConnector -> ClearingHouse: LogMessage with ContractAgreementMessage
             ClearingHouse --> ProviderConnector: MessageProcessedNotificationMessage
             ProviderConnector --> ConsumerConnector: MessageProcessedNotificationMessage
+            ConsumerConnector -> ConsumerConnector: confirm ContractAgreement
 
             ConsumerConnector -> ProviderConnector: DescriptionRequestMessage
             alt valid request
@@ -78,6 +79,7 @@ alt valid ContractRequest
                 ConsumerConnector -> ConsumerConnector: link artifact to representation
 
                 ConsumerConnector -> ConsumerConnector: ContractAgreement to artifact
+                ConsumerConnector -> ConsumerBackend: ContractAgreement
             else
                 ProviderConnector --> ConsumerConnector: RejectionMessage
                 ConsumerConnector --> ConsumerBackend: error
@@ -99,13 +101,13 @@ ConsumerBackend -> ConsumerConnector: GET /api/artifacts/artifactId/data
 note left: download data
 ConsumerConnector -> ProviderConnector: ArtifactRequestMessage
 alt valid request
-    ProviderConnector -> ProviderConnector: policy enforcement
+    ProviderConnector -> ProviderConnector: validate policy
     alt access allowed
         ProviderConnector -> ProviderBackend: request data
         ProviderBackend -> ProviderConnector: data
         ProviderConnector --> ConsumerConnector: ArtifactResponseMessage with data
 
-        ConsumerConnector -> ConsumerConnector: policy enforcement
+        ConsumerConnector -> ConsumerConnector: validate policy
         ConsumerConnector --> ConsumerBackend: data
     else
         ProviderConnector --> ConsumerConnector: RejectionMessage
