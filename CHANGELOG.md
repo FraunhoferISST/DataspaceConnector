@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Increase pitest version from 1.6.7 to 1.6.8.
+- Increase springdoc version from 1.5.9 to 1.5.10.
 
 ### Fixed
 - Restrict access to POST/PUT/DELETE `{entity}/subscriptions` for artifacts and representations.
