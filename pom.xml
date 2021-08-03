@@ -101,9 +101,8 @@
 		<modelmapper.version>2.4.4</modelmapper.version>
 		<jackson.version>2.12.4</jackson.version>
 		<postgres.version>42.2.23</postgres.version>
-		<springdoc-ui.version>1.5.9</springdoc-ui.version>
-		<springdoc-security.version>1.5.9</springdoc-security.version>
-		<springdoc-hateoas.version>1.5.9</springdoc-hateoas.version>
+		<springdoc.version>1.5.10</springdoc.version>
+		<jsonld-java.version>0.13.3</jsonld-java.version>
 		<equalsverifier.version>3.7</equalsverifier.version>
 		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
@@ -112,7 +111,7 @@
 		<idscp2.version>0.5.0</idscp2.version>
 
 		<!-- Plugins -->
-		<maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
+		<maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
 		<maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
 		<pitest.version>1.6.8</pitest.version>
@@ -123,7 +122,7 @@
 		<spotbugs.version>4.3.0</spotbugs.version>
 		<findsecbugs-plugin.version>1.11.0</findsecbugs-plugin.version>
 		<checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
-		<checkstyle.version>8.44</checkstyle.version>
+		<checkstyle.version>8.45</checkstyle.version>
 		<jacoco.version>0.8.7</jacoco.version>
 		<pmd-plugin.version>3.14.0</pmd-plugin.version>
 		<pmd.version>6.36.0</pmd.version>
@@ -166,6 +165,11 @@
 				<exclusion>
 					<groupId>org.bitbucket.b_c</groupId>
 					<artifactId>jose4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<!-- Till IDS Messaging service updates -->
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-compress</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -268,12 +272,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.squareup</groupId>
-			<artifactId>javapoet</artifactId>
-			<version>1.13.0</version>
-		</dependency>
-
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
@@ -360,20 +358,20 @@
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>${springdoc-ui.version}</version>
+			<version>${springdoc.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-security</artifactId>
-			<version>${springdoc-security.version}</version>
+			<version>${springdoc.version}</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-hateoas -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-hateoas</artifactId>
-			<version>${springdoc-hateoas.version}</version>
+			<version>${springdoc.version}</version>
 		</dependency>
 
 		<dependency>
@@ -403,6 +401,14 @@
 					<artifactId>commons-collections</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
+		<!-- Till IDS Messaging service updates -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+			<version>1.21</version>
 		</dependency>
 
 		<dependency>

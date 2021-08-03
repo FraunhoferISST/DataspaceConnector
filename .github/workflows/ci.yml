@@ -124,7 +124,7 @@ jobs:
       run: mvn -B -U verify --file pom.xml -Prelease
 
   unit-and-integration-tests-cross-version:
-    needs: unit-and-integration-tests
+    needs: [style, license, linting]
     timeout-minutes: 30
     runs-on: ${{ matrix.os }}
     strategy:
