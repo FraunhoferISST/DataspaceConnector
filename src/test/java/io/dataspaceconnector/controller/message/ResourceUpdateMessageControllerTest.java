@@ -29,7 +29,6 @@ import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.util.ErrorMessage;
 import lombok.SneakyThrows;
@@ -239,8 +238,7 @@ public class ResourceUpdateMessageControllerTest {
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/resource/update")
                 .param("recipient", recipient)
-                .param("resourceId", resourceId.toString())
-                .param("protocol", CommunicationProtocol.IDSCP2.name()))
+                .param("resourceId", resourceId.toString()))
                 .andReturn();
 
         /* ASSERT */
@@ -265,8 +263,7 @@ public class ResourceUpdateMessageControllerTest {
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/resource/update")
                 .param("recipient", recipient)
-                .param("resourceId", resourceId.toString())
-                .param("protocol", CommunicationProtocol.IDSCP2.name()))
+                .param("resourceId", resourceId.toString()))
                 .andReturn();
 
         /* ASSERT */

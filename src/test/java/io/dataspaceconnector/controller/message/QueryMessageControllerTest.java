@@ -30,7 +30,6 @@ import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.controller.util.CommunicationProtocol;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.util.ErrorMessage;
@@ -235,7 +234,6 @@ public class QueryMessageControllerTest {
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/query")
                 .param("recipient", brokerUrl)
-                .param("protocol", CommunicationProtocol.IDSCP2.name())
                 .content("SOME QUERY"))
                 .andReturn();
 
@@ -262,7 +260,6 @@ public class QueryMessageControllerTest {
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/query")
                 .param("recipient", brokerUrl)
-                .param("protocol", CommunicationProtocol.IDSCP2.name())
                 .content("SOME QUERY"))
                 .andReturn();
 
@@ -374,7 +371,6 @@ public class QueryMessageControllerTest {
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/search")
                 .param("recipient", brokerUrl)
-                .param("protocol", CommunicationProtocol.IDSCP2.name())
                 .content("SOME SEARCH TERM"))
                 .andReturn();
 
@@ -401,7 +397,6 @@ public class QueryMessageControllerTest {
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/search")
                 .param("recipient", brokerUrl)
-                .param("protocol", CommunicationProtocol.IDSCP2.name())
                 .content("SOME SEARCH TERM"))
                 .andReturn();
 
