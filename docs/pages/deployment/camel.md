@@ -7,10 +7,10 @@ permalink: /Deployment/Camel
 parent: Deployment
 ---
 
-# Customizing Camel Routes
+# Customizing Apache Camel Routes
 {: .fs-9 }
 
-Here, you can find instructions on how to customize Camel within the Dataspace Connector.
+Here, you can find instructions on how to customize Apache Camel within the Dataspace Connector.
 {: .fs-6 .fw-300 }
 
 ---

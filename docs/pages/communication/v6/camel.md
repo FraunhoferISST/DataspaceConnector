@@ -7,10 +7,10 @@ permalink: /CommunicationGuide/v6/Camel
 parent: Communication Guide
 ---
 
-# Routing Frameworks
+# Using Apache Camel
 {: .fs-9 }
 
-Here, you can find instructions for using Camel with the Dataspace Connector.
+Here, you can find instructions for using Apache Camel with the Dataspace Connector.
 {: .fs-6 .fw-300 }
 
 ---
