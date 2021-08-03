@@ -78,6 +78,35 @@ public final class RelationControllers {
     @Tag(name = ResourceName.ARTIFACTS, description = ResourceDescription.ARTIFACTS)
     public static class ArtifactsToSubscriptions extends BaseResourceChildRestrictedController<
             RelationServices.ArtifactSubscriptionLinker, Subscription, SubscriptionView> {
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = "Not allowed")})
+        public final PagedModel<SubscriptionView> addResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
+
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = "No content")})
+        public final HttpEntity<Void> replaceResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
+
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = "No content")})
+        public final HttpEntity<Void> removeResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
     }
 
     /**
@@ -112,6 +141,35 @@ public final class RelationControllers {
     @Tag(name = ResourceName.REPRESENTATIONS, description = ResourceDescription.REPRESENTATIONS)
     public static class RepresentationsToSubscriptions extends BaseResourceChildController<
             RelationServices.RepresentationSubscriptionLinker, Subscription, SubscriptionView> {
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = "Not allowed")})
+        public final PagedModel<SubscriptionView> addResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
+
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = "No content")})
+        public final HttpEntity<Void> replaceResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
+
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = "No content")})
+        public final HttpEntity<Void> removeResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
     }
 
     /**

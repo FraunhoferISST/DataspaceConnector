@@ -9,6 +9,13 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Increase pitest version from 1.6.7 to 1.6.8.
+- Increase maven-enforcer-plugin version from 3.0.0-M3 to 3.0.0.
+- Increase springdoc version from 1.5.9 to 1.5.10.
+- Increase checkstyle version from 8.44 to 8.45.
+
+### Fixed
+- Restrict access to POST/PUT/DELETE `{entity}/subscriptions` for artifacts and representations.
+- Fix eager service loading causing "Bean not eligable for..." messages.
 
 ## [6.0.0] - 2021-07-20
 
