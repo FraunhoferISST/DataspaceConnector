@@ -47,8 +47,7 @@ If you want to build and run locally, ensure that at least Java 11 is installed.
     be accessed at https://localhost:8080/api. The Swagger UI can be found at https://localhost:8080/api/docs.
 
 For more details, see [here](https://international-data-spaces-association.github.io/DataspaceConnector/).
-
-For Docker or Kubernetes deployment as well as full setup with IDS Configuration Manager and its GUI, see [here](https://github.com/International-Data-Spaces-Association/IDS-Deployment-Examples/tree/main/dataspace-connector).
+For a Docker or Kubernetes deployment, as well as a full setup with the IDS Configuration Manager and its GUI, see [here](https://github.com/International-Data-Spaces-Association/IDS-Deployment-Examples/tree/main/dataspace-connector).
 
 ## Contributing
 
