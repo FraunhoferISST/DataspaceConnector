@@ -6,16 +6,12 @@ import io.dataspaceconnector.controller.resource.swagger.response.ResponseDescri
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.service.resource.RelationService;
 import io.swagger.v3.oas.annotations.Hidden;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.HttpEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
@@ -38,8 +34,7 @@ public class BaseResourceChildRestrictedController<S extends RelationService<?, 
      * {@inheritDoc}
      */
     @Hidden
-    @PostMapping
-    @Operation(summary = "Add a list of children to a base resource")
+    @Override
     @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
             description = ResponseDescription.METHOD_NOT_ALLOWED)})
     public PagedModel<V> addResources(
@@ -52,8 +47,7 @@ public class BaseResourceChildRestrictedController<S extends RelationService<?, 
      * {@inheritDoc}
      */
     @Hidden
-    @PutMapping
-    @Operation(summary = "Replace the children of a base resource")
+    @Override
     @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
             description = ResponseDescription.METHOD_NOT_ALLOWED)})
     public HttpEntity<Void> replaceResources(@Valid @PathVariable(name = "id") final UUID ownerId,
@@ -65,8 +59,7 @@ public class BaseResourceChildRestrictedController<S extends RelationService<?, 
      * {@inheritDoc}
      */
     @Hidden
-    @DeleteMapping
-    @Operation(summary = "Remove a list of children from a base resource")
+    @Override
     @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
             description = ResponseDescription.METHOD_NOT_ALLOWED)})
     public HttpEntity<Void> removeResources(@Valid @PathVariable(name = "id") final UUID ownerId,
