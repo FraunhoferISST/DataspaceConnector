@@ -4,7 +4,7 @@ title: Camel
 nav_order: 6
 description: ""
 permalink: /CommunicationGuide/v6/Camel
-parent: CommunicationGuide
+parent: Communication Guide
 ---
 
 # Routing Frameworks
