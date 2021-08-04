@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Restrict access to POST/PUT/DELETE `{entity}/subscriptions` for artifacts and representations.
+- Restrict access to POST/PUT/DELETE `offers/{id}/brokers`.
 - Fix eager service loading causing "Bean not eligable for..." messages.
 
 ## [6.0.0] - 2021-07-20
