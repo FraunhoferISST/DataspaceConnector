@@ -67,26 +67,28 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
      * Updates the URL of a subscription.
      *
      * @param subscription The subscription.
-     * @param url          The new URL.
+     * @param uri          The new URL.
      * @return true, if the URL was updated; false otherwise.
      */
-    private boolean updateLocation(final Subscription subscription, final URI url) {
-        // TODO Should not throw?
-        if (connectorConfig.isIdscpEnabled()) {
-            if (url == null || url.toString().isBlank()) {
-                throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT.toString());
-            }
-        } else {
-            if (url == null || ValidationUtils.isInvalidUri(String.valueOf(url))) {
-                throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT.toString());
-            }
-        }
+    private boolean updateLocation(final Subscription subscription, final URI uri) {
+        validateInput(uri);
 
-        final var newUri = MetadataUtils.updateUri(subscription.getLocation(), url, null);
+        final var newUri = MetadataUtils.updateUri(subscription.getLocation(), uri, null);
         newUri.ifPresent(subscription::setLocation);
 
         return newUri.isPresent();
     }
+
+    private void validateInput(final URI uri) {
+        // TODO Should not throw?
+        final var cond1 = connectorConfig.isIdscpEnabled() && (uri == null || uri.toString().isBlank());
+        final var cond2 = uri == null || ValidationUtils.isInvalidUri(String.valueOf(uri));
+
+        if (cond1 || cond2) {
+            throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT.toString());
+        }
+    }
+
 
     /**
      * Updates the target of a subscription.
