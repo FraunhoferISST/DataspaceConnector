@@ -10,7 +10,7 @@
 
         <!-- the un/subscription could not be processed -->
         <onException>
-            <exception>io.dataspaceconnector.camel.exception.SubscriptionProcessingException</exception>
+            <exception>io.dataspaceconnector.exception.SubscriptionProcessingException</exception>
             <to uri="direct:handleMessageProcessingFailedForSubscription"/>
         </onException>
 

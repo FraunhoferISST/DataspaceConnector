@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.camel.exception;
+package io.dataspaceconnector.exception;
 
 /**
  * Thrown to indicate that a subscription could not be built or persisted.
@@ -32,16 +32,6 @@ public class SubscriptionProcessingException extends RuntimeException {
      */
     public SubscriptionProcessingException(final String msg) {
         super(msg);
-    }
-
-    /**
-     * Constructs an SubscriptionUpdateException with the specified detail message and cause.
-     *
-     * @param msg   the detail message.
-     * @param cause the cause.
-     */
-    public SubscriptionProcessingException(final String msg, final Throwable cause) {
-        super(msg, cause);
     }
 
 }

@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.camel.exception.SubscriptionProcessingException;
 import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.exception.SubscriptionProcessingException;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
