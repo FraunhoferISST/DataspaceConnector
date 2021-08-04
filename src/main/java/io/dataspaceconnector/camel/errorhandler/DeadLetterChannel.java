@@ -55,9 +55,9 @@ public class DeadLetterChannel extends RouteBuilder {
     private void processException(final Exchange exchange) {
         if (log.isWarnEnabled()) {
             final var cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT,
-                                                   Exception.class);
-            log.warn("Failed to store error logs at RoutesController. "
-                     + "[exception=({})]", cause.getMessage());
+                    Exception.class);
+            log.warn("Failed to store error logs at RoutesController. [exception=({})]",
+                    cause.getMessage());
         }
     }
 

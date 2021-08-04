@@ -45,6 +45,16 @@ public class ResponseDescription {
     public static final String UNAUTHORIZED = "Unauthorized";
 
     /**
+     * Response code is BAD_REQUEST.
+     */
+    public static final String BAD_REQUEST = "Bad request";
+
+    /**
+     * Response code is INTERNAL_SERVER_ERROR.
+     */
+    public static final String INTERNAL_SERVER_ERROR = "Internal server error";
+
+    /**
      * Description is Not Allowed.
      */
     public static final String METHOD_NOT_ALLOWED = "Not Allowed";
