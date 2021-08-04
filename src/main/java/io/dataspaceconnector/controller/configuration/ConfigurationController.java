@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.controller.configuration;
 
-import de.fraunhofer.iais.eis.ConfigurationModelImpl;
-import de.fraunhofer.iais.eis.Proxy;
-import de.fraunhofer.iais.eis.ProxyImpl;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.controller.resource.BaseResourceController;
@@ -44,9 +41,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.LinkedList;
 import java.util.UUID;
-
 /**
  * Offers the endpoints for managing configurations.
  */
@@ -106,42 +101,5 @@ public class ConfigurationController extends BaseResourceController<Configuratio
     @ResponseBody
     public ConfigurationView getConfiguration() {
         return get(configurationSvc.getActiveConfig().getId());
-    }
-
-    /**
-     * Return the connector's current configuration.
-     *
-     * @return The configuration object or an error.
-     */
-    @GetMapping(value = "/active", produces = "application/ld+json")
-    @Operation(summary = "Get current configuration")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @ResponseBody
-    public ResponseEntity<Object> getIdsConfiguration() {
-        //Loads the configuration from the IDS-Messaging-Services that hold sensitive data.
-        //These must be removed before output via the API.
-        final var completeConfig = (ConfigurationModelImpl) configContainer.getConfigurationModel();
-
-        if (completeConfig.getKeyStorePassword() != null) {
-            completeConfig.setKeyStorePassword("");
-        }
-
-        if (completeConfig.getTrustStorePassword() != null) {
-            completeConfig.setTrustStorePassword("");
-        }
-
-        if (completeConfig.getConnectorProxy() != null) {
-            final var proxyList = new LinkedList<Proxy>();
-            for (var proxy : completeConfig.getConnectorProxy()) {
-                var proxyimpl = (ProxyImpl) proxy;
-                proxyimpl.setProxyAuthentication(null);
-                proxyList.add(proxyimpl);
-            }
-            completeConfig.setConnectorProxy(proxyList);
-        }
-
-        return ResponseEntity.ok(completeConfig.toRdf());
     }
 }

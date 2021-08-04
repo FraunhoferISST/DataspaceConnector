@@ -123,17 +123,6 @@ public class ConfigurationControllerIT {
 
     @Test
     @WithMockUser("ADMIN")
-     public void get_validInput_returnIDSRepresentation() throws Exception {
-        final var newObject =
-                mockMvc.perform(get("/api/configurations/active")
-                                        .accept("application/ld+json"))
-                       .andExpect(status().isOk()).andReturn();
-
-        assertEquals(HttpStatus.OK.value(), newObject.getResponse().getStatus());
-    }
-
-    @Test
-    @WithMockUser("ADMIN")
      public void setConfiguration_validInput_swapConfig() throws Exception {
         final var newObject =
                 mockMvc.perform(post("/api/configurations")
