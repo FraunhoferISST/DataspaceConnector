@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.resource.view;
 
 import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.bind.annotation.RequestMapping;

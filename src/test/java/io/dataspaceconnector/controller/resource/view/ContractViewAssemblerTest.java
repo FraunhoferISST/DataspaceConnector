@@ -17,6 +17,7 @@ package io.dataspaceconnector.controller.resource.view;
 
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.exception.UnreachableLineException;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.contract.ContractDesc;

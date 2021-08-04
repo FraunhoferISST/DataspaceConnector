@@ -17,9 +17,10 @@ package io.dataspaceconnector.controller.resource.view;
 
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers.RepresentationController;
+import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.exception.UnreachableLineException;
-import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.util.ErrorMessage;
 import lombok.NoArgsConstructor;

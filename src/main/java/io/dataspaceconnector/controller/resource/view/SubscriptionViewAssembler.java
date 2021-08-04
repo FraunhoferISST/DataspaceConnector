@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.resource.view;
 
 import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.subscription.Subscription;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;

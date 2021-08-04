@@ -17,12 +17,13 @@ package io.dataspaceconnector.controller.resource.view;
 
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.exception.UnreachableLineException;
-import io.dataspaceconnector.model.resource.OfferedResourceDesc;
-import io.dataspaceconnector.model.resource.OfferedResourceFactory;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.representation.RepresentationDesc;
 import io.dataspaceconnector.model.representation.RepresentationFactory;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.OfferedResourceFactory;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.resource.RequestedResourceFactory;
 import io.dataspaceconnector.model.resource.Resource;

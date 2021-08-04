@@ -17,6 +17,7 @@ package io.dataspaceconnector.controller.resource.view;
 
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
 import io.dataspaceconnector.model.catalog.CatalogFactory;
