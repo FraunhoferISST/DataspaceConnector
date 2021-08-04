@@ -16,8 +16,8 @@
 package io.dataspaceconnector.controller.resource;
 
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
-import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
-import io.dataspaceconnector.controller.resource.swagger.response.ResponseDescription;
+import io.dataspaceconnector.controller.resource.tag.ResponseCode;
+import io.dataspaceconnector.controller.resource.tag.ResponseDescription;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.service.resource.RelationService;
 import io.swagger.v3.oas.annotations.Hidden;

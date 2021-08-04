@@ -16,9 +16,9 @@
 package io.dataspaceconnector.controller.configuration;
 
 import io.dataspaceconnector.controller.base.CRUDController;
-import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
 import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.tag.ResourceName;
+import io.dataspaceconnector.controller.resource.tag.ResponseCode;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.service.configuration.GenericEndpointService;
