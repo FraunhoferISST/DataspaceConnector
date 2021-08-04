@@ -19,7 +19,10 @@ import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
+import io.dataspaceconnector.service.ArtifactDataDownloader;
 import io.dataspaceconnector.service.MetadataDownloader;
+import io.dataspaceconnector.service.configuration.AppService;
+import io.dataspaceconnector.util.UUIDUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -54,7 +57,18 @@ public class AppRequestMessageController {
     private final @NonNull MetadataDownloader metadataDownloader;
 
     /**
+     * The app service.
+     */
+    private final @NonNull AppService appService;
+
+    /**
+     * The artifact request service.
+     */
+    private final @NonNull ArtifactDataDownloader artifactDataDownloader;
+
+    /**
      * Add an apps metadata to an app object.
+     *
      * @param recipient The recipient url
      * @param app       The app ID.
      * @return Success, when App can be found and created from recipient response.
@@ -72,9 +86,16 @@ public class AppRequestMessageController {
             @RequestParam("app") final URI app) {
 
         try {
+            // Send description request message and save the app
             downloadApp(recipient, app);
 
-            //TODO: sendArtifactRequestMessage
+            // Send artifact request message
+            final var downloadedApp = appService.get(UUIDUtils.uuidFromUri(app));
+            if (downloadedApp != null) {
+                // ToDO: Get artifact instance from downloaded app
+//                final var representation = downloadedApp.getAdditional().get("ids:instance");
+//                artifactDataDownloader.downloadAppArtifact(recipient, app);
+            }
             return new ResponseEntity<>(HttpStatus.OK);
 
         } catch (MessageException exception) {

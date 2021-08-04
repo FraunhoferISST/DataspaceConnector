@@ -87,4 +87,8 @@ public class ArtifactDataDownloader {
             }
         }
     }
+
+    public void downloadAppArtifact(final URI recipient, final URI artifact) {
+        // ToDO: Send artifact request message
+    }
 }
