@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.config;
-
-import java.io.Serializable;
+package io.dataspaceconnector.config.security;
 
 import io.dataspaceconnector.service.ids.ConnectorService;
 import lombok.NonNull;
@@ -24,6 +22,8 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
 
 /**
  * This class provides DAT validation.
