@@ -3,7 +3,7 @@ layout: default
 title: Usage Control
 nav_order: 5
 description: ""
-permalink: /Documentation/UsageControl
+permalink: /Documentation/v6/UsageControl
 parent: Documentation
 ---
 
@@ -13,10 +13,12 @@ parent: Documentation
 Usage policies are an important aspect of IDS, further details are explained on this page.
 {: .fs-6 .fw-300 }
 
+[previous version](../v5/usage-control.md)
+
 ---
 
-The Dataspace Connector supports usage policies written
-in the `IDS Usage Control Language` based on [ODRL](https://www.w3.org/TR/odrl-model/#policy).
+The Dataspace Connector supports usage policies written in the `IDS Usage Control Language` based on
+[ODRL](https://www.w3.org/TR/odrl-model/#policy).
 
 "An IDS Contract is implicitly divided to two main sections: the contract specific metadata and the
 `IDS Usage Control Policy` of the contract.
@@ -33,12 +35,7 @@ enforcement of data sovereignty." (p.22, [IDSA Position Paper Usage Control in t
 ## Policy Patterns
 
 Following the specifications of the IDSA Position Paper about Usage Control, the IDS defines 21
-policy classes. The Dataspace Connector currently implements eight of these.
-
-Examples for each of them can be found by using the endpoint `POST /api/examples/policy`.
-The usage policy is added to the metadata of a resource. The classes at
-`io.dataspaceconnector.service.usagecontrol` read, classify, verify, and enforce the policies at
-runtime.
+policy classes. The Dataspace Connector currently implements nine of these.
 
 | No. | Title                                          | Support | Implementation |
 |:----|:-----------------------------------------------|:-------:|:-------|
@@ -54,7 +51,7 @@ runtime.
 | 10  | Purpose-restricted Data Usage Policy           | -       |
 | 11  | Event-restricted Usage Policy                  | -       |
 | 12  | Restricted Number of Usages                    | x       | allows data usage for n times
-| 13  | Security Level Restricted Policy               | -       |
+| 13  | Security Level Restricted Policy               | x       | allows data access only for connectors with a specified security level
 | 14  | Use Data and Delete it After                   | x       | allows data usage within a specified time interval with the restriction to delete it at a specified time stamp
 | 15  | Modify Data (in Transit)                       | -       |
 | 16  | Modify Data (in Rest)                          | -       |
@@ -64,10 +61,87 @@ runtime.
 | 20  | Distribute only if Encrypted                   | -       |
 | 21  | State Restricted Policy                        | -       |
 
+
+Examples for each of them can be found by using the endpoint `POST /api/examples/policy`.
+
+![Swagger Policy Endpoints](../../../assets/images/v6/swagger_policies.png)
+
+The usage policy is added to the metadata of a resource. The classes at
+`io.dataspaceconnector.service.usagecontrol` read, classify, verify, and enforce the policies at
+runtime. See how this works on the [provider-side](../../communication/v6/provider.md) and
+[consumer-side](../../communication/v6/consumer.md) in the communication guide.
+
+## Example Endpoint
+
+The endpoint at `POST /api/examples/policy` is able to process inputs to fill out a policy
+automatically. Thus, it does not need to be modified afterwards. Have a look at the schema provided
+by the OpenApi specs or displayed by the Swagger UI.
+
+### Provide Access
+
+```json
+{ "type": "PROVIDE_ACCESS" }
+```
+
+### Prohibit Access
+
+```json
+{ "type": "PROHIBIT_ACCESS" }
+```
+
+### N Times Usage
+
+```json
+{ "type": "N_TIMES_USAGE", "value": "5" }
+```
+
+### Usage During Interval
+
+```json
+{ "type": "USAGE_DURING_INTERVAL", "start": "2020-07-11T00:00:00Z", "end": "2020-07-11T00:00:00Z" }
+```
+
+### Duration Usage
+
+```json
+{ "type": "DURATION_USAGE", "duration": "PT1M30.5S" }
+```
+
+### Usage Until Deletion
+
+```json
+{ "type": "USAGE_UNTIL_DELETION", "start": "2020-07-11T00:00:00Z", "end": "2020-07-11T00:00:00Z", "date": "2020-07-11T00:00:00Z" }
+```
+
+### Usage Logging
+
+```json
+{ "type": "USAGE_LOGGING" }
+```
+
+### Usage Notification
+
+```json
+{ "type": "USAGE_NOTIFICATION", "url": "https://localhost:8080/api/ids/data" }
+```
+
+### Connector Restricted Usage
+
+```json
+{ "type": "CONNECTOR_RESTRICTED_USAGE", "url": "https://localhost:8080" }
+```
+
+### Security Profile Restricted Usage
+
+```json
+{ "type": "SECURITY_PROFILE_RESTRICTED_USAGE", "profile": "BASE_SECURITY_PROFILE" }
+```
+
+
 ## Pattern Examples
 
 ### Provide Access
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -91,7 +165,7 @@ runtime.
 ```
 
 ### Prohibit Access
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -115,7 +189,7 @@ runtime.
 ```
 
 ### N Times Usage
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -153,7 +227,7 @@ runtime.
 ```
 
 ### Duration Usage
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -191,7 +265,7 @@ runtime.
 ```
 
 ### Usage During Interval
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -242,7 +316,7 @@ runtime.
 ```
 
 ### Usage Until Deletion
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -314,7 +388,7 @@ runtime.
 ```
 
 ### Usage Logging
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -345,7 +419,7 @@ runtime.
 ```
 
 ### Usage Notification
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -390,7 +464,7 @@ runtime.
 ```
 
 ### Connector Restricted Usage
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -422,6 +496,46 @@ runtime.
     "ids:operator" : {
       "@id" : "idsc:SAME_AS"
     }
+  } ],
+  "ids:target": [...]
+}
+```
+
+### Security Profile Restricted Usage
+
+```json
+{
+  "@context" : {
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "ids" : "https://w3id.org/idsa/core/",
+    "idsc" : "https://w3id.org/idsa/code/"
+  },
+  "@type" : "ids:Permission",
+  "@id" : "https://w3id.org/idsa/autogen/permission/703226ed-f271-4a74-9db1-6fdc9e481c3c",
+  "ids:action" : [ {
+    "@id" : "https://w3id.org/idsa/code/USE"
+  } ],
+  "ids:constraint" : [ {
+    "@type" : "ids:Constraint",
+    "@id" : "https://w3id.org/idsa/autogen/constraint/b734b74c-27e5-4375-9edd-2fd7ba4a57b4",
+    "ids:operator" : {
+      "@id" : "https://w3id.org/idsa/code/EQUALS"
+    },
+    "ids:leftOperand" : {
+      "@id" : "https://w3id.org/idsa/code/SECURITY_LEVEL"
+    },
+    "ids:rightOperand" : {
+      "@value" : "https://w3id.org/idsa/code/BASE_SECURITY_PROFILE",
+      "@type" : "xsd:string"
+    }
+  } ],
+  "ids:title" : [ {
+    "@value" : "Example Usage Policy",
+    "@type" : "http://www.w3.org/2001/XMLSchema#string"
+  } ],
+  "ids:description" : [ {
+    "@value" : "security-level-restriction",
+    "@type" : "http://www.w3.org/2001/XMLSchema#string"
   } ],
   "ids:target": [...]
 }

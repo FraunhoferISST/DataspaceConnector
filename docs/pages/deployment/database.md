@@ -1,10 +1,11 @@
 ---
 layout: default
 title: Database
-nav_order: 4
+nav_order: 1
 description: ""
-permalink: /Deployment/Database
-parent: Deployment
+permalink: /Deployment/Configuration/Database
+parent: Configuration
+grand_parent: Deployment
 ---
 
 # Database Configuration
@@ -21,7 +22,7 @@ can be replaced by e.g. MySQL, PostgreSQL, or Oracle databases with minimal effo
 
 To use another database for the Connector, follow these steps:
 
-1. Add the dependency for your chosen database to the Connector's `pom.xml` (contains required JDBC 
+1. Add the dependency for your chosen database to the Connector's `pom.xml` (contains required JDBC
    driver).
 2. Adjust the following parameters in `src/main/resources/application.properties`:
 
@@ -82,7 +83,7 @@ Therefore, add the following service to the `docker-compose.yaml`:
      - ./postgres.env
 ```
 
-In the file `postgres-params.env`, specify the database name, username, and password for the 
+In the file `postgres-params.env`, specify the database name, username, and password for the
 PostgreSQL container:
 
 ```properties
@@ -116,7 +117,7 @@ to connect, also add this to the Connector service in ``docker-compose.yaml``:
 ```
 
 By default, all data in the Postgres container will be lost when running `docker-compose down`. If
-you want to keep your data persisted across restarts, add a persistent volume in the 
+you want to keep your data persisted across restarts, add a persistent volume in the
 `docker-compose.yaml`:
 
 ```yml
