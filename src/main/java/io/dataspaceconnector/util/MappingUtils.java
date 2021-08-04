@@ -30,6 +30,7 @@ import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
+import io.dataspaceconnector.model.configuration.ConnectorStatus;
 import io.dataspaceconnector.model.configuration.DeployMode;
 import io.dataspaceconnector.model.configuration.LogLevel;
 import io.dataspaceconnector.model.configuration.SecurityProfile;
@@ -532,6 +533,23 @@ public final class MappingUtils {
     }
 
     /**
+     * Get dsc connector status from ids connector status.
+     * @param status The ids connector status.
+     * @return The internal connector status.
+     */
+    public static ConnectorStatus fromIdsConnectorStatus(
+            final de.fraunhofer.iais.eis.ConnectorStatus status) {
+        switch (status) {
+            case CONNECTOR_ONLINE:
+                return ConnectorStatus.ONLINE;
+            case CONNECTOR_OFFLINE:
+                return ConnectorStatus.OFFLINE;
+            default:
+                return ConnectorStatus.FAULTY;
+        }
+    }
+
+    /**
      * Get dsc security profile from ids security profile.
      *
      * @param securityProfile The ids security profile.
@@ -587,7 +605,7 @@ public final class MappingUtils {
                 configModel.getTrustStore(),
                 configModel.getTrustStorePassword(),
                 configModel.getTrustStoreAlias()));
-        description.setStatus(configModel.getConnectorStatus());
+        description.setStatus(fromIdsConnectorStatus(configModel.getConnectorStatus()));
         return description;
     }
 

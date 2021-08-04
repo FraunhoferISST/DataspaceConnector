@@ -15,7 +15,12 @@
  */
 package io.dataspaceconnector.view.configuration;
 
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.dataspaceconnector.model.configuration.ConnectorStatus;
 import io.dataspaceconnector.model.configuration.DeployMode;
 import io.dataspaceconnector.model.configuration.LogLevel;
 import io.dataspaceconnector.model.configuration.SecurityProfile;
@@ -28,10 +33,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
-
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.util.List;
 
 /**
  * A DTO for controlled exposing of configuration information in API responses.
@@ -98,6 +99,11 @@ public class ConfigurationView extends RepresentationModel<ConfigurationView> {
      * The security profile.
      */
     private SecurityProfile securityProfile;
+
+    /**
+     * The connector status.
+     */
+    private ConnectorStatus status;
 
     /**
      * The log level.

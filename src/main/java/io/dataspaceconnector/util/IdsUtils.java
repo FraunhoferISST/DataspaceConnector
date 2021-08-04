@@ -24,6 +24,7 @@ import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.ConnectorDeployMode;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
+import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractOffer;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -392,6 +393,23 @@ public final class IdsUtils {
                 return LogLevel.DEBUG_LEVEL_LOGGING;
             default:
                 return LogLevel.NO_LOGGING;
+        }
+    }
+
+    /**
+     * Get the ids connector status from dsc connector status.
+     * @param status The internal connector status.
+     * @return The ids connector status.
+     */
+    public static ConnectorStatus getConnectorStatus(
+            final io.dataspaceconnector.model.configuration.ConnectorStatus status) {
+        switch (status) {
+            case ONLINE:
+                return ConnectorStatus.CONNECTOR_ONLINE;
+            case OFFLINE:
+                return ConnectorStatus.CONNECTOR_OFFLINE;
+            default:
+                return ConnectorStatus.CONNECTOR_BADLY_CONFIGURED;
         }
     }
 

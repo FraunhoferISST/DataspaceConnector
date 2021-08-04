@@ -18,7 +18,6 @@ package io.dataspaceconnector.service.ids.builder;
 import java.util.List;
 
 import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
-import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.util.IdsUtils;
@@ -42,6 +41,7 @@ public final class IdsConfigModelBuilder extends AbstractIdsBuilder<Configuratio
         final var deployMode = IdsUtils.getConnectorDeployMode(config.getDeployMode());
         final var logLevel = IdsUtils.getLogLevel(config.getLogLevel());
         final var connector = IdsUtils.getConnectorFromConfiguration(config);
+        final var status = IdsUtils.getConnectorStatus(config.getStatus());
 
         final var configurationBuilder = new ConfigurationModelBuilder()
                 ._connectorDeployMode_(deployMode)
@@ -52,8 +52,7 @@ public final class IdsConfigModelBuilder extends AbstractIdsBuilder<Configuratio
                 ._trustStorePassword_(config.getTruststore().getPassword())
                 ._trustStoreAlias_(config.getTruststore().getAlias())
                 ._configurationModelLogLevel_(logLevel)
-                ._connectorStatus_(config.getStatus() != null ? config.getStatus()
-                        : ConnectorStatus.CONNECTOR_ONLINE)
+                ._connectorStatus_(status)
                 ._connectorDescription_(connector);
 
         if (config.getProxy() != null) {

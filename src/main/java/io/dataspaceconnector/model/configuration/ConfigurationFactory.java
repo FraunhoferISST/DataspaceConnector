@@ -15,7 +15,9 @@
  */
 package io.dataspaceconnector.model.configuration;
 
-import de.fraunhofer.iais.eis.ConnectorStatus;
+import java.net.URI;
+import java.util.List;
+
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
@@ -27,9 +29,6 @@ import io.dataspaceconnector.util.MetadataUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
-import java.util.List;
 
 /**
  * Creates and updates a configuration.
@@ -98,6 +97,11 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
      * The default security profile.
      */
     public static final SecurityProfile DEFAULT_SECURITY_PROFILE = SecurityProfile.BASE_SECURITY;
+
+    /**
+     * The default connector status.
+     */
+    public static final ConnectorStatus DEFAULT_STATUS = ConnectorStatus.OFFLINE;
 
     /**
      * @param desc The description of the entity.
@@ -292,36 +296,31 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     }
 
     private boolean updateProxy(final Configuration configuration, final ProxyDesc desc) {
-        //ProxyDesc may not be null but all its fields may have empty contents
-        final var proxyDescIsEmpty = (desc == null
-                || desc.getLocation() == null
-                || desc.getLocation().toString().isEmpty());
-
-        if (configuration.getProxy() == null && proxyDescIsEmpty) {
-            return false;
-        }
-
-        if (configuration.getProxy() != null && proxyDescIsEmpty) {
+        if (configuration.getProxy() != null && desc == null) {
             configuration.setProxy(null);
             return true;
         }
 
-        if (configuration.getProxy() != null) {
-            proxyFactory.update(configuration.getProxy(), desc);
-        } else {
-            configuration.setProxy(proxyFactory.create(desc));
-        }
-
-        return true;
-    }
-
-    private boolean updateStatus(final Configuration configuration, final ConnectorStatus status) {
-        if (status == null) {
+        if (configuration.getProxy() == null && desc == null) {
             return false;
         }
 
-        configuration.setStatus(status);
+        if (configuration.getProxy() != null) {
+            return proxyFactory.update(configuration.getProxy(), desc);
+        } else {
+            configuration.setProxy(proxyFactory.create(desc));
+            return true;
+        }
+    }
 
+    private boolean updateStatus(final Configuration configuration, final ConnectorStatus status) {
+        final var tmp = status == null ? DEFAULT_STATUS : status;
+
+        if (tmp.equals(configuration.getStatus())) {
+            return false;
+        }
+
+        configuration.setStatus(tmp);
         return true;
     }
 }

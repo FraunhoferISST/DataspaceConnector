@@ -33,8 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConfigurationFactoryTest {
 
-    final ConfigurationDesc desc = new ConfigurationDesc();
-
     final ProxyFactory proxyFactory = new ProxyFactory();
     final TruststoreFactory truststoreFactory = new TruststoreFactory();
     final KeystoreFactory keystoreFactory =  new KeystoreFactory();
@@ -57,6 +55,7 @@ public class ConfigurationFactoryTest {
         assertEquals(ConfigurationFactory.DEFAULT_INBOUND_VERSION, result.getInboundModelVersion());
         assertEquals(ConfigurationFactory.DEFAULT_OUTBOUND_VERSION, result.getOutboundModelVersion());
         assertEquals(ConfigurationFactory.DEFAULT_SECURITY_PROFILE, result.getSecurityProfile());
+        assertEquals(ConfigurationFactory.DEFAULT_STATUS, result.getStatus());
     }
 
     @Test
