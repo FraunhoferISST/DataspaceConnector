@@ -3,7 +3,7 @@ layout: default
 title: Data Model
 nav_order: 2
 description: ""
-permalink: /Documentation/DataModel
+permalink: /Documentation/v6/DataModel
 parent: Documentation
 ---
 
@@ -13,32 +13,34 @@ parent: Documentation
 An explanation of the Dataspace Connector's data model.
 {: .fs-6 .fw-300 }
 
+[previous version](../v5/data-model.md)
+
 ---
 
-The data model of the Dataspace Connector is based on the structure of the IDS Infomodel. On the top 
-level, metadata of a data object is called a `resource`. This includes e.g. the title, a description, 
-license information, and a list of `contract offers`. Resources are organized by `catalogs`. An IDS 
-Connector can have multiple catalogs. A resource also has a list of `representations` that describes 
-the offered data in more detail. This includes e.g. the data type. Below the representation, there 
-is the `artifact`. This has a 1:1 relation to the raw data and describes e.g. checksum and 
-bytesize. An artifact then has a reference to `contract agreements`, which describe the agreed usage 
+The data model of the Dataspace Connector is based on the structure of the IDS Infomodel. On the top
+level, metadata of a data object is called a `resource`. This includes e.g. the title, a description,
+license information, and a list of `contract` (offers). Resources are organized by `catalogs`. An IDS
+Connector can have multiple catalogs. A resource also has a list of `representations` that describes
+the offered data in more detail. This includes e.g. the data type. Below the representation, there
+is the `artifact`. This has a 1:1 relation to the raw data and describes e.g. checksum and
+bytesize. An artifact then has a reference to (contract) `agreements`, which describe the agreed usage
 between data provider and data consumer. Contract offers as `contracts` can contain multiple rules.
-Each rule may represent one IDS Usage Control Pattern as described [here](usage-control.md).
+Each rule may represent one IDS Usage Control Pattern as described [here](pages/documentation/v6/usage-control.md).
 
-![Data Model Overview](../../assets/images/data_model.png)
+![Data Model Overview](../../../assets/images/data_model.png)
 
-Furthermore, the Connector distinguishes between offered and requested resources. If data is offered, 
-it is called an offered resource. The interfaces allow these resources to be modified and deleted 
-without any restrictions. If data is requested by a consumer, it is stored as requested resource 
-after being received. The interfaces for requested resources and contract agreements only allow 
-interactions and manipulations that do not affect the technical assurance of data sovereignty. Also, 
-requested resources cannot be registered as such with an IDS broker. Instead, an explicit offer must 
+Furthermore, the Connector distinguishes between offered and requested resources. If data is offered,
+it is called an offered resource. The interfaces allow these resources to be modified and deleted
+without any restrictions. If data is requested by a consumer, it is stored as requested resource
+after being received. The interfaces for requested resources and contract agreements only allow
+interactions and manipulations that do not affect the technical assurance of data sovereignty. Also,
+requested resources cannot be registered as such with an IDS broker. Instead, an explicit offer must
 be created.
 
-By default, the Dataspace Connector implements a subset of the IDS Infomodel. Some attributes can be 
-defined via the interfaces, while others are gathered automatically. Each input is checked and empty 
-inputs have a predefined default value. For a domain specific usage of the Dataspace Connector, each 
-database entity has an additional "attributes" field, which allows storing custom key value pairs 
+By default, the Dataspace Connector implements a subset of the IDS Infomodel. Some attributes can be
+defined via the interfaces, while others are gathered automatically. Each input is checked and empty
+inputs have a predefined default value. For a domain specific usage of the Dataspace Connector, each
+database entity has an `additional` attributes field that allows storing custom key value pairs
 into the database.
 
 An overview of all entities and its attributes are listed in the table below. Between all parent and
@@ -55,14 +57,15 @@ child entities n to m relations are provided.
 | rule | title, value | remoteId, created, modified | n contracts |
 | agreement | - | remoteId, confirmed, archived, value, created, modified | n artifacts |
 
-Mapping between the Dataspace Connector's data model and the IDS Infomodel takes place for any IDS 
-communication. Then a catalog with offered resources is built from all related objects. 
+Mapping between the Dataspace Connector's data model and the IDS Infomodel takes place for any IDS
+communication. Then, a catalog with offered resources is built from all related objects.
 
 ---
 
-**Note**: An offered resource is only complete if it contains at least one contract offer and at 
-least one representation with at least one artifact. Otherwise, it will not be listed in the IDS 
-self-description because there is no complete data offer.
+**Note**: An offered resource is only complete if it contains at least one contract offer with at
+least one rule, and at least one representation with at least one artifact. Otherwise, it will not
+be listed in the IDS self-description because there is no complete data offer. In addition, it
+should not be missed to link a resource to a catalog.
 
 ---
 

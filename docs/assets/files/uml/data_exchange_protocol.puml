@@ -1,0 +1,20 @@
+@startuml
+skinparam sequenceMessageAlign center
+participant ConsumerBackend
+participant ConsumerConnector
+participant ProviderConnector
+participant ProviderBackend
+ConsumerConnector->>ProviderConnector: query data offers
+ProviderConnector-->>ConsumerConnector: metadata
+ConsumerConnector->>ProviderConnector: contract request
+ProviderConnector-->>ConsumerConnector: contract agreement
+ConsumerConnector->>ProviderConnector: request data
+ProviderConnector-->>ConsumerConnector: access information
+alt protocol == pull
+    ConsumerBackend->>ProviderBackend: request data
+    ProviderBackend-->>ConsumerBackend: return data
+else protocol == push
+    ProviderBackend->>ConsumerBackend: push data
+    ConsumerBackend->>ConsumerBackend: process data
+end
+@enduml

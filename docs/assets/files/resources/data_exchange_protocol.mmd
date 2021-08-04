@@ -1,0 +1,18 @@
+sequenceDiagram
+    participant ConsumerBackend
+    participant ConsumerConnector
+    participant ProviderConnector
+    participant ProviderBackend
+    ConsumerConnector->>ProviderConnector: query data offers
+    ProviderConnector-->>ConsumerConnector: return metadata
+    ConsumerConnector->>ProviderConnector: contract request
+    ProviderConnector-->>ConsumerConnector: contract agreement
+    ConsumerConnector->>ProviderConnector: request artifact
+    ProviderConnector-->>ConsumerConnector: return access information
+    alt protocol.PULL
+        ConsumerBackend->>ProviderBackend: request data
+        ProviderBackend-->>ConsumerBackend: return data
+    else protocol.PUSH
+        ProviderBackend->>ConsumerBackend: push data
+        ConsumerBackend->>ConsumerBackend: process data
+    end
