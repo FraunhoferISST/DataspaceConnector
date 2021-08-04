@@ -33,9 +33,6 @@ class AppStoreControllersTest {
     @Autowired
     private AppStoreControllers.AppController appController;
 
-    @Autowired
-    private AppStoreControllers.AppStoreRegistryController appStoreRegistryController;
-
     @Test
     public void createApp_returnMethodNotAllowed() {
         /* ARRANGE */

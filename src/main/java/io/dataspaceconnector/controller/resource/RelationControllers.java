@@ -20,6 +20,7 @@ import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
 import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.AgreementView;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.view.app.AppView;
 import io.dataspaceconnector.controller.resource.view.ArtifactView;
 import io.dataspaceconnector.controller.resource.view.CatalogView;
@@ -46,6 +47,7 @@ import io.dataspaceconnector.service.resource.AbstractResourceContractLinker;
 import io.dataspaceconnector.service.resource.AbstractResourceRepresentationLinker;
 import io.dataspaceconnector.service.resource.RelationServices;
 import io.dataspaceconnector.view.broker.BrokerView;
+import io.dataspaceconnector.view.endpoint.AppEndpointView;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -125,6 +127,17 @@ public final class RelationControllers {
                 @Valid @RequestBody final List<URI> resources) {
             throw new MethodNotAllowed();
         }
+
+    }
+
+    /**
+     * Offers the endpoints for managing the relations between apps and app endpoints.
+     */
+    @RestController
+    @RequestMapping("/api/apps/{id}/endpoints")
+    @Tag(name = ResourceName.APPS, description = ResourceDescription.APPS)
+    public static class AppToEndpoints extends BaseResourceChildController<
+            EntityLinkerService.AppEndpointLinker, AppEndpoint, AppEndpointView> {
 
     }
 

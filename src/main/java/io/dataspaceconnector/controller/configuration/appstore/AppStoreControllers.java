@@ -26,7 +26,7 @@ import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.appstore.AppStoreDesc;
 import io.dataspaceconnector.service.appstore.AppStoreRegistryService;
-import io.dataspaceconnector.service.appstore.container.ContainerConfiguration;
+import io.dataspaceconnector.service.appstore.container.ActionType;
 import io.dataspaceconnector.service.configuration.AppService;
 import io.dataspaceconnector.service.configuration.AppStoreService;
 import io.dataspaceconnector.view.app.AppView;
@@ -39,11 +39,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -62,8 +60,14 @@ public final class AppStoreControllers {
     @RestController
     @RequestMapping("/api/apps")
     @Tag(name = ResourceName.APPS, description = ResourceDescription.APPS)
+    @RequiredArgsConstructor
     public static class AppController extends BaseResourceController<App, AppDesc,
             AppView, AppService> {
+
+        /**
+         * App store registry service.
+         */
+        private final @NonNull AppStoreRegistryService appStoreRegistryService;
 
         @Override
         @Hidden
@@ -80,6 +84,87 @@ public final class AppStoreControllers {
         public final ResponseEntity<AppView> update(final UUID resourceId, final AppDesc desc) {
             throw new MethodNotAllowed();
         }
+
+        /**
+         * @param containerId The id of the container.
+         * @param actionType  The action type.
+         * @return Response depending on the action on an app.
+         */
+        @PutMapping("/{id}/actions")
+        @Operation(summary = "Actions on apps", description = "Can be used for "
+                + "managing apps.")
+        @ApiResponse(responseCode = "200", description = "Ok")
+        @ApiResponse(responseCode = "400", description = "Bad request")
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+        @ResponseBody
+        public final ResponseEntity<String> containerManagement(
+                final @PathVariable("id") String containerId,
+                final @RequestParam("actionType") String actionType) {
+
+            final var action = actionType.toUpperCase();
+            ResponseEntity<String> response = null;
+            try {
+                if (ActionType.START.name().equals(action)) {
+                    final var startResponse = appStoreRegistryService.startContainer(containerId);
+                    if (startResponse.isSuccessful()) {
+                        response = ResponseEntity.ok("Successfully started the app.");
+                    } else {
+                        response = ResponseEntity.internalServerError()
+                                .body(startResponse.body().string());
+                    }
+                }
+                if (ActionType.STOP.name().equals(action)) {
+                    final var stopResponse = appStoreRegistryService.stopContainer(containerId);
+                    if (stopResponse.isSuccessful()) {
+                        response = ResponseEntity.ok("Successfully stopped the app.");
+                    } else {
+                        response = ResponseEntity.internalServerError()
+                                .body(stopResponse.body().string());
+                    }
+                }
+                if (ActionType.DELETE.name().equals(action)) {
+                    final var deleteResponse = appStoreRegistryService.deleteContainer(containerId);
+                    if (deleteResponse.isSuccessful()) {
+                        response = ResponseEntity.ok("Successfully deleted the app.");
+                    } else {
+                        response = ResponseEntity.internalServerError()
+                                .body(deleteResponse.body().string());
+                    }
+                }
+            } catch (IOException e) {
+                response = ResponseEntity.badRequest().body(e.getMessage());
+            }
+            return response;
+        }
+
+        /**
+         * @param containerId The id of the container.
+         * @return Response which describes the current app.
+         */
+        @GetMapping("/{id}/describe")
+        @Operation(summary = "Description of the app container", description = "Can be used for "
+                + "describing the current app container.")
+        @ApiResponse(responseCode = "200", description = "Ok")
+        @ApiResponse(responseCode = "400", description = "Bad request")
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+        @ResponseBody
+        public final ResponseEntity<String> containerDescription(
+                final @PathVariable("id") String containerId) {
+            ResponseEntity<String> response;
+            try {
+                final var descriptionResponse = appStoreRegistryService
+                        .getContainerDescription(containerId);
+                if (descriptionResponse.isSuccessful()) {
+                    response = ResponseEntity.ok(descriptionResponse.body().string());
+                } else {
+                    response = ResponseEntity.internalServerError()
+                            .body(descriptionResponse.body().string());
+                }
+            } catch (IOException e) {
+                response = ResponseEntity.badRequest().body(e.getMessage());
+            }
+            return response;
+        }
     }
 
     /**
@@ -90,198 +175,5 @@ public final class AppStoreControllers {
     @Tag(name = ResourceName.APPSTORES, description = ResourceDescription.APPSTORE)
     public static class AppStoreController extends BaseResourceController<AppStore, AppStoreDesc,
             AppStoreView, AppStoreService> {
-    }
-
-    /**
-     * Offers the endpoints for managing app stores.
-     */
-    @RestController
-    @RequestMapping("/api/appstore/registry")
-    @Tag(name = ResourceName.APPSTORE_REGISTRY, description = ResourceDescription.APPSTORE_REGISTRY)
-    @RequiredArgsConstructor
-    public static class AppStoreRegistryController {
-
-        /**
-         * App store registry service.
-         */
-        private final @NonNull AppStoreRegistryService appStoreRegistryService;
-
-        /**
-         * @return List of images.
-         */
-        @GetMapping("/images")
-        @Operation(summary = "Display all images", description = "Can be used for "
-                + "displaying all images.")
-        @ApiResponse(responseCode = "200", description = "Ok")
-        @ApiResponse(responseCode = "400", description = "Bad request")
-        @ApiResponse(responseCode = "500", description = "Internal server error")
-        @ResponseBody
-        public final ResponseEntity<String> getImages() {
-            try {
-                final var response = appStoreRegistryService.getImages();
-                if (response.isSuccessful()) {
-                    return ResponseEntity.ok(response.body().string());
-                } else {
-                    return ResponseEntity.internalServerError().body(response.body().string());
-                }
-            } catch (IOException exception) {
-                return ResponseEntity.badRequest().body(exception.getMessage());
-            }
-        }
-
-        /**
-         * @return List of containers.
-         */
-        @GetMapping("/containers")
-        @Operation(summary = "Display all containers", description = "Can be used for "
-                + "displaying all containers.")
-        @ApiResponse(responseCode = "200", description = "Ok")
-        @ApiResponse(responseCode = "400", description = "Bad request")
-        @ApiResponse(responseCode = "500", description = "Internal server error")
-        @ResponseBody
-        public final ResponseEntity<String> getContainers() {
-            try {
-                final var response = appStoreRegistryService.getContainers();
-                if (response.isSuccessful()) {
-                    return ResponseEntity.ok(response.body().string());
-                } else {
-                    return ResponseEntity.internalServerError().body(response.body().string());
-                }
-            } catch (IOException exception) {
-                return ResponseEntity.badRequest().body(exception.getMessage());
-            }
-        }
-
-        /**
-         * @param imageName The name of the image.
-         * @return Response message, whether image has been downloaded successfully or not.
-         */
-        @PostMapping("/images/pull")
-        @Operation(summary = "Pull an image from registry", description = "Can be used for "
-                + "pulling an specific image from the registry.")
-        @ApiResponse(responseCode = "200", description = "Ok")
-        @ApiResponse(responseCode = "400", description = "Bad request")
-        @ApiResponse(responseCode = "500", description = "Internal server error")
-        @ResponseBody
-        public final ResponseEntity<String> pullImage(
-                final @RequestParam("imageName") String imageName) {
-            try {
-                final var response = appStoreRegistryService.pullImage(imageName);
-                if (response.isSuccessful()) {
-                    return ResponseEntity.ok("Image successfully downloaded from registry");
-                } else {
-                    final var message = response.body().string();
-                    return ResponseEntity.internalServerError().body(message);
-                }
-            } catch (IOException exception) {
-                return ResponseEntity.badRequest().body(exception.getMessage());
-            }
-        }
-
-        /**
-         * @param containerName          The name of the container.
-         * @param containerConfiguration The container configuration-
-         * @return Response message, whether container has been created successfully or not.
-         */
-        @PostMapping("/containers/create")
-        @Operation(summary = "Creates a container", description = "Can be used for "
-                + "creating a container from a specific image.")
-        @ApiResponse(responseCode = "200", description = "Ok")
-        @ApiResponse(responseCode = "400", description = "Bad request")
-        @ApiResponse(responseCode = "500", description = "Internal server error")
-        @ResponseBody
-        public final ResponseEntity<String> createContainer(
-                final @RequestParam("containerName") String containerName,
-                final @RequestBody ContainerConfiguration containerConfiguration) {
-            try {
-                final var response = appStoreRegistryService
-                        .createContainer(containerName, containerConfiguration);
-                if (response.isSuccessful()) {
-                    return ResponseEntity.ok(response.body().string());
-                } else {
-                    return ResponseEntity.internalServerError().body(response.body().string());
-                }
-            } catch (IOException exception) {
-                return ResponseEntity.badRequest().body(exception.getMessage());
-            }
-        }
-
-        /**
-         * @param containerId The id of the container.
-         * @return Response message, whether container has been started successfully or not.
-         */
-        @PostMapping("/containers/{id}/start")
-        @Operation(summary = "Starts a container", description = "Can be used for "
-                + "starting a specific container.")
-        @ApiResponse(responseCode = "200", description = "Ok")
-        @ApiResponse(responseCode = "400", description = "Bad request")
-        @ApiResponse(responseCode = "500", description = "Internal server error")
-        @ResponseBody
-        public final ResponseEntity<String> startContainer(
-                final @PathVariable("id") String containerId) {
-            try {
-                final var response = appStoreRegistryService
-                        .startContainer(containerId);
-                if (response.isSuccessful()) {
-                    return ResponseEntity.ok(response.body().string());
-                } else {
-                    return ResponseEntity.internalServerError().body(response.body().string());
-                }
-            } catch (IOException exception) {
-                return ResponseEntity.badRequest().body(exception.getMessage());
-            }
-        }
-
-        /**
-         * @param containerId The id of the container.
-         * @return Response message, whether container has been stopped successfully or not.
-         */
-        @PostMapping("/containers/{id}/stop")
-        @Operation(summary = "Stops a container", description = "Can be used for "
-                + "stopping a specific container.")
-        @ApiResponse(responseCode = "200", description = "Ok")
-        @ApiResponse(responseCode = "400", description = "Bad request")
-        @ApiResponse(responseCode = "500", description = "Internal server error")
-        @ResponseBody
-        public final ResponseEntity<String> stopContainer(
-                final @PathVariable("id") String containerId) {
-            try {
-                final var response = appStoreRegistryService
-                        .stopContainer(containerId);
-                if (response.isSuccessful()) {
-                    return ResponseEntity.ok(response.body().string());
-                } else {
-                    return ResponseEntity.internalServerError().body(response.body().string());
-                }
-            } catch (IOException exception) {
-                return ResponseEntity.badRequest().body(exception.getMessage());
-            }
-        }
-
-        /**
-         * @param containerId The id of the container.
-         * @return Response message, whether container has been deleted successfully or not.
-         */
-        @DeleteMapping("/containers/{id}")
-        @Operation(summary = "Deletes a container", description = "Can be used for "
-                + "deleting a specific container.")
-        @ApiResponse(responseCode = "200", description = "Ok")
-        @ApiResponse(responseCode = "400", description = "Bad request")
-        @ApiResponse(responseCode = "500", description = "Internal server error")
-        @ResponseBody
-        public final ResponseEntity<String> deleteContainer(
-                final @PathVariable("id") String containerId) {
-            try {
-                final var response = appStoreRegistryService
-                        .deleteContainer(containerId);
-                if (response.isSuccessful()) {
-                    return ResponseEntity.ok(response.body().string());
-                } else {
-                    return ResponseEntity.internalServerError().body(response.body().string());
-                }
-            } catch (IOException exception) {
-                return ResponseEntity.badRequest().body(exception.getMessage());
-            }
-        }
     }
 }
