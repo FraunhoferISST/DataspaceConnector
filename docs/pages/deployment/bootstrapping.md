@@ -90,7 +90,6 @@ sample files are provided at `test/resources/bootstrap`.
             }
           ],
           "ids:language": {
-            "properties": null,
             "@id": "idsc:EN"
           },
           "ids:created": "2016-10-03T15:10:40.000Z",
@@ -164,10 +163,10 @@ broker.register.https\://w3id.org/idsa/autogen/resource/d5b1cd4e-2a5a-47c2-86c5-
 ```
 
 ## Registering Elements at the IDS Broker
-Each resource that has been registered during the bootstrapping process can be registered at an
-IDS Broker. It is possible to register different resources at different brokers, but each resource
-can only be registered at one broker once. The registration of a resource at a broker implicitly
-registers the connector itself at the broker.
+Each resource being registered during the bootstrapping process can be registered at an IDS Broker.
+It is possible to register different resources at different brokers, but each resource can only be
+registered at one broker once. The registration of a resource at a broker implicitly registers the
+connector itself at the broker.
 
 In order to register a resource at the broker, an entry with the following structure must be placed
 in a `bootstrap.properties` file:

@@ -1,0 +1,31 @@
+@startuml
+left to right direction
+
+package "Dataspace Connector" {
+        () "IDSCP" as i5
+        () "HTTPS" as i3
+        () "HTTPS" as i4
+
+        database "PostgreSQL"
+
+        node "Core Container" as core {
+            [Entity Service] --> PostgreSQL: manage
+
+            [Access Verifier] <-- [Entity Service]: validate usage
+            [Entity Controller] -> [Entity Service]: access
+
+            [Messaging Services] -- i3
+            [Messaging Services] ..> [Infomodel Library]: use
+            [Entity Service] .> [Infomodel Library]: use
+
+            [Messaging Services] --> [Entity Service]: access
+            [Entity Controller] - i4
+
+            [Apache Camel] - i5
+            [Entity Service] --> [Apache Camel]: deploy
+        }
+
+        [GUI] ---> i4: interact with
+    }
+
+@enduml

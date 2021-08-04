@@ -1,0 +1,33 @@
+@startuml
+participant ProviderBackend
+actor User
+participant ProviderConnector
+participant ConsumerConnector
+participant ConsumerBackend
+'autonumber
+User->>ProviderConnector: create offered resource
+ProviderConnector-->>User: created
+ConsumerConnector->>ProviderConnector: request resource
+ProviderConnector-->>ConsumerConnector: metadata
+ConsumerConnector->>ConsumerConnector: create requested resource
+ConsumerBackend->>ConsumerConnector: subscribe to requested resource
+ConsumerConnector-->>ConsumerBackend: ok
+ProviderBackend->>ProviderConnector: data update event (POST /notify)
+loop notify subscribers
+        ProviderConnector->>ConsumerConnector: send resource update message
+        ConsumerConnector->>ConsumerConnector: update requested resource
+        ConsumerConnector-->>ProviderConnector: processed
+    end
+    ProviderConnector-->>ProviderBackend: ok
+    loop notify subscribers
+        alt pushData
+            ConsumerConnector->>ProviderConnector: request data
+            ProviderConnector-->>ConsumerConnector: data
+            ConsumerConnector->>ConsumerBackend: send notification with data
+            ConsumerBackend-->>ConsumerConnector: ok
+        else
+            ConsumerConnector->>ConsumerBackend: send notification without data
+            ConsumerBackend-->>ConsumerConnector: ok
+        end
+    end
+@enduml
