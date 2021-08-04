@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.controller.base;
 
-import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
-import io.dataspaceconnector.controller.resource.swagger.response.ResponseDescription;
+import io.dataspaceconnector.controller.resource.tag.ResponseCode;
+import io.dataspaceconnector.controller.resource.tag.ResponseDescription;
 import io.dataspaceconnector.model.base.Description;
 import io.dataspaceconnector.model.base.Entity;
 import io.swagger.v3.oas.annotations.Operation;

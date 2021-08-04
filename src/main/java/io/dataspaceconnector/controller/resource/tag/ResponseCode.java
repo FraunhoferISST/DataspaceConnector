@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.resource.swagger.response;
+package io.dataspaceconnector.controller.resource.tag;
 
 /**
  * This class holds information about response codes.

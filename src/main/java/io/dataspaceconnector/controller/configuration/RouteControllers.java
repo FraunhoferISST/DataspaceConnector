@@ -17,10 +17,10 @@ package io.dataspaceconnector.controller.configuration;
 
 import io.dataspaceconnector.controller.resource.BaseResourceChildController;
 import io.dataspaceconnector.controller.resource.BaseResourceController;
-import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
-import io.dataspaceconnector.controller.resource.swagger.response.ResponseDescription;
 import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.tag.ResourceName;
+import io.dataspaceconnector.controller.resource.tag.ResponseCode;
+import io.dataspaceconnector.controller.resource.tag.ResponseDescription;
 import io.dataspaceconnector.controller.resource.view.ArtifactView;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.route.Route;

@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.camel.controller;
 
-import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
-import io.dataspaceconnector.controller.resource.swagger.response.ResponseDescription;
+import io.dataspaceconnector.controller.resource.tag.ResponseCode;
+import io.dataspaceconnector.controller.resource.tag.ResponseDescription;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
