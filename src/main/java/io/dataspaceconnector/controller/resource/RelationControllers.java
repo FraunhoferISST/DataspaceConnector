@@ -27,20 +27,25 @@ import io.dataspaceconnector.controller.resource.view.RepresentationView;
 import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
 import io.dataspaceconnector.controller.resource.view.SubscriptionView;
 import io.dataspaceconnector.model.agreement.Agreement;
+import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.subscription.Subscription;
+import io.dataspaceconnector.service.configuration.EntityLinkerService;
 import io.dataspaceconnector.service.resource.AbstractCatalogResourceLinker;
 import io.dataspaceconnector.service.resource.AbstractResourceContractLinker;
 import io.dataspaceconnector.service.resource.AbstractResourceRepresentationLinker;
 import io.dataspaceconnector.service.resource.RelationServices;
+import io.dataspaceconnector.view.app.AppView;
 import io.dataspaceconnector.view.broker.BrokerView;
+import io.dataspaceconnector.view.endpoint.AppEndpointView;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -76,38 +81,8 @@ public final class RelationControllers {
     @RestController
     @RequestMapping("/api/appstores/{id}/apps")
     @Tag(name = ResourceName.APPSTORES, description = ResourceDescription.APPSTORE)
-    public static class AppstoreToApps extends BaseResourceChildController<
+    public static class AppstoreToApps extends BaseResourceChildRestrictedController<
             EntityLinkerService.AppLinker, App, AppView> {
-
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                description = "Not allowed")})
-        public final PagedModel<AppView> addResources(
-                @Valid @PathVariable(name = "id") final UUID ownerId,
-                @Valid @RequestBody final List<URI> resources) {
-            throw new MethodNotAllowed();
-        }
-
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                description = "No content")})
-        public final HttpEntity<Void> replaceResources(
-                @Valid @PathVariable(name = "id") final UUID ownerId,
-                @Valid @RequestBody final List<URI> resources) {
-            throw new MethodNotAllowed();
-        }
-
-        @Override
-        @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                description = "No content")})
-        public final HttpEntity<Void> removeResources(
-                @Valid @PathVariable(name = "id") final UUID ownerId,
-                @Valid @RequestBody final List<URI> resources) {
-            throw new MethodNotAllowed();
-        }
 
     }
 
@@ -117,7 +92,7 @@ public final class RelationControllers {
     @RestController
     @RequestMapping("/api/apps/{id}/endpoints")
     @Tag(name = ResourceName.APPS, description = ResourceDescription.APPS)
-    public static class AppToEndpoints extends BaseResourceChildController<
+    public static class AppToEndpoints extends BaseResourceChildRestrictedController<
             EntityLinkerService.AppEndpointLinker, AppEndpoint, AppEndpointView> {
 
     }
