@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import javax.xml.datatype.DatatypeFactory;
-import java.io.IOException;
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.DescriptionRequestMessage;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DynamicAttributeToken;
@@ -28,14 +24,13 @@ import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
-import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
-import io.dataspaceconnector.service.configuration.BrokerService;
 import de.fraunhofer.ids.messaging.requests.MessageContainer;
+import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.controller.util.CommunicationProtocol;
+import io.dataspaceconnector.service.configuration.BrokerService;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import lombok.SneakyThrows;
@@ -55,6 +50,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+
+import javax.xml.datatype.DatatypeFactory;
+import java.io.IOException;
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -249,8 +248,7 @@ public class ConnectorUpdateMessageControllerTest {
 
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/connector/update")
-                .param("recipient", recipient)
-                .param("protocol", CommunicationProtocol.IDSCP2.name()))
+                .param("recipient", recipient))
                 .andReturn();
 
         /* ASSERT */
@@ -274,8 +272,7 @@ public class ConnectorUpdateMessageControllerTest {
 
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/connector/update")
-                .param("recipient", recipient)
-                .param("protocol", CommunicationProtocol.IDSCP2.name()))
+                .param("recipient", recipient))
                 .andReturn();
 
         /* ASSERT */
