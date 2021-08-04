@@ -12,9 +12,11 @@ All notable changes to this project will be documented in this file.
 - Increase maven-enforcer-plugin version from 3.0.0-M3 to 3.0.0.
 - Increase springdoc version from 1.5.9 to 1.5.10.
 - Increase checkstyle version from 8.44 to 8.45.
+- Increase pmd version from 6.36.0 to 6.37.0.
 
 ### Fixed
 - Restrict access to POST/PUT/DELETE `{entity}/subscriptions` for artifacts and representations.
+- Restrict access to POST/PUT/DELETE `offers/{id}/brokers`.
 - Fix eager service loading causing "Bean not eligable for..." messages.
 
 ## [6.0.0] - 2021-07-20
