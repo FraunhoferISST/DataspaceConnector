@@ -17,7 +17,7 @@ package io.dataspaceconnector.view.datasource;
 
 import io.dataspaceconnector.controller.configuration.DataSourceController;
 import io.dataspaceconnector.controller.resource.view.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
+import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.datasource.DataSource;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;

@@ -16,7 +16,7 @@
 package io.dataspaceconnector.view.configuration;
 
 import io.dataspaceconnector.controller.configuration.ConfigurationController;
-import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
+import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
 import io.dataspaceconnector.model.configuration.ConfigurationFactory;

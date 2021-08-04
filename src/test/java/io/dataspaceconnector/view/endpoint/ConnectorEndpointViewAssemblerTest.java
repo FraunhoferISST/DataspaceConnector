@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.view.endpoint;
 
-import java.net.URI;
-
 import io.dataspaceconnector.controller.configuration.EndpointController;
-import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
+import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpointDesc;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpointFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

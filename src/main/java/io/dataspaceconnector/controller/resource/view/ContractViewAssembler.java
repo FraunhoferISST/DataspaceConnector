@@ -15,10 +15,9 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers.ContractController;
+import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.exception.UnreachableLineException;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.resource.OfferedResource;
@@ -29,6 +28,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
