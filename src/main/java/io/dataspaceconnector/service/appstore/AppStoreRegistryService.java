@@ -16,7 +16,6 @@
 package io.dataspaceconnector.service.appstore;
 
 import de.fraunhofer.ids.messaging.protocol.http.HttpService;
-import io.dataspaceconnector.service.appstore.container.ContainerConfiguration;
 import io.dataspaceconnector.service.appstore.container.ContainerRequestBodyCreator;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -95,101 +94,6 @@ public class AppStoreRegistryService {
     }
 
     /**
-     * @return Return response of image request.
-     */
-    public Response getImages() throws IOException {
-        String jwt = getJwtToken();
-        final var builder = getRequestBuilder();
-        final var urlBuilder = new HttpUrl.Builder()
-                .scheme("http")
-                .host(appStoreRegistryConfig.getDockerHost())
-                .port(appStoreRegistryConfig.getDockerPort())
-                .addPathSegments("api/endpoints/1/docker/images/json")
-                .addQueryParameter("all", "0");
-        final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
-        builder.url(url);
-        builder.get();
-
-        final var request = builder.build();
-        return httpService.send(request);
-    }
-
-    /**
-     * @return Response of container request.
-     */
-    public Response getContainers() throws IOException {
-        String jwt = getJwtToken();
-        final var builder = getRequestBuilder();
-        final var urlBuilder = new HttpUrl.Builder()
-                .scheme("http")
-                .host(appStoreRegistryConfig.getDockerHost())
-                .port(appStoreRegistryConfig.getDockerPort())
-                .addPathSegments("api/endpoints/1/docker/containers/json")
-                .addQueryParameter("all", "0");
-        final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
-        builder.url(url);
-        builder.get();
-
-        final var request = builder.build();
-        return httpService.send(request);
-    }
-
-    /**
-     * @param imageName The name of the image.
-     * @return Response of pulling an image.
-     * @throws IOException if an error occurs while pulling the image.
-     */
-    public Response pullImage(final String imageName) throws IOException {
-        String jwt = getJwtToken();
-        final var builder = getRequestBuilder();
-        final var urlBuilder = new HttpUrl.Builder()
-                .scheme("http")
-                .host(appStoreRegistryConfig.getDockerHost())
-                .port(appStoreRegistryConfig.getDockerPort())
-                .addPathSegments("api/endpoints/1/docker/images/create")
-                .addQueryParameter("fromImage", imageName);
-        final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
-        builder.url(url);
-        builder.post(RequestBody.create(new byte[0], null));
-
-        final var request = builder.build();
-        return httpService.send(request);
-    }
-
-    /**
-     * @param containerName          The container name.
-     * @param containerConfiguration The container configuration.
-     * @return Response of creating a container.
-     * @throws IOException if an error occurs while creating the container.
-     */
-    public Response createContainer(final String containerName,
-                                    final ContainerConfiguration containerConfiguration)
-            throws IOException {
-        String jwt = getJwtToken();
-        final var requestBody = requestBodyCreator
-                .createContainerConfigRequestBody(containerConfiguration);
-
-        final var builder = getRequestBuilder();
-        final var urlBuilder = new HttpUrl.Builder()
-                .scheme("http")
-                .host(appStoreRegistryConfig.getDockerHost())
-                .port(appStoreRegistryConfig.getDockerPort())
-                .addPathSegments("api/endpoints/1/docker/containers/create")
-                .addQueryParameter("name", containerName);
-        final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
-        builder.url(url);
-        builder.post(RequestBody.create(requestBody, MediaType.parse("application/json")));
-
-        final var request = builder.build();
-        // ToDO: Check why timeout exception occurs.
-        return httpService.send(request);
-    }
-
-    /**
      * @param containerId The id of the container.
      * @return Response of starting container.
      * @throws IOException if an error occurs while starting the container.
@@ -253,6 +157,29 @@ public class AppStoreRegistryService {
         builder.addHeader("Authorization", "Bearer " + jwt);
         builder.url(url);
         builder.delete();
+
+        final var request = builder.build();
+        return httpService.send(request);
+    }
+
+    /**
+     * @param containerId The id of the container.
+     * @return Response is container description.
+     * @throws IOException IOException if an error occurs while deleting the container.
+     */
+    public Response getContainerDescription(final String containerId) throws IOException {
+        String jwt = getJwtToken();
+        final var builder = getRequestBuilder();
+
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(appStoreRegistryConfig.getDockerHost())
+                .port(appStoreRegistryConfig.getDockerPort())
+                .addPathSegments("api/endpoints/1/docker/containers/" + containerId + "/json");
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.url(url);
+        builder.get();
 
         final var request = builder.build();
         return httpService.send(request);

@@ -15,36 +15,48 @@
  */
 package io.dataspaceconnector.service.appstore.container;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 /**
- * Container configuration class.
+ * Enum class for action types.
  */
-@Getter
-@Setter
-@NoArgsConstructor
-public class ContainerConfiguration {
+public enum ActionType {
 
     /**
-     * The image name of container.
+     * Start an app.
      */
-    private String imageName;
+    START("Start"),
 
     /**
-     * The protocol.
+     * Stop an app.
      */
-    private String protocol;
+    STOP("Stop"),
 
     /**
-     * The host port.
+     * Delete an app.
      */
-    private int hostPort;
+    DELETE("Delete"),
 
     /**
-     * The exposed port.
+     * Install an app.
      */
-    private int exposedPort;
+    INSTALL("Install");
+
+    /**
+     * Holds the enums string.
+     */
+    private final String value;
+
+    /**
+     * Constructor.
+     *
+     * @param message The msg of the action type.
+     */
+    ActionType(final String message) {
+        this.value = message;
+    }
+
+    @Override
+    public String toString() {
+        return value;
+    }
 
 }

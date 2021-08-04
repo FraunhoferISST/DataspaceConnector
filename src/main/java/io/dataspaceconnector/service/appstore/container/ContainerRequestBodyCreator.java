@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.service.appstore.container;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
@@ -37,35 +36,5 @@ public class ContainerRequestBodyCreator {
         jsonObject.put("Password", password);
 
         return jsonObject.toString();
-    }
-
-    /**
-     * @param containerConfiguration The container configuration.
-     * @return request body as string.
-     */
-    public final String createContainerConfigRequestBody(
-            final ContainerConfiguration containerConfiguration) {
-        final var main = new JSONObject();
-
-        if (containerConfiguration != null) {
-            main.put("Image", containerConfiguration.getImageName());
-
-            final var exposedPorts = new JSONObject();
-            final var exposedPort = String.valueOf(containerConfiguration.getExposedPort());
-            final var protocol = containerConfiguration.getProtocol();
-            exposedPorts.put(exposedPort + "/" + protocol, new JSONObject());
-            main.put("ExposedPorts", exposedPorts);
-
-            final var hostConfig = new JSONObject();
-            final var portBinding = new JSONObject();
-            final var hostConfigs = new JSONArray();
-            final var hostPort = new JSONObject();
-            hostPort.put("HostPort", containerConfiguration.getHostPort());
-            hostConfigs.put(hostPort);
-            portBinding.put(containerConfiguration.getHostPort() + "/" + protocol, hostConfigs);
-            hostConfig.put("PortBindings", portBinding);
-            main.put("HostConfig", hostConfig);
-        }
-        return main.toString();
     }
 }

@@ -73,6 +73,8 @@ public class AppRequestMessageController {
 
         try {
             downloadApp(recipient, app);
+
+            //TODO: sendArtifactRequestMessage
             return new ResponseEntity<>(HttpStatus.OK);
 
         } catch (MessageException exception) {
