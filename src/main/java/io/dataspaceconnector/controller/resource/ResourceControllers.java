@@ -15,35 +15,60 @@
  */
 package io.dataspaceconnector.controller.resource;
 
+import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
+import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import de.fraunhofer.ids.messaging.protocol.UnexpectedResponseException;
-import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
-import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
-import io.dataspaceconnector.controller.resource.tag.ResourceName;
-import io.dataspaceconnector.controller.resource.tag.ResponseCode;
-import io.dataspaceconnector.controller.resource.tag.ResponseDescription;
-import io.dataspaceconnector.controller.resource.view.AgreementView;
-import io.dataspaceconnector.controller.resource.view.ArtifactView;
-import io.dataspaceconnector.controller.resource.view.CatalogView;
-import io.dataspaceconnector.controller.resource.view.ContractRuleView;
-import io.dataspaceconnector.controller.resource.view.ContractView;
-import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
-import io.dataspaceconnector.controller.resource.view.RepresentationView;
-import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
-import io.dataspaceconnector.controller.resource.view.SubscriptionView;
+import io.dataspaceconnector.common.QueryInput;
+import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.common.ValidationUtils;
+import io.dataspaceconnector.controller.resource.base.BaseResourceController;
+import io.dataspaceconnector.controller.resource.base.BaseResourceNotificationController;
+import io.dataspaceconnector.controller.resource.base.CRUDController;
+import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
+import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
+import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
+import io.dataspaceconnector.controller.resource.base.tag.ResponseCode;
+import io.dataspaceconnector.controller.resource.base.tag.ResponseDescription;
+import io.dataspaceconnector.controller.resource.view.agreement.AgreementView;
+import io.dataspaceconnector.controller.resource.view.artifact.ArtifactView;
+import io.dataspaceconnector.controller.resource.view.broker.BrokerView;
+import io.dataspaceconnector.controller.resource.view.catalog.CatalogView;
+import io.dataspaceconnector.controller.resource.view.configuration.ConfigurationView;
+import io.dataspaceconnector.controller.resource.view.contract.ContractView;
+import io.dataspaceconnector.controller.resource.view.datasource.DataSourceView;
+import io.dataspaceconnector.controller.resource.view.endpoint.EndpointViewAssemblerProxy;
+import io.dataspaceconnector.controller.resource.view.endpoint.EndpointViewProxy;
+import io.dataspaceconnector.controller.resource.view.representation.RepresentationView;
+import io.dataspaceconnector.controller.resource.view.resource.OfferedResourceView;
+import io.dataspaceconnector.controller.resource.view.resource.RequestedResourceView;
+import io.dataspaceconnector.controller.resource.view.route.RouteView;
+import io.dataspaceconnector.controller.resource.view.rule.ContractRuleView;
+import io.dataspaceconnector.controller.resource.view.subscription.SubscriptionView;
+import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.agreement.AgreementDesc;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
+import io.dataspaceconnector.model.broker.Broker;
+import io.dataspaceconnector.model.broker.BrokerDesc;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
+import io.dataspaceconnector.model.configuration.Configuration;
+import io.dataspaceconnector.model.configuration.ConfigurationDesc;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.contract.ContractDesc;
+import io.dataspaceconnector.model.datasource.DataSource;
+import io.dataspaceconnector.model.datasource.DataSourceDesc;
+import io.dataspaceconnector.model.endpoint.Endpoint;
+import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.representation.RepresentationDesc;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
+import io.dataspaceconnector.model.route.Route;
+import io.dataspaceconnector.model.route.RouteDesc;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.rule.ContractRuleDesc;
 import io.dataspaceconnector.model.subscription.Subscription;
@@ -52,30 +77,39 @@ import io.dataspaceconnector.service.BlockingArtifactReceiver;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.resource.AgreementService;
 import io.dataspaceconnector.service.resource.ArtifactService;
+import io.dataspaceconnector.service.resource.BrokerService;
 import io.dataspaceconnector.service.resource.CatalogService;
+import io.dataspaceconnector.service.resource.ConfigurationService;
 import io.dataspaceconnector.service.resource.ContractService;
+import io.dataspaceconnector.service.resource.DataSourceService;
+import io.dataspaceconnector.service.resource.EndpointServiceProxy;
+import io.dataspaceconnector.service.resource.GenericEndpointService;
 import io.dataspaceconnector.service.resource.RepresentationService;
 import io.dataspaceconnector.service.resource.ResourceService;
 import io.dataspaceconnector.service.resource.RetrievalInformation;
+import io.dataspaceconnector.service.resource.RouteService;
 import io.dataspaceconnector.service.resource.RuleService;
 import io.dataspaceconnector.service.resource.SubscriptionService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
-import io.dataspaceconnector.util.QueryInput;
-import io.dataspaceconnector.util.Utils;
-import io.dataspaceconnector.util.ValidationUtils;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -84,6 +118,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -129,7 +164,7 @@ public final class ResourceControllers {
     @Tag(name = ResourceName.REPRESENTATIONS, description = ResourceDescription.REPRESENTATIONS)
     public static class RepresentationController
             extends BaseResourceNotificationController<Representation, RepresentationDesc,
-            RepresentationView, RepresentationService> {
+                        RepresentationView, RepresentationService> {
     }
 
     /**
@@ -309,7 +344,7 @@ public final class ResourceControllers {
                 @RequestBody(required = false) final QueryInput queryInput)
                 throws IOException,
                 UnexpectedResponseException,
-                io.dataspaceconnector.exception.UnexpectedResponseException {
+                io.dataspaceconnector.common.exception.UnexpectedResponseException {
             ValidationUtils.validateQueryInput(queryInput);
             final var data =
                     artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput);
@@ -422,6 +457,304 @@ public final class ResourceControllers {
             }
 
             return model;
+        }
+    }
+
+    /**
+     * Offers the endpoints for managing brokers.
+     */
+    @RestController
+    @RequestMapping("/api/brokers")
+    @Tag(name = ResourceName.BROKERS, description = ResourceDescription.BROKERS)
+    public static class BrokerController extends BaseResourceController<Broker, BrokerDesc,
+            BrokerView, BrokerService> {
+    }
+
+    /**
+     * Offers the endpoints for managing configurations.
+     */
+    @RestController
+    @RequestMapping("/api/configurations")
+    @RequiredArgsConstructor
+    @Tag(name = ResourceName.CONFIGURATIONS, description = ResourceDescription.CONFIGURATIONS)
+    public static class ConfigurationController extends BaseResourceController<Configuration,
+            ConfigurationDesc, ConfigurationView, ConfigurationService> {
+
+        /**
+         * The current connector configuration.
+         */
+        private final @NonNull ConfigContainer configContainer;
+
+        /**
+         * Configuration Service, to read and set current config in DB.
+         */
+        private final @NonNull ConfigurationService configurationSvc;
+
+        /**
+         * Update the connector's current configuration.
+         *
+         * @param toSelect The new configuration.
+         * @return Ok or error response.
+         */
+        @PutMapping(value = "/{id}/active", consumes = {"*/*"})
+        @Operation(summary = "Update current configuration")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "200", description = "Ok"),
+                @ApiResponse(responseCode = "400", description = "Failed to deserialize."),
+                @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                @ApiResponse(responseCode = "415", description = "Wrong media type."),
+                @ApiResponse(responseCode = "500", description = "Internal server error")})
+        @ResponseBody
+        public ResponseEntity<Object> setConfiguration(
+                @Valid @PathVariable(name = "id") final UUID toSelect) {
+            try {
+                configurationSvc.swapActiveConfig(toSelect);
+            } catch (ConfigUpdateException exception) {
+                return ResponseUtils.respondConfigurationUpdateError(exception);
+            }
+
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        /**
+         * Return the connector's current configuration.
+         *
+         * @return The configuration object or an error.
+         */
+        @GetMapping(value = "/active", produces = "application/hal+json")
+        @Operation(summary = "Get current configuration")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "200", description = "Ok"),
+                @ApiResponse(responseCode = "401", description = "Unauthorized")})
+        @ResponseBody
+        public ConfigurationView getConfiguration() {
+            return get(configurationSvc.getActiveConfig().getId());
+        }
+
+        /**
+         * Return the connector's current configuration.
+         *
+         * @return The configuration object or an error.
+         */
+        @GetMapping(value = "/active", produces = "application/ld+json")
+        @Operation(summary = "Get current configuration")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "200", description = "Ok"),
+                @ApiResponse(responseCode = "401", description = "Unauthorized")})
+        @ResponseBody
+        public ResponseEntity<Object> getIdsConfiguration() {
+            return ResponseEntity.ok(configContainer.getConfigurationModel().toRdf());
+        }
+    }
+
+    /**
+     * Offers the endpoints for managing data sources.
+     */
+    @RestController
+    @RequestMapping("/api/datasources")
+    @RequiredArgsConstructor
+    @Tag(name = ResourceName.DATA_SOURCES, description = ResourceDescription.DATA_SOURCES)
+    public static class DataSourceController extends BaseResourceController<DataSource,
+            DataSourceDesc, DataSourceView, DataSourceService> {
+    }
+
+    /**
+     * Offers the endpoints for managing different endpoints.
+     */
+    @RestController
+    @RequestMapping("/api/endpoints")
+    @RequiredArgsConstructor
+    @Tag(name = ResourceName.ENDPOINTS, description = ResourceDescription.ENDPOINTS)
+    @Getter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.NONE)
+    public static class EndpointController implements CRUDController<Endpoint, EndpointDesc, Object> {
+
+        /**
+         * Service for generic endpoint.
+         */
+        private final @NonNull GenericEndpointService genericEndpointService;
+
+        /**
+         * Service proxy for endpoints.
+         */
+        private final @NonNull EndpointServiceProxy service;
+
+        /**
+         * Assembler for pagination.
+         */
+        private final @NonNull PagedResourcesAssembler<Endpoint> pagedAssembler;
+
+        /**
+         * Assembler for the EndpointView.
+         */
+        private final @NonNull EndpointViewAssemblerProxy assemblerProxy;
+
+        /**
+         * @param obj The endpoint object.
+         * @return response entity
+         */
+        private ResponseEntity<Object> respondCreated(final Endpoint obj) {
+            final RepresentationModel<?> entity = assemblerProxy.toModel(obj);
+            final var headers = new HttpHeaders();
+            headers.setLocation(entity.getRequiredLink("self").toUri());
+
+            return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public ResponseEntity<Object> create(final EndpointDesc desc) {
+            return respondCreated(service.create(desc));
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        @SuppressWarnings("unchecked")
+        public PagedModel<Object> getAll(final Integer page, final Integer size) {
+            final var pageable = Utils.toPageRequest(page, size);
+            final var entities = service.getAll(pageable);
+            final PagedModel<?> model;
+            if (entities.hasContent()) {
+                model = pagedAssembler.toModel(entities, assemblerProxy);
+            } else {
+                model = pagedAssembler.toEmptyModel(entities, EndpointViewProxy.class);
+            }
+
+            return (PagedModel<Object>) model;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public final Object get(final UUID resourceId) {
+            return assemblerProxy.toModel(service.get(resourceId));
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public ResponseEntity<Object> update(final UUID resourceId, final EndpointDesc desc) {
+            final var resource = service.update(resourceId, desc);
+
+            if (resource.getId().equals(resourceId)) {
+                // The resource was not moved.
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            return respondCreated(resource);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public ResponseEntity<Void> delete(final UUID resourceId) {
+            service.delete(resourceId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        /**
+         * @param genericEndpointId The id of the generic endpoint.
+         * @param dataSourceId      The id of the data source.
+         * @return response status OK, if data source is created at generic endpoint.
+         */
+        @PutMapping("{id}/datasource/{dataSourceId}")
+        @Operation(summary = "Creates start endpoint for the route")
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.NO_CONTENT)})
+        public final ResponseEntity<Void> linkDataSource(
+                @Valid @PathVariable(name = "id") final UUID genericEndpointId,
+                @Valid @PathVariable(name = "dataSourceId") final UUID dataSourceId) {
+            genericEndpointService.setGenericEndpointDataSource(genericEndpointId, dataSourceId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+    }
+
+    /**
+     * Offers the endpoints for managing routes.
+     */
+    @RestController
+    @RequestMapping("/api/routes")
+    @Tag(name = ResourceName.ROUTES, description = ResourceDescription.ROUTES)
+    @RequiredArgsConstructor
+    public static class RouteController extends BaseResourceController<Route, RouteDesc, RouteView,
+            RouteService> {
+
+        /**
+         * @param routeId    The id of the route.
+         * @param endpointId The id of the endpoint.
+         * @return response status OK, if start endpoint is created.
+         */
+        @PutMapping("{id}/endpoint/start")
+        @Operation(summary = "Creates start endpoint for the route")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
+                        description = ResponseDescription.NO_CONTENT),
+                @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                        description = ResponseDescription.UNAUTHORIZED)})
+        public ResponseEntity<String> createStartEndpoint(
+                @Valid @PathVariable(name = "id") final UUID routeId,
+                @RequestBody final UUID endpointId) {
+            getService().setStartEndpoint(routeId, endpointId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        /**
+         * @param routeId The id of the route.
+         * @return response status OK, if start endpoint is deleted.
+         */
+        @DeleteMapping("{id}/endpoint/start")
+        @Operation(summary = "Deletes the start endpoint of the route")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
+                        description = ResponseDescription.NO_CONTENT),
+                @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                        description = ResponseDescription.UNAUTHORIZED)})
+        public ResponseEntity<String> deleteStartEndpoint(
+                @Valid @PathVariable(name = "id") final UUID routeId) {
+            getService().removeStartEndpoint(routeId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        /**
+         * @param routeId    The id of the route.
+         * @param endpointId The id of the endpoint.
+         * @return response status OK, if last endpoint is created.
+         */
+        @PutMapping("{id}/endpoint/end")
+        @Operation(summary = "Creates last endpoint for the route")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
+                        description = ResponseDescription.NO_CONTENT),
+                @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                        description = ResponseDescription.UNAUTHORIZED)})
+        public ResponseEntity<String> createLastEndpoint(
+                @Valid @PathVariable(name = "id") final UUID routeId,
+                @RequestBody final UUID endpointId) {
+            getService().setLastEndpoint(routeId, endpointId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        /**
+         * @param routeId The id of the route.
+         * @return response status OK, if last endpoint is deleted.
+         */
+        @DeleteMapping("{id}/endpoint/end")
+        @Operation(summary = "Deletes the start endpoint of the route")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
+                        description = ResponseDescription.NO_CONTENT),
+                @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                        description = ResponseDescription.UNAUTHORIZED)})
+        public ResponseEntity<String> deleteLastEndpoint(
+                @Valid @PathVariable(name = "id") final UUID routeId) {
+            getService().removeLastEndpoint(routeId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
 }

@@ -15,16 +15,18 @@
  */
 package io.dataspaceconnector.service.configuration;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.model.datasource.DataSource;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.repository.GenericEndpointRepository;
+import io.dataspaceconnector.service.resource.DataSourceService;
+import io.dataspaceconnector.service.resource.GenericEndpointService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;

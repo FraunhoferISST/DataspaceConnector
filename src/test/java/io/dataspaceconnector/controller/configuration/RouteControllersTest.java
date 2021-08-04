@@ -15,15 +15,16 @@
  */
 package io.dataspaceconnector.controller.configuration;
 
-import java.util.UUID;
-
-import io.dataspaceconnector.service.configuration.RouteService;
+import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.service.resource.RouteService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
@@ -35,7 +36,7 @@ class RouteControllersTest {
     private RouteService routeService;
 
     @Autowired
-    private RouteControllers.RouteController controller;
+    private ResourceControllers.RouteController controller;
 
     @Test
     public void createStartEndpoint_validInput_setStartEndpoint() {

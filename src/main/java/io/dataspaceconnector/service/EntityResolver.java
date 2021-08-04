@@ -16,6 +16,10 @@
 package io.dataspaceconnector.service;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
+import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.IdsUtils;
+import io.dataspaceconnector.common.QueryInput;
+import io.dataspaceconnector.common.Utils;
 import io.dataspaceconnector.exception.InvalidResourceException;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
@@ -43,10 +47,6 @@ import io.dataspaceconnector.service.resource.ResourceService;
 import io.dataspaceconnector.service.resource.RuleService;
 import io.dataspaceconnector.service.usagecontrol.AllowAccessVerifier;
 import io.dataspaceconnector.service.util.EndpointUtils;
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.IdsUtils;
-import io.dataspaceconnector.util.QueryInput;
-import io.dataspaceconnector.util.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

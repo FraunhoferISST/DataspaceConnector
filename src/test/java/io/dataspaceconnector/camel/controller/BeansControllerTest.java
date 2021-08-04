@@ -15,8 +15,7 @@
  */
 package io.dataspaceconnector.camel.controller;
 
-import java.nio.charset.StandardCharsets;
-
+import io.dataspaceconnector.controller.routing.BeansController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -28,6 +27,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
 import org.xml.sax.InputSource;
+
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;

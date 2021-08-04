@@ -15,16 +15,13 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import io.dataspaceconnector.exception.PolicyRestrictionException;
-import io.dataspaceconnector.exception.UnreachableLineException;
+import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.QueryInput;
+import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.common.exception.NotImplemented;
+import io.dataspaceconnector.common.exception.PolicyRestrictionException;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
@@ -39,10 +36,6 @@ import io.dataspaceconnector.service.HttpService;
 import io.dataspaceconnector.service.usagecontrol.AccessVerificationInput;
 import io.dataspaceconnector.service.usagecontrol.PolicyVerifier;
 import io.dataspaceconnector.service.usagecontrol.VerificationResult;
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.QueryInput;
-import io.dataspaceconnector.util.Utils;
-import io.dataspaceconnector.util.exception.NotImplemented;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -51,6 +44,14 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Handles the basic logic for artifacts.
@@ -140,7 +141,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @return The artifacts data.
      * @throws PolicyRestrictionException                                if the data access has
      *                                                                   been denied.
-     * @throws io.dataspaceconnector.exception.ResourceNotFoundException if the artifact does not
+     * @throws ResourceNotFoundException if the artifact does not
      *                                                                   exist.
      * @throws IllegalArgumentException                                  if any of the parameters
      *                                                                   is null.
@@ -211,7 +212,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @return The artifact's data.
      * @throws PolicyRestrictionException                                if the data access has
      *                                                                   been denied.
-     * @throws io.dataspaceconnector.exception.ResourceNotFoundException if the artifact does not
+     * @throws ResourceNotFoundException if the artifact does not
      *                                                                   exist.
      * @throws IllegalArgumentException                                  if any of the parameters
      *                                                                   is null.

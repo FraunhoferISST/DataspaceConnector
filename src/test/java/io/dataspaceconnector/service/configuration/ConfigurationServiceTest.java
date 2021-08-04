@@ -19,6 +19,7 @@ import de.fraunhofer.ids.messaging.core.config.ConfigProducer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
 import io.dataspaceconnector.repository.ConfigurationRepository;
+import io.dataspaceconnector.service.resource.ConfigurationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

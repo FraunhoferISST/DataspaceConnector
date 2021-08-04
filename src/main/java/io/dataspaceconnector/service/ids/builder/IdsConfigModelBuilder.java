@@ -15,16 +15,16 @@
  */
 package io.dataspaceconnector.service.ids.builder;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
 import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import io.dataspaceconnector.common.IdsUtils;
 import io.dataspaceconnector.model.configuration.Configuration;
-import io.dataspaceconnector.util.IdsUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Converts dsc configuration to ids configuration.

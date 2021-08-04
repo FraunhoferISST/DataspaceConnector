@@ -15,15 +15,7 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-
+import io.dataspaceconnector.common.QueryInput;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.artifact.LocalData;
@@ -33,13 +25,21 @@ import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
 import io.dataspaceconnector.service.HttpService;
 import io.dataspaceconnector.service.usagecontrol.AllowAccessVerifier;
-import io.dataspaceconnector.util.QueryInput;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

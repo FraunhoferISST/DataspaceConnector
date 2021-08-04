@@ -16,16 +16,16 @@
 package io.dataspaceconnector.service.ids;
 
 import de.fraunhofer.iais.eis.Language;
-import io.dataspaceconnector.model.base.Entity;
+import io.dataspaceconnector.common.IdsUtils;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.representation.RepresentationDesc;
 import io.dataspaceconnector.model.representation.RepresentationFactory;
 import io.dataspaceconnector.service.ids.builder.IdsArtifactBuilder;
 import io.dataspaceconnector.service.ids.builder.IdsRepresentationBuilder;
-import io.dataspaceconnector.util.IdsUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

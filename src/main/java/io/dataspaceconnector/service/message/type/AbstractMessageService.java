@@ -24,15 +24,15 @@ import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.protocol.http.IdsHttpService;
 import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
+import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.MessageUtils;
+import io.dataspaceconnector.common.exception.VersionNotSupportedException;
 import io.dataspaceconnector.exception.MessageEmptyException;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
-import io.dataspaceconnector.exception.VersionNotSupportedException;
 import io.dataspaceconnector.model.message.MessageDesc;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.MessageUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,7 +41,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-
 import java.util.HashMap;
 import java.util.Map;
 

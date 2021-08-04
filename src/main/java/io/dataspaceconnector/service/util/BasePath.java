@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.service.util;
 
-import io.dataspaceconnector.exception.UnreachableLineException;
+import io.dataspaceconnector.common.exception.UnreachableLineException;
 
 /**
  * The list of the api's paths.

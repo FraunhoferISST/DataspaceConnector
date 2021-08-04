@@ -15,9 +15,9 @@
  */
 package io.dataspaceconnector.controller.resource;
 
-import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
+import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
-import io.dataspaceconnector.service.message.subscription.SubscriberNotificationService;
+import io.dataspaceconnector.service.message.processing.SubscriberNotificationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

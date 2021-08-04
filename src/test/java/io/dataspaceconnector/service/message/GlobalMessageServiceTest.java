@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.service.message;
 
-import javax.xml.datatype.DatatypeFactory;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Optional;
-
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
@@ -36,16 +29,23 @@ import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import io.dataspaceconnector.model.broker.BrokerFactory;
 import io.dataspaceconnector.repository.BrokerRepository;
-import io.dataspaceconnector.service.configuration.BrokerService;
-import io.dataspaceconnector.service.configuration.EntityLinkerService;
 import io.dataspaceconnector.service.message.processing.BrokerCommunication;
 import io.dataspaceconnector.service.message.type.NotificationService;
+import io.dataspaceconnector.service.resource.BrokerService;
+import io.dataspaceconnector.service.resource.RelationServices;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import javax.xml.datatype.DatatypeFactory;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -64,7 +64,7 @@ class GlobalMessageServiceTest {
     private BrokerFactory brokerFactory;
 
     @MockBean
-    private EntityLinkerService.BrokerOfferedResourcesLinker brokerOfferedResourcesLinker;
+    private RelationServices.BrokerOfferedResourceLinker brokerOfferedResourceLinker;
 
     @MockBean
     private BrokerService dscBrokerService;

@@ -15,13 +15,13 @@
 
         <!-- failed to persist the confirmation of the agreement -->
         <onException>
-            <exception>io.dataspaceconnector.camel.exception.UnconfirmedAgreementException</exception>
+            <exception>io.dataspaceconnector.service.message.handler.exception.UnconfirmedAgreementException</exception>
             <to uri="direct:handleUnconfirmedAgreementException"/>
         </onException>
 
         <!-- no agreement with a matching ID was found in the database -->
         <onException>
-            <exception>io.dataspaceconnector.exception.ResourceNotFoundException</exception>
+            <exception>io.dataspaceconnector.common.exception.ResourceNotFoundException</exception>
             <to uri="direct:handleMessageProcessingFailedForAgreement"/>
         </onException>
 

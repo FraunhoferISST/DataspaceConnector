@@ -15,9 +15,9 @@
  */
 package io.dataspaceconnector.model.broker;
 
+import io.dataspaceconnector.common.MetadataUtils;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;

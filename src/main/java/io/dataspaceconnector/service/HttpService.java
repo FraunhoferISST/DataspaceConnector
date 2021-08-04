@@ -15,10 +15,10 @@
  */
 package io.dataspaceconnector.service;
 
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.QueryInput;
-import io.dataspaceconnector.util.Utils;
-import io.dataspaceconnector.util.exception.NotImplemented;
+import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.QueryInput;
+import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.common.exception.NotImplemented;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

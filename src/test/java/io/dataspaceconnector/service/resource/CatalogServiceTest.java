@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
 import io.dataspaceconnector.model.catalog.CatalogFactory;

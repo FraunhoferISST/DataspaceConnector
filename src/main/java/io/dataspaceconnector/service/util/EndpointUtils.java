@@ -15,9 +15,9 @@
  */
 package io.dataspaceconnector.service.util;
 
-import io.dataspaceconnector.exception.UnreachableLineException;
-import io.dataspaceconnector.util.UUIDUtils;
-import io.dataspaceconnector.util.EndpointId;
+import io.dataspaceconnector.common.EndpointId;
+import io.dataspaceconnector.common.UUIDUtils;
+import io.dataspaceconnector.common.exception.UnreachableLineException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 

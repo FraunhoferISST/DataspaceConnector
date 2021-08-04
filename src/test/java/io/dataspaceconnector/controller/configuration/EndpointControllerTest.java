@@ -15,12 +15,13 @@
  */
 package io.dataspaceconnector.controller.configuration;
 
+import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.controller.resource.ResourceControllers;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
-import io.dataspaceconnector.service.configuration.GenericEndpointService;
 import io.dataspaceconnector.service.resource.EndpointServiceProxy;
-import io.dataspaceconnector.util.Utils;
+import io.dataspaceconnector.service.resource.GenericEndpointService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ class EndpointControllerTest {
     private EndpointServiceProxy service;
 
     @Autowired
-    private EndpointController controller;
+    private ResourceControllers.EndpointController controller;
 
     @Test
     public void create_validInput_returnNewEndpoint() {

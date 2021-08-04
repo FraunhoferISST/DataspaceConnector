@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.camel.processor.controller;
 
-import java.net.URI;
-import java.util.List;
-
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementBuilder;
@@ -29,10 +24,10 @@ import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.PermissionBuilder;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
-import io.dataspaceconnector.camel.dto.Response;
-import io.dataspaceconnector.camel.processor.controller.ids.validator.ContractAgreementValidator;
-import io.dataspaceconnector.camel.processor.controller.ids.validator.RuleListInputValidator;
-import io.dataspaceconnector.camel.util.ParameterUtils;
+import io.dataspaceconnector.common.ParameterUtils;
+import io.dataspaceconnector.controller.message.ids.validator.ContractAgreementValidator;
+import io.dataspaceconnector.controller.message.ids.validator.RuleListInputValidator;
+import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
 import lombok.SneakyThrows;
 import org.apache.camel.Exchange;
@@ -42,6 +37,10 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.net.URI;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;

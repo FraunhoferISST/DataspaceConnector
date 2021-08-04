@@ -15,21 +15,17 @@
  */
 package io.dataspaceconnector.camel.processor.controller;
 
-import java.net.URI;
-
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import de.fraunhofer.iais.eis.DescriptionRequestMessage;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
-import io.dataspaceconnector.camel.dto.Response;
-import io.dataspaceconnector.camel.exception.InvalidResponseException;
-import io.dataspaceconnector.camel.processor.controller.ids.response.validator.ArtifactResponseValidator;
-import io.dataspaceconnector.camel.processor.controller.ids.response.validator.ContractAgreementResponseValidator;
-import io.dataspaceconnector.camel.processor.controller.ids.response.validator.ContractResponseValidator;
-import io.dataspaceconnector.camel.processor.controller.ids.response.validator.DescriptionResponseValidator;
+import io.dataspaceconnector.controller.message.ids.validator.ArtifactResponseValidator;
+import io.dataspaceconnector.controller.message.ids.validator.ContractAgreementResponseValidator;
+import io.dataspaceconnector.controller.message.ids.validator.ContractResponseValidator;
+import io.dataspaceconnector.controller.message.ids.validator.DescriptionResponseValidator;
+import io.dataspaceconnector.service.message.handler.dto.Response;
+import io.dataspaceconnector.service.message.handler.exception.InvalidResponseException;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
 import io.dataspaceconnector.service.message.type.ContractAgreementService;
 import io.dataspaceconnector.service.message.type.ContractRequestService;
@@ -41,6 +37,9 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;

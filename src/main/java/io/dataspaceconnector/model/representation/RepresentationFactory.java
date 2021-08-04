@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.model.representation;
 
-import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.common.MetadataUtils;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import org.springframework.stereotype.Component;
 

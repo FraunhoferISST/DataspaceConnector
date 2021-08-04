@@ -22,7 +22,7 @@ import de.fraunhofer.iais.eis.RepresentationBuilder;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.resource.RequestedResource;

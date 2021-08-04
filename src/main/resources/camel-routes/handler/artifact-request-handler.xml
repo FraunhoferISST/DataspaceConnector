@@ -3,7 +3,7 @@
 
         <!-- the requested artifact is missing from the message header -->
         <onException>
-            <exception>io.dataspaceconnector.camel.exception.NoRequestedArtifactException</exception>
+            <exception>io.dataspaceconnector.service.message.handler.exception.NoRequestedArtifactException</exception>
             <to uri="direct:handleNoRequestedArtifactException"/>
         </onException>
 

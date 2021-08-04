@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.swagger.response;
 
-import io.dataspaceconnector.controller.resource.tag.ResponseDescription;
+import io.dataspaceconnector.controller.resource.base.tag.ResponseDescription;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;

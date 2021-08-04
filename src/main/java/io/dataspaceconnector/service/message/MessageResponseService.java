@@ -15,26 +15,26 @@
  */
 package io.dataspaceconnector.service.message;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import de.fraunhofer.ids.messaging.response.MessageResponse;
+import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.common.exception.PolicyRestrictionException;
+import io.dataspaceconnector.common.exception.VersionNotSupportedException;
 import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
 import io.dataspaceconnector.exception.MessageEmptyException;
-import io.dataspaceconnector.exception.PolicyRestrictionException;
-import io.dataspaceconnector.exception.VersionNotSupportedException;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.service.ids.ConnectorService;
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
 
 /**
  * This class handles message responses.
@@ -92,7 +92,7 @@ public class MessageResponseService {
     }
 
     /**
-     * Handles thrown exceptions when building the response message.
+     * Handles thrown exception when building the response message.
      *
      * @param exception       Exception that was thrown when building the response message.
      * @param issuerConnector The issuer connector extracted from the incoming message.
@@ -185,7 +185,7 @@ public class MessageResponseService {
     }
 
     /**
-     * Handles thrown exceptions in processing a message's payload.
+     * Handles thrown exception in processing a message's payload.
      *
      * @param exception       Exception that was thrown while reading a message's payload.
      * @param messageId       The id of the incoming message.
@@ -337,7 +337,7 @@ public class MessageResponseService {
     }
 
     /**
-     * Handle exceptions when saving a contract agreement.
+     * Handle exception when saving a contract agreement.
      *
      * @param exception       Exception that was thrown while storing a contract agreement.
      * @param agreement       The contract agreement.
@@ -456,7 +456,7 @@ public class MessageResponseService {
     }
 
     /**
-     * Handle exceptions when retrieving the data.
+     * Handle exception when retrieving the data.
      *
      * @param exception         Exception that was thrown while getting the data.
      * @param requestedArtifact The requested artifact.

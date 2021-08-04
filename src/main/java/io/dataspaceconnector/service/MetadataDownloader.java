@@ -15,10 +15,10 @@
  */
 package io.dataspaceconnector.service;
 
+import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.service.message.type.DescriptionRequestService;
-import io.dataspaceconnector.exception.UnexpectedResponseException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

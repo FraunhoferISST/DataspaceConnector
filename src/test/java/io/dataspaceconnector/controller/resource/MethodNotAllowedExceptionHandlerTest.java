@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.controller.resource;
 
-import io.dataspaceconnector.controller.resource.exceptionhandler.MethodNotAllowedExceptionHandler;
+import io.dataspaceconnector.controller.resource.base.exceptionhandler.MethodNotAllowedExceptionHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MethodNotAllowedExceptionHandlerTest {
 

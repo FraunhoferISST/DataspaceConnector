@@ -15,19 +15,19 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import java.net.URI;
-import java.util.List;
-
+import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.Utils;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.service.util.EndpointUtils;
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.util.List;
 
 /**
  * This service offers methods for finding entities related to another given entity.

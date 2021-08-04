@@ -15,10 +15,10 @@
  */
 package io.dataspaceconnector.service;
 
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
-import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
 import io.dataspaceconnector.service.resource.AgreementService;
 import lombok.NonNull;

@@ -15,6 +15,13 @@
  */
 package io.dataspaceconnector.service.ids.builder;
 
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import io.dataspaceconnector.common.SelfLinkHelper;
+import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.model.base.Entity;
+import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -23,13 +30,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import io.dataspaceconnector.model.base.Entity;
-import io.dataspaceconnector.util.SelfLinkHelper;
-import io.dataspaceconnector.util.Utils;
-import lombok.NoArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 /**
  * The base class for constructing an ids object from DSC objects.

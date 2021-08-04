@@ -16,6 +16,8 @@
 package io.dataspaceconnector.camel.errorhandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dataspaceconnector.controller.routing.error.DeadLetterChannelProcessor;
+import io.dataspaceconnector.service.message.handler.dto.RouteError;
 import lombok.SneakyThrows;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;

@@ -15,18 +15,19 @@
  */
 package io.dataspaceconnector.service.configuration;
 
-import java.net.URI;
-import java.util.Optional;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.broker.BrokerFactory;
 import io.dataspaceconnector.repository.BrokerRepository;
+import io.dataspaceconnector.service.resource.BrokerService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

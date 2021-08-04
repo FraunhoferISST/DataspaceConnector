@@ -156,11 +156,11 @@ public final class BootstrapUtils {
                                                   final String extension)
             throws FileNotFoundException, NullPointerException {
         // Validate input.
-        final var base = io.dataspaceconnector.util.FileUtils.openFile(path);
+        final var base = io.dataspaceconnector.common.FileUtils.openFile(path);
         final var files = new ArrayList<File>();
         if (base.isDirectory()) {
             // If the base file is a directory, iterate all child files.
-            for (final var child : io.dataspaceconnector.util.FileUtils.getContainedFiles(base)) {
+            for (final var child : io.dataspaceconnector.common.FileUtils.getContainedFiles(base)) {
                 if (child.isDirectory()) {
                     files.addAll(findFilesByExtension(child.getPath(), filename, extension));
                 } else {

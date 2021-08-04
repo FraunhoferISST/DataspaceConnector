@@ -15,12 +15,9 @@
  */
 package io.dataspaceconnector.controller.resource;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.UUID;
-
 import de.fraunhofer.ids.messaging.protocol.UnexpectedResponseException;
-import io.dataspaceconnector.controller.resource.view.ArtifactViewAssembler;
+import io.dataspaceconnector.common.QueryInput;
+import io.dataspaceconnector.controller.resource.view.artifact.ArtifactViewAssembler;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.repository.ArtifactRepository;
@@ -28,10 +25,9 @@ import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
 import io.dataspaceconnector.service.HttpService;
-import io.dataspaceconnector.service.message.subscription.SubscriberNotificationService;
+import io.dataspaceconnector.service.message.processing.SubscriberNotificationService;
 import io.dataspaceconnector.service.resource.ArtifactService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
-import io.dataspaceconnector.util.QueryInput;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +36,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.http.HttpStatus;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -104,7 +104,7 @@ class ArtifactControllerTest {
     public void getData_validIdAndQuery_returnTheData() throws
             IOException,
             UnexpectedResponseException,
-            io.dataspaceconnector.exception.UnexpectedResponseException {
+            io.dataspaceconnector.common.exception.UnexpectedResponseException {
         /* ARRANGE */
         final var artifactId = UUID.randomUUID();
         final var queryInput = new QueryInput();

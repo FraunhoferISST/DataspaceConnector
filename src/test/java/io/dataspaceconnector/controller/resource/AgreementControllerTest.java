@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.controller.resource;
 
-import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
-import io.dataspaceconnector.controller.resource.view.AgreementViewAssembler;
+import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
+import io.dataspaceconnector.controller.resource.view.agreement.AgreementViewAssembler;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.agreement.AgreementDesc;
 import io.dataspaceconnector.service.resource.AgreementService;

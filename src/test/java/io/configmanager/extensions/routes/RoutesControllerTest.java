@@ -15,10 +15,7 @@
  */
 package io.configmanager.extensions.routes;
 
-import java.util.List;
-
-import io.configmanager.extensions.routes.api.RoutesApi;
-import io.configmanager.extensions.routes.api.controller.RoutesController;
+import io.dataspaceconnector.controller.gui.RoutesController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -26,6 +23,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -35,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Tests for the configmanager RoutesController class.
  */
-@SpringBootTest(classes = {RoutesController.class, RoutesApi.class})
+@SpringBootTest(classes = {RoutesController.class})
 @AutoConfigureMockMvc
 class RoutesControllerTest {
 

@@ -15,21 +15,21 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Function;
-
-import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.base.Entity;
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.Utils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Function;
 
 /**
  * Creates a parent-children relationship between two types of resources.

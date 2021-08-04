@@ -17,6 +17,15 @@ package io.dataspaceconnector.controller.resource.view;
 
 import io.dataspaceconnector.controller.ExampleController;
 import io.dataspaceconnector.controller.MainController;
+import io.dataspaceconnector.controller.resource.view.agreement.AgreementView;
+import io.dataspaceconnector.controller.resource.view.artifact.ArtifactView;
+import io.dataspaceconnector.controller.resource.view.catalog.CatalogView;
+import io.dataspaceconnector.controller.resource.view.contract.ContractView;
+import io.dataspaceconnector.controller.resource.view.representation.RepresentationView;
+import io.dataspaceconnector.controller.resource.view.resource.OfferedResourceView;
+import io.dataspaceconnector.controller.resource.view.resource.RequestedResourceView;
+import io.dataspaceconnector.controller.resource.view.rule.ContractRuleView;
+import io.dataspaceconnector.controller.resource.view.subscription.SubscriptionView;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 import org.springframework.hateoas.Link;

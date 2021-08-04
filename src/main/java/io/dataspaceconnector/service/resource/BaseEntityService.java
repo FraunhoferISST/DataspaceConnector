@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.base.Description;
 import io.dataspaceconnector.model.base.Entity;
-import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.repository.BaseEntityRepository;
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.Utils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;

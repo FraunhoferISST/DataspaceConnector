@@ -20,12 +20,12 @@ import de.fraunhofer.iais.eis.NotificationMessageBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
+import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.common.exception.PolicyExecutionException;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
-import io.dataspaceconnector.exception.PolicyExecutionException;
 import io.dataspaceconnector.model.message.NotificationMessageDesc;
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.Utils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 

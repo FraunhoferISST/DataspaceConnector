@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.iais.eis.ContractAgreementBuilder;
 import de.fraunhofer.iais.eis.ContractOffer;
@@ -33,6 +26,8 @@ import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
+import io.dataspaceconnector.common.IdsUtils;
+import io.dataspaceconnector.common.QueryInput;
 import io.dataspaceconnector.exception.InvalidResourceException;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
@@ -59,8 +54,6 @@ import io.dataspaceconnector.service.resource.RepresentationService;
 import io.dataspaceconnector.service.resource.ResourceService;
 import io.dataspaceconnector.service.resource.RuleService;
 import io.dataspaceconnector.service.usagecontrol.AllowAccessVerifier;
-import io.dataspaceconnector.util.IdsUtils;
-import io.dataspaceconnector.util.QueryInput;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -68,6 +61,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

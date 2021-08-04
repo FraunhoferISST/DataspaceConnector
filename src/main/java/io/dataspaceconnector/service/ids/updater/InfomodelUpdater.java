@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.service.ids.updater;
 
-import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.base.Entity;
 
 /**

@@ -15,16 +15,12 @@
  */
 package io.dataspaceconnector.controller.resource;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.controller.resource.view.artifact.ArtifactView;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.service.resource.RelationServices;
-import io.dataspaceconnector.util.Utils;
-import io.dataspaceconnector.controller.resource.view.ArtifactView;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,6 +34,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

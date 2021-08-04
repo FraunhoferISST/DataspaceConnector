@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.controller.exceptionhandler;
 
-import io.dataspaceconnector.controller.util.ControllerUtils;
-import io.dataspaceconnector.exception.UnexpectedResponseException;
+import io.dataspaceconnector.common.exception.UnexpectedResponseException;
+import io.dataspaceconnector.controller.util.ResponseUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -29,13 +29,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Order(1)
 public final class UnexpectedResponseExceptionHandler {
     /**
-     * Handle runtime exceptions with response code 417.
+     * Handle runtime exception with response code 417.
      *
      * @param exception The thrown exception.
      * @return Response entity with code 417.
      */
     @ExceptionHandler(UnexpectedResponseException.class)
     public ResponseEntity<Object> handleAnyException(final UnexpectedResponseException exception) {
-        return ControllerUtils.respondWithContent(exception.getContent());
+        return ResponseUtils.respondWithContent(exception.getContent());
     }
 }

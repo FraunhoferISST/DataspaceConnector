@@ -19,12 +19,11 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.model.message.MessageProcessedNotificationMessageDesc;
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.Utils;
-import org.springframework.stereotype.Service;
-
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
+import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.model.message.MessageProcessedNotificationMessageDesc;
+import org.springframework.stereotype.Service;
 
 /**
  * Message service for ids message processed notification messages.

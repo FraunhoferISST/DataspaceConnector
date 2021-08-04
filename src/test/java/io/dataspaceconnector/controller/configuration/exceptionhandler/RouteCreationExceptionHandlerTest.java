@@ -15,7 +15,8 @@
  */
 package io.dataspaceconnector.controller.configuration.exceptionhandler;
 
-import io.configmanager.extensions.routes.camel.exceptions.RouteCreationException;
+import io.dataspaceconnector.common.RouteCreationException;
+import io.dataspaceconnector.controller.resource.base.exceptionhandler.RouteCreationExceptionHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

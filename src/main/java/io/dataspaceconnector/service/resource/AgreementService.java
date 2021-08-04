@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.service.resource;
 
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.agreement.AgreementDesc;
 import io.dataspaceconnector.repository.AgreementRepository;
@@ -36,7 +37,7 @@ public class AgreementService extends BaseEntityService<Agreement, AgreementDesc
      *
      * @param agreement The agreement that should be confirmed.
      * @return true - if the was unconfirmed and has been changed to confirmed.
-     * @throws io.dataspaceconnector.exception.ResourceNotFoundException if the agreement does no
+     * @throws ResourceNotFoundException if the agreement does no
      * longer exist.
      */
     public boolean confirmAgreement(final Agreement agreement) {

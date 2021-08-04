@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.camel.processor.controller;
 
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementBuilder;
@@ -31,14 +26,14 @@ import de.fraunhofer.iais.eis.PermissionBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
-import io.dataspaceconnector.camel.dto.Response;
-import io.dataspaceconnector.camel.processor.controller.ids.response.processor.AgreementToArtifactsLinker;
-import io.dataspaceconnector.camel.processor.controller.ids.response.processor.ContractAgreementPersistenceProcessor;
-import io.dataspaceconnector.camel.processor.controller.ids.response.processor.DataPersistenceProcessor;
-import io.dataspaceconnector.camel.processor.controller.ids.response.processor.MetadataPersistenceProcessor;
-import io.dataspaceconnector.camel.util.ParameterUtils;
+import io.dataspaceconnector.common.ParameterUtils;
+import io.dataspaceconnector.controller.message.ids.processor.AgreementToArtifactsLinker;
+import io.dataspaceconnector.controller.message.ids.processor.ContractAgreementPersistenceProcessor;
+import io.dataspaceconnector.controller.message.ids.processor.DataPersistenceProcessor;
+import io.dataspaceconnector.controller.message.ids.processor.MetadataPersistenceProcessor;
 import io.dataspaceconnector.service.EntityPersistenceService;
 import io.dataspaceconnector.service.EntityUpdateService;
+import io.dataspaceconnector.service.message.handler.dto.Response;
 import lombok.SneakyThrows;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -47,6 +42,11 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;

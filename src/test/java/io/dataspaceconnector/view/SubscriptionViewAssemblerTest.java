@@ -16,7 +16,7 @@
 package io.dataspaceconnector.view;
 
 import io.dataspaceconnector.controller.resource.ResourceControllers;
-import io.dataspaceconnector.controller.resource.view.SubscriptionViewAssembler;
+import io.dataspaceconnector.controller.resource.view.subscription.SubscriptionViewAssembler;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.subscription.Subscription;
 import org.junit.jupiter.api.Test;

@@ -15,19 +15,14 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.time.format.DateTimeParseException;
-
+import io.dataspaceconnector.common.ContractUtils;
+import io.dataspaceconnector.common.RuleUtils;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.config.util.UsageControlFramework;
-import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.AgreementService;
 import io.dataspaceconnector.service.resource.ArtifactService;
-import io.dataspaceconnector.util.ContractUtils;
-import io.dataspaceconnector.util.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -35,6 +30,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.time.format.DateTimeParseException;
 
 /**
  * This class implements automated policy check.

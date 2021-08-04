@@ -15,10 +15,10 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
-import java.net.URI;
-
+import io.dataspaceconnector.common.MetadataUtils;
 import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.util.MetadataUtils;
+
+import java.net.URI;
 
 /**
  * Base class for creating and updating endpoints.

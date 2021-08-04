@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.model.route;
 
-import java.util.ArrayList;
-import java.util.Objects;
-
+import io.dataspaceconnector.common.MetadataUtils;
 import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Creates and updates a route.

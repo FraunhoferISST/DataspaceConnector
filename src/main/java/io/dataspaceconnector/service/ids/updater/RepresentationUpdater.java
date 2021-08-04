@@ -16,9 +16,9 @@
 package io.dataspaceconnector.service.ids.updater;
 
 import de.fraunhofer.iais.eis.Representation;
-import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.MappingUtils;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.service.resource.RepresentationService;
-import io.dataspaceconnector.util.MappingUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
- * This class handles exceptions of type {@link AccessDeniedException}.
+ * This class handles exception of type {@link AccessDeniedException}.
  */
 @RestControllerAdvice
 @Log4j2

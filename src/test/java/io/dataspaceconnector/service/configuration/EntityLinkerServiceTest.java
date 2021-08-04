@@ -17,6 +17,7 @@ package io.dataspaceconnector.service.configuration;
 
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.route.Route;
+import io.dataspaceconnector.service.resource.RelationServices;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,32 +28,32 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class EntityLinkerServiceTest {
 
     @Autowired
-    private EntityLinkerService.BrokerOfferedResourcesLinker brokerOfferedResourcesLinker;
+    private RelationServices.BrokerOfferedResourceLinker brokerOfferedResourceLinker;
 
     @Autowired
-    private EntityLinkerService.RouteStepsLinker routeStepsLinker;
+    private RelationServices.RouteStepLinker routeStepLinker;
 
     @Autowired
-    private EntityLinkerService.RouteArtifactsLinker routeArtifactsLinker;
+    private RelationServices.RouteArtifactLinker routeArtifactLinker;
 
     @Test
     public void brokerOfferedResourcesLinker_getInternal_returnBrokerOfferedResources() {
         /* ARRANGE */
         /* ACT && ASSERT */
-        assertNull(brokerOfferedResourcesLinker.getInternal(new Broker()));
+        assertNull(brokerOfferedResourceLinker.getInternal(new Broker()));
     }
 
     @Test
     public void routeStepsLinker_getInternal_returnBrokerSteps() {
         /* ARRANGE */
         /* ACT && ASSERT */
-        assertNull(routeStepsLinker.getInternal(new Route()));
+        assertNull(routeStepLinker.getInternal(new Route()));
     }
 
     @Test
     public void routeArtifactsLinker_getInternal_returnBrokerOfferedResources() {
         /* ARRANGE */
         /* ACT && ASSERT */
-        assertNull(routeArtifactsLinker.getInternal(new Route()));
+        assertNull(routeArtifactLinker.getInternal(new Route()));
     }
 }

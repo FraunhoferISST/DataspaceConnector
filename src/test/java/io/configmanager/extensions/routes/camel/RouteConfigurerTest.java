@@ -15,8 +15,12 @@
  */
 package io.configmanager.extensions.routes.camel;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.AppRouteBuilder;
+import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
+import de.fraunhofer.iais.eis.EndpointBuilder;
+import de.fraunhofer.iais.eis.GenericEndpointBuilder;
 import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.service.routing.RouteConfigurer;
 import org.apache.velocity.VelocityContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +28,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.net.URI;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Tests for the RouteConfigurer class.

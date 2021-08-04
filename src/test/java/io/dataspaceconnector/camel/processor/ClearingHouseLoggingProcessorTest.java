@@ -15,16 +15,14 @@
  */
 package io.dataspaceconnector.camel.processor;
 
-import java.net.URI;
-import java.util.Optional;
-
 import de.fraunhofer.iais.eis.DescriptionRequestMessage;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
-import io.dataspaceconnector.camel.dto.Request;
-import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.service.message.handler.ClearingHouseLoggingProcessor;
+import io.dataspaceconnector.service.message.handler.dto.Request;
+import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.processing.ClearingHouseService;
 import lombok.SneakyThrows;
 import org.apache.camel.Exchange;
@@ -35,6 +33,9 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.net.URI;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;

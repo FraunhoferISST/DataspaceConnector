@@ -15,14 +15,10 @@
  */
 package io.dataspaceconnector.controller.resource;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
+import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.controller.resource.view.catalog.CatalogViewAssembler;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.service.resource.CatalogService;
-import io.dataspaceconnector.util.Utils;
-import io.dataspaceconnector.controller.resource.view.CatalogViewAssembler;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +29,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PagedResourcesAssembler;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

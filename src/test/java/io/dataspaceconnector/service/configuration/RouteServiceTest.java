@@ -15,21 +15,22 @@
  */
 package io.dataspaceconnector.service.configuration;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteFactory;
 import io.dataspaceconnector.repository.EndpointRepository;
 import io.dataspaceconnector.repository.RouteRepository;
-import io.dataspaceconnector.service.configuration.util.RouteHelper;
 import io.dataspaceconnector.service.resource.EndpointServiceProxy;
+import io.dataspaceconnector.service.resource.RouteHelper;
+import io.dataspaceconnector.service.resource.RouteService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.eq;
 
