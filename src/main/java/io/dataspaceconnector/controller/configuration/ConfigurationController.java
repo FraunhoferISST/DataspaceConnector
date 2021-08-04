@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.controller.configuration;
 
-import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.controller.resource.BaseResourceController;
 import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
@@ -51,12 +50,6 @@ import java.util.UUID;
 @Tag(name = ResourceName.CONFIGURATIONS, description = ResourceDescription.CONFIGURATIONS)
 public class ConfigurationController extends BaseResourceController<Configuration,
         ConfigurationDesc, ConfigurationView, ConfigurationService> {
-
-    /**
-     * The current connector configuration.
-     */
-    private final @NonNull ConfigContainer configContainer;
-
     /**
      * Configuration Service, to read and set current config in DB.
      */
