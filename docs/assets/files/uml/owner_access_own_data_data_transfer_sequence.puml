@@ -1,0 +1,14 @@
+@startuml
+skinparam sequenceMessageAlign center
+actor User
+User->>Connector: POST /api/artifacts/artifacId/data
+Connector->>ArtifactController: getData(artifacId, queryInput)
+ArtifactController->>ArtifactService: getData(*, *, artifactId, queryInput)
+ArtifactService->>Database: get(artifactId)
+Database-->>ArtifactService: Artifact.RemoteData
+ArtifactService->>HttpService: getData(RemoteData, queryInput)
+HttpService-->>ArtifactService: dataStream
+ArtifactService-->>ArtifactController: dataStream
+ArtifactController-->>Connector: dataStream
+Connector-->>User: StreamingResponse<dataStream>
+@enduml

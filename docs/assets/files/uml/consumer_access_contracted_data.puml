@@ -1,0 +1,20 @@
+@startuml
+skinparam sequenceMessageAlign center
+actor User
+User->>Connector: POST /api/artifacts/artifactId/data
+Connector->>ArtifactController: getData(artifactId, agreementId, queryInput)
+ArtifactController->>ArtifactService: getData(AccessVerifier, ArtifactRetriever, agreementId, artifactId, queryInput)
+ArtifactService->>Database: get(artifactId)
+Database-->>ArtifactService: artifact
+ArtifactService->>AccessVerifier: verifyDataAccess(agreementId, artifact)
+AccessVerifier-->>ArtifactService: ok
+ArtifactService->>ArtifactRetriever: downloadAndUpdateData(artifact, agreementId, queryInput)
+ArtifactRetriever->>ArtifactRequestService: sendMessage(recipient, artifact.remoteId, agreementId, queryInput)
+ArtifactRequestService-->>ArtifactRetriever: response
+ArtifactRetriever-->>ArtifactService: dataStream
+ArtifactService->>Database: setData(artifactId, dataStream)
+Database-->>ArtifactService: ok
+ArtifactService-->>ArtifactController: dataStream
+ArtifactController-->>Connector: dataStream
+Connector-->>User: StreamingResponse<dataStream>
+@enduml

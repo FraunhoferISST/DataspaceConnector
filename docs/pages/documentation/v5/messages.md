@@ -3,8 +3,9 @@ layout: default
 title: Messages
 nav_order: 4
 description: ""
-permalink: /Documentation/Messages
-parent: Documentation
+permalink: /Documentation/v5/Messages
+parent: Version 5
+grand_parent: Documentation
 ---
 
 # IDS Messages
@@ -17,10 +18,10 @@ See what IDS message types can be sent and received.
 
 ## Message Types
 
-IDS messages and their content are defined 
+IDS messages and their content are defined
 [here](http://htmlpreview.github.io/?https://github.com/IndustrialDataSpace/InformationModel/blob/feature/message_taxonomy_description/model/communication/Message_Description.htm).
 The table below lists the supported message types. Thereby, it is to be distinguished whether the
-Dataspace Connector provides functionality for sending messages as request or response, or for 
+Dataspace Connector provides functionality for sending messages as request or response, or for
 processing incoming messages.
 
 | IDS Message Type                    | Outgoing           | Incoming | Description              |
@@ -46,9 +47,9 @@ processing incoming messages.
 
 ## Sequences
 
-![Automated IDS Messaging Sequence](../../assets/images/message_sequence_1.png)
+![Automated IDS Messaging Sequence](../../../assets/images/message_sequence_1.png)
 
-![Automated Data Updates](../../assets/images/message_sequence_2.png)
+![Automated Data Updates](../../../assets/images/message_sequence_2.png)
 
 ## Examples
 
@@ -89,7 +90,7 @@ Request Message:
 ```
 
 Response Message:
-```
+```json
 --
 Content-Disposition: form-data; name="header"
 Content-Type: text/plain;charset=UTF-8
@@ -147,7 +148,7 @@ Content-Length: 4051
 ### Description Request: Metadata
 
 Request Message:
-```
+```json
 {
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
@@ -185,7 +186,7 @@ Request Message:
 
 Response Message:
 
-```
+```json
 --
 Content-Disposition: form-data; name="header"
 Content-Type: text/plain;charset=UTF-8

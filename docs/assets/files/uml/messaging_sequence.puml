@@ -1,0 +1,121 @@
+@startuml
+skinparam sequenceMessageAlign center
+
+participant ConsumerBackend
+participant ConsumerConnector
+participant ProviderConnector
+participant ProviderBackend
+participant ClearingHouse
+
+ProviderBackend -> ProviderConnector: POST /api/catalogs
+note right: create objects
+ProviderConnector --> ProviderBackend: created
+ProviderBackend -> ProviderConnector: POST /api/offers
+ProviderConnector --> ProviderBackend: created
+ProviderBackend -> ProviderConnector: POST /api/representations
+ProviderConnector --> ProviderBackend: created
+ProviderBackend -> ProviderConnector: POST /api/artifacts
+ProviderConnector --> ProviderBackend: created
+ProviderBackend -> ProviderConnector: POST /api/contracts
+ProviderConnector --> ProviderBackend: created
+ProviderBackend -> ProviderConnector: POST /api/rules
+ProviderConnector --> ProviderBackend: created
+
+ProviderBackend -> ProviderConnector: POST /api/catalogs/catalogId/offers
+note right: link objects
+ProviderConnector --> ProviderBackend: ok
+ProviderBackend -> ProviderConnector: POST /api/offers/resourceId/representations
+ProviderConnector --> ProviderBackend: ok
+ProviderBackend -> ProviderConnector: POST /api/representations/representationId/artifacts
+ProviderConnector --> ProviderBackend: ok
+ProviderBackend -> ProviderConnector: POST /api/contracts/contractId/rules
+ProviderConnector --> ProviderBackend: ok
+ProviderBackend -> ProviderConnector: POST /api/offers/resourceId/contracts
+ProviderConnector --> ProviderBackend: ok
+
+ConsumerBackend -> ConsumerConnector: POST /api/ids/description
+note left: browse offers
+ConsumerConnector -> ProviderConnector: DescriptionRequestMessage
+alt valid request
+    ProviderConnector --> ConsumerConnector: DescriptionResponseMessage with metadata
+    ConsumerConnector --> ConsumerBackend: ids metadata
+else
+    ProviderConnector --> ConsumerConnector: RejectionMessage
+    ConsumerConnector --> ConsumerBackend: error
+end
+
+ConsumerBackend -> ConsumerConnector: POST /api/ids/contract
+note left: initiate negotiation
+ConsumerConnector -> ConsumerConnector: build ContractRequest
+ConsumerConnector -> ProviderConnector: ContractRequestMessage
+ProviderConnector -> ProviderConnector: validate ContractRequest
+alt valid ContractRequest
+    ProviderConnector -> ProviderConnector: build ContractAgreement
+    ProviderConnector -> ProviderConnector: persist ContractAgreement
+    ProviderConnector --> ConsumerConnector: ContractAgreementMessage
+
+    ConsumerConnector -> ConsumerConnector: validate ContractAgreement
+    alt valid ContractAgreement
+        ConsumerConnector -> ConsumerConnector: build ContractAgreement
+        ConsumerConnector -> ConsumerConnector: persist ContractAgreement
+        ConsumerConnector -> ProviderConnector: ContractAgreementMessage
+
+        ProviderConnector -> ProviderConnector: validate ContractAgreement
+        alt valid ContractAgreement
+            ProviderConnector -> ProviderConnector: confirm ContractAgreement
+            ProviderConnector -> ClearingHouse: LogMessage with ContractAgreementMessage
+            ClearingHouse --> ProviderConnector: MessageProcessedNotificationMessage
+            ProviderConnector --> ConsumerConnector: MessageProcessedNotificationMessage
+            ConsumerConnector -> ConsumerConnector: confirm ContractAgreement
+
+            ConsumerConnector -> ProviderConnector: DescriptionRequestMessage
+            alt valid request
+                ProviderConnector --> ConsumerConnector: DescriptionResponseMessage with metadata
+
+                ConsumerConnector -> ConsumerConnector: create requested resource
+                ConsumerConnector -> ConsumerConnector: create representation
+                ConsumerConnector -> ConsumerConnector: create artifact
+                ConsumerConnector -> ConsumerConnector: link representation to requested resource
+                ConsumerConnector -> ConsumerConnector: link artifact to representation
+
+                ConsumerConnector -> ConsumerConnector: ContractAgreement to artifact
+                ConsumerConnector -> ConsumerBackend: ContractAgreement
+            else
+                ProviderConnector --> ConsumerConnector: RejectionMessage
+                ConsumerConnector --> ConsumerBackend: error
+            end
+        else
+            ProviderConnector --> ConsumerConnector: ContractRejectionMessage
+            ConsumerConnector --> ConsumerBackend: error
+        end
+    else
+        ConsumerConnector -> ProviderConnector: ContractRejectionMessage
+    ConsumerConnector --> ConsumerBackend: error
+    end
+else
+    ProviderConnector --> ConsumerConnector: ContractRejectionMessage
+    ConsumerConnector --> ConsumerBackend: error
+end
+
+ConsumerBackend -> ConsumerConnector: GET /api/artifacts/artifactId/data
+note left: download data
+ConsumerConnector -> ProviderConnector: ArtifactRequestMessage
+alt valid request
+    ProviderConnector -> ProviderConnector: validate policy
+    alt access allowed
+        ProviderConnector -> ProviderBackend: request data
+        ProviderBackend -> ProviderConnector: data
+        ProviderConnector --> ConsumerConnector: ArtifactResponseMessage with data
+
+        ConsumerConnector -> ConsumerConnector: validate policy
+        ConsumerConnector --> ConsumerBackend: data
+    else
+        ProviderConnector --> ConsumerConnector: RejectionMessage
+        ConsumerConnector --> ConsumerBackend: restriction
+    end
+else
+    ProviderConnector --> ConsumerConnector: RejectionMessage
+    ConsumerConnector --> ConsumerBackend: error
+end
+
+@enduml
