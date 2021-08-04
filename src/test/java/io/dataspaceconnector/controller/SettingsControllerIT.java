@@ -17,7 +17,7 @@ package io.dataspaceconnector.controller;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.idscp.config.Idscp2Config;
+import io.dataspaceconnector.extension.idscp.config.Idscp2Config;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import net.minidev.json.JSONObject;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
