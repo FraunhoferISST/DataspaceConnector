@@ -41,6 +41,11 @@ public class ResponseCode {
     public static final String NO_CONTENT = "204";
 
     /**
+     * Response code is BAD_REQUEST.
+     */
+    public static final String BAD_REQUEST = "400";
+
+    /**
      * Response code is UNAUTHORIZED.
      */
     public static final String UNAUTHORIZED = "401";
@@ -49,4 +54,9 @@ public class ResponseCode {
      * Response code is METHOD_NOT_ALLOWED.
      */
     public static final String METHOD_NOT_ALLOWED = "405";
+
+    /**
+     * Response code is INTERNAL_SERVER_ERROR.
+     */
+    public static final String INTERNAL_SERVER_ERROR = "500";
 }

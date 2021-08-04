@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.camel.controller;
 
+import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
+import io.dataspaceconnector.controller.resource.swagger.response.ResponseDescription;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -63,15 +65,16 @@ public class RoutesController {
      * @param file the XML file.
      * @return a response entity with code 200 or 500, if an error occurs.
      */
+    @Hidden
     @PostMapping
     @Operation(summary = "Add a route to the Camel context.")
     @Tag(name = "Camel", description = "Endpoints for dynamically managing Camel routes.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "400", description = "Bad request"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
-    @Hidden
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+            @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description =
+                    ResponseDescription.BAD_REQUEST),
+            @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR, description =
+                    ResponseDescription.INTERNAL_SERVER_ERROR)})
     public ResponseEntity<String> addRoutes(@RequestParam("file") final MultipartFile file) {
         try {
             if (file == null) {
@@ -116,14 +119,14 @@ public class RoutesController {
      * @param routeId the route ID.
      * @return a response entity with code 200 or 500, if an error occurs.
      */
+    @Hidden
     @DeleteMapping("/{routeId}")
     @Operation(summary = "Delete a route from the Camel context.")
     @Tag(name = "Camel", description = "Endpoints for dynamically managing Camel routes.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
-    @Hidden
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+            @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR, description =
+                    ResponseDescription.INTERNAL_SERVER_ERROR)})
     public ResponseEntity<String> removeRoute(@PathVariable("routeId") final String routeId) {
         try {
             camelContext.stopRoute(routeId);

@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.camel.controller;
 
+import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
+import io.dataspaceconnector.controller.resource.swagger.response.ResponseDescription;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -67,14 +69,14 @@ public class BeansController {
      * @param file the XML file.
      * @return a response entity with code 200 or 500, if an error occurs.
      */
+    @Hidden
     @PostMapping
     @Operation(summary = "Add a bean to the application context.")
     @Tag(name = "Camel", description = "Endpoints for dynamically managing Camel routes.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "400", description = "Bad request")
-    })
-    @Hidden
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+            @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description =
+                    ResponseDescription.BAD_REQUEST)})
     public ResponseEntity<String> addBeans(@RequestParam("file") final MultipartFile file) {
         try {
             if (file == null) {
@@ -112,14 +114,14 @@ public class BeansController {
      * @param beanId the bean ID.
      * @return a response entity with code 200 or 500, if an error occurs.
      */
+    @Hidden
     @DeleteMapping("/{beanId}")
     @Operation(summary = "Remove a bean from the application context.")
     @Tag(name = "Camel", description = "Endpoints for dynamically managing Camel routes.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "400", description = "Bad request")
-    })
-    @Hidden
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+            @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description =
+                    ResponseDescription.BAD_REQUEST)})
     public ResponseEntity<String> removeBean(@PathVariable("beanId") final String beanId) {
         try {
             beanRegistry.removeBeanDefinition(beanId);
