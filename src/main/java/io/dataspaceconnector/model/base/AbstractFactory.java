@@ -15,9 +15,9 @@
  */
 package io.dataspaceconnector.model.base;
 
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.MetadataUtils;
-import io.dataspaceconnector.util.Utils;
+import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.MetadataUtils;
+import io.dataspaceconnector.common.Utils;
 
 import java.net.URI;
 import java.util.HashMap;

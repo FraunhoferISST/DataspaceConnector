@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.model;
 
-import java.util.ArrayList;
-
+import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.model.resource.Resource;
-import io.dataspaceconnector.util.exception.NotImplemented;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ResourceTest {
     @Test

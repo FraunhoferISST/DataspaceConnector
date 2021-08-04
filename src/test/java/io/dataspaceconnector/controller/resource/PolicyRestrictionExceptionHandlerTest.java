@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.controller.resource;
 
+import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.exception.PolicyRestrictionException;
 import io.dataspaceconnector.controller.exceptionhandler.PolicyRestrictionExceptionHandler;
-import io.dataspaceconnector.exception.PolicyRestrictionException;
-import io.dataspaceconnector.util.ErrorMessage;
 import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PolicyRestrictionExceptionHandlerTest {
 

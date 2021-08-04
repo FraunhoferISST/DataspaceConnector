@@ -18,18 +18,18 @@ package io.dataspaceconnector.service.message.subscription;
 // import java.io.ByteArrayInputStream;
 // import java.io.InputStream;
 // import java.net.URI;
-// import java.util.Date;
-// import java.util.List;
+// import java.common.Date;
+// import java.common.List;
 
-// import io.dataspaceconnector.controller.util.Event;
-// import io.dataspaceconnector.controller.util.Notification;
+// import io.dataspaceconnector.service.message.processing.common.Event;
+// import io.dataspaceconnector.controller.common.Notification;
 // import org.junit.jupiter.api.AfterEach;
 // import org.junit.jupiter.api.BeforeEach;
 // import org.junit.jupiter.api.Test;
 // import org.mockito.Mock;
 // import org.mockito.Mockito;
 // import org.mockito.MockitoAnnotations;
-// import org.springframework.test.util.ReflectionTestUtils;
+// import org.springframework.test.common.ReflectionTestUtils;
 // import org.springframework.web.reactive.function.client.WebClient;
 // import reactor.core.publisher.Mono;
 

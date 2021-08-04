@@ -17,8 +17,8 @@ package io.dataspaceconnector.service.message;
 
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
+import io.dataspaceconnector.common.exception.VersionNotSupportedException;
 import io.dataspaceconnector.exception.MessageEmptyException;
-import io.dataspaceconnector.exception.VersionNotSupportedException;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

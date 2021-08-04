@@ -15,7 +15,8 @@
  */
 package io.dataspaceconnector.controller.configuration;
 
-import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
+import io.dataspaceconnector.controller.resource.RelationControllers;
+import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class BrokerControllersTest {
 
     @Autowired
-    private BrokerControllers.BrokerToOfferedResources brokerToOfferedResources;
+    private RelationControllers.BrokersToOfferedResources brokersToOfferedResources;
 
     @Test
     public void addResources_validDesc_returnMethodNotAllowed() {
@@ -34,7 +35,7 @@ class BrokerControllersTest {
         // Nothing to arrange.
 
         /* ACT && ASSERT */
-        assertThrows(MethodNotAllowed.class, () -> brokerToOfferedResources.addResources(null, null));
+        assertThrows(MethodNotAllowed.class, () -> brokersToOfferedResources.addResources(null, null));
     }
 
     @Test
@@ -43,7 +44,7 @@ class BrokerControllersTest {
         // Nothing to arrange.
 
         /* ACT && ASSERT */
-        assertThrows(MethodNotAllowed.class, () -> brokerToOfferedResources.replaceResources(null, null));
+        assertThrows(MethodNotAllowed.class, () -> brokersToOfferedResources.replaceResources(null, null));
     }
 
     @Test
@@ -52,6 +53,6 @@ class BrokerControllersTest {
         // Nothing to arrange.
 
         /* ACT && ASSERT */
-        assertThrows(MethodNotAllowed.class, () -> brokerToOfferedResources.removeResources(null, null));
+        assertThrows(MethodNotAllowed.class, () -> brokersToOfferedResources.removeResources(null, null));
     }
 }

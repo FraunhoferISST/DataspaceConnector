@@ -16,8 +16,8 @@
 package io.dataspaceconnector.extension.idscp.processor;
 
 import de.fraunhofer.iais.eis.Connector;
-import io.dataspaceconnector.camel.dto.Request;
-import io.dataspaceconnector.camel.util.ParameterUtils;
+import io.dataspaceconnector.common.ParameterUtils;
+import io.dataspaceconnector.service.message.handler.dto.Request;
 import org.apache.camel.Message;
 import org.springframework.stereotype.Component;
 

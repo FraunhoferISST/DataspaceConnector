@@ -15,17 +15,21 @@
  */
 package io.dataspaceconnector.controller.resource;
 
-import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
-import io.dataspaceconnector.controller.resource.tag.ResourceName;
-import io.dataspaceconnector.controller.resource.view.AgreementView;
-import io.dataspaceconnector.controller.resource.view.ArtifactView;
-import io.dataspaceconnector.controller.resource.view.CatalogView;
-import io.dataspaceconnector.controller.resource.view.ContractRuleView;
-import io.dataspaceconnector.controller.resource.view.ContractView;
-import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
-import io.dataspaceconnector.controller.resource.view.RepresentationView;
-import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
-import io.dataspaceconnector.controller.resource.view.SubscriptionView;
+import io.dataspaceconnector.controller.resource.base.BaseResourceChildController;
+import io.dataspaceconnector.controller.resource.base.BaseResourceChildRestrictedController;
+import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
+import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
+import io.dataspaceconnector.controller.resource.view.agreement.AgreementView;
+import io.dataspaceconnector.controller.resource.view.artifact.ArtifactView;
+import io.dataspaceconnector.controller.resource.view.broker.BrokerView;
+import io.dataspaceconnector.controller.resource.view.catalog.CatalogView;
+import io.dataspaceconnector.controller.resource.view.contract.ContractView;
+import io.dataspaceconnector.controller.resource.view.representation.RepresentationView;
+import io.dataspaceconnector.controller.resource.view.resource.OfferedResourceView;
+import io.dataspaceconnector.controller.resource.view.resource.RequestedResourceView;
+import io.dataspaceconnector.controller.resource.view.route.RouteView;
+import io.dataspaceconnector.controller.resource.view.rule.ContractRuleView;
+import io.dataspaceconnector.controller.resource.view.subscription.SubscriptionView;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.broker.Broker;
@@ -34,13 +38,13 @@ import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.service.resource.AbstractCatalogResourceLinker;
 import io.dataspaceconnector.service.resource.AbstractResourceContractLinker;
 import io.dataspaceconnector.service.resource.AbstractResourceRepresentationLinker;
 import io.dataspaceconnector.service.resource.RelationServices;
-import io.dataspaceconnector.view.broker.BrokerView;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -77,7 +81,7 @@ public final class RelationControllers {
     @RequestMapping("/api/artifacts/{id}/subscriptions")
     @Tag(name = ResourceName.ARTIFACTS, description = ResourceDescription.ARTIFACTS)
     public static class ArtifactsToSubscriptions extends BaseResourceChildRestrictedController<
-            RelationServices.ArtifactSubscriptionLinker, Subscription, SubscriptionView> {
+                RelationServices.ArtifactSubscriptionLinker, Subscription, SubscriptionView> {
     }
 
     /**
@@ -192,9 +196,8 @@ public final class RelationControllers {
     @RestController
     @RequestMapping("/api/representations/{id}/artifacts")
     @Tag(name = ResourceName.REPRESENTATIONS, description = ResourceDescription.REPRESENTATIONS)
-    public static class RepresentationsToArtifacts
-            extends BaseResourceChildController<RelationServices.RepresentationArtifactLinker,
-            Artifact, ArtifactView> {
+    public static class RepresentationsToArtifacts extends BaseResourceChildController<
+            RelationServices.RepresentationArtifactLinker, Artifact, ArtifactView> {
     }
 
     /**
@@ -223,9 +226,8 @@ public final class RelationControllers {
     @RestController
     @RequestMapping("/api/offers/{id}/contracts")
     @Tag(name = ResourceName.OFFERS, description = ResourceDescription.OFFERS)
-    public static class OfferedResourcesToContracts
-            extends BaseResourceChildController<AbstractResourceContractLinker<OfferedResource>,
-            Contract, ContractView> {
+    public static class OfferedResourcesToContracts extends BaseResourceChildController<
+            AbstractResourceContractLinker<OfferedResource>, Contract, ContractView> {
     }
 
     /**
@@ -283,5 +285,36 @@ public final class RelationControllers {
     public static class OfferedResourcesToSubscriptions
             extends BaseResourceChildRestrictedController<
             RelationServices.OfferedResourceSubscriptionLinker, Subscription, SubscriptionView> {
+    }
+
+    /**
+     * Offers the endpoints for managing the relations between broker and offered resources.
+     */
+    @RestController
+    @RequestMapping("/api/brokers/{id}/offers")
+    @Tag(name = ResourceName.BROKERS, description = ResourceDescription.BROKERS)
+    public static class BrokersToOfferedResources extends
+            BaseResourceChildRestrictedController<RelationServices.BrokerOfferedResourceLinker,
+                    OfferedResource, OfferedResourceView> {
+    }
+
+    /**
+     * Offers the endpoints for managing steps.
+     */
+    @RestController
+    @RequestMapping("/api/routes/{id}/steps")
+    @Tag(name = ResourceName.ROUTES, description = ResourceDescription.ROUTES)
+    public static class RoutesToSteps extends BaseResourceChildController<
+            RelationServices.RouteStepLinker, Route, RouteView> {
+    }
+
+    /**
+     * Offers the endpoint for managing route artifacts.
+     */
+    @RestController
+    @RequestMapping("/api/routes/{id}/outputs")
+    @Tag(name = ResourceName.ROUTES, description = ResourceDescription.ROUTES)
+    public static class RoutesToArtifacts extends BaseResourceChildController<
+            RelationServices.RouteArtifactLinker, Artifact, ArtifactView> {
     }
 }

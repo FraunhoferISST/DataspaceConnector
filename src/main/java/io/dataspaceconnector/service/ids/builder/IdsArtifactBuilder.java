@@ -17,8 +17,8 @@ package io.dataspaceconnector.service.ids.builder;
 
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import io.dataspaceconnector.common.IdsUtils;
 import io.dataspaceconnector.model.artifact.Artifact;
-import io.dataspaceconnector.util.IdsUtils;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 

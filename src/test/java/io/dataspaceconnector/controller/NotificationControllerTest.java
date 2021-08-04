@@ -15,14 +15,11 @@
  */
 package io.dataspaceconnector.controller;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Optional;
-
+import io.dataspaceconnector.controller.message.NotificationController;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.service.EntityResolver;
-import io.dataspaceconnector.service.message.subscription.SubscriberNotificationService;
+import io.dataspaceconnector.service.message.processing.SubscriberNotificationService;
 import io.dataspaceconnector.service.resource.SubscriptionService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -30,6 +27,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;

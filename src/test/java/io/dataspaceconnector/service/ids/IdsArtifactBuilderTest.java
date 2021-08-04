@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.service.ids;
 
+import io.dataspaceconnector.common.IdsUtils;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.service.ids.builder.IdsArtifactBuilder;
-import io.dataspaceconnector.util.IdsUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

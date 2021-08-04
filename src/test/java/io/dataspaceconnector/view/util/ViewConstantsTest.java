@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.view.util;
 
+import io.dataspaceconnector.controller.resource.view.util.ViewConstants;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;

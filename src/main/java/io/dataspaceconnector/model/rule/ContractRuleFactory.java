@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.model.rule;
 
+import io.dataspaceconnector.common.MetadataUtils;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;

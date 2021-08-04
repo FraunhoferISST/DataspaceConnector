@@ -17,7 +17,7 @@ package io.dataspaceconnector.service.ids.updater;
 
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
-import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.template.ArtifactTemplate;
 import io.dataspaceconnector.service.resource.ArtifactService;

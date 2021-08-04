@@ -18,7 +18,7 @@ package io.dataspaceconnector.service.ids.updater;
 import de.fraunhofer.iais.eis.Language;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.RepresentationBuilder;
-import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.representation.RepresentationDesc;
 import io.dataspaceconnector.model.template.RepresentationTemplate;
 import io.dataspaceconnector.service.resource.RepresentationService;

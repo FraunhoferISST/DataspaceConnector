@@ -29,6 +29,7 @@ import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseExcep
 import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
+import io.dataspaceconnector.common.TemplateUtils;
 import io.dataspaceconnector.extension.bootstrap.util.BootstrapUtils;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
@@ -41,7 +42,6 @@ import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.service.resource.CatalogService;
 import io.dataspaceconnector.service.resource.TemplateBuilder;
-import io.dataspaceconnector.util.TemplateUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

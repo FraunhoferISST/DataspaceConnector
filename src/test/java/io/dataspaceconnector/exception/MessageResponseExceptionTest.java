@@ -17,8 +17,6 @@ package io.dataspaceconnector.exception;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class MessageResponseExceptionTest {
     @Test
     public void constructor_someMsg_holdsMsg() {

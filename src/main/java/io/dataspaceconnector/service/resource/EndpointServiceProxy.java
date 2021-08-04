@@ -15,20 +15,18 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import java.util.UUID;
-
-import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpointDesc;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.repository.EndpointRepository;
-import io.dataspaceconnector.service.configuration.ConnectorEndpointService;
-import io.dataspaceconnector.service.configuration.GenericEndpointService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 /**
  * Service class for endpoint proxy.

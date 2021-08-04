@@ -2,7 +2,7 @@
     <route id="subscriptionSender">
 
         <onException>
-            <exception>io.dataspaceconnector.camel.exception.InvalidResponseException</exception>
+            <exception>io.dataspaceconnector.service.message.handler.exception.InvalidResponseException</exception>
             <to uri="direct:handleInvalidResponseException"/>
         </onException>
 

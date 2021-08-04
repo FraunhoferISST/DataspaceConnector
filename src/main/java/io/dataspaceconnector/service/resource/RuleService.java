@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.service.resource;
 
+import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.Utils;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.rule.ContractRuleDesc;
 import io.dataspaceconnector.repository.RuleRepository;
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.Utils;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 

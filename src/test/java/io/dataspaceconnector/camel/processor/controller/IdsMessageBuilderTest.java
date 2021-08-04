@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.camel.processor.controller;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.Connector;
@@ -36,15 +32,15 @@ import de.fraunhofer.iais.eis.ResourceUpdateMessage;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
-import io.dataspaceconnector.camel.dto.Request;
-import io.dataspaceconnector.camel.processor.controller.messagebuilder.ConnectorUnavailableMessageBuilder;
-import io.dataspaceconnector.camel.processor.controller.messagebuilder.ConnectorUpdateMessageBuilder;
-import io.dataspaceconnector.camel.processor.controller.messagebuilder.ResourceUnavailableMessageBuilder;
-import io.dataspaceconnector.camel.processor.controller.messagebuilder.ResourceUpdateMessageBuilder;
-import io.dataspaceconnector.camel.processor.controller.messagebuilder.SubscriptionRequestMessageBuilder;
-import io.dataspaceconnector.camel.util.ParameterUtils;
+import io.dataspaceconnector.common.ParameterUtils;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.service.message.builder.ConnectorUnavailableMessageBuilder;
+import io.dataspaceconnector.service.message.builder.ConnectorUpdateMessageBuilder;
+import io.dataspaceconnector.service.message.builder.ResourceUnavailableMessageBuilder;
+import io.dataspaceconnector.service.message.builder.ResourceUpdateMessageBuilder;
+import io.dataspaceconnector.service.message.builder.SubscriptionRequestMessageBuilder;
+import io.dataspaceconnector.service.message.handler.dto.Request;
 import io.dataspaceconnector.service.message.type.SubscriptionRequestService;
 import lombok.SneakyThrows;
 import org.apache.camel.Exchange;
@@ -57,6 +53,10 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;

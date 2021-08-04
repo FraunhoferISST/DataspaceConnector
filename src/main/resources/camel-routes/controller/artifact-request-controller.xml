@@ -3,7 +3,7 @@
 
         <!-- an unexpected message type has been received as the response to a request -->
         <onException>
-            <exception>io.dataspaceconnector.camel.exception.InvalidResponseException</exception>
+            <exception>io.dataspaceconnector.service.message.handler.exception.InvalidResponseException</exception>
             <process ref="PolicyRestrictionProcessor"/>
         </onException>
 

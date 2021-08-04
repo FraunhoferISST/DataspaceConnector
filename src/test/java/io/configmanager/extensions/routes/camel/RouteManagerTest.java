@@ -15,19 +15,21 @@
  */
 package io.configmanager.extensions.routes.camel;
 
-import java.net.URI;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.AppRouteBuilder;
 import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
 import de.fraunhofer.iais.eis.GenericEndpointBuilder;
 import de.fraunhofer.iais.eis.util.Util;
-import io.configmanager.extensions.routes.camel.exceptions.RouteCreationException;
-import io.dataspaceconnector.camel.config.CamelConfig;
+import io.dataspaceconnector.common.RouteCreationException;
+import io.dataspaceconnector.config.camel.CamelConfig;
+import io.dataspaceconnector.service.routing.RouteConfigurer;
+import io.dataspaceconnector.service.routing.RouteManager;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.net.URI;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

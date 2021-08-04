@@ -15,7 +15,9 @@
  */
 package io.dataspaceconnector.controller;
 
-import io.dataspaceconnector.controller.util.ControllerUtils;
+import io.dataspaceconnector.common.PatternUtils;
+import io.dataspaceconnector.common.RuleUtils;
+import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.model.pattern.ConnectorRestrictionDesc;
 import io.dataspaceconnector.model.pattern.DeletionDesc;
@@ -29,8 +31,6 @@ import io.dataspaceconnector.model.pattern.ProhibitionDesc;
 import io.dataspaceconnector.model.pattern.SecurityRestrictionDesc;
 import io.dataspaceconnector.model.pattern.UsageNumberDesc;
 import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.util.PatternUtils;
-import io.dataspaceconnector.util.RuleUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -80,7 +80,7 @@ public class ExampleController {
             final var rule = deserializationService.getRule(ruleAsString);
             return ResponseEntity.ok(RuleUtils.getPatternByRule(rule));
         } catch (IllegalStateException | ContractException exception) {
-            return ControllerUtils.respondPatternNotIdentified(exception);
+            return ResponseUtils.respondPatternNotIdentified(exception);
         }
     }
 

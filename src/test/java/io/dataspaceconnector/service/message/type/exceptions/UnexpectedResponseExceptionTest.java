@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.service.message.type.exceptions;
 
-import java.util.HashMap;
-
-import io.dataspaceconnector.exception.UnexpectedResponseException;
+import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.HashMap;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UnexpectedResponseExceptionTest {
 

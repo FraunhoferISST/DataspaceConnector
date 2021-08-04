@@ -16,11 +16,11 @@
 package io.dataspaceconnector.service.message.processing;
 
 import de.fraunhofer.iais.eis.Message;
+import io.dataspaceconnector.common.UUIDUtils;
+import io.dataspaceconnector.common.exception.PolicyExecutionException;
+import io.dataspaceconnector.common.exception.UUIDFormatException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.exception.PolicyExecutionException;
-import io.dataspaceconnector.exception.UUIDFormatException;
 import io.dataspaceconnector.service.message.type.LogMessageService;
-import io.dataspaceconnector.util.UUIDUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

@@ -15,17 +15,17 @@
  */
 package io.dataspaceconnector.model.subscription;
 
-import java.net.URI;
-
+import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.MetadataUtils;
+import io.dataspaceconnector.common.ValidationUtils;
+import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.exception.InvalidEntityException;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.MetadataUtils;
-import io.dataspaceconnector.util.ValidationUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
 
 /**
  * Creates and updates a subscription.

@@ -15,10 +15,11 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
+import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.view.representation.RepresentationViewAssembler;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
-import io.dataspaceconnector.exception.UnreachableLineException;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.representation.RepresentationDesc;
 import io.dataspaceconnector.model.representation.RepresentationFactory;

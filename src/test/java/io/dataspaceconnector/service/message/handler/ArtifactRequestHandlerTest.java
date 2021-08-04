@@ -15,12 +15,6 @@
  */
 package io.dataspaceconnector.service.message.handler;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import javax.xml.datatype.DatatypeFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageBuilder;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
@@ -29,13 +23,19 @@ import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
-import io.dataspaceconnector.camel.processor.ClearingHouseLoggingProcessor;
+import io.dataspaceconnector.service.message.handler.type.ArtifactRequestHandler;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
+
+import javax.xml.datatype.DatatypeFactory;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

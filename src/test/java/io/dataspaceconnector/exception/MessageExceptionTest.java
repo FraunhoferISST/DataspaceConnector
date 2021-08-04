@@ -15,10 +15,8 @@
  */
 package io.dataspaceconnector.exception;
 
-import io.dataspaceconnector.util.ErrorMessage;
+import io.dataspaceconnector.common.ErrorMessage;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class MessageExceptionTest {
     @Test

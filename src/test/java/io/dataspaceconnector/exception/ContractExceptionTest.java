@@ -17,8 +17,6 @@ package io.dataspaceconnector.exception;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class ContractExceptionTest {
 
     @Test

@@ -15,14 +15,15 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
+import io.dataspaceconnector.common.ContractUtils;
+import io.dataspaceconnector.common.RuleUtils;
+import io.dataspaceconnector.common.SelfLinkHelper;
+import io.dataspaceconnector.common.exception.PolicyExecutionException;
+import io.dataspaceconnector.common.exception.PolicyRestrictionException;
+import io.dataspaceconnector.common.exception.UnsupportedPatternException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.exception.PolicyExecutionException;
-import io.dataspaceconnector.exception.PolicyRestrictionException;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.service.EntityResolver;
-import io.dataspaceconnector.util.ContractUtils;
-import io.dataspaceconnector.util.RuleUtils;
-import io.dataspaceconnector.util.SelfLinkHelper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -92,7 +93,7 @@ public final class DataAccessVerifier implements PolicyVerifier<AccessVerificati
      * @param artifactId  The requested artifact.
      * @param remoteId    The remote id of the requested artifact.
      * @param agreementId The id of the transfer contract (agreement).
-     * @throws io.dataspaceconnector.exception.UnsupportedPatternException If no suitable pattern
+     * @throws UnsupportedPatternException If no suitable pattern
      *                                                                     could be found.
      */
     public void checkForAccess(final List<PolicyPattern> patterns, final URI artifactId,

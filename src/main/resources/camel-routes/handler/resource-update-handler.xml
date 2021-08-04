@@ -3,13 +3,13 @@
 
         <!-- affected resource is missing from message header -->
         <onException>
-            <exception>io.dataspaceconnector.camel.exception.NoAffectedResourceException</exception>
+            <exception>io.dataspaceconnector.service.message.handler.exception.NoAffectedResourceException</exception>
             <to uri="direct:handleNoAffectedResourceException"/>
         </onException>
 
         <!-- affected resource from message header does not match resource ID in payload -->
         <onException>
-            <exception>io.dataspaceconnector.camel.exception.InvalidAffectedResourceException</exception>
+            <exception>io.dataspaceconnector.service.message.handler.exception.InvalidAffectedResourceException</exception>
             <to uri="direct:handleInvalidAffectedResourceException"/>
         </onException>
 
@@ -34,13 +34,13 @@
             <process ref="ResourceDeserializer"/>
             <doCatch>
                 <!-- deserializing the message payload fails -->
-                <exception>io.dataspaceconnector.camel.exception.DeserializationException</exception>
+                <exception>io.dataspaceconnector.service.message.handler.exception.DeserializationException</exception>
                 <to uri="direct:handleWrappedIllegalArgumentException"/>
                 <stop/>
             </doCatch>
             <doCatch>
                 <!-- payload is empty -->
-                <exception>io.dataspaceconnector.camel.exception.MissingPayloadException</exception>
+                <exception>io.dataspaceconnector.service.message.handler.exception.MissingPayloadException</exception>
                 <to uri="direct:handleMissingPayloadException"/>
                 <stop/>
             </doCatch>

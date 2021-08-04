@@ -15,11 +15,7 @@
  */
 package io.dataspaceconnector.camel.controller;
 
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
+import io.dataspaceconnector.controller.routing.RoutesController;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RoutesDefinition;
 import org.junit.jupiter.api.Test;
@@ -28,6 +24,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
+
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;

@@ -15,20 +15,16 @@
  */
 package io.dataspaceconnector.camel.processor.controller;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Optional;
-
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
-import io.dataspaceconnector.camel.exception.InvalidResponseException;
-import io.dataspaceconnector.camel.processor.controller.helper.ConfigurationUpdater;
-import io.dataspaceconnector.camel.processor.controller.helper.PolicyRestrictionProcessor;
-import io.dataspaceconnector.camel.processor.controller.helper.ResourceFinder;
-import io.dataspaceconnector.camel.util.ParameterUtils;
-import io.dataspaceconnector.exception.PolicyRestrictionException;
-import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.ParameterUtils;
+import io.dataspaceconnector.common.exception.PolicyRestrictionException;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.controller.message.ids.helper.ConfigurationUpdater;
+import io.dataspaceconnector.controller.message.ids.helper.PolicyRestrictionProcessor;
+import io.dataspaceconnector.controller.message.ids.helper.ResourceFinder;
 import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.service.message.handler.exception.InvalidResponseException;
 import lombok.SneakyThrows;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -37,6 +33,10 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;

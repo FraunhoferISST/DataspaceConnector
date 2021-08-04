@@ -17,6 +17,7 @@ package io.dataspaceconnector.service.ids;
 
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.ids.messaging.util.SerializerProvider;
+import io.dataspaceconnector.common.IdsUtils;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.contract.ContractDesc;
@@ -28,7 +29,6 @@ import io.dataspaceconnector.service.ids.builder.IdsContractBuilder;
 import io.dataspaceconnector.service.ids.builder.IdsDutyBuilder;
 import io.dataspaceconnector.service.ids.builder.IdsPermissionBuilder;
 import io.dataspaceconnector.service.ids.builder.IdsProhibitionBuilder;
-import io.dataspaceconnector.util.IdsUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

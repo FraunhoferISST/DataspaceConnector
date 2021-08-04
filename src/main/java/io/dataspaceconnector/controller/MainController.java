@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.controller;
 
-import io.dataspaceconnector.controller.configuration.BrokerControllers;
-import io.dataspaceconnector.controller.configuration.DataSourceController;
-import io.dataspaceconnector.controller.configuration.EndpointController;
-import io.dataspaceconnector.controller.configuration.RouteControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -99,21 +95,21 @@ public class MainController {
                 .getAll(null, null)).withRel("agreements"));
         model.add(linkTo(methodOn(ResourceControllers.ArtifactController.class)
                 .getAll(null, null)).withRel("artifacts"));
-        model.add(linkTo(methodOn(BrokerControllers.BrokerController.class)
+        model.add(linkTo(methodOn(ResourceControllers.BrokerController.class)
                 .getAll(null, null)).withRel("brokers"));
         model.add(linkTo(methodOn(ResourceControllers.CatalogController.class)
                 .getAll(null, null)).withRel("catalogs"));
         model.add(linkTo(methodOn(ResourceControllers.ContractController.class)
                 .getAll(null, null)).withRel("contracts"));
-        model.add(linkTo(methodOn(DataSourceController.class)
+        model.add(linkTo(methodOn(ResourceControllers.DataSourceController.class)
                 .getAll(null, null)).withRel("datasources"));
-        model.add(linkTo(methodOn(EndpointController.class)
+        model.add(linkTo(methodOn(ResourceControllers.EndpointController.class)
                 .getAll(null, null)).withRel("endpoints"));
         model.add(linkTo(methodOn(ResourceControllers.OfferedResourceController.class)
                 .getAll(null, null)).withRel("offers"));
         model.add(linkTo(methodOn(ResourceControllers.RepresentationController.class)
                 .getAll(null, null)).withRel("representations"));
-        model.add(linkTo(methodOn(RouteControllers.RouteController.class)
+        model.add(linkTo(methodOn(ResourceControllers.RouteController.class)
                 .getAll(null, null)).withRel("routes"));
         model.add(linkTo(methodOn(ResourceControllers.RequestedResourceController.class)
                 .getAll(null, null)).withRel("requests"));

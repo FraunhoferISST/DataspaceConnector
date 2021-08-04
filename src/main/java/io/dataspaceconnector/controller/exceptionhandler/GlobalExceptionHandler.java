@@ -26,14 +26,14 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
- * Controller for global handling of runtime exceptions.
+ * Controller for global handling of runtime exception.
  */
 @Log4j2
 @ControllerAdvice
 @Order
 public final class GlobalExceptionHandler {
     /**
-     * Handle runtime exceptions with response code 500.
+     * Handle runtime exception with response code 500.
      *
      * @param exception The thrown exception.
      * @return Response entity with code 500.

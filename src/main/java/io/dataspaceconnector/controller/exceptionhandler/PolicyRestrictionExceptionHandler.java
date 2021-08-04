@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.exceptionhandler;
 
-import io.dataspaceconnector.exception.PolicyRestrictionException;
+import io.dataspaceconnector.common.exception.PolicyRestrictionException;
 import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONObject;
 import org.springframework.core.annotation.Order;

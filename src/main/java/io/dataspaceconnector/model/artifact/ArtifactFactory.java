@@ -15,18 +15,18 @@
  */
 package io.dataspaceconnector.model.artifact;
 
+import io.dataspaceconnector.common.MetadataUtils;
+import io.dataspaceconnector.model.auth.ApiKey;
+import io.dataspaceconnector.model.auth.AuthenticationDesc;
+import io.dataspaceconnector.model.auth.BasicAuth;
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
+import org.springframework.stereotype.Component;
+
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.zip.CRC32C;
-
-import io.dataspaceconnector.model.auth.ApiKey;
-import io.dataspaceconnector.model.auth.AuthenticationDesc;
-import io.dataspaceconnector.model.auth.BasicAuth;
-import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import io.dataspaceconnector.util.MetadataUtils;
-import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates an artifact.

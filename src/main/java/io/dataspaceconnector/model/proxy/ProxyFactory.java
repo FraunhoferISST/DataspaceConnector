@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.model.proxy;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
+import io.dataspaceconnector.common.MetadataUtils;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.util.MetadataUtils;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Factory class for the proxy.

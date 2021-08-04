@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.model.named;
 
+import io.dataspaceconnector.common.MetadataUtils;
 import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.util.MetadataUtils;
 
 /**
  * Abstract factory class which holds additional information like title, description.

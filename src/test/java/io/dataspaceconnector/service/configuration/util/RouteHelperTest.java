@@ -15,25 +15,26 @@
  */
 package io.dataspaceconnector.service.configuration.util;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.AppRoute;
 import de.fraunhofer.iais.eis.AppRouteBuilder;
 import de.fraunhofer.iais.eis.GenericEndpointBuilder;
 import de.fraunhofer.iais.eis.util.Util;
-import io.configmanager.extensions.routes.camel.RouteManager;
 import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.service.ids.builder.IdsAppRouteBuilder;
+import io.dataspaceconnector.service.resource.RouteHelper;
+import io.dataspaceconnector.service.routing.RouteManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;

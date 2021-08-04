@@ -15,16 +15,10 @@
  */
 package io.dataspaceconnector.service;
 
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Map;
-
+import io.dataspaceconnector.common.QueryInput;
+import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.auth.BasicAuth;
-import io.dataspaceconnector.util.QueryInput;
-import io.dataspaceconnector.util.exception.NotImplemented;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
 import okhttp3.Request;
@@ -36,6 +30,12 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
