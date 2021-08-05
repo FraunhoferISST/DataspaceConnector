@@ -28,8 +28,8 @@ import de.fraunhofer.iais.eis.ResourceUpdateMessage;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.common.exception.MessageEmptyException;
 import io.dataspaceconnector.common.exception.VersionNotSupportedException;
-import io.dataspaceconnector.exception.MessageEmptyException;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;

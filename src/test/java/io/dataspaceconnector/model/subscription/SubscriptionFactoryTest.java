@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.model.subscription;
 
-import java.net.URI;
-
+import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.exception.InvalidEntityException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

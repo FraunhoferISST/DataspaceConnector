@@ -15,7 +15,10 @@
  */
 package io.dataspaceconnector.exception;
 
+import io.dataspaceconnector.common.exception.InvalidResourceException;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class InvalidResourceExceptionTest {
     @Test

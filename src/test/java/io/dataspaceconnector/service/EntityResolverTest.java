@@ -28,7 +28,7 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.common.IdsUtils;
 import io.dataspaceconnector.common.QueryInput;
-import io.dataspaceconnector.exception.InvalidResourceException;
+import io.dataspaceconnector.common.exception.InvalidResourceException;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
