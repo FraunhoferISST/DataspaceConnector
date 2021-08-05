@@ -5,7 +5,7 @@ import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
 import io.dataspaceconnector.common.MessageUtils;
 import io.dataspaceconnector.common.QueryInput;
-import io.dataspaceconnector.exception.InvalidInputException;
+import io.dataspaceconnector.common.exception.InvalidInputException;
 import io.dataspaceconnector.model.message.ArtifactResponseMessageDesc;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.message.handler.dto.Response;

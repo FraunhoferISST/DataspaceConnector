@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.model.resource;
 
-import java.net.URI;
-import java.util.List;
-
 import io.dataspaceconnector.model.named.NamedDescription;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.net.URI;
+import java.util.List;
 
 /**
  * Base class for describing resources.

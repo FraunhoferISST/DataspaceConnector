@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.model.artifact;
 
-import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.base.RemoteObject;
 import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;

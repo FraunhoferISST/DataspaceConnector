@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import java.util.UUID;
-
-import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.base.Description;
+import io.dataspaceconnector.model.base.Entity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.UUID;
 
 /**
  * Interface for entities.

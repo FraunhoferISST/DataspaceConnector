@@ -17,11 +17,11 @@ package io.dataspaceconnector.controller.message.ids;
 
 import io.dataspaceconnector.common.MessageUtils;
 import io.dataspaceconnector.common.ParameterUtils;
+import io.dataspaceconnector.common.exception.MessageException;
+import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.controller.util.ResponseUtils;
-import io.dataspaceconnector.exception.MessageException;
-import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.service.message.type.SubscriptionRequestService;
 import io.swagger.v3.oas.annotations.Operation;

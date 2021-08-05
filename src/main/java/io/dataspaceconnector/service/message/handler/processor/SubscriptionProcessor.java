@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.RequestMessageImpl;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
 import io.dataspaceconnector.common.MessageUtils;
-import io.dataspaceconnector.exception.InvalidInputException;
+import io.dataspaceconnector.common.exception.InvalidInputException;
 import io.dataspaceconnector.model.message.MessageProcessedNotificationMessageDesc;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;

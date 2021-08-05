@@ -17,8 +17,8 @@ package io.dataspaceconnector.controller;
 
 import io.dataspaceconnector.common.PatternUtils;
 import io.dataspaceconnector.common.RuleUtils;
+import io.dataspaceconnector.common.exception.ContractException;
 import io.dataspaceconnector.controller.util.ResponseUtils;
-import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.model.pattern.ConnectorRestrictionDesc;
 import io.dataspaceconnector.model.pattern.DeletionDesc;
 import io.dataspaceconnector.model.pattern.DurationDesc;

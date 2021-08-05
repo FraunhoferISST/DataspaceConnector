@@ -25,9 +25,9 @@ import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.common.ErrorMessage;
 import io.dataspaceconnector.common.IdsUtils;
 import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.common.exception.MessageException;
+import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
-import io.dataspaceconnector.exception.MessageException;
-import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.model.message.ContractAgreementMessageDesc;
 import org.springframework.stereotype.Service;
 

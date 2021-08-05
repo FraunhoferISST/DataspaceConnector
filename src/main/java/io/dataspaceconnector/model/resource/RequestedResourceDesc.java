@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.model.resource;
 
-import java.net.URI;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.net.URI;
 
 /**
  * Describes a requested resource. Use this to create or

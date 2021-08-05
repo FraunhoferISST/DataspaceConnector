@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import java.net.URI;
-import java.util.Optional;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.repository.RequestedResourcesRepository;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Handles the basic logic for requested resources.

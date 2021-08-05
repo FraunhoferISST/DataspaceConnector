@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.repository;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.configuration.Configuration;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Repository for the configuration.

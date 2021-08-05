@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.model.template;
 
-import java.util.List;
-
 import io.dataspaceconnector.model.base.Description;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -25,6 +23,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 /**
  * Describes a resource and all its dependencies.

@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import java.util.List;
-
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Handles the relation between a catalog and its offered resources.

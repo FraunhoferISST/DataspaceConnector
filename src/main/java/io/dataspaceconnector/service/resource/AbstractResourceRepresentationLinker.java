@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import java.util.List;
-
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.Resource;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 /**
  * Handles the relation between a resources and its representations.
