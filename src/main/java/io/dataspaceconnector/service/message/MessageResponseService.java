@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.service.message;
 
+import java.net.URI;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.RejectionReason;
@@ -33,8 +35,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
 
 /**
  * This class handles message responses.
@@ -582,6 +582,24 @@ public class MessageResponseService {
         }
         return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 "This the transfer contract has not yet been confirmed.",
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
+    }
+
+    /**
+     * Respond with error if no valid subscriptions could be created from supplied input.
+     *
+     * @param exception The exception.
+     * @param input String representation of the input for creating the subscription.
+     * @return A message response.
+     */
+    public MessageResponse handleInvalidSubscription(final Exception exception,
+                                                     final String input) {
+        if (log.isDebugEnabled()) {
+            log.debug("Unable to create valid subscription from input. "
+                    + "[input=({}), exception=({})]", input, exception.getMessage());
+        }
+        return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
+                "Unable to create valid subscription from input.",
                 connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 }

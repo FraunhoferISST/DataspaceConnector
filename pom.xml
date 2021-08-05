@@ -102,7 +102,6 @@
 		<jackson.version>2.12.4</jackson.version>
 		<postgres.version>42.2.23</postgres.version>
 		<springdoc.version>1.5.10</springdoc.version>
-		<jsonld-java.version>0.13.3</jsonld-java.version>
 		<equalsverifier.version>3.7</equalsverifier.version>
 		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
@@ -346,7 +345,13 @@
 			<groupId>io.opentracing.contrib</groupId>
 			<artifactId>opentracing-spring-jaeger-web-starter</artifactId>
 			<version>${jaeger.version}</version>
-		</dependency>
+            <exclusions>
+                <exclusion>
+                    <artifactId>libthrift</artifactId>
+                    <groupId>org.apache.thrift</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui -->
 		<dependency>
@@ -366,13 +371,6 @@
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-hateoas</artifactId>
 			<version>${springdoc.version}</version>
-		</dependency>
-
-		<!-- https://github.com/jsonld-java/jsonld-java -->
-		<dependency>
-			<groupId>com.github.jsonld-java</groupId>
-			<artifactId>jsonld-java</artifactId>
-			<version>${jsonld-java.version}</version>
 		</dependency>
 
 		<dependency>
@@ -418,6 +416,14 @@
 			<version>3.2.2</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+		<!-- Override commons-io 2.2 in IDS Messaging Service affected by CVE-2021-29425 -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.11.0</version>
+			<scope>compile</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.camel.springboot</groupId>
@@ -442,7 +448,13 @@
 			<groupId>de.fhg.aisec.ids</groupId>
 			<artifactId>camel-idscp2</artifactId>
 			<version>${idscp2.version}</version>
-		</dependency>
+            <exclusions>
+                <exclusion>
+                    <artifactId>camel-core</artifactId>
+                    <groupId>org.apache.camel</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
 	</dependencies>
 
@@ -501,6 +513,7 @@
 				<filtering>true</filtering>
 				<includes>
 					<include>conf/**/*.*</include>
+					<include>camel-routes/**/*.xml</include>
 					<include>log4j2.xml</include>
 					<include>camel-templates/**/*.vm</include>
 					<include>application.properties</include>
@@ -746,7 +759,7 @@
 					<threads>2</threads>
 					<timestampedReports>false</timestampedReports>
 					<coverageThreshold>98</coverageThreshold>
-					<mutationThreshold>77</mutationThreshold>
+					<mutationThreshold>74</mutationThreshold>
 				</configuration>
 			</plugin>
 			<plugin>

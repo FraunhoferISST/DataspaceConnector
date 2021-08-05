@@ -39,7 +39,6 @@ import io.dataspaceconnector.model.contract.ContractDesc;
 import io.dataspaceconnector.model.contract.ContractFactory;
 import io.dataspaceconnector.model.rule.ContractRuleDesc;
 import io.dataspaceconnector.model.rule.ContractRuleFactory;
-import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.service.EntityPersistenceService;
 import io.dataspaceconnector.service.resource.EntityDependencyResolver;
 import lombok.SneakyThrows;
@@ -72,9 +71,6 @@ import static org.mockito.ArgumentMatchers.any;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class ContractRequestHandlerTest {
-
-    @MockBean
-    private IdscpServerRoute idscpServerRoute;
 
     @MockBean
     EntityPersistenceService persistenceService;

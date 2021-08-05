@@ -17,10 +17,13 @@ package io.dataspaceconnector.controller.util;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Objects;
 
 import de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception;
+import io.dataspaceconnector.camel.dto.Response;
 import io.dataspaceconnector.util.ErrorMessage;
 import lombok.extern.log4j.Log4j2;
+import org.apache.camel.Exchange;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -263,5 +266,29 @@ public final class ControllerUtils {
                     exception.getMessage());
         }
         return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Returns the result of a controller's Camel route as a response entity.
+     *
+     * @param exchange the exchange resulting from the Camel route.
+     * @return a response entity representing the result.
+     */
+    public static ResponseEntity<Object> respondWithExchangeContent(final Exchange exchange) {
+        final var response = exchange.getIn().getBody(Response.class);
+        if (response != null) {
+            return ResponseEntity.ok(response.getBody());
+        } else {
+            final var responseEntity =
+                    toObjectResponse(exchange.getIn().getBody(ResponseEntity.class));
+            return Objects.requireNonNullElseGet(responseEntity,
+                    () -> new ResponseEntity<>("An internal server error occurred.",
+                            HttpStatus.INTERNAL_SERVER_ERROR));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static ResponseEntity<Object> toObjectResponse(final ResponseEntity<?> response) {
+        return (ResponseEntity<Object>) response;
     }
 }

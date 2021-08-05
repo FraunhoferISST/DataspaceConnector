@@ -45,6 +45,8 @@ export CONSUMER_CONTAINER_PORT=$(kubectl get pod --namespace default $CONSUMER_P
 kubectl port-forward $PROVIDER_POD_NAME 8080:$PROVIDER_CONTAINER_PORT 2>&1 > /dev/null &
 kubectl port-forward $CONSUMER_POD_NAME 8081:$CONSUMER_CONTAINER_PORT 2>&1 > /dev/null &
 
+sleep 5s
+
 echo "$LINE_BREAK_DASH"
 while read INPUT; do
     export CURRENT_TEST_SCRIPT=$INPUT

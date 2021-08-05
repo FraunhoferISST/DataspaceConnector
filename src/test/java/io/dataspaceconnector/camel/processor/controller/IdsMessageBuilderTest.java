@@ -27,19 +27,25 @@ import de.fraunhofer.iais.eis.ConnectorUnavailableMessage;
 import de.fraunhofer.iais.eis.ConnectorUpdateMessage;
 import de.fraunhofer.iais.eis.DynamicAttributeToken;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
+import de.fraunhofer.iais.eis.RequestMessage;
+import de.fraunhofer.iais.eis.RequestMessageBuilder;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.iais.eis.ResourceUnavailableMessage;
 import de.fraunhofer.iais.eis.ResourceUpdateMessage;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.TokenFormat;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Request;
 import io.dataspaceconnector.camel.processor.controller.messagebuilder.ConnectorUnavailableMessageBuilder;
 import io.dataspaceconnector.camel.processor.controller.messagebuilder.ConnectorUpdateMessageBuilder;
 import io.dataspaceconnector.camel.processor.controller.messagebuilder.ResourceUnavailableMessageBuilder;
 import io.dataspaceconnector.camel.processor.controller.messagebuilder.ResourceUpdateMessageBuilder;
+import io.dataspaceconnector.camel.processor.controller.messagebuilder.SubscriptionRequestMessageBuilder;
 import io.dataspaceconnector.camel.util.ParameterUtils;
+import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.service.message.type.SubscriptionRequestService;
 import lombok.SneakyThrows;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -62,7 +68,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = { ConnectorUnavailableMessageBuilder.class,
         ConnectorUpdateMessageBuilder.class, ResourceUnavailableMessageBuilder.class,
-        ResourceUpdateMessageBuilder.class})
+        ResourceUpdateMessageBuilder.class, SubscriptionRequestMessageBuilder.class})
 public class IdsMessageBuilderTest {
 
     @Mock
@@ -73,6 +79,9 @@ public class IdsMessageBuilderTest {
 
     @MockBean
     private ConnectorService connectorService;
+
+    @MockBean
+    private SubscriptionRequestService subscriptionReqSvc;
 
     @Captor
     private ArgumentCaptor<Request<?, ?, ?>> captor;
@@ -88,6 +97,9 @@ public class IdsMessageBuilderTest {
 
     @Autowired
     private ResourceUpdateMessageBuilder resourceUpdateBuilder;
+
+    @Autowired
+    private SubscriptionRequestMessageBuilder subscriptionRequestBuilder;
 
     private final URI recipient = URI.create("https://recipient.com");
 
@@ -187,6 +199,32 @@ public class IdsMessageBuilderTest {
         assertTrue(request.getBody() instanceof Resource);
     }
 
+    @Test
+    @SneakyThrows
+    public void subscriptionRequestMessageBuilder_returnRequest() {
+        /* ARRANGE */
+        final var target = URI.create("https://target.com");
+        final var subscription = new SubscriptionDesc();
+        subscription.setTarget(target);
+        final var idsMessage = getSubscriptionRequestMessage();
+
+        when(exchange.getProperty(ParameterUtils.SUBSCRIPTION_DESC_PARAM, SubscriptionDesc.class))
+                .thenReturn(subscription);
+        when(subscriptionReqSvc.buildMessage(any())).thenReturn(idsMessage);
+
+        /* ACT */
+        subscriptionRequestBuilder.process(exchange);
+
+        /* ASSERT */
+        verify(in, times(1)).setBody(captor.capture());
+
+        final var request = captor.getValue();
+        assertNotNull(request.getHeader());
+        assertTrue(request.getHeader() instanceof RequestMessage);
+        assertNotNull(request.getBody());
+        assertTrue(request.getBody() instanceof SubscriptionDesc);
+    }
+
     /***********************************************************************************************
      * Utilities.                                                                                  *
      **********************************************************************************************/
@@ -213,6 +251,16 @@ public class IdsMessageBuilderTest {
 
     private Resource getResource() {
         return new ResourceBuilder().build();
+    }
+
+    private RequestMessage getSubscriptionRequestMessage() {
+        return new RequestMessageBuilder()
+                ._issued_(IdsMessageUtils.getGregorianNow())
+                ._modelVersion_("4.0.0")
+                ._securityToken_(getToken())
+                ._issuerConnector_(recipient)
+                ._senderAgent_(recipient)
+                .build();
     }
 
 }

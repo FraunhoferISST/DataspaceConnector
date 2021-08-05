@@ -23,6 +23,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BasicAuthTest {
 
+    private final String username = "user";
+    private final String password = "pwd";
+    private final String credentials = Credentials.basic(username, password);
+    private final HttpService.Pair authHeader = new HttpService.Pair("Authorization", credentials);
+    private final BasicAuth            basicAuth = new BasicAuth(username, password);
+    private final HttpService.HttpArgs args      = new HttpService.HttpArgs();
+
     @Test
     void getAuthPair_nullValue_nullValue() {
         /* ARRANGE */
@@ -38,11 +45,6 @@ class BasicAuthTest {
     @Test
     void getAuthPair_validContent_getAuthorization() {
         /* ARRANGE */
-        var username = "user";
-        var password = "pw";
-        var basicAuth = new BasicAuth(username, password);
-
-        final var args = new HttpService.HttpArgs();
 
         /* ACT */
         basicAuth.setAuth(args);
@@ -54,17 +56,83 @@ class BasicAuthTest {
     @Test
     void getAuthPair_validContent_getValue2() {
         /* ARRANGE */
-        var username = "user";
-        var password = "pw";
-        var basicAuth = new BasicAuth(username, password);
-
-        var expected = Credentials.basic(username, password);
-        final var args = new HttpService.HttpArgs();
 
         /* ACT */
         basicAuth.setAuth(args);
 
         /* ASSERT */
-        assertEquals(expected, args.getAuth().getSecond());
+        assertEquals(credentials, args.getAuth().getSecond());
+    }
+
+    @Test
+    void constructor_validDesc_willAssign() {
+        /* ARRANGE */
+        final var desc = new AuthenticationDesc(username, password);
+
+        /* ACT */
+        final var basicAuth = new BasicAuth(desc);
+
+        /* ASSERT */
+        assertEquals(username, basicAuth.getUsername());
+        assertEquals(password, basicAuth.getPassword());
+    }
+
+    @Test
+    void setAuth_validValue_willAddAuthHeader() {
+        /* ARRANGE */
+
+        /* ACT */
+        basicAuth.setAuth(args);
+
+        /* ASSERT */
+        assertEquals(authHeader, args.getAuth());
+    }
+
+    @Test
+    void setAuth_validValueButAuthAlreadySet_willNotUpdate() {
+        /* ARRANGE */
+        args.setAuth(new HttpService.Pair("Authorization", Credentials.basic("test", "test")));
+
+        /* ACT */
+        basicAuth.setAuth(args);
+
+        /* ASSERT */
+        assertNotEquals(authHeader, args.getAuth());
+    }
+
+    @Test
+    void setAuth_validValueArgsHasSomeKeySet_willNotUpdate() {
+        /* ARRANGE */
+        args.setAuth(new HttpService.Pair("Authorization", null));
+
+        /* ACT */
+        basicAuth.setAuth(args);
+
+        /* ASSERT */
+        assertNotEquals(authHeader, args.getAuth());
+    }
+
+    @Test
+    void setAuth_validValueArgsHasSomeValueSet_willNotUpdate() {
+        /* ARRANGE */
+        args.setAuth(new HttpService.Pair(null, credentials));
+
+        /* ACT */
+        basicAuth.setAuth(args);
+
+        /* ASSERT */
+        assertNotEquals(authHeader, args.getAuth());
+    }
+
+    @Test
+    void setAuth_validValueArgsHasNoValuesSet_willUpdate() {
+        /* ARRANGE */
+        args.setAuth(new HttpService.Pair(null, null));
+
+        /* ACT */
+        basicAuth.setAuth(args);
+
+        /* ASSERT */
+        assertEquals(authHeader, args.getAuth());
     }
 }

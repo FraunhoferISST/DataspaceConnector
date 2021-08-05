@@ -28,7 +28,6 @@ import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseExcep
 import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Response;
-import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
@@ -75,9 +74,6 @@ public class QueryMessageControllerTest {
 
     @Mock
     private Message in;
-
-    @MockBean
-    private IdscpServerRoute idscpServerRoute;
 
     @MockBean
     private GlobalMessageService messageService;

@@ -26,19 +26,6 @@ public final class ParameterUtils {
     private ParameterUtils() { }
 
     /**
-     * Dynamic URI used for sending IDSCPv2 messages in routes.
-     */
-    public static final String IDSCP_CLIENT_URI = "idscp2client://${exchangeProperty.recipient}?"
-            + "awaitResponse=true&sslContextParameters=#serverSslContext"
-            + "&useIdsMessages=true";
-
-    /**
-     * URI used to receive IDSCPv2 messages in routes.
-     */
-    public static final String IDSCP_SERVER_URI = "idscp2server://0.0.0.0:29292?"
-            + "sslContextParameters=#serverSslContext&useIdsMessages=true";
-
-    /**
      * Name of the header containing the IDSCPv2 message.
      */
     public static final String IDSCP_HEADER = "idscp2-header";
@@ -144,9 +131,20 @@ public final class ParameterUtils {
     public static final String QUERY_INPUT_PARAM = "queryInput";
 
     /**
-     * Reference for calling a method on ControllerUtils from a route.
+     * Name of the parameter for the subscription description.
      */
-    public static final String CONTROLLER_UTILS_BEAN = "bean:io.dataspaceconnector.controller"
-            + ".util.ControllerUtils?method=";
+    public static final String SUBSCRIPTION_DESC_PARAM = "subscriptionDesc";
+
+    /**
+     * Inserts the specified recipient into the URI used to make IDSCP2 client calls.
+     *
+     * @param recipient the recipient
+     * @return the IDSCP2 client URI with the recipient.
+     */
+    public static String getIdscp2ClientUri(final String recipient) {
+        return "idscp2client://" + recipient + "?awaitResponse=true"
+                + "&sslContextParameters=#serverSslContext"
+                + "&useIdsMessages=true";
+    }
 
 }

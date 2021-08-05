@@ -25,8 +25,8 @@
         </Root>
 <!--        <Logger name="org.springframework" level="info" /> -->
         <Logger name="org.hibernate" level="error"/>
-<!--        <Logger name="io.dataspaceconnector" level="info" /> -->
-        <Logger name="camel-route-logger" level="debug"/>
+        <Logger name="io.dataspaceconnector" level="info" />
+        <Logger name="camel-route-logger" level="info"/>
 <!--        <Logger name="de.fhg.aisec.ids.idscp2" level="TRACE" />-->
 <!--        <Logger name="de.fhg.aisec.ids.camel.idscp2" level="TRACE" />-->
     </Loggers>
