@@ -25,7 +25,7 @@ import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.RdfBuilderException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.controller.resource.view.agreement.AgreementViewAssembler;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.service.ArtifactDataDownloader;
@@ -113,7 +113,7 @@ public class ContractRequestMessageController {
     /**
      * Service for handle application.properties settings.
      */
-    private final @NonNull ConnectorConfiguration connectorConfig;
+    private final @NonNull ConnectorConfig connectorConfig;
 
     /**
      * Starts a contract, metadata, and data exchange with an external connector.

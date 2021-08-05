@@ -31,7 +31,7 @@ import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.controller.message.ids.DescriptionRequestMessageController;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.message.handler.dto.Response;
@@ -86,7 +86,7 @@ public class DescriptionRequestMessageControllerTest {
     private DescriptionRequestMessageController controller;
 
     @MockBean
-    private ConnectorConfiguration connectorConfiguration;
+    private ConnectorConfig connectorConfig;
 
     @Test
     @SneakyThrows
@@ -196,7 +196,7 @@ public class DescriptionRequestMessageControllerTest {
         when(exchange.getIn()).thenReturn(in);
         when(in.getBody(Response.class)).thenReturn(response);
         when(deserializationService.getInfrastructureComponent(any())).thenReturn(connector);
-        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
+        when(connectorConfig.isIdscpEnabled()).thenReturn(true);
 
         /* ACT */
         final var responseEntity = controller
@@ -216,7 +216,7 @@ public class DescriptionRequestMessageControllerTest {
         when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
         when(exchange.getIn()).thenReturn(in);
         when(in.getBody(ResponseEntity.class)).thenReturn(response);
-        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
+        when(connectorConfig.isIdscpEnabled()).thenReturn(true);
 
         /* ACT */
         final var responseEntity = controller

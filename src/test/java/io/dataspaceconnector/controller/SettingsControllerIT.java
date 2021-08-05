@@ -16,7 +16,7 @@
 package io.dataspaceconnector.controller;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.extension.idscp.config.Idscp2Config;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import net.minidev.json.JSONObject;
@@ -52,7 +52,7 @@ public class SettingsControllerIT {
     private ConfigContainer configContainer;
 
     @SpyBean
-    private ConnectorConfiguration connectorConfig;
+    private ConnectorConfig connectorConfig;
 
     @SpyBean
     private DeserializationService idsService;

@@ -29,7 +29,7 @@ import java.time.Duration;
  */
 @Configuration
 @RequiredArgsConstructor
-public class ConnectionConfiguration {
+public class HttpConfig {
 
     /**
      * Global timeout value.

@@ -16,7 +16,7 @@
 package io.dataspaceconnector.service;
 
 import io.dataspaceconnector.common.exception.DataRetrievalException;
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
@@ -59,7 +59,7 @@ public class BlockingArtifactReceiverTest {
     private BlockingArtifactReceiver blockingArtifactReceiver;
 
     @MockBean
-    private ConnectorConfiguration connectorConfiguration;
+    private ConnectorConfig connectorConfig;
 
     @Test
     public void retrieve_artifactIdNull_throwIllegalArgumentException() {

@@ -29,7 +29,7 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.config.ConnectorConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -51,7 +51,7 @@ public class DataProvisionVerifierTest {
     private RuleValidator ruleValidator;
 
     @MockBean
-    private ConnectorConfiguration connectorConfig;
+    private ConnectorConfig connectorConfig;
 
     @Autowired
     private DataProvisionVerifier verifier;

@@ -20,7 +20,7 @@ import io.dataspaceconnector.common.ParameterUtils;
 import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.service.message.type.SubscriptionRequestService;
@@ -62,7 +62,7 @@ public class SubscriptionMessageController {
     /**
      * Service for handling application.properties settings.
      */
-    private final @NonNull ConnectorConfiguration connectorConfig;
+    private final @NonNull ConnectorConfig connectorConfig;
 
     /**
      * Template for triggering Camel routes.

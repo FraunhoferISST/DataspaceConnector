@@ -28,7 +28,7 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.service.EntityResolver;
@@ -55,7 +55,7 @@ public class DataAccessVerifierTest {
     private RuleValidator ruleValidator;
 
     @MockBean
-    private ConnectorConfiguration connectorConfig;
+    private ConnectorConfig connectorConfig;
 
     @MockBean
     private EntityResolver entityResolver;

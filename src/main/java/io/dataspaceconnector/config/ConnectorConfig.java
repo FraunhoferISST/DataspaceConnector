@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.config;
 
-import io.dataspaceconnector.config.util.UsageControlFramework;
+import io.dataspaceconnector.common.util.ids.UsageControlFramework;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +26,7 @@ import java.net.URI;
  */
 @Data
 @Configuration
-public class ConnectorConfiguration {
+public class ConnectorConfig {
     /**
      * The clearing house access url.
      */

@@ -20,7 +20,7 @@ import io.dataspaceconnector.common.ErrorMessage;
 import io.dataspaceconnector.common.ParameterUtils;
 import io.dataspaceconnector.common.QueryInput;
 import io.dataspaceconnector.common.SelfLinkHelper;
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.representation.Representation;
@@ -99,7 +99,7 @@ public class SubscriberNotificationService {
     /**
      * Service for the current connector configuration.
      */
-    private final @NonNull ConnectorConfiguration connectorConfig;
+    private final @NonNull ConnectorConfig connectorConfig;
 
     /**
      * Template for triggering Camel routes.

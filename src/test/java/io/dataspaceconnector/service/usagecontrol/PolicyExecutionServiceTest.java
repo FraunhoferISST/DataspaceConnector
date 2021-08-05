@@ -29,7 +29,7 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.common.IdsUtils;
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.processing.ClearingHouseService;
 import io.dataspaceconnector.service.message.type.LogMessageService;
@@ -55,7 +55,7 @@ import static org.mockito.Mockito.when;
 public class PolicyExecutionServiceTest {
 
     @MockBean
-    private ConnectorConfiguration connectorConfig;
+    private ConnectorConfig connectorConfig;
 
     @MockBean
     private ConnectorService connectorService;

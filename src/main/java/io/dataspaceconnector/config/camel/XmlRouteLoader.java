@@ -16,7 +16,7 @@
 package io.dataspaceconnector.config.camel;
 
 import io.dataspaceconnector.common.FileUtils;
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.config.ConnectorConfig;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -190,7 +190,7 @@ public class XmlRouteLoader {
         /**
          * The current connector configuration.
          */
-        private final @NonNull ConnectorConfiguration connectorConfig;
+        private final @NonNull ConnectorConfig connectorConfig;
 
         public void addRouteToContext(final List<RouteDefinition> routes) throws Exception {
             for (final var route : routes) {

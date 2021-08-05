@@ -19,7 +19,7 @@ import de.fraunhofer.iais.eis.Message;
 import io.dataspaceconnector.common.UUIDUtils;
 import io.dataspaceconnector.common.exception.PolicyExecutionException;
 import io.dataspaceconnector.common.exception.UUIDFormatException;
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.service.message.type.LogMessageService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +40,7 @@ public class ClearingHouseService {
     /**
      * Service for configuring policy settings.
      */
-    private final @NonNull ConnectorConfiguration connectorConfig;
+    private final @NonNull ConnectorConfig connectorConfig;
 
     /**
      * Service for ids log messages.

@@ -13,7 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.dataspaceconnector.common.util.ids;
+
 /**
- * The usage control frameworks.
+ * This class provides a usage control framework enum.
  */
-package io.dataspaceconnector.config.util;
+public enum UsageControlFramework {
+
+    /**
+     * Usage control (enforcement) inside the connector.
+     */
+    INTERNAL("INTERNAL"),
+
+    /**
+     * Usage control framework MyData.
+     */
+    MY_DATA("MY_DATA");
+
+    /**
+     * The usage control framework.
+     */
+    private final String framework;
+
+    UsageControlFramework(final String string) {
+        framework = string;
+    }
+
+    @Override
+    public String toString() {
+        return framework;
+    }
+}

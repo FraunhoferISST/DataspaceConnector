@@ -20,7 +20,7 @@ import io.dataspaceconnector.common.RuleUtils;
 import io.dataspaceconnector.common.SelfLinkHelper;
 import io.dataspaceconnector.common.exception.PolicyExecutionException;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.service.EntityResolver;
 import lombok.NonNull;
@@ -49,7 +49,7 @@ public final class DataAccessVerifier implements PolicyVerifier<AccessVerificati
     /**
      * Service for configuring policy settings.
      */
-    private final @NonNull ConnectorConfiguration connectorConfig;
+    private final @NonNull ConnectorConfig connectorConfig;
 
     /**
      * Service for resolving entities.

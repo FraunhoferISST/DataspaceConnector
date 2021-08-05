@@ -19,7 +19,7 @@ import io.dataspaceconnector.common.ErrorMessage;
 import io.dataspaceconnector.common.MetadataUtils;
 import io.dataspaceconnector.common.ValidationUtils;
 import io.dataspaceconnector.common.exception.InvalidEntityException;
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
     /**
      * Service for the current connector configuration.
      */
-    private final @NonNull ConnectorConfiguration connectorConfig;
+    private final @NonNull ConnectorConfig connectorConfig;
 
     /** {@inheritDoc} */
     @Override

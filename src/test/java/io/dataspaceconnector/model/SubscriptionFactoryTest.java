@@ -16,7 +16,7 @@
 package io.dataspaceconnector.model;
 
 import io.dataspaceconnector.common.exception.InvalidEntityException;
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.model.subscription.SubscriptionFactory;
@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class SubscriptionFactoryTest {
 
     @Mock
-    private ConnectorConfiguration connectorConfig;
+    private ConnectorConfig connectorConfig;
 
     private SubscriptionFactory factory;
 

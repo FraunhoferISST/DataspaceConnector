@@ -20,7 +20,7 @@ import de.fraunhofer.iais.eis.SecurityProfile;
 import io.dataspaceconnector.common.ContractUtils;
 import io.dataspaceconnector.common.RuleUtils;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.config.ConnectorConfig;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -47,7 +47,7 @@ public class DataProvisionVerifier implements PolicyVerifier<ProvisionVerificati
     /**
      * Service for configuring policy settings.
      */
-    private final @NonNull ConnectorConfiguration connectorConfig;
+    private final @NonNull ConnectorConfig connectorConfig;
 
     /**
      * Policy check on data provision on provider side.

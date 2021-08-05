@@ -18,8 +18,8 @@ package io.dataspaceconnector.service.usagecontrol;
 import io.dataspaceconnector.common.ContractUtils;
 import io.dataspaceconnector.common.RuleUtils;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
-import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.config.util.UsageControlFramework;
+import io.dataspaceconnector.common.util.ids.UsageControlFramework;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.AgreementService;
 import io.dataspaceconnector.service.resource.ArtifactService;
@@ -53,7 +53,7 @@ public class ScheduledDataRemoval {
     /**
      * Service for configuring policy settings.
      */
-    private final @NonNull ConnectorConfiguration connectorConfig;
+    private final @NonNull ConnectorConfig connectorConfig;
 
     /**
      * Service for ids deserialization.

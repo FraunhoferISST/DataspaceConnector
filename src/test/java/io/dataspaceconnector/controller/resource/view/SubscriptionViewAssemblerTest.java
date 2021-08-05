@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
 import io.dataspaceconnector.controller.resource.view.subscription.SubscriptionViewAssembler;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class SubscriptionViewAssemblerTest {
 
     @MockBean
-    private ConnectorConfiguration connectorConfig;
+    private ConnectorConfig connectorConfig;
 
     @Autowired
     private SubscriptionViewAssembler subscriptionViewAssembler;

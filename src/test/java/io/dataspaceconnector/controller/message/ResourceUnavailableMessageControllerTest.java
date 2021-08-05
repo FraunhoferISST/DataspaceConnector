@@ -27,7 +27,7 @@ import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.common.ErrorMessage;
-import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.service.message.handler.dto.Response;
@@ -88,7 +88,7 @@ public class ResourceUnavailableMessageControllerTest {
     private ProducerTemplate producerTemplate;
 
     @MockBean
-    private ConnectorConfiguration connectorConfiguration;
+    private ConnectorConfig connectorConfig;
 
     @Autowired
     private MockMvc mockMvc;
@@ -254,7 +254,7 @@ public class ResourceUnavailableMessageControllerTest {
         when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
         when(exchange.getIn()).thenReturn(in);
         when(in.getBody(Response.class)).thenReturn(response);
-        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
+        when(connectorConfig.isIdscpEnabled()).thenReturn(true);
 
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/resource/unavailable")
@@ -279,7 +279,7 @@ public class ResourceUnavailableMessageControllerTest {
         when(producerTemplate.send(anyString(), any(Exchange.class))).thenReturn(exchange);
         when(exchange.getIn()).thenReturn(in);
         when(in.getBody(ResponseEntity.class)).thenReturn(response);
-        when(connectorConfiguration.isIdscpEnabled()).thenReturn(true);
+        when(connectorConfig.isIdscpEnabled()).thenReturn(true);
 
         /* ACT */
         final var mvcResult = mockMvc.perform(post("/api/ids/resource/unavailable")
