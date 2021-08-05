@@ -17,6 +17,7 @@ package io.dataspaceconnector.service.configuration;
 
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.appstore.AppStoreDesc;
+import io.dataspaceconnector.repository.AppStoreRepository;
 import io.dataspaceconnector.service.resource.BaseEntityService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,9 +39,7 @@ public class AppStoreService extends BaseEntityService<AppStore, AppStoreDesc> {
      * @return Page containing AppStores which are offering an app with AppID.
      */
     public Page<AppStore> getStoresByContainsApp(final UUID appId, final Pageable pageable) {
-        //TODO use query method when ready
-        //return ((AppStoreRepository) getRepository())
-        // .findAppStoresByAppsWithPagination(appId, pageable);
-        return Page.empty();
+        return ((AppStoreRepository) getRepository())
+         .findAppStoresWithPaginationByApps(appId, pageable);
     }
 }

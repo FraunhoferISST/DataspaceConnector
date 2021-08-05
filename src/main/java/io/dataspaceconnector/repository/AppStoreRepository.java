@@ -16,7 +16,11 @@
 package io.dataspaceconnector.repository;
 
 import io.dataspaceconnector.model.appstore.AppStore;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+
+import java.util.UUID;
 
 /**
  * The repository containing all objects of
@@ -25,7 +29,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AppStoreRepository extends BaseEntityRepository<AppStore> {
 
-    //TODO create working query method for AppStores containing an App with pagination
-    //Page<AppStore> findAppStoresByAppsWithPagination(final UUID id, final Pageable pageable);
+    /**
+     * Get all related appstores for an appid.
+     *
+     * @param id app id for which relative appstores should be found.
+     * @param pageable pageable for portioning response.
+     * @return pageable of related appstores.
+     */
+    Page<AppStore> findAppStoresWithPaginationByApps(final UUID id, final Pageable pageable);
 
 }
