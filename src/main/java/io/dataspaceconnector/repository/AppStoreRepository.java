@@ -25,4 +25,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AppStoreRepository extends BaseEntityRepository<AppStore> {
 
+    //TODO create working query method for AppStores containing an App with pagination
+    //Page<AppStore> findAppStoresByAppsWithPagination(final UUID id, final Pageable pageable);
+
 }

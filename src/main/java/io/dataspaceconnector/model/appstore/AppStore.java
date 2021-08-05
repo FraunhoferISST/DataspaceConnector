@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.net.URI;
@@ -57,7 +58,7 @@ public class AppStore extends NamedEntity {
     /**
      * List of apps in app store.
      */
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<App> apps;
 
 }

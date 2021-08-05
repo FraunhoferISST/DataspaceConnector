@@ -29,8 +29,10 @@ import io.dataspaceconnector.service.appstore.AppStoreRegistryService;
 import io.dataspaceconnector.service.appstore.container.ActionType;
 import io.dataspaceconnector.service.configuration.AppService;
 import io.dataspaceconnector.service.configuration.AppStoreService;
+import io.dataspaceconnector.util.Utils;
 import io.dataspaceconnector.view.app.AppView;
 import io.dataspaceconnector.view.appstore.AppStoreView;
+import io.dataspaceconnector.view.appstore.AppStoreViewAssembler;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -38,6 +40,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -68,6 +73,18 @@ public final class AppStoreControllers {
          * App store registry service.
          */
         private final @NonNull AppStoreRegistryService appStoreRegistryService;
+
+        /**
+         * The assembler for creating pages of AppStoreViews.
+         */
+        @Autowired
+        private final PagedResourcesAssembler<AppStore> appStorePagedResourcesAssembler;
+
+        /**
+         * The assembler for creating AppStoreViews.
+         */
+        @Autowired
+        private final AppStoreViewAssembler appStoreViewAssembler;
 
         @Override
         @Hidden
@@ -164,6 +181,37 @@ public final class AppStoreControllers {
                 response = ResponseEntity.badRequest().body(e.getMessage());
             }
             return response;
+        }
+
+        /**
+         * Get the AppStores related to the given app.
+         *
+         * @param resourceId id of app for which related appstores should be found.
+         * @param page number of the page to get.
+         * @param size size of response pages.
+         * @return Pageable of AppStores.
+         */
+        @GetMapping("/{id}/appstore")
+        @Operation(summary = "Get appstore holding this app",
+                description = "Get appstore holding this app"
+        )
+        @ApiResponse(responseCode = "200", description = "Ok")
+        @ApiResponse(responseCode = "400", description = "Bad request")
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+        @ResponseBody
+        public final PagedModel<AppStoreView> relatedAppStore(
+                final @PathVariable("id") UUID resourceId,
+                final @RequestParam(required = false, defaultValue = "0") Integer page,
+                final @RequestParam(required = false, defaultValue = "30") Integer size) {
+            final var pageable = Utils.toPageRequest(page, size);
+            final var entities = getService()
+                    .getStoresByContainsApp(resourceId, pageable);
+            if (entities.hasContent()) {
+                return appStorePagedResourcesAssembler.toModel(entities, appStoreViewAssembler);
+            } else {
+                return (PagedModel<AppStoreView>) appStorePagedResourcesAssembler
+                        .toEmptyModel(entities, AppStore.class);
+            }
         }
     }
 

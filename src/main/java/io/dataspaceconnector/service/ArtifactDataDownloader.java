@@ -21,9 +21,11 @@ import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
 import io.dataspaceconnector.service.resource.AgreementService;
+import io.dataspaceconnector.util.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.PersistenceException;
@@ -88,7 +90,18 @@ public class ArtifactDataDownloader {
         }
     }
 
-    public void downloadAppArtifact(final URI recipient, final URI artifact) {
+    /**
+     * Request the App Artifact and update the app.
+     *
+     * @param recipient appstore where artifact shall be downlaoded.
+     * @param artifact app artifact id.
+     * @throws UnexpectedResponseException when response is not an ArtifactResponseMessage.
+     */
+    public void downloadAppArtifact(final URI recipient, final URI artifact)
+            throws UnexpectedResponseException {
         // ToDO: Send artifact request message
+        var response = artifactReqSvc.sendMessage(recipient, artifact, null);
+        var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
+        var json = new JSONObject(payload);
     }
 }

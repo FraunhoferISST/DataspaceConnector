@@ -93,8 +93,8 @@ public class AppRequestMessageController {
             final var downloadedApp = appService.get(UUIDUtils.uuidFromUri(app));
             if (downloadedApp != null) {
                 // ToDO: Get artifact instance from downloaded app
-//                final var representation = downloadedApp.getAdditional().get("ids:instance");
-//                artifactDataDownloader.downloadAppArtifact(recipient, app);
+                //final var representation = downloadedApp.getAdditional().get("ids:instance");
+                artifactDataDownloader.downloadAppArtifact(recipient, app);
             }
             return new ResponseEntity<>(HttpStatus.OK);
 
