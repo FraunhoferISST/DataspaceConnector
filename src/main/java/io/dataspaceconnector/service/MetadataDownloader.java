@@ -69,14 +69,15 @@ public class MetadataDownloader {
     }
 
     /**
+     * Get AppResource from AppStore.
+     *
      * @param recipient The recipient connector.
      * @param appResource The app resource.
      * @throws UnexpectedResponseException if the response type is not as expected.
+     * @return the appstore response.
      */
-    public void downloadAppResource(final URI recipient,
+    public Map<String, String> downloadAppResource(final URI recipient,
                                     final URI appResource) throws UnexpectedResponseException {
-        Map<String, String> response;
-        response = descReqSvc.sendMessage(recipient, appResource);
-        persistenceSvc.saveAppResource(response, recipient);
+        return descReqSvc.sendMessage(recipient, appResource);
     }
 }

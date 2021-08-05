@@ -35,6 +35,7 @@ import io.dataspaceconnector.model.template.RepresentationTemplate;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
 import lombok.extern.log4j.Log4j2;
+import org.json.JSONObject;
 
 /**
  * Provides methods for building entity templates.
@@ -202,11 +203,13 @@ public final class TemplateUtils {
      * Build an app template from an AppResource.
      *
      * @param appResource the app resource.
+     * @param metadata the app artifacts metadata.
      * @param remoteUrl remoteURL of the app.
      * @return AppTemplate from AppResource.
      */
     public static AppTemplate getAppResourceTemplate(final AppResource appResource,
+                                                     final JSONObject metadata,
                                                      final URI remoteUrl) {
-        return MappingUtils.fromIdsApp(appResource, remoteUrl);
+        return MappingUtils.fromIdsApp(appResource, metadata, remoteUrl);
     }
 }

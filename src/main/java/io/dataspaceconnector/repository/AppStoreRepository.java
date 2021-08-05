@@ -36,6 +36,6 @@ public interface AppStoreRepository extends BaseEntityRepository<AppStore> {
      * @param pageable pageable for portioning response.
      * @return pageable of related appstores.
      */
-    Page<AppStore> findAppStoresWithPaginationByApps(final UUID id, final Pageable pageable);
+    Page<AppStore> findAppStoresWithPaginationByApps(UUID id, Pageable pageable);
 
 }

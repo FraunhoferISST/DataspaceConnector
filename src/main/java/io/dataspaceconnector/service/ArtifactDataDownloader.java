@@ -96,12 +96,13 @@ public class ArtifactDataDownloader {
      * @param recipient appstore where artifact shall be downlaoded.
      * @param artifact app artifact id.
      * @throws UnexpectedResponseException when response is not an ArtifactResponseMessage.
+     * @return JSONObject containing app artifacts metadata.
      */
-    public void downloadAppArtifact(final URI recipient, final URI artifact)
+    public JSONObject downloadAppArtifact(final URI recipient, final URI artifact)
             throws UnexpectedResponseException {
         // ToDO: Send artifact request message
         var response = artifactReqSvc.sendMessage(recipient, artifact, null);
         var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
-        var json = new JSONObject(payload);
+        return new JSONObject(payload);
     }
 }

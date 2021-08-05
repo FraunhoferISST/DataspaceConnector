@@ -162,6 +162,22 @@ public final class ControllerUtils {
     }
 
     /**
+     * Creates a ResponseEntity with status code 500 and a message indicating that parsing an URI
+     * has failed.
+     *
+     * @param e The exception that was thrown.
+     * @return ResponseEntity with status code 500.
+     */
+    public static ResponseEntity<Object> respondFailedToParseURI(final Exception e) {
+        final var msg = "Failed to parse URI.";
+        if (log.isWarnEnabled()) {
+            log.warn("{} [exception=({})]", msg, e.getMessage(), e);
+        }
+        return new ResponseEntity<>(String.format("%s %s", msg, e.getMessage()),
+                HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
      * Creates a ResponseEntity with status code 504 and a message indicating that the connection
      * timed out.
      *

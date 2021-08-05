@@ -15,14 +15,17 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import de.fraunhofer.iais.eis.AppRepresentation;
+import de.fraunhofer.iais.eis.AppResource;
+import de.fraunhofer.ids.messaging.util.SerializerProvider;
 import io.dataspaceconnector.controller.util.ControllerUtils;
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.ArtifactDataDownloader;
+import io.dataspaceconnector.service.EntityPersistenceService;
 import io.dataspaceconnector.service.MetadataDownloader;
-import io.dataspaceconnector.service.configuration.AppService;
-import io.dataspaceconnector.util.UUIDUtils;
+import io.dataspaceconnector.util.MessageUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -39,7 +42,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This controller provides the endpoint for sending an app request message and starting the
@@ -52,19 +58,24 @@ import java.net.URI;
 public class AppRequestMessageController {
 
     /**
+     * Service for ids serializations.
+     */
+    private final @NonNull SerializerProvider serProvider;
+
+    /**
      * Downloads metadata.
      */
     private final @NonNull MetadataDownloader metadataDownloader;
 
     /**
-     * The app service.
-     */
-    private final @NonNull AppService appService;
-
-    /**
      * The artifact request service.
      */
     private final @NonNull ArtifactDataDownloader artifactDataDownloader;
+
+    /**
+     * Service for persisting entities.
+     */
+    private final @NonNull EntityPersistenceService persistenceSvc;
 
     /**
      * Add an apps metadata to an app object.
@@ -87,32 +98,84 @@ public class AppRequestMessageController {
 
         try {
             // Send description request message and save the app
-            downloadApp(recipient, app);
-
+            var response = downloadApp(recipient, app);
+            var appresource = parseAppResource(response);
+            var instanceId = getInstanceID(appresource);
             // Send artifact request message
-            final var downloadedApp = appService.get(UUIDUtils.uuidFromUri(app));
-            if (downloadedApp != null) {
-                // ToDO: Get artifact instance from downloaded app
-                //final var representation = downloadedApp.getAdditional().get("ids:instance");
-                artifactDataDownloader.downloadAppArtifact(recipient, app);
+            if (instanceId != null) {
+                var artifactJson = artifactDataDownloader
+                        .downloadAppArtifact(recipient, instanceId);
+                if (artifactJson != null) {
+                    persistenceSvc.saveAppResource(response, artifactJson, recipient);
+                } else {
+                    //TODO useful error response
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
+            } else {
+                //TODO useful error response
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             return new ResponseEntity<>(HttpStatus.OK);
 
         } catch (MessageException exception) {
             // If the message could not be built.
             return ControllerUtils.respondIdsMessageFailed(exception);
-        } catch (MessageResponseException | IllegalArgumentException e) {
+        } catch (MessageResponseException | IllegalArgumentException | IOException e) {
             // If the response message is invalid or malformed.
             return ControllerUtils.respondReceivedInvalidResponse(e);
         } catch (UnexpectedResponseException e) {
             // If the response is not as expected.
             return ControllerUtils.respondWithContent(e.getContent());
         }
+
     }
 
-    private void downloadApp(final URI recipient, final URI appResource)
+    /**
+     * Get AppResource from AppStore.
+     *
+     * @param recipient The recipient connector.
+     * @param appResource The app resource.
+     * @throws UnexpectedResponseException if the response type is not as expected.
+     * @return the appstore response.
+     */
+    private Map<String, String> downloadApp(final URI recipient, final URI appResource)
             throws UnexpectedResponseException {
-        metadataDownloader.downloadAppResource(recipient, appResource);
+        return metadataDownloader.downloadAppResource(recipient, appResource);
+    }
+
+    /**
+     * Parse response from AppStore to AppResource.
+     *
+     * @param response response from AppStore.
+     * @return payload parsed as AppResource.
+     * @throws IOException when payload cannot be parsed to AppResource.
+     */
+    private AppResource parseAppResource(final Map<String, String> response) throws IOException {
+        var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
+        return serProvider.getSerializer().deserialize(payload, AppResource.class);
+    }
+
+    /**
+     * Get instance ID (used for receiving AppArtifact with metadata from AppStore)
+     * from AppResource.
+     *
+     * @param appResource the appresource.
+     * @return the instance ID.
+     */
+    private URI getInstanceID(final AppResource appResource) {
+        if (appResource != null && appResource.getRepresentation() != null) {
+            var appRepresentations = appResource.getRepresentation().stream()
+                    .filter(x -> x instanceof AppRepresentation)
+                    .map(x -> (AppRepresentation) x)
+                    .collect(Collectors.toList());
+            if (!appRepresentations.isEmpty()) {
+                var instance = appRepresentations.get(0).getInstance();
+                if (instance != null && !instance.isEmpty()) {
+                    return instance.get(0).getId();
+                }
+            }
+        }
+        return null;
     }
 
 

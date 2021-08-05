@@ -37,6 +37,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jose4j.base64url.Base64;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -245,15 +246,18 @@ public class EntityPersistenceService {
      * Validate response and save app to database.
      *
      * @param response  The response message map.
+     * @param metadata  App Artifacts metadata.
      * @param remoteUrl The provider's url for receiving app request messages.
      */
-    public void saveAppResource(final Map<String, String> response, final URI remoteUrl) {
+    public void saveAppResource(final Map<String, String> response,
+                                final JSONObject metadata,
+                                final URI remoteUrl) {
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
         final var appResource = deserializationService.getAppResource(payload);
 
         try {
             final var appResourceTemplate =
-                    TemplateUtils.getAppResourceTemplate(appResource, remoteUrl);
+                    TemplateUtils.getAppResourceTemplate(appResource, metadata, remoteUrl);
 
             // Save all entities.
             tempBuilder.build(appResourceTemplate);

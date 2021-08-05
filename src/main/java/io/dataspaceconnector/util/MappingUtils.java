@@ -58,6 +58,7 @@ import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
 import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
+import org.json.JSONObject;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -108,10 +109,15 @@ public final class MappingUtils {
     /**
      * Map ids app resource to resource.
      * @param resource  The app resource.
+     * @param metadata the app artifacts metadata.
      * @param remoteUrl The recipient id.
      * @return app template.
      */
-    public static AppTemplate fromIdsApp(final AppResource resource, final URI remoteUrl) {
+    public static AppTemplate fromIdsApp(final AppResource resource,
+                                         final JSONObject metadata,
+                                         final URI remoteUrl) {
+        //TODO use metadata
+
         Utils.requireNonNull(resource, ErrorMessage.ENTITY_NULL);
         final var appDesc = new AppDesc();
         final var endpoints = new ArrayList<AppEndpointTemplate>();
