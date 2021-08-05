@@ -16,7 +16,7 @@
 package io.configmanager.extensions.gui;
 
 import io.dataspaceconnector.controller.gui.GuiController;
-import io.dataspaceconnector.controller.gui.util.GuiUtilService;
+import io.dataspaceconnector.controller.gui.util.GuiUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Tests for the GuiUtilController class.
  */
-@SpringBootTest(classes = {GuiUtilService.class, GuiController.class})
+@SpringBootTest(classes = {GuiUtils.class, GuiController.class})
 @AutoConfigureMockMvc
 class GuiControllerTest {
 

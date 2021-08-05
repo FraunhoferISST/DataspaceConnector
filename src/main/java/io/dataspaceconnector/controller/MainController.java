@@ -15,8 +15,10 @@
  */
 package io.dataspaceconnector.controller;
 
+import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
-import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.controller.util.ResponseCode;
+import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -54,8 +56,9 @@ public class MainController {
     @GetMapping(value = {"/", ""}, produces = "application/ld+json")
     @Operation(summary = "Public IDS self-description")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")})
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                    description = ResponseDescription.UNAUTHORIZED)})
     @ResponseBody
     public ResponseEntity<Object> getPublicSelfDescription() {
         return ResponseEntity.ok(connectorService.getConnectorWithoutResources().toRdf());
@@ -69,9 +72,11 @@ public class MainController {
     @GetMapping(value = "/api/connector", produces = "application/ld+json")
     @Operation(summary = "Private IDS self-description")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                    description = ResponseDescription.UNAUTHORIZED),
+            @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
+                    description = ResponseDescription.INTERNAL_SERVER_ERROR)})
     @ResponseBody
     public ResponseEntity<Object> getPrivateSelfDescription() {
         return ResponseEntity.ok(connectorService.getConnectorWithOfferedResources().toRdf());
@@ -85,8 +90,9 @@ public class MainController {
     @Hidden
     @GetMapping("/api")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Ok"),
-        @ApiResponse(responseCode = "401", description = "Unauthorized")})
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                    description = ResponseDescription.UNAUTHORIZED)})
     public ResponseEntity<RepresentationModel<?>> root() {
         final var model = new RepresentationModel<>();
 

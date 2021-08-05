@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.common;
 
+import io.dataspaceconnector.common.net.QueryInput;
+import io.dataspaceconnector.common.util.ValidationUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

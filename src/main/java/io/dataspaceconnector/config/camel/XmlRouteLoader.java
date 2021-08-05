@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.config.camel;
 
-import io.dataspaceconnector.common.FileUtils;
+import io.dataspaceconnector.common.file.FileUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

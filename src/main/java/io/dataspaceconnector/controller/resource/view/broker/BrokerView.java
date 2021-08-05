@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.resource.view.broker;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.view.util.ViewConstants;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import lombok.EqualsAndHashCode;
@@ -33,7 +34,7 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "brokers", itemRelation = "broker")
+@Relation(collectionRelation = BaseType.BROKERS, itemRelation = "broker")
 public class BrokerView extends RepresentationModel<BrokerView> {
 
     /**

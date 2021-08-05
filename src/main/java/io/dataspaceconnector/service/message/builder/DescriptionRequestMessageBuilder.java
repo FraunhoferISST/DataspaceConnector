@@ -16,10 +16,11 @@
 package io.dataspaceconnector.service.message.builder;
 
 import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
-import io.dataspaceconnector.common.ParameterUtils;
+import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.model.message.DescriptionRequestMessageDesc;
+import io.dataspaceconnector.service.message.builder.base.IdsMessageBuilder;
+import io.dataspaceconnector.service.message.builder.type.DescriptionRequestService;
 import io.dataspaceconnector.service.message.handler.dto.Request;
-import io.dataspaceconnector.service.message.type.DescriptionRequestService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import lombok.NonNull;

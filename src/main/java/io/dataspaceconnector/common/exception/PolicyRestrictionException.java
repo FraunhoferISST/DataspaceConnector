@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.common.exception;
 
-import io.dataspaceconnector.common.ErrorMessage;
-
 /**
  * Thrown if a policy restriction has been detected.
  */

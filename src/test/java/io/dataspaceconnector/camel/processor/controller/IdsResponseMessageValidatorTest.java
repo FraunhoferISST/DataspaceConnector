@@ -26,10 +26,10 @@ import io.dataspaceconnector.controller.message.ids.validator.ContractResponseVa
 import io.dataspaceconnector.controller.message.ids.validator.DescriptionResponseValidator;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.exception.InvalidResponseException;
-import io.dataspaceconnector.service.message.type.ArtifactRequestService;
-import io.dataspaceconnector.service.message.type.ContractAgreementService;
-import io.dataspaceconnector.service.message.type.ContractRequestService;
-import io.dataspaceconnector.service.message.type.DescriptionRequestService;
+import io.dataspaceconnector.service.message.builder.type.ArtifactRequestService;
+import io.dataspaceconnector.service.message.builder.type.ContractAgreementService;
+import io.dataspaceconnector.service.message.builder.type.ContractRequestService;
+import io.dataspaceconnector.service.message.builder.type.DescriptionRequestService;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.junit.jupiter.api.Test;

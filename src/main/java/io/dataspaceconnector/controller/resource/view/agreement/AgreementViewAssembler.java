@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view.agreement;
 
+import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers.AgreementController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
@@ -45,7 +46,7 @@ public class AgreementViewAssembler
         final var artifactLink = WebMvcLinkBuilder
                 .linkTo(methodOn(RelationControllers.AgreementsToArtifacts.class)
                         .getResource(agreement.getId(), null, null))
-                .withRel("artifacts");
+                .withRel(BaseType.ARTIFACTS);
         view.add(artifactLink);
 
         return view;

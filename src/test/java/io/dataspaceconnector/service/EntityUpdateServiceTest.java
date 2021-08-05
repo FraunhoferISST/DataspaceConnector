@@ -28,12 +28,12 @@ import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.resource.RequestedResourceFactory;
-import io.dataspaceconnector.service.ids.updater.ArtifactUpdater;
-import io.dataspaceconnector.service.ids.updater.RepresentationUpdater;
-import io.dataspaceconnector.service.ids.updater.RequestedResourceUpdater;
-import io.dataspaceconnector.service.resource.AgreementService;
-import io.dataspaceconnector.service.resource.ArtifactService;
-import io.dataspaceconnector.service.resource.RelationServices;
+import io.dataspaceconnector.service.resource.ids.updater.ArtifactUpdater;
+import io.dataspaceconnector.service.resource.ids.updater.RepresentationUpdater;
+import io.dataspaceconnector.service.resource.ids.updater.RequestedResourceUpdater;
+import io.dataspaceconnector.service.resource.relation.AgreementArtifactLinker;
+import io.dataspaceconnector.service.resource.type.AgreementService;
+import io.dataspaceconnector.service.resource.type.ArtifactService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -78,7 +78,7 @@ public class EntityUpdateServiceTest {
     private AgreementService agreementService;
 
     @MockBean
-    private RelationServices.AgreementArtifactLinker agreementArtifactLinker;
+    private AgreementArtifactLinker agreementArtifactLinker;
 
     @MockBean
     private ArtifactService artifactService;

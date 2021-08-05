@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.common.exception;
 
-import io.dataspaceconnector.common.ErrorMessage;
-
 /**
  * Thrown to indicate that a problem with a message request occurred.
  */

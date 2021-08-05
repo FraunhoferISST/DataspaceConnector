@@ -16,7 +16,7 @@
 package io.dataspaceconnector.controller.message.ids.validator;
 
 import de.fraunhofer.iais.eis.ContractRequest;
-import io.dataspaceconnector.common.ParameterUtils;
+import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
 import lombok.NonNull;

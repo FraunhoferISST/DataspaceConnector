@@ -19,7 +19,7 @@ import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.PermissionBuilder;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.service.ids.DeserializationService;
+import io.dataspaceconnector.common.ids.DeserializationService;
 import org.apache.commons.codec.CharEncoding;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

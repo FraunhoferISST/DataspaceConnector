@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource;
 
-import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
 import io.dataspaceconnector.controller.exceptionhandler.PolicyRestrictionExceptionHandler;
 import net.minidev.json.JSONObject;

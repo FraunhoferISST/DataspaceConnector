@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view.broker;
 
+import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.RelationControllers.BrokersToOfferedResources;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
@@ -51,7 +52,7 @@ public class BrokerViewAssembler
 
         final var offeredResourcesLink = linkTo(methodOn(BrokersToOfferedResources.class)
                 .getResource(broker.getId(), null, null))
-                .withRel("resources");
+                .withRel(BaseType.OFFERS);
         view.add(offeredResourcesLink);
 
         return view;

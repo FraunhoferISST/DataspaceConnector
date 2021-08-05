@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.model.configuration;
 
-import io.dataspaceconnector.common.MetadataUtils;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
@@ -23,6 +22,7 @@ import io.dataspaceconnector.model.proxy.ProxyDesc;
 import io.dataspaceconnector.model.proxy.ProxyFactory;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
 import io.dataspaceconnector.model.truststore.TruststoreFactory;
+import io.dataspaceconnector.model.util.FactoryUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -169,7 +169,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     private boolean updateOutboundModelVersion(final Configuration config,
                                                final String outboundModelVersion) {
         final var newOutboundVersion =
-                MetadataUtils.updateString(config.getOutboundModelVersion(), outboundModelVersion,
+                FactoryUtils.updateString(config.getOutboundModelVersion(), outboundModelVersion,
                         DEFAULT_OUTBOUND_VERSION);
         newOutboundVersion.ifPresent(config::setOutboundModelVersion);
 
@@ -184,7 +184,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     private boolean updateInboundModelVersion(final Configuration config,
                                               final List<String> inboundModelVersion) {
         final var newInboundModelVersionList =
-                MetadataUtils.updateStringList(config.getInboundModelVersion(), inboundModelVersion,
+                FactoryUtils.updateStringList(config.getInboundModelVersion(), inboundModelVersion,
                         DEFAULT_INBOUND_VERSION);
         newInboundModelVersionList.ifPresent(config::setInboundModelVersion);
 
@@ -198,7 +198,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
      */
     private boolean updateMaintainer(final Configuration config, final URI maintainer) {
         final var newUri =
-                MetadataUtils.updateUri(config.getMaintainer(), maintainer,
+                FactoryUtils.updateUri(config.getMaintainer(), maintainer,
                         DEFAULT_MAINTAINER);
         newUri.ifPresent(config::setMaintainer);
 
@@ -212,7 +212,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
      */
     private boolean updateCurator(final Configuration config, final URI curator) {
         final var newUri =
-                MetadataUtils.updateUri(config.getCurator(), curator,
+                FactoryUtils.updateUri(config.getCurator(), curator,
                         DEFAULT_CURATOR);
         newUri.ifPresent(config::setCurator);
 
@@ -226,7 +226,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
      */
     private boolean updateVersion(final Configuration config,
                                   final String version) {
-        final var newVersion = MetadataUtils.updateString(config.getVersion(),
+        final var newVersion = FactoryUtils.updateString(config.getVersion(),
                 version, DEFAULT_VERSION);
         newVersion.ifPresent(config::setVersion);
 
@@ -240,7 +240,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
      */
     private boolean updateDefaultEndpoint(final Configuration config,
                                           final URI defaultEndpoint) {
-        final var newUri = MetadataUtils.updateUri(config.getDefaultEndpoint(),
+        final var newUri = FactoryUtils.updateUri(config.getDefaultEndpoint(),
                 defaultEndpoint, DEFAULT_CONNECTOR_ENDPOINT);
         newUri.ifPresent(config::setDefaultEndpoint);
 

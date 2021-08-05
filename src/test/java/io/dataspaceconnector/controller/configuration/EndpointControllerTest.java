@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.controller.configuration;
 
-import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
-import io.dataspaceconnector.service.resource.EndpointServiceProxy;
-import io.dataspaceconnector.service.resource.GenericEndpointService;
+import io.dataspaceconnector.service.resource.type.EndpointServiceProxy;
+import io.dataspaceconnector.service.resource.type.GenericEndpointService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;

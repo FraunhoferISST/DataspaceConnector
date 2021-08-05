@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.configuration.exceptionhandler;
 
-import io.dataspaceconnector.common.RouteCreationException;
+import io.dataspaceconnector.common.exception.RouteCreationException;
 import io.dataspaceconnector.controller.resource.base.exceptionhandler.RouteCreationExceptionHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

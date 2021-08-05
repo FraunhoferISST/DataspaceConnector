@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.controller.resource.base;
 
-import io.dataspaceconnector.common.ErrorMessage;
-import io.dataspaceconnector.common.UUIDUtils;
-import io.dataspaceconnector.common.Utils;
-import io.dataspaceconnector.controller.resource.base.tag.ResponseCode;
-import io.dataspaceconnector.controller.resource.base.tag.ResponseDescription;
+import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.util.UUIDUtils;
+import io.dataspaceconnector.common.util.Utils;
+import io.dataspaceconnector.controller.util.ResponseCode;
+import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.dataspaceconnector.model.base.Entity;
-import io.dataspaceconnector.service.resource.RelationService;
+import io.dataspaceconnector.service.resource.base.RelationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -102,13 +102,15 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
     /**
      * Get all resources of the same type linked to the passed resource.
      * Endpoint for GET requests.
+     *
      * @param ownerId The id of the owning resource.
-     * @param page The page index.
-     * @param size The page size.
+     * @param page    The page index.
+     * @param size    The page size.
      * @return The children of the resource.
-     * @throws IllegalArgumentException if the ownerId is null.
+     * @throws IllegalArgumentException if the ownerId is
+     * null.
      * @throws io.dataspaceconnector.common.exception.ResourceNotFoundException if the ownerId is
-     * not known.
+     *                                                                          not known.
      */
     @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET)
@@ -116,7 +118,7 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
     @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.OK,
             description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-             description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.UNAUTHORIZED)})
     public PagedModel<V> getResource(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @RequestParam(required = false, defaultValue = "0") final Integer page,
@@ -146,7 +148,7 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
     @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.OK,
             description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-             description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.UNAUTHORIZED)})
     public PagedModel<V> addResources(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<URI> resources) {
@@ -171,9 +173,9 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
     @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.NO_CONTENT,
             description = ResponseDescription.NO_CONTENT),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-             description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.UNAUTHORIZED)})
     public HttpEntity<Void> replaceResources(@Valid @PathVariable(name = "id") final UUID ownerId,
-            @Valid @RequestBody final List<URI> resources) {
+                                             @Valid @RequestBody final List<URI> resources) {
         linker.replace(ownerId, toSet(resources));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -190,9 +192,9 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
     @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.NO_CONTENT,
             description = ResponseDescription.NO_CONTENT),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-             description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.UNAUTHORIZED)})
     public HttpEntity<Void> removeResources(@Valid @PathVariable(name = "id") final UUID ownerId,
-            @Valid @RequestBody final List<URI> resources) {
+                                            @Valid @RequestBody final List<URI> resources) {
         linker.remove(ownerId, toSet(resources));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

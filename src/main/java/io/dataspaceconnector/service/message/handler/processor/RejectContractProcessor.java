@@ -17,12 +17,12 @@ package io.dataspaceconnector.service.message.handler.processor;
 
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.iais.eis.RejectionMessage;
-import io.dataspaceconnector.common.MessageUtils;
+import io.dataspaceconnector.common.ids.communication.MessageUtils;
 import io.dataspaceconnector.model.message.ContractRejectionMessageDesc;
+import io.dataspaceconnector.service.message.builder.type.ContractRejectionService;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
 import io.dataspaceconnector.service.message.handler.dto.payload.ContractTargetRuleMapContainer;
-import io.dataspaceconnector.service.message.type.ContractRejectionService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

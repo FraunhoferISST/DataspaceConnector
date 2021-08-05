@@ -16,11 +16,11 @@
 package io.dataspaceconnector.service.message.processing;
 
 import de.fraunhofer.iais.eis.Resource;
-import io.dataspaceconnector.common.UUIDUtils;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.UUIDFormatException;
-import io.dataspaceconnector.service.resource.BrokerService;
-import io.dataspaceconnector.service.resource.RelationServices;
+import io.dataspaceconnector.common.util.UUIDUtils;
+import io.dataspaceconnector.service.resource.relation.BrokerOfferedResourceLinker;
+import io.dataspaceconnector.service.resource.type.BrokerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class BrokerCommunication {
     /**
      * Service for relation between broker and offered resources.
      */
-    private final @NotNull RelationServices.BrokerOfferedResourceLinker linker;
+    private final @NotNull BrokerOfferedResourceLinker linker;
 
     /**
      * Service for the broker.

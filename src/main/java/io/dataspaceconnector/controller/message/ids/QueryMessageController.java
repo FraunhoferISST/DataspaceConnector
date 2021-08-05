@@ -27,7 +27,7 @@ import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseExcep
 import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
-import io.dataspaceconnector.common.ParameterUtils;
+import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.service.message.GlobalMessageService;

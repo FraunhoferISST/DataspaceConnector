@@ -16,7 +16,7 @@
 package io.dataspaceconnector.service.message.handler.transformer;
 
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
-import io.dataspaceconnector.common.ContractUtils;
+import io.dataspaceconnector.common.ids.policy.ContractUtils;
 import io.dataspaceconnector.service.message.handler.dto.Request;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
 import io.dataspaceconnector.service.message.handler.dto.payload.ContractRuleListContainer;

@@ -17,10 +17,11 @@ package io.dataspaceconnector.service.message.builder;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
-import io.dataspaceconnector.common.ParameterUtils;
+import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.model.message.ContractAgreementMessageDesc;
+import io.dataspaceconnector.service.message.builder.base.IdsMessageBuilder;
+import io.dataspaceconnector.service.message.builder.type.ContractAgreementService;
 import io.dataspaceconnector.service.message.handler.dto.Request;
-import io.dataspaceconnector.service.message.type.ContractAgreementService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import lombok.NonNull;

@@ -18,7 +18,7 @@ package io.dataspaceconnector.controller.message;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.message.processing.SubscriberNotificationService;
-import io.dataspaceconnector.service.resource.SubscriptionService;
+import io.dataspaceconnector.service.resource.type.SubscriptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

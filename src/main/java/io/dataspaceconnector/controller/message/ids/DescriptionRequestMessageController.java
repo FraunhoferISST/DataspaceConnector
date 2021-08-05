@@ -15,17 +15,17 @@
  */
 package io.dataspaceconnector.controller.message.ids;
 
-import io.dataspaceconnector.common.MessageUtils;
-import io.dataspaceconnector.common.ParameterUtils;
-import io.dataspaceconnector.common.Utils;
 import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
+import io.dataspaceconnector.common.ids.DeserializationService;
+import io.dataspaceconnector.common.ids.communication.MessageUtils;
+import io.dataspaceconnector.common.routing.ParameterUtils;
+import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.controller.util.ResponseUtils;
-import io.dataspaceconnector.service.ids.DeserializationService;
+import io.dataspaceconnector.service.message.builder.type.DescriptionRequestService;
 import io.dataspaceconnector.service.message.handler.dto.Response;
-import io.dataspaceconnector.service.message.type.DescriptionRequestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

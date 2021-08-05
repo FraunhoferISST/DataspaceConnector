@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
-import io.dataspaceconnector.controller.ExampleController;
+import io.dataspaceconnector.controller.policy.ExampleController;
 import io.dataspaceconnector.controller.MainController;
 import io.dataspaceconnector.controller.resource.view.agreement.AgreementView;
 import io.dataspaceconnector.controller.resource.view.artifact.ArtifactView;

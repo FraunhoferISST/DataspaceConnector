@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view.catalog;
 
+import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers.CatalogController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
@@ -53,7 +54,7 @@ public class CatalogViewAssembler
         final var offeredResLink = WebMvcLinkBuilder
                 .linkTo(methodOn(RelationControllers.CatalogsToOfferedResources.class)
                         .getResource(catalog.getId(), null, null))
-                .withRel("offers");
+                .withRel(BaseType.OFFERS);
         view.add(offeredResLink);
 
         return view;

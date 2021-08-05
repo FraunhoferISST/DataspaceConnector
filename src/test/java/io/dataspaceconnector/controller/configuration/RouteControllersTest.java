@@ -16,7 +16,7 @@
 package io.dataspaceconnector.controller.configuration;
 
 import io.dataspaceconnector.controller.resource.ResourceControllers;
-import io.dataspaceconnector.service.resource.RouteService;
+import io.dataspaceconnector.service.resource.type.RouteService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;

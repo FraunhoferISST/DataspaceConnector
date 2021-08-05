@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view.route;
 
+import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
@@ -55,13 +56,13 @@ public class RouteViewAssembler
 
         final var steps = linkTo(methodOn(RelationControllers.RoutesToSteps.class)
                 .getResource(route.getId(), null, null))
-                .withRel("routes");
+                .withRel(BaseType.ROUTES);
         view.add(steps);
 
         final var artifacts =
                 linkTo(methodOn(RelationControllers.RoutesToArtifacts.class)
                         .getResource(route.getId(), null, null))
-                        .withRel("artifacts");
+                        .withRel(BaseType.ARTIFACTS);
         view.add(artifacts);
 
         return view;

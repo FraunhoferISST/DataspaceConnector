@@ -22,9 +22,10 @@ import de.fraunhofer.iais.eis.ConnectorEndpoint;
 import de.fraunhofer.iais.eis.Endpoint;
 import de.fraunhofer.iais.eis.GenericEndpoint;
 import de.fraunhofer.iais.eis.RouteStep;
-import io.dataspaceconnector.common.RouteCreationException;
-import io.dataspaceconnector.common.RouteDeletionException;
+import io.dataspaceconnector.common.exception.RouteCreationException;
+import io.dataspaceconnector.common.exception.RouteDeletionException;
 import io.dataspaceconnector.model.route.Route;
+import io.dataspaceconnector.service.routing.config.RouteConfigurer;
 import io.dataspaceconnector.service.routing.dto.RouteStepEndpoint;
 import io.dataspaceconnector.service.routing.exception.NoSuitableTemplateException;
 import lombok.NonNull;
@@ -323,8 +324,7 @@ public class RouteManager {
     }
 
     /**
-     * Deletes all Camel routes associated with app routes in a given list by calling
-     * {@link RouteManager#deleteRoute(AppRoute)}.
+     * Deletes all Camel routes associated with app routes in a given list.
      *
      * @param appRoutes the list of app routes to be deleted.
      * @throws RouteDeletionException if any of the Camel routes cannot be deleted

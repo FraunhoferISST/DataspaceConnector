@@ -21,6 +21,7 @@ import de.fraunhofer.iais.eis.Constraint;
 import de.fraunhofer.iais.eis.LeftOperand;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Prohibition;
+import io.dataspaceconnector.controller.policy.util.PatternUtils;
 import io.dataspaceconnector.model.pattern.ConnectorRestrictionDesc;
 import io.dataspaceconnector.model.pattern.DeletionDesc;
 import io.dataspaceconnector.model.pattern.DurationDesc;

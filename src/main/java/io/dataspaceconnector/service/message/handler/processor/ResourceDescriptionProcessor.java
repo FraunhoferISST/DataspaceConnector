@@ -17,14 +17,14 @@ package io.dataspaceconnector.service.message.handler.processor;
 
 import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
-import io.dataspaceconnector.common.ErrorMessage;
-import io.dataspaceconnector.common.MessageUtils;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.ids.communication.MessageUtils;
 import io.dataspaceconnector.model.message.DescriptionResponseMessageDesc;
 import io.dataspaceconnector.service.EntityResolver;
+import io.dataspaceconnector.service.message.builder.type.DescriptionResponseService;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
-import io.dataspaceconnector.service.message.type.DescriptionResponseService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

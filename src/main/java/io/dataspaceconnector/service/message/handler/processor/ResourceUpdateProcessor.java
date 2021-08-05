@@ -17,12 +17,12 @@ package io.dataspaceconnector.service.message.handler.processor;
 
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
-import io.dataspaceconnector.common.MessageUtils;
+import io.dataspaceconnector.common.ids.communication.MessageUtils;
 import io.dataspaceconnector.model.message.MessageProcessedNotificationMessageDesc;
 import io.dataspaceconnector.service.EntityUpdateService;
+import io.dataspaceconnector.service.message.builder.type.MessageProcessedNotificationService;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
-import io.dataspaceconnector.service.message.type.MessageProcessedNotificationService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;

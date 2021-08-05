@@ -20,7 +20,7 @@ import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.message.processing.SubscriberNotificationService;
-import io.dataspaceconnector.service.resource.SubscriptionService;
+import io.dataspaceconnector.service.resource.type.SubscriptionService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;

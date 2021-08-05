@@ -24,7 +24,7 @@ import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.PermissionBuilder;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
-import io.dataspaceconnector.common.ParameterUtils;
+import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.controller.message.ids.validator.ContractAgreementValidator;
 import io.dataspaceconnector.controller.message.ids.validator.RuleListInputValidator;
 import io.dataspaceconnector.service.message.handler.dto.Response;

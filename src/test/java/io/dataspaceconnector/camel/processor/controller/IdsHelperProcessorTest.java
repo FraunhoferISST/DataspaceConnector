@@ -17,13 +17,13 @@ package io.dataspaceconnector.camel.processor.controller;
 
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
-import io.dataspaceconnector.common.ParameterUtils;
+import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.controller.message.ids.helper.ConfigurationUpdater;
 import io.dataspaceconnector.controller.message.ids.helper.PolicyRestrictionProcessor;
 import io.dataspaceconnector.controller.message.ids.helper.ResourceFinder;
-import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.service.message.handler.exception.InvalidResponseException;
 import lombok.SneakyThrows;
 import org.apache.camel.Exchange;

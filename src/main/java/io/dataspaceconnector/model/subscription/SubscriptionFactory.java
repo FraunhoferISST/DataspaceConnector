@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.model.subscription;
 
-import io.dataspaceconnector.common.ErrorMessage;
-import io.dataspaceconnector.common.MetadataUtils;
-import io.dataspaceconnector.common.ValidationUtils;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.InvalidEntityException;
+import io.dataspaceconnector.common.util.ValidationUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
+import io.dataspaceconnector.model.util.FactoryUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -73,7 +73,7 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
     private boolean updateLocation(final Subscription subscription, final URI uri) {
         validateInput(uri);
 
-        final var newUri = MetadataUtils.updateUri(subscription.getLocation(), uri, null);
+        final var newUri = FactoryUtils.updateUri(subscription.getLocation(), uri, null);
         newUri.ifPresent(subscription::setLocation);
 
         return newUri.isPresent();
@@ -103,7 +103,7 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
             throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT.toString());
         }
 
-        final var newTarget = MetadataUtils.updateUri(subscription.getTarget(), target, null);
+        final var newTarget = FactoryUtils.updateUri(subscription.getTarget(), target, null);
         newTarget.ifPresent(subscription::setTarget);
 
         return newTarget.isPresent();
@@ -122,7 +122,7 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
         }
 
         final var newSubscriber =
-                MetadataUtils.updateUri(subscription.getSubscriber(), subscriber, null);
+                FactoryUtils.updateUri(subscription.getSubscriber(), subscriber, null);
         newSubscriber.ifPresent(subscription::setSubscriber);
 
         return newSubscriber.isPresent();
@@ -137,7 +137,7 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
      */
     private boolean updatePushData(final Subscription subscription, final boolean push) {
         final var newPushValue =
-                MetadataUtils.updateBoolean(subscription.isPushData(), push, false);
+                FactoryUtils.updateBoolean(subscription.isPushData(), push, false);
         newPushValue.ifPresent(subscription::setPushData);
 
         return newPushValue.isPresent();
@@ -152,7 +152,7 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
      */
     private boolean updateIdsValue(final Subscription subscription, final boolean ids) {
         final var newIdsValue =
-                MetadataUtils.updateBoolean(subscription.isIdsProtocol(), ids, false);
+                FactoryUtils.updateBoolean(subscription.isIdsProtocol(), ids, false);
         newIdsValue.ifPresent(subscription::setIdsProtocol);
 
         return newIdsValue.isPresent();

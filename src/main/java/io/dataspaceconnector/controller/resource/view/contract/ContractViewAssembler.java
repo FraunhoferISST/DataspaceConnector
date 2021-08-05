@@ -15,8 +15,9 @@
  */
 package io.dataspaceconnector.controller.resource.view.contract;
 
-import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
+import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers.ContractController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
@@ -56,7 +57,7 @@ public class ContractViewAssembler
 
         final var rulesLink = linkTo(methodOn(RelationControllers.ContractsToRules.class)
                                              .getResource(contract.getId(), null, null))
-                                      .withRel("rules");
+                                      .withRel(BaseType.RULES);
         view.add(rulesLink);
 
         final var resourceType = contract.getResources();
@@ -65,19 +66,19 @@ public class ContractViewAssembler
             // No elements found, default to offered resources
             resourceLinker = linkTo(methodOn(RelationControllers.ContractsToOfferedResources.class)
                     .getResource(contract.getId(), null, null))
-                    .withRel("offers");
+                    .withRel(BaseType.OFFERS);
         } else {
             // Construct the link for the right resource type.
             if (resourceType.get(0) instanceof OfferedResource) {
                 resourceLinker =
                         linkTo(methodOn(RelationControllers.ContractsToOfferedResources.class)
                                 .getResource(contract.getId(), null, null))
-                                .withRel("offers");
+                                .withRel(BaseType.OFFERS);
             } else if (resourceType.get(0) instanceof RequestedResource) {
                 resourceLinker =
                         linkTo(methodOn(RelationControllers.ContractsToRequestedResources.class)
                                 .getResource(contract.getId(), null, null))
-                                .withRel("requests");
+                                .withRel(BaseType.REQUESTS);
             } else {
                 throw new UnreachableLineException(ErrorMessage.UNKNOWN_TYPE);
             }

@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller;
 
+import io.dataspaceconnector.controller.policy.ExampleController;
 import io.dataspaceconnector.model.pattern.ConnectorRestrictionDesc;
 import io.dataspaceconnector.model.pattern.DeletionDesc;
 import io.dataspaceconnector.model.pattern.DurationDesc;
@@ -25,7 +26,7 @@ import io.dataspaceconnector.model.pattern.PermissionDesc;
 import io.dataspaceconnector.model.pattern.ProhibitionDesc;
 import io.dataspaceconnector.model.pattern.SecurityRestrictionDesc;
 import io.dataspaceconnector.model.pattern.UsageNumberDesc;
-import io.dataspaceconnector.service.ids.DeserializationService;
+import io.dataspaceconnector.common.ids.DeserializationService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

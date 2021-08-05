@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.model.auth;
 
-import io.dataspaceconnector.service.HttpService.HttpArgs;
-import io.dataspaceconnector.service.HttpService.Pair;
+import io.dataspaceconnector.common.net.HttpService.HttpArgs;
+import io.dataspaceconnector.common.net.HttpService.Pair;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

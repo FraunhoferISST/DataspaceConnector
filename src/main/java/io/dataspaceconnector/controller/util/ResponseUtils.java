@@ -16,7 +16,7 @@
 package io.dataspaceconnector.controller.util;
 
 import de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception;
-import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import lombok.extern.log4j.Log4j2;
 import org.apache.camel.Exchange;

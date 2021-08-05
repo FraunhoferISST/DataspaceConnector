@@ -16,7 +16,6 @@
 package io.dataspaceconnector.controller.routing.error;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.dataspaceconnector.controller.gui.RoutesController;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.Exchange;
@@ -34,7 +33,7 @@ public class DeadLetterChannel extends RouteBuilder {
     /**
      * The controller offering the route error API.
      */
-    private final @NonNull RoutesController routesController;
+    private final @NonNull ErrorController errorController;
 
     /**
      * Configures the error route. The error route uses a processor to create an
@@ -49,7 +48,7 @@ public class DeadLetterChannel extends RouteBuilder {
 
         from("direct:deadLetterChannel")
                 .process("dlcProcessor")
-                .bean(routesController, "addRouteErrors(${body})");
+                .bean(errorController, "addRouteErrors(${body})");
     }
 
     @SuppressFBWarnings("CRLF_INJECTION_LOGS")

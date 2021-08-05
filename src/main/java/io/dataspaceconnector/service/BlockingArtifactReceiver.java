@@ -16,17 +16,17 @@
 package io.dataspaceconnector.service;
 
 import de.fraunhofer.iais.eis.RejectionReason;
-import io.dataspaceconnector.common.ErrorMessage;
-import io.dataspaceconnector.common.MessageUtils;
-import io.dataspaceconnector.common.ParameterUtils;
-import io.dataspaceconnector.common.QueryInput;
+import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.ids.communication.MessageUtils;
+import io.dataspaceconnector.common.routing.ParameterUtils;
+import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.exception.DataRetrievalException;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.service.message.handler.dto.Response;
-import io.dataspaceconnector.service.message.type.ArtifactRequestService;
-import io.dataspaceconnector.service.resource.ArtifactService;
+import io.dataspaceconnector.service.message.builder.type.ArtifactRequestService;
+import io.dataspaceconnector.service.resource.type.ArtifactService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

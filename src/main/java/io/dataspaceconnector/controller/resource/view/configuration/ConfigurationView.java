@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.resource.view.configuration;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.view.keystore.KeystoreView;
 import io.dataspaceconnector.controller.resource.view.proxy.ProxyView;
 import io.dataspaceconnector.controller.resource.view.truststore.TruststoreView;
@@ -39,7 +40,7 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "configurations", itemRelation = "configuration")
+@Relation(collectionRelation = BaseType.CONFIGURATIONS, itemRelation = "configuration")
 public class ConfigurationView extends RepresentationModel<ConfigurationView> {
 
     /**

@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.controller.message.ids;
 
-import io.dataspaceconnector.common.MessageUtils;
-import io.dataspaceconnector.common.ParameterUtils;
 import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
+import io.dataspaceconnector.common.ids.communication.MessageUtils;
+import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
-import io.dataspaceconnector.service.message.type.SubscriptionRequestService;
+import io.dataspaceconnector.service.message.builder.type.SubscriptionRequestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.base.exceptionhandler;
 
-import io.dataspaceconnector.common.RouteDeletionException;
+import io.dataspaceconnector.common.exception.RouteDeletionException;
 import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONObject;
 import org.springframework.http.HttpHeaders;

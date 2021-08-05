@@ -22,7 +22,7 @@ import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import de.fraunhofer.ids.messaging.response.MessageResponse;
-import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.service.message.handler.dto.Request;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.jsonwebtoken.Claims;

@@ -21,10 +21,10 @@ import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import de.fraunhofer.ids.messaging.core.config.PreConfigProducerInterceptor;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.dataspaceconnector.common.MappingUtils;
-import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.service.ids.builder.IdsConfigModelBuilder;
-import io.dataspaceconnector.service.resource.ConfigurationService;
+import io.dataspaceconnector.common.ids.DeserializationService;
+import io.dataspaceconnector.common.ids.mapping.FromIdsObjectMapper;
+import io.dataspaceconnector.service.resource.ids.builder.IdsConfigModelBuilder;
+import io.dataspaceconnector.service.resource.type.ConfigurationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -110,7 +110,7 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
         }
 
         final var configModel = deserializationSvc.getConfigurationModel(config);
-        final var dscConfig = configurationSvc.create(MappingUtils.fromIdsConfig(configModel));
+        final var dscConfig = configurationSvc.create(FromIdsObjectMapper.fromIdsConfig(configModel));
         configurationSvc.swapActiveConfig(dscConfig.getId());
         return configModel;
     }

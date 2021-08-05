@@ -56,7 +56,7 @@ public class GenericEndpointViewAssembler
 
         if (genericEndpoint.getDataSource() != null) {
             view.add(dataSourceViewAssembler.getSelfLink(genericEndpoint.getDataSource().getId())
-                    .withRel("dataSource"));
+                    .withRel("dataSource")); // TODO rename
         }
 
         return view;

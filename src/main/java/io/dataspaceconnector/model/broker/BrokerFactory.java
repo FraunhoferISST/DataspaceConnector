@@ -15,9 +15,9 @@
  */
 package io.dataspaceconnector.model.broker;
 
-import io.dataspaceconnector.common.MetadataUtils;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
+import io.dataspaceconnector.model.util.FactoryUtils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -80,7 +80,7 @@ public class BrokerFactory extends AbstractNamedFactory<Broker, BrokerDesc> {
      * @return True, if broker is updated.
      */
     private boolean updateLocation(final Broker broker, final URI location) {
-        final var newAccessUrl = MetadataUtils.updateUri(broker.getLocation(), location,
+        final var newAccessUrl = FactoryUtils.updateUri(broker.getLocation(), location,
                 DEFAULT_URI);
         newAccessUrl.ifPresent(broker::setLocation);
         return newAccessUrl.isPresent();

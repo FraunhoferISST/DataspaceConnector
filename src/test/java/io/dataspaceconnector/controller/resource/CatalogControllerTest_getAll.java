@@ -15,10 +15,10 @@
  */
 package io.dataspaceconnector.controller.resource;
 
-import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.controller.resource.view.catalog.CatalogViewAssembler;
 import io.dataspaceconnector.model.catalog.Catalog;
-import io.dataspaceconnector.service.resource.CatalogService;
+import io.dataspaceconnector.service.resource.type.CatalogService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

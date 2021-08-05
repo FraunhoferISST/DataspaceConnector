@@ -18,7 +18,7 @@ package io.dataspaceconnector.service;
 import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
-import io.dataspaceconnector.service.message.type.DescriptionRequestService;
+import io.dataspaceconnector.service.message.builder.type.DescriptionRequestService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

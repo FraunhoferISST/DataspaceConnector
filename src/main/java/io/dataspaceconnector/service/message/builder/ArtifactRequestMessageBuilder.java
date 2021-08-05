@@ -16,11 +16,12 @@
 package io.dataspaceconnector.service.message.builder;
 
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
-import io.dataspaceconnector.common.ParameterUtils;
-import io.dataspaceconnector.common.QueryInput;
+import io.dataspaceconnector.common.net.QueryInput;
+import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
+import io.dataspaceconnector.service.message.builder.base.IdsMessageBuilder;
+import io.dataspaceconnector.service.message.builder.type.ArtifactRequestService;
 import io.dataspaceconnector.service.message.handler.dto.Request;
-import io.dataspaceconnector.service.message.type.ArtifactRequestService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import lombok.NonNull;

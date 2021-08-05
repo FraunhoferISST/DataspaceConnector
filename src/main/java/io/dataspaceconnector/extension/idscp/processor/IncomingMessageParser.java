@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsValidator;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
-import io.dataspaceconnector.common.ParameterUtils;
+import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.service.message.handler.dto.Request;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.service.message.handler.util;
 
-import io.dataspaceconnector.common.IdsUtils;
-import io.dataspaceconnector.common.ParameterUtils;
+import io.dataspaceconnector.common.ids.mapping.RdfConverter;
+import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 
 import java.util.HashMap;
@@ -40,7 +40,7 @@ public final class ProcessorUtils {
      */
     public static Map<String, String> getResponseMap(final Response response) {
         final var map = new HashMap<String, String>();
-        map.put(ParameterUtils.HEADER_PART_NAME, IdsUtils.toRdf(response.getHeader()));
+        map.put(ParameterUtils.HEADER_PART_NAME, RdfConverter.toRdf(response.getHeader()));
         map.put(ParameterUtils.PAYLOAD_PART_NAME, response.getBody());
         return map;
     }

@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.controller.resource.base;
 
-import io.dataspaceconnector.controller.resource.base.tag.ResponseCode;
-import io.dataspaceconnector.controller.resource.base.tag.ResponseDescription;
+import io.dataspaceconnector.controller.util.ResponseCode;
+import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.dataspaceconnector.model.base.Description;
 import io.dataspaceconnector.model.base.Entity;
 import io.swagger.v3.oas.annotations.Operation;
@@ -90,8 +90,8 @@ public interface CRUDController<T extends Entity, D extends Description, V> {
      */
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @Operation(summary = "Get a base resource by id")
-    @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.OK,
-            description = ResponseDescription.OK),
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
                     description = ResponseDescription.UNAUTHORIZED)
     })

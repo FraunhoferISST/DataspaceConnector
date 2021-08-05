@@ -28,12 +28,12 @@ import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
-import io.dataspaceconnector.common.IdsUtils;
+import io.dataspaceconnector.common.ids.mapping.RdfConverter;
 import io.dataspaceconnector.config.ConnectorConfig;
-import io.dataspaceconnector.service.ids.ConnectorService;
-import io.dataspaceconnector.service.message.processing.ClearingHouseService;
-import io.dataspaceconnector.service.message.type.LogMessageService;
-import io.dataspaceconnector.service.message.type.NotificationService;
+import io.dataspaceconnector.common.ids.ConnectorService;
+import io.dataspaceconnector.common.ids.communication.ClearingHouseService;
+import io.dataspaceconnector.service.message.builder.type.LogMessageService;
+import io.dataspaceconnector.service.message.builder.type.NotificationService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +98,7 @@ public class PolicyExecutionServiceTest {
 
         /* ASSERT */
         verify(logMessageService, times(1))
-                .sendMessage(new URI(chUri + agreementID.toString()), IdsUtils.toRdf(agreement));
+                .sendMessage(new URI(chUri + agreementID.toString()), RdfConverter.toRdf(agreement));
     }
 
     @Test

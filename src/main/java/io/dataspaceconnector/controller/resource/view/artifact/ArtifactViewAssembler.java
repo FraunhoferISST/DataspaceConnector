@@ -15,7 +15,8 @@
  */
 package io.dataspaceconnector.controller.resource.view.artifact;
 
-import io.dataspaceconnector.common.QueryInput;
+import io.dataspaceconnector.common.net.QueryInput;
+import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers.ArtifactController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
@@ -60,19 +61,19 @@ public class ArtifactViewAssembler
 
         final var repLink = linkTo(methodOn(RelationControllers.ArtifactsToRepresentations.class)
                 .getResource(artifact.getId(), null, null))
-                .withRel("representations");
+                .withRel(BaseType.REPRESENTATIONS);
         view.add(repLink);
 
         final var agreementLink =
                 linkTo(methodOn(RelationControllers.ArtifactsToAgreements.class)
                         .getResource(artifact.getId(), null, null))
-                        .withRel("agreements");
+                        .withRel(BaseType.AGREEMENTS);
         view.add(agreementLink);
 
         final var subscriptionLink =
                 linkTo(methodOn(RelationControllers.ArtifactsToSubscriptions.class)
                         .getResource(artifact.getId(), null, null))
-                        .withRel("subscriptions");
+                        .withRel(BaseType.SUBSCRIPTIONS);
         view.add(subscriptionLink);
 
         return view;

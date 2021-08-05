@@ -15,8 +15,8 @@
  */
 package io.configmanager.extensions.routes.camel;
 
-import io.dataspaceconnector.common.RouteCreationException;
-import io.dataspaceconnector.common.RouteDeletionException;
+import io.dataspaceconnector.common.exception.RouteCreationException;
+import io.dataspaceconnector.common.exception.RouteDeletionException;
 import io.dataspaceconnector.service.routing.exception.NoSuitableTemplateException;
 import org.junit.jupiter.api.Test;
 

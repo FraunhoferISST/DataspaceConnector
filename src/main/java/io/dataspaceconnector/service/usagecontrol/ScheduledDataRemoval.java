@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
-import io.dataspaceconnector.common.ContractUtils;
-import io.dataspaceconnector.common.RuleUtils;
+import io.dataspaceconnector.common.ids.policy.ContractUtils;
+import io.dataspaceconnector.common.ids.policy.RuleUtils;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
-import io.dataspaceconnector.common.util.ids.UsageControlFramework;
+import io.dataspaceconnector.common.ids.policy.UsageControlFramework;
 import io.dataspaceconnector.config.ConnectorConfig;
-import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.service.resource.AgreementService;
-import io.dataspaceconnector.service.resource.ArtifactService;
+import io.dataspaceconnector.common.ids.DeserializationService;
+import io.dataspaceconnector.service.resource.type.AgreementService;
+import io.dataspaceconnector.service.resource.type.ArtifactService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

@@ -16,10 +16,10 @@
 package io.dataspaceconnector.controller.resource.base;
 
 import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
-import io.dataspaceconnector.controller.resource.base.tag.ResponseCode;
-import io.dataspaceconnector.controller.resource.base.tag.ResponseDescription;
+import io.dataspaceconnector.controller.util.ResponseCode;
+import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.dataspaceconnector.model.base.Entity;
-import io.dataspaceconnector.service.resource.RelationService;
+import io.dataspaceconnector.service.resource.base.RelationService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

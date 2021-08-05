@@ -18,10 +18,10 @@ package io.dataspaceconnector.service.message.handler.validator;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
-import io.dataspaceconnector.common.ErrorMessage;
-import io.dataspaceconnector.common.IdsUtils;
-import io.dataspaceconnector.common.MessageUtils;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
+import io.dataspaceconnector.common.ids.communication.MessageUtils;
+import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
 import io.dataspaceconnector.service.message.handler.dto.Request;
 import io.dataspaceconnector.service.message.handler.exception.NoTransferContractException;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
@@ -89,7 +89,7 @@ class PolicyValidator extends IdsValidator<Request<ArtifactRequestMessageImpl, M
         }
 
         final var value = claims.get().getBody().get("securityProfile");
-        final var profile = IdsUtils.getSecurityProfile(value.toString());
+        final var profile = ToIdsObjectMapper.getSecurityProfile(value.toString());
         if (profile.isEmpty()) {
             return Optional.empty();
         }

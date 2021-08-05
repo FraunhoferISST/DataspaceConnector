@@ -16,8 +16,8 @@
 package io.dataspaceconnector.controller.message.ids.validator;
 
 import de.fraunhofer.iais.eis.Rule;
-import io.dataspaceconnector.common.ParameterUtils;
-import io.dataspaceconnector.common.RuleUtils;
+import io.dataspaceconnector.common.ids.policy.RuleUtils;
+import io.dataspaceconnector.common.routing.ParameterUtils;
 import org.apache.camel.Exchange;
 import org.springframework.stereotype.Component;
 

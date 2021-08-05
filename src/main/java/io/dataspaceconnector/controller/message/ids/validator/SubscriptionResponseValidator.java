@@ -16,10 +16,10 @@
 package io.dataspaceconnector.controller.message.ids.validator;
 
 import io.dataspaceconnector.common.exception.MessageResponseException;
+import io.dataspaceconnector.service.message.builder.type.SubscriptionRequestService;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.exception.InvalidResponseException;
 import io.dataspaceconnector.service.message.handler.util.ProcessorUtils;
-import io.dataspaceconnector.service.message.type.SubscriptionRequestService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

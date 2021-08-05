@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view.endpoint;
 
+import io.dataspaceconnector.config.BaseType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +28,6 @@ import org.springframework.hateoas.server.core.Relation;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "endpoints", itemRelation = "endpoint")
+@Relation(collectionRelation = BaseType.ENDPOINTS, itemRelation = "endpoint")
 public class EndpointViewProxy extends RepresentationModel<EndpointViewProxy> {
 }

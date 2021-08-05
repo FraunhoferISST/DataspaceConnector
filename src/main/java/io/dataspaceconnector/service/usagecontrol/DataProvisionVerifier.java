@@ -17,8 +17,8 @@ package io.dataspaceconnector.service.usagecontrol;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.SecurityProfile;
-import io.dataspaceconnector.common.ContractUtils;
-import io.dataspaceconnector.common.RuleUtils;
+import io.dataspaceconnector.common.ids.policy.ContractUtils;
+import io.dataspaceconnector.common.ids.policy.RuleUtils;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
 import io.dataspaceconnector.config.ConnectorConfig;
 import lombok.NonNull;

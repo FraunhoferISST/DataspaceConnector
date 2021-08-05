@@ -17,7 +17,7 @@ package io.dataspaceconnector.service.message.handler.type;
 
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.ids.messaging.handler.message.SupportedMessageType;
-import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.common.ids.ConnectorService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.springframework.stereotype.Component;

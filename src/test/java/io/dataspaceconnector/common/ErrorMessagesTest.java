@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.common;
 
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

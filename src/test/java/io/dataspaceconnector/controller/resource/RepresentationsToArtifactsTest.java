@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.controller.resource;
 
-import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.controller.resource.view.artifact.ArtifactView;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
-import io.dataspaceconnector.service.resource.RelationServices;
+import io.dataspaceconnector.service.resource.relation.RepresentationArtifactLinker;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class RepresentationsToArtifactsTest {
 
     @MockBean
-    RelationServices.RepresentationArtifactLinker linker;
+    RepresentationArtifactLinker linker;
 
     @MockBean
     RepresentationModelAssembler<Artifact, ArtifactView> assembler;

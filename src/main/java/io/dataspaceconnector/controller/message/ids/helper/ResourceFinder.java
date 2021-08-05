@@ -15,9 +15,9 @@
  */
 package io.dataspaceconnector.controller.message.ids.helper;
 
-import io.dataspaceconnector.common.ParameterUtils;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
-import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.common.ids.ConnectorService;
+import io.dataspaceconnector.common.routing.ParameterUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.Exchange;

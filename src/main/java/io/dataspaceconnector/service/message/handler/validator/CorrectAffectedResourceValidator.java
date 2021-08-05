@@ -17,7 +17,7 @@ package io.dataspaceconnector.service.message.handler.validator;
 
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
-import io.dataspaceconnector.common.MessageUtils;
+import io.dataspaceconnector.common.ids.communication.MessageUtils;
 import io.dataspaceconnector.service.message.handler.dto.Request;
 import io.dataspaceconnector.service.message.handler.exception.InvalidAffectedResourceException;
 import io.jsonwebtoken.Claims;

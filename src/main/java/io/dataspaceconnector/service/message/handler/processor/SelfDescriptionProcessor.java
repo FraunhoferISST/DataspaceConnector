@@ -17,13 +17,13 @@ package io.dataspaceconnector.service.message.handler.processor;
 
 import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
-import io.dataspaceconnector.common.IdsUtils;
-import io.dataspaceconnector.common.MessageUtils;
+import io.dataspaceconnector.common.ids.ConnectorService;
+import io.dataspaceconnector.common.ids.communication.MessageUtils;
+import io.dataspaceconnector.common.ids.mapping.RdfConverter;
 import io.dataspaceconnector.model.message.DescriptionResponseMessageDesc;
-import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.service.message.builder.type.DescriptionResponseService;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
-import io.dataspaceconnector.service.message.type.DescriptionResponseService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -68,6 +68,6 @@ class SelfDescriptionProcessor extends IdsProcessor<
         final var header = messageService.buildMessage(desc);
 
         // Send ids response message.
-        return new Response(header, IdsUtils.toRdf(connector));
+        return new Response(header, RdfConverter.toRdf(connector));
     }
 }

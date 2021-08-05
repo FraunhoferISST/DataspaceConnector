@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.configuration.exceptionhandler;
 
-import io.dataspaceconnector.common.RouteDeletionException;
+import io.dataspaceconnector.common.exception.RouteDeletionException;
 import io.dataspaceconnector.controller.resource.base.exceptionhandler.RouteDeletionExceptionHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.config.security;
 
-import io.dataspaceconnector.service.ids.ConnectorService;
+import io.dataspaceconnector.common.ids.ConnectorService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectFactory;

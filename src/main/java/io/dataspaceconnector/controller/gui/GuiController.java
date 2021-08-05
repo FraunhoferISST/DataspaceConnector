@@ -15,14 +15,13 @@
  */
 package io.dataspaceconnector.controller.gui;
 
-import io.dataspaceconnector.controller.gui.util.GuiUtilService;
-import io.dataspaceconnector.controller.resource.base.tag.ResponseCode;
-import io.dataspaceconnector.controller.resource.base.tag.ResponseDescription;
+import io.dataspaceconnector.controller.gui.util.GuiUtils;
+import io.dataspaceconnector.controller.util.ResponseCode;
+import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,10 +38,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/configmanager")
 @Tag(name = "ConfigManager: GUI Utilities")
 public class GuiController {
-    /**
-     * The service class for returning values for the API calls.
-     */
-    private final @NonNull GuiUtilService utilService;
 
     /**
      * Auxiliary API to provide data to a GUI, which either comes from the infomodel or is connector
@@ -60,7 +55,7 @@ public class GuiController {
     @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED, description
             = ResponseDescription.UNAUTHORIZED)
     ResponseEntity<String> getSpecificEnum(final @PathVariable String enumName) {
-        final var enums = utilService.getSpecificEnum(enumName);
+        final var enums = GuiUtils.getSpecificEnum(enumName);
         return enums == null ? ResponseEntity.badRequest().body("Could not get the enums")
                 : ResponseEntity.ok(enums);
     }

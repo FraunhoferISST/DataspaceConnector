@@ -20,7 +20,7 @@ import io.dataspaceconnector.controller.resource.view.catalog.CatalogViewAssembl
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
 import io.dataspaceconnector.model.resource.OfferedResource;
-import io.dataspaceconnector.service.resource.CatalogService;
+import io.dataspaceconnector.service.resource.type.CatalogService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

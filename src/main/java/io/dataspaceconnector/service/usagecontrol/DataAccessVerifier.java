@@ -15,9 +15,9 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
-import io.dataspaceconnector.common.ContractUtils;
-import io.dataspaceconnector.common.RuleUtils;
-import io.dataspaceconnector.common.SelfLinkHelper;
+import io.dataspaceconnector.common.ids.policy.ContractUtils;
+import io.dataspaceconnector.common.ids.policy.RuleUtils;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.common.exception.PolicyExecutionException;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
 import io.dataspaceconnector.config.ConnectorConfig;

@@ -15,8 +15,9 @@
  */
 package io.dataspaceconnector.controller.resource.view.representation;
 
-import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
+import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers.RepresentationController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
@@ -57,7 +58,7 @@ public class RepresentationViewAssembler
         final var artifactsLink =
                 linkTo(methodOn(RelationControllers.RepresentationsToArtifacts.class)
                                 .getResource(representation.getId(), null, null))
-                        .withRel("artifacts");
+                        .withRel(BaseType.ARTIFACTS);
         view.add(artifactsLink);
 
         final var resourceType = representation.getResources();
@@ -67,20 +68,20 @@ public class RepresentationViewAssembler
             resourceLinker =
                     linkTo(methodOn(RelationControllers.RepresentationsToOfferedResources.class)
                                    .getResource(representation.getId(), null, null))
-                            .withRel("offers");
+                            .withRel(BaseType.OFFERS);
         } else {
             // Construct the link for the right resource type.
             if (resourceType.get(0) instanceof OfferedResource) {
                 resourceLinker =
                         linkTo(methodOn(RelationControllers.RepresentationsToOfferedResources.class)
                                        .getResource(representation.getId(), null, null))
-                                .withRel("offers");
+                                .withRel(BaseType.OFFERS);
             } else if (resourceType.get(0) instanceof RequestedResource) {
                 resourceLinker =
                         linkTo(methodOn(
                                 RelationControllers.RepresentationsToRequestedResources.class)
                                        .getResource(representation.getId(), null, null))
-                                .withRel("requests");
+                                .withRel(BaseType.REQUESTS);
             } else {
                 throw new UnreachableLineException(ErrorMessage.UNKNOWN_TYPE);
             }
@@ -91,7 +92,7 @@ public class RepresentationViewAssembler
         final var subscriptionLink =
                 linkTo(methodOn(RelationControllers.RepresentationsToSubscriptions.class)
                         .getResource(representation.getId(), null, null))
-                        .withRel("subscriptions");
+                        .withRel(BaseType.SUBSCRIPTIONS);
         view.add(subscriptionLink);
 
         return view;

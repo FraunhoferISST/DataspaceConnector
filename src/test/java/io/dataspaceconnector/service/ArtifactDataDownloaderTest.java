@@ -17,8 +17,8 @@ package io.dataspaceconnector.service;
 
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.agreement.Agreement;
-import io.dataspaceconnector.service.message.type.ArtifactRequestService;
-import io.dataspaceconnector.service.resource.AgreementService;
+import io.dataspaceconnector.service.message.builder.type.ArtifactRequestService;
+import io.dataspaceconnector.service.resource.type.AgreementService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;

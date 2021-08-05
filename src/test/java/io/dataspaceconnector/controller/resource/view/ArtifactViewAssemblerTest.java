@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
-import io.dataspaceconnector.common.QueryInput;
+import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
 import io.dataspaceconnector.controller.resource.view.artifact.ArtifactViewAssembler;

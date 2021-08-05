@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.controller.routing;
 
-import io.dataspaceconnector.controller.resource.base.tag.ResponseCode;
-import io.dataspaceconnector.controller.resource.base.tag.ResponseDescription;
+import io.dataspaceconnector.controller.util.ResponseCode;
+import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -75,8 +75,10 @@ public class BeansController {
     @Tag(name = "Camel", description = "Endpoints for dynamically managing Camel routes.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description =
-                    ResponseDescription.BAD_REQUEST)})
+            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                    description = ResponseDescription.UNAUTHORIZED),
+            @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
+                    description = ResponseDescription.BAD_REQUEST)})
     public ResponseEntity<String> addBeans(@RequestParam("file") final MultipartFile file) {
         try {
             if (file == null) {
@@ -120,6 +122,8 @@ public class BeansController {
     @Tag(name = "Camel", description = "Endpoints for dynamically managing Camel routes.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                    description = ResponseDescription.UNAUTHORIZED),
             @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description =
                     ResponseDescription.BAD_REQUEST)})
     public ResponseEntity<String> removeBean(@PathVariable("beanId") final String beanId) {

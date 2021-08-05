@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.exception;
 
-import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.RdfBuilderException;
 import org.junit.jupiter.api.Test;
 

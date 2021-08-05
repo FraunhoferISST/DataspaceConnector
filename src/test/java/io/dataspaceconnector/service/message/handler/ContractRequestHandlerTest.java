@@ -41,7 +41,7 @@ import io.dataspaceconnector.model.rule.ContractRuleDesc;
 import io.dataspaceconnector.model.rule.ContractRuleFactory;
 import io.dataspaceconnector.service.EntityPersistenceService;
 import io.dataspaceconnector.service.message.handler.type.ContractRequestHandler;
-import io.dataspaceconnector.service.resource.EntityDependencyResolver;
+import io.dataspaceconnector.service.EntityDependencyResolver;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

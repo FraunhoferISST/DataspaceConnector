@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.extension.idscp.processor;
 
-import io.dataspaceconnector.common.ParameterUtils;
+import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.service.message.handler.dto.Request;
 import org.apache.camel.Message;
 import org.springframework.stereotype.Component;

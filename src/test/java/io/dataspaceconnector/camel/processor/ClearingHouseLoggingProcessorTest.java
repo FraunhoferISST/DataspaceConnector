@@ -23,7 +23,7 @@ import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.service.message.handler.ClearingHouseLoggingProcessor;
 import io.dataspaceconnector.service.message.handler.dto.Request;
 import io.dataspaceconnector.service.message.handler.dto.Response;
-import io.dataspaceconnector.service.message.processing.ClearingHouseService;
+import io.dataspaceconnector.common.ids.communication.ClearingHouseService;
 import lombok.SneakyThrows;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;

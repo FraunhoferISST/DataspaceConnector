@@ -16,6 +16,8 @@
 package io.dataspaceconnector.controller.resource.view.agreement;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.dataspaceconnector.config.BaseType;
+import io.dataspaceconnector.controller.resource.view.util.ViewConstants;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,19 +33,19 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "agreements", itemRelation = "agreement")
+@Relation(collectionRelation = BaseType.AGREEMENTS, itemRelation = "agreement")
 public class AgreementView extends RepresentationModel<AgreementView> {
 
     /**
      * The creation date.
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ViewConstants.DATE_TIME_FORMAT)
     private ZonedDateTime creationDate;
 
     /**
      * The last modification date.
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ViewConstants.DATE_TIME_FORMAT)
     private ZonedDateTime modificationDate;
 
     /**

@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.resource.view.route;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.view.util.ViewConstants;
 import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.endpoint.Endpoint;
@@ -34,7 +35,7 @@ import java.util.Map;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "routes", itemRelation = "route")
+@Relation(collectionRelation = BaseType.ROUTES, itemRelation = "route")
 public class RouteView extends RepresentationModel<RouteView> {
 
     /**

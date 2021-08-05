@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.base.exceptionhandler;
 
-import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.InvalidEntityException;
 import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONObject;

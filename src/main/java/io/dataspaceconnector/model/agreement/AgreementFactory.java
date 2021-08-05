@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.model.agreement;
 
-import io.dataspaceconnector.common.MetadataUtils;
 import io.dataspaceconnector.model.base.AbstractFactory;
+import io.dataspaceconnector.model.util.FactoryUtils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -64,7 +64,7 @@ public class AgreementFactory extends AbstractFactory<Agreement, AgreementDesc> 
 
     private boolean updateRemoteId(final Agreement agreement, final URI remoteId) {
         final var newUri =
-                MetadataUtils.updateUri(agreement.getRemoteId(), remoteId, DEFAULT_REMOTE_ID);
+                FactoryUtils.updateUri(agreement.getRemoteId(), remoteId, DEFAULT_REMOTE_ID);
         newUri.ifPresent(agreement::setRemoteId);
 
         return newUri.isPresent();
@@ -80,7 +80,7 @@ public class AgreementFactory extends AbstractFactory<Agreement, AgreementDesc> 
     }
 
     private boolean updateValue(final Agreement agreement, final String value) {
-        final var newValue = MetadataUtils.updateString(agreement.getValue(), value, DEFAULT_VALUE);
+        final var newValue = FactoryUtils.updateString(agreement.getValue(), value, DEFAULT_VALUE);
         newValue.ifPresent(agreement::setValue);
 
         return newValue.isPresent();

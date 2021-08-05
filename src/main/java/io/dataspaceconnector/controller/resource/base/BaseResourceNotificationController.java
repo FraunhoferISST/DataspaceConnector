@@ -18,7 +18,7 @@ package io.dataspaceconnector.controller.resource.base;
 import io.dataspaceconnector.model.base.Description;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.service.message.processing.SubscriberNotificationService;
-import io.dataspaceconnector.service.resource.EntityService;
+import io.dataspaceconnector.service.resource.base.EntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.ResponseEntity;

@@ -16,7 +16,7 @@
 package io.dataspaceconnector.model.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.dataspaceconnector.service.HttpService;
+import io.dataspaceconnector.common.net.HttpService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

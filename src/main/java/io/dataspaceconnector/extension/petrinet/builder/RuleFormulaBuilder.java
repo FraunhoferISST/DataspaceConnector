@@ -16,7 +16,7 @@
 package io.dataspaceconnector.extension.petrinet.builder;
 
 import de.fraunhofer.iais.eis.Rule;
-import io.dataspaceconnector.common.RuleUtils;
+import io.dataspaceconnector.common.ids.policy.RuleUtils;
 import io.dataspaceconnector.extension.petrinet.evaluation.formula.Formula;
 import io.dataspaceconnector.extension.petrinet.evaluation.formula.transition.TransitionFormula;
 import io.dataspaceconnector.service.usagecontrol.PolicyPattern;

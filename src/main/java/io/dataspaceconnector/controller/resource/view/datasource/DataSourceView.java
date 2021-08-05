@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.resource.view.datasource;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.view.util.ViewConstants;
 import io.dataspaceconnector.model.datasource.DataSourceType;
 import lombok.EqualsAndHashCode;
@@ -33,7 +34,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "datasources", itemRelation = "datasource")
+@Relation(collectionRelation = BaseType.DATA_SOURCES, itemRelation = "datasource")
 public class DataSourceView extends RepresentationModel<DataSourceView> {
 
     /**

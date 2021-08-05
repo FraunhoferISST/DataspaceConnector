@@ -16,7 +16,7 @@
 package io.dataspaceconnector.controller.resource;
 
 import de.fraunhofer.ids.messaging.protocol.UnexpectedResponseException;
-import io.dataspaceconnector.common.QueryInput;
+import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.controller.resource.view.artifact.ArtifactViewAssembler;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
@@ -24,9 +24,9 @@ import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
-import io.dataspaceconnector.service.HttpService;
+import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.service.message.processing.SubscriberNotificationService;
-import io.dataspaceconnector.service.resource.ArtifactService;
+import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

@@ -30,9 +30,9 @@ import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import io.dataspaceconnector.model.broker.BrokerFactory;
 import io.dataspaceconnector.repository.BrokerRepository;
 import io.dataspaceconnector.service.message.processing.BrokerCommunication;
-import io.dataspaceconnector.service.message.type.NotificationService;
-import io.dataspaceconnector.service.resource.BrokerService;
-import io.dataspaceconnector.service.resource.RelationServices;
+import io.dataspaceconnector.service.message.builder.type.NotificationService;
+import io.dataspaceconnector.service.resource.relation.BrokerOfferedResourceLinker;
+import io.dataspaceconnector.service.resource.type.BrokerService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -64,7 +64,7 @@ class GlobalMessageServiceTest {
     private BrokerFactory brokerFactory;
 
     @MockBean
-    private RelationServices.BrokerOfferedResourceLinker brokerOfferedResourceLinker;
+    private BrokerOfferedResourceLinker brokerOfferedResourceLinker;
 
     @MockBean
     private BrokerService dscBrokerService;

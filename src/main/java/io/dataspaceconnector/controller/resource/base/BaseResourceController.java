@@ -15,10 +15,10 @@
  */
 package io.dataspaceconnector.controller.resource.base;
 
-import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.base.Description;
 import io.dataspaceconnector.model.base.Entity;
-import io.dataspaceconnector.service.resource.EntityService;
+import io.dataspaceconnector.service.resource.base.EntityService;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;

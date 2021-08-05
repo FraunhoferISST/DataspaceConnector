@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view.resource;
 
+import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers.OfferedResourceController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
@@ -53,31 +54,31 @@ public class OfferedResourceViewAssembler
         final var contractsLink =
                 linkTo(methodOn(RelationControllers.OfferedResourcesToContracts.class)
                         .getResource(resource.getId(), null, null))
-                        .withRel("contracts");
+                        .withRel(BaseType.CONTRACTS);
         view.add(contractsLink);
 
         final var repLink =
                 linkTo(methodOn(RelationControllers.OfferedResourcesToRepresentations.class)
                         .getResource(resource.getId(), null, null))
-                        .withRel("representations");
+                        .withRel(BaseType.REPRESENTATIONS);
         view.add(repLink);
 
         final var catalogLink =
                 linkTo(methodOn(RelationControllers.OfferedResourcesToCatalogs.class)
                         .getResource(resource.getId(), null, null))
-                        .withRel("catalogs");
+                        .withRel(BaseType.CATALOGS);
         view.add(catalogLink);
 
         final var subscriptionLink =
                 linkTo(methodOn(RelationControllers.OfferedResourcesToSubscriptions.class)
                         .getResource(resource.getId(), null, null))
-                        .withRel("subscriptions");
+                        .withRel(BaseType.SUBSCRIPTIONS);
         view.add(subscriptionLink);
 
         final var brokerLink =
                 linkTo(methodOn(RelationControllers.OfferedResourcesToBrokers.class)
                         .getResource(resource.getId(), null, null))
-                        .withRel("brokers");
+                        .withRel(BaseType.BROKERS);
         view.add(brokerLink);
 
         return view;

@@ -18,17 +18,18 @@ package io.dataspaceconnector.controller.resource;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import de.fraunhofer.ids.messaging.protocol.UnexpectedResponseException;
-import io.dataspaceconnector.common.QueryInput;
-import io.dataspaceconnector.common.Utils;
-import io.dataspaceconnector.common.ValidationUtils;
+import io.dataspaceconnector.common.ids.ConnectorService;
+import io.dataspaceconnector.common.net.QueryInput;
+import io.dataspaceconnector.common.net.RetrievalInformation;
+import io.dataspaceconnector.common.util.Utils;
+import io.dataspaceconnector.common.util.ValidationUtils;
+import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.BaseResourceController;
 import io.dataspaceconnector.controller.resource.base.BaseResourceNotificationController;
 import io.dataspaceconnector.controller.resource.base.CRUDController;
 import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
-import io.dataspaceconnector.controller.resource.base.tag.ResponseCode;
-import io.dataspaceconnector.controller.resource.base.tag.ResponseDescription;
 import io.dataspaceconnector.controller.resource.view.agreement.AgreementView;
 import io.dataspaceconnector.controller.resource.view.artifact.ArtifactView;
 import io.dataspaceconnector.controller.resource.view.broker.BrokerView;
@@ -44,6 +45,8 @@ import io.dataspaceconnector.controller.resource.view.resource.RequestedResource
 import io.dataspaceconnector.controller.resource.view.route.RouteView;
 import io.dataspaceconnector.controller.resource.view.rule.ContractRuleView;
 import io.dataspaceconnector.controller.resource.view.subscription.SubscriptionView;
+import io.dataspaceconnector.controller.util.ResponseCode;
+import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.agreement.AgreementDesc;
@@ -74,22 +77,20 @@ import io.dataspaceconnector.model.rule.ContractRuleDesc;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
-import io.dataspaceconnector.service.ids.ConnectorService;
-import io.dataspaceconnector.service.resource.AgreementService;
-import io.dataspaceconnector.service.resource.ArtifactService;
-import io.dataspaceconnector.service.resource.BrokerService;
-import io.dataspaceconnector.service.resource.CatalogService;
-import io.dataspaceconnector.service.resource.ConfigurationService;
-import io.dataspaceconnector.service.resource.ContractService;
-import io.dataspaceconnector.service.resource.DataSourceService;
-import io.dataspaceconnector.service.resource.EndpointServiceProxy;
-import io.dataspaceconnector.service.resource.GenericEndpointService;
-import io.dataspaceconnector.service.resource.RepresentationService;
-import io.dataspaceconnector.service.resource.ResourceService;
-import io.dataspaceconnector.service.resource.RetrievalInformation;
-import io.dataspaceconnector.service.resource.RouteService;
-import io.dataspaceconnector.service.resource.RuleService;
-import io.dataspaceconnector.service.resource.SubscriptionService;
+import io.dataspaceconnector.service.resource.type.AgreementService;
+import io.dataspaceconnector.service.resource.type.ArtifactService;
+import io.dataspaceconnector.service.resource.type.BrokerService;
+import io.dataspaceconnector.service.resource.type.CatalogService;
+import io.dataspaceconnector.service.resource.type.ConfigurationService;
+import io.dataspaceconnector.service.resource.type.ContractService;
+import io.dataspaceconnector.service.resource.type.DataSourceService;
+import io.dataspaceconnector.service.resource.type.EndpointServiceProxy;
+import io.dataspaceconnector.service.resource.type.GenericEndpointService;
+import io.dataspaceconnector.service.resource.type.RepresentationService;
+import io.dataspaceconnector.service.resource.type.ResourceService;
+import io.dataspaceconnector.service.resource.type.RouteService;
+import io.dataspaceconnector.service.resource.type.RuleService;
+import io.dataspaceconnector.service.resource.type.SubscriptionService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -140,7 +141,7 @@ public final class ResourceControllers {
      * Offers the endpoints for managing catalogs.
      */
     @RestController
-    @RequestMapping("/api/catalogs")
+    @RequestMapping(BasePath.CATALOGS)
     @Tag(name = ResourceName.CATALOGS, description = ResourceDescription.CATALOGS)
     public static class CatalogController
             extends BaseResourceController<Catalog, CatalogDesc, CatalogView, CatalogService> {
@@ -150,7 +151,7 @@ public final class ResourceControllers {
      * Offers the endpoints for managing rules.
      */
     @RestController
-    @RequestMapping("/api/rules")
+    @RequestMapping(BasePath.RULES)
     @Tag(name = ResourceName.RULES, description = ResourceDescription.RULES)
     public static class RuleController extends BaseResourceController<ContractRule,
             ContractRuleDesc, ContractRuleView, RuleService> {
@@ -160,7 +161,7 @@ public final class ResourceControllers {
      * Offers the endpoints for managing representations.
      */
     @RestController
-    @RequestMapping("/api/representations")
+    @RequestMapping(BasePath.REPRESENTATIONS)
     @Tag(name = ResourceName.REPRESENTATIONS, description = ResourceDescription.REPRESENTATIONS)
     public static class RepresentationController
             extends BaseResourceNotificationController<Representation, RepresentationDesc,
@@ -171,7 +172,7 @@ public final class ResourceControllers {
      * Offers the endpoints for managing contracts.
      */
     @RestController
-    @RequestMapping("/api/contracts")
+    @RequestMapping(BasePath.CONTRACTS)
     @Tag(name = ResourceName.CONTRACTS, description = ResourceDescription.CONTRACTS)
     public static class ContractController
             extends BaseResourceController<Contract, ContractDesc, ContractView, ContractService> {
@@ -181,7 +182,7 @@ public final class ResourceControllers {
      * Offers the endpoints for managing offered resources.
      */
     @RestController
-    @RequestMapping("/api/offers")
+    @RequestMapping(BasePath.OFFERS)
     @Tag(name = ResourceName.OFFERS, description = ResourceDescription.OFFERS)
     public static class OfferedResourceController
             extends BaseResourceNotificationController<OfferedResource, OfferedResourceDesc,
@@ -192,7 +193,7 @@ public final class ResourceControllers {
      * Offers the endpoints for managing requested resources.
      */
     @RestController
-    @RequestMapping("/api/requests")
+    @RequestMapping(BasePath.REQUESTS)
     @RequiredArgsConstructor
     @Tag(name = ResourceName.REQUESTS, description = ResourceDescription.REQUESTS)
     public static class RequestedResourceController
@@ -213,7 +214,7 @@ public final class ResourceControllers {
      * Offers the endpoints for managing agreements.
      */
     @RestController
-    @RequestMapping("/api/agreements")
+    @RequestMapping(BasePath.AGREEMENTS)
     @Tag(name = ResourceName.AGREEMENTS, description = ResourceDescription.AGREEMENTS)
     public static class AgreementController extends BaseResourceController<Agreement, AgreementDesc,
             AgreementView, AgreementService> {
@@ -247,7 +248,7 @@ public final class ResourceControllers {
      * Offers the endpoints for managing artifacts.
      */
     @RestController
-    @RequestMapping("/api/artifacts")
+    @RequestMapping(BasePath.ARTIFACTS)
     @Tag(name = ResourceName.ARTIFACTS, description = ResourceDescription.ARTIFACTS)
     @RequiredArgsConstructor
     public static class ArtifactController
@@ -394,7 +395,7 @@ public final class ResourceControllers {
      * Offers the endpoints for managing subscriptions.
      */
     @RestController
-    @RequestMapping("/api/subscriptions")
+    @RequestMapping(BasePath.SUBSCRIPTIONS)
     @RequiredArgsConstructor
     @Tag(name = ResourceName.SUBSCRIPTIONS, description = ResourceDescription.SUBSCRIPTIONS)
     public static class SubscriptionController extends BaseResourceController<Subscription,
@@ -415,7 +416,8 @@ public final class ResourceControllers {
         @Override
         @PostMapping
         @Operation(summary = "Create a base resource")
-        @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Created")})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.CREATED,
+                description = ResponseDescription.CREATED)})
         public ResponseEntity<SubscriptionView> create(@RequestBody final SubscriptionDesc desc) {
             // Set boolean to false as this subscription has been created via a REST API call.
             desc.setIdsProtocol(false);
@@ -438,7 +440,8 @@ public final class ResourceControllers {
          */
         @GetMapping("owning")
         @SuppressWarnings("unchecked")
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = ResponseDescription.METHOD_NOT_ALLOWED)})
         public final PagedModel<SubscriptionView> getAllFiltered(
                 @RequestParam(required = false, defaultValue = "0") final Integer page,
                 @RequestParam(required = false, defaultValue = "30") final Integer size) {
@@ -464,7 +467,7 @@ public final class ResourceControllers {
      * Offers the endpoints for managing brokers.
      */
     @RestController
-    @RequestMapping("/api/brokers")
+    @RequestMapping(BasePath.BROKERS)
     @Tag(name = ResourceName.BROKERS, description = ResourceDescription.BROKERS)
     public static class BrokerController extends BaseResourceController<Broker, BrokerDesc,
             BrokerView, BrokerService> {
@@ -474,7 +477,7 @@ public final class ResourceControllers {
      * Offers the endpoints for managing configurations.
      */
     @RestController
-    @RequestMapping("/api/configurations")
+    @RequestMapping(BasePath.CONFIGURATIONS)
     @RequiredArgsConstructor
     @Tag(name = ResourceName.CONFIGURATIONS, description = ResourceDescription.CONFIGURATIONS)
     public static class ConfigurationController extends BaseResourceController<Configuration,
@@ -499,11 +502,15 @@ public final class ResourceControllers {
         @PutMapping(value = "/{id}/active", consumes = {"*/*"})
         @Operation(summary = "Update current configuration")
         @ApiResponses(value = {
-                @ApiResponse(responseCode = "200", description = "Ok"),
-                @ApiResponse(responseCode = "400", description = "Failed to deserialize."),
-                @ApiResponse(responseCode = "401", description = "Unauthorized"),
-                @ApiResponse(responseCode = "415", description = "Wrong media type."),
-                @ApiResponse(responseCode = "500", description = "Internal server error")})
+                @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+                @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
+                        description = ResponseDescription.BAD_REQUEST),
+                @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                        description = ResponseDescription.UNAUTHORIZED),
+                @ApiResponse(responseCode = ResponseCode.UNSUPPORTED_MEDIA_TYPE,
+                        description = ResponseDescription.UNSUPPORTED_MEDIA_TYPE),
+                @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
+                        description = ResponseDescription.INTERNAL_SERVER_ERROR)})
         @ResponseBody
         public ResponseEntity<Object> setConfiguration(
                 @Valid @PathVariable(name = "id") final UUID toSelect) {
@@ -524,8 +531,9 @@ public final class ResourceControllers {
         @GetMapping(value = "/active", produces = "application/hal+json")
         @Operation(summary = "Get current configuration")
         @ApiResponses(value = {
-                @ApiResponse(responseCode = "200", description = "Ok"),
-                @ApiResponse(responseCode = "401", description = "Unauthorized")})
+                @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+                @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                        description = ResponseDescription.UNAUTHORIZED)})
         @ResponseBody
         public ConfigurationView getConfiguration() {
             return get(configurationSvc.getActiveConfig().getId());
@@ -539,8 +547,9 @@ public final class ResourceControllers {
         @GetMapping(value = "/active", produces = "application/ld+json")
         @Operation(summary = "Get current configuration")
         @ApiResponses(value = {
-                @ApiResponse(responseCode = "200", description = "Ok"),
-                @ApiResponse(responseCode = "401", description = "Unauthorized")})
+                @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+                @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                        description = ResponseCode.UNAUTHORIZED)})
         @ResponseBody
         public ResponseEntity<Object> getIdsConfiguration() {
             return ResponseEntity.ok(configContainer.getConfigurationModel().toRdf());
@@ -551,7 +560,7 @@ public final class ResourceControllers {
      * Offers the endpoints for managing data sources.
      */
     @RestController
-    @RequestMapping("/api/datasources")
+    @RequestMapping(BasePath.DATA_SOURCES)
     @RequiredArgsConstructor
     @Tag(name = ResourceName.DATA_SOURCES, description = ResourceDescription.DATA_SOURCES)
     public static class DataSourceController extends BaseResourceController<DataSource,
@@ -562,7 +571,7 @@ public final class ResourceControllers {
      * Offers the endpoints for managing different endpoints.
      */
     @RestController
-    @RequestMapping("/api/endpoints")
+    @RequestMapping(BasePath.ENDPOINTS)
     @RequiredArgsConstructor
     @Tag(name = ResourceName.ENDPOINTS, description = ResourceDescription.ENDPOINTS)
     @Getter(AccessLevel.PROTECTED)
@@ -667,7 +676,8 @@ public final class ResourceControllers {
          */
         @PutMapping("{id}/datasource/{dataSourceId}")
         @Operation(summary = "Creates start endpoint for the route")
-        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.NO_CONTENT)})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.NO_CONTENT,
+                description = ResponseDescription.NO_CONTENT)})
         public final ResponseEntity<Void> linkDataSource(
                 @Valid @PathVariable(name = "id") final UUID genericEndpointId,
                 @Valid @PathVariable(name = "dataSourceId") final UUID dataSourceId) {
@@ -680,7 +690,7 @@ public final class ResourceControllers {
      * Offers the endpoints for managing routes.
      */
     @RestController
-    @RequestMapping("/api/routes")
+    @RequestMapping(BasePath.ROUTES)
     @Tag(name = ResourceName.ROUTES, description = ResourceDescription.ROUTES)
     @RequiredArgsConstructor
     public static class RouteController extends BaseResourceController<Route, RouteDesc, RouteView,

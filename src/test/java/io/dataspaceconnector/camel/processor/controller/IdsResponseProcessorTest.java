@@ -26,7 +26,7 @@ import de.fraunhofer.iais.eis.PermissionBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
-import io.dataspaceconnector.common.ParameterUtils;
+import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.controller.message.ids.processor.AgreementToArtifactsLinker;
 import io.dataspaceconnector.controller.message.ids.processor.ContractAgreementPersistenceProcessor;
 import io.dataspaceconnector.controller.message.ids.processor.DataPersistenceProcessor;

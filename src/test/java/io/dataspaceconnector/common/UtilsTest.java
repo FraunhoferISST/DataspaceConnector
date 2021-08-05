@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.common;
 
+import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.util.Utils;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

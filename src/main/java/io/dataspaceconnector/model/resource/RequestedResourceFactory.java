@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.model.resource;
 
-import io.dataspaceconnector.common.MetadataUtils;
+import io.dataspaceconnector.model.util.FactoryUtils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -46,7 +46,7 @@ public final class RequestedResourceFactory
     }
 
     private boolean updateRemoteId(final RequestedResource resource, final URI remoteId) {
-        final var newUri = MetadataUtils.updateUri(resource.getRemoteId(), remoteId,
+        final var newUri = FactoryUtils.updateUri(resource.getRemoteId(), remoteId,
                 DEFAULT_REMOTE_ID);
         newUri.ifPresent(resource::setRemoteId);
 

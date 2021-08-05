@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view.rule;
 
+import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.RelationControllers;
 import io.dataspaceconnector.controller.resource.ResourceControllers.RuleController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
@@ -53,7 +54,7 @@ public class ContractRuleViewAssembler
         final var contractLink = WebMvcLinkBuilder
                 .linkTo(methodOn(RelationControllers.RulesToContracts.class)
                         .getResource(rule.getId(), null, null))
-                .withRel("contracts");
+                .withRel(BaseType.CONTRACTS);
         view.add(contractLink);
 
         return view;

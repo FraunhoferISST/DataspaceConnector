@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.model.artifact;
 
-import io.dataspaceconnector.common.MetadataUtils;
 import io.dataspaceconnector.model.auth.ApiKey;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
+import io.dataspaceconnector.model.util.FactoryUtils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -79,14 +79,14 @@ public final class ArtifactFactory extends AbstractNamedFactory<Artifact, Artifa
 
     private boolean updateRemoteId(final Artifact artifact, final URI remoteId) {
         final var newUri =
-                MetadataUtils.updateUri(artifact.getRemoteId(), remoteId, DEFAULT_REMOTE_ID);
+                FactoryUtils.updateUri(artifact.getRemoteId(), remoteId, DEFAULT_REMOTE_ID);
         newUri.ifPresent(artifact::setRemoteId);
 
         return newUri.isPresent();
     }
 
     private boolean updateRemoteAddress(final Artifact artifact, final URI remoteAddress) {
-        final var newUri = MetadataUtils
+        final var newUri = FactoryUtils
                 .updateUri(artifact.getRemoteAddress(), remoteAddress, DEFAULT_REMOTE_ADDRESS);
         newUri.ifPresent(artifact::setRemoteAddress);
 

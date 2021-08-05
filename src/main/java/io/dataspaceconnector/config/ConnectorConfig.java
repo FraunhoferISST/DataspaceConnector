@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.config;
 
-import io.dataspaceconnector.common.util.ids.UsageControlFramework;
+import io.dataspaceconnector.common.ids.policy.UsageControlFramework;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

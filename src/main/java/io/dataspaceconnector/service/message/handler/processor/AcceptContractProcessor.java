@@ -18,15 +18,15 @@ package io.dataspaceconnector.service.message.handler.processor;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import io.dataspaceconnector.common.IdsUtils;
-import io.dataspaceconnector.common.MessageUtils;
+import io.dataspaceconnector.common.ids.communication.MessageUtils;
+import io.dataspaceconnector.common.ids.mapping.RdfConverter;
 import io.dataspaceconnector.model.message.ContractAgreementMessageDesc;
 import io.dataspaceconnector.service.EntityPersistenceService;
+import io.dataspaceconnector.service.message.builder.type.ContractAgreementService;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
 import io.dataspaceconnector.service.message.handler.dto.payload.ContractTargetRuleMapContainer;
 import io.dataspaceconnector.service.message.handler.exception.AgreementPersistenceException;
-import io.dataspaceconnector.service.message.type.ContractAgreementService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -88,7 +88,7 @@ class AcceptContractProcessor extends
         }
 
         // Send ids response message.
-        return new Response(header, IdsUtils.toRdf(agreement));
+        return new Response(header, RdfConverter.toRdf(agreement));
     }
 
 }

@@ -20,7 +20,7 @@ import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.EndpointBuilder;
 import de.fraunhofer.iais.eis.GenericEndpointBuilder;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.service.routing.RouteConfigurer;
+import io.dataspaceconnector.service.routing.config.RouteConfigurer;
 import org.apache.velocity.VelocityContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
