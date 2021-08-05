@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.base.Entity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,7 +40,7 @@ public interface RelationService<K extends Entity, W extends Entity,
      * @param pageable The {@link Pageable} object for getting only a page of objects.
      * @return The ids of the children.
      * @throws IllegalArgumentException  if any of the passed arguments is null.
-     * @throws ResourceNotFoundException
+     * @throws io.dataspaceconnector.common.exception.ResourceNotFoundException
      *         if the ownerId entity does not exists.
      */
     Page<W> get(UUID ownerId, Pageable pageable);
@@ -52,7 +51,7 @@ public interface RelationService<K extends Entity, W extends Entity,
      * @param ownerId  The id of the entity that the children should be added to.
      * @param entities The children to be added.
      * @throws IllegalArgumentException  if any of the passed arguments is null.
-     * @throws ResourceNotFoundException
+     * @throws io.dataspaceconnector.common.exception.ResourceNotFoundException
      *         if any of the entities does not exists.
      */
     void add(UUID ownerId, Set<UUID> entities);
@@ -63,7 +62,7 @@ public interface RelationService<K extends Entity, W extends Entity,
      * @param ownerId  The id of the entity that the children should be removed from.
      * @param entities The children to be removed.
      * @throws IllegalArgumentException  if any of the passed arguments is null.
-     * @throws ResourceNotFoundException
+     * @throws io.dataspaceconnector.common.exception.ResourceNotFoundException
      *         if any of the entities does not exists.
      */
     void remove(UUID ownerId, Set<UUID> entities);
@@ -74,7 +73,7 @@ public interface RelationService<K extends Entity, W extends Entity,
      * @param ownerId  The id of the entity whose children should be replaced.
      * @param entities The new children for the entity.
      * @throws IllegalArgumentException  if any of the passed arguments is null.
-     * @throws ResourceNotFoundException
+     * @throws io.dataspaceconnector.common.exception.ResourceNotFoundException
      *         if any of the entities does not exists.
      */
     void replace(UUID ownerId, Set<UUID> entities);

@@ -39,7 +39,8 @@ public class ConfigurationViewAssembler implements
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, ResourceControllers.ConfigurationController.class);
+        return ViewAssemblerHelper.getSelfLink(entityId,
+                ResourceControllers.ConfigurationController.class);
     }
 
     @Override

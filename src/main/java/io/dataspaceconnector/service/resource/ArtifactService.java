@@ -20,7 +20,6 @@ import io.dataspaceconnector.common.QueryInput;
 import io.dataspaceconnector.common.Utils;
 import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
-import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
@@ -139,13 +138,11 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param artifactId     The id of the artifact.
      * @param queryInput     The query for the backend.
      * @return The artifacts data.
-     * @throws PolicyRestrictionException                                if the data access has
-     *                                                                   been denied.
-     * @throws ResourceNotFoundException if the artifact does not
-     *                                                                   exist.
-     * @throws IllegalArgumentException                                  if any of the parameters
-     *                                                                   is null.
-     * @throws IOException                                               if IO errors occurr.
+     * @throws PolicyRestrictionException if the data access has been denied.
+     * @throws io.dataspaceconnector.common.exception.ResourceNotFoundException if the artifact does
+     * not exist.
+     * @throws IllegalArgumentException if any of the parameters is null.
+     * @throws IOException if IO errors occur.
      */
     public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
@@ -210,13 +207,11 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param artifactId     The id of the artifact.
      * @param information    Information for pulling the data from a remote source.
      * @return The artifact's data.
-     * @throws PolicyRestrictionException                                if the data access has
-     *                                                                   been denied.
-     * @throws ResourceNotFoundException if the artifact does not
-     *                                                                   exist.
-     * @throws IllegalArgumentException                                  if any of the parameters
-     *                                                                   is null.
-     * @throws IOException                                               if IO errors occurr.
+     * @throws PolicyRestrictionException if the data access has been denied.
+     * @throws io.dataspaceconnector.common.exception.ResourceNotFoundException if the artifact does
+     * not exist.
+     * @throws IllegalArgumentException if any of the parameters is null.
+     * @throws IOException if IO errors occurr.
      */
     @Transactional
     public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,

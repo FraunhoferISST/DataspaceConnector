@@ -17,7 +17,6 @@ package io.dataspaceconnector.controller.routing.error;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.controller.gui.RoutesController;
-import io.dataspaceconnector.service.message.handler.dto.RouteError;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.Exchange;
@@ -38,8 +37,9 @@ public class DeadLetterChannel extends RouteBuilder {
     private final @NonNull RoutesController routesController;
 
     /**
-     * Configures the error route. The error route uses a processor to create an {@link RouteError}
-     * and then sends this to the Configuration Manager.
+     * Configures the error route. The error route uses a processor to create an
+     * {@link io.dataspaceconnector.service.message.handler.dto.RouteError} and then sends this to
+     * the Configuration Manager.
      */
     @Override
     public void configure() {

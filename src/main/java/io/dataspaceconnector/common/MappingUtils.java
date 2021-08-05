@@ -26,7 +26,6 @@ import de.fraunhofer.iais.eis.Proxy;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
-import io.dataspaceconnector.common.exception.RdfBuilderException;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
@@ -441,9 +440,9 @@ public final class MappingUtils {
      *
      * @param rule The ids rule.
      * @return The rule template.
-     * @throws IllegalArgumentException                            if the rule is null.
-     * @throws RdfBuilderException if the rule cannot be
-     *                                                             converted to string.
+     * @throws IllegalArgumentException if the rule is null.
+     * @throws io.dataspaceconnector.common.exception.RdfBuilderException if the rule cannot be
+     * converted to string.
      */
     public static RuleTemplate fromIdsRule(final Rule rule) {
         Utils.requireNonNull(rule, ErrorMessage.ENTITY_NULL);

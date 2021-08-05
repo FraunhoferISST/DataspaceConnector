@@ -20,7 +20,6 @@ import io.dataspaceconnector.common.RuleUtils;
 import io.dataspaceconnector.common.SelfLinkHelper;
 import io.dataspaceconnector.common.exception.PolicyExecutionException;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
-import io.dataspaceconnector.common.exception.UnsupportedPatternException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.service.EntityResolver;
@@ -93,8 +92,8 @@ public final class DataAccessVerifier implements PolicyVerifier<AccessVerificati
      * @param artifactId  The requested artifact.
      * @param remoteId    The remote id of the requested artifact.
      * @param agreementId The id of the transfer contract (agreement).
-     * @throws UnsupportedPatternException If no suitable pattern
-     *                                                                     could be found.
+     * @throws io.dataspaceconnector.common.exception.UnsupportedPatternException if no suitable
+     * pattern could be found.
      */
     public void checkForAccess(final List<PolicyPattern> patterns, final URI artifactId,
                                final URI remoteId, final URI agreementId) {

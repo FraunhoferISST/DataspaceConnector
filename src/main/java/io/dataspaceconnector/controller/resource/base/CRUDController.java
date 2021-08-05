@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.controller.resource.base;
 
-import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.controller.resource.base.tag.ResponseCode;
 import io.dataspaceconnector.controller.resource.base.tag.ResponseDescription;
 import io.dataspaceconnector.model.base.Description;
@@ -85,9 +84,9 @@ public interface CRUDController<T extends Entity, D extends Description, V> {
      *
      * @param resourceId The id of the resource.
      * @return The resource.
-     * @throws IllegalArgumentException                                  if the resourceId is null.
-     * @throws ResourceNotFoundException if the resourceId is
-     *                                                                   unknown.
+     * @throws IllegalArgumentException if the resourceId is null.
+     * @throws io.dataspaceconnector.common.exception.ResourceNotFoundException if the resourceId is
+     * unknown.
      */
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @Operation(summary = "Get a base resource by id")
@@ -105,10 +104,9 @@ public interface CRUDController<T extends Entity, D extends Description, V> {
      * @param desc The new description of the resource.
      * @return Response with code (No_Content) when the resource has been updated or response with
      * code (201) if the resource has been updated and been moved to a new endpoint.
-     * @throws IllegalArgumentException                                  if the any of the
-     *                                                                   parameters is null.
-     * @throws ResourceNotFoundException if the resourceId is
-     *                                                                   unknown.
+     * @throws IllegalArgumentException if the any of the parameters is null.
+     * @throws io.dataspaceconnector.common.exception.ResourceNotFoundException if the resourceId is
+     * unknown.
      */
     @PutMapping("{id}")
     @Operation(summary = "Update a base resource by id")

@@ -18,7 +18,6 @@ package io.dataspaceconnector.controller.resource.base;
 import io.dataspaceconnector.common.ErrorMessage;
 import io.dataspaceconnector.common.UUIDUtils;
 import io.dataspaceconnector.common.Utils;
-import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.controller.resource.base.tag.ResponseCode;
 import io.dataspaceconnector.controller.resource.base.tag.ResponseDescription;
 import io.dataspaceconnector.model.base.Entity;
@@ -108,8 +107,8 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
      * @param size The page size.
      * @return The children of the resource.
      * @throws IllegalArgumentException if the ownerId is null.
-     * @throws ResourceNotFoundException
-     *          if the ownerId is not known.
+     * @throws io.dataspaceconnector.common.exception.ResourceNotFoundException if the ownerId is
+     * not known.
      */
     @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET)

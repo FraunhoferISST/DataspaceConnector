@@ -43,7 +43,8 @@ public class GenericEndpointViewAssembler
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, ResourceControllers.EndpointController.class);
+        return ViewAssemblerHelper.getSelfLink(entityId,
+                ResourceControllers.EndpointController.class);
     }
 
     @Override
@@ -55,7 +56,7 @@ public class GenericEndpointViewAssembler
 
         if (genericEndpoint.getDataSource() != null) {
             view.add(dataSourceViewAssembler.getSelfLink(genericEndpoint.getDataSource().getId())
-                                            .withRel("dataSource"));
+                    .withRel("dataSource"));
         }
 
         return view;

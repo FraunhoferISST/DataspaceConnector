@@ -35,7 +35,8 @@ public class DataSourceViewAssembler
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, ResourceControllers.DataSourceController.class);
+        return ViewAssemblerHelper.getSelfLink(entityId,
+                ResourceControllers.DataSourceController.class);
     }
 
     @Override

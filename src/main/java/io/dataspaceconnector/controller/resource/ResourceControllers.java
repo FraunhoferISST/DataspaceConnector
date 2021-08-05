@@ -164,7 +164,7 @@ public final class ResourceControllers {
     @Tag(name = ResourceName.REPRESENTATIONS, description = ResourceDescription.REPRESENTATIONS)
     public static class RepresentationController
             extends BaseResourceNotificationController<Representation, RepresentationDesc,
-                        RepresentationView, RepresentationService> {
+            RepresentationView, RepresentationService> {
     }
 
     /**
@@ -567,7 +567,8 @@ public final class ResourceControllers {
     @Tag(name = ResourceName.ENDPOINTS, description = ResourceDescription.ENDPOINTS)
     @Getter(AccessLevel.PROTECTED)
     @Setter(AccessLevel.NONE)
-    public static class EndpointController implements CRUDController<Endpoint, EndpointDesc, Object> {
+    public static class EndpointController
+            implements CRUDController<Endpoint, EndpointDesc, Object> {
 
         /**
          * Service for generic endpoint.
