@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.common.exception;
 
-import io.dataspaceconnector.common.ErrorMessage;
-
 /**
  * Thrown to indicate that the self link for an entity could not be created.
  */

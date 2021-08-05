@@ -3,7 +3,7 @@ package io.dataspaceconnector.service.message.handler.validator;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
-import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.IdsUtils;
 import io.dataspaceconnector.common.MessageUtils;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;

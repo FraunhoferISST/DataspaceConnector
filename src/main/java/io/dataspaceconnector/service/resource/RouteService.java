@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.RouteCreationException;
 import io.dataspaceconnector.common.RouteDeletionException;
 import io.dataspaceconnector.common.Utils;

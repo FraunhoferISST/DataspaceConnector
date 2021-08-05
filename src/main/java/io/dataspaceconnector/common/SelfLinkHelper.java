@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.common;
 
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.controller.resource.view.agreement.AgreementViewAssembler;

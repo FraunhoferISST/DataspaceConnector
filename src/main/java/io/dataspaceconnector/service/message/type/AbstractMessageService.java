@@ -24,7 +24,7 @@ import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.protocol.http.IdsHttpService;
 import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
-import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.MessageUtils;
 import io.dataspaceconnector.common.exception.VersionNotSupportedException;
 import io.dataspaceconnector.common.exception.MessageEmptyException;

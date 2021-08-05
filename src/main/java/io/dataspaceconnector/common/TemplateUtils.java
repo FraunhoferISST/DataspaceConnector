@@ -20,6 +20,7 @@ import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.template.ArtifactTemplate;
@@ -99,7 +100,7 @@ public final class TemplateUtils {
         final var representationList = resource.getRepresentation();
         try {
             for (final var representation : Utils.requireNonNull(representationList,
-                    ErrorMessage.LIST_NULL)) {
+                                                                 ErrorMessage.LIST_NULL)) {
                 final var template = MappingUtils.fromIdsRepresentation(representation);
                 final var artifactTemplates = getArtifactTemplates(representation,
                         artifacts, download, accessUrl);

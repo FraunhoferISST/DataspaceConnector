@@ -24,6 +24,7 @@ import de.fraunhofer.iais.eis.ResourceUpdateMessage;
 import de.fraunhofer.ids.messaging.common.SerializeException;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
 import de.fraunhofer.ids.messaging.util.InfomodelMessageBuilder;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.VersionNotSupportedException;
 import io.dataspaceconnector.common.exception.MessageEmptyException;
 import io.dataspaceconnector.common.exception.MessageRequestException;

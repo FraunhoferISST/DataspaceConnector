@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.common;
+package io.dataspaceconnector.common.exception;
 
 /**
  * Contains a list of common error messages used by exception.

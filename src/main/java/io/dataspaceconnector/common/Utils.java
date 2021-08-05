@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.common;
 
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;

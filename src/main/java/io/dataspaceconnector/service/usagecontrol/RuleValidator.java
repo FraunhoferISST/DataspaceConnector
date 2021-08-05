@@ -17,7 +17,7 @@ package io.dataspaceconnector.service.usagecontrol;
 
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.SecurityProfile;
-import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.RuleUtils;
 import io.dataspaceconnector.common.TimeInterval;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;

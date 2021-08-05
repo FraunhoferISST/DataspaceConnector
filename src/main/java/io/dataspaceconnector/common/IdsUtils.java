@@ -40,6 +40,7 @@ import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.RdfBuilderException;
 import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.configuration.Configuration;

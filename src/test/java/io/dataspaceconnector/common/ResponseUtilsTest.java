@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.common;
 
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

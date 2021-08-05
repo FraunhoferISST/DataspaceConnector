@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.model.base;
 
-import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.MetadataUtils;
 import io.dataspaceconnector.common.Utils;
 

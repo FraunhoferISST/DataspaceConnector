@@ -16,7 +16,7 @@
 package io.dataspaceconnector.service.message.processing;
 
 import de.fraunhofer.iais.eis.Resource;
-import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.ParameterUtils;
 import io.dataspaceconnector.common.QueryInput;
 import io.dataspaceconnector.common.SelfLinkHelper;

@@ -18,7 +18,7 @@ package io.dataspaceconnector.service;
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
-import io.dataspaceconnector.common.ErrorMessage;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.SelfLinkHelper;
 import io.dataspaceconnector.common.Utils;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
