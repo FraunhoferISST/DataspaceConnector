@@ -22,7 +22,7 @@
 
         <!-- transfer contract is invalid -->
         <onException>
-            <exception>io.dataspaceconnector.exception.ContractException</exception>
+            <exception>io.dataspaceconnector.common.exception.ContractException</exception>
             <to uri="direct:handleInvalidTransferContract"/>
         </onException>
 

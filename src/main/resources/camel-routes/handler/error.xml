@@ -26,7 +26,7 @@
         <from uri="direct:handleResourceNotFoundExceptionForSubscription"/>
         <log loggingLevel="DEBUG" message="Error route for handling ResourceNotFoundException called."/>
         <setProperty name="subscription-target">
-            <simple>${bean:io.dataspaceconnector.common.MessageUtils?method=extractTargetId(${body.getHeader()})}</simple>
+            <simple>${bean:io.dataspaceconnector.common.ids.communication.MessageUtils?method=extractTargetId(${body.getHeader()})}</simple>
         </setProperty>
         <to uri="bean:messageResponseService?method=handleResourceNotFoundException(${exception},
         ${exchangeProperty.subscription-target},

@@ -9,7 +9,7 @@
 
         <!-- the query input from the consumer for fetching the data is invalid -->
         <onException>
-            <exception>io.dataspaceconnector.exception.InvalidInputException</exception>
+            <exception>io.dataspaceconnector.common.exception.InvalidInputException</exception>
             <to uri="direct:handleInvalidInputException"/>
         </onException>
 
@@ -33,7 +33,7 @@
         <process ref="ClearingHouseLoggingProcessor"/>
         <choice>
             <when>
-                <simple>${bean:connectorConfiguration.isPolicyNegotiation} == true</simple>
+                <simple>${bean:connectorConfig.isPolicyNegotiation} == true</simple>
                 <to uri="direct:policyCheck"/>
             </when>
         </choice>
