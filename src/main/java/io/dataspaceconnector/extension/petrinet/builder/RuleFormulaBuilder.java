@@ -19,7 +19,7 @@ import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.common.ids.policy.RuleUtils;
 import io.dataspaceconnector.extension.petrinet.evaluation.formula.Formula;
 import io.dataspaceconnector.extension.petrinet.evaluation.formula.transition.TransitionFormula;
-import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
+import io.dataspaceconnector.common.ids.policy.PolicyPattern;
 
 import java.net.URI;
 

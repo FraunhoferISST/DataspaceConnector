@@ -24,7 +24,7 @@ import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
-import io.dataspaceconnector.service.usagecontrol.AllowAccessVerifier;
+import io.dataspaceconnector.common.usagecontrol.AllowAccessVerifier;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;

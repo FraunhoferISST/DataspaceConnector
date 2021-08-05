@@ -27,7 +27,7 @@ import io.dataspaceconnector.service.message.handler.exception.NoTransferContrac
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
 import io.dataspaceconnector.service.usagecontrol.DataProvisionVerifier;
 import io.dataspaceconnector.service.usagecontrol.ProvisionVerificationInput;
-import io.dataspaceconnector.service.usagecontrol.VerificationResult;
+import io.dataspaceconnector.common.usagecontrol.VerificationResult;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import lombok.NonNull;

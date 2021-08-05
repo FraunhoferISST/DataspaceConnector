@@ -20,7 +20,7 @@ import de.fraunhofer.iais.eis.ContractRequest;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.ids.mapping.RdfConverter;
 import io.dataspaceconnector.common.ids.communication.MessageUtils;
-import io.dataspaceconnector.common.resource.TemplateUtils;
+import io.dataspaceconnector.common.ids.resource.TemplateUtils;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.controller.resource.ResourceControllers;
 import io.dataspaceconnector.model.agreement.AgreementDesc;

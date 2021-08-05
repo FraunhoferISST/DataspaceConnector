@@ -13,30 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.usagecontrol;
-
-import io.dataspaceconnector.model.artifact.Artifact;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-
-import java.net.URI;
+package io.dataspaceconnector.common.usagecontrol;
 
 /**
- * A DTO for information required to decide if data provision should be allowed.
+ * Interface for verifying policies.
+ *
+ * @param <T> Type for the verification input.
  */
-@AllArgsConstructor
-@Data
-@RequiredArgsConstructor
-public class AccessVerificationInput {
+public interface PolicyVerifier<T> {
 
     /**
-     * The id of the transfer contract (agreement).
+     * Verify policy base on input.
+     *
+     * @param input Reference object of verification.
+     * @return The verification result.
      */
-    private URI agreementId;
-
-    /**
-     * The artifact.
-     */
-    private Artifact artifact;
+    VerificationResult verify(T input);
 }

@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.usagecontrol;
+package io.dataspaceconnector.common.usagecontrol;
 
 /**
- * Interface for verifying policies.
- *
- * @param <T> Type for the verification input.
+ * This class provides an enum for data usage verification result.
  */
-public interface PolicyVerifier<T> {
+public enum VerificationResult {
 
     /**
-     * Verify policy base on input.
-     *
-     * @param input Reference object of verification.
-     * @return The verification result.
+     * Indicates that the data access is allowed.
      */
-    VerificationResult verify(T input);
+    ALLOWED,
+
+    /**
+     * Indicates that the data access is denied.
+     */
+    DENIED
 }

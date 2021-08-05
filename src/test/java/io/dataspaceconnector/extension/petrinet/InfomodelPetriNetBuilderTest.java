@@ -87,11 +87,11 @@ import static io.dataspaceconnector.extension.petrinet.evaluation.formula.transi
 import static io.dataspaceconnector.extension.petrinet.evaluation.formula.transition.TransitionNOT.transitionNOT;
 import static io.dataspaceconnector.extension.petrinet.evaluation.formula.transition.TransitionOR.transitionOR;
 import static io.dataspaceconnector.extension.petrinet.evaluation.formula.transition.TransitionPOS.transitionPOS;
-import static io.dataspaceconnector.service.usagecontrol.PolicyPattern.PROHIBIT_ACCESS;
-import static io.dataspaceconnector.service.usagecontrol.PolicyPattern.PROVIDE_ACCESS;
-import static io.dataspaceconnector.service.usagecontrol.PolicyPattern.USAGE_LOGGING;
-import static io.dataspaceconnector.service.usagecontrol.PolicyPattern.USAGE_NOTIFICATION;
-import static io.dataspaceconnector.service.usagecontrol.PolicyPattern.USAGE_UNTIL_DELETION;
+import static io.dataspaceconnector.common.ids.policy.PolicyPattern.PROHIBIT_ACCESS;
+import static io.dataspaceconnector.common.ids.policy.PolicyPattern.PROVIDE_ACCESS;
+import static io.dataspaceconnector.common.ids.policy.PolicyPattern.USAGE_LOGGING;
+import static io.dataspaceconnector.common.ids.policy.PolicyPattern.USAGE_NOTIFICATION;
+import static io.dataspaceconnector.common.ids.policy.PolicyPattern.USAGE_UNTIL_DELETION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

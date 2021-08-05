@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.usagecontrol;
+package io.dataspaceconnector.common.ids.policy;
 
 /**
  * Enum describing policy patterns supported by this ids connector.

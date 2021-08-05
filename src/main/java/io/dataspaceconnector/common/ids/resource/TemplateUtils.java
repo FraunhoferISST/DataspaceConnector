@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.common.resource;
+package io.dataspaceconnector.common.ids.resource;
 
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Catalog;

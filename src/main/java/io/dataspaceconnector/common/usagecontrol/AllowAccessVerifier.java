@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.usagecontrol;
+package io.dataspaceconnector.common.usagecontrol;
+
+import org.springframework.stereotype.Component;
 
 /**
- * This class provides an enum for data usage verification result.
+ * A {@link PolicyVerifier} implementation that simply allows access.
  */
-public enum VerificationResult {
-
-    /**
-     * Indicates that the data access is allowed.
-     */
-    ALLOWED,
-
-    /**
-     * Indicates that the data access is denied.
-     */
-    DENIED
+@Component
+public final class AllowAccessVerifier implements PolicyVerifier<AccessVerificationInput> {
+    @Override
+    public VerificationResult verify(final AccessVerificationInput input) {
+        return VerificationResult.ALLOWED;
+    }
 }

@@ -31,8 +31,8 @@ import io.dataspaceconnector.common.exception.ContractException;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.InvalidInputException;
 import io.dataspaceconnector.common.ids.mapping.FromIdsObjectMapper;
+import io.dataspaceconnector.common.time.TimeInterval;
 import io.dataspaceconnector.common.util.Utils;
-import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
 import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;

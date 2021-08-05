@@ -31,7 +31,7 @@ import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.ids.DeserializationService;
-import io.dataspaceconnector.common.resource.TemplateUtils;
+import io.dataspaceconnector.common.ids.resource.TemplateUtils;
 import io.dataspaceconnector.extension.bootstrap.util.BootstrapUtils;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;

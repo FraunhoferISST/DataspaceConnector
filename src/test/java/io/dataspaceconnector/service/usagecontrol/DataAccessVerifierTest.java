@@ -32,6 +32,8 @@ import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.service.EntityResolver;
+import io.dataspaceconnector.common.usagecontrol.AccessVerificationInput;
+import io.dataspaceconnector.common.usagecontrol.VerificationResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

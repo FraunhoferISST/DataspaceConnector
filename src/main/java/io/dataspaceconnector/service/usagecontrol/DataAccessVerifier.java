@@ -16,6 +16,7 @@
 package io.dataspaceconnector.service.usagecontrol;
 
 import io.dataspaceconnector.common.ids.policy.ContractUtils;
+import io.dataspaceconnector.common.ids.policy.PolicyPattern;
 import io.dataspaceconnector.common.ids.policy.RuleUtils;
 import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.common.exception.PolicyExecutionException;
@@ -23,6 +24,9 @@ import io.dataspaceconnector.common.exception.PolicyRestrictionException;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.service.EntityResolver;
+import io.dataspaceconnector.common.usagecontrol.AccessVerificationInput;
+import io.dataspaceconnector.common.usagecontrol.PolicyVerifier;
+import io.dataspaceconnector.common.usagecontrol.VerificationResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

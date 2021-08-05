@@ -13,17 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.usagecontrol;
+package io.dataspaceconnector.common.usagecontrol;
 
-import org.springframework.stereotype.Component;
+import io.dataspaceconnector.model.artifact.Artifact;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+
+import java.net.URI;
 
 /**
- * A {@link PolicyVerifier} implementation that simply allows access.
+ * A DTO for information required to decide if data provision should be allowed.
  */
-@Component
-public final class AllowAccessVerifier implements PolicyVerifier<AccessVerificationInput> {
-    @Override
-    public VerificationResult verify(final AccessVerificationInput input) {
-        return VerificationResult.ALLOWED;
-    }
+@AllArgsConstructor
+@Data
+@RequiredArgsConstructor
+public class AccessVerificationInput {
+
+    /**
+     * The id of the transfer contract (agreement).
+     */
+    private URI agreementId;
+
+    /**
+     * The artifact.
+     */
+    private Artifact artifact;
 }

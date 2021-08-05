@@ -53,7 +53,7 @@ import io.dataspaceconnector.service.resource.type.ContractService;
 import io.dataspaceconnector.service.resource.type.RepresentationService;
 import io.dataspaceconnector.service.resource.type.ResourceService;
 import io.dataspaceconnector.service.resource.type.RuleService;
-import io.dataspaceconnector.service.usagecontrol.AllowAccessVerifier;
+import io.dataspaceconnector.common.usagecontrol.AllowAccessVerifier;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.common.ids.policy;
+package io.dataspaceconnector.common.time;
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;

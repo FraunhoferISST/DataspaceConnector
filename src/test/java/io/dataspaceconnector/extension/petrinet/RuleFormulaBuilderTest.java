@@ -24,7 +24,7 @@ import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.extension.petrinet.builder.RuleFormulaBuilder;
-import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
+import io.dataspaceconnector.common.ids.policy.PolicyPattern;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
