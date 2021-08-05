@@ -154,7 +154,7 @@ public class EntityResolver {
      *
      * @param elementId The entity id.
      * @return The respective object.
-     * @throws IllegalArgumentException  If the resource is null or the elementId.
+     * @throws IllegalArgumentException If the resource is null or the elementId.
      */
     public Optional<Entity> getEntityById(final URI elementId) {
         Utils.requireNonNull(elementId, ErrorMessage.URI_NULL);
@@ -164,30 +164,26 @@ public class EntityResolver {
             final var basePath = endpointId.getBasePath();
             final var entityId = endpointId.getResourceId();
 
-            // Find the right service and return the requested element.
-            switch (Objects.requireNonNull(basePath)) {
-                case BasePath.ARTIFACTS:
-                    return Optional.of(artifactService.get(entityId));
-                case BasePath.REPRESENTATIONS:
-                    return Optional.of(representationService.get(entityId));
-                case BasePath.OFFERS:
-                    return Optional.of(offerService.get(entityId));
-                case BasePath.CATALOGS:
-                    return Optional.of(catalogService.get(entityId));
-                case BasePath.CONTRACTS:
-                    return Optional.of(contractService.get(entityId));
-                case BasePath.RULES:
-                    return Optional.of(ruleService.get(entityId));
-                case BasePath.AGREEMENTS:
-                    return Optional.of(agreementService.get(entityId));
-                case BasePath.REQUESTS:
-                    return Optional.of(requestService.get(entityId));
-                default:
-                    return Optional.empty();
+            if (basePath.contains(BasePath.ARTIFACTS)) {
+                return Optional.of(artifactService.get(entityId));
+            } else if (basePath.contains(BasePath.REPRESENTATIONS)) {
+                return Optional.of(representationService.get(entityId));
+            } else if (basePath.contains(BasePath.OFFERS)) {
+                return Optional.of(offerService.get(entityId));
+            } else if (basePath.contains(BasePath.CATALOGS)) {
+                return Optional.of(catalogService.get(entityId));
+            } else if (basePath.contains(BasePath.CONTRACTS)) {
+                return Optional.of(contractService.get(entityId));
+            } else if (basePath.contains(BasePath.RULES)) {
+                return Optional.of(ruleService.get(entityId));
+            } else if (basePath.contains(BasePath.AGREEMENTS)) {
+                return Optional.of(agreementService.get(entityId));
+            } else if (basePath.contains(BasePath.REQUESTS)) {
+                return Optional.of(requestService.get(entityId));
             }
-        } catch (Exception exception) {
-            return Optional.empty();
+        } catch (Exception ignored) {
         }
+        return Optional.empty();
     }
 
     /**
