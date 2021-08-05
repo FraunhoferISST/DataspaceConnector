@@ -18,7 +18,7 @@ package io.dataspaceconnector.model;
 import java.net.URI;
 
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.exception.InvalidEntityException;
+import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.model.subscription.SubscriptionFactory;

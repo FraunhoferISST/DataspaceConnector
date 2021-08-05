@@ -13,36 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exception;
+package io.dataspaceconnector.common.exception;
 
-import io.dataspaceconnector.common.ErrorMessage;
-import io.dataspaceconnector.common.exception.UnreachableLineException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class UnreachableLineExceptionTest {
+public class InvalidResourceExceptionTest {
     @Test
     public void constructor_someMsg_holdsMsg() {
         /* ARRANGE */
         final var msg = "Some msg";
 
         /* ACT */
-        final var exception = new UnreachableLineException(msg);
+        final var exception = new InvalidResourceException(msg);
 
         /* ASSERT */
         assertEquals(msg, exception.getMessage());
-    }
-
-    @Test
-    public void constructor_someErrorMsg_holdsMsg() {
-        /* ARRANGE */
-        final var msg = ErrorMessage.CONTRACT_NULL;
-
-        /* ACT */
-        final var exception = new UnreachableLineException(msg);
-
-        /* ASSERT */
-        assertEquals(msg.toString(), exception.getMessage());
     }
 }

@@ -27,9 +27,9 @@ import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseExcep
 import io.dataspaceconnector.common.ErrorMessage;
 import io.dataspaceconnector.common.MessageUtils;
 import io.dataspaceconnector.common.exception.VersionNotSupportedException;
-import io.dataspaceconnector.exception.MessageEmptyException;
-import io.dataspaceconnector.exception.MessageException;
-import io.dataspaceconnector.exception.MessageResponseException;
+import io.dataspaceconnector.common.exception.MessageEmptyException;
+import io.dataspaceconnector.common.exception.MessageException;
+import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.model.message.MessageDesc;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.ids.DeserializationService;

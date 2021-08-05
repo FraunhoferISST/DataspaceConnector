@@ -3,8 +3,8 @@
 
         <!-- the subscription from the consumer is invalid -->
         <onException>
-            <exception>io.dataspaceconnector.exception.InvalidInputException</exception>
-            <exception>io.dataspaceconnector.exception.InvalidEntityException</exception>
+            <exception>io.dataspaceconnector.common.exception.InvalidInputException</exception>
+            <exception>io.dataspaceconnector.common.exception.InvalidEntityException</exception>
             <to uri="direct:handleInvalidSubscriptionInput"/>
         </onException>
 

@@ -23,7 +23,7 @@ import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.protocol.http.IdsHttpService;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.exception.MessageResponseException;
+import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.ids.DeserializationService;

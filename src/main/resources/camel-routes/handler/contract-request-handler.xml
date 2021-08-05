@@ -15,7 +15,7 @@
 
         <!-- payload stream cannot be read -->
         <onException>
-            <exception>io.dataspaceconnector.exception.MessageRequestException</exception>
+            <exception>io.dataspaceconnector.common.exception.MessageRequestException</exception>
             <to uri="direct:handleMessagePayloadException"/>
         </onException>
 

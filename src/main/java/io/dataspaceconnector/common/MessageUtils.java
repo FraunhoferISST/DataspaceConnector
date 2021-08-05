@@ -25,8 +25,8 @@ import de.fraunhofer.ids.messaging.common.SerializeException;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
 import de.fraunhofer.ids.messaging.util.InfomodelMessageBuilder;
 import io.dataspaceconnector.common.exception.VersionNotSupportedException;
-import io.dataspaceconnector.exception.MessageEmptyException;
-import io.dataspaceconnector.exception.MessageRequestException;
+import io.dataspaceconnector.common.exception.MessageEmptyException;
+import io.dataspaceconnector.common.exception.MessageRequestException;
 import okhttp3.MultipartBody;
 
 import java.io.IOException;

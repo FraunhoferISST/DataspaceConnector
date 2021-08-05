@@ -13,21 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exception;
+package io.dataspaceconnector.common.exception;
 
-import io.dataspaceconnector.common.exception.PolicyExecutionException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PolicyExecutionExceptionTest {
+public class VersionNotSupportedExceptionTest {
     @Test
     public void constructor_someMsg_holdsMsg() {
         /* ARRANGE */
         final var msg = "Some msg";
 
         /* ACT */
-        final var exception = new PolicyExecutionException(msg);
+        final var exception = new VersionNotSupportedException(msg);
 
         /* ASSERT */
         assertEquals(msg, exception.getMessage());

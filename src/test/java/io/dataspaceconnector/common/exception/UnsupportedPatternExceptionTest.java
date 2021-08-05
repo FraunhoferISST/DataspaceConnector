@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exception;
+package io.dataspaceconnector.common.exception;
 
 import org.junit.jupiter.api.Test;
 
-public class ContractExceptionTest {
-
+public class UnsupportedPatternExceptionTest {
     @Test
     public void constructor_someMsg_holdsMsg() {
         /* ARRANGE */
         final var msg = "Some msg";
 
         /* ACT */
-        final var exception = new ContractException(msg);
+        final var exception = new UnsupportedPatternException(msg);
 
         /* ASSERT */
         assertEquals(msg, exception.getMessage());

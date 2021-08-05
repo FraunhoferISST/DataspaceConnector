@@ -2,12 +2,12 @@
     <route id="descriptionRequestSender">
 
         <onException>
-            <exception>io.dataspaceconnector.exception.MessageException</exception>
+            <exception>io.dataspaceconnector.common.exception.MessageException</exception>
             <to uri="direct:handleMessageException"/>
         </onException>
 
         <onException>
-            <exception>io.dataspaceconnector.exception.MessageResponseException</exception>
+            <exception>io.dataspaceconnector.common.exception.MessageResponseException</exception>
             <to uri="direct:handleReceivedInvalidResponse"/>
         </onException>
 

@@ -16,7 +16,7 @@
 package io.dataspaceconnector.service;
 
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.exception.DataRetrievalException;
+import io.dataspaceconnector.common.exception.DataRetrievalException;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;

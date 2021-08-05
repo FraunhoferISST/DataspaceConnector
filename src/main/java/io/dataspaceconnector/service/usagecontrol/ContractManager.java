@@ -33,7 +33,7 @@ import io.dataspaceconnector.common.ContractUtils;
 import io.dataspaceconnector.common.ErrorMessage;
 import io.dataspaceconnector.common.RuleUtils;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
-import io.dataspaceconnector.exception.ContractException;
+import io.dataspaceconnector.common.exception.ContractException;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.ids.ConnectorService;

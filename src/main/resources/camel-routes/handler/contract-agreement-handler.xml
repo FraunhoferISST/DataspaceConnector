@@ -3,13 +3,13 @@
 
         <!-- payload stream cannot be read -->
         <onException>
-            <exception>io.dataspaceconnector.exception.MessageRequestException</exception>
+            <exception>io.dataspaceconnector.common.exception.MessageRequestException</exception>
             <to uri="direct:handleMessagePayloadException"/>
         </onException>
 
         <!-- the agreements to not match -->
         <onException>
-            <exception>io.dataspaceconnector.exception.ContractException</exception>
+            <exception>io.dataspaceconnector.common.exception.ContractException</exception>
             <to uri="direct:handleContractException"/>
         </onException>
 

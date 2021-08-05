@@ -20,7 +20,7 @@ import io.dataspaceconnector.common.ErrorMessage;
 import io.dataspaceconnector.common.IdsUtils;
 import io.dataspaceconnector.common.QueryInput;
 import io.dataspaceconnector.common.Utils;
-import io.dataspaceconnector.exception.InvalidResourceException;
+import io.dataspaceconnector.common.exception.InvalidResourceException;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.base.Entity;

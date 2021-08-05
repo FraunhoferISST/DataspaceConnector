@@ -2,7 +2,7 @@
     <route id="contractRequestSender">
 
         <onException>
-            <exception>io.dataspaceconnector.exception.InvalidInputException</exception>
+            <exception>io.dataspaceconnector.common.exception.InvalidInputException</exception>
             <to uri="direct:handleInvalidInputException"/>
         </onException>
 
@@ -17,13 +17,13 @@
         </onException>
 
         <onException>
-            <exception>io.dataspaceconnector.exception.MessageException</exception>
+            <exception>io.dataspaceconnector.common.exception.MessageException</exception>
             <to uri="direct:handleMessageException"/>
         </onException>
 
         <onException>
-            <exception>io.dataspaceconnector.exception.MessageResponseException</exception>
-            <exception>io.dataspaceconnector.exception.ContractException</exception>
+            <exception>io.dataspaceconnector.common.exception.MessageResponseException</exception>
+            <exception>io.dataspaceconnector.common.exception.ContractException</exception>
             <exception>java.lang.IllegalArgumentException</exception>
             <to uri="direct:handleReceivedInvalidResponse"/>
         </onException>
@@ -42,7 +42,7 @@
         <onException>
             <exception>java.io.IOException</exception>
             <exception>io.dataspaceconnector.common.exception.ResourceNotFoundException</exception>
-            <exception>io.dataspaceconnector.exception.MessageResponseException</exception>
+            <exception>io.dataspaceconnector.common.exception.MessageResponseException</exception>
             <log loggingLevel="DEBUG" message="Could not save data for artifact. [artifact=(${exchangeProperty.currentArtifact}), exception=(${exception.message})]"/>
         </onException>
 

@@ -23,7 +23,7 @@ import io.dataspaceconnector.common.QueryInput;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.exception.DataRetrievalException;
+import io.dataspaceconnector.common.exception.DataRetrievalException;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
 import io.dataspaceconnector.service.resource.ArtifactService;

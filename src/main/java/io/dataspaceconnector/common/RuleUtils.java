@@ -27,8 +27,8 @@ import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.PermissionImpl;
 import de.fraunhofer.iais.eis.Prohibition;
 import de.fraunhofer.iais.eis.Rule;
-import io.dataspaceconnector.exception.ContractException;
-import io.dataspaceconnector.exception.InvalidInputException;
+import io.dataspaceconnector.common.exception.ContractException;
+import io.dataspaceconnector.common.exception.InvalidInputException;
 import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
 import lombok.extern.log4j.Log4j2;
 

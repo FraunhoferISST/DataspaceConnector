@@ -13,22 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exception;
+package io.dataspaceconnector.common.exception;
 
 import io.dataspaceconnector.common.ErrorMessage;
-import io.dataspaceconnector.common.exception.RdfBuilderException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RdfBuilderExceptionTest {
+public class UnreachableLineExceptionTest {
     @Test
     public void constructor_someMsg_holdsMsg() {
+        /* ARRANGE */
+        final var msg = "Some msg";
+
+        /* ACT */
+        final var exception = new UnreachableLineException(msg);
+
+        /* ASSERT */
+        assertEquals(msg, exception.getMessage());
+    }
+
+    @Test
+    public void constructor_someErrorMsg_holdsMsg() {
         /* ARRANGE */
         final var msg = ErrorMessage.CONTRACT_NULL;
 
         /* ACT */
-        final var exception = new RdfBuilderException(msg);
+        final var exception = new UnreachableLineException(msg);
 
         /* ASSERT */
         assertEquals(msg.toString(), exception.getMessage());

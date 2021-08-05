@@ -15,19 +15,19 @@
  */
 package io.dataspaceconnector.common;
 
-import de.fraunhofer.iais.eis.Contract;
-import de.fraunhofer.iais.eis.ContractAgreement;
-import de.fraunhofer.iais.eis.Rule;
-import io.dataspaceconnector.common.exception.ResourceNotFoundException;
-import io.dataspaceconnector.exception.ContractException;
-import io.dataspaceconnector.model.artifact.Artifact;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import de.fraunhofer.iais.eis.Contract;
+import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.Rule;
+import io.dataspaceconnector.common.exception.ContractException;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.model.artifact.Artifact;
 
 import static io.dataspaceconnector.common.RuleUtils.compareObligations;
 import static io.dataspaceconnector.common.RuleUtils.comparePermissions;
