@@ -15,6 +15,11 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.iais.eis.AppRepresentation;
 import de.fraunhofer.iais.eis.AppResource;
 import de.fraunhofer.ids.messaging.util.SerializerProvider;
@@ -41,11 +46,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This controller provides the endpoint for sending an app request message and starting the
@@ -90,7 +90,7 @@ public class AppRequestMessageController {
             @ApiResponse(responseCode = "200", description = "Ok")})
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     @ResponseBody
-    public final ResponseEntity<Object> sendMessage(
+    public ResponseEntity<Object> sendMessage(
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The app url.", required = true)
