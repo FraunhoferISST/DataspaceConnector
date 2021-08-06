@@ -127,7 +127,7 @@ public final class MappingUtils {
         //set appdesc fields
 
         appDesc.setRemoteAddress(remoteUrl);
-        if(metadata != null){
+        if (metadata != null) {
             appDesc.setDescription(metadata.getString("description"));
             appDesc.setTitle(metadata.getString("title"));
             appDesc.setAppStorageConfiguration(metadata.getString("volumes"));
