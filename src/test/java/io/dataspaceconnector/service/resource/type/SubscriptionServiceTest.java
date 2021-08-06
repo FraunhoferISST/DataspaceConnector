@@ -17,6 +17,7 @@ package io.dataspaceconnector.service.resource.type;
 
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.SubscriptionProcessingException;
+import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.model.subscription.SubscriptionFactory;
@@ -48,6 +49,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = {SubscriptionService.class})
@@ -131,11 +134,63 @@ public class SubscriptionServiceTest {
     @Test
     public void create_validInputInvalidTargetType_throwSubscriptionProcessingException() {
         /* ARRANGE */
-        // nothing to arrange here
         Mockito.doReturn(Optional.of(subscription)).when(entityResolver).getEntityById(Mockito.any());
 
         /* ACT & ASSERT */
         assertThrows(SubscriptionProcessingException.class, () -> service.create(subscriptionDesc));
+    }
+
+    @Test
+    public void getBySubscriber_validInput_returnSubscriptionList() {
+        /* ARRANGE */
+        final var pageable = Utils.toPageRequest(0, 30);
+        Mockito.doReturn(List.of(subscription)).when(repository).findAllBySubscriber(Mockito.any());
+
+        /* ACT */
+        final var result = service.getBySubscriber(pageable, URI.create("https://subscriber"));
+
+        /* ASSERT */
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(subscription, result.get(0));
+    }
+
+    @Test
+    public void getBySubscriberAndTarget_validInput_returnSubscriptionList() {
+        /* ARRANGE */
+        Mockito.doReturn(List.of(subscription)).when(repository).findAllBySubscriberAndTarget(Mockito.any(), Mockito.any());
+
+        /* ACT */
+        final var result = service.getBySubscriberAndTarget(URI.create("https://subscriber"), URI.create("https://target"));
+
+        /* ASSERT */
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(subscription, result.get(0));
+    }
+
+    @Test
+    public void getByTarget_validInput_returnSubscriptionList() {
+        /* ARRANGE */
+        Mockito.doReturn(List.of(subscription)).when(repository).findAllByTarget(Mockito.any());
+
+        /* ACT */
+        final var result = service.getByTarget(URI.create("https://target"));
+
+        /* ASSERT */
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(subscription, result.get(0));
+    }
+
+    @Test
+    public void removeSubscription_invalidTarget_throwResourceNotFoundException() {
+        /* ARRANGE */
+        // nothing to arrange here
+
+        /* ACT & ASSERT */
+        assertThrows(ResourceNotFoundException.class,
+                () -> service.removeSubscription(URI.create("https://target"), URI.create("https://issuer")));
     }
 
     private SubscriptionDesc getDesc() {
