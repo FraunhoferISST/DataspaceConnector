@@ -224,8 +224,7 @@ class ContractRequestHandlerTest {
     public void checkContractRequest_contractEmptyRules_returnBadParametersErrorResponse() {
         /* ARRANGE */
         final var contractRequest =
-                new ContractRequestBuilder(URI.create("https://someUri"))
-                        .build();
+                new ContractRequestBuilder(URI.create("https://someUri")).build();
         final var payload = new Serializer().serialize(contractRequest);
 
         final var message = getMessage();
