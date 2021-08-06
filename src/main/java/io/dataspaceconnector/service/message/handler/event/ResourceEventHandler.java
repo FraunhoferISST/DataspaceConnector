@@ -16,7 +16,7 @@
 package io.dataspaceconnector.service.message.handler.event;
 
 import de.fraunhofer.iais.eis.Resource;
-import io.dataspaceconnector.service.message.processing.SubscriberNotificationService;
+import io.dataspaceconnector.service.message.SubscriberNotificationService;
 import io.dataspaceconnector.service.resource.type.RequestedResourceService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

@@ -16,7 +16,7 @@
 package io.dataspaceconnector.service.message.handler;
 
 import de.fraunhofer.iais.eis.Message;
-import io.dataspaceconnector.common.ids.communication.ClearingHouseService;
+import io.dataspaceconnector.common.ids.message.ClearingHouseService;
 import io.dataspaceconnector.service.message.handler.dto.Request;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;

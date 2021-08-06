@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.message.processing;
+package io.dataspaceconnector.service.message;
 
 import de.fraunhofer.iais.eis.Resource;
 import io.dataspaceconnector.common.exception.ErrorMessage;
@@ -29,9 +29,8 @@ import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
-import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.service.message.handler.dto.Response;
-import io.dataspaceconnector.service.message.processing.util.Event;
+import io.dataspaceconnector.service.message.util.Event;
 import io.dataspaceconnector.service.resource.ids.builder.IdsResourceBuilder;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.resource.type.SubscriptionService;

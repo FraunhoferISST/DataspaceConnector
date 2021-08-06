@@ -31,7 +31,7 @@ import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.VersionNotSupportedException;
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.ids.DeserializationService;
-import io.dataspaceconnector.common.ids.communication.MessageUtils;
+import io.dataspaceconnector.common.ids.message.MessageUtils;
 import io.dataspaceconnector.model.message.MessageDesc;
 import lombok.AccessLevel;
 import lombok.Getter;

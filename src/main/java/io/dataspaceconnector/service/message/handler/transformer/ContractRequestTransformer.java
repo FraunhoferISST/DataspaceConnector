@@ -19,7 +19,7 @@ import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
 import io.dataspaceconnector.common.ids.DeserializationService;
-import io.dataspaceconnector.common.ids.communication.MessageUtils;
+import io.dataspaceconnector.common.ids.message.MessageUtils;
 import io.dataspaceconnector.service.message.handler.dto.Request;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
 import io.jsonwebtoken.Claims;

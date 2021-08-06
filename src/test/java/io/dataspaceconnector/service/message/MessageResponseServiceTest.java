@@ -20,6 +20,7 @@ import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.common.exception.MessageEmptyException;
 import io.dataspaceconnector.common.exception.VersionNotSupportedException;
 import io.dataspaceconnector.common.ids.ConnectorService;
+import io.dataspaceconnector.common.ids.message.MessageResponseService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

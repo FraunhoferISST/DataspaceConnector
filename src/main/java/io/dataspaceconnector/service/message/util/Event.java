@@ -13,7 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.dataspaceconnector.service.message.util;
+
 /**
- * Services for IDS participant communication, e.g. IDS Broker, App Store, Clearing House etc.
+ * Class provides enums for event types.
  */
-package io.dataspaceconnector.service.message.processing;
+public enum Event {
+//    CREATED,
+    /**
+     * Values indicates that something has been updated.
+     */
+    UPDATED,
+//    DELETED
+}

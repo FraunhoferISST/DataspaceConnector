@@ -13,16 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.message.processing.util;
-
 /**
- * Class provides enums for event types.
+ * Provides utility functions and services for ids handling across multiple packages.
  */
-public enum Event {
-//    CREATED,
-    /**
-     * Values indicates that something has been updated.
-     */
-    UPDATED,
-//    DELETED
-}
+package io.dataspaceconnector.common.ids.message;

@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Contains custom exceptions thrown in the Dataspace Connector.
+ * Provides utility functions for file handling.
  */
-package io.dataspaceconnector.common.exception;
+package io.dataspaceconnector.common.file;

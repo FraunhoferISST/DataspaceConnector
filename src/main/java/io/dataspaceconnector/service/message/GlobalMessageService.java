@@ -35,7 +35,6 @@ import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadExceptio
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.service.message.builder.type.NotificationService;
-import io.dataspaceconnector.service.message.processing.BrokerCommunication;
 import io.dataspaceconnector.service.resource.type.BrokerService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

@@ -21,7 +21,7 @@ import io.dataspaceconnector.common.exception.ContractException;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.ids.DeserializationService;
-import io.dataspaceconnector.common.ids.communication.MessageUtils;
+import io.dataspaceconnector.common.ids.message.MessageUtils;
 import io.dataspaceconnector.common.ids.policy.ContractUtils;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.message.MessageProcessedNotificationMessageDesc;

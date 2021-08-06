@@ -25,7 +25,7 @@ import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
 import io.dataspaceconnector.common.net.HttpService;
-import io.dataspaceconnector.service.message.processing.SubscriberNotificationService;
+import io.dataspaceconnector.service.message.SubscriberNotificationService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
 import org.junit.jupiter.api.Test;

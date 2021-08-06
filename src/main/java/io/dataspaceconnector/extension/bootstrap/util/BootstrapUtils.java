@@ -160,7 +160,8 @@ public final class BootstrapUtils {
         final var files = new ArrayList<File>();
         if (base.isDirectory()) {
             // If the base file is a directory, iterate all child files.
-            for (final var child : io.dataspaceconnector.common.file.FileUtils.getContainedFiles(base)) {
+            for (final var child
+                    : io.dataspaceconnector.common.file.FileUtils.getContainedFiles(base)) {
                 if (child.isDirectory()) {
                     files.addAll(findFilesByExtension(child.getPath(), filename, extension));
                 } else {

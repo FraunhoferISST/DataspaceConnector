@@ -31,7 +31,7 @@ import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.common.ids.mapping.RdfConverter;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.common.ids.ConnectorService;
-import io.dataspaceconnector.common.ids.communication.ClearingHouseService;
+import io.dataspaceconnector.common.ids.message.ClearingHouseService;
 import io.dataspaceconnector.service.message.builder.type.LogMessageService;
 import io.dataspaceconnector.service.message.builder.type.NotificationService;
 import lombok.SneakyThrows;

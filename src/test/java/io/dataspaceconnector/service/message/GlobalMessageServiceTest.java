@@ -29,7 +29,6 @@ import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import io.dataspaceconnector.model.broker.BrokerFactory;
 import io.dataspaceconnector.repository.BrokerRepository;
-import io.dataspaceconnector.service.message.processing.BrokerCommunication;
 import io.dataspaceconnector.service.message.builder.type.NotificationService;
 import io.dataspaceconnector.service.resource.relation.BrokerOfferedResourceLinker;
 import io.dataspaceconnector.service.resource.type.BrokerService;

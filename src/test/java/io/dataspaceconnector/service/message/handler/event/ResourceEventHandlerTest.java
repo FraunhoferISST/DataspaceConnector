@@ -17,7 +17,7 @@ package io.dataspaceconnector.service.message.handler.event;
 
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import io.dataspaceconnector.model.resource.RequestedResource;
-import io.dataspaceconnector.service.message.processing.SubscriberNotificationService;
+import io.dataspaceconnector.service.message.SubscriberNotificationService;
 import io.dataspaceconnector.service.resource.type.RequestedResourceService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;

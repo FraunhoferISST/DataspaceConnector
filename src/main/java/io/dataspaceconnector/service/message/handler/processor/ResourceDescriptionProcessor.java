@@ -19,7 +19,7 @@ import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
-import io.dataspaceconnector.common.ids.communication.MessageUtils;
+import io.dataspaceconnector.common.ids.message.MessageUtils;
 import io.dataspaceconnector.model.message.DescriptionResponseMessageDesc;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.message.builder.type.DescriptionResponseService;

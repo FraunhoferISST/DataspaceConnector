@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.message.processing;
+package io.dataspaceconnector.service.message;
 
 import de.fraunhofer.iais.eis.Resource;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;

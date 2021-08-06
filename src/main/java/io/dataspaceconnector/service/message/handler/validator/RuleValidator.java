@@ -18,7 +18,7 @@ package io.dataspaceconnector.service.message.handler.validator;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.iais.eis.Rule;
-import io.dataspaceconnector.common.ids.communication.MessageUtils;
+import io.dataspaceconnector.common.ids.message.MessageUtils;
 import io.dataspaceconnector.common.ids.policy.ContractUtils;
 import io.dataspaceconnector.service.EntityDependencyResolver;
 import io.dataspaceconnector.service.message.handler.dto.Request;

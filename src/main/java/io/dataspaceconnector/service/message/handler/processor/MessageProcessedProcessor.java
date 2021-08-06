@@ -16,7 +16,7 @@
 package io.dataspaceconnector.service.message.handler.processor;
 
 import de.fraunhofer.iais.eis.NotificationMessageImpl;
-import io.dataspaceconnector.common.ids.communication.MessageUtils;
+import io.dataspaceconnector.common.ids.message.MessageUtils;
 import io.dataspaceconnector.model.message.MessageProcessedNotificationMessageDesc;
 import io.dataspaceconnector.service.message.builder.type.MessageProcessedNotificationService;
 import io.dataspaceconnector.service.message.handler.dto.Response;

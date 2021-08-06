@@ -28,7 +28,7 @@ import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.service.message.handler.ClearingHouseLoggingProcessor;
-import io.dataspaceconnector.common.ids.communication.ClearingHouseService;
+import io.dataspaceconnector.common.ids.message.ClearingHouseService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

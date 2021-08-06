@@ -17,7 +17,7 @@ package io.dataspaceconnector.service;
 
 import de.fraunhofer.iais.eis.RejectionReason;
 import io.dataspaceconnector.common.exception.ErrorMessage;
-import io.dataspaceconnector.common.ids.communication.MessageUtils;
+import io.dataspaceconnector.common.ids.message.MessageUtils;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.exception.DataRetrievalException;

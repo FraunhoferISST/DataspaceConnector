@@ -110,7 +110,8 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
         }
 
         final var configModel = deserializationSvc.getConfigurationModel(config);
-        final var dscConfig = configurationSvc.create(FromIdsObjectMapper.fromIdsConfig(configModel));
+        final var dscConfig
+                = configurationSvc.create(FromIdsObjectMapper.fromIdsConfig(configModel));
         configurationSvc.swapActiveConfig(dscConfig.getId());
         return configModel;
     }

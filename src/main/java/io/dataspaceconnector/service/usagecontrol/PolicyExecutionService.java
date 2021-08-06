@@ -22,7 +22,7 @@ import io.dataspaceconnector.common.ids.mapping.RdfConverter;
 import io.dataspaceconnector.common.ids.policy.RuleUtils;
 import io.dataspaceconnector.common.exception.PolicyExecutionException;
 import io.dataspaceconnector.common.ids.ConnectorService;
-import io.dataspaceconnector.common.ids.communication.ClearingHouseService;
+import io.dataspaceconnector.common.ids.message.ClearingHouseService;
 import io.dataspaceconnector.service.message.builder.type.NotificationService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

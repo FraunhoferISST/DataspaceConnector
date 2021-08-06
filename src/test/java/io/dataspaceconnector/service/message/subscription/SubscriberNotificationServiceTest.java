@@ -19,7 +19,7 @@ import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
-import io.dataspaceconnector.service.message.processing.SubscriberNotificationService;
+import io.dataspaceconnector.service.message.SubscriberNotificationService;
 import io.dataspaceconnector.service.resource.relation.AbstractResourceContractLinker;
 import io.dataspaceconnector.service.resource.relation.AbstractResourceRepresentationLinker;
 import io.dataspaceconnector.service.resource.TemplateBuilder;
