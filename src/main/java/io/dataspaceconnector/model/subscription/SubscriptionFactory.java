@@ -17,18 +17,27 @@ package io.dataspaceconnector.model.subscription;
 
 import java.net.URI;
 
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.InvalidEntityException;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.MetadataUtils;
 import io.dataspaceconnector.util.ValidationUtils;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates a subscription.
  */
 @Component
+@RequiredArgsConstructor
 public class SubscriptionFactory extends AbstractNamedFactory<Subscription, SubscriptionDesc> {
+
+    /**
+     * Service for the current connector configuration.
+     */
+    private final @NonNull ConnectorConfiguration connectorConfig;
 
     /** {@inheritDoc} */
     @Override
@@ -58,20 +67,29 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
      * Updates the URL of a subscription.
      *
      * @param subscription The subscription.
-     * @param url          The new URL.
+     * @param uri          The new URL.
      * @return true, if the URL was updated; false otherwise.
      */
-    private boolean updateLocation(final Subscription subscription, final URI url) {
-        // TODO Should not throw?
-        if (url == null || ValidationUtils.isInvalidUri(String.valueOf(url))) {
-            throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT.toString());
-        }
+    private boolean updateLocation(final Subscription subscription, final URI uri) {
+        validateInput(uri);
 
-        final var newUri = MetadataUtils.updateUri(subscription.getLocation(), url, null);
+        final var newUri = MetadataUtils.updateUri(subscription.getLocation(), uri, null);
         newUri.ifPresent(subscription::setLocation);
 
         return newUri.isPresent();
     }
+
+    private void validateInput(final URI uri) {
+        // TODO Should not throw?
+        final var cond1 = connectorConfig.isIdscpEnabled()
+                          && (uri == null || uri.toString().isBlank());
+        final var cond2 = uri == null || ValidationUtils.isInvalidUri(String.valueOf(uri));
+
+        if (cond1 || cond2) {
+            throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT.toString());
+        }
+    }
+
 
     /**
      * Updates the target of a subscription.

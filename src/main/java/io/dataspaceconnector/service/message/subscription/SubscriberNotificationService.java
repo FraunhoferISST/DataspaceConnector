@@ -15,7 +15,19 @@
  */
 package io.dataspaceconnector.service.message.subscription;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.iais.eis.Resource;
+import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.util.ParameterUtils;
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.controller.util.Event;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.base.Entity;
@@ -36,16 +48,10 @@ import io.dataspaceconnector.util.SelfLinkHelper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.ExchangeBuilder;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This class provides methods for handling subscriptions to a requested resource.
@@ -89,6 +95,21 @@ public class SubscriberNotificationService {
      * Service for executing http requests.
      */
     private final @NonNull HttpService httpService;
+
+    /**
+     * Service for the current connector configuration.
+     */
+    private final @NonNull ConnectorConfiguration connectorConfig;
+
+    /**
+     * Template for triggering Camel routes.
+     */
+    private final @NonNull ProducerTemplate template;
+
+    /**
+     * The CamelContext required for constructing the {@link ProducerTemplate}.
+     */
+    private final @NonNull CamelContext context;
 
     /**
      * Notify subscribers on database update event.
@@ -177,15 +198,38 @@ public class SubscriberNotificationService {
             // Send update message for every found resource.
             for (final var resource : resources) {
                 try {
-                    final var response = messageSvc.sendResourceUpdateMessage(recipient, resource);
-                    if (response.isPresent()) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Successfully sent update message. [url=({})]", recipient);
+                    if (connectorConfig.isIdscpEnabled()) {
+                        final var result = template.send("direct:resourceUpdateSender",
+                                ExchangeBuilder.anExchange(context)
+                                        .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)
+                                        .withProperty(ParameterUtils.RESOURCE_ID_PARAM,
+                                                resource.getId())
+                                        .build());
+                        final var response = result.getIn().getBody(Response.class);
+                        if (response != null) {
+                            if (log.isDebugEnabled()) {
+                                log.debug("Successfully sent update message. [url=({})]",
+                                        recipient);
+                            }
+                        } else {
+                            if (log.isDebugEnabled()) {
+                                log.debug("{} [url=({})]", ErrorMessage.UPDATE_MESSAGE_FAILED,
+                                        recipient);
+                            }
                         }
                     } else {
-                        if (log.isDebugEnabled()) {
-                            log.debug("{} [url=({})]", ErrorMessage.UPDATE_MESSAGE_FAILED,
-                                    recipient);
+                        final var response = messageSvc
+                                .sendResourceUpdateMessage(recipient, resource);
+                        if (response.isPresent()) {
+                            if (log.isDebugEnabled()) {
+                                log.debug("Successfully sent update message. [url=({})]",
+                                        recipient);
+                            }
+                        } else {
+                            if (log.isDebugEnabled()) {
+                                log.debug("{} [url=({})]", ErrorMessage.UPDATE_MESSAGE_FAILED,
+                                        recipient);
+                            }
                         }
                     }
                 } catch (Exception e) {

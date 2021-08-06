@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.service.resource;
 
-import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
@@ -40,9 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class TemplateBuilderTest {
-
-    @MockBean
-    private IdscpServerRoute idscpServerRoute;
 
     @MockBean
     private ArtifactService artifactService;

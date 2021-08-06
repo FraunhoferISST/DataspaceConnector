@@ -15,22 +15,30 @@
  */
 package io.dataspaceconnector.model;
 
+import java.net.URI;
+
+import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exception.InvalidEntityException;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.model.subscription.SubscriptionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ExtendWith(MockitoExtension.class)
 public class SubscriptionFactoryTest {
+
+    @Mock
+    private ConnectorConfiguration connectorConfig;
 
     private SubscriptionFactory factory;
 
@@ -40,7 +48,7 @@ public class SubscriptionFactoryTest {
 
     @BeforeEach
     public void init() {
-        this.factory = new SubscriptionFactory();
+        this.factory = new SubscriptionFactory(connectorConfig);
     }
 
     @Test

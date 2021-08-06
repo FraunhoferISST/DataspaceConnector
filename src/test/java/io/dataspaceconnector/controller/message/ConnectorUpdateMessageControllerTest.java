@@ -28,7 +28,6 @@ import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.camel.dto.Response;
-import io.dataspaceconnector.camel.route.handler.IdscpServerRoute;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.service.configuration.BrokerService;
 import io.dataspaceconnector.service.ids.ConnectorService;
@@ -72,9 +71,6 @@ public class ConnectorUpdateMessageControllerTest {
 
     @Mock
     private Message in;
-
-    @MockBean
-    private IdscpServerRoute idscpServerRoute;
 
     @MockBean
     private IDSBrokerService brokerService;
