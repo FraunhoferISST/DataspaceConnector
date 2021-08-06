@@ -48,7 +48,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = {SubscriptionService.class})
@@ -112,12 +111,12 @@ public class SubscriptionServiceTest {
     }
 
     @Test
-    public void create_emptyInput_throwNullPointerException() {
+    public void create_emptyInput_throwIllegalArgumentException() {
         /* ARRANGE */
         // nothing to arrange here
 
         /* ACT & ASSERT */
-        assertThrows(NullPointerException.class, () -> service.create(new SubscriptionDesc()));
+        assertThrows(IllegalArgumentException.class, () -> service.create(new SubscriptionDesc()));
     }
 
     @Test
@@ -137,19 +136,6 @@ public class SubscriptionServiceTest {
 
         /* ACT & ASSERT */
         assertThrows(SubscriptionProcessingException.class, () -> service.create(subscriptionDesc));
-    }
-
-    @Test
-    public void create_validInputInvalidTarget_returnSubscription() {
-        /* ARRANGE */
-        // nothing to arrange here
-        Mockito.doReturn(Optional.of(subscription)).when(entityResolver).getEntityById(Mockito.any());
-
-        /* ACT */
-        final var result = service.create(subscriptionDesc);
-
-        /* ASSERT */
-        assertNotNull(result);
     }
 
     private SubscriptionDesc getDesc() {
