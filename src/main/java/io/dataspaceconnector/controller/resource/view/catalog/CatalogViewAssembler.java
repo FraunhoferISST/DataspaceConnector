@@ -16,8 +16,8 @@
 package io.dataspaceconnector.controller.resource.view.catalog;
 
 import io.dataspaceconnector.config.BaseType;
-import io.dataspaceconnector.controller.resource.RelationControllers;
-import io.dataspaceconnector.controller.resource.ResourceControllers.CatalogController;
+import io.dataspaceconnector.controller.resource.relation.CatalogsToOfferedResourcesController;
+import io.dataspaceconnector.controller.resource.type.CatalogController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.catalog.Catalog;
@@ -52,7 +52,7 @@ public class CatalogViewAssembler
         view.add(getSelfLink(catalog.getId()));
 
         final var offeredResLink = WebMvcLinkBuilder
-                .linkTo(methodOn(RelationControllers.CatalogsToOfferedResources.class)
+                .linkTo(methodOn(CatalogsToOfferedResourcesController.class)
                         .getResource(catalog.getId(), null, null))
                 .withRel(BaseType.OFFERS);
         view.add(offeredResLink);

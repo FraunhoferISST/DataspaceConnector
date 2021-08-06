@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.message.handler.transformer;
+package io.dataspaceconnector.service.message.handler.transformer.base;
 
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
 import org.apache.camel.Exchange;

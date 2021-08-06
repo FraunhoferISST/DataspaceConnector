@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * The configurations for spring security.
+ * Contains configurations for spring security.
  */
 package io.dataspaceconnector.config.security;

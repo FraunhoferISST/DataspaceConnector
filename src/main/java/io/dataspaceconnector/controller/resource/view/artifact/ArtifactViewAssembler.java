@@ -17,8 +17,10 @@ package io.dataspaceconnector.controller.resource.view.artifact;
 
 import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.config.BaseType;
-import io.dataspaceconnector.controller.resource.RelationControllers;
-import io.dataspaceconnector.controller.resource.ResourceControllers.ArtifactController;
+import io.dataspaceconnector.controller.resource.relation.ArtifactsToAgreementsController;
+import io.dataspaceconnector.controller.resource.relation.ArtifactsToRepresentationsController;
+import io.dataspaceconnector.controller.resource.relation.ArtifactsToSubscriptionsController;
+import io.dataspaceconnector.controller.resource.type.ArtifactController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.artifact.Artifact;
@@ -59,21 +61,19 @@ public class ArtifactViewAssembler
                 .withRel("data");
         view.add(dataLink);
 
-        final var repLink = linkTo(methodOn(RelationControllers.ArtifactsToRepresentations.class)
+        final var repLink = linkTo(methodOn(ArtifactsToRepresentationsController.class)
                 .getResource(artifact.getId(), null, null))
                 .withRel(BaseType.REPRESENTATIONS);
         view.add(repLink);
 
-        final var agreementLink =
-                linkTo(methodOn(RelationControllers.ArtifactsToAgreements.class)
-                        .getResource(artifact.getId(), null, null))
-                        .withRel(BaseType.AGREEMENTS);
+        final var agreementLink = linkTo(methodOn(ArtifactsToAgreementsController.class)
+                .getResource(artifact.getId(), null, null))
+                .withRel(BaseType.AGREEMENTS);
         view.add(agreementLink);
 
-        final var subscriptionLink =
-                linkTo(methodOn(RelationControllers.ArtifactsToSubscriptions.class)
-                        .getResource(artifact.getId(), null, null))
-                        .withRel(BaseType.SUBSCRIPTIONS);
+        final var subscriptionLink = linkTo(methodOn(ArtifactsToSubscriptionsController.class)
+                .getResource(artifact.getId(), null, null))
+                .withRel(BaseType.SUBSCRIPTIONS);
         view.add(subscriptionLink);
 
         return view;

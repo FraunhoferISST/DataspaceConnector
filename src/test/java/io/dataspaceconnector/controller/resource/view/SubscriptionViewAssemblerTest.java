@@ -16,7 +16,7 @@
 package io.dataspaceconnector.controller.resource.view;
 
 import io.dataspaceconnector.config.ConnectorConfig;
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.type.SubscriptionController;
 import io.dataspaceconnector.controller.resource.view.subscription.SubscriptionViewAssembler;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.subscription.Subscription;
@@ -61,7 +61,7 @@ public class SubscriptionViewAssemblerTest {
     public void getSelfLink_inputNull_returnBasePathWithoutId() {
         /* ARRANGE */
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.SubscriptionController.class
+        final var path = SubscriptionController.class
                 .getAnnotation(RequestMapping.class).value()[0];
 
         /* ACT */

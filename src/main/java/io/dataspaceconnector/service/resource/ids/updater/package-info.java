@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Update DSC entities based on IDS Objects.
+ * Update DSC entities based on IDS objects.
  */
 package io.dataspaceconnector.service.resource.ids.updater;

@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 /**
- * Contains the repositories for the different datatypes defined
- * by the Dataspace Connector.
- * Do not use these directly in your code. Consider using one of
- * the resource services instead.
+ * Contains the repositories for the different entities defined by the Dataspace Connector.
+ * Do not use these directly in your code. Consider using one of the resource services instead.
  */
 package io.dataspaceconnector.repository;

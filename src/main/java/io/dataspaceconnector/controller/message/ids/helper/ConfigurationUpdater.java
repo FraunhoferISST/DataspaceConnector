@@ -17,6 +17,7 @@ package io.dataspaceconnector.controller.message.ids.helper;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.common.ids.ConnectorService;
+import io.dataspaceconnector.controller.message.ids.helper.base.IdsHelperProcessor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.Exchange;

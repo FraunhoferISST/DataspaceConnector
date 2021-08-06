@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.configuration;
 
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.type.RouteController;
 import io.dataspaceconnector.service.resource.type.RouteService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -36,7 +36,7 @@ class RouteControllersTest {
     private RouteService routeService;
 
     @Autowired
-    private ResourceControllers.RouteController controller;
+    private RouteController controller;
 
     @Test
     public void createStartEndpoint_validInput_setStartEndpoint() {

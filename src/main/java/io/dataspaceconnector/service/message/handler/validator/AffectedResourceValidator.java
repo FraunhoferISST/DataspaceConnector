@@ -20,6 +20,7 @@ import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
 import io.dataspaceconnector.service.message.handler.dto.Request;
 import io.dataspaceconnector.service.message.handler.exception.NoAffectedResourceException;
+import io.dataspaceconnector.service.message.handler.validator.base.IdsValidator;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import org.springframework.stereotype.Component;

@@ -50,8 +50,9 @@ public class BaseResourceChildRestrictedController<S extends RelationService<?, 
      */
     @Hidden
     @Override
-    @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-            description = ResponseDescription.METHOD_NOT_ALLOWED)})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
     public PagedModel<V> addResources(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<URI> resources) {
@@ -63,8 +64,9 @@ public class BaseResourceChildRestrictedController<S extends RelationService<?, 
      */
     @Hidden
     @Override
-    @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-            description = ResponseDescription.METHOD_NOT_ALLOWED)})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
     public HttpEntity<Void> replaceResources(@Valid @PathVariable(name = "id") final UUID ownerId,
                                              @Valid @RequestBody final List<URI> resources) {
         throw new MethodNotAllowed();
@@ -75,8 +77,9 @@ public class BaseResourceChildRestrictedController<S extends RelationService<?, 
      */
     @Hidden
     @Override
-    @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-            description = ResponseDescription.METHOD_NOT_ALLOWED)})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
     public HttpEntity<Void> removeResources(@Valid @PathVariable(name = "id") final UUID ownerId,
                                             @Valid @RequestBody final List<URI> resources) {
         throw new MethodNotAllowed();

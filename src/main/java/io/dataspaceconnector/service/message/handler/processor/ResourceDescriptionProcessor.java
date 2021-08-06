@@ -25,6 +25,7 @@ import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.message.builder.type.DescriptionResponseService;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
+import io.dataspaceconnector.service.message.handler.processor.base.IdsProcessor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

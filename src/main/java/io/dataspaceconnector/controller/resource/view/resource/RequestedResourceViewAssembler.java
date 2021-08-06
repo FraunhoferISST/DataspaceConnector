@@ -15,8 +15,11 @@
  */
 package io.dataspaceconnector.controller.resource.view.resource;
 
-import io.dataspaceconnector.controller.resource.RelationControllers;
-import io.dataspaceconnector.controller.resource.ResourceControllers.RequestedResourceController;
+import io.dataspaceconnector.controller.resource.type.RequestedResourceController;
+import io.dataspaceconnector.controller.resource.relation.RequestedResourcesToCatalogsController;
+import io.dataspaceconnector.controller.resource.relation.RequestedResourcesToContractsController;
+import io.dataspaceconnector.controller.resource.relation.RequestedResourcesToRepresentationsController;
+import io.dataspaceconnector.controller.resource.relation.RequestedResourcesToSubscriptionsController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.resource.RequestedResource;
@@ -36,9 +39,8 @@ import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.met
  */
 @Component
 @NoArgsConstructor
-public class RequestedResourceViewAssembler
-        implements RepresentationModelAssembler<RequestedResource, RequestedResourceView>,
-        SelfLinking {
+public class RequestedResourceViewAssembler implements RepresentationModelAssembler<
+        RequestedResource, RequestedResourceView>, SelfLinking {
     /**
      * Construct the RequestedResourceView from a RequestedResource.
      *
@@ -51,28 +53,26 @@ public class RequestedResourceViewAssembler
         final var view = modelMapper.map(resource, RequestedResourceView.class);
         view.add(getSelfLink(resource.getId()));
 
-        final var contractsLink =
-                linkTo(methodOn(RelationControllers.RequestedResourcesToContracts.class)
-                        .getResource(resource.getId(), null, null))
-                        .withRel("contracts");
+        final var contractsLink = linkTo(methodOn(RequestedResourcesToContractsController.class)
+                .getResource(resource.getId(), null, null))
+                .withRel("contracts");
         view.add(contractsLink);
 
-        final var representationLink =
-                linkTo(methodOn(RelationControllers.RequestedResourcesToRepresentations.class)
-                        .getResource(resource.getId(), null, null))
-                        .withRel("representations");
+        final var representationLink
+                = linkTo(methodOn(RequestedResourcesToRepresentationsController.class)
+                .getResource(resource.getId(), null, null))
+                .withRel("representations");
         view.add(representationLink);
 
-        final var catalogLink =
-                linkTo(methodOn(RelationControllers.RequestedResourcesToCatalogs.class)
-                        .getResource(resource.getId(), null, null))
-                        .withRel("catalogs");
+        final var catalogLink = linkTo(methodOn(RequestedResourcesToCatalogsController.class)
+                .getResource(resource.getId(), null, null))
+                .withRel("catalogs");
         view.add(catalogLink);
 
-        final var subscriptionLink =
-                linkTo(methodOn(RelationControllers.RequestedResourcesToSubscriptions.class)
-                        .getResource(resource.getId(), null, null))
-                        .withRel("subscriptions");
+        final var subscriptionLink
+                = linkTo(methodOn(RequestedResourcesToSubscriptionsController.class)
+                .getResource(resource.getId(), null, null))
+                .withRel("subscriptions");
         view.add(subscriptionLink);
 
         return view;

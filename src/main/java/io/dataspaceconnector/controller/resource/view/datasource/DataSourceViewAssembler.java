@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view.datasource;
 
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.type.DataSourceController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.datasource.DataSource;
@@ -36,7 +36,7 @@ public class DataSourceViewAssembler
     @Override
     public final Link getSelfLink(final UUID entityId) {
         return ViewAssemblerHelper.getSelfLink(entityId,
-                ResourceControllers.DataSourceController.class);
+                DataSourceController.class);
     }
 
     @Override

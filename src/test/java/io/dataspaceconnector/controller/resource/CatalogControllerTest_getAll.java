@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.resource;
 
 import io.dataspaceconnector.common.util.Utils;
+import io.dataspaceconnector.controller.resource.type.CatalogController;
 import io.dataspaceconnector.controller.resource.view.catalog.CatalogViewAssembler;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.service.resource.type.CatalogService;
@@ -36,7 +37,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(classes = {ResourceControllers.CatalogController.class})
+@SpringBootTest(classes = {CatalogController.class})
 class CatalogControllerTest_getAll {
     @MockBean
     private CatalogService service;
@@ -51,7 +52,7 @@ class CatalogControllerTest_getAll {
 
     @Autowired
     // private MockMvc mockMvc;
-    private ResourceControllers.CatalogController controller;
+    private CatalogController controller;
 
     /**
      * Setup

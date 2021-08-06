@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.message.ids.processor;
 
 import io.dataspaceconnector.common.routing.ParameterUtils;
+import io.dataspaceconnector.controller.message.ids.processor.base.IdsResponseProcessor;
 import io.dataspaceconnector.service.EntityUpdateService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

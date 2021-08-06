@@ -18,6 +18,7 @@ package io.dataspaceconnector.extension.idscp.processor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dataspaceconnector.common.routing.ParameterUtils;
+import io.dataspaceconnector.extension.idscp.processor.base.Idscp2MappingProcessor;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.service.message.handler.dto.Request;
 import org.apache.camel.Message;

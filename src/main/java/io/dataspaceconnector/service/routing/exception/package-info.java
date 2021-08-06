@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * This package contains all Exceptions that indicate errors during the creation, deployment or
+ * This package contains all exceptions that indicate errors during the creation, deployment, or
  * deletion of Camel routes.
  */
 package io.dataspaceconnector.service.routing.exception;

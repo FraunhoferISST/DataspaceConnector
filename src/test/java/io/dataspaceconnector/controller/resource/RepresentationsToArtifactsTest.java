@@ -17,6 +17,7 @@ package io.dataspaceconnector.controller.resource;
 
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.controller.resource.relation.RepresentationsToArtifactsController;
 import io.dataspaceconnector.controller.resource.view.artifact.ArtifactView;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
@@ -42,7 +43,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest(classes = {RelationControllers.RepresentationsToArtifacts.class})
+@SpringBootTest(classes = {RepresentationsToArtifactsController.class})
 class RepresentationsToArtifactsTest {
 
     @MockBean
@@ -56,7 +57,7 @@ class RepresentationsToArtifactsTest {
 
     @Autowired
     @InjectMocks
-    private RelationControllers.RepresentationsToArtifacts controller;
+    private RepresentationsToArtifactsController controller;
 
     private List<Artifact> artifacts = new ArrayList<>();
 

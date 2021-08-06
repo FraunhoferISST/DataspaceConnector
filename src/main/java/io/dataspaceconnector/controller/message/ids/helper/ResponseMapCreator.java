@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.message.ids.helper;
 
+import io.dataspaceconnector.controller.message.ids.helper.base.IdsHelperProcessor;
 import io.dataspaceconnector.service.message.handler.exception.InvalidResponseException;
 import org.apache.camel.Exchange;
 import org.springframework.stereotype.Component;

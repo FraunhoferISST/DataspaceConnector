@@ -16,8 +16,9 @@
 package io.dataspaceconnector.controller.resource.view;
 
 import io.dataspaceconnector.common.net.QueryInput;
-import io.dataspaceconnector.controller.resource.RelationControllers;
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.relation.ArtifactsToAgreementsController;
+import io.dataspaceconnector.controller.resource.relation.ArtifactsToRepresentationsController;
+import io.dataspaceconnector.controller.resource.type.ArtifactController;
 import io.dataspaceconnector.controller.resource.view.artifact.ArtifactViewAssembler;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.artifact.Artifact;
@@ -63,7 +64,7 @@ public class ArtifactViewAssemblerTest {
     public void getSelfLink_inputNull_returnBasePathWithoutId() {
         /* ARRANGE */
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.ArtifactController.class
+        final var path = ArtifactController.class
                 .getAnnotation(RequestMapping.class).value()[0];
 
         /* ACT */
@@ -80,7 +81,7 @@ public class ArtifactViewAssemblerTest {
         /* ARRANGE */
         final var artifactId = UUID.randomUUID();
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.ArtifactController.class
+        final var path = ArtifactController.class
                 .getAnnotation(RequestMapping.class).value()[0];
 
         /* ACT */
@@ -166,24 +167,24 @@ public class ArtifactViewAssemblerTest {
 
     private String getArtifactLink(final UUID artifactId) {
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.ArtifactController.class
+        final var path = ArtifactController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         return baseUrl + path + "/" + artifactId;
     }
 
     @SneakyThrows
     private String getArtifactDataLink(final UUID artifactId) {
-        return linkTo(methodOn(ResourceControllers.ArtifactController.class)
+        return linkTo(methodOn(ArtifactController.class)
                 .getData(artifactId, new QueryInput())).toString();
     }
 
     private String getArtifactRepresentationsLink(final UUID artifactId) {
-        return WebMvcLinkBuilder.linkTo(methodOn(RelationControllers.ArtifactsToRepresentations.class)
+        return WebMvcLinkBuilder.linkTo(methodOn(ArtifactsToRepresentationsController.class)
                 .getResource(artifactId, null, null)).toString();
     }
 
     private String getArtifactAgreementsLink(final UUID artifactId) {
-        return linkTo(methodOn(RelationControllers.ArtifactsToAgreements.class)
+        return linkTo(methodOn(ArtifactsToAgreementsController.class)
                 .getResource(artifactId, null, null)).toString();
     }
 }

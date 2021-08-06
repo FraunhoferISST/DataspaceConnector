@@ -16,8 +16,8 @@
 package io.dataspaceconnector.controller.resource.view.rule;
 
 import io.dataspaceconnector.config.BaseType;
-import io.dataspaceconnector.controller.resource.RelationControllers;
-import io.dataspaceconnector.controller.resource.ResourceControllers.RuleController;
+import io.dataspaceconnector.controller.resource.type.RuleController;
+import io.dataspaceconnector.controller.resource.relation.RulesToContractsController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.rule.ContractRule;
@@ -51,9 +51,8 @@ public class ContractRuleViewAssembler
         final var view = modelMapper.map(rule, ContractRuleView.class);
         view.add(getSelfLink(rule.getId()));
 
-        final var contractLink = WebMvcLinkBuilder
-                .linkTo(methodOn(RelationControllers.RulesToContracts.class)
-                        .getResource(rule.getId(), null, null))
+        final var contractLink = WebMvcLinkBuilder.linkTo(methodOn(RulesToContractsController.class)
+                .getResource(rule.getId(), null, null))
                 .withRel(BaseType.CONTRACTS);
         view.add(contractLink);
 

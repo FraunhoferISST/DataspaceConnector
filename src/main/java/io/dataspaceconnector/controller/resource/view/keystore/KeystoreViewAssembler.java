@@ -22,11 +22,10 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 /**
  * The view assembler for the key store.
  */
-public class KeystoreViewAssembler implements
-        RepresentationModelAssembler<Keystore, KeystoreView> {
+public class KeystoreViewAssembler implements RepresentationModelAssembler<Keystore, KeystoreView> {
 
     @Override
     public final KeystoreView toModel(final Keystore store) {
-        return  new ModelMapper().map(store, KeystoreView.class);
+        return new ModelMapper().map(store, KeystoreView.class);
     }
 }

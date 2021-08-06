@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Services for performing IDS actions with the Dataspace Connector.
+ * Services for IDS entity services.
  */
 package io.dataspaceconnector.service.resource.ids;

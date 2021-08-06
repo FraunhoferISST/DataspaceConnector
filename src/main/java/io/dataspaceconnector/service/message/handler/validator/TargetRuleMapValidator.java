@@ -19,6 +19,7 @@ import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import io.dataspaceconnector.service.message.handler.dto.Request;
 import io.dataspaceconnector.service.message.handler.dto.payload.ContractTargetRuleMapContainer;
 import io.dataspaceconnector.service.message.handler.exception.MissingTargetInRuleException;
+import io.dataspaceconnector.service.message.handler.validator.base.IdsValidator;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import org.springframework.stereotype.Component;

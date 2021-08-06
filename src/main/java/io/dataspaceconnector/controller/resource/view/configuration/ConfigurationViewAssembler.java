@@ -15,14 +15,13 @@
  */
 package io.dataspaceconnector.controller.resource.view.configuration;
 
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.type.ConfigurationController;
 import io.dataspaceconnector.controller.resource.view.keystore.KeystoreViewAssembler;
 import io.dataspaceconnector.controller.resource.view.proxy.ProxyViewAssembler;
 import io.dataspaceconnector.controller.resource.view.truststore.TruststoreViewAssembler;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.configuration.Configuration;
-import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -40,11 +39,11 @@ public class ConfigurationViewAssembler implements
     @Override
     public final Link getSelfLink(final UUID entityId) {
         return ViewAssemblerHelper.getSelfLink(entityId,
-                ResourceControllers.ConfigurationController.class);
+                ConfigurationController.class);
     }
 
     @Override
-    public final ConfigurationView toModel(@NotNull final Configuration configuration) {
+    public final ConfigurationView toModel(final Configuration configuration) {
         final var modelMapper = new ModelMapper();
         final var view = modelMapper.map(configuration, ConfigurationView.class);
         view.add(getSelfLink(configuration.getId()));

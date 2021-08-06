@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.message.handler.processor;
+package io.dataspaceconnector.service.message.handler.processor.base;
 
 import io.dataspaceconnector.service.message.handler.dto.Request;
 import io.dataspaceconnector.service.message.handler.dto.Response;

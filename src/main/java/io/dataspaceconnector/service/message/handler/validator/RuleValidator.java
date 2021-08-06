@@ -26,6 +26,7 @@ import io.dataspaceconnector.service.message.handler.dto.payload.ContractTargetR
 import io.dataspaceconnector.service.message.handler.exception.ContractListEmptyException;
 import io.dataspaceconnector.service.message.handler.exception.ContractRejectedException;
 import io.dataspaceconnector.service.message.handler.exception.MalformedRuleException;
+import io.dataspaceconnector.service.message.handler.validator.base.IdsValidator;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import lombok.NonNull;

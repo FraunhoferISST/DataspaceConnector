@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view.endpoint;
 
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.type.EndpointController;
 import io.dataspaceconnector.controller.resource.view.datasource.DataSourceViewAssembler;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
@@ -44,14 +44,13 @@ public class GenericEndpointViewAssembler
     @Override
     public final Link getSelfLink(final UUID entityId) {
         return ViewAssemblerHelper.getSelfLink(entityId,
-                ResourceControllers.EndpointController.class);
+                EndpointController.class);
     }
 
     @Override
     public final GenericEndpointView toModel(final GenericEndpoint genericEndpoint) {
         final var modelMapper = new ModelMapper();
-        final var view = modelMapper.map(genericEndpoint,
-                GenericEndpointView.class);
+        final var view = modelMapper.map(genericEndpoint, GenericEndpointView.class);
         view.add(getSelfLink(genericEndpoint.getId()));
 
         if (genericEndpoint.getDataSource() != null) {

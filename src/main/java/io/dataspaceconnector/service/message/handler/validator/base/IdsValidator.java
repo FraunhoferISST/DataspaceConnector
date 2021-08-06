@@ -13,35 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.message.ids.helper;
+package io.dataspaceconnector.service.message.handler.validator.base;
 
+import io.dataspaceconnector.service.message.handler.dto.Request;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 /**
- * Superclass for all processors that perform helper tasks that do not fit in with any of the other
- * processor types.
+ * Superclass for Camel processors that validate either header or payload of an incoming message.
+ *
+ * @param <I> the expected input type (body of the Camel {@link Exchange}).
  */
-public abstract class IdsHelperProcessor implements Processor {
+public abstract class IdsValidator<I> implements Processor {
 
     /**
      * Override of the {@link Processor}'s process method. Calls the implementing class's
-     * processInternal method with the {@link Exchange}.
+     * processInternal method.
      *
-     * @param exchange the exchange.
-     * @throws Exception if any error occurs.
+     * @param exchange the input.
+     * @throws Exception if validation fails.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public void process(final Exchange exchange) throws Exception {
-        processInternal(exchange);
+        processInternal((I) exchange.getIn().getBody(Request.class));
     }
 
     /**
-     * Performs the helper task. To be implemented by sub classes.
+     * Validates either header of body of the incoming message. To be implemented by sub classes.
      *
-     * @param exchange the exchange.
-     * @throws Exception if any error occurs.
+     * @param msg the incoming message.
+     * @throws Exception if validation fails.
      */
-    protected abstract void processInternal(Exchange exchange) throws Exception;
-
+    protected abstract void processInternal(I msg) throws Exception;
 }

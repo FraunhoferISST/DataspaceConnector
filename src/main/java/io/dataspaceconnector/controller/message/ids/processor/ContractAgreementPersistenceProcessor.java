@@ -17,6 +17,7 @@ package io.dataspaceconnector.controller.message.ids.processor;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.common.routing.ParameterUtils;
+import io.dataspaceconnector.controller.message.ids.processor.base.IdsResponseProcessor;
 import io.dataspaceconnector.service.EntityPersistenceService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

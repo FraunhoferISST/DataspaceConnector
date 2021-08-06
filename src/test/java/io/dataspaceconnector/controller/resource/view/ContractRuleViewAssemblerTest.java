@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
-import io.dataspaceconnector.controller.resource.RelationControllers;
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.relation.RulesToContractsController;
+import io.dataspaceconnector.controller.resource.type.RuleController;
 import io.dataspaceconnector.controller.resource.view.rule.ContractRuleViewAssembler;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.rule.ContractRule;
@@ -59,7 +59,7 @@ public class ContractRuleViewAssemblerTest {
     public void getSelfLink_inputNull_returnBasePathWithoutId() {
         /* ARRANGE */
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.RuleController.class
+        final var path = RuleController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         final var rel = "self";
 
@@ -77,7 +77,7 @@ public class ContractRuleViewAssemblerTest {
         /* ARRANGE */
         final var contractRuleId = UUID.randomUUID();
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.RuleController.class
+        final var path = RuleController.class
                 .getAnnotation(RequestMapping.class).value()[0];
 
         /* ACT */
@@ -148,13 +148,13 @@ public class ContractRuleViewAssemblerTest {
     private String getContractRuleLink(final UUID contractRuleId) {
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .toUriString();
-        final var path = ResourceControllers.RuleController.class
+        final var path = RuleController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         return baseUrl + path + "/" + contractRuleId;
     }
 
     private String getContractRuleContractsLink(final UUID contractRuleId) {
-        return WebMvcLinkBuilder.linkTo(methodOn(RelationControllers.RulesToContracts.class)
+        return WebMvcLinkBuilder.linkTo(methodOn(RulesToContractsController.class)
                 .getResource(contractRuleId, null, null)).toString();
     }
 }

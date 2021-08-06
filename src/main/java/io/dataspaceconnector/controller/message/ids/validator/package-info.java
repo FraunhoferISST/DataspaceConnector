@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * The Ids response validators.
+ * The ids response validators.
  */
 package io.dataspaceconnector.controller.message.ids.validator;

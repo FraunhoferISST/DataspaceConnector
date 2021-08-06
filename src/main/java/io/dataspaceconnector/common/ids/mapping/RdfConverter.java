@@ -30,7 +30,7 @@ import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.RdfBuilderException;
 
 /**
- *
+ * Converting ids objects to rdf strings.
  */
 public final class RdfConverter {
 

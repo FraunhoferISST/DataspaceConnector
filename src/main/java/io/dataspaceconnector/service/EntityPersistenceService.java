@@ -22,7 +22,7 @@ import io.dataspaceconnector.common.ids.mapping.RdfConverter;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
 import io.dataspaceconnector.common.ids.model.TemplateUtils;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.type.AgreementController;
 import io.dataspaceconnector.model.agreement.AgreementDesc;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
@@ -141,7 +141,7 @@ public class EntityPersistenceService {
         try {
             // Get base URL of application and path to agreements API.
             final var applicationBaseUrl = getApplicationBaseUrl();
-            final var path = ResourceControllers.AgreementController.class.getAnnotation(
+            final var path = AgreementController.class.getAnnotation(
                     RequestMapping.class).value()[0];
 
             // Persist empty agreement to generate UUID.

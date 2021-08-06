@@ -24,6 +24,7 @@ import io.dataspaceconnector.common.ids.message.MessageUtils;
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
 import io.dataspaceconnector.service.message.handler.dto.Request;
 import io.dataspaceconnector.service.message.handler.exception.NoTransferContractException;
+import io.dataspaceconnector.service.message.handler.validator.base.IdsValidator;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
 import io.dataspaceconnector.service.usagecontrol.DataProvisionVerifier;
 import io.dataspaceconnector.service.usagecontrol.ProvisionVerificationInput;

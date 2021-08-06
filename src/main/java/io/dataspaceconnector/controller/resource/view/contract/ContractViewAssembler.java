@@ -18,8 +18,10 @@ package io.dataspaceconnector.controller.resource.view.contract;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.config.BaseType;
-import io.dataspaceconnector.controller.resource.RelationControllers;
-import io.dataspaceconnector.controller.resource.ResourceControllers.ContractController;
+import io.dataspaceconnector.controller.resource.relation.ContractsToOfferedResourcesController;
+import io.dataspaceconnector.controller.resource.relation.ContractsToRequestedResourcesController;
+import io.dataspaceconnector.controller.resource.relation.ContractsToRulesController;
+import io.dataspaceconnector.controller.resource.type.ContractController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.contract.Contract;
@@ -55,30 +57,28 @@ public class ContractViewAssembler
         final var view = modelMapper.map(contract, ContractView.class);
         view.add(getSelfLink(contract.getId()));
 
-        final var rulesLink = linkTo(methodOn(RelationControllers.ContractsToRules.class)
-                                             .getResource(contract.getId(), null, null))
-                                      .withRel(BaseType.RULES);
+        final var rulesLink = linkTo(methodOn(ContractsToRulesController.class)
+                .getResource(contract.getId(), null, null))
+                .withRel(BaseType.RULES);
         view.add(rulesLink);
 
         final var resourceType = contract.getResources();
         Link resourceLinker;
         if (resourceType.isEmpty()) {
             // No elements found, default to offered resources
-            resourceLinker = linkTo(methodOn(RelationControllers.ContractsToOfferedResources.class)
+            resourceLinker = linkTo(methodOn(ContractsToOfferedResourcesController.class)
                     .getResource(contract.getId(), null, null))
                     .withRel(BaseType.OFFERS);
         } else {
             // Construct the link for the right resource type.
             if (resourceType.get(0) instanceof OfferedResource) {
-                resourceLinker =
-                        linkTo(methodOn(RelationControllers.ContractsToOfferedResources.class)
-                                .getResource(contract.getId(), null, null))
-                                .withRel(BaseType.OFFERS);
+                resourceLinker = linkTo(methodOn(ContractsToOfferedResourcesController.class)
+                        .getResource(contract.getId(), null, null))
+                        .withRel(BaseType.OFFERS);
             } else if (resourceType.get(0) instanceof RequestedResource) {
-                resourceLinker =
-                        linkTo(methodOn(RelationControllers.ContractsToRequestedResources.class)
-                                .getResource(contract.getId(), null, null))
-                                .withRel(BaseType.REQUESTS);
+                resourceLinker = linkTo(methodOn(ContractsToRequestedResourcesController.class)
+                        .getResource(contract.getId(), null, null))
+                        .withRel(BaseType.REQUESTS);
             } else {
                 throw new UnreachableLineException(ErrorMessage.UNKNOWN_TYPE);
             }

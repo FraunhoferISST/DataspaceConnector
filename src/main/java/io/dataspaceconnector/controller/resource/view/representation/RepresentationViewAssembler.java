@@ -18,8 +18,11 @@ package io.dataspaceconnector.controller.resource.view.representation;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.config.BaseType;
-import io.dataspaceconnector.controller.resource.RelationControllers;
-import io.dataspaceconnector.controller.resource.ResourceControllers.RepresentationController;
+import io.dataspaceconnector.controller.resource.type.RepresentationController;
+import io.dataspaceconnector.controller.resource.relation.RepresentationsToArtifactsController;
+import io.dataspaceconnector.controller.resource.relation.RepresentationsToOfferedResourcesController;
+import io.dataspaceconnector.controller.resource.relation.RepresentationsToRequestsController;
+import io.dataspaceconnector.controller.resource.relation.RepresentationsToSubscriptionsController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.representation.Representation;
@@ -55,33 +58,28 @@ public class RepresentationViewAssembler
         final var view = modelMapper.map(representation, RepresentationView.class);
         view.add(getSelfLink(representation.getId()));
 
-        final var artifactsLink =
-                linkTo(methodOn(RelationControllers.RepresentationsToArtifacts.class)
-                                .getResource(representation.getId(), null, null))
-                        .withRel(BaseType.ARTIFACTS);
+        final var artifactsLink = linkTo(methodOn(RepresentationsToArtifactsController.class)
+                .getResource(representation.getId(), null, null))
+                .withRel(BaseType.ARTIFACTS);
         view.add(artifactsLink);
 
         final var resourceType = representation.getResources();
         Link resourceLinker;
         if (resourceType.isEmpty()) {
             // No elements found, default to offered resources
-            resourceLinker =
-                    linkTo(methodOn(RelationControllers.RepresentationsToOfferedResources.class)
-                                   .getResource(representation.getId(), null, null))
-                            .withRel(BaseType.OFFERS);
+            resourceLinker = linkTo(methodOn(RepresentationsToOfferedResourcesController.class)
+                    .getResource(representation.getId(), null, null))
+                    .withRel(BaseType.OFFERS);
         } else {
             // Construct the link for the right resource type.
             if (resourceType.get(0) instanceof OfferedResource) {
-                resourceLinker =
-                        linkTo(methodOn(RelationControllers.RepresentationsToOfferedResources.class)
-                                       .getResource(representation.getId(), null, null))
-                                .withRel(BaseType.OFFERS);
+                resourceLinker = linkTo(methodOn(RepresentationsToOfferedResourcesController.class)
+                        .getResource(representation.getId(), null, null))
+                        .withRel(BaseType.OFFERS);
             } else if (resourceType.get(0) instanceof RequestedResource) {
-                resourceLinker =
-                        linkTo(methodOn(
-                                RelationControllers.RepresentationsToRequestedResources.class)
-                                       .getResource(representation.getId(), null, null))
-                                .withRel(BaseType.REQUESTS);
+                resourceLinker = linkTo(methodOn(RepresentationsToRequestsController.class)
+                        .getResource(representation.getId(), null, null))
+                        .withRel(BaseType.REQUESTS);
             } else {
                 throw new UnreachableLineException(ErrorMessage.UNKNOWN_TYPE);
             }
@@ -89,10 +87,9 @@ public class RepresentationViewAssembler
 
         view.add(resourceLinker);
 
-        final var subscriptionLink =
-                linkTo(methodOn(RelationControllers.RepresentationsToSubscriptions.class)
-                        .getResource(representation.getId(), null, null))
-                        .withRel(BaseType.SUBSCRIPTIONS);
+        final var subscriptionLink = linkTo(methodOn(RepresentationsToSubscriptionsController.class)
+                .getResource(representation.getId(), null, null))
+                .withRel(BaseType.SUBSCRIPTIONS);
         view.add(subscriptionLink);
 
         return view;

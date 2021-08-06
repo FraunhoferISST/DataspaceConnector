@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Provides utility functions and services for ids handling across multiple packages.
+ * Provides services for ids message processing.
  */
 package io.dataspaceconnector.common.ids.message;

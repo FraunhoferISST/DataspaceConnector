@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * This package contains all classes required for creating, deploying and deleting Camel routes.
+ * This package contains all classes required for creating, deploying, and deleting Camel routes.
  */
 package io.dataspaceconnector.service.routing;

@@ -31,6 +31,7 @@ import io.dataspaceconnector.service.message.builder.type.MessageProcessedNotifi
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
 import io.dataspaceconnector.service.message.handler.exception.UnconfirmedAgreementException;
+import io.dataspaceconnector.service.message.handler.processor.base.IdsProcessor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;

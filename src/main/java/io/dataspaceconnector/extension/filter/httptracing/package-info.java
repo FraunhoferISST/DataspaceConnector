@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 /**
- * The classes for intercepting and logging http communication over
- * spring endpoints along with the necessary beans.
+ * The classes for intercepting and logging http communication over spring endpoints along with the
+ * necessary beans.
  */
 
 package io.dataspaceconnector.extension.filter.httptracing;

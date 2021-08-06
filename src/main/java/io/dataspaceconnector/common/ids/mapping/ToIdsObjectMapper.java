@@ -49,6 +49,9 @@ import java.util.Optional;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
+/**
+ * Maps internal entities to ids objects.
+ */
 public final class ToIdsObjectMapper {
 
     /**

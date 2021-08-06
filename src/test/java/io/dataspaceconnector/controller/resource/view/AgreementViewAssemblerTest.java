@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
-import io.dataspaceconnector.controller.resource.RelationControllers;
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.relation.AgreementsToArtifactsController;
+import io.dataspaceconnector.controller.resource.type.AgreementController;
 import io.dataspaceconnector.controller.resource.view.agreement.AgreementViewAssembler;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.agreement.Agreement;
@@ -59,7 +59,7 @@ public class AgreementViewAssemblerTest {
     public void getSelfLink_inputNull_returnBasePathWithoutId() {
         /* ARRANGE */
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.AgreementController.class
+        final var path = AgreementController.class
                 .getAnnotation(RequestMapping.class).value()[0];
 
         /* ACT */
@@ -76,7 +76,7 @@ public class AgreementViewAssemblerTest {
         /* ARRANGE */
         final var agreementId = UUID.randomUUID();
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.AgreementController.class
+        final var path = AgreementController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         final var rel = "self";
 
@@ -144,13 +144,13 @@ public class AgreementViewAssemblerTest {
 
     private String getAgreementLink(final UUID agreementId) {
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.AgreementController.class
+        final var path = AgreementController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         return baseUrl + path + "/" + agreementId;
     }
 
     private String getAgreementArtifactsLink(final UUID agreementId) {
-        return WebMvcLinkBuilder.linkTo(methodOn(RelationControllers.AgreementsToArtifacts.class)
+        return WebMvcLinkBuilder.linkTo(methodOn(AgreementsToArtifactsController.class)
                 .getResource(agreementId, null, null)).toString();
     }
 }

@@ -50,7 +50,6 @@ public class EndpointViewAssemblerProxy
      */
     @Override
     public RepresentationModel<?> toModel(final Endpoint endpoint) {
-
         if (endpoint instanceof ConnectorEndpoint) {
             return connectorAssembler.toModel((ConnectorEndpoint) endpoint);
         }

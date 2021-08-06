@@ -22,8 +22,7 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 /**
  * The view assembler for the proxy.
  */
-public class ProxyViewAssembler  implements
-        RepresentationModelAssembler<Proxy, ProxyView> {
+public class ProxyViewAssembler implements RepresentationModelAssembler<Proxy, ProxyView> {
 
     @Override
     public final ProxyView toModel(final Proxy proxy) {

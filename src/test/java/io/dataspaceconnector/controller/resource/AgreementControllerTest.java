@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.resource;
 
 import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
+import io.dataspaceconnector.controller.resource.type.AgreementController;
 import io.dataspaceconnector.controller.resource.view.agreement.AgreementViewAssembler;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.agreement.AgreementDesc;
@@ -31,7 +32,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest(classes = {ResourceControllers.AgreementController.class})
+@SpringBootTest(classes = {AgreementController.class})
 class AgreementControllerTest {
     @MockBean
     private AgreementService service;
@@ -44,7 +45,7 @@ class AgreementControllerTest {
 
     @Autowired
     @InjectMocks
-    private ResourceControllers.AgreementController controller;
+    private AgreementController controller;
 
     /**
      * create.

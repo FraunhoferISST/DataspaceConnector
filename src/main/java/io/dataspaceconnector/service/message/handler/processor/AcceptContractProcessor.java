@@ -27,6 +27,7 @@ import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
 import io.dataspaceconnector.service.message.handler.dto.payload.ContractTargetRuleMapContainer;
 import io.dataspaceconnector.service.message.handler.exception.AgreementPersistenceException;
+import io.dataspaceconnector.service.message.handler.processor.base.IdsProcessor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

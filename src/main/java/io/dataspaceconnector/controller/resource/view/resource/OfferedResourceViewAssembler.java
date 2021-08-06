@@ -16,8 +16,12 @@
 package io.dataspaceconnector.controller.resource.view.resource;
 
 import io.dataspaceconnector.config.BaseType;
-import io.dataspaceconnector.controller.resource.RelationControllers;
-import io.dataspaceconnector.controller.resource.ResourceControllers.OfferedResourceController;
+import io.dataspaceconnector.controller.resource.relation.OfferedResourcesToBrokersController;
+import io.dataspaceconnector.controller.resource.relation.OfferedResourcesToCatalogsController;
+import io.dataspaceconnector.controller.resource.relation.OfferedResourcesToContractsController;
+import io.dataspaceconnector.controller.resource.relation.OfferedResourcesToRepresentationsController;
+import io.dataspaceconnector.controller.resource.relation.OfferedResourcesToSubscriptionsController;
+import io.dataspaceconnector.controller.resource.type.OfferedResourceController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.resource.OfferedResource;
@@ -51,34 +55,30 @@ public class OfferedResourceViewAssembler
         final var view = modelMapper.map(resource, OfferedResourceView.class);
         view.add(getSelfLink(resource.getId()));
 
-        final var contractsLink =
-                linkTo(methodOn(RelationControllers.OfferedResourcesToContracts.class)
-                        .getResource(resource.getId(), null, null))
-                        .withRel(BaseType.CONTRACTS);
+        final var contractsLink = linkTo(methodOn(OfferedResourcesToContractsController.class)
+                .getResource(resource.getId(), null, null))
+                .withRel(BaseType.CONTRACTS);
         view.add(contractsLink);
 
-        final var repLink =
-                linkTo(methodOn(RelationControllers.OfferedResourcesToRepresentations.class)
-                        .getResource(resource.getId(), null, null))
-                        .withRel(BaseType.REPRESENTATIONS);
+        final var repLink = linkTo(methodOn(OfferedResourcesToRepresentationsController.class)
+                .getResource(resource.getId(), null, null))
+                .withRel(BaseType.REPRESENTATIONS);
         view.add(repLink);
 
-        final var catalogLink =
-                linkTo(methodOn(RelationControllers.OfferedResourcesToCatalogs.class)
-                        .getResource(resource.getId(), null, null))
-                        .withRel(BaseType.CATALOGS);
+        final var catalogLink = linkTo(methodOn(OfferedResourcesToCatalogsController.class)
+                .getResource(resource.getId(), null, null))
+                .withRel(BaseType.CATALOGS);
         view.add(catalogLink);
 
         final var subscriptionLink =
-                linkTo(methodOn(RelationControllers.OfferedResourcesToSubscriptions.class)
-                        .getResource(resource.getId(), null, null))
-                        .withRel(BaseType.SUBSCRIPTIONS);
+                linkTo(methodOn(OfferedResourcesToSubscriptionsController.class)
+                .getResource(resource.getId(), null, null))
+                .withRel(BaseType.SUBSCRIPTIONS);
         view.add(subscriptionLink);
 
-        final var brokerLink =
-                linkTo(methodOn(RelationControllers.OfferedResourcesToBrokers.class)
-                        .getResource(resource.getId(), null, null))
-                        .withRel(BaseType.BROKERS);
+        final var brokerLink = linkTo(methodOn(OfferedResourcesToBrokersController.class)
+                .getResource(resource.getId(), null, null))
+                .withRel(BaseType.BROKERS);
         view.add(brokerLink);
 
         return view;

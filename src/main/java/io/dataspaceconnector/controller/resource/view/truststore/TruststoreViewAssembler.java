@@ -22,8 +22,8 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 /**
  * View assembler for the trust store.
  */
-public class TruststoreViewAssembler implements
-        RepresentationModelAssembler<Truststore, TruststoreView> {
+public class TruststoreViewAssembler implements RepresentationModelAssembler<Truststore,
+        TruststoreView> {
 
     @Override
     public final TruststoreView toModel(final Truststore store) {

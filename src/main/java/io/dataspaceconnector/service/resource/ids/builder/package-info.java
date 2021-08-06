@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Builder construct IDS Objects from Dataspace Connector entities.
+ * Builder construct IDS objects from DSC entities.
  */
 package io.dataspaceconnector.service.resource.ids.builder;

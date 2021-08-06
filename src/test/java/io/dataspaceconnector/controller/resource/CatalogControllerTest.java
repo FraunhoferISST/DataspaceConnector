@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.resource;
 
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.controller.resource.type.CatalogController;
 import io.dataspaceconnector.controller.resource.view.catalog.CatalogViewAssembler;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
@@ -41,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {ResourceControllers.CatalogController.class})
+@SpringBootTest(classes = {CatalogController.class})
 class CatalogControllerTest {
     @MockBean
     private CatalogService catalogService;
@@ -53,7 +54,7 @@ class CatalogControllerTest {
     private PagedResourcesAssembler<Catalog> pagedAssembler;
 
     @Autowired
-    private ResourceControllers.CatalogController controller;
+    private CatalogController controller;
 
     private CatalogDesc desc = getDesc();
     private CatalogDesc updatedDescOne = getUpdatedDesc();

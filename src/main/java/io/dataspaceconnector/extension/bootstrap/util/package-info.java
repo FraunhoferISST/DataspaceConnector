@@ -15,6 +15,6 @@
  */
 
 /**
- * Utilities for bootstrapping data on start.
+ * Utilities for bootstrapping service.
  */
 package io.dataspaceconnector.extension.bootstrap.util;

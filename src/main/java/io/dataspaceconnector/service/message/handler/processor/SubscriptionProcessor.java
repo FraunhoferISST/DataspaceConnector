@@ -26,6 +26,7 @@ import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.service.message.builder.type.MessageProcessedNotificationService;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
+import io.dataspaceconnector.service.message.handler.processor.base.IdsProcessor;
 import io.dataspaceconnector.service.resource.type.SubscriptionService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

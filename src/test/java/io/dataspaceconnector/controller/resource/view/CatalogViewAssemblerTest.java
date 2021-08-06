@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
-import io.dataspaceconnector.controller.resource.RelationControllers;
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.relation.CatalogsToOfferedResourcesController;
+import io.dataspaceconnector.controller.resource.type.CatalogController;
 import io.dataspaceconnector.controller.resource.view.catalog.CatalogViewAssembler;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.catalog.Catalog;
@@ -59,7 +59,7 @@ public class CatalogViewAssemblerTest {
     public void getSelfLink_inputNull_returnBasePathWithoutId() {
         /* ARRANGE */
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.CatalogController.class
+        final var path = CatalogController.class
                 .getAnnotation(RequestMapping.class).value()[0];
 
         /* ACT */
@@ -76,7 +76,7 @@ public class CatalogViewAssemblerTest {
         /* ARRANGE */
         final var catalogId = UUID.randomUUID();
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.CatalogController.class
+        final var path = CatalogController.class
                 .getAnnotation(RequestMapping.class).value()[0];
 
         /* ACT */
@@ -147,13 +147,13 @@ public class CatalogViewAssemblerTest {
     private String getCatalogLink(final UUID catalogId) {
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .toUriString();
-        final var path = ResourceControllers.CatalogController.class
+        final var path = CatalogController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         return baseUrl + path + "/" + catalogId;
     }
 
     private String getCatalogOfferedResourcesLink(final UUID catalogId) {
-        return WebMvcLinkBuilder.linkTo(methodOn(RelationControllers.CatalogsToOfferedResources.class)
+        return WebMvcLinkBuilder.linkTo(methodOn(CatalogsToOfferedResourcesController.class)
                 .getResource(catalogId, null, null)).toString();
     }
 

@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.message.ids.validator;
 
 import io.dataspaceconnector.common.exception.MessageResponseException;
+import io.dataspaceconnector.controller.message.ids.validator.base.IdsResponseMessageValidator;
 import io.dataspaceconnector.service.message.builder.type.ArtifactRequestService;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.exception.InvalidResponseException;

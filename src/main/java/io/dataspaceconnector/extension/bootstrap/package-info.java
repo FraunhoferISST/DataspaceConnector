@@ -15,6 +15,6 @@
  */
 
 /**
- * Package for bootstrapping data on start.
+ * Package for bootstrapping data on application start.
  */
 package io.dataspaceconnector.extension.bootstrap;

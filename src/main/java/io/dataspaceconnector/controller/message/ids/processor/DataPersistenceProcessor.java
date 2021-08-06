@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.message.ids.processor;
 
 import io.dataspaceconnector.common.routing.ParameterUtils;
+import io.dataspaceconnector.controller.message.ids.processor.base.IdsResponseProcessor;
 import io.dataspaceconnector.service.EntityPersistenceService;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.util.ProcessorUtils;

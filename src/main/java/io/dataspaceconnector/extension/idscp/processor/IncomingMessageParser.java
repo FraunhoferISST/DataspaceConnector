@@ -20,6 +20,7 @@ import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsValidator;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import io.dataspaceconnector.common.routing.ParameterUtils;
+import io.dataspaceconnector.extension.idscp.processor.base.Idscp2MappingProcessor;
 import io.dataspaceconnector.service.message.handler.dto.Request;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

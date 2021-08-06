@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 /**
- * Contains the exception handlers used only by the controllers for handling the Dataspace
- * Connector's resources.
+ * Contains the exception handlers used only by resource controllers.
  */
 package io.dataspaceconnector.controller.resource.base.exceptionhandler;

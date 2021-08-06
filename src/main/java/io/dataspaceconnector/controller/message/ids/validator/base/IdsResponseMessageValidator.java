@@ -13,34 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.message.ids.processor;
+package io.dataspaceconnector.controller.message.ids.validator.base;
 
+import io.dataspaceconnector.service.message.handler.dto.Response;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 /**
- * Superclass for all processors that process a response received after sending a request.
+ * Superclass for all processors that validate a received response message.
  */
-public abstract class IdsResponseProcessor implements Processor {
+public abstract class IdsResponseMessageValidator implements Processor {
+
+    /**
+     * The error message used for throwing an Exception when the response is not valid.
+     */
+    protected static final String ERROR_MESSAGE = "Received an invalid response.";
 
     /**
      * Override of the {@link Processor}'s process method. Calls the implementing class's
-     * processInternal method with the {@link Exchange}.
+     * processInternal method with the {@link Exchange}'s body as parameter.
      *
      * @param exchange the exchange.
-     * @throws Exception if building the message or payload fails.
+     * @throws Exception if validation fails.
      */
     @Override
     public void process(final Exchange exchange) throws Exception {
-        processInternal(exchange);
+        processInternal(exchange.getIn().getBody(Response.class));
     }
 
     /**
-     * Processes the response. To be implemented by sub classes.
+     * Validates the response DTO. To be implemented by sub classes.
      *
-     * @param exchange the exchange.
-     * @throws Exception if processing the response fails.
+     * @param response the response DTO.
+     * @throws Exception if validation fails.
      */
-    protected abstract void processInternal(Exchange exchange) throws Exception;
+    protected abstract void processInternal(Response response) throws Exception;
 
 }

@@ -16,8 +16,9 @@
 package io.dataspaceconnector.controller.resource.view.route;
 
 import io.dataspaceconnector.config.BaseType;
-import io.dataspaceconnector.controller.resource.RelationControllers;
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.relation.RoutesToArtifactsController;
+import io.dataspaceconnector.controller.resource.relation.RoutesToStepsController;
+import io.dataspaceconnector.controller.resource.type.RouteController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
@@ -43,7 +44,7 @@ public class RouteViewAssembler
     @Override
     public final Link getSelfLink(final UUID entityId) {
         return ViewAssemblerHelper.getSelfLink(entityId,
-                ResourceControllers.RouteController.class);
+                RouteController.class);
     }
 
     @Override
@@ -54,15 +55,14 @@ public class RouteViewAssembler
         setEndpointType(view);
         view.add(getSelfLink(route.getId()));
 
-        final var steps = linkTo(methodOn(RelationControllers.RoutesToSteps.class)
+        final var steps = linkTo(methodOn(RoutesToStepsController.class)
                 .getResource(route.getId(), null, null))
                 .withRel(BaseType.ROUTES);
         view.add(steps);
 
-        final var artifacts =
-                linkTo(methodOn(RelationControllers.RoutesToArtifacts.class)
-                        .getResource(route.getId(), null, null))
-                        .withRel(BaseType.ARTIFACTS);
+        final var artifacts = linkTo(methodOn(RoutesToArtifactsController.class)
+                .getResource(route.getId(), null, null))
+                .withRel(BaseType.ARTIFACTS);
         view.add(artifacts);
 
         return view;
@@ -70,6 +70,7 @@ public class RouteViewAssembler
 
     /**
      * This method determines the endpoint type.
+     *
      * @param view The route view.
      */
     private void setEndpointType(final RouteView view) {

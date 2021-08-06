@@ -16,8 +16,10 @@
 package io.dataspaceconnector.controller.resource.view;
 
 import io.dataspaceconnector.common.exception.UnreachableLineException;
-import io.dataspaceconnector.controller.resource.RelationControllers;
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.relation.ContractsToOfferedResourcesController;
+import io.dataspaceconnector.controller.resource.relation.ContractsToRequestedResourcesController;
+import io.dataspaceconnector.controller.resource.relation.ContractsToRulesController;
+import io.dataspaceconnector.controller.resource.type.ContractController;
 import io.dataspaceconnector.controller.resource.view.contract.ContractViewAssembler;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.contract.Contract;
@@ -78,7 +80,7 @@ public class ContractViewAssemblerTest {
     public void getSelfLink_inputNull_returnBasePathWithoutId() {
         /* ARRANGE */
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.ContractController.class
+        final var path = ContractController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         final var rel = "self";
 
@@ -96,7 +98,7 @@ public class ContractViewAssemblerTest {
         /* ARRANGE */
         final var contractId = UUID.randomUUID();
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.ContractController.class
+        final var path = ContractController.class
                 .getAnnotation(RequestMapping.class).value()[0];
 
         /* ACT */
@@ -310,23 +312,23 @@ public class ContractViewAssemblerTest {
 
     private String getContractLink(final UUID contractId) {
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.ContractController.class
+        final var path = ContractController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         return baseUrl + path + "/" + contractId;
     }
 
     private String getContractRulesLink(final UUID contractId) {
-        return WebMvcLinkBuilder.linkTo(methodOn(RelationControllers.ContractsToRules.class)
+        return WebMvcLinkBuilder.linkTo(methodOn(ContractsToRulesController.class)
                 .getResource(contractId, null, null)).toString();
     }
 
     private String getContractOfferedResourcesLink(final UUID contractId) {
-        return linkTo(methodOn(RelationControllers.ContractsToOfferedResources.class)
+        return linkTo(methodOn(ContractsToOfferedResourcesController.class)
                 .getResource(contractId, null, null)).toString();
     }
 
     private String getContractRequestedResourcesLink(final UUID contractId) {
-        return linkTo(methodOn(RelationControllers.ContractsToRequestedResources.class)
+        return linkTo(methodOn(ContractsToRequestedResourcesController.class)
                 .getResource(contractId, null, null)).toString();
     }
 

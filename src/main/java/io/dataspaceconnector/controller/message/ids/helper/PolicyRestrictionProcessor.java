@@ -17,6 +17,7 @@ package io.dataspaceconnector.controller.message.ids.helper;
 
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
+import io.dataspaceconnector.controller.message.ids.helper.base.IdsHelperProcessor;
 import io.dataspaceconnector.service.message.handler.exception.InvalidResponseException;
 import lombok.extern.log4j.Log4j2;
 import org.apache.camel.Exchange;

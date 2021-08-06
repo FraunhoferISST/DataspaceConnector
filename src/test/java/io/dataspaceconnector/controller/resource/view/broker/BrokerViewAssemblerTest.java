@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view.broker;
 
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.type.BrokerController;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.broker.Broker;
@@ -38,7 +38,7 @@ public class BrokerViewAssemblerTest {
         final var shouldLookLike = getBroker();
         final var link = ViewAssemblerHelper.
                 getSelfLink(shouldLookLike.getId(),
-                        ResourceControllers.BrokerController.class);
+                        BrokerController.class);
 
         /* ACT */
         final var after = getBrokerView();

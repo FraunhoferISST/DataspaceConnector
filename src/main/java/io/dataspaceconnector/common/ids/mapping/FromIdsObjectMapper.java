@@ -64,7 +64,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * Maps ids resources to internal resources.
+ * Maps ids objects to internal entities.
  */
 public final class FromIdsObjectMapper {
 

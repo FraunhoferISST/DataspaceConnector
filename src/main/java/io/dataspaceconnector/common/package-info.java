@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Utility functions used across the io.dataspaceconnector package.
+ * Utility functions and services used across all packages.
  */
 package io.dataspaceconnector.common;

@@ -19,6 +19,7 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
 import io.dataspaceconnector.service.message.handler.dto.Request;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
+import io.dataspaceconnector.service.message.handler.transformer.base.IdsTransformer;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import org.springframework.stereotype.Component;

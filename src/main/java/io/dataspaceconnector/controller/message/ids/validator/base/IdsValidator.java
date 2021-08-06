@@ -13,35 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.extension.idscp.processor;
+package io.dataspaceconnector.controller.message.ids.validator.base;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 
 /**
- * Superclass for all processors that perform mapping between IDSCPv2 messages and the DTOs used
- * in the routes.
+ * Superclass for all processors that perform validation.
  */
-public abstract class Idscp2MappingProcessor implements Processor {
+public abstract class IdsValidator implements Processor {
 
     /**
      * Override of the {@link Processor}'s process method. Calls the implementing class's
-     * processInternal method with the {@link Exchange}'s in-message.
+     * processInternal method with the {@link Exchange}.
      *
      * @param exchange the exchange.
-     * @throws Exception if mapping fails.
+     * @throws Exception if validation fails.
      */
     @Override
     public void process(final Exchange exchange) throws Exception {
-        processInternal(exchange.getIn());
+        processInternal(exchange);
     }
 
     /**
-     * Performs the mapping operation. To be implemented by sub classes.
+     * Performs validation. To be implemented by sub classes.
      *
-     * @param in the in-message of the exchange.
+     * @param exchange the exchange.
      */
-    protected abstract void processInternal(Message in) throws Exception;
+    protected abstract void processInternal(Exchange exchange);
 
 }

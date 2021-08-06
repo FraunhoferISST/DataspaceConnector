@@ -15,8 +15,10 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
-import io.dataspaceconnector.controller.resource.RelationControllers;
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.type.RequestedResourceController;
+import io.dataspaceconnector.controller.resource.relation.RequestedResourcesToCatalogsController;
+import io.dataspaceconnector.controller.resource.relation.RequestedResourcesToContractsController;
+import io.dataspaceconnector.controller.resource.relation.RequestedResourcesToRepresentationsController;
 import io.dataspaceconnector.controller.resource.view.resource.RequestedResourceViewAssembler;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.resource.RequestedResource;
@@ -61,7 +63,7 @@ public class RequestedResourceViewAssemblerTest {
     public void getSelfLink_inputNull_returnBasePathWithoutId() {
         /* ARRANGE */
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.RequestedResourceController.class
+        final var path = RequestedResourceController.class
                 .getAnnotation(RequestMapping.class).value()[0];
 
         /* ACT */
@@ -78,7 +80,7 @@ public class RequestedResourceViewAssemblerTest {
         /* ARRANGE */
         final var resourceId = UUID.randomUUID();
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.RequestedResourceController.class
+        final var path = RequestedResourceController.class
                 .getAnnotation(RequestMapping.class).value()[0];
 
         /* ACT */
@@ -177,23 +179,23 @@ public class RequestedResourceViewAssemblerTest {
 
     private String getRequestedResourceLink(final UUID resourceId) {
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.RequestedResourceController.class
+        final var path = RequestedResourceController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         return baseUrl + path + "/" + resourceId;
     }
 
     private String getRequestedResourceContractsLink(final UUID resourceId) {
-        return WebMvcLinkBuilder.linkTo(methodOn(RelationControllers.RequestedResourcesToContracts.class)
+        return WebMvcLinkBuilder.linkTo(methodOn(RequestedResourcesToContractsController.class)
                 .getResource(resourceId, null, null)).toString();
     }
 
     private String getRequestedResourceRepresentationsLink(final UUID resourceId) {
-        return linkTo(methodOn(RelationControllers.RequestedResourcesToRepresentations.class)
+        return linkTo(methodOn(RequestedResourcesToRepresentationsController.class)
                 .getResource(resourceId, null, null)).toString();
     }
 
     private String getRequestedResourceCatalogsLink(final UUID resourceId) {
-        return linkTo(methodOn(RelationControllers.RequestedResourcesToCatalogs.class)
+        return linkTo(methodOn(RequestedResourcesToCatalogsController.class)
                 .getResource(resourceId, null, null)).toString();
     }
 }

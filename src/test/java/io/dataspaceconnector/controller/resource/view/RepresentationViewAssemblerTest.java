@@ -16,8 +16,10 @@
 package io.dataspaceconnector.controller.resource.view;
 
 import io.dataspaceconnector.common.exception.UnreachableLineException;
-import io.dataspaceconnector.controller.resource.RelationControllers;
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.type.RepresentationController;
+import io.dataspaceconnector.controller.resource.relation.RepresentationsToArtifactsController;
+import io.dataspaceconnector.controller.resource.relation.RepresentationsToOfferedResourcesController;
+import io.dataspaceconnector.controller.resource.relation.RepresentationsToRequestsController;
 import io.dataspaceconnector.controller.resource.view.representation.RepresentationViewAssembler;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.representation.Representation;
@@ -78,7 +80,7 @@ public class RepresentationViewAssemblerTest {
     public void getSelfLink_inputNull_returnBasePathWithoutId() {
         /* ARRANGE */
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.RepresentationController.class
+        final var path = RepresentationController.class
                 .getAnnotation(RequestMapping.class).value()[0];
 
         /* ACT */
@@ -95,7 +97,7 @@ public class RepresentationViewAssemblerTest {
         /* ARRANGE */
         final var representationId = UUID.randomUUID();
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.RepresentationController.class
+        final var path = RepresentationController.class
                 .getAnnotation(RequestMapping.class).value()[0];
 
         /* ACT */
@@ -319,23 +321,23 @@ public class RepresentationViewAssemblerTest {
 
     private String getRepresentationLink(final UUID representationId) {
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.RepresentationController.class
+        final var path = RepresentationController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         return baseUrl + path + "/" + representationId;
     }
 
     private String getRepresentationArtifactsLink(final UUID representationId) {
-        return WebMvcLinkBuilder.linkTo(methodOn(RelationControllers.RepresentationsToArtifacts.class)
+        return WebMvcLinkBuilder.linkTo(methodOn(RepresentationsToArtifactsController.class)
                 .getResource(representationId, null, null)).toString();
     }
 
     private String getRepresentationOfferedResourcesLink(final UUID representationId) {
-        return linkTo(methodOn(RelationControllers.RepresentationsToOfferedResources.class)
+        return linkTo(methodOn(RepresentationsToOfferedResourcesController.class)
                 .getResource(representationId, null, null)).toString();
     }
 
     private String getRepresentationRequestedResourcesLink(final UUID representationId) {
-        return linkTo(methodOn(RelationControllers.RepresentationsToRequestedResources.class)
+        return linkTo(methodOn(RepresentationsToRequestsController.class)
                 .getResource(representationId, null, null)).toString();
     }
 

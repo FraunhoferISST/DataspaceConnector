@@ -17,6 +17,7 @@ package io.dataspaceconnector.controller.resource;
 
 import de.fraunhofer.ids.messaging.protocol.UnexpectedResponseException;
 import io.dataspaceconnector.common.net.QueryInput;
+import io.dataspaceconnector.controller.resource.type.ArtifactController;
 import io.dataspaceconnector.controller.resource.view.artifact.ArtifactViewAssembler;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
@@ -45,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 
-@SpringBootTest(classes = { ResourceControllers.ArtifactController.class })
+@SpringBootTest(classes = { ArtifactController.class })
 class ArtifactControllerTest {
 
     @MockBean
@@ -82,7 +83,7 @@ class ArtifactControllerTest {
     private ArtifactService service;
 
     @Autowired
-    ResourceControllers.ArtifactController controller;
+    ArtifactController controller;
 
     @Test
     public void putData_newData_willPlace() throws IOException {

@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view.endpoint;
 
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.type.EndpointController;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpointDesc;
@@ -37,7 +37,7 @@ public class GenericEndpointViewAssemblerTest {
         /* ARRANGE */
         final var shouldLookLike = getGenericEndpoint();
         final var link = ViewAssemblerHelper.
-                getSelfLink(shouldLookLike.getId(), ResourceControllers.EndpointController.class);
+                getSelfLink(shouldLookLike.getId(), EndpointController.class);
 
         /* ACT */
         final var after = getGenericEndpointView();

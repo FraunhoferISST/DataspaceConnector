@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.type.SubscriptionController;
 import io.dataspaceconnector.controller.resource.view.subscription.SubscriptionViewAssembler;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.subscription.Subscription;
@@ -48,7 +48,7 @@ public class SubscriptionViewAssemblerTest2 {
         /* ARRANGE */
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .toUriString();
-        final var path = ResourceControllers.SubscriptionController.class
+        final var path = SubscriptionController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         final var rel = "self";
 
@@ -67,7 +67,7 @@ public class SubscriptionViewAssemblerTest2 {
         final var subscriberId = UUID.randomUUID();
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .toUriString();
-        final var path = ResourceControllers.SubscriptionController.class
+        final var path = SubscriptionController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         final var rel = "self";
 
@@ -130,7 +130,7 @@ public class SubscriptionViewAssemblerTest2 {
     private String getSubscriberLink(final UUID subscriberId) {
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .toUriString();
-        final var path = ResourceControllers.SubscriptionController.class
+        final var path = SubscriptionController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         return baseUrl + path + "/" + subscriberId;
     }

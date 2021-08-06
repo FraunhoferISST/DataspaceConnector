@@ -21,6 +21,7 @@ import io.dataspaceconnector.service.message.handler.dto.Request;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
 import io.dataspaceconnector.service.message.handler.dto.payload.ContractRuleListContainer;
 import io.dataspaceconnector.service.message.handler.dto.payload.ContractTargetRuleMapContainer;
+import io.dataspaceconnector.service.message.handler.transformer.base.IdsTransformer;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import org.springframework.stereotype.Component;

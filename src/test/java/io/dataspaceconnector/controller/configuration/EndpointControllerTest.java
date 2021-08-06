@@ -16,7 +16,7 @@
 package io.dataspaceconnector.controller.configuration;
 
 import io.dataspaceconnector.common.util.Utils;
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.type.EndpointController;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
@@ -47,7 +47,7 @@ class EndpointControllerTest {
     private EndpointServiceProxy service;
 
     @Autowired
-    private ResourceControllers.EndpointController controller;
+    private EndpointController controller;
 
     @Test
     public void create_validInput_returnNewEndpoint() {

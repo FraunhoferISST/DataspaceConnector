@@ -107,16 +107,16 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
      * @param page    The page index.
      * @param size    The page size.
      * @return The children of the resource.
-     * @throws IllegalArgumentException if the ownerId is
-     * null.
+     * @throws IllegalArgumentException                                         if the ownerId is
+     *                                                                          null.
      * @throws io.dataspaceconnector.common.exception.ResourceNotFoundException if the ownerId is
      *                                                                          not known.
      */
     @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET)
     @Operation(summary = "Get all children of a base resource with pagination")
-    @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.OK,
-            description = ResponseDescription.OK),
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
                     description = ResponseDescription.UNAUTHORIZED)})
     public PagedModel<V> getResource(
@@ -145,8 +145,8 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
      */
     @PostMapping
     @Operation(summary = "Add a list of children to a base resource")
-    @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.OK,
-            description = ResponseDescription.OK),
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
                     description = ResponseDescription.UNAUTHORIZED)})
     public PagedModel<V> addResources(
@@ -170,8 +170,9 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
      */
     @PutMapping
     @Operation(summary = "Replace the children of a base resource")
-    @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.NO_CONTENT,
-            description = ResponseDescription.NO_CONTENT),
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
+                    description = ResponseDescription.NO_CONTENT),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
                     description = ResponseDescription.UNAUTHORIZED)})
     public HttpEntity<Void> replaceResources(@Valid @PathVariable(name = "id") final UUID ownerId,
@@ -189,8 +190,9 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
      */
     @DeleteMapping
     @Operation(summary = "Remove a list of children from a base resource")
-    @ApiResponses(value = {@ApiResponse(responseCode = ResponseCode.NO_CONTENT,
-            description = ResponseDescription.NO_CONTENT),
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
+                    description = ResponseDescription.NO_CONTENT),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
                     description = ResponseDescription.UNAUTHORIZED)})
     public HttpEntity<Void> removeResources(@Valid @PathVariable(name = "id") final UUID ownerId,

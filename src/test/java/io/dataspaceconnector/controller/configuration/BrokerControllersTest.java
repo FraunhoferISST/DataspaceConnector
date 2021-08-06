@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.configuration;
 
-import io.dataspaceconnector.controller.resource.RelationControllers;
+import io.dataspaceconnector.controller.resource.relation.BrokersToOfferedResourcesController;
 import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class BrokerControllersTest {
 
     @Autowired
-    private RelationControllers.BrokersToOfferedResources brokersToOfferedResources;
+    private BrokersToOfferedResourcesController brokersToOfferedResources;
 
     @Test
     public void addResources_validDesc_returnMethodNotAllowed() {

@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view.subscription;
 
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.type.SubscriptionController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.subscription.Subscription;
@@ -59,7 +59,7 @@ public class SubscriptionViewAssembler
     @Override
     public Link getSelfLink(final UUID entityId) {
         return ViewAssemblerHelper.getSelfLink(entityId,
-                ResourceControllers.SubscriptionController.class);
+                SubscriptionController.class);
     }
 
 }

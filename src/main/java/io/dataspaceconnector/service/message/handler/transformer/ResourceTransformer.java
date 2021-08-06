@@ -24,6 +24,7 @@ import io.dataspaceconnector.service.message.handler.dto.Request;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
 import io.dataspaceconnector.service.message.handler.exception.DeserializationException;
 import io.dataspaceconnector.service.message.handler.exception.MissingPayloadException;
+import io.dataspaceconnector.service.message.handler.transformer.base.IdsTransformer;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import lombok.NonNull;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Contains classes related to handling errors in Camel routes deployed by the Configuration
- * Manager, so that information about the errors can be propagated to it.
+ * Contains classes related to handling errors in Camel routes, so that information about the errors
+ * can be propagated.
  */
 package io.dataspaceconnector.controller.routing.error;
