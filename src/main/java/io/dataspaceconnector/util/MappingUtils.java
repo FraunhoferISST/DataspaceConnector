@@ -58,9 +58,11 @@ import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
 import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -123,10 +125,21 @@ public final class MappingUtils {
         final var endpoints = new ArrayList<AppEndpointTemplate>();
 
         //set appdesc fields
-        appDesc.setDescription("This app is created from an IDS data app.");
-        appDesc.setTitle("IDS APP");
+
         appDesc.setRemoteAddress(remoteUrl);
-        setResourceEndpoint(resource, appDesc);
+        if(metadata != null){
+            appDesc.setDescription(metadata.getString("description"));
+            appDesc.setTitle(metadata.getString("title"));
+            appDesc.setAppStorageConfiguration(metadata.getString("volumes"));
+            appDesc.setAppEnvironmentVariables(metadata.getString("env"));
+            appDesc.setValue(metadata.getString("image"));
+            try {
+                appDesc.setDataAppDistributionService(new URI(metadata.getString("registry")));
+            } catch (URISyntaxException | JSONException e) {
+                //TODO cannot get some field from json (or uri is not valid)
+            }
+            setResourceEndpoint(resource, appDesc);
+        }
         if (resource.getKeyword() != null) {
             appDesc.setKeywords(resource.getKeyword()
                     .stream()
@@ -139,12 +152,12 @@ public final class MappingUtils {
 
         //set representation fields
         if (resource.getRepresentation() != null) {
-            var appRepresenmtations = resource.getRepresentation().stream()
+            var appRepresentations = resource.getRepresentation().stream()
                     .filter(x -> x instanceof AppRepresentation)
                     .map(x -> (AppRepresentation) x)
                     .collect(Collectors.toList());
-            if (!appRepresenmtations.isEmpty()) {
-                final var representation = appRepresenmtations.get(0);
+            if (!appRepresentations.isEmpty()) {
+                final var representation = appRepresentations.get(0);
                 appDesc.setAdditional(buildAdditionalForRepresentation(representation));
                 appDesc.setLanguage(String.valueOf(representation.getLanguage()));
                 appDesc.setDataAppDistributionService(
