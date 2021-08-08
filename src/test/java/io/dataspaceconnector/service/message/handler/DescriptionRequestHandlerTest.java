@@ -278,6 +278,36 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         assertEquals(RejectionReason.NOT_FOUND, result.getRejectionMessage().getRejectionReason());
     }
 
+     @SneakyThrows
+     @Test
+     public void handleMessage_validResourceDescriptionMsgEmptyEntity_returnNotFoundRejection() {
+         /* ARRANGE */
+         final var calendar = new GregorianCalendar();
+         calendar.setTime(new Date());
+         final var xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
+
+         final var message =
+                 new DescriptionRequestMessageBuilder()
+                         ._senderAgent_(URI.create("https://localhost:8080"))
+                         ._issuerConnector_(URI.create("https://localhost:8080"))
+                         ._securityToken_(new DynamicAttributeTokenBuilder()
+                                 ._tokenFormat_(TokenFormat.OTHER)
+                                 ._tokenValue_("")
+                                 .build())
+                         ._modelVersion_("4.0.0")
+                         ._requestedElement_(URI.create("https://localhost/8080/api/artifacts/"))
+                         ._issued_(xmlCalendar)
+                         .build();
+
+         Mockito.doReturn(Optional.empty()).when(resolver).getEntityById(Mockito.any());
+
+         /* ACT */
+         final var result = (ErrorResponse) handler.handleMessage((DescriptionRequestMessageImpl) message, null);
+
+         /* ASSERT */
+         assertEquals(RejectionReason.NOT_FOUND, result.getRejectionMessage().getRejectionReason());
+     }
+
     @SneakyThrows
     private MessageResponse constructSelfDescription(final URI issuer, final URI messageId) {
         final var connector = connectorService.getConnectorWithOfferedResources();

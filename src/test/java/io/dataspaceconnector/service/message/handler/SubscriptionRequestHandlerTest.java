@@ -126,7 +126,7 @@ class SubscriptionRequestHandlerTest {
 
     @SneakyThrows
     @Test
-    public void handleMessage_validInput_returnBadParametersResponse() {
+    public void handleMessage_validInput_returnSuccessfulSubscription() {
         /* ARRANGE */
         final var calendar = new GregorianCalendar();
         calendar.setTime(new Date());
@@ -148,7 +148,38 @@ class SubscriptionRequestHandlerTest {
         Mockito.doReturn(getSubscription()).when(subscriptionService).create(getDesc());
 
         /* ACT */
-        final var result = (BodyResponse) handler.handleMessage((RequestMessageImpl) message, payload);
+        final var result = (BodyResponse<?>) handler.handleMessage((RequestMessageImpl) message, payload);
+
+        /* ASSERT */
+        assertNotNull(result);
+        assertEquals(MessageProcessedNotificationMessageImpl.class, result.getHeader().getClass());
+    }
+
+    @SneakyThrows
+    @Test
+    public void handleMessage_validInput_returnSuccessfulUnsubscription() {
+        /* ARRANGE */
+        final var calendar = new GregorianCalendar();
+        calendar.setTime(new Date());
+        final var xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
+        final var message = new RequestMessageBuilder()
+                ._senderAgent_(URI.create("https://localhost:8080"))
+                ._issuerConnector_(URI.create("https://localhost:8080"))
+                ._securityToken_(new DynamicAttributeTokenBuilder()._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build())
+                ._modelVersion_("4.0.0")
+                ._issued_(xmlCalendar)
+                .build();
+        message.setProperty("https://w3id.org/idsa/core/target", "1234:https://target/");
+
+        final var objectMapper = new ObjectMapper();
+        final var string = objectMapper.writeValueAsString(null);
+        final var payload = new MessagePayloadInputstream(
+                new ByteArrayInputStream(string.getBytes()), new ObjectMapper());
+
+        Mockito.doReturn(getSubscription()).when(subscriptionService).create(getDesc());
+
+        /* ACT */
+        final var result = (BodyResponse<?>) handler.handleMessage((RequestMessageImpl) message, payload);
 
         /* ASSERT */
         assertNotNull(result);

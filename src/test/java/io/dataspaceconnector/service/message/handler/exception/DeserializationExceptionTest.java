@@ -15,24 +15,21 @@
  */
 package io.dataspaceconnector.service.message.handler.exception;
 
-/**
- * Thrown to indicate that deserialization failed.
- */
-public class DeserializationException extends RuntimeException {
+import org.junit.jupiter.api.Test;
 
-    /**
-     * Default serial version uid.
-     */
-    private static final long serialVersionUID = 1L;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-    /**
-     * Constructs a DeserializationException with the specified detail message and cause.
-     *
-     * @param msg the detail message.
-     * @param cause the cause.
-     */
-    public DeserializationException(final String msg, final Throwable cause) {
-        super(msg, cause);
+public class DeserializationExceptionTest {
+
+    @Test
+    public void constructor_someMsg_holdsMsg() {
+        /* ARRANGE */
+        final var msg = "Some msg";
+
+        /* ACT */
+        final var exception = new DeserializationException(msg, new Throwable());
+
+        /* ASSERT */
+        assertEquals(msg, exception.getMessage());
     }
-
 }

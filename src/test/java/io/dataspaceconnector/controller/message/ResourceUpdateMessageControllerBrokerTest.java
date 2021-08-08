@@ -63,7 +63,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class ResourceUpdateMessageControllerTest {
+public class ResourceUpdateMessageControllerBrokerTest {
 
     @Mock
     private Exchange exchange;
