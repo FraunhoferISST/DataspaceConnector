@@ -17,15 +17,18 @@ package io.dataspaceconnector.service.resource.type;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigProducer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
 import io.dataspaceconnector.repository.ConfigurationRepository;
-import io.dataspaceconnector.service.resource.type.ConfigurationService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 class ConfigurationServiceTest {
@@ -36,7 +39,7 @@ class ConfigurationServiceTest {
     @SpyBean
     private ConfigProducer configProducer;
 
-    @Autowired
+    @SpyBean
     private ConfigurationService service;
 
     @Test
@@ -50,5 +53,23 @@ class ConfigurationServiceTest {
 
         /* ASSERT */
         assertEquals(config.getId(), service.getActiveConfig().getId());
+    }
+
+    @Test
+    public void update_validInput_returnConfiguration() {
+        /* ARRANGE */
+        final String title = "Title";
+        final var config = new Configuration();
+        final var desc = new ConfigurationDesc();
+        desc.setTitle(title);
+        final var entityId = UUID.randomUUID();
+
+        Mockito.doReturn(config).when(service).update(entityId, desc);
+
+        /* ACT */
+        final var result = service.update(entityId, desc);
+
+        /* ASSERT */
+        assertNotNull(result);
     }
 }
