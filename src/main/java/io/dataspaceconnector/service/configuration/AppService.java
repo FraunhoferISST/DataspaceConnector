@@ -17,35 +17,103 @@ package io.dataspaceconnector.service.configuration;
 
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
+import io.dataspaceconnector.model.app.AppImpl;
 import io.dataspaceconnector.model.appstore.AppStore;
+import io.dataspaceconnector.model.artifact.LocalData;
+import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.resource.BaseEntityService;
+import io.dataspaceconnector.util.exception.NotImplemented;
+import lombok.NonNull;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
 
 /**
  * Service class for apps.
  */
+@Log4j2
 @Service
 public class AppService extends BaseEntityService<App, AppDesc> {
 
     /**
      * The AppStoreService, to get related appstores.
      */
+    private final @NonNull AppStoreService appStoreSvc;
+
+    /**
+     * Repository for storing data.
+     **/
+    private final @NonNull DataRepository dataRepository;
+
+    /**
+     * Constructor for the app service.
+     * @param appStoreService The app store service.
+     * @param dataRepo The data repository.
+     */
     @Autowired
-    private AppStoreService appStoreService;
+    public AppService(final @NonNull AppStoreService appStoreService,
+                      final @NonNull DataRepository dataRepo) {
+        super();
+        this.appStoreSvc = appStoreService;
+        this.dataRepository = dataRepo;
+    }
 
     /**
      * Get AppStores which are offering the given App.
      *
-     * @param appId id of the app to find related appstore for.
+     * @param appId    id of the app to find related appstore for.
      * @param pageable pageable for response as view.
      * @return Page containing AppStores which are offering an app with AppID.
      */
     public Page<AppStore> getStoresByContainsApp(final UUID appId, final Pageable pageable) {
-        return appStoreService.getStoresByContainsApp(appId, pageable);
+        return appStoreSvc.getStoresByContainsApp(appId, pageable);
+    }
+
+    /**
+     * Update an artifacts underlying data.
+     *
+     * @param appArtifactId The artifact which should be updated.
+     * @param data       The new data.
+     * @return The data stored in the artifact.
+     * @throws IOException if the data could not be stored.
+     */
+    @NonNull
+    public InputStream setData(final UUID appArtifactId, final InputStream data)
+            throws IOException {
+        final var appArtifact = get(appArtifactId);
+        final var currentData = ((AppImpl) appArtifact).getData();
+        if (currentData instanceof LocalData) {
+            return setLocalData(appArtifactId, data, (LocalData) currentData);
+        } else {
+            throw new NotImplemented();
+        }
+    }
+
+    @NonNull
+    private ByteArrayInputStream setLocalData(final UUID appArtifactId,
+                                              final InputStream data,
+                                              final LocalData localData)
+            throws IOException {
+        try {
+            // Update the internal database and return the new data.
+            final var bytes = data.readAllBytes();
+            data.close();
+            dataRepository.setLocalData(localData.getId(), bytes);
+            return new ByteArrayInputStream(bytes);
+        } catch (IOException e) {
+            if (log.isErrorEnabled()) {
+                log.error("Failed to store data. [artifactId=({}), exception=({})]",
+                        appArtifactId, e.getMessage(), e);
+            }
+
+            throw new IOException("Failed to store data.", e);
+        }
     }
 }

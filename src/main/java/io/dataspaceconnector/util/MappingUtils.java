@@ -58,11 +58,8 @@ import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
 import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -111,35 +108,18 @@ public final class MappingUtils {
     /**
      * Map ids app resource to resource.
      * @param resource  The app resource.
-     * @param metadata the app artifacts metadata.
      * @param remoteUrl The recipient id.
      * @return app template.
      */
     public static AppTemplate fromIdsApp(final AppResource resource,
-                                         final JSONObject metadata,
                                          final URI remoteUrl) {
-        //TODO use metadata
-
         Utils.requireNonNull(resource, ErrorMessage.ENTITY_NULL);
         final var appDesc = new AppDesc();
         final var endpoints = new ArrayList<AppEndpointTemplate>();
 
-        //set appdesc fields
+        //Set app description fields
 
         appDesc.setRemoteAddress(remoteUrl);
-        if (metadata != null) {
-            appDesc.setDescription(metadata.getString("description"));
-            appDesc.setTitle(metadata.getString("title"));
-            appDesc.setAppStorageConfiguration(metadata.getString("volumes"));
-            appDesc.setAppEnvironmentVariables(metadata.getString("env"));
-            appDesc.setValue(metadata.getString("image"));
-            try {
-                appDesc.setDataAppDistributionService(new URI(metadata.getString("registry")));
-            } catch (URISyntaxException | JSONException e) {
-                //TODO cannot get some field from json (or uri is not valid)
-            }
-            setResourceEndpoint(resource, appDesc);
-        }
         if (resource.getKeyword() != null) {
             appDesc.setKeywords(resource.getKeyword()
                     .stream()

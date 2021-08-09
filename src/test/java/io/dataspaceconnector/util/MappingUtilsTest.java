@@ -224,7 +224,7 @@ public class MappingUtilsTest {
         final var remoteAddress = URI.create("https://someURL");
 
         /* ACT */
-        final var result = MappingUtils.fromIdsApp(app, null, remoteAddress);
+        final var result = MappingUtils.fromIdsApp(app, remoteAddress);
         //TODO check more filled fields
         assertEquals("IDS APP", result.getDesc().getTitle());
     }
@@ -232,7 +232,7 @@ public class MappingUtilsTest {
     @Test
     public void fromIdsAppEndpoint_inputNull_throwIllegalArgumentException() {
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> MappingUtils.fromIdsApp(null, null, null));
+        assertThrows(IllegalArgumentException.class, () -> MappingUtils.fromIdsApp(null, null));
     }
 
     @Test

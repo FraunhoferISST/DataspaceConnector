@@ -17,8 +17,8 @@ package io.dataspaceconnector.service;
 
 import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
-import io.dataspaceconnector.service.message.type.DescriptionRequestService;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
+import io.dataspaceconnector.service.message.type.DescriptionRequestService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -47,7 +47,6 @@ public class MetadataDownloader {
 
     /**
      * Download metadata from another connector.
-     *
      * @param recipient The recipient connector.
      * @param resources The resources.
      * @param artifacts The artifacts.
@@ -69,15 +68,18 @@ public class MetadataDownloader {
     }
 
     /**
-     * Get AppResource from AppStore.
-     *
-     * @param recipient The recipient connector.
+     * Get app resource  from app store.
+     * @param recipient   The recipient connector.
      * @param appResource The app resource.
+     * @return response of description request.
      * @throws UnexpectedResponseException if the response type is not as expected.
-     * @return the appstore response.
      */
     public Map<String, String> downloadAppResource(final URI recipient,
-                                    final URI appResource) throws UnexpectedResponseException {
-        return descReqSvc.sendMessage(recipient, appResource);
+                                                   final URI appResource)
+            throws UnexpectedResponseException {
+        Map<String, String> response;
+        response = descReqSvc.sendMessage(recipient, appResource);
+        persistenceSvc.saveAppMetadata(response, appResource);
+        return response;
     }
 }

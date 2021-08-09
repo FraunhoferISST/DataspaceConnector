@@ -21,11 +21,9 @@ import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.message.type.ArtifactRequestService;
 import io.dataspaceconnector.service.resource.AgreementService;
-import io.dataspaceconnector.util.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.PersistenceException;
@@ -59,7 +57,6 @@ public class ArtifactDataDownloader {
 
     /**
      * Download artifact data.
-     *
      * @param recipient   The provider connector.
      * @param artifacts   The artifact whose data should be downloaded.
      * @param agreementId The agreement allowing the transfer.
@@ -92,17 +89,25 @@ public class ArtifactDataDownloader {
 
     /**
      * Request the App Artifact and update the app.
-     *
-     * @param recipient appstore where artifact shall be downlaoded.
-     * @param artifact app artifact id.
-     * @throws UnexpectedResponseException when response is not an ArtifactResponseMessage.
-     * @return JSONObject containing app artifacts metadata.
+     * @param recipient The app store where the artifact shall be downloaded.
+     * @param app The app artifact id.
+     * @throws UnexpectedResponseException When response is not an ArtifactResponseMessage.
      */
-    public JSONObject downloadAppArtifact(final URI recipient, final URI artifact)
+    public void downloadAppArtifact(final URI recipient, final URI app)
             throws UnexpectedResponseException {
-        // ToDO: Send artifact request message
-        var response = artifactReqSvc.sendMessage(recipient, artifact, null);
-        var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
-        return new JSONObject(payload);
+        var response = artifactReqSvc.sendMessage(recipient, app, null);
+
+        // Read and process the response message.
+        try {
+            persistenceSvc.saveAppData(response, app);
+        } catch (IOException | ResourceNotFoundException
+                | MessageResponseException e) {
+            // Ignore that the data saving failed. Another try can take place later.
+            if (log.isWarnEnabled()) {
+                log.warn("Could not save data for app artifact. [app artifact=({}), "
+                        + "exception=({})]", app, e.getMessage());
+            }
+            throw new PersistenceException(e);
+        }
     }
 }

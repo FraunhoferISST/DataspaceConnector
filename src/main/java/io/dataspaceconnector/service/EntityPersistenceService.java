@@ -23,6 +23,7 @@ import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.agreement.AgreementDesc;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
+import io.dataspaceconnector.service.configuration.AppService;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.AgreementService;
 import io.dataspaceconnector.service.resource.ArtifactService;
@@ -33,11 +34,11 @@ import io.dataspaceconnector.service.util.EndpointUtils;
 import io.dataspaceconnector.util.IdsUtils;
 import io.dataspaceconnector.util.MessageUtils;
 import io.dataspaceconnector.util.TemplateUtils;
+import io.dataspaceconnector.util.UUIDUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jose4j.base64url.Base64;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -74,6 +75,11 @@ public class EntityPersistenceService {
     private final @NonNull AgreementService agreementService;
 
     /**
+     * Service for updating app data.
+     */
+    private final @NonNull AppService appService;
+
+    /**
      * Service for updating artifact data.
      */
     private final @NonNull ArtifactService artifactService;
@@ -100,7 +106,6 @@ public class EntityPersistenceService {
 
     /**
      * Save contract agreement to database (consumer side).
-     *
      * @param agreement The ids contract agreement.
      * @return The id of the stored contract agreement.
      * @throws PersistenceException If the contract agreement could not be saved.
@@ -127,7 +132,6 @@ public class EntityPersistenceService {
     /**
      * Builds a contract agreement from a contract request and saves this agreement to the database
      * with relation to the targeted artifacts (provider side).
-     *
      * @param request    The ids contract request.
      * @param targetList List of artifacts.
      * @param issuer     The issuer connector id.
@@ -210,7 +214,6 @@ public class EntityPersistenceService {
 
     /**
      * Validate response and save resource to database.
-     *
      * @param response     The response message map.
      * @param artifactList List of requested artifacts.
      * @param download     Indicated whether the artifact is going to be downloaded automatically.
@@ -244,20 +247,17 @@ public class EntityPersistenceService {
 
     /**
      * Validate response and save app to database.
-     *
      * @param response  The response message map.
-     * @param metadata  App Artifacts metadata.
      * @param remoteUrl The provider's url for receiving app request messages.
      */
-    public void saveAppResource(final Map<String, String> response,
-                                final JSONObject metadata,
+    public void saveAppMetadata(final Map<String, String> response,
                                 final URI remoteUrl) {
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
         final var appResource = deserializationService.getAppResource(payload);
 
         try {
             final var appResourceTemplate =
-                    TemplateUtils.getAppResourceTemplate(appResource, metadata, remoteUrl);
+                    TemplateUtils.getAppResourceTemplate(appResource, remoteUrl);
 
             // Save all entities.
             tempBuilder.build(appResourceTemplate);
@@ -271,7 +271,6 @@ public class EntityPersistenceService {
 
     /**
      * Save data and return the uri of the respective artifact.
-     *
      * @param response The response message.
      * @param remoteId The artifact id.
      * @throws IllegalArgumentException  if the message response could not be processed.
@@ -292,6 +291,27 @@ public class EntityPersistenceService {
                 new ByteArrayInputStream(Base64.decode(base64Data)));
         if (log.isDebugEnabled()) {
             log.debug("Updated data from artifact. [target=({})]", artifactId);
+        }
+    }
+
+    /**
+     * Save app data and return the uri of the respective artifact.
+     * @param response The response message.
+     * @param appId    The id of the app.
+     * @throws IllegalArgumentException  if the message response could not be processed.
+     * @throws ResourceNotFoundException if the artifact could not be found.
+     * @throws IOException               if the data could not be stored.
+     */
+    public void saveAppData(final Map<String, String> response, final URI appId)
+            throws ResourceNotFoundException, IllegalArgumentException, IOException {
+        final var base64Data = MessageUtils.extractPayloadFromMultipartMessage(response);
+
+        final var appUUID = UUIDUtils.uuidFromUri(appId);
+        final var app = appService.get(appUUID);
+        appService.setData(app.getId(),
+                new ByteArrayInputStream(Base64.decode(base64Data)));
+        if (log.isDebugEnabled()) {
+            log.debug("Updated data from artifact. [target=({})]", appUUID);
         }
     }
 }

@@ -38,7 +38,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -99,23 +98,16 @@ public class AppRequestMessageController {
         try {
             // Send description request message and save the app
             var response = downloadApp(recipient, app);
-            var appresource = parseAppResource(response);
-            var instanceId = getInstanceID(appresource);
+            var appResource = parseAppResource(response);
+            var instanceId = getInstanceID(appResource);
+
             // Send artifact request message
             if (instanceId != null) {
-                var artifactJson = artifactDataDownloader
-                        .downloadAppArtifact(recipient, instanceId);
-                if (artifactJson != null) {
-                    persistenceSvc.saveAppResource(response, artifactJson, recipient);
-                } else {
-                    //TODO useful error response
-                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-                }
+                 artifactDataDownloader.downloadAppArtifact(recipient, instanceId);
+                 return ResponseEntity.ok("Successfully downloaded the app artifact");
             } else {
-                //TODO useful error response
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body("Could not find app artifact");
             }
-            return new ResponseEntity<>(HttpStatus.OK);
 
         } catch (MessageException exception) {
             // If the message could not be built.
