@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpointDesc;
 import io.dataspaceconnector.model.endpoint.Endpoint;
@@ -127,6 +128,22 @@ class EndpointServiceProxyTest {
         /* ASSERT */
         assertNotNull(result);
         assertTrue(result instanceof ConnectorEndpoint);
+    }
+
+    @Test
+    public void get_genericEndpoint_returnGenericEndpoint() {
+        /* ARRANGE */
+        final var uuid = UUID.randomUUID();
+
+        Mockito.doThrow(new ResourceNotFoundException("")).when(connector).get(uuid);
+        Mockito.doReturn(new GenericEndpoint()).when(generic).get(uuid);
+
+        /* ACT */
+        final var result = serviceProxy.get(uuid);
+
+        /* ASSERT */
+        assertNotNull(result);
+        assertTrue(result instanceof GenericEndpoint);
     }
 
     @Test
