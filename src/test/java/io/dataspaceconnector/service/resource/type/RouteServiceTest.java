@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteFactory;
@@ -76,7 +77,7 @@ class RouteServiceTest {
     }
 
     @Test
-    public void delete_validInput_saveStartEndpoint() {
+    public void delete_validInput_deleteRoute() {
         /* ARRANGE */
         final var id = UUID.randomUUID();
         Mockito.doReturn(new Route()).when(service).get(Mockito.eq(id));
@@ -87,4 +88,61 @@ class RouteServiceTest {
         assertDoesNotThrow(() -> service.delete(id));
     }
 
+    @Test
+    public void setStartEndpoint_validInput_setStartEndpoint() {
+        /* ARRANGE */
+        final var endpointId = UUID.randomUUID();
+        final var routeId = UUID.randomUUID();
+        final var endpoint = new ConnectorEndpoint();
+        final var route = new Route();
+
+        Mockito.doReturn(endpoint).when(endpointService).get(Mockito.eq(endpointId));
+        Mockito.doReturn(route).when(service).get(routeId);
+        Mockito.doReturn(new Route()).when(factory).setStartEndpoint(route, endpoint);
+
+        /* ACT & ASSERT */
+        assertDoesNotThrow(() -> service.setStartEndpoint(routeId, endpointId));
+    }
+
+    @Test
+    public void removeStartEndpoint_validInput_removeStartEndpoint() {
+        /* ARRANGE */
+        final var routeId = UUID.randomUUID();
+        final var route = new Route();
+
+        Mockito.doReturn(route).when(service).get(routeId);
+        Mockito.doReturn(new Route()).when(factory).deleteStartEndpoint(route);
+
+        /* ACT & ASSERT */
+        assertDoesNotThrow(() -> service.removeStartEndpoint(routeId));
+    }
+
+    @Test
+    public void setLastEndpoint_validInput_setLastEndpoint() {
+        /* ARRANGE */
+        final var endpointId = UUID.randomUUID();
+        final var routeId = UUID.randomUUID();
+        final var endpoint = new ConnectorEndpoint();
+        final var route = new Route();
+
+        Mockito.doReturn(endpoint).when(endpointService).get(Mockito.eq(endpointId));
+        Mockito.doReturn(route).when(service).get(routeId);
+        Mockito.doReturn(new Route()).when(factory).setLastEndpoint(route, endpoint);
+
+        /* ACT & ASSERT */
+        assertDoesNotThrow(() -> service.setLastEndpoint(routeId, endpointId));
+    }
+
+    @Test
+    public void removeLastEndpoint_validInput_removeLastEndpoint() {
+        /* ARRANGE */
+        final var routeId = UUID.randomUUID();
+        final var route = new Route();
+
+        Mockito.doReturn(route).when(service).get(routeId);
+        Mockito.doReturn(new Route()).when(factory).deleteLastEndpoint(route);
+
+        /* ACT & ASSERT */
+        assertDoesNotThrow(() -> service.removeLastEndpoint(routeId));
+    }
 }
