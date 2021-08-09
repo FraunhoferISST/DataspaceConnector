@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.configuration.appstore;
+package io.dataspaceconnector.controller.configuration;
 
 import io.dataspaceconnector.controller.resource.BaseResourceController;
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
@@ -24,11 +24,9 @@ import io.dataspaceconnector.controller.resource.tag.ResourceName;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.appstore.AppStore;
-import io.dataspaceconnector.model.appstore.AppStoreDesc;
 import io.dataspaceconnector.service.appstore.AppStoreRegistryService;
 import io.dataspaceconnector.service.appstore.container.ActionType;
 import io.dataspaceconnector.service.configuration.AppService;
-import io.dataspaceconnector.service.configuration.AppStoreService;
 import io.dataspaceconnector.util.Utils;
 import io.dataspaceconnector.view.app.AppView;
 import io.dataspaceconnector.view.appstore.AppStoreView;
@@ -58,7 +56,7 @@ import java.util.UUID;
 /**
  * Controller class for app store management.
  */
-public final class AppStoreControllers {
+public final class AppControllers {
     /**
      * Offers the endpoints for managing apps.
      */
@@ -213,15 +211,5 @@ public final class AppStoreControllers {
                         .toEmptyModel(entities, AppStore.class);
             }
         }
-    }
-
-    /**
-     * Offers the endpoints for managing app stores.
-     */
-    @RestController
-    @RequestMapping("/api/appstores")
-    @Tag(name = ResourceName.APPSTORES, description = ResourceDescription.APPSTORE)
-    public static class AppStoreController extends BaseResourceController<AppStore, AppStoreDesc,
-            AppStoreView, AppStoreService> {
     }
 }

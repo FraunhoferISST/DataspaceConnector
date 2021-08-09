@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.configuration.appstore;
+package io.dataspaceconnector.controller.configuration;
 
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
 import io.dataspaceconnector.service.appstore.AppStoreRegistryService;
@@ -25,13 +25,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-class AppStoreControllersTest {
+class AppControllersTest {
 
     @MockBean
     private AppStoreRegistryService appStoreRegistryService;
 
     @Autowired
-    private AppStoreControllers.AppController appController;
+    private AppControllers.AppController appController;
 
     @Test
     public void createApp_returnMethodNotAllowed() {
