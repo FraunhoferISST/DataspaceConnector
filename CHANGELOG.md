@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - Increase springdoc version from 1.5.9 to 1.5.10.
 - Increase checkstyle version from 8.44 to 8.45.
 - Increase pmd version from 6.36.0 to 6.37.0.
+- Increase camel version from 3.11.0 to 3.11.1.
 
 ### Fixed
 - Restrict access to POST/PUT/DELETE `{entity}/subscriptions` for artifacts and representations.
