@@ -20,18 +20,17 @@ import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteFactory;
 import io.dataspaceconnector.repository.EndpointRepository;
 import io.dataspaceconnector.repository.RouteRepository;
-import io.dataspaceconnector.service.resource.type.EndpointServiceProxy;
 import io.dataspaceconnector.service.routing.RouteHelper;
-import io.dataspaceconnector.service.resource.type.RouteService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.eq;
 
 @SpringBootTest(classes = { RouteService.class, RouteRepository.class, EndpointRepository.class,
@@ -50,7 +49,10 @@ class RouteServiceTest {
     @MockBean
     private RouteHelper routeHelper;
 
-    @Autowired
+    @MockBean
+    private RouteFactory factory;
+
+    @SpyBean
     private RouteService service;
 
     @Test
@@ -71,6 +73,18 @@ class RouteServiceTest {
         /* ASSERT */
         Mockito.verify(endpointRepository, Mockito.times(2)).save(eq(start));
         Mockito.verify(endpointRepository, Mockito.times(2)).save(eq(end));
+    }
+
+    @Test
+    public void delete_validInput_saveStartEndpoint() {
+        /* ARRANGE */
+        final var id = UUID.randomUUID();
+        Mockito.doReturn(new Route()).when(service).get(Mockito.eq(id));
+        Mockito.doNothing().when(routeHelper).delete(Mockito.any());
+        Mockito.doReturn(new Route()).when(factory).deleteSubroutes(new Route());
+
+        /* ACT & ASSERT */
+        assertDoesNotThrow(() -> service.delete(id));
     }
 
 }
