@@ -95,8 +95,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
     /**
      * The linker for representation-artifact relations.
      */
-    private final @NonNull
-    RepresentationArtifactLinker representationArtifactLinker;
+    private final @NonNull RepresentationArtifactLinker representationArtifactLinker;
 
     /**
      * The service for contracts.
