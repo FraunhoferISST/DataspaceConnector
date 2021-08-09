@@ -55,15 +55,14 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
 
     /**
      * @param clazz The class.
-     * @param <X> Types of endpoint.
-     * @param <Y> Types of the endpoint description.
+     * @param <X>   Types of endpoint.
+     * @param <Y>   Types of the endpoint description.
      * @return entity service.
      */
     @SuppressWarnings("unchecked")
     private <X extends Endpoint, Y extends EndpointDesc> EntityService<X, Y>
     getService(final Class<?> clazz) {
-        if (ConnectorEndpointDesc.class.equals(clazz)
-                || ConnectorEndpoint.class.equals(clazz)) {
+        if (ConnectorEndpointDesc.class.equals(clazz) || ConnectorEndpoint.class.equals(clazz)) {
             return (EntityService<X, Y>) connector;
         }
 
@@ -85,7 +84,8 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
 
         try {
             return connector.get(entityId);
-        } catch (ResourceNotFoundException ignored) { }
+        } catch (ResourceNotFoundException ignored) {
+        }
 
         return generic.get(entityId);
     }
@@ -97,7 +97,7 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
 
     @Override
     public final boolean doesExist(final UUID entityId) {
-        return   connector.doesExist(entityId)
+        return connector.doesExist(entityId)
                 || generic.doesExist(entityId);
     }
 
