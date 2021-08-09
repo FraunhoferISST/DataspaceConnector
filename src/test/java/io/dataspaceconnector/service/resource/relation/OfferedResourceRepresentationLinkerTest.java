@@ -100,8 +100,8 @@ class OfferedResourceRepresentationLinkerTest {
         constructor.setAccessible(true);
 
         final var representation = constructor.newInstance();
-        ReflectionTestUtils.setField(resource, "title", "Hello");
-        ReflectionTestUtils.setField(resource, "id", UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
+        ReflectionTestUtils.setField(representation, "title", "Hello");
+        ReflectionTestUtils.setField(representation, "id", UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
 
         return representation;
     }

@@ -19,6 +19,10 @@ import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.SubscriptionProcessingException;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
+import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.model.subscription.SubscriptionFactory;
@@ -139,6 +143,58 @@ public class SubscriptionServiceTest {
 
         /* ACT & ASSERT */
         assertThrows(SubscriptionProcessingException.class, () -> service.create(subscriptionDesc));
+    }
+
+    @Test
+    public void create_validInput_returnSubscriptionForArtifact() {
+        /* ARRANGE */
+        Mockito.doReturn(Optional.of(getArtifact())).when(entityResolver).getEntityById(Mockito.any());
+        Mockito.doNothing().when(artSubLinker).add(Mockito.any(), Mockito.any());
+
+        /* ACT */
+        final var subscription = service.create(subscriptionDesc);
+
+        /* ASSERT */
+        assertNotNull(subscription);
+    }
+
+    @Test
+    public void create_validInput_returnSubscriptionForRepresentation() {
+        /* ARRANGE */
+        Mockito.doReturn(Optional.of(getRepresentation())).when(entityResolver).getEntityById(Mockito.any());
+        Mockito.doNothing().when(artSubLinker).add(Mockito.any(), Mockito.any());
+
+        /* ACT */
+        final var subscription = service.create(subscriptionDesc);
+
+        /* ASSERT */
+        assertNotNull(subscription);
+    }
+
+    @Test
+    public void create_validInput_returnSubscriptionForOffer() {
+        /* ARRANGE */
+        Mockito.doReturn(Optional.of(getOfferedResource())).when(entityResolver).getEntityById(Mockito.any());
+        Mockito.doNothing().when(artSubLinker).add(Mockito.any(), Mockito.any());
+
+        /* ACT */
+        final var subscription = service.create(subscriptionDesc);
+
+        /* ASSERT */
+        assertNotNull(subscription);
+    }
+
+    @Test
+    public void create_validInput_returnSubscriptionForRequest() {
+        /* ARRANGE */
+        Mockito.doReturn(Optional.of(getRequestedResource())).when(entityResolver).getEntityById(Mockito.any());
+        Mockito.doNothing().when(artSubLinker).add(Mockito.any(), Mockito.any());
+
+        /* ACT */
+        final var subscription = service.create(subscriptionDesc);
+
+        /* ASSERT */
+        assertNotNull(subscription);
     }
 
     @Test
@@ -266,25 +322,41 @@ public class SubscriptionServiceTest {
         return artifact;
     }
 
+    @SneakyThrows
+    private Representation getRepresentation() {
+        final var constructor = Representation.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
 
-//    @Test
-//    public void getAllByContract_inputNull_throwIllegalArgumentException() {
-//        /* ACT && ASSERT */
-//        assertThrows(IllegalArgumentException.class, () -> service.getAllByContract(null));
-//    }
-//
-//    @Test
-//    public void getAllByContract_validInput_returnRules() {
-//        /* ARRANGE */
-//        final var contractId = UUID.randomUUID();
-//        final var rules = List.of(new ContractRule());
-//
-//        when(repository.findAllByContract(contractId)).thenReturn(rules);
-//
-//        /* ACT */
-//        final var result = service.getAllByContract(contractId);
-//
-//        /* ASSERT */
-//        assertEquals(rules, result);
-//    }
+        final var representation = constructor.newInstance();
+        ReflectionTestUtils.setField(representation, "title", "Hello");
+        ReflectionTestUtils.setField(representation, "id", UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
+
+        return representation;
+    }
+
+    @SneakyThrows
+    private OfferedResource getOfferedResource() {
+        final var constructor = OfferedResource.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+
+        final var resource = constructor.newInstance();
+        ReflectionTestUtils.setField(resource, "title", "Hello");
+        ReflectionTestUtils.setField(resource, "representations", new ArrayList<Contract>());
+        ReflectionTestUtils.setField(resource, "id", UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
+
+        return resource;
+    }
+
+    @SneakyThrows
+    private RequestedResource getRequestedResource() {
+        final var constructor = RequestedResource.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+
+        final var resource = constructor.newInstance();
+        ReflectionTestUtils.setField(resource,"title", "Hello");
+        ReflectionTestUtils.setField(resource,"id", UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
+
+        return resource;
+    }
+
 }

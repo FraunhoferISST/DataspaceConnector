@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.relation;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.service.resource.type.CatalogService;
@@ -30,6 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -99,8 +99,8 @@ class CatalogRequestedResourceLinkerTest {
         constructor.setAccessible(true);
 
         final var resource = constructor.newInstance();
-        ReflectionTestUtils.setField(catalog,"title", "Hello");
-        ReflectionTestUtils.setField(catalog,"id", UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
+        ReflectionTestUtils.setField(resource,"title", "Hello");
+        ReflectionTestUtils.setField(resource,"id", UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
 
         return resource;
     }

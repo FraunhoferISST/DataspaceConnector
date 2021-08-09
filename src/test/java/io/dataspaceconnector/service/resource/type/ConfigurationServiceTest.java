@@ -25,6 +25,7 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -65,6 +66,8 @@ class ConfigurationServiceTest {
         final var entityId = UUID.randomUUID();
 
         Mockito.doReturn(config).when(service).update(entityId, desc);
+        Mockito.doReturn(Optional.of(config)).when(repo).findActive();
+        Mockito.doReturn(Optional.of(config)).when(service).findActiveConfig();
 
         /* ACT */
         final var result = service.update(entityId, desc);
