@@ -977,7 +977,12 @@
 											<element>PACKAGE</element>
 											<limits>
 												<limit>
-													<counter>LINE</counter>
+													<counter>INSTRUCTION</counter>
+													<value>COVEREDRATIO</value>
+													<minimum>70%</minimum>
+												</limit>
+												<limit>
+													<counter>BRANCH</counter>
 													<value>COVEREDRATIO</value>
 													<minimum>50%</minimum>
 												</limit>
