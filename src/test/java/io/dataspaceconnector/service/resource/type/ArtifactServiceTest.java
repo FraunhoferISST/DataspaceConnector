@@ -15,10 +15,11 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
+import io.dataspaceconnector.common.net.HttpService;
+import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
@@ -31,11 +32,10 @@ import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
-import io.dataspaceconnector.common.net.HttpService;
-import io.dataspaceconnector.service.resource.type.ArtifactService;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -44,6 +44,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -373,6 +375,36 @@ class ArtifactServiceTest {
         /* ACT && ASSERT */
         assertThrows(UnreachableLineException.class,
                      () -> service.getData(null, null, unknownArtifact.getId(), (QueryInput) null));
+    }
+
+    @Test
+    public void getAllByAgreement_validUuid_returnList() {
+        /* ARRANGE */
+        final var uuid = UUID.randomUUID();
+        Mockito.doReturn(List.of(getLocalArtifact())).when(artifactRepository).findAllByAgreement(Mockito.eq(uuid));
+
+        /* ACT */
+        final var result = service.getAllByAgreement(uuid);
+
+        /* ASSERT */
+        assertNotNull(result);
+        assertEquals(getLocalArtifact(), result.get(0));
+    }
+
+    @Test
+    public void identifyByRemoteId_validUuid_returnOptional() {
+        /* ARRANGE */
+        final var uuid = UUID.randomUUID();
+        final var remoteId = URI.create("https://artifact");
+        Mockito.doReturn(Optional.of(uuid)).when(artifactRepository).identifyByRemoteId(Mockito.eq(remoteId));
+
+        /* ACT */
+        final var result = service.identifyByRemoteId(remoteId);
+
+        /* ASSERT */
+        assertNotNull(result);
+        assertTrue(result.isPresent());
+        assertEquals(uuid, result.get());
     }
 
     /**************************************************************************

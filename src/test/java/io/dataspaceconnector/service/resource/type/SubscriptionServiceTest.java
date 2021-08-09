@@ -18,6 +18,7 @@ package io.dataspaceconnector.service.resource.type;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.SubscriptionProcessingException;
 import io.dataspaceconnector.common.util.Utils;
+import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.model.subscription.SubscriptionFactory;
@@ -34,9 +35,9 @@ import org.mockito.AdditionalMatchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -77,7 +78,7 @@ public class SubscriptionServiceTest {
     @MockBean
     private EntityResolver entityResolver;
 
-    @Autowired
+    @SpyBean
     private SubscriptionService service;
 
     SubscriptionDesc subscriptionDesc = getDesc();
@@ -193,6 +194,17 @@ public class SubscriptionServiceTest {
                 () -> service.removeSubscription(URI.create("https://target"), URI.create("https://issuer")));
     }
 
+    @Test
+    public void removeSubscription_validInput_throwSubscriptionProcessingException() {
+        /* ARRANGE */
+        Mockito.doReturn(List.of(getSubscription())).when(service).getBySubscriberAndTarget(Mockito.any(), Mockito.any());
+        Mockito.doThrow(new ResourceNotFoundException("")).when(service).delete(Mockito.any());
+
+        /* ACT & ASSERT */
+        assertThrows(SubscriptionProcessingException.class,
+                () -> service.removeSubscription(URI.create("https://target"), URI.create("https://issuer")));
+    }
+
     private SubscriptionDesc getDesc() {
         var desc = new SubscriptionDesc();
         desc.setTitle("The new title.");
@@ -240,6 +252,18 @@ public class SubscriptionServiceTest {
         final var obj = (UUID) invocation.getArgument(0);
         subscriptionList.removeIf(x -> x.getId().equals(obj));
         return null;
+    }
+
+    @SneakyThrows
+    private ArtifactImpl getArtifact() {
+        final var constructor = ArtifactImpl.class.getConstructor();
+        constructor.setAccessible(true);
+
+        final var artifact = constructor.newInstance();
+        ReflectionTestUtils.setField(artifact, "title", "Artifact");
+        ReflectionTestUtils.setField(artifact, "id", UUID.fromString("554ed409-03e9-4b41-a45a-4b7a8c0aa499"));
+
+        return artifact;
     }
 
 
