@@ -15,39 +15,45 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import de.fraunhofer.ids.messaging.core.config.ConfigProducer;
-import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
 import io.dataspaceconnector.repository.ConfigurationRepository;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-class ConfigurationServiceTest {
+class ConfigurationServiceTest2 {
 
     @SpyBean
     private ConfigurationRepository repo;
 
     @SpyBean
-    private ConfigProducer configProducer;
-
-    @Autowired
     private ConfigurationService service;
 
     @Test
-    public void swapActiveConfig_hasActiveConfig_willSetPassedConfigAsActiveAndTheOldOneAsInActive()
-            throws ConfigUpdateException {
+    public void update_validInput_returnConfiguration() {
         /* ARRANGE */
-        final var config = service.create(new ConfigurationDesc());
+        final String title = "Title";
+        final var config = new Configuration();
+        final var desc = new ConfigurationDesc();
+        desc.setTitle(title);
+        final var entityId = UUID.randomUUID();
+
+        Mockito.doReturn(config).when(service).update(entityId, desc);
+        Mockito.doReturn(Optional.of(config)).when(repo).findActive();
+        Mockito.doReturn(Optional.of(config)).when(service).findActiveConfig();
 
         /* ACT */
-        service.swapActiveConfig(config.getId());
+        final var result = service.update(entityId, desc);
 
         /* ASSERT */
-        assertEquals(config.getId(), service.getActiveConfig().getId());
+        assertNotNull(result);
     }
 }
