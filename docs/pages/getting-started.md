@@ -44,5 +44,5 @@ with ConfigManager and GUI, but also some with other IDS components. The goal is
 entry into the whole IDS ecosystem. Feel free to have a look at the files or contribute with your
 own examples.
 
-Running IDS test instances for the [Dataspace Connector](communication/v6/consumer.md) and other
+Running IDS test instances for the [Dataspace Connector](communication.md#test-deployment) and other
 [IDS participants](communication/v6/ecosystem.md) are documented [here](communication.md).

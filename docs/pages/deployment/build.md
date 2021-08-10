@@ -16,7 +16,7 @@ Take a look at the more detailed instructions to deploy the Dataspace Connector.
 ---
 
 If you want to set up the Dataspace Connector yourself, follow the instructions below. If you
-encounter any problems, please have a look at the [FAQ](pages/faq.md).
+encounter any problems, please have a look at the [FAQ](../faq.md).
 
 Clone the project: `git clone https://github.com/International-Data-Spaces-Association/DataspaceConnector.git`
 
@@ -53,7 +53,7 @@ at `/target/apidocs`. Open the `index.html` in a browser of your choice.
 ---
 
 The connector provides several endpoints for resource database handling and IDS messaging. Details
-on how to interact with them can be found [here](pages/communication.md).
+on how to interact with them can be found [here](../communication.md).
 
 *  `Connector` and `Usage Control` provide information about the running connector and settings for
    contract negotiation and policy enforcement behaviour.
