@@ -106,7 +106,7 @@
 		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
 		<velocity.version>1.7</velocity.version>
-		<camel.version>3.11.0</camel.version>
+		<camel.version>3.11.1</camel.version>
 		<idscp2.version>0.5.0</idscp2.version>
 
 		<!-- Plugins -->
@@ -121,7 +121,7 @@
 		<spotbugs.version>4.3.0</spotbugs.version>
 		<findsecbugs-plugin.version>1.11.0</findsecbugs-plugin.version>
 		<checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
-		<checkstyle.version>8.45</checkstyle.version>
+		<checkstyle.version>8.45.1</checkstyle.version>
 		<jacoco.version>0.8.7</jacoco.version>
 		<pmd-plugin.version>3.14.0</pmd-plugin.version>
 		<pmd.version>6.37.0</pmd.version>
