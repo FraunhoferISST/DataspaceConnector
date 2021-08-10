@@ -163,7 +163,7 @@ curl -X 'POST' \
 ]'
 ```
 
-As stated [here](pages/documentation/v5/data-model.md), **an offered resource is only complete if it
+As stated [here](../../documentation/v5/data-model.md), **an offered resource is only complete if it
 contains at least one contract offer and at least one representation with at least one artifact.
 Otherwise, it will not be listed in the IDS self-description because there is no complete data offer.**
 
