@@ -21,14 +21,14 @@ The self-description is returned as JSON-LD and contains several information abo
 connector instance. This includes e.g. the title, the maintainer, the IDS Informodel version, and
 the resource catalog. At the public endpoint `/`, the resource catalog is not displayed. It can only
 be accessed with admin credentials at `GET /api/connector` or by sending an IDS description request
-message as explained [here](pages/communication/v5/consumer.md#step-1-request-a-connectors-self-description).
+message as explained [here](consumer.md#step-1-request-a-connectors-self-description).
 
 ![Selfservice Endpoints](../../../assets/images/swagger_connector.png)
 
 ## Step by Step
 
 To understand the structure of a resource, please first take a look at the
-[data model section](pages/documentation/v5/data-model.md) and the [REST API explanation](pages/documentation/v5/rest-api.md).
+[data model section](../../documentation/v5/data-model.md) and the [REST API explanation](../../documentation/v5/rest-api.md).
 For adding resources to the running connector as a data provider, have a look at the following
 steps.
 
@@ -250,7 +250,7 @@ local data. The Dataspace Connector automatically classifies an artifact as `rem
 
 Currently, the Dataspace Connector can natively establish a connection via http, https, and https
 with basic authentication. To connect to other backends, take a look at how to integrate
-routing frameworks as explained [here](pages/deployment/camel.md).
+routing frameworks as explained [here](../../deployment/camel.md).
 
 ---
 
@@ -296,7 +296,7 @@ the data provider returns the data. If not, it will respond with a `RejectionRea
 ---
 
 **Note**: The contract negotiation is enabled by default. To disable it, have a look at the
-[configurations](pages/deployment/configuration.md#ids-settings).
+[configurations](../../deployment/configuration.md#ids-settings).
 
 ---
 

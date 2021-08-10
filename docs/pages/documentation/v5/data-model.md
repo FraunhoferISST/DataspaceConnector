@@ -24,7 +24,7 @@ the offered data in more detail. This includes e.g. the data type. Below the rep
 is the `artifact`. This has a 1:1 relation to the raw data and describes e.g. checksum and
 bytesize. An artifact then has a reference to `contract agreements`, which describe the agreed usage
 between data provider and data consumer. Contract offers as `contracts` can contain multiple rules.
-Each rule may represent one IDS Usage Control Pattern as described [here](pages/documentation/v5/usage-control.md).
+Each rule may represent one IDS Usage Control Pattern as described [here](usage-control.md).
 
 ![Data Model Overview](../../../assets/images/data_model.png)
 

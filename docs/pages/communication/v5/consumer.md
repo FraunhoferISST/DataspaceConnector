@@ -125,7 +125,7 @@ rejection reason from the provider connector. E.g.:
 With this, you can navigate yourself through the data offers of the provider and choose the artifact
 whose data you want to retrieve. A response will never contain the raw data.
 
-Following the example data, that was provided within the [provider guide](pages/communication/v5/provider.md),
+Following the example data, that was provided within the [provider guide](provider.md),
 we would end up with the following information when requesting
 [https://localhost:8080/api/catalogs/eda0cda2-10f2-4b39-b462-5d4f2b1bb758](https://localhost:8080/api/catalogs/eda0cda2-10f2-4b39-b462-5d4f2b1bb758)
 and its resource offer [https://localhost:8080/api/offers/98d6818b-a1b7-4171-a318-a0e11837bf10](https://localhost:8080/api/offers/98d6818b-a1b7-4171-a318-a0e11837bf10):
