@@ -53,8 +53,8 @@ public class PatternUtilsTest {
        /* ASSERT */
        Assertions.assertTrue(Permission.class.isAssignableFrom(rule.getClass()));
        Assertions.assertEquals(Action.USE, rule.getAction().get(0));
-       Assertions.assertNull(rule.getConstraint());
-       Assertions.assertNull(((Permission) rule).getPostDuty());
+       Assertions.assertTrue(rule.getConstraint().isEmpty());
+       Assertions.assertTrue(((Permission) rule).getPostDuty().isEmpty());
    }
 
    @Test

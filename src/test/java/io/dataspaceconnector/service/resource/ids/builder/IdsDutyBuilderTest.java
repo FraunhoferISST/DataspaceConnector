@@ -26,7 +26,6 @@ import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.rule.ContractRuleDesc;
 import io.dataspaceconnector.model.rule.ContractRuleFactory;
-import io.dataspaceconnector.service.resource.ids.builder.IdsDutyBuilder;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,7 +142,7 @@ public class IdsDutyBuilderTest {
         assertTrue(idsRule.getId().isAbsolute());
         assertTrue(idsRule.getId().toString().contains(rule.getId().toString()));
 
-        assertNull(idsRule.getAction());
+        assertTrue(idsRule.getAction().isEmpty());
 
         assertEquals(1, idsRule.getConstraint().size());
         Constraint constraint = (Constraint) idsRule.getConstraint().get(0);

@@ -26,10 +26,6 @@ import io.dataspaceconnector.model.contract.ContractFactory;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.rule.ContractRuleDesc;
 import io.dataspaceconnector.model.rule.ContractRuleFactory;
-import io.dataspaceconnector.service.resource.ids.builder.IdsContractBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsDutyBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsPermissionBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsProhibitionBuilder;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,7 +92,7 @@ public class IdsContractBuilderTest {
         assertTrue(idsContract.getObligation().isEmpty());
         assertEquals(1, idsContract.getPermission().size());
         assertEquals(Action.USE, idsContract.getPermission().get(0).getAction().get(0));
-        assertNull(idsContract.getPermission().get(0).getConstraint());
+        assertTrue(idsContract.getPermission().get(0).getConstraint().isEmpty());
     }
 
     @Test
@@ -124,7 +120,7 @@ public class IdsContractBuilderTest {
         assertTrue(idsContract.getObligation().isEmpty());
         assertEquals(1, idsContract.getPermission().size());
         assertEquals(Action.USE, idsContract.getPermission().get(0).getAction().get(0));
-        assertNull(idsContract.getPermission().get(0).getConstraint());
+        assertTrue(idsContract.getPermission().get(0).getConstraint().isEmpty());
     }
 
     @Test
@@ -161,7 +157,7 @@ public class IdsContractBuilderTest {
         assertTrue(idsContract.getObligation().isEmpty());
         assertEquals(1, idsContract.getPermission().size());
         assertEquals(Action.USE, idsContract.getPermission().get(0).getAction().get(0));
-        assertNull(idsContract.getPermission().get(0).getConstraint());
+        assertTrue(idsContract.getPermission().get(0).getConstraint().isEmpty());
     }
 
     /**************************************************************************
