@@ -15,15 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.ids.builder.base;
 
-import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import io.dataspaceconnector.common.net.SelfLinkHelper;
-import io.dataspaceconnector.common.util.Utils;
-import io.dataspaceconnector.model.base.Entity;
-import lombok.NoArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -31,25 +22,25 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import de.fraunhofer.iais.eis.ModelClass;
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
+import io.dataspaceconnector.common.util.Utils;
+import io.dataspaceconnector.model.base.Entity;
+import lombok.NoArgsConstructor;
 /**
  * The base class for constructing an ids object from DSC objects.
  *
  * @param <T> The type of the DSC object.
  * @param <X> The type of the ids object.
  */
-@Log4j2
 @NoArgsConstructor
-public abstract class AbstractIdsBuilder<T extends Entity, X> {
+public abstract class AbstractIdsBuilder<T extends Entity, X extends ModelClass> {
 
     /**
      * The default depth the builder will follow dependencies.
      */
     public static final int DEFAULT_DEPTH = -1;
-
-    /**
-     * The max depth when searching for the setProperty method in ids objects.
-     */
-    private static final int MAX_DEPTH = 3;
 
     /**
      * Convert an DSC object to an ids object. The default depth will be used to determine the
@@ -121,9 +112,9 @@ public abstract class AbstractIdsBuilder<T extends Entity, X> {
      * @param maxDepth     The distance to the original call.
      * @param <V>          The type of the DSC entity.
      * @param <W>          The type of the ids entity.
-     * @return The converted ids objects. Null if the distance is to far to the original call.
+     * @return The converted ids objects. Null if the distance is too far from the original call.
      */
-    protected <V extends Entity, W> Optional<List<W>> create(
+    protected <V extends Entity, W extends ModelClass> Optional<List<W>> create(
             final AbstractIdsBuilder<V, W> builder, final List<V> entityList,
             final int currentDepth, final int maxDepth) throws ConstraintViolationException {
         final int nextDepth = currentDepth + 1;
@@ -135,40 +126,12 @@ public abstract class AbstractIdsBuilder<T extends Entity, X> {
                 .collect(Collectors.toList()));
     }
 
-    private <K> K addAdditionals(final K idsObject, final Map<String, String> additional) {
-        // NOTE: The Infomodel lib has setProperty on all classes, but the method is implemented
-        // individually...
-        try {
-            final var setPropertyMethod = findAdditionalMethod(idsObject);
-            for (final var entry : additional.entrySet()) {
-                setPropertyMethod.invoke(idsObject, entry.getKey(), entry.getValue());
-            }
-
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Failed to set additional fields. [exception=({})]", e.getMessage(), e);
-            }
+    private <K extends ModelClass> K addAdditionals(final K idsObject,
+                                                    final Map<String, String> additional) {
+        for (final var entry : additional.entrySet()) {
+            idsObject.setProperty(entry.getKey(), entry.getValue());
         }
 
         return idsObject;
-    }
-
-    private <K> Method findAdditionalMethod(final K idsResource) throws NoSuchMethodException {
-        // NOTE: The Infomodel lib has setProperty on all classes, but some of them are implemented
-        // higher up the inheritance chain.
-        // If the setProperty method has a different signature null is returned.
-        var tClass = idsResource.getClass();
-        for (int i = 0; i < MAX_DEPTH; i++) {
-            try {
-                return tClass.getMethod("setProperty", String.class, Object.class);
-            } catch (NoSuchMethodException ignored) {
-                // Intentionally empty
-            }
-            if (i < MAX_DEPTH - 1) {
-                tClass = tClass.getSuperclass();
-            }
-        }
-
-        throw new NoSuchMethodException();
     }
 }
