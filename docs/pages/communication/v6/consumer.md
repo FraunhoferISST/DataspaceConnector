@@ -406,7 +406,7 @@ policies of the requested data resource are checked for the following patterns:
 `USAGE_NOTIFICATION`, and `N_TIMES_USAGE`. The policy is then implemented using the detected
 pattern.
 
-As described [here](pages/communication/v6/provider.md#policy-enforcement), depending on the rule
+As described [here](provider.md#policy-enforcement), depending on the rule
 values, the access permission will be set to true or false, and correspondingly, the data is either
 returned or not.
 

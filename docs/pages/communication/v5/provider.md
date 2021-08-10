@@ -145,7 +145,7 @@ entity change, as well as the creation and modification date.
 
 The endpoints `PUT`, `GET`, and`DELETE` `/offers/{id}` provide standard CRUD functions to read,
 update, and delete the metadata, respectively the data resource - as described
-[here](pages/documentation/v5/data-model.md).
+[here](../../documentation/v5/data-model.md).
 
 Next to the resource, we need a catalog as a parent for the offer. Use `POST /api/catalogs` to
 create one. Its location is: [https://localhost:8080/api/catalogs/5ac012e1-ffa5-43b3-af41-9707d2a9137d](https://localhost:8080/api/catalogs/5ac012e1-ffa5-43b3-af41-9707d2a9137d).
