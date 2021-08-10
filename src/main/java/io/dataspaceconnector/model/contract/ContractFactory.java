@@ -16,7 +16,7 @@
 package io.dataspaceconnector.model.contract;
 
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.model.util.FactoryUtils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -82,7 +82,7 @@ public class ContractFactory extends AbstractNamedFactory<Contract, ContractDesc
 
     private boolean updateRemoteId(final Contract contract, final URI remoteId) {
         final var newUri =
-                MetadataUtils.updateUri(contract.getRemoteId(), remoteId, DEFAULT_REMOTE_ID);
+                FactoryUtils.updateUri(contract.getRemoteId(), remoteId, DEFAULT_REMOTE_ID);
         newUri.ifPresent(contract::setRemoteId);
 
         return newUri.isPresent();
@@ -90,7 +90,7 @@ public class ContractFactory extends AbstractNamedFactory<Contract, ContractDesc
 
     private boolean updateConsumer(final Contract contract, final URI consumer) {
         final var newUri =
-                MetadataUtils.updateUri(contract.getConsumer(), consumer, DEFAULT_CONSUMER);
+                FactoryUtils.updateUri(contract.getConsumer(), consumer, DEFAULT_CONSUMER);
         newUri.ifPresent(contract::setConsumer);
 
         return newUri.isPresent();
@@ -98,7 +98,7 @@ public class ContractFactory extends AbstractNamedFactory<Contract, ContractDesc
 
     private boolean updateProvider(final Contract contract, final URI provider) {
         final var newUri =
-                MetadataUtils.updateUri(contract.getProvider(), provider, DEFAULT_PROVIDER);
+                FactoryUtils.updateUri(contract.getProvider(), provider, DEFAULT_PROVIDER);
         newUri.ifPresent(contract::setProvider);
 
         return newUri.isPresent();
@@ -107,8 +107,8 @@ public class ContractFactory extends AbstractNamedFactory<Contract, ContractDesc
     private boolean updateTime(final Contract contract, final ZonedDateTime start,
                                final ZonedDateTime end) {
         final var defaultTime = ZonedDateTime.now(ZoneOffset.UTC);
-        final var newStart = MetadataUtils.updateDate(contract.getStart(), start, defaultTime);
-        final var newEnd = MetadataUtils.updateDate(contract.getEnd(), end, defaultTime);
+        final var newStart = FactoryUtils.updateDate(contract.getStart(), start, defaultTime);
+        final var newEnd = FactoryUtils.updateDate(contract.getEnd(), end, defaultTime);
 
         // Validate the state of the contract with the new times
         var realStart = newStart.orElseGet(contract::getStart);
@@ -121,8 +121,8 @@ public class ContractFactory extends AbstractNamedFactory<Contract, ContractDesc
 
         // Reiterate the operation
         final var finalStartValue =
-                MetadataUtils.updateDate(contract.getStart(), realStart, defaultTime);
-        final var finalEndValue = MetadataUtils.updateDate(contract.getEnd(), realEnd, defaultTime);
+                FactoryUtils.updateDate(contract.getStart(), realStart, defaultTime);
+        final var finalEndValue = FactoryUtils.updateDate(contract.getEnd(), realEnd, defaultTime);
 
         finalStartValue.ifPresent(contract::setStart);
         finalEndValue.ifPresent(contract::setEnd);

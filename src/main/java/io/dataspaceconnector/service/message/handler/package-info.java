@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Handler for receiving incoming IDS messages.
+ * Services and processors for processing incoming IDS messages.
  */
 package io.dataspaceconnector.service.message.handler;

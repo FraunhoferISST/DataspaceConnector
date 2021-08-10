@@ -15,29 +15,29 @@
  */
 package io.dataspaceconnector.service;
 
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
-import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
+import io.dataspaceconnector.common.util.Utils;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.agreement.Agreement;
-import io.dataspaceconnector.service.ids.updater.ArtifactUpdater;
-import io.dataspaceconnector.service.ids.updater.RepresentationUpdater;
-import io.dataspaceconnector.service.ids.updater.RequestedResourceUpdater;
-import io.dataspaceconnector.service.resource.AgreementService;
-import io.dataspaceconnector.service.resource.ArtifactService;
-import io.dataspaceconnector.service.resource.RelationServices;
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.SelfLinkHelper;
-import io.dataspaceconnector.util.Utils;
+import io.dataspaceconnector.service.resource.ids.updater.ArtifactUpdater;
+import io.dataspaceconnector.service.resource.ids.updater.RepresentationUpdater;
+import io.dataspaceconnector.service.resource.ids.updater.RequestedResourceUpdater;
+import io.dataspaceconnector.service.resource.relation.AgreementArtifactLinker;
+import io.dataspaceconnector.service.resource.type.AgreementService;
+import io.dataspaceconnector.service.resource.type.ArtifactService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * This service offers method for updating entities.
@@ -70,7 +70,7 @@ public class EntityUpdateService {
     /**
      * Service for linking artifacts to agreement.
      */
-    private final @NonNull RelationServices.AgreementArtifactLinker agreementArtifactLinker;
+    private final @NonNull AgreementArtifactLinker agreementArtifactLinker;
 
     /**
      * Service for artifacts.

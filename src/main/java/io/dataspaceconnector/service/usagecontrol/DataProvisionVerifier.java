@@ -17,10 +17,13 @@ package io.dataspaceconnector.service.usagecontrol;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.SecurityProfile;
-import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.exception.PolicyRestrictionException;
-import io.dataspaceconnector.util.ContractUtils;
-import io.dataspaceconnector.util.RuleUtils;
+import io.dataspaceconnector.common.ids.policy.ContractUtils;
+import io.dataspaceconnector.common.ids.policy.PolicyPattern;
+import io.dataspaceconnector.common.ids.policy.RuleUtils;
+import io.dataspaceconnector.common.exception.PolicyRestrictionException;
+import io.dataspaceconnector.config.ConnectorConfig;
+import io.dataspaceconnector.common.usagecontrol.PolicyVerifier;
+import io.dataspaceconnector.common.usagecontrol.VerificationResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -47,7 +50,7 @@ public class DataProvisionVerifier implements PolicyVerifier<ProvisionVerificati
     /**
      * Service for configuring policy settings.
      */
-    private final @NonNull ConnectorConfiguration connectorConfig;
+    private final @NonNull ConnectorConfig connectorConfig;
 
     /**
      * Policy check on data provision on provider side.

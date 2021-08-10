@@ -39,8 +39,8 @@ reference.
 
 ---
 
-**Note:** All processors already defined use `io.dataspaceconnector.camel.dto.Request` and
-`io.dataspaceconnector.camel.dto.Response` as the message bodies. So if you set any other object as
+**Note:** All processors already defined use `io.dataspaceconnector.service.message.handler.dto.Request` and
+`io.dataspaceconnector.service.message.handler.dto.Response` as the message bodies. So if you set any other object as
 the body in your processor's `process` method, the following processors in the route will fail!
 
 ---

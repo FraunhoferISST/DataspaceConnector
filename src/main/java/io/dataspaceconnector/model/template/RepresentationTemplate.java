@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.model.template;
 
-import java.util.List;
-
 import io.dataspaceconnector.model.representation.RepresentationDesc;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -25,6 +23,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 /**
  * Describes a representation and all its dependencies.

@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.model.keystore;
 
-import java.net.URI;
-
 import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.model.util.FactoryUtils;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
 
 /**
  * Factory class for the key store.
@@ -55,7 +55,7 @@ public class KeystoreFactory extends AbstractFactory<Keystore, KeystoreDesc> {
             return false;
         }
 
-        final var newPassword = MetadataUtils.updateString(keystore.getPassword(),
+        final var newPassword = FactoryUtils.updateString(keystore.getPassword(),
                 password, DEFAULT_PASSWORD);
         newPassword.ifPresent(keystore::setPassword);
 
@@ -64,7 +64,7 @@ public class KeystoreFactory extends AbstractFactory<Keystore, KeystoreDesc> {
 
     private boolean updateLocation(final Keystore keystore, final URI location) {
         final var newLocation =
-                MetadataUtils.updateUri(keystore.getLocation(), location, DEFAULT_LOCATION);
+                FactoryUtils.updateUri(keystore.getLocation(), location, DEFAULT_LOCATION);
         newLocation.ifPresent(keystore::setLocation);
 
         return newLocation.isPresent();

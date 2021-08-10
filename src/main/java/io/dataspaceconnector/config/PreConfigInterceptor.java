@@ -15,26 +15,26 @@
  */
 package io.dataspaceconnector.config;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.ids.messaging.core.config.ConfigProducerInterceptorException;
 import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import de.fraunhofer.ids.messaging.core.config.PreConfigProducerInterceptor;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.dataspaceconnector.service.configuration.ConfigurationService;
-import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.service.ids.builder.IdsConfigModelBuilder;
-import io.dataspaceconnector.util.MappingUtils;
+import io.dataspaceconnector.common.ids.DeserializationService;
+import io.dataspaceconnector.common.ids.mapping.FromIdsObjectMapper;
+import io.dataspaceconnector.service.resource.ids.builder.IdsConfigModelBuilder;
+import io.dataspaceconnector.service.resource.type.ConfigurationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 
 /**
  * Intercepts {@link de.fraunhofer.ids.messaging.core.config.ConfigProducer} and changes how the
@@ -110,7 +110,8 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
         }
 
         final var configModel = deserializationSvc.getConfigurationModel(config);
-        final var dscConfig = configurationSvc.create(MappingUtils.fromIdsConfig(configModel));
+        final var dscConfig
+                = configurationSvc.create(FromIdsObjectMapper.fromIdsConfig(configModel));
         configurationSvc.swapActiveConfig(dscConfig.getId());
         return configModel;
     }

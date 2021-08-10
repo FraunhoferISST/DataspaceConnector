@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.model.broker;
 
-import java.net.URI;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dataspaceconnector.model.named.NamedDescription;
 import io.dataspaceconnector.model.base.RegistrationStatus;
+import io.dataspaceconnector.model.named.NamedDescription;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.net.URI;
 
 /**
  * Describing broker's properties.

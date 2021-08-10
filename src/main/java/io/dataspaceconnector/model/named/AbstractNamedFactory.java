@@ -16,7 +16,7 @@
 package io.dataspaceconnector.model.named;
 
 import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.model.util.FactoryUtils;
 
 /**
  * Abstract factory class which holds additional information like title, description.
@@ -53,14 +53,14 @@ public abstract class AbstractNamedFactory<T extends NamedEntity, D extends Name
     }
 
     private boolean updateTitle(final T entity, final String title) {
-        final var newTitle = MetadataUtils.updateString(entity.getTitle(), title, DEFAULT_TITLE);
+        final var newTitle = FactoryUtils.updateString(entity.getTitle(), title, DEFAULT_TITLE);
         newTitle.ifPresent(entity::setTitle);
 
         return newTitle.isPresent();
     }
 
     private boolean updateDescription(final T entity, final String description) {
-        final var newDescription = MetadataUtils.updateString(entity.getDescription(), description,
+        final var newDescription = FactoryUtils.updateString(entity.getDescription(), description,
                 DEFAULT_DESCRIPTION);
         newDescription.ifPresent(entity::setDescription);
 

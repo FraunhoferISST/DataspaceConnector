@@ -15,18 +15,9 @@
  */
 package io.dataspaceconnector.model.broker;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import java.net.URI;
-import java.util.List;
-
-import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.base.RemoteService;
+import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
@@ -36,6 +27,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import java.net.URI;
+import java.util.List;
 
 import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 

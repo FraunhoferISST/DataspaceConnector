@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.model.truststore;
 
-import java.net.URI;
-
 import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.model.util.FactoryUtils;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
 
 /**
  * Factory class for the trust store.
@@ -61,7 +61,7 @@ public class TruststoreFactory extends AbstractFactory<Truststore, TruststoreDes
             return false;
         }
 
-        final var newPassword = MetadataUtils.updateString(truststore.getPassword(),
+        final var newPassword = FactoryUtils.updateString(truststore.getPassword(),
                 password, DEFAULT_PASSWORD);
         newPassword.ifPresent(truststore::setPassword);
 
@@ -70,7 +70,7 @@ public class TruststoreFactory extends AbstractFactory<Truststore, TruststoreDes
 
     private boolean updateLocation(final Truststore truststore, final URI location) {
         final var newLocation =
-                MetadataUtils.updateUri(truststore.getLocation(), location, DEFAULT_LOCATION);
+                FactoryUtils.updateUri(truststore.getLocation(), location, DEFAULT_LOCATION);
         newLocation.ifPresent(truststore::setLocation);
 
         return newLocation.isPresent();

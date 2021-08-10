@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.model.representation;
 
-import io.dataspaceconnector.util.MetadataUtils;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
+import io.dataspaceconnector.model.util.FactoryUtils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -87,7 +87,7 @@ public class RepresentationFactory
     }
 
     private boolean updateRemoteId(final Representation representation, final URI remoteId) {
-        final var newUri = MetadataUtils.updateUri(
+        final var newUri = FactoryUtils.updateUri(
                 representation.getRemoteId(), remoteId, DEFAULT_REMOTE_ID);
         newUri.ifPresent(representation::setRemoteId);
 
@@ -95,7 +95,7 @@ public class RepresentationFactory
     }
 
     private boolean updateLanguage(final Representation representation, final String language) {
-        final var newLanguage = MetadataUtils.updateString(
+        final var newLanguage = FactoryUtils.updateString(
                 representation.getLanguage(), language, DEFAULT_LANGUAGE);
         newLanguage.ifPresent(representation::setLanguage);
 
@@ -103,7 +103,7 @@ public class RepresentationFactory
     }
 
     private boolean updateMediaType(final Representation representation, final String mediaType) {
-        final var newMediaType = MetadataUtils.updateString(representation.getMediaType(),
+        final var newMediaType = FactoryUtils.updateString(representation.getMediaType(),
                 mediaType, DEFAULT_MEDIA_TYPE);
         newMediaType.ifPresent(representation::setMediaType);
 
@@ -111,7 +111,7 @@ public class RepresentationFactory
     }
 
     private boolean updateStandard(final Representation representation, final String standard) {
-        final var newAdditional = MetadataUtils.updateString(representation.getStandard(),
+        final var newAdditional = FactoryUtils.updateString(representation.getStandard(),
                 standard, DEFAULT_STANDARD);
         newAdditional.ifPresent(representation::setStandard);
 

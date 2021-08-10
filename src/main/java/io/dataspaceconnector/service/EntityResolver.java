@@ -16,7 +16,11 @@
 package io.dataspaceconnector.service;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
-import io.dataspaceconnector.exception.InvalidResourceException;
+import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.ids.mapping.RdfConverter;
+import io.dataspaceconnector.common.net.QueryInput;
+import io.dataspaceconnector.common.util.Utils;
+import io.dataspaceconnector.common.exception.InvalidResourceException;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.base.Entity;
@@ -28,25 +32,22 @@ import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.rule.ContractRule;
-import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.service.ids.builder.IdsArtifactBuilder;
-import io.dataspaceconnector.service.ids.builder.IdsCatalogBuilder;
-import io.dataspaceconnector.service.ids.builder.IdsContractBuilder;
-import io.dataspaceconnector.service.ids.builder.IdsRepresentationBuilder;
-import io.dataspaceconnector.service.ids.builder.IdsResourceBuilder;
-import io.dataspaceconnector.service.resource.AgreementService;
-import io.dataspaceconnector.service.resource.ArtifactService;
-import io.dataspaceconnector.service.resource.CatalogService;
-import io.dataspaceconnector.service.resource.ContractService;
-import io.dataspaceconnector.service.resource.RepresentationService;
-import io.dataspaceconnector.service.resource.ResourceService;
-import io.dataspaceconnector.service.resource.RuleService;
-import io.dataspaceconnector.service.usagecontrol.AllowAccessVerifier;
-import io.dataspaceconnector.service.util.EndpointUtils;
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.IdsUtils;
-import io.dataspaceconnector.util.QueryInput;
-import io.dataspaceconnector.util.Utils;
+import io.dataspaceconnector.common.ids.DeserializationService;
+import io.dataspaceconnector.service.resource.ids.builder.IdsArtifactBuilder;
+import io.dataspaceconnector.service.resource.ids.builder.IdsCatalogBuilder;
+import io.dataspaceconnector.service.resource.ids.builder.IdsContractBuilder;
+import io.dataspaceconnector.service.resource.ids.builder.IdsRepresentationBuilder;
+import io.dataspaceconnector.service.resource.ids.builder.IdsResourceBuilder;
+import io.dataspaceconnector.service.resource.type.AgreementService;
+import io.dataspaceconnector.service.resource.type.ArtifactService;
+import io.dataspaceconnector.service.resource.type.CatalogService;
+import io.dataspaceconnector.service.resource.type.ContractService;
+import io.dataspaceconnector.service.resource.type.RepresentationService;
+import io.dataspaceconnector.service.resource.type.ResourceService;
+import io.dataspaceconnector.service.resource.type.RuleService;
+import io.dataspaceconnector.common.usagecontrol.AllowAccessVerifier;
+import io.dataspaceconnector.config.BasePath;
+import io.dataspaceconnector.common.net.EndpointUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -153,7 +154,7 @@ public class EntityResolver {
      *
      * @param elementId The entity id.
      * @return The respective object.
-     * @throws IllegalArgumentException  If the resource is null or the elementId.
+     * @throws IllegalArgumentException If the resource is null or the elementId.
      */
     public Optional<Entity> getEntityById(final URI elementId) {
         Utils.requireNonNull(elementId, ErrorMessage.URI_NULL);
@@ -163,32 +164,26 @@ public class EntityResolver {
             final var basePath = endpointId.getBasePath();
             final var entityId = endpointId.getResourceId();
 
-            final var pathEnum = EndpointUtils.getBasePathEnumFromString(basePath);
-
-            // Find the right service and return the requested element.
-            switch (Objects.requireNonNull(pathEnum)) {
-                case ARTIFACTS:
-                    return Optional.of(artifactService.get(entityId));
-                case REPRESENTATIONS:
-                    return Optional.of(representationService.get(entityId));
-                case OFFERS:
-                    return Optional.of(offerService.get(entityId));
-                case CATALOGS:
-                    return Optional.of(catalogService.get(entityId));
-                case CONTRACTS:
-                    return Optional.of(contractService.get(entityId));
-                case RULES:
-                    return Optional.of(ruleService.get(entityId));
-                case AGREEMENTS:
-                    return Optional.of(agreementService.get(entityId));
-                case REQUESTS:
-                    return Optional.of(requestService.get(entityId));
-                default:
-                    return Optional.empty();
+            if (basePath.contains(BasePath.ARTIFACTS)) {
+                return Optional.of(artifactService.get(entityId));
+            } else if (basePath.contains(BasePath.REPRESENTATIONS)) {
+                return Optional.of(representationService.get(entityId));
+            } else if (basePath.contains(BasePath.OFFERS)) {
+                return Optional.of(offerService.get(entityId));
+            } else if (basePath.contains(BasePath.CATALOGS)) {
+                return Optional.of(catalogService.get(entityId));
+            } else if (basePath.contains(BasePath.CONTRACTS)) {
+                return Optional.of(contractService.get(entityId));
+            } else if (basePath.contains(BasePath.RULES)) {
+                return Optional.of(ruleService.get(entityId));
+            } else if (basePath.contains(BasePath.AGREEMENTS)) {
+                return Optional.of(agreementService.get(entityId));
+            } else if (basePath.contains(BasePath.REQUESTS)) {
+                return Optional.of(requestService.get(entityId));
             }
-        } catch (Exception exception) {
-            return Optional.empty();
+        } catch (Exception ignored) {
         }
+        return Optional.empty();
     }
 
     /**
@@ -204,19 +199,19 @@ public class EntityResolver {
         try {
             if (entity instanceof Artifact) {
                 final var artifact = artifactBuilder.create((Artifact) entity);
-                return IdsUtils.toRdf(Objects.requireNonNull(artifact));
+                return RdfConverter.toRdf(Objects.requireNonNull(artifact));
             } else if (entity instanceof OfferedResource) {
                 final var resource = offerBuilder.create((OfferedResource) entity);
-                return IdsUtils.toRdf(Objects.requireNonNull(resource));
+                return RdfConverter.toRdf(Objects.requireNonNull(resource));
             } else if (entity instanceof Representation) {
                 final var representation = representationBuilder.create((Representation) entity);
-                return IdsUtils.toRdf(Objects.requireNonNull(representation));
+                return RdfConverter.toRdf(Objects.requireNonNull(representation));
             } else if (entity instanceof Catalog) {
                 final var catalog = catalogBuilder.create((Catalog) entity);
-                return IdsUtils.toRdf(Objects.requireNonNull(catalog));
+                return RdfConverter.toRdf(Objects.requireNonNull(catalog));
             } else if (entity instanceof Contract) {
                 final var contractOffer = contractBuilder.create((Contract) entity);
-                return IdsUtils.toRdf(Objects.requireNonNull(contractOffer));
+                return RdfConverter.toRdf(Objects.requireNonNull(contractOffer));
             } else if (entity instanceof Agreement) {
                 final var agreement = (Agreement) entity;
                 return agreement.getValue();

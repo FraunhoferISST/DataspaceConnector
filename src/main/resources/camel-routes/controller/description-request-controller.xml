@@ -2,17 +2,17 @@
     <route id="descriptionRequestSender">
 
         <onException>
-            <exception>io.dataspaceconnector.exception.MessageException</exception>
+            <exception>io.dataspaceconnector.common.exception.MessageException</exception>
             <to uri="direct:handleMessageException"/>
         </onException>
 
         <onException>
-            <exception>io.dataspaceconnector.exception.MessageResponseException</exception>
+            <exception>io.dataspaceconnector.common.exception.MessageResponseException</exception>
             <to uri="direct:handleReceivedInvalidResponse"/>
         </onException>
 
         <onException>
-            <exception>io.dataspaceconnector.camel.exception.InvalidResponseException</exception>
+            <exception>io.dataspaceconnector.service.message.handler.exception.InvalidResponseException</exception>
             <to uri="direct:handleInvalidResponseException"/>
         </onException>
 
@@ -24,7 +24,7 @@
 
         <from uri="direct:descriptionRequestSender"/>
         <setProperty name="idscp2-client-uri">
-            <simple>${bean:io.dataspaceconnector.camel.util.ParameterUtils?method=getIdscp2ClientUri(${exchangeProperty.recipient})}</simple>
+            <simple>${bean:io.dataspaceconnector.common.routing.ParameterUtils?method=getIdscp2ClientUri(${exchangeProperty.recipient})}</simple>
         </setProperty>
         <process ref="DescriptionRequestMessageBuilder"/>
         <process ref="RequestWithoutPayloadPreparer"/>

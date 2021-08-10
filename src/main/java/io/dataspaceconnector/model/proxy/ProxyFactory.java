@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.model.proxy;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.model.util.FactoryUtils;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Factory class for the proxy.
@@ -51,7 +51,7 @@ public class ProxyFactory extends AbstractFactory<Proxy, ProxyDesc> {
     }
 
     private boolean updateExclusions(final Proxy proxy, final List<String> exclusions) {
-        final var newExclusionList = MetadataUtils.updateStringList(proxy.getExclusions(),
+        final var newExclusionList = FactoryUtils.updateStringList(proxy.getExclusions(),
                 exclusions, new ArrayList<>());
         newExclusionList.ifPresent(proxy::setExclusions);
 
@@ -93,7 +93,7 @@ public class ProxyFactory extends AbstractFactory<Proxy, ProxyDesc> {
     }
 
     private boolean updateLocation(final Proxy proxy, final URI location) {
-        final var newLocation = MetadataUtils.updateUri(proxy.getLocation(), location,
+        final var newLocation = FactoryUtils.updateUri(proxy.getLocation(), location,
                 DEFAULT_LOCATION);
         newLocation.ifPresent(proxy::setLocation);
 

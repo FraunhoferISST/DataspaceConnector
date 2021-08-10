@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Contains all services of the Dataspace Connector.
+ * Contains all service classes.
  */
 package io.dataspaceconnector.service;

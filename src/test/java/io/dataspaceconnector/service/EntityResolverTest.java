@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.iais.eis.ContractAgreementBuilder;
 import de.fraunhofer.iais.eis.ContractOffer;
@@ -33,7 +26,9 @@ import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
-import io.dataspaceconnector.exception.InvalidResourceException;
+import io.dataspaceconnector.common.net.QueryInput;
+import io.dataspaceconnector.common.exception.InvalidResourceException;
+import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
@@ -45,22 +40,20 @@ import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.rule.ContractRule;
-import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.service.ids.builder.IdsArtifactBuilder;
-import io.dataspaceconnector.service.ids.builder.IdsCatalogBuilder;
-import io.dataspaceconnector.service.ids.builder.IdsContractBuilder;
-import io.dataspaceconnector.service.ids.builder.IdsRepresentationBuilder;
-import io.dataspaceconnector.service.ids.builder.IdsResourceBuilder;
-import io.dataspaceconnector.service.resource.AgreementService;
-import io.dataspaceconnector.service.resource.ArtifactService;
-import io.dataspaceconnector.service.resource.CatalogService;
-import io.dataspaceconnector.service.resource.ContractService;
-import io.dataspaceconnector.service.resource.RepresentationService;
-import io.dataspaceconnector.service.resource.ResourceService;
-import io.dataspaceconnector.service.resource.RuleService;
-import io.dataspaceconnector.service.usagecontrol.AllowAccessVerifier;
-import io.dataspaceconnector.util.IdsUtils;
-import io.dataspaceconnector.util.QueryInput;
+import io.dataspaceconnector.common.ids.DeserializationService;
+import io.dataspaceconnector.service.resource.ids.builder.IdsArtifactBuilder;
+import io.dataspaceconnector.service.resource.ids.builder.IdsCatalogBuilder;
+import io.dataspaceconnector.service.resource.ids.builder.IdsContractBuilder;
+import io.dataspaceconnector.service.resource.ids.builder.IdsRepresentationBuilder;
+import io.dataspaceconnector.service.resource.ids.builder.IdsResourceBuilder;
+import io.dataspaceconnector.service.resource.type.AgreementService;
+import io.dataspaceconnector.service.resource.type.ArtifactService;
+import io.dataspaceconnector.service.resource.type.CatalogService;
+import io.dataspaceconnector.service.resource.type.ContractService;
+import io.dataspaceconnector.service.resource.type.RepresentationService;
+import io.dataspaceconnector.service.resource.type.ResourceService;
+import io.dataspaceconnector.service.resource.type.RuleService;
+import io.dataspaceconnector.common.usagecontrol.AllowAccessVerifier;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -68,6 +61,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -414,7 +414,7 @@ public class EntityResolverTest {
         Mockito.doReturn(artifact).when(artifactService).get(eq(endpointId));
 
         final var idsAgreement = new ContractAgreementBuilder()
-                ._contractStart_(IdsUtils.getGregorianOf(ZonedDateTime.now()))
+                ._contractStart_(ToIdsObjectMapper.getGregorianOf(ZonedDateTime.now()))
                 .build();
 
         Mockito.doReturn(idsAgreement).when(deserializationService).getContractAgreement(eq(agreement.getValue()));

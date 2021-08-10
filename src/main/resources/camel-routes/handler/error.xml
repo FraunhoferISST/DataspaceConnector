@@ -26,7 +26,7 @@
         <from uri="direct:handleResourceNotFoundExceptionForSubscription"/>
         <log loggingLevel="DEBUG" message="Error route for handling ResourceNotFoundException called."/>
         <setProperty name="subscription-target">
-            <simple>${bean:io.dataspaceconnector.util.MessageUtils?method=extractTargetId(${body.getHeader()})}</simple>
+            <simple>${bean:io.dataspaceconnector.common.ids.communication.MessageUtils?method=extractTargetId(${body.getHeader()})}</simple>
         </setProperty>
         <to uri="bean:messageResponseService?method=handleResourceNotFoundException(${exception},
         ${exchangeProperty.subscription-target},
@@ -75,9 +75,9 @@
         <log loggingLevel="DEBUG" message="Error route for handling IllegalArgumentException called."/>
         <process ref="PayloadStreamReader"/>
         <to uri="bean:messageResponseService?method=handleIllegalArgumentException(${exception},
-        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getBody().toString()},
-        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getHeader().getIssuerConnector()},
-        ${mandatoryBodyAs(io.dataspaceconnector.camel.dto.Request).getHeader().getId()})"/>
+        ${mandatoryBodyAs(io.dataspaceconnector.service.message.handler.dto.Request).getBody().toString()},
+        ${mandatoryBodyAs(io.dataspaceconnector.service.message.handler.dto.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.service.message.handler.dto.Request).getHeader().getId()})"/>
     </route>
 
     <route id="wrappedIllegalArgumentException">

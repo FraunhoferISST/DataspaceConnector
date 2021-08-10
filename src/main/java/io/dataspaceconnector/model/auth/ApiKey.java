@@ -15,10 +15,7 @@
  */
 package io.dataspaceconnector.model.auth;
 
-import javax.persistence.Entity;
-import java.util.HashMap;
-
-import io.dataspaceconnector.service.HttpService.HttpArgs;
+import io.dataspaceconnector.common.net.HttpService.HttpArgs;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +24,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import javax.persistence.Entity;
+import java.util.HashMap;
 
 /**
  * Entity used for containing Basic Auth information in the context of AuthTypes.

@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.model.auth;
 
-import io.dataspaceconnector.service.HttpService;
+import io.dataspaceconnector.common.net.HttpService;
 import okhttp3.Credentials;
 import org.junit.jupiter.api.Test;
 

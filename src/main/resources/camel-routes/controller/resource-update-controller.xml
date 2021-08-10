@@ -2,7 +2,7 @@
     <route id="resourceUpdateSender">
 
         <onException>
-            <exception>io.dataspaceconnector.exception.ResourceNotFoundException</exception>
+            <exception>io.dataspaceconnector.common.exception.ResourceNotFoundException</exception>
             <to uri="direct:handleResourceNotFoundForController"/>
         </onException>
 
@@ -14,7 +14,7 @@
 
         <from uri="direct:resourceUpdateSender"/>
         <setProperty name="idscp2-client-uri">
-            <simple>${bean:io.dataspaceconnector.camel.util.ParameterUtils?method=getIdscp2ClientUri(${exchangeProperty.recipient})}</simple>
+            <simple>${bean:io.dataspaceconnector.common.routing.ParameterUtils?method=getIdscp2ClientUri(${exchangeProperty.recipient})}</simple>
         </setProperty>
         <process ref="ResourceFinder"/>
         <process ref="ResourceUpdateMessageBuilder"/>

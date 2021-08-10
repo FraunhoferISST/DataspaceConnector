@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 /**
- * The views are DTOs for controlled exposing of
- * Dataspace Connector entities.
+ * The views are DTOs for controlled exposing of entities.
  */
 package io.dataspaceconnector.controller.resource.view;
