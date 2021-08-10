@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.controller.resource.base;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.base.Description;
 import io.dataspaceconnector.model.base.Entity;
@@ -24,6 +26,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.RepresentationModel;
@@ -31,8 +34,6 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.UUID;
 
 /**
  * Offers REST-Api endpoints for REST resource handling.
@@ -96,11 +97,20 @@ public class BaseResourceController<T extends Entity, D extends Description, V
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
     @Override
     public PagedModel<V> getAll(final Integer page, final Integer size) {
         final var pageable = Utils.toPageRequest(page, size);
         final var entities = service.getAll(pageable);
+        return getPagedModel(entities);
+    }
+
+    /**
+     * Create a PagedModel from a page.
+     * @param entities The entities.
+     * @return The pagemodel.
+     */
+    @SuppressWarnings("unchecked")
+    protected PagedModel<V> getPagedModel(final Page<T> entities) {
         PagedModel<V> model;
         if (entities.hasContent()) {
             model = pagedAssembler.toModel(entities, assembler);
@@ -110,7 +120,6 @@ public class BaseResourceController<T extends Entity, D extends Description, V
 
         return model;
     }
-
 
     /** {@inheritDoc} */
     @Override

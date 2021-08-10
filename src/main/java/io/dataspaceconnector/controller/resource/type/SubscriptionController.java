@@ -33,10 +33,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.hateoas.PagedModel;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -78,14 +75,7 @@ public class SubscriptionController extends BaseResourceController<Subscription,
     public ResponseEntity<SubscriptionView> create(@RequestBody final SubscriptionDesc desc) {
         // Set boolean to false as this subscription has been created via a REST API call.
         desc.setIdsProtocol(false);
-
-        final var obj = getService().create(desc);
-        final var entity = getAssembler().toModel(obj);
-
-        final var headers = new HttpHeaders();
-        headers.setLocation(entity.getRequiredLink("self").toUri());
-
-        return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
+        return super.create(desc);
     }
 
     /**
@@ -96,7 +86,6 @@ public class SubscriptionController extends BaseResourceController<Subscription,
      * @return Response with code 200 (Ok) and the list of all endpoints of this resource type.
      */
     @GetMapping("owning")
-    @SuppressWarnings("unchecked")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
                     description = ResponseDescription.METHOD_NOT_ALLOWED),
@@ -108,17 +97,8 @@ public class SubscriptionController extends BaseResourceController<Subscription,
         final var pageable = Utils.toPageRequest(page, size);
 
         final var connectorId = connectorSvc.getConnectorId();
-        final var list = getService().getBySubscriber(pageable, connectorId);
-
-        final var entities = new PageImpl<>(list);
-        PagedModel<SubscriptionView> model;
-        if (entities.hasContent()) {
-            model = getPagedAssembler().toModel(entities, getAssembler());
-        } else {
-            model = (PagedModel<SubscriptionView>) getPagedAssembler().toEmptyModel(entities,
-                    getResourceType());
-        }
-
-        return model;
+        final var list = Utils.toPage(getService()
+                                              .getBySubscriber(pageable, connectorId), pageable);
+        return getPagedModel(list);
     }
 }
