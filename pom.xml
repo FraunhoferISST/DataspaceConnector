@@ -94,7 +94,7 @@
 		<maven.minimum.version>3.3.9</maven.minimum.version>
 
 		<!-- Dependencies -->
-		<ids-messaging-services.version>2.0.1</ids-messaging-services.version>
+		<ids-messaging-services.version>3.1.0</ids-messaging-services.version>
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.6.2</swagger-annotations.version>
 		<okhttp.version>4.9.1</okhttp.version>
@@ -165,10 +165,14 @@
 					<groupId>org.bitbucket.b_c</groupId>
 					<artifactId>jose4j</artifactId>
 				</exclusion>
+				<!-- Already included by camel-idscp2 -->
 				<exclusion>
-					<!-- Till IDS Messaging service updates -->
-					<groupId>org.apache.commons</groupId>
-					<artifactId>commons-compress</artifactId>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.squareup.okhttp3</groupId>
+					<artifactId>okhttp</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -350,6 +354,10 @@
                     <artifactId>libthrift</artifactId>
                     <groupId>org.apache.thrift</groupId>
                 </exclusion>
+				<exclusion>
+					<groupId>com.squareup.okhttp3</groupId>
+					<artifactId>okhttp</artifactId>
+				</exclusion>
             </exclusions>
         </dependency>
 
@@ -402,27 +410,10 @@
 			</exclusions>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
-		<!-- Till IDS Messaging service updates -->
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-compress</artifactId>
-			<version>1.21</version>
-		</dependency>
-
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
 			<version>3.2.2</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
-		<!-- Override commons-io 2.2 in IDS Messaging Service affected by CVE-2021-29425 -->
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.11.0</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
@@ -453,6 +444,18 @@
                     <artifactId>camel-core</artifactId>
                     <groupId>org.apache.camel</groupId>
                 </exclusion>
+				<exclusion>
+					<groupId>de.fraunhofer.iais.eis.ids.infomodel</groupId>
+					<artifactId>java</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>de.fraunhofer.iais.eis.ids</groupId>
+					<artifactId>infomodel-serializer</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.squareup.okhttp3</groupId>
+					<artifactId>okhttp</artifactId>
+				</exclusion>
             </exclusions>
         </dependency>
 

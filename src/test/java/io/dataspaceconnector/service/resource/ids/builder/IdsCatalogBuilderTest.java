@@ -37,14 +37,6 @@ import io.dataspaceconnector.model.resource.Resource;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.rule.ContractRuleDesc;
 import io.dataspaceconnector.model.rule.ContractRuleFactory;
-import io.dataspaceconnector.service.resource.ids.builder.IdsArtifactBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsCatalogBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsContractBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsDutyBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsPermissionBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsProhibitionBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsRepresentationBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsResourceBuilder;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,7 +109,7 @@ public class IdsCatalogBuilderTest {
         assertTrue(idsCatalog.getId().toString().contains(idsCatalog.getId().toString()));
         assertNull(idsCatalog.getProperties());
 
-        assertNull(idsCatalog.getRequestedResource());
+        assertTrue(idsCatalog.getRequestedResource().isEmpty());
 
         final var offeredResources = idsCatalog.getOfferedResource();
         assertEquals(1, offeredResources.size());
@@ -149,7 +141,7 @@ public class IdsCatalogBuilderTest {
         assertEquals(1, idsCatalog.getProperties().size());
         assertEquals("value", idsCatalog.getProperties().get("key"));
 
-        assertNull(idsCatalog.getRequestedResource());
+        assertTrue(idsCatalog.getRequestedResource().isEmpty());
 
         final var offeredResources = idsCatalog.getOfferedResource();
         assertEquals(1, offeredResources.size());
@@ -178,8 +170,8 @@ public class IdsCatalogBuilderTest {
         assertTrue(idsCatalog.getId().toString().contains(idsCatalog.getId().toString()));
         assertNull(idsCatalog.getProperties());
 
-        assertNull(idsCatalog.getRequestedResource());
-        assertNull(idsCatalog.getOfferedResource());
+        assertTrue(idsCatalog.getRequestedResource().isEmpty());
+        assertTrue(idsCatalog.getOfferedResource().isEmpty());
     }
 
     @Test
@@ -195,7 +187,7 @@ public class IdsCatalogBuilderTest {
         assertTrue(idsCatalog.getId().toString().contains(idsCatalog.getId().toString()));
         assertNull(idsCatalog.getProperties());
 
-        assertNull(idsCatalog.getRequestedResource());
+        assertTrue(idsCatalog.getRequestedResource().isEmpty());
 
         final var offeredResources = idsCatalog.getOfferedResource();
         assertEquals(0, offeredResources.size());
@@ -214,7 +206,7 @@ public class IdsCatalogBuilderTest {
         assertTrue(idsCatalog.getId().toString().contains(idsCatalog.getId().toString()));
         assertNull(idsCatalog.getProperties());
 
-        assertNull(idsCatalog.getRequestedResource());
+        assertTrue(idsCatalog.getRequestedResource().isEmpty());
 
         final var offeredResources = idsCatalog.getOfferedResource();
         assertEquals(0, offeredResources.size());
@@ -233,7 +225,7 @@ public class IdsCatalogBuilderTest {
         assertTrue(idsCatalog.getId().toString().contains(idsCatalog.getId().toString()));
         assertNull(idsCatalog.getProperties());
 
-        assertNull(idsCatalog.getRequestedResource());
+        assertTrue(idsCatalog.getRequestedResource().isEmpty());
 
         final var offeredResources = idsCatalog.getOfferedResource();
         assertEquals(1, offeredResources.size());

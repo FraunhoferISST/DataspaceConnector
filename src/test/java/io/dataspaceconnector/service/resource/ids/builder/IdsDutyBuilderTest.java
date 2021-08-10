@@ -26,7 +26,6 @@ import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.rule.ContractRuleDesc;
 import io.dataspaceconnector.model.rule.ContractRuleFactory;
-import io.dataspaceconnector.service.resource.ids.builder.IdsDutyBuilder;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,6 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -82,7 +80,7 @@ public class IdsDutyBuilderTest {
         assertEquals(BinaryOperator.TEMPORAL_EQUALS, constraint.getOperator());
         assertEquals(LeftOperand.POLICY_EVALUATION_TIME, constraint.getLeftOperand());
 
-        assertNull(idsRule.getDescription());
+        assertTrue(idsRule.getDescription().isEmpty());
     }
 
     @Test
@@ -108,7 +106,7 @@ public class IdsDutyBuilderTest {
         assertEquals(BinaryOperator.TEMPORAL_EQUALS, constraint.getOperator());
         assertEquals(LeftOperand.POLICY_EVALUATION_TIME, constraint.getLeftOperand());
 
-        assertNull(idsRule.getDescription());
+        assertTrue(idsRule.getDescription().isEmpty());
     }
 
     @Test
@@ -143,7 +141,7 @@ public class IdsDutyBuilderTest {
         assertTrue(idsRule.getId().isAbsolute());
         assertTrue(idsRule.getId().toString().contains(rule.getId().toString()));
 
-        assertNull(idsRule.getAction());
+        assertTrue(idsRule.getAction().isEmpty());
 
         assertEquals(1, idsRule.getConstraint().size());
         Constraint constraint = (Constraint) idsRule.getConstraint().get(0);
@@ -152,7 +150,7 @@ public class IdsDutyBuilderTest {
         assertEquals(BinaryOperator.TEMPORAL_EQUALS, constraint.getOperator());
         assertEquals(LeftOperand.POLICY_EVALUATION_TIME, constraint.getLeftOperand());
 
-        assertNull(idsRule.getDescription());
+        assertTrue(idsRule.getDescription().isEmpty());
     }
 
     /**************************************************************************

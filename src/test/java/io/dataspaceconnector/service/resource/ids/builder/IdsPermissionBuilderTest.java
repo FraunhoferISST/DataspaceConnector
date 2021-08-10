@@ -15,26 +15,24 @@
  */
 package io.dataspaceconnector.service.resource.ids.builder;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.PermissionImpl;
+import de.fraunhofer.ids.messaging.util.SerializerProvider;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.rule.ContractRuleDesc;
 import io.dataspaceconnector.model.rule.ContractRuleFactory;
-import io.dataspaceconnector.service.resource.ids.builder.IdsPermissionBuilder;
-import de.fraunhofer.ids.messaging.util.SerializerProvider;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -71,7 +69,7 @@ public class IdsPermissionBuilderTest {
 
         assertEquals(1, idsRule.getAction().size());
         assertEquals(Action.USE, idsRule.getAction().get(0));
-        assertNull(idsRule.getConstraint());
+        assertTrue(idsRule.getConstraint().isEmpty());
         assertEquals(1, idsRule.getDescription().size());
         assertEquals("provide-access", idsRule.getDescription().get(0).getValue());
     }
@@ -91,7 +89,7 @@ public class IdsPermissionBuilderTest {
 
         assertEquals(1, idsRule.getAction().size());
         assertEquals(Action.USE, idsRule.getAction().get(0));
-        assertNull(idsRule.getConstraint());
+        assertTrue(idsRule.getConstraint().isEmpty());
         assertEquals(1, idsRule.getDescription().size());
         assertEquals("provide-access", idsRule.getDescription().get(0).getValue());
     }
@@ -127,7 +125,7 @@ public class IdsPermissionBuilderTest {
         assertEquals(PermissionImpl.class, idsRule.getClass());
         assertTrue(idsRule.getId().isAbsolute());
         assertTrue(idsRule.getId().toString().contains(rule.getId().toString()));
-        assertNull(idsRule.getAction());
+        assertTrue(idsRule.getAction().isEmpty());
     }
 
     /**************************************************************************
