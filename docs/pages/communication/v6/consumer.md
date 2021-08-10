@@ -338,6 +338,11 @@ As a response, we now receive the closed contract agreement:
 }
 ```
 
+To get to the artifacts and their data links, make a request on (in this example):
+`https://localhost:8080/api/agreements/e6464bac-bed9-49ca-bafb-86fb4142b49c/artifacts`.
+Due to HATEOAS, all responses contain information about related objects. So you can just
+search your way through the data model.
+
 The corresponding contract agreement has been sent to the Clearing House and stored inside the
 consumer's and provider's internal database for later access and usage control.
 
