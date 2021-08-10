@@ -367,8 +367,9 @@ rules, you are able to handle out contract agreements for multiple artifacts at 
 
 ---
 
-The Dataspace Connector will automatically start sending `DescriptionRequestMessages` and
-`ArtifactRequestMessages` for the requested elements and store metadata and data to its database.
+After the contract negotiation, the Dataspace Connector will automatically start sending
+`DescriptionRequestMessages` and `ArtifactRequestMessages` for the requested elements and store
+metadata and data to its database.
 
 ### Step 4: Access the Data
 
