@@ -36,7 +36,6 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -81,7 +80,7 @@ public class IdsDutyBuilderTest {
         assertEquals(BinaryOperator.TEMPORAL_EQUALS, constraint.getOperator());
         assertEquals(LeftOperand.POLICY_EVALUATION_TIME, constraint.getLeftOperand());
 
-        assertNull(idsRule.getDescription());
+        assertTrue(idsRule.getDescription().isEmpty());
     }
 
     @Test
@@ -107,7 +106,7 @@ public class IdsDutyBuilderTest {
         assertEquals(BinaryOperator.TEMPORAL_EQUALS, constraint.getOperator());
         assertEquals(LeftOperand.POLICY_EVALUATION_TIME, constraint.getLeftOperand());
 
-        assertNull(idsRule.getDescription());
+        assertTrue(idsRule.getDescription().isEmpty());
     }
 
     @Test
@@ -151,7 +150,7 @@ public class IdsDutyBuilderTest {
         assertEquals(BinaryOperator.TEMPORAL_EQUALS, constraint.getOperator());
         assertEquals(LeftOperand.POLICY_EVALUATION_TIME, constraint.getLeftOperand());
 
-        assertNull(idsRule.getDescription());
+        assertTrue(idsRule.getDescription().isEmpty());
     }
 
     /**************************************************************************

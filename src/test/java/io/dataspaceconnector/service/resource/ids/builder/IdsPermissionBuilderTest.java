@@ -33,7 +33,6 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -90,7 +89,7 @@ public class IdsPermissionBuilderTest {
 
         assertEquals(1, idsRule.getAction().size());
         assertEquals(Action.USE, idsRule.getAction().get(0));
-        assertNull(idsRule.getConstraint());
+        assertTrue(idsRule.getConstraint().isEmpty());
         assertEquals(1, idsRule.getDescription().size());
         assertEquals("provide-access", idsRule.getDescription().get(0).getValue());
     }
