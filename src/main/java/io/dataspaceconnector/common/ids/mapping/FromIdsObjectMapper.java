@@ -127,7 +127,7 @@ public final class FromIdsObjectMapper {
             additional.put("ids:accrualPeriodicity", periodicity.toRdf());
         }
 
-        if (contentPart != null) {
+        if (contentPart != null && !contentPart.isEmpty()) {
             addListToAdditional(contentPart, additional, "ids:contentPart");
         }
 
@@ -147,7 +147,7 @@ public final class FromIdsObjectMapper {
             additional.put("ids:customLicense", customLicense.toString());
         }
 
-        if (representation != null) {
+        if (representation != null && !representation.isEmpty()) {
             addListToAdditional(representation, additional, "ids:defaultRepresentation");
         }
 
@@ -155,15 +155,15 @@ public final class FromIdsObjectMapper {
             additional.put("ids:modified", modified.toXMLFormat());
         }
 
-        if (resourceEndpoint != null) {
+        if (resourceEndpoint != null && !resourceEndpoint.isEmpty()) {
             addListToAdditional(resourceEndpoint, additional, "ids:resourceEndpoint");
         }
 
-        if (resourcePart != null) {
+        if (resourcePart != null && !resourcePart.isEmpty()) {
             addListToAdditional(resourcePart, additional, "ids:resourcePart");
         }
 
-        if (sample != null) {
+        if (sample != null && !sample.isEmpty()) {
             addListToAdditional(sample, additional, "ids:sample");
         }
 
@@ -171,11 +171,11 @@ public final class FromIdsObjectMapper {
             additional.put("ids:shapesGraph", shapesGraph.toString());
         }
 
-        if (spatialCoverage != null) {
+        if (spatialCoverage != null && !spatialCoverage.isEmpty()) {
             addListToAdditional(spatialCoverage, additional, "ids:spatialCoverage");
         }
 
-        if (temporalCoverage != null) {
+        if (temporalCoverage != null && !temporalCoverage.isEmpty()) {
             addListToAdditional(temporalCoverage, additional, "ids:temporalCoverage");
         }
 
@@ -183,7 +183,7 @@ public final class FromIdsObjectMapper {
             additional.put("ids:temporalResolution", temporalRes.toString());
         }
 
-        if (theme != null) {
+        if (theme != null && !theme.isEmpty()) {
             addListToAdditional(theme, additional, "ids:theme");
         }
 
@@ -214,21 +214,21 @@ public final class FromIdsObjectMapper {
         desc.setLicense(standardLicense);
         desc.setSovereign(sovereign);
 
-        if (description != null) {
+        if (description != null && !description.isEmpty()) {
             desc.setDescription(description.size() == 1 ? description.get(0).getValue()
                     : description.toString());
         }
 
-        if (title != null) {
+        if (title != null && !title.isEmpty()) {
             desc.setTitle(title.size() == 1 ? title.get(0).getValue() : title.toString());
         }
 
-        if (language != null) {
+        if (language != null && !language.isEmpty()) {
             desc.setLanguage(
                     language.size() == 1 ? language.get(0).toString() : language.toString());
         }
 
-        if (resourceEndpoint != null) {
+        if (resourceEndpoint != null && !resourceEndpoint.isEmpty()) {
             getFirstEndpointDocumentation(resourceEndpoint)
                     .ifPresent(desc::setEndpointDocumentation);
         }
@@ -456,7 +456,7 @@ public final class FromIdsObjectMapper {
         desc.setRemoteId(rule.getId());
         desc.setValue(value);
 
-        if (rule.getTitle() != null) {
+        if (rule.getTitle() != null && !rule.getTitle().isEmpty()) {
             desc.setTitle(rule.getTitle().toString());
         }
 
@@ -473,7 +473,7 @@ public final class FromIdsObjectMapper {
     private static Map<String, String> propertiesToAdditional(
             final Map<String, Object> properties) {
         final Map<String, String> additional = new ConcurrentHashMap<>();
-        if (properties != null) {
+        if (properties != null && !properties.isEmpty()) {
             for (final Map.Entry<String, Object> entry : properties.entrySet()) {
                 if (entry.getValue() != null) {
                     additional.put(entry.getKey(), entry.getValue().toString());
@@ -505,7 +505,7 @@ public final class FromIdsObjectMapper {
             final List<? extends ConnectorEndpoint> endpoints) {
         Optional<URI> output = Optional.empty();
 
-        if (!endpoints.isEmpty()) {
+        if (endpoints != null && !endpoints.isEmpty()) {
             final var first = endpoints.get(0);
 
             if (first.getEndpointDocumentation() != null
@@ -620,7 +620,7 @@ public final class FromIdsObjectMapper {
     public static List<String> getKeywordsAsString(final List<? extends TypedLiteral> keywords) {
 
         final var list = new ArrayList<String>();
-        if (keywords != null) {
+        if (keywords != null && !keywords.isEmpty()) {
             for (final var keyword : keywords) {
                 list.add(keyword.getValue());
             }
