@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpointDesc;
 import io.dataspaceconnector.model.endpoint.GenericEndpointFactory;
@@ -26,8 +28,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 /**
  * Service class for generic endpoints.
@@ -44,16 +44,6 @@ public class GenericEndpointService
     private final @NonNull DataSourceService dataSourceSvc;
 
     /**
-     * Service for managing routes.
-     */
-    private final @NonNull RouteRepository routeRepo;
-
-    /**
-     * Helper class for deploying and deleting Camel routes.
-     */
-    private final @NonNull RouteHelper routeHelper;
-
-    /**
      * Constructor for injection.
      *
      * @param dataSourceService The data source repository.
@@ -61,13 +51,11 @@ public class GenericEndpointService
      * @param camelRouteHelper The helper class for Camel routes.
      */
     @Autowired
-    public GenericEndpointService(final @NonNull DataSourceService dataSourceService,
-                                  final @NonNull RouteRepository routeRepository,
-                                  final @NonNull RouteHelper camelRouteHelper) {
-        super();
+    public GenericEndpointService(final DataSourceService dataSourceService,
+                                  final RouteRepository routeRepository,
+                                  final RouteHelper camelRouteHelper) {
+        super(routeRepository, camelRouteHelper);
         this.dataSourceSvc = dataSourceService;
-        this.routeRepo = routeRepository;
-        this.routeHelper = camelRouteHelper;
     }
 
     /**
@@ -81,22 +69,5 @@ public class GenericEndpointService
         final var updated = ((GenericEndpointFactory) getFactory())
                 .setDataSourceToGenericEndpoint(get(endpointId), dataSourceSvc.get(dataSourceId));
         persist(updated);
-    }
-
-    /**
-     * Persists a generic endpoint. If an already existing endpoint is updated, the Camel routes
-     * for all routes referencing the endpoint are recreated.
-     *
-     * @param endpoint the endpoint to persist.
-     * @return the persisted endpoint.
-     */
-    @Override
-    protected final GenericEndpoint persist(final GenericEndpoint endpoint) {
-        if (endpoint.getId() != null) {
-            final var affectedRoutes = routeRepo.findTopLevelRoutesByEndpoint(endpoint.getId());
-            affectedRoutes.forEach(routeHelper::deploy);
-        }
-
-        return super.persist(endpoint);
     }
 }
