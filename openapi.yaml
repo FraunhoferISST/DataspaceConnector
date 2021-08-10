@@ -2173,132 +2173,6 @@ paths:
           description: Unauthorized
         "204":
           description: No Content
-  /api/offers/{id}/brokers:
-    get:
-      tags:
-        - Offered Resources
-      summary: Get all children of a base resource with pagination
-      operationId: getResource_15
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
-      responses:
-        "401":
-          description: Unauthorized
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelBrokerView'
-        "200":
-          description: Ok
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelBrokerView'
-    put:
-      tags:
-        - Offered Resources
-      summary: Replace the children of a base resource
-      operationId: replaceResources_12
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-        "204":
-          description: No Content
-    post:
-      tags:
-        - Offered Resources
-      summary: Add a list of children to a base resource
-      operationId: addResources_12
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelBrokerView'
-        "200":
-          description: Ok
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelBrokerView'
-    delete:
-      tags:
-        - Offered Resources
-      summary: Remove a list of children from a base resource
-      operationId: removeResources_12
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-        "204":
-          description: No Content
   /api/notify:
     put:
       tags:
@@ -2649,7 +2523,7 @@ paths:
       tags:
         - Contracts
       summary: Replace the children of a base resource
-      operationId: replaceResources_13
+      operationId: replaceResources_12
       parameters:
         - name: id
           in: path
@@ -2675,7 +2549,7 @@ paths:
       tags:
         - Contracts
       summary: Add a list of children to a base resource
-      operationId: addResources_13
+      operationId: addResources_12
       parameters:
         - name: id
           in: path
@@ -2709,7 +2583,7 @@ paths:
       tags:
         - Contracts
       summary: Remove a list of children from a base resource
-      operationId: removeResources_13
+      operationId: removeResources_12
       parameters:
         - name: id
           in: path
@@ -2775,7 +2649,7 @@ paths:
       tags:
         - Contracts
       summary: Replace the children of a base resource
-      operationId: replaceResources_14
+      operationId: replaceResources_13
       parameters:
         - name: id
           in: path
@@ -2801,7 +2675,7 @@ paths:
       tags:
         - Contracts
       summary: Add a list of children to a base resource
-      operationId: addResources_14
+      operationId: addResources_13
       parameters:
         - name: id
           in: path
@@ -2835,7 +2709,7 @@ paths:
       tags:
         - Contracts
       summary: Remove a list of children from a base resource
-      operationId: removeResources_14
+      operationId: removeResources_13
       parameters:
         - name: id
           in: path
@@ -2901,7 +2775,7 @@ paths:
       tags:
         - Contracts
       summary: Replace the children of a base resource
-      operationId: replaceResources_15
+      operationId: replaceResources_14
       parameters:
         - name: id
           in: path
@@ -2927,7 +2801,7 @@ paths:
       tags:
         - Contracts
       summary: Add a list of children to a base resource
-      operationId: addResources_15
+      operationId: addResources_14
       parameters:
         - name: id
           in: path
@@ -2961,7 +2835,7 @@ paths:
       tags:
         - Contracts
       summary: Remove a list of children from a base resource
-      operationId: removeResources_15
+      operationId: removeResources_14
       parameters:
         - name: id
           in: path
@@ -3360,7 +3234,7 @@ paths:
       tags:
         - Catalogs
       summary: Replace the children of a base resource
-      operationId: replaceResources_16
+      operationId: replaceResources_15
       parameters:
         - name: id
           in: path
@@ -3386,7 +3260,7 @@ paths:
       tags:
         - Catalogs
       summary: Add a list of children to a base resource
-      operationId: addResources_16
+      operationId: addResources_15
       parameters:
         - name: id
           in: path
@@ -3420,7 +3294,7 @@ paths:
       tags:
         - Catalogs
       summary: Remove a list of children from a base resource
-      operationId: removeResources_16
+      operationId: removeResources_15
       parameters:
         - name: id
           in: path
@@ -3646,7 +3520,7 @@ paths:
       tags:
         - Artifacts
       summary: Replace the children of a base resource
-      operationId: replaceResources_17
+      operationId: replaceResources_16
       parameters:
         - name: id
           in: path
@@ -3672,7 +3546,7 @@ paths:
       tags:
         - Artifacts
       summary: Add a list of children to a base resource
-      operationId: addResources_17
+      operationId: addResources_16
       parameters:
         - name: id
           in: path
@@ -3706,7 +3580,7 @@ paths:
       tags:
         - Artifacts
       summary: Remove a list of children from a base resource
-      operationId: removeResources_17
+      operationId: removeResources_16
       parameters:
         - name: id
           in: path
@@ -5346,6 +5220,46 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/PagedModelSubscriptionView'
+  /api/offers/{id}/brokers:
+    get:
+      tags:
+        - Offered Resources
+      summary: Get all children of a base resource with pagination
+      operationId: getResource_15
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 30
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelBrokerView'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelBrokerView'
   /api/connector:
     get:
       tags:
@@ -6511,20 +6425,6 @@ components:
           $ref: '#/components/schemas/Links'
         page:
           $ref: '#/components/schemas/PageMetadata'
-    PagedModelBrokerView:
-      type: object
-      properties:
-        _embedded:
-          type: object
-          properties:
-            brokers:
-              type: array
-              items:
-                $ref: '#/components/schemas/BrokerView'
-        _links:
-          $ref: '#/components/schemas/Links'
-        page:
-          $ref: '#/components/schemas/PageMetadata'
     AbstractConstraint:
       required:
         - '@id'
@@ -6563,7 +6463,7 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
-            ids:pipEndpoint:
+            ids:unit:
               type: string
               format: uri
             ids:leftOperand:
@@ -6588,9 +6488,6 @@ components:
                 - https://w3id.org/idsa/code/USER
             ids:rightOperand:
               $ref: '#/components/schemas/RdfResource'
-            ids:unit:
-              type: string
-              format: uri
             ids:operator:
               type: string
               enum:
@@ -6643,6 +6540,9 @@ components:
             ids:rightOperandReference:
               type: string
               format: uri
+            ids:pipEndpoint:
+              type: string
+              format: uri
             '@type':
               type: string
     Duty:
@@ -6674,11 +6574,11 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
-            ids:or:
+            ids:xone:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
-            ids:xone:
+            ids:or:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
@@ -6696,11 +6596,11 @@ components:
         - $ref: '#/components/schemas/Rule'
         - type: object
           properties:
-            ids:preDuty:
+            ids:postDuty:
               type: array
               items:
                 $ref: '#/components/schemas/Duty'
-            ids:postDuty:
+            ids:preDuty:
               type: array
               items:
                 $ref: '#/components/schemas/Duty'
@@ -6752,20 +6652,6 @@ components:
         ids:target:
           type: string
           format: uri
-        ids:assignee:
-          type: array
-          items:
-            type: string
-            format: uri
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/LogicalConstraint'
-        ids:assetRefinement:
-          oneOf:
-            - $ref: '#/components/schemas/Constraint'
-            - $ref: '#/components/schemas/LogicalConstraint'
         ids:action:
           type: array
           items:
@@ -6787,7 +6673,21 @@ components:
               - https://w3id.org/idsa/code/TRACK_PROVENANCE
               - https://w3id.org/idsa/code/USE
               - https://w3id.org/idsa/code/WRITE
+        ids:constraint:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/LogicalConstraint'
+        ids:assetRefinement:
+          oneOf:
+            - $ref: '#/components/schemas/Constraint'
+            - $ref: '#/components/schemas/LogicalConstraint'
         ids:assigner:
+          type: array
+          items:
+            type: string
+            format: uri
+        ids:assignee:
           type: array
           items:
             type: string
@@ -6985,6 +6885,20 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/SubscriptionView'
+        _links:
+          $ref: '#/components/schemas/Links'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+    PagedModelBrokerView:
+      type: object
+      properties:
+        _embedded:
+          type: object
+          properties:
+            brokers:
+              type: array
+              items:
+                $ref: '#/components/schemas/BrokerView'
         _links:
           $ref: '#/components/schemas/Links'
         page:
