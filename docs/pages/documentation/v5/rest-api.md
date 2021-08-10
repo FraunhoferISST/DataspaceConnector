@@ -17,7 +17,7 @@ Get to know the Dataspace Connector's REST API to automated resource handling.
 ---
 
 If you haven't already checked it out, please first take a look at the Dataspace Connector data
-model [here](pages/documentation/v5/data-model.md). As mentioned there, the data model of the
+model [here](data-model.md). As mentioned there, the data model of the
 Connector is very modular. Relations between objects are predefined and via the REST API, a data
 offer can thus be created very dynamically. Individual objects can be detached from each other,
 attached to other objects, and modified at any time.
@@ -52,10 +52,10 @@ Swagger UI for adding offers to catalogs:
 
 ![Swagger API Catalog to Offers](../../../assets/images/swagger_catalogs_offer.png)
 
-As described [here](pages/features.md), the Dataspace Connector partly supports HATEOAS and
+As described [here](../../features.md), the Dataspace Connector partly supports HATEOAS and
 returns correct response codes according to the HTTP1.1 standard (RFC 7231). The OpenApi
 documentation is provided within the repository and can additionally be created at runtime as
-explained [here](pages/deployment/build.md#maven).
+explained [here](../../deployment/build.md#maven).
 
 The entry point for the REST API is located at `/api`. From there, you can easily navigate through
 the data model.

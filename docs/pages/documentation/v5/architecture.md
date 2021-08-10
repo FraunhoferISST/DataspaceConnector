@@ -62,4 +62,4 @@ The Dataspace Connector will support a segmented network. Every running containe
 to a different network zone by providing its own virtual network stack. The Connector as the core
 container will have root rights and be able to manage network and firewall configurations for all
 separated containers and their networks. As root namespace, it provides an external IP and can be
-reached from an external network. Details can be found [here](pages/roadmap/concept.md).
+reached from an external network. Details can be found [here](../../roadmap/concept.md).

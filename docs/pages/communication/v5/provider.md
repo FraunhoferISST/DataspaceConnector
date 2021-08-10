@@ -21,14 +21,14 @@ The self-description is returned as JSON-LD and contains several information abo
 connector instance. This includes e.g. the title, the maintainer, the IDS Informodel version, and
 the resource catalog. At the public endpoint `/`, the resource catalog is not displayed. It can only
 be accessed with admin credentials at `GET /api/connector` or by sending an IDS description request
-message as explained [here](pages/communication/v5/consumer.md#step-1-request-a-connectors-self-description).
+message as explained [here](consumer.md#step-1-request-a-connectors-self-description).
 
 ![Selfservice Endpoints](../../../assets/images/swagger_connector.png)
 
 ## Step by Step
 
 To understand the structure of a resource, please first take a look at the
-[data model section](pages/documentation/v5/data-model.md) and the [REST API explanation](pages/documentation/v5/rest-api.md).
+[data model section](../../documentation/v5/data-model.md) and the [REST API explanation](../../documentation/v5/rest-api.md).
 For adding resources to the running connector as a data provider, have a look at the following
 steps.
 
@@ -144,8 +144,7 @@ itself, its parents, etc. A version number is generated automatically and is inc
 entity change, as well as the creation and modification date.
 
 The endpoints `PUT`, `GET`, and`DELETE` `/offers/{id}` provide standard CRUD functions to read,
-update, and delete the metadata, respectively the data resource - as described
-[here](pages/documentation/v5/data-model.md).
+update, and delete the metadata, respectively the data resource.
 
 Next to the resource, we need a catalog as a parent for the offer. Use `POST /api/catalogs` to
 create one. Its location is: [https://localhost:8080/api/catalogs/5ac012e1-ffa5-43b3-af41-9707d2a9137d](https://localhost:8080/api/catalogs/5ac012e1-ffa5-43b3-af41-9707d2a9137d).
@@ -164,7 +163,7 @@ curl -X 'POST' \
 ]'
 ```
 
-As stated [here](pages/documentation/v5/data-model.md), **an offered resource is only complete if it
+As stated [here](../../documentation/v5/data-model.md), **an offered resource is only complete if it
 contains at least one contract offer and at least one representation with at least one artifact.
 Otherwise, it will not be listed in the IDS self-description because there is no complete data offer.**
 
@@ -250,7 +249,7 @@ local data. The Dataspace Connector automatically classifies an artifact as `rem
 
 Currently, the Dataspace Connector can natively establish a connection via http, https, and https
 with basic authentication. To connect to other backends, take a look at how to integrate
-routing frameworks as explained [here](pages/deployment/camel.md).
+routing frameworks as explained [here](../../deployment/camel.md).
 
 ---
 
@@ -296,7 +295,7 @@ the data provider returns the data. If not, it will respond with a `RejectionRea
 ---
 
 **Note**: The contract negotiation is enabled by default. To disable it, have a look at the
-[configurations](pages/deployment/configuration.md#ids-settings).
+[configurations](../../deployment/configuration.md#ids-settings).
 
 ---
 
