@@ -19,7 +19,7 @@ In this section, the registration of resources during the startup is described.
 
 ## Configuration
 
-The bootstrapping feature is disabled by default. To enable it, change the `bootstrap.active=false`
+The bootstrapping feature is disabled by default. To enable it, change the `bootstrap.enabled=false`
 value in the `application.properties` to `true`. Then, follow the steps below.
 
 ## Registering Elements at the Connector
