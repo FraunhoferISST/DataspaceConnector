@@ -165,6 +165,15 @@
 					<groupId>org.bitbucket.b_c</groupId>
 					<artifactId>jose4j</artifactId>
 				</exclusion>
+				<!-- Already included by camel-idscp2 -->
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.squareup.okhttp3</groupId>
+					<artifactId>okhttp</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -345,6 +354,10 @@
                     <artifactId>libthrift</artifactId>
                     <groupId>org.apache.thrift</groupId>
                 </exclusion>
+				<exclusion>
+					<groupId>com.squareup.okhttp3</groupId>
+					<artifactId>okhttp</artifactId>
+				</exclusion>
             </exclusions>
         </dependency>
 
@@ -438,6 +451,10 @@
 				<exclusion>
 					<groupId>de.fraunhofer.iais.eis.ids</groupId>
 					<artifactId>infomodel-serializer</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.squareup.okhttp3</groupId>
+					<artifactId>okhttp</artifactId>
 				</exclusion>
             </exclusions>
         </dependency>
