@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Contains all classes for container configuration.
+ * Classes for interacting with local Portainer instance.
  */
-package io.dataspaceconnector.service.appstore.container;
+package io.dataspaceconnector.service.appstore.portainer;

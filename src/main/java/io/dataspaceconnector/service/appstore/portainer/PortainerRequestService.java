@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.appstore;
+package io.dataspaceconnector.service.appstore.portainer;
 
 import de.fraunhofer.ids.messaging.protocol.http.HttpService;
-import io.dataspaceconnector.service.appstore.container.ContainerRequestBodyCreator;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -25,6 +24,7 @@ import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.io.IOException;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class AppStoreRegistryService {
+public class PortainerRequestService {
 
     /**
      * Service for http connections.
@@ -46,12 +46,7 @@ public class AppStoreRegistryService {
     /**
      * Service for http connections.
      */
-    private final @NonNull AppStoreRegistryConfig appStoreRegistryConfig;
-
-    /**
-     * Request body creator class.
-     */
-    private final @NonNull ContainerRequestBodyCreator requestBodyCreator;
+    private final @NonNull PortainerConfig portainerConfig;
 
     /**
      * Start index for sub string method.
@@ -70,14 +65,14 @@ public class AppStoreRegistryService {
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
-                .host(appStoreRegistryConfig.getDockerHost())
-                .port(appStoreRegistryConfig.getDockerPort())
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
                 .addPathSegment("api/auth");
         final var url = urlBuilder.build();
         builder.url(url);
-        final var requestBody = requestBodyCreator
-                .createRequestBodyForAuthentication(appStoreRegistryConfig.getDockerUser(),
-                        appStoreRegistryConfig.getDockerPassword());
+        final var requestBody = createRequestBodyForAuthentication(
+                        portainerConfig.getPortainerUser(),
+                        portainerConfig.getPortainerPassword());
         builder.post(RequestBody.create(requestBody,
                 MediaType.parse("application/json")));
 
@@ -104,8 +99,8 @@ public class AppStoreRegistryService {
 
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
-                .host(appStoreRegistryConfig.getDockerHost())
-                .port(appStoreRegistryConfig.getDockerPort())
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
                 .addPathSegments("api/endpoints/1/docker/containers/" + containerId + "/start");
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + jwt);
@@ -127,8 +122,8 @@ public class AppStoreRegistryService {
 
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
-                .host(appStoreRegistryConfig.getDockerHost())
-                .port(appStoreRegistryConfig.getDockerPort())
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
                 .addPathSegments("api/endpoints/1/docker/containers/" + containerId + "/stop");
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + jwt);
@@ -150,8 +145,8 @@ public class AppStoreRegistryService {
 
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
-                .host(appStoreRegistryConfig.getDockerHost())
-                .port(appStoreRegistryConfig.getDockerPort())
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
                 .addPathSegments("api/endpoints/1/docker/containers/" + containerId);
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + jwt);
@@ -173,8 +168,8 @@ public class AppStoreRegistryService {
 
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
-                .host(appStoreRegistryConfig.getDockerHost())
-                .port(appStoreRegistryConfig.getDockerPort())
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
                 .addPathSegments("api/endpoints/1/docker/containers/" + containerId + "/json");
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + jwt);
@@ -192,5 +187,19 @@ public class AppStoreRegistryService {
     private String getJwtToken() {
         String jwtTokenResponse = authenticate();
         return jwtTokenResponse.substring(START_INDEX, jwtTokenResponse.length() - LAST_INDEX);
+    }
+
+    /**
+     * @param username The username for the authentication.
+     * @param password The password for the authentication.
+     * @return request body as string.
+     */
+    private String createRequestBodyForAuthentication(final String username,
+                                                      final String password) {
+        final var jsonObject = new JSONObject();
+        jsonObject.put("Username", username);
+        jsonObject.put("Password", password);
+
+        return jsonObject.toString();
     }
 }

@@ -13,40 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.appstore;
+package io.dataspaceconnector.service.appstore.portainer;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Configuration class for app store registries.
+ * Configuration class for Portainer.
  */
 @Data
 @Configuration
-public class AppStoreRegistryConfig {
+public class PortainerConfig {
 
     /**
-     * The docker host.
+     * The host.
      */
     @Value("${portainer.application.host}")
-    private String dockerHost;
+    private String portainerHost;
 
     /**
-     * The docker port.
+     * The port.
      */
     @Value("${portainer.application.port}")
-    private Integer dockerPort;
+    private Integer portainerPort;
 
     /**
      * The user for the authentication.
      */
     @Value("${portainer.application.username}")
-    private String dockerUser;
+    private String portainerUser;
 
     /**
      * The password for the authentication.
      */
     @Value("${portainer.application.password}")
-    private String dockerPassword;
+    private String portainerPassword;
 }

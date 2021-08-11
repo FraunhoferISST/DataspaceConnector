@@ -24,8 +24,8 @@ import io.dataspaceconnector.controller.resource.tag.ResourceName;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.appstore.AppStore;
-import io.dataspaceconnector.service.appstore.AppStoreRegistryService;
-import io.dataspaceconnector.service.appstore.container.ActionType;
+import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
+import io.dataspaceconnector.controller.util.ActionType;
 import io.dataspaceconnector.service.configuration.AppService;
 import io.dataspaceconnector.util.Utils;
 import io.dataspaceconnector.view.app.AppView;
@@ -70,7 +70,7 @@ public final class AppControllers {
         /**
          * App store registry service.
          */
-        private final @NonNull AppStoreRegistryService appStoreRegistryService;
+        private final @NonNull PortainerRequestService portainerRequestService;
 
         /**
          * The assembler for creating pages of AppStoreViews.
@@ -120,7 +120,7 @@ public final class AppControllers {
             ResponseEntity<String> response = null;
             try {
                 if (ActionType.START.name().equals(action)) {
-                    final var startResponse = appStoreRegistryService.startContainer(containerId);
+                    final var startResponse = portainerRequestService.startContainer(containerId);
                     if (startResponse.isSuccessful()) {
                         response = ResponseEntity.ok("Successfully started the app.");
                     } else {
@@ -129,7 +129,7 @@ public final class AppControllers {
                     }
                 }
                 if (ActionType.STOP.name().equals(action)) {
-                    final var stopResponse = appStoreRegistryService.stopContainer(containerId);
+                    final var stopResponse = portainerRequestService.stopContainer(containerId);
                     if (stopResponse.isSuccessful()) {
                         response = ResponseEntity.ok("Successfully stopped the app.");
                     } else {
@@ -138,7 +138,7 @@ public final class AppControllers {
                     }
                 }
                 if (ActionType.DELETE.name().equals(action)) {
-                    final var deleteResponse = appStoreRegistryService.deleteContainer(containerId);
+                    final var deleteResponse = portainerRequestService.deleteContainer(containerId);
                     if (deleteResponse.isSuccessful()) {
                         response = ResponseEntity.ok("Successfully deleted the app.");
                     } else {
@@ -167,7 +167,7 @@ public final class AppControllers {
                 final @PathVariable("id") String containerId) {
             ResponseEntity<String> response;
             try {
-                final var descriptionResponse = appStoreRegistryService
+                final var descriptionResponse = portainerRequestService
                         .getContainerDescription(containerId);
                 if (descriptionResponse.isSuccessful()) {
                     response = ResponseEntity.ok(descriptionResponse.body().string());

@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Service classes for the Configuration Manager.
+ * Service classes for the AppStore.
  */
 package io.dataspaceconnector.service.appstore;

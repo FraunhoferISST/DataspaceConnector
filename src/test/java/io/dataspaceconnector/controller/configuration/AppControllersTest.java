@@ -16,7 +16,7 @@
 package io.dataspaceconnector.controller.configuration;
 
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
-import io.dataspaceconnector.service.appstore.AppStoreRegistryService;
+import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class AppControllersTest {
 
     @MockBean
-    private AppStoreRegistryService appStoreRegistryService;
+    private PortainerRequestService appStoreRegistryService;
 
     @Autowired
     private AppControllers.AppController appController;
