@@ -126,11 +126,13 @@ public class AppService extends BaseEntityService<App, AppDesc> {
                     .map(Object::toString)
                     .collect(Collectors.joining(",", "", ""));
 
-            final var path = Path.of("src/main/resources/Template.json");
+            final var path = Path.of("src/main/resources/portainer-templates"
+                    + "/Template.json");
             final var  content = Files.readString(path, StandardCharsets.UTF_8);
 
             final var resultTemplate = String.format(content, jsonTemplate);
-            FileUtils.writeStringToFile(new File("src/main/resources/AppTemplate.json"),
+            FileUtils.writeStringToFile(new File("src/main/resources/"
+                            + "portainer-templates/AppTemplate.json"),
                     resultTemplate, StandardCharsets.UTF_8);
 
         } catch (IOException e) {
