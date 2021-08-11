@@ -23,6 +23,7 @@ import io.dataspaceconnector.model.artifact.Data;
 import io.dataspaceconnector.model.artifact.DataType;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.repository.DataRepository;
+import io.dataspaceconnector.service.appstore.AppStoreRegistryService;
 import io.dataspaceconnector.service.resource.BaseEntityService;
 import io.dataspaceconnector.util.exception.NotImplemented;
 import lombok.NonNull;
@@ -61,16 +62,24 @@ public class AppService extends BaseEntityService<App, AppDesc> {
     private final @NonNull DataRepository dataRepository;
 
     /**
+     * Service class for app store.
+     */
+    private final @NonNull AppStoreRegistryService appStoreRegistrySvc;
+
+    /**
      * Constructor for the app service.
      * @param appStoreService The app store service.
      * @param dataRepo        The data repository.
+     * @param appStoreRegistryService The app store registry service.
      */
     @Autowired
     public AppService(final @NonNull AppStoreService appStoreService,
-                      final @NonNull DataRepository dataRepo) {
+                      final @NonNull DataRepository dataRepo,
+                      final @NonNull AppStoreRegistryService appStoreRegistryService) {
         super();
         this.appStoreSvc = appStoreService;
         this.dataRepository = dataRepo;
+        this.appStoreRegistrySvc = appStoreRegistryService;
     }
 
     /**
@@ -134,6 +143,14 @@ public class AppService extends BaseEntityService<App, AppDesc> {
             FileUtils.writeStringToFile(new File("src/main/resources/"
                             + "portainer-templates/AppTemplate.json"),
                     resultTemplate, StandardCharsets.UTF_8);
+
+            // Update Template Url in Portainer Settings
+            final var response = appStoreRegistrySvc.updatePortainerSettings();
+            if (response.isSuccessful()) {
+                if (log.isInfoEnabled()) {
+                    log.info("Updated successfully template url in portainer settings");
+                }
+            }
 
         } catch (IOException e) {
             if (log.isErrorEnabled()) {
