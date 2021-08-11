@@ -35,6 +35,8 @@ import org.springframework.data.annotation.Version;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
@@ -107,6 +109,20 @@ public class Resource extends NamedEntity {
      */
     @Version
     private long version;
+
+    /**
+     * The payment method.
+     */
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+
+    /**
+     * Links to sample resources.
+     */
+    @ElementCollection
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private List<URI> samples;
 
     /**
      * The representation available for the resource.
