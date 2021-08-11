@@ -30,8 +30,8 @@ public class InvalidEntityException extends RuntimeException {
      *
      * @param msg The detail message.
      */
-    public InvalidEntityException(final String msg) {
-        super(msg);
+    public InvalidEntityException(final ErrorMessage msg) {
+        super(msg.toString());
     }
 
 }

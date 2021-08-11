@@ -86,7 +86,7 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
         final var cond2 = uri == null || ValidationUtils.isInvalidUri(String.valueOf(uri));
 
         if (cond1 || cond2) {
-            throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT.toString());
+            throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT);
         }
     }
 
@@ -100,7 +100,7 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
      */
     private boolean updateTarget(final Subscription subscription, final URI target) {
         if (target == null || ValidationUtils.isInvalidUri(String.valueOf(target))) {
-            throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT.toString());
+            throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT);
         }
 
         final var newTarget = FactoryUtils.updateUri(subscription.getTarget(), target, null);
@@ -118,7 +118,7 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
      */
     private boolean updateSubscriber(final Subscription subscription, final URI subscriber) {
         if (subscriber == null || ValidationUtils.isInvalidUri(String.valueOf(subscriber))) {
-            throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT.toString());
+            throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT);
         }
 
         final var newSubscriber =
