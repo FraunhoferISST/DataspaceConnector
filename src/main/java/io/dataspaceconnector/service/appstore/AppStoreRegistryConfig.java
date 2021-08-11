@@ -29,24 +29,24 @@ public class AppStoreRegistryConfig {
     /**
      * The docker host.
      */
-    @Value("${docker.host}")
+    @Value("${portainer.application.host}")
     private String dockerHost;
 
     /**
      * The docker port.
      */
-    @Value("${docker.port}")
+    @Value("${portainer.application.port}")
     private Integer dockerPort;
 
     /**
      * The user for the authentication.
      */
-    @Value("${docker.api.username}")
+    @Value("${portainer.application.username}")
     private String dockerUser;
 
     /**
      * The password for the authentication.
      */
-    @Value("${docker.api.password}")
+    @Value("${portainer.application.password}")
     private String dockerPassword;
 }
