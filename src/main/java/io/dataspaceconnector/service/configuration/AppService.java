@@ -102,7 +102,30 @@ public class AppService extends BaseEntityService<App, AppDesc> {
             data.close();
             dataRepository.setAppTemplate(localData.getId(), template);
 
+            //TODO: Deploy app via Portainer APIs using infos of template
+            //Assuming localhost:9000 is Portainer URL
 
+            //1. Create registry where APP is hosted in Portainer is not existing:
+            // POST http://localhost:9000/api/registries
+            //-> Body: Authentication true/false, Name, Password, Type, URL, Username
+            //(infos from AppStore Template)
+
+            //2. Pull Image from AppStore registry
+            // POST http://localhost:9000/api/endpoints/1/docker/images/create?fromImage=<REGISTRY-URL>%2F<IMAGE>
+            // Portainer knows registry URL and credentials if auth required (see step 1)
+            // (infos from AppStore Template)
+
+            //3. Create volumes if needed (infos from AppStore Template)
+            // POST http://localhost:9000/api/endpoints/1/docker/volumes/create
+            // return volume ID
+
+            //4.Create Container
+            // POST http://localhost:9000/api/endpoints/1/docker/containers/create?name=
+            // AppStore-Template as POST request body
+            // returns container ID
+
+            //5. Start Container
+            // POST http://localhost:9000/api/endpoints/1/docker/containers/<CONTAINER-ID>/start
 
         } catch (IOException e) {
             if (log.isErrorEnabled()) {
