@@ -19,30 +19,20 @@ import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.app.AppImpl;
 import io.dataspaceconnector.model.appstore.AppStore;
-import io.dataspaceconnector.model.artifact.Data;
-import io.dataspaceconnector.model.artifact.DataType;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.repository.DataRepository;
-import io.dataspaceconnector.service.appstore.AppStoreRegistryService;
 import io.dataspaceconnector.service.resource.BaseEntityService;
 import io.dataspaceconnector.util.exception.NotImplemented;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Service class for apps.
@@ -62,24 +52,16 @@ public class AppService extends BaseEntityService<App, AppDesc> {
     private final @NonNull DataRepository dataRepository;
 
     /**
-     * Service class for app store.
-     */
-    private final @NonNull AppStoreRegistryService appStoreRegistrySvc;
-
-    /**
      * Constructor for the app service.
      * @param appStoreService The app store service.
      * @param dataRepo        The data repository.
-     * @param appStoreRegistryService The app store registry service.
      */
     @Autowired
     public AppService(final @NonNull AppStoreService appStoreService,
-                      final @NonNull DataRepository dataRepo,
-                      final @NonNull AppStoreRegistryService appStoreRegistryService) {
+                      final @NonNull DataRepository dataRepo) {
         super();
         this.appStoreSvc = appStoreService;
         this.dataRepository = dataRepo;
-        this.appStoreRegistrySvc = appStoreRegistryService;
     }
 
     /**
@@ -116,41 +98,11 @@ public class AppService extends BaseEntityService<App, AppDesc> {
             throws IOException {
         try {
             // Update the internal database and return the new data.
-            final var bytes = data.readAllBytes();
+            final var template = data.readAllBytes();
             data.close();
-            dataRepository.setAppTemplate(localData.getId(), DataType.APP_TEMPLATE, bytes);
+            dataRepository.setAppTemplate(localData.getId(), template);
 
-            // Create JSON file for app template.
-            final var templates = dataRepository.findAll();
-            final var appTemplates = new ArrayList<Data>();
-            var jsonTemplate = "";
 
-            for (var dataTmp : templates) {
-                if (DataType.APP_TEMPLATE.equals(dataTmp.getType())) {
-                    appTemplates.add(dataTmp);
-                }
-            }
-
-            jsonTemplate = appTemplates.stream()
-                    .map(Object::toString)
-                    .collect(Collectors.joining(",", "", ""));
-
-            final var path = Path.of("src/main/resources/portainer-templates"
-                    + "/Template.json");
-            final var  content = Files.readString(path, StandardCharsets.UTF_8);
-
-            final var resultTemplate = String.format(content, jsonTemplate);
-            FileUtils.writeStringToFile(new File("src/main/resources/"
-                            + "portainer-templates/AppTemplate.json"),
-                    resultTemplate, StandardCharsets.UTF_8);
-
-            // Update Template Url in Portainer Settings
-            final var response = appStoreRegistrySvc.updatePortainerSettings();
-            if (response.isSuccessful()) {
-                if (log.isInfoEnabled()) {
-                    log.info("Updated successfully template url in portainer settings");
-                }
-            }
 
         } catch (IOException e) {
             if (log.isErrorEnabled()) {

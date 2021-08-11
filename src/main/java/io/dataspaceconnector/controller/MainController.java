@@ -36,11 +36,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -70,30 +65,6 @@ public class MainController {
     @ResponseBody
     public ResponseEntity<Object> getPublicSelfDescription() {
         return ResponseEntity.ok(connectorService.getConnectorWithoutResources().toRdf());
-    }
-
-    /**
-     * Gets connector self-description without catalogs and resources.
-     *
-     * @return Self-description or error response.
-     */
-    @GetMapping(value = {"/portainer/template", ""}, produces = "application/ld+json")
-    @Operation(summary = "Public Template for Portainer")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "400", description = "Bad Request")})
-    @ResponseBody
-    public ResponseEntity<String> getPortainerTemplate() {
-        ResponseEntity<String> response;
-        final var path = Path.of("src/main/resources/portainer-templates"
-                + "/AppTemplate.json");
-        try {
-            final var template = Files.readString(path, StandardCharsets.UTF_8);
-            response = ResponseEntity.ok(template);
-        } catch (IOException e) {
-            response = ResponseEntity.badRequest().body(e.getMessage());
-        }
-        return response;
     }
 
     /**

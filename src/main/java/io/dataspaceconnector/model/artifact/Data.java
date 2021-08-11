@@ -19,8 +19,6 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -72,11 +70,4 @@ public class Data implements Serializable {
      */
     @Column(name = "deleted")
     private boolean deleted;
-
-    /**
-     * Default data type is resource.
-     */
-    @Enumerated(EnumType.STRING)
-    private DataType type = DataType.RESOURCE;
-
 }

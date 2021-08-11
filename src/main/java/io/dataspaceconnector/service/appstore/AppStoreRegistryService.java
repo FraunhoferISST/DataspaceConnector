@@ -25,7 +25,6 @@ import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.apache.jena.atlas.json.JSON;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -186,51 +185,6 @@ public class AppStoreRegistryService {
         return httpService.send(request);
     }
 
-    /**
-     * @return Response is current portainer settings.
-     * @throws IOException if an error occurs while deleting the container.
-     */
-    public Response getPortainerSetting() throws IOException {
-        String jwt = getJwtToken();
-        final var builder = getRequestBuilder();
-
-        final var urlBuilder = new HttpUrl.Builder()
-                .scheme("http")
-                .host(appStoreRegistryConfig.getDockerHost())
-                .port(appStoreRegistryConfig.getDockerPort())
-                .addPathSegments("api/settings");
-        final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
-        builder.url(url);
-        builder.get();
-
-        final var request = builder.build();
-        return httpService.send(request);
-    }
-
-    /**
-     * @return Response is current portainer settings.
-     * @throws IOException if an error occurs while deleting the container.
-     */
-    public Response updatePortainerSettings() throws IOException {
-        String jwt = getJwtToken();
-        final var builder = getRequestBuilder();
-
-        final var urlBuilder = new HttpUrl.Builder()
-                .scheme("http")
-                .host(appStoreRegistryConfig.getDockerHost())
-                .port(appStoreRegistryConfig.getDockerPort())
-                .addPathSegments("api/settings");
-        final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
-        builder.url(url);
-        builder.put(RequestBody.create(updateTemplateURL(),
-                MediaType.parse("application/json")));
-
-        final var request = builder.build();
-        return httpService.send(request);
-    }
-
     private Request.Builder getRequestBuilder() {
         return new Request.Builder();
     }
@@ -238,13 +192,5 @@ public class AppStoreRegistryService {
     private String getJwtToken() {
         String jwtTokenResponse = authenticate();
         return jwtTokenResponse.substring(START_INDEX, jwtTokenResponse.length() - LAST_INDEX);
-    }
-
-    private String updateTemplateURL() throws IOException {
-        final var currentPortainerSettings = getPortainerSetting();
-        var json = JSON.parse(currentPortainerSettings.body().string());
-
-        json.put("TemplatesURL", "https://localhost:8080/portainer/template");
-        return json.toString();
     }
 }
