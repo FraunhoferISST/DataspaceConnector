@@ -105,7 +105,7 @@ public class AppService extends BaseEntityService<App, AppDesc> {
             //TODO: Deploy app via Portainer APIs using infos of template
             //Assuming localhost:9000 is Portainer URL
 
-            //1. Create registry where APP is hosted in Portainer is not existing:
+            //1. Create registry where APP is hosted in Portainer if not existing:
             // POST http://localhost:9000/api/registries
             //-> Body: Authentication true/false, Name, Password, Type, URL, Username
             //(infos from AppStore Template)
