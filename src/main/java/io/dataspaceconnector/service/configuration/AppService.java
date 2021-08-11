@@ -121,7 +121,8 @@ public class AppService extends BaseEntityService<App, AppDesc> {
 
             //4.Create Container
             // POST http://localhost:9000/api/endpoints/1/docker/containers/create?name=
-            // AppStore-Template as POST request body
+            // AppStore-Template as POST request body, volume info in AppStore template
+            //       needs to be adjusted to naming/generated volume-id of Step 3
             // returns container ID
 
             //5. Start Container
