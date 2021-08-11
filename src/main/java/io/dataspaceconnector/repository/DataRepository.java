@@ -16,6 +16,7 @@
 package io.dataspaceconnector.repository;
 
 import io.dataspaceconnector.model.artifact.Data;
+import io.dataspaceconnector.model.artifact.DataType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -37,4 +38,18 @@ public interface DataRepository extends JpaRepository<Data, Long> {
             + "SET a.value = :data "
             + "WHERE a.id = :entityId")
     void setLocalData(Long entityId, byte[] data);
+
+    /**
+     * Set new local app data for an entity.
+     *
+     * @param entityId The entity id.
+     * @param dataType The data type of the entity.
+     * @param data     The new data.
+     */
+    @Modifying
+    @Query("UPDATE LocalData a "
+            + "SET a.value = :data, "
+            + "a.type = :dataType "
+            + "WHERE a.id = :entityId")
+    void setAppTemplate(Long entityId, DataType dataType, byte[] data);
 }
