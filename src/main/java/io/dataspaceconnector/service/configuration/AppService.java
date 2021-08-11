@@ -100,7 +100,7 @@ public class AppService extends BaseEntityService<App, AppDesc> {
             // Update the internal database and return the new data.
             final var template = data.readAllBytes();
             data.close();
-            dataRepository.setAppTemplate(localData.getId(), template);
+            dataRepository.setLocalData(localData.getId(), template);
 
             //TODO: Deploy app via Portainer APIs using infos of template
             //Assuming localhost:9000 is Portainer URL

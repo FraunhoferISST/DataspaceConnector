@@ -37,16 +37,4 @@ public interface DataRepository extends JpaRepository<Data, Long> {
             + "SET a.value = :data "
             + "WHERE a.id = :entityId")
     void setLocalData(Long entityId, byte[] data);
-
-    /**
-     * Set new local app data for an entity.
-     *
-     * @param entityId The entity id.
-     * @param data     The new data.
-     */
-    @Modifying
-    @Query("UPDATE LocalData a "
-            + "SET a.value = :data "
-            + "WHERE a.id = :entityId")
-    void setAppTemplate(Long entityId, byte[] data);
 }
