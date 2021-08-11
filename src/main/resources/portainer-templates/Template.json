@@ -1,0 +1,6 @@
+{
+  "version": "2",
+  "templates": [
+    %1$s
+  ]
+}
