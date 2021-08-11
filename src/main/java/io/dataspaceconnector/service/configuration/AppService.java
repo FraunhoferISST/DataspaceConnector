@@ -21,10 +21,12 @@ import io.dataspaceconnector.model.app.AppImpl;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.repository.DataRepository;
+import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
 import io.dataspaceconnector.service.resource.BaseEntityService;
 import io.dataspaceconnector.util.exception.NotImplemented;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +34,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
@@ -48,8 +51,13 @@ public class AppService extends BaseEntityService<App, AppDesc> {
 
     /**
      * Repository for storing data.
-     **/
+     */
     private final @NonNull DataRepository dataRepository;
+
+    /**
+     * The PortainerRequestService to send request to the local Portainer instance.
+     */
+    private final @NonNull PortainerRequestService portainerRequestSvc;
 
     /**
      * Constructor for the app service.
@@ -58,10 +66,12 @@ public class AppService extends BaseEntityService<App, AppDesc> {
      */
     @Autowired
     public AppService(final @NonNull AppStoreService appStoreService,
-                      final @NonNull DataRepository dataRepo) {
+                      final @NonNull DataRepository dataRepo,
+                      final @NonNull PortainerRequestService portainerRequestService) {
         super();
         this.appStoreSvc = appStoreService;
         this.dataRepository = dataRepo;
+        this.portainerRequestSvc = portainerRequestService;
     }
 
     /**
@@ -98,9 +108,9 @@ public class AppService extends BaseEntityService<App, AppDesc> {
             throws IOException {
         try {
             // Update the internal database and return the new data.
-            final var template = data.readAllBytes();
+            final var templateInput = data.readAllBytes();
             data.close();
-            dataRepository.setLocalData(localData.getId(), template);
+            dataRepository.setLocalData(localData.getId(), templateInput);
 
             //TODO: Deploy app via Portainer APIs using infos of template
             //Assuming localhost:9000 is Portainer URL
@@ -109,6 +119,8 @@ public class AppService extends BaseEntityService<App, AppDesc> {
             // POST http://localhost:9000/api/registries
             //-> Body: Authentication true/false, Name, Password, Type, URL, Username
             //(infos from AppStore Template)
+            final var appStoreTemplate = IOUtils.toString(templateInput, "UTF-8");
+            portainerRequestSvc.createRegistry(appStoreTemplate);
 
             //2. Pull Image from AppStore registry
             // POST http://localhost:9000/api/endpoints/1/docker/images/create?fromImage=<REGISTRY-URL>%2F<IMAGE>

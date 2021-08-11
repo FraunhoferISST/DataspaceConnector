@@ -180,6 +180,46 @@ public class PortainerRequestService {
         return httpService.send(request);
     }
 
+    /**
+     * @param appStoreTemplate The info
+     * @return Response of deleting container.
+     * @throws IOException if an error occurs while deleting the container.
+     */
+    public Response createRegistry(final String appStoreTemplate) throws IOException {
+        final var templateObject = toJsonObject(appStoreTemplate);
+
+        //Needed registry info from AppStore template for request body:
+        //Authentication true/false, Name, Password, Type, URL, Username
+        final var requestBody = new JSONObject();
+        requestBody.put("url", templateObject.getString("registry"));
+        requestBody.put("name", templateObject.getString("registry")); //name of registry will be the url
+        requestBody.put("type", 1); //TODO: correct for portainer?
+        requestBody.put("authentication", false);
+
+        if (templateObject.has("username") && templateObject.has("password")) {
+            requestBody.put("authentication", true);
+            requestBody.put("username", templateObject.getString("username")); //TODO: Where does AppStore template provide credentials?
+            requestBody.put("password", templateObject.getString("password")); //TODO: Where does AppStore template provide credentials?
+        }
+
+
+        final var jwt = getJwtToken();
+        final var builder = getRequestBuilder();
+
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments("api/registries");
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.url(url);
+        builder.post(RequestBody.create(requestBody.toString(), null));
+
+        final var request = builder.build();
+        return httpService.send(request);
+    }
+
     private Request.Builder getRequestBuilder() {
         return new Request.Builder();
     }
@@ -201,5 +241,9 @@ public class PortainerRequestService {
         jsonObject.put("Password", password);
 
         return jsonObject.toString();
+    }
+
+    private JSONObject toJsonObject(String string) {
+        return new JSONObject(string);
     }
 }
