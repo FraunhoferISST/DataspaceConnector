@@ -131,14 +131,14 @@ public class AppService extends BaseEntityService<App, AppDesc> {
             //3. Create volumes if needed (infos from AppStore Template)
             // POST http://localhost:9000/api/endpoints/1/docker/volumes/create
             // return volume ID
-            portainerRequestSvc.createVolumes(appStoreTemplate);
+            var volumeMap = portainerRequestSvc.createVolumes(appStoreTemplate);
 
             //4.Create Container
             // POST http://localhost:9000/api/endpoints/1/docker/containers/create?name=
             // AppStore-Template as POST request body, volume info in AppStore template
             //       needs to be adjusted to naming/generated volume-id of Step 3
             // returns container ID
-            var containerId = portainerRequestSvc.createContainer(appStoreTemplate);
+            var containerId = portainerRequestSvc.createContainer(appStoreTemplate, volumeMap);
 
             //5. Start Container
             // POST http://localhost:9000/api/endpoints/1/docker/containers/<CONTAINER-ID>/start
