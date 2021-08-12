@@ -19,7 +19,7 @@ set -eo pipefail
 
 . ./scripts/ci/libraries/init.sh
 
-echo "Setup provider and consumer"
+echo "Setup provider (latest release) and consumer (lastest build)"
 
 # Provider setup
 helm install provider charts/dataspace-connector --set env.config.SPRING_APPLICATION_NAME="Provider Connector" 2>&1 > /dev/null
