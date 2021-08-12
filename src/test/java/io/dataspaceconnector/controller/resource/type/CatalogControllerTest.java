@@ -16,7 +16,6 @@
 package io.dataspaceconnector.controller.resource.type;
 
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
-import io.dataspaceconnector.controller.resource.type.CatalogController;
 import io.dataspaceconnector.controller.resource.view.catalog.CatalogViewAssembler;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.catalog.CatalogDesc;

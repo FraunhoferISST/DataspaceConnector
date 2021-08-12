@@ -19,7 +19,6 @@ import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
 import io.dataspaceconnector.model.catalog.CatalogFactory;
 import io.dataspaceconnector.repository.CatalogRepository;
-import io.dataspaceconnector.service.resource.type.CatalogService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

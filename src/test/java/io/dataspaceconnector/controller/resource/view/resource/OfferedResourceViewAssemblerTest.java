@@ -19,7 +19,6 @@ import io.dataspaceconnector.controller.resource.relation.OfferedResourcesToCata
 import io.dataspaceconnector.controller.resource.relation.OfferedResourcesToContractsController;
 import io.dataspaceconnector.controller.resource.relation.OfferedResourcesToRepresentationsController;
 import io.dataspaceconnector.controller.resource.type.OfferedResourceController;
-import io.dataspaceconnector.controller.resource.view.resource.OfferedResourceViewAssembler;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;

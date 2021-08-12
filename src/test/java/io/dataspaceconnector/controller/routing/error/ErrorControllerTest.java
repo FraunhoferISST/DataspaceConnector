@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.controller.routing.error;
 
-import io.dataspaceconnector.controller.routing.error.ErrorController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

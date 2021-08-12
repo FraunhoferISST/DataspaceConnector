@@ -32,7 +32,6 @@ import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.config.ConnectorConfig;
-import io.dataspaceconnector.controller.message.ids.DescriptionRequestMessageController;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.builder.type.DescriptionRequestService;

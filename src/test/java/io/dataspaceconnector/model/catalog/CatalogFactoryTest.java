@@ -18,8 +18,6 @@ package io.dataspaceconnector.model.catalog;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.dataspaceconnector.model.catalog.CatalogDesc;
-import io.dataspaceconnector.model.catalog.CatalogFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
