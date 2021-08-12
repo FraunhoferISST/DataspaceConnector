@@ -364,6 +364,8 @@ public class PortainerRequestService {
         final var templateObject = toJsonObject(appStoreTemplate);
         final var image = templateObject.getJSONArray("image");
         final List<String> ports = new ArrayList<>();
+
+        //get all ports from the appTemplate
         for(var key : templateObject.getJSONObject("ports").keySet()) {
             var portString = templateObject.getJSONObject("ports").getString(key);
             portString = portString.substring(portString.indexOf(":"));
@@ -380,17 +382,31 @@ public class PortainerRequestService {
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + jwt);
         builder.url(url);
+
+        //build json payload
         final var jsonPayload = new JSONObject();
+
+        //fill single fields of json payload
         jsonPayload.put("Env", new JSONArray());
         jsonPayload.put("OpenStdin", false);
         jsonPayload.put("Tty", false);
+        jsonPayload.put("Labels", new JSONObject());
+        jsonPayload.put("name", "");
+        jsonPayload.put("Cmd", new JSONArray());
+        jsonPayload.put("Image", templateObject.getString("image"));
 
+        //build exposed ports part of json payload
         final var exposedPorts = new JSONObject();
         for(var port : ports) {
             exposedPorts.put(port, new JSONObject());
         }
         jsonPayload.put("ExposedPorts", exposedPorts);
+
+        //build hostConfig part of json payload
         final var hostConfig = new JSONObject();
+        hostConfig.put("Privileged", false);
+        hostConfig.put("ExtraHosts", new JSONArray());
+        hostConfig.put("NetworkMode", "bridge");
         hostConfig.put("RestartPolicy", new JSONObject(
                 String.format("{\"Name\":\"%s\"}", templateObject.getString("restart_policy")))
         );
@@ -403,26 +419,24 @@ public class PortainerRequestService {
         for(var bind : volumes.entrySet()){
             binds.appendElement(new JSONObject().put(bind.getValue(), bind.getKey()));
         }
-        hostConfig.put("Binds", new JSONArray());
-        hostConfig.put("Privileged", false);
-        hostConfig.put("ExtraHosts", new JSONArray());
-        hostConfig.put("NetworkMode", "bridge");
+        hostConfig.put("Binds", binds);
         jsonPayload.put("HostConfig", hostConfig);
+
+        //build volumes part of json payload
         final var volumesJSON = new JSONObject();
         for(var bind : volumes.entrySet()){
             volumesJSON.put(bind.getKey(), new JSONObject());
         }
         jsonPayload.put("Volumes", volumesJSON);
-        jsonPayload.put("Labels", new JSONObject());
-        jsonPayload.put("name", "");
-        jsonPayload.put("Cmd", new JSONArray());
-        jsonPayload.put("Image", templateObject.getString("image"));
 
+        //add json payload to request
         builder.post(
                 RequestBody.create(jsonPayload.toString(), MediaType.parse("application/json"))
         );
 
         final var request = builder.build();
+
+        //return container id
         return new JSONObject(httpService.send(request).body().string()).getString("Id");
     }
 
