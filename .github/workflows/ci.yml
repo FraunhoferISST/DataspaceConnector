@@ -239,7 +239,6 @@ jobs:
       - name: Run scripts
         run: |
           ./scripts/ci/e2e/setup-new-provider-old-consumer.sh
-          ./scripts/ci/e2e/setup-new-consumer-old-provider.sh
 
   e2e-test-consumer:
     needs: build-test-image
