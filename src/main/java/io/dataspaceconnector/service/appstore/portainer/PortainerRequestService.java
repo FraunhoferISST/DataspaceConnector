@@ -318,45 +318,6 @@ public class PortainerRequestService {
      * @param volumes the map for volume names used in the template.
      * @return portainer response.
      * @throws IOException If an error occurs while connection to portainer.
-     *
-     * Example JSON payload:
-     * {
-     *     "Env": [],
-     *     "OpenStdin": false,
-     *     "Tty": false,
-     *     "ExposedPorts": {
-     *         "80/tcp": {},
-     *         "443/tcp": {}
-     *     },
-     *     "HostConfig": {
-     *         "RestartPolicy": {
-     *             "Name": "always"
-     *         },
-     *         "PortBindings": {
-     *             "80/tcp": [
-     *                 {}
-     *             ],
-     *             "443/tcp": [
-     *                 {}
-     *             ]
-     *         },
-     *         "Binds": [
-     *             "894eefe46f554af770e48771950df183ea0bfc8874eab6e05d8b3611da10a8a9:/etc/nginx",
-     *             "bba9eb7e8ea30fc7c8e0b5e41d3cc36e277a35f38eb9ca09b50d0b971db36f4c:/usr/share/nginx/html"
-     *         ],
-     *         "Privileged": false,
-     *         "ExtraHosts": [],
-     *         "NetworkMode": "bridge"
-     *     },
-     *     "Volumes": {
-     *         "/etc/nginx": {},
-     *         "/usr/share/nginx/html": {}
-     *     },
-     *     "Labels": {},
-     *     "name": "",
-     *     "Cmd": [],
-     *     "Image": "nginx:latest"
-     * }
      */
     public String createContainer(final String appStoreTemplate, final Map<String, String> volumes)
             throws IOException {
@@ -366,7 +327,7 @@ public class PortainerRequestService {
         final List<String> ports = new ArrayList<>();
 
         //get all ports from the appTemplate
-        for(var key : templateObject.getJSONObject("ports").keySet()) {
+        for (var key : templateObject.getJSONObject("ports").keySet()) {
             var portString = templateObject.getJSONObject("ports").getString(key);
             portString = portString.substring(portString.indexOf(":"));
             ports.add(portString);
@@ -397,7 +358,7 @@ public class PortainerRequestService {
 
         //build exposed ports part of json payload
         final var exposedPorts = new JSONObject();
-        for(var port : ports) {
+        for (var port : ports) {
             exposedPorts.put(port, new JSONObject());
         }
         jsonPayload.put("ExposedPorts", exposedPorts);
@@ -411,12 +372,12 @@ public class PortainerRequestService {
                 String.format("{\"Name\":\"%s\"}", templateObject.getString("restart_policy")))
         );
         final var portBindings = new JSONObject();
-        for(var port : ports) {
+        for (var port : ports) {
             portBindings.put(port, new JSONArray().appendElement(new JSONObject()));
         }
         hostConfig.put("PortBindings", new JSONObject());
         final var binds = new JSONArray();
-        for(var bind : volumes.entrySet()){
+        for (var bind : volumes.entrySet()) {
             binds.appendElement(new JSONObject().put(bind.getValue(), bind.getKey()));
         }
         hostConfig.put("Binds", binds);
@@ -424,7 +385,7 @@ public class PortainerRequestService {
 
         //build volumes part of json payload
         final var volumesJSON = new JSONObject();
-        for(var bind : volumes.entrySet()){
+        for (var bind : volumes.entrySet()) {
             volumesJSON.put(bind.getKey(), new JSONObject());
         }
         jsonPayload.put("Volumes", volumesJSON);
