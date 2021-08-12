@@ -286,7 +286,7 @@ public class PortainerRequestService {
 
             final var request = builder.build();
             final var response = httpService.send(request);
-            volumeNames.put(templateName, response.body().string());
+            volumeNames.put(templateName, new JSONObject(response.body().string()).getString("Name"));
         }
         return volumeNames;
     }
