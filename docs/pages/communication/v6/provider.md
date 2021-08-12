@@ -57,18 +57,36 @@ curl -X 'POST' \
     "data",
     "sample"
   ],
+  "paymentModality": "fixedPrice",
   "publisher": "https://openweathermap.org/",
   "language": "EN",
   "license": "http://opendatacommons.org/licenses/odbl/1.0/",
   "sovereign": "https://openweathermap.org/",
   "endpointDocumentation": "https://example.com",
-  "key": "value"
+  "key": "value",
+  "samples": ["https://localhost:8080/api/offers/ca502fbc-bd65-4125-fbeb-97536647d623"]
 }'
 ```
 
 The values `title`, `description`, `keywords`, `publisher`, `sovereign`, `license`, etc. describe
 the data resource and will be used to fill in the IDS Information Model attributes for IDS
 communication with a connector as data consumer.
+
+**New**: You can add a payment modality to your resource (one of `free`, `fixedPrice`, or
+`negotiationBasis`). On top of that, you can add a list of resources as a sample of another
+resource. For this, add the IDs to the sample list. The connector checks if the values are valid
+uri and match known resource offers. If this is not the case, you will get a code 400 as a response.
+
+---
+
+**Note**: Be aware that the payment modality attribute has nothing to do with the contract
+negotiation. This has to be done no matter what modality is added to the resource. This is only for
+informative purpose.
+
+Also, the sample feature is only for informative purpose. Handling out a contract agreement for a
+resource does not imply the automated negotiation for sample resources. To use the sample resource
+to provide "free" or "try out" example data, make sure that the sample resource has a usage policy
+without any restriction added.
 
 ---
 
