@@ -181,9 +181,9 @@ public class PortainerRequestService {
     }
 
     /**
-     * @param appStoreTemplate The info
-     * @return Response of deleting container.
-     * @throws IOException if an error occurs while deleting the container.
+     * @param appStoreTemplate The template provided by the AppStore decribing 1 App.
+     * @return Response of portainer.
+     * @throws IOException If an error occurs while connection to portainer.
      */
     public Response createRegistry(final String appStoreTemplate) throws IOException {
         final var templateObject = toJsonObject(appStoreTemplate);

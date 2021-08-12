@@ -114,12 +114,12 @@ public class AppService extends BaseEntityService<App, AppDesc> {
 
             //TODO: Deploy app via Portainer APIs using infos of template
             //Assuming localhost:9000 is Portainer URL
+            final var appStoreTemplate = IOUtils.toString(templateInput, "UTF-8");
 
             //1. Create registry where APP is hosted in Portainer if not existing:
             // POST http://localhost:9000/api/registries
             //-> Body: Authentication true/false, Name, Password, Type, URL, Username
             //(infos from AppStore Template)
-            final var appStoreTemplate = IOUtils.toString(templateInput, "UTF-8");
             portainerRequestSvc.createRegistry(appStoreTemplate);
 
             //2. Pull Image from AppStore registry
