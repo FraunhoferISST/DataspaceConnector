@@ -16,7 +16,6 @@
 package io.dataspaceconnector.controller.resource.type;
 
 import io.dataspaceconnector.common.util.Utils;
-import io.dataspaceconnector.controller.resource.type.EndpointController;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;

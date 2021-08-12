@@ -20,7 +20,8 @@ import io.dataspaceconnector.config.ConnectorConfig;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.CamelContext;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.springframework.beans.factory.annotation.Value;
@@ -185,7 +186,7 @@ public class XmlRouteLoader {
         /**
          * The Camel context.
          */
-        private final @NonNull DefaultCamelContext context;
+        private final @NonNull CamelContext context;
 
         /**
          * The current connector configuration.
@@ -209,7 +210,7 @@ public class XmlRouteLoader {
         }
 
         private void addToContext(final RouteDefinition route) throws Exception {
-            context.addRouteDefinition(route);
+            context.adapt(ModelCamelContext.class).addRouteDefinition(route);
 
             if (log.isDebugEnabled()) {
                 log.debug("Loaded route from XML file: {}", route.getRouteId());
@@ -219,7 +220,7 @@ public class XmlRouteLoader {
 
     /**
      * Creates the pattern used for finding all XML files under a given directory by appending
-     * wildcards for sub directories and file names.
+     * wildcards for subdirectories and file names.
      *
      * @param path the path to the directory.
      * @return the pattern for finding all XML files in the specified directory.

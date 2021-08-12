@@ -30,7 +30,6 @@ import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.service.EntityUpdateService;
-import io.dataspaceconnector.service.message.handler.type.ResourceUpdateMessageHandler;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

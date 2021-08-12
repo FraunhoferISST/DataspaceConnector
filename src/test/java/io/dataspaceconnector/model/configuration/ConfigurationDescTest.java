@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.model.configuration;
 
-import io.dataspaceconnector.model.configuration.ConfigurationDesc;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 

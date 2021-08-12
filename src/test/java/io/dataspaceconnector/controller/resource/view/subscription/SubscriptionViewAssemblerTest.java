@@ -17,7 +17,6 @@ package io.dataspaceconnector.controller.resource.view.subscription;
 
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.controller.resource.type.SubscriptionController;
-import io.dataspaceconnector.controller.resource.view.subscription.SubscriptionViewAssembler;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;

@@ -29,8 +29,6 @@ import de.fraunhofer.iais.eis.ProhibitionBuilder;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.common.ids.policy.ContractUtils;
-import io.dataspaceconnector.common.ids.policy.RuleUtils;
 import io.dataspaceconnector.model.contract.Contract;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;

@@ -31,7 +31,8 @@ import io.dataspaceconnector.service.routing.exception.NoSuitableTemplateExcepti
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.CamelContext;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.velocity.VelocityContext;
@@ -77,7 +78,7 @@ public class RouteManager {
     /**
      * The Camel context for deploying routes.
      */
-    private final @NonNull DefaultCamelContext camelContext;
+    private final @NonNull CamelContext camelContext;
 
     /**
      * Creates a Camel XML route from a given app route. The generated XML route is then added to
@@ -274,8 +275,7 @@ public class RouteManager {
             final var inputStream = new ByteArrayInputStream(writer.toString()
                     .getBytes(StandardCharsets.UTF_8));
             final var routes = (RoutesDefinition) unmarshaller.unmarshal(inputStream);
-            camelContext.addRouteDefinitions(routes.getRoutes());
-
+            camelContext.adapt(ModelCamelContext.class).addRouteDefinitions(routes.getRoutes());
         } else {
             if (log.isWarnEnabled()) {
                 log.warn("Template is null. Unable to create XML route file for AppRoute"
@@ -371,7 +371,7 @@ public class RouteManager {
     private void deleteRouteById(final String camelRouteId) {
         if (camelContext.getRoute(camelRouteId) != null) {
             try {
-                camelContext.stopRoute(camelRouteId);
+                camelContext.getRouteController().stopRoute(camelRouteId);
                 if (!camelContext.removeRoute(camelRouteId)) {
                     throw new IllegalStateException("Could not remove route because route was not "
                             + "stopped.");

@@ -20,7 +20,6 @@ import de.fraunhofer.iais.eis.RepresentationBuilder;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.common.ids.model.TemplateUtils;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;

@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.common.net;
 
-import io.dataspaceconnector.common.net.HttpService;
-import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.auth.BasicAuth;

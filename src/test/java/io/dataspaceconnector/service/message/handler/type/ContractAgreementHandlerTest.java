@@ -34,7 +34,6 @@ import io.dataspaceconnector.common.util.UUIDUtils;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.EntityUpdateService;
-import io.dataspaceconnector.service.message.handler.type.ContractAgreementHandler;
 import io.dataspaceconnector.service.message.builder.type.LogMessageService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;

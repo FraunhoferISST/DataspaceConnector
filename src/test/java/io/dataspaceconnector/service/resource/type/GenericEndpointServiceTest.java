@@ -18,8 +18,6 @@ package io.dataspaceconnector.service.resource.type;
 import io.dataspaceconnector.model.datasource.DataSource;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.repository.GenericEndpointRepository;
-import io.dataspaceconnector.service.resource.type.DataSourceService;
-import io.dataspaceconnector.service.resource.type.GenericEndpointService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;

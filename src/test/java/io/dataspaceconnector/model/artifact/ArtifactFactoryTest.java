@@ -22,11 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.dataspaceconnector.model.artifact.ArtifactDesc;
-import io.dataspaceconnector.model.artifact.ArtifactFactory;
-import io.dataspaceconnector.model.artifact.ArtifactImpl;
-import io.dataspaceconnector.model.artifact.LocalData;
-import io.dataspaceconnector.model.artifact.RemoteData;
 import io.dataspaceconnector.model.auth.ApiKey;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.auth.BasicAuth;
