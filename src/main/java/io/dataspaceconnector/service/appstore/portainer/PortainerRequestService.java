@@ -263,7 +263,8 @@ public class PortainerRequestService {
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + jwt);
         builder.url(url);
-        builder.post(RequestBody.create(new JSONObject().put("fromImage", templateObject.getString("image")).toString(), null));
+        builder.post(RequestBody.create(new JSONObject().put("fromImage",
+                templateObject.getString("image")).toString(), null));
 
         final var request = builder.build();
         return httpService.send(request);
