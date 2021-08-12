@@ -83,8 +83,8 @@ public class PortainerRequestService {
         final var url = urlBuilder.build();
         builder.url(url);
         final var requestBody = createRequestBodyForAuthentication(
-                        portainerConfig.getPortainerUser(),
-                        portainerConfig.getPortainerPassword());
+                portainerConfig.getPortainerUser(),
+                portainerConfig.getPortainerPassword());
         builder.post(RequestBody.create(requestBody,
                 MediaType.parse("application/json")));
 
@@ -260,12 +260,16 @@ public class PortainerRequestService {
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
                 .addPathSegments("api/endpoints/1/docker/images/create")
-                .addQueryParameter("fromImage", templateObject.getString("image"));
+                .addQueryParameter("fromImage", templateObject.getString("registry") + "/" + templateObject.getString("image"));
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + jwt);
         builder.url(url);
-        builder.post(RequestBody.create(new JSONObject().put("fromImage",
-                templateObject.getString("image")).toString(), null));
+        builder.post(
+                RequestBody.create(
+                        new JSONObject()
+                                .put("fromImage", templateObject.getString("registry") + "/" + templateObject.getString("image"))
+                                .toString(),
+                        null));
 
         final var request = builder.build();
         return httpService.send(request);
@@ -312,7 +316,7 @@ public class PortainerRequestService {
 
     /**
      * @param appStoreTemplate The template provided by the AppStore describing 1 App.
-     * @param volumes the map for volume names used in the template.
+     * @param volumes          the map for volume names used in the template.
      * @return portainer response.
      * @throws IOException If an error occurs while connection to portainer.
      */
