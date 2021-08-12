@@ -15,13 +15,14 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
+import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
 import io.dataspaceconnector.service.routing.RouteHelper;
 import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Handles the basic logic for endpoints.
@@ -44,17 +45,19 @@ public class EndpointService<T extends Endpoint, D extends EndpointDesc>
 
     /**
      * Constructor for injection.
-     *
-     * @param routeRepository the service for managing routes.
+     *  @param routeRepository the service for managing routes.
      * @param camelRouteHelper The helper class for Camel routes.
      */
-    @Autowired
-    public EndpointService(final @NonNull RouteRepository routeRepository,
-                           final @NonNull RouteHelper camelRouteHelper) {
-        super();
+    public EndpointService(
+            final BaseEntityRepository<T> repository,
+            final AbstractFactory<T, D> factory,
+            final @NonNull RouteRepository routeRepository,
+            final @NonNull RouteHelper camelRouteHelper) {
+        super(repository, factory);
         this.routeRepo = routeRepository;
         this.routeHelper = camelRouteHelper;
     }
+
 
     /**
      * Persists a connector endpoint. If an already existing endpoint is updated, the Camel routes

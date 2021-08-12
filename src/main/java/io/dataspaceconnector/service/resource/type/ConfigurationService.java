@@ -15,34 +15,32 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
+import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.ConfigurationRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
 import io.dataspaceconnector.service.resource.ids.builder.IdsConfigModelBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Service class for the configuration.
  */
-@Service
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.NONE)
-@RequiredArgsConstructor
 @Transactional
 @Log4j2
 public class ConfigurationService extends BaseEntityService<Configuration, ConfigurationDesc> {
@@ -57,8 +55,17 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
      */
     private final @NonNull IdsConfigModelBuilder configBuilder;
 
+    public ConfigurationService(final BaseEntityRepository<Configuration> repository,
+                                final AbstractFactory<Configuration, ConfigurationDesc> factory,
+                                final @NonNull ApplicationContext context,
+                                final @NonNull IdsConfigModelBuilder configBuilder) {
+        super(repository, factory);
+        this.context = context;
+        this.configBuilder = configBuilder;
+    }
+
     /**
-     * Try too find the active configuration.
+     * Try to find the active configuration.
      *
      * @return The active configuration if it exists.
      */

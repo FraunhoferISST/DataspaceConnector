@@ -43,7 +43,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
-public final class RequestedResource extends Resource implements RemoteObject {
+public class RequestedResource extends Resource implements RemoteObject {
 
     /**
      * Serial version uid.
@@ -86,4 +86,13 @@ public final class RequestedResource extends Resource implements RemoteObject {
         return catalogs;
     }
 
+    /*
+        v5 -> v6 migration
+     */
+
+    @Setter(AccessLevel.PRIVATE)
+    @Getter(AccessLevel.PRIVATE)
+    @Convert(converter = UriConverter.class)
+    @Column(name = "licence", length = URI_COLUMN_LENGTH)
+    private URI licence;
 }

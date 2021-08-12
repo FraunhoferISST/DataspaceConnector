@@ -15,24 +15,27 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import io.dataspaceconnector.common.exception.ErrorMessage;
-import io.dataspaceconnector.common.util.Utils;
-import io.dataspaceconnector.model.rule.ContractRule;
-import io.dataspaceconnector.model.rule.ContractRuleDesc;
-import io.dataspaceconnector.repository.RuleRepository;
-import io.dataspaceconnector.service.resource.base.BaseEntityService;
-import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.UUID;
+
+import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.util.Utils;
+import io.dataspaceconnector.model.base.AbstractFactory;
+import io.dataspaceconnector.model.rule.ContractRule;
+import io.dataspaceconnector.model.rule.ContractRuleDesc;
+import io.dataspaceconnector.repository.BaseEntityRepository;
+import io.dataspaceconnector.repository.RuleRepository;
+import io.dataspaceconnector.service.resource.base.BaseEntityService;
 
 /**
  * Handles the basic logic for contract rules.
  */
-@Service
-@NoArgsConstructor
 public class RuleService extends BaseEntityService<ContractRule, ContractRuleDesc> {
+
+    public RuleService(final BaseEntityRepository<ContractRule> repository,
+            final AbstractFactory<ContractRule, ContractRuleDesc> factory) {
+        super(repository, factory);
+    }
 
     /**
      * Finds all rules in a specific contract.

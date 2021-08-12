@@ -15,15 +15,24 @@
  */
 package io.dataspaceconnector.model.resource;
 
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import java.net.URI;
+import java.util.List;
+
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.util.UriConverter;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import java.util.List;
+import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
  * Describes resources offered by this connector.
@@ -32,7 +41,7 @@ import java.util.List;
 @Where(clause = "deleted = false")
 @Entity
 @EqualsAndHashCode(callSuper = true)
-public final class OfferedResource extends Resource {
+public class OfferedResource extends Resource {
 
     /**
      * Serial version uid.
@@ -89,4 +98,14 @@ public final class OfferedResource extends Resource {
     public List<Broker> getBrokers() {
         return brokers;
     }
+
+    /*
+        v5 -> v6 migration
+     */
+
+    @Setter(AccessLevel.PRIVATE)
+    @Getter(AccessLevel.PRIVATE)
+    @Convert(converter = UriConverter.class)
+    @Column(name = "licence", length = URI_COLUMN_LENGTH)
+    private URI licence;
 }

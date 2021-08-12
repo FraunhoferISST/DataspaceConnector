@@ -15,16 +15,22 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import java.net.URI;
+import java.util.List;
+import java.util.Set;
+
 import io.dataspaceconnector.common.exception.ErrorMessage;
-import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.SubscriptionProcessingException;
+import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
+import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.SubscriptionRepository;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
@@ -32,20 +38,14 @@ import io.dataspaceconnector.service.resource.relation.ArtifactSubscriptionLinke
 import io.dataspaceconnector.service.resource.relation.OfferedResourceSubscriptionLinker;
 import io.dataspaceconnector.service.resource.relation.RepresentationSubscriptionLinker;
 import io.dataspaceconnector.service.resource.relation.RequestedResourceSubscriptionLinker;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Handles the basic logic for subscriptions.
  */
 @Service
-@NoArgsConstructor
 public class SubscriptionService extends BaseEntityService<Subscription, SubscriptionDesc> {
 
     /**
@@ -77,6 +77,13 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
      */
     @Autowired
     private EntityResolver entityResolver;
+
+    @Autowired
+    public SubscriptionService(
+            final BaseEntityRepository<Subscription> repository,
+            final AbstractFactory<Subscription, SubscriptionDesc> factory) {
+        super(repository, factory);
+    }
 
     /**
      * @param desc The description of the new entity.

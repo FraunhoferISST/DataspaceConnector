@@ -17,16 +17,17 @@ package io.dataspaceconnector.service.resource.type;
 
 import java.util.UUID;
 
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpointDesc;
 import io.dataspaceconnector.model.endpoint.GenericEndpointFactory;
+import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.routing.RouteHelper;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -45,18 +46,30 @@ public class GenericEndpointService
 
     /**
      * Constructor for injection.
+     * @param repository
+     * @param factory
+     * @param routeRepository  the service for managing routes.
+     * @param camelRouteHelper The helper class for Camel routes.
+     * @param dataSourceSvc
+     */
+    public GenericEndpointService(
+            final BaseEntityRepository<GenericEndpoint> repository,
+            final AbstractFactory<GenericEndpoint, GenericEndpointDesc> factory,
+            final RouteRepository routeRepository,
+            final RouteHelper camelRouteHelper,
+            final DataSourceService dataSourceSvc) {
+        super(repository, factory, routeRepository, camelRouteHelper);
+        this.dataSourceSvc = dataSourceSvc;
+    }
+
+    /**
+     * Constructor for injection.
      *
      * @param dataSourceService The data source repository.
      * @param routeRepository The service for managing routes.
      * @param camelRouteHelper The helper class for Camel routes.
      */
-    @Autowired
-    public GenericEndpointService(final DataSourceService dataSourceService,
-                                  final RouteRepository routeRepository,
-                                  final RouteHelper camelRouteHelper) {
-        super(routeRepository, camelRouteHelper);
-        this.dataSourceSvc = dataSourceService;
-    }
+
 
     /**
      * This method allows to modify the generic endpoint and set a data source.

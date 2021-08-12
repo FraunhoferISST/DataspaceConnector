@@ -15,13 +15,17 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.RouteCreationException;
 import io.dataspaceconnector.common.exception.RouteDeletionException;
 import io.dataspaceconnector.common.util.Utils;
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteDesc;
 import io.dataspaceconnector.model.route.RouteFactory;
+import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.EndpointRepository;
 import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
@@ -31,10 +35,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 /**
  * Service class for routes.
@@ -61,16 +62,17 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
 
     /**
      * Constructor for route service.
-     *
      * @param endpointRepository   The endpoint repository.
      * @param endpointServiceProxy The endpoint service.
      * @param camelRouteHelper     The helper class for Camel routes.
      */
-    @Autowired
-    public RouteService(final @NonNull EndpointRepository endpointRepository,
-                        final @NonNull EndpointServiceProxy endpointServiceProxy,
-                        final @NonNull RouteHelper camelRouteHelper) {
-        super();
+    public RouteService(
+            final BaseEntityRepository<Route> repository,
+            final AbstractFactory<Route, RouteDesc> factory,
+            final @NonNull EndpointRepository endpointRepository,
+            final @NonNull EndpointServiceProxy endpointServiceProxy,
+            final @NonNull RouteHelper camelRouteHelper) {
+        super(repository, factory);
         this.endpointRepo = endpointRepository;
         this.endpointService = endpointServiceProxy;
         this.routeHelper = camelRouteHelper;

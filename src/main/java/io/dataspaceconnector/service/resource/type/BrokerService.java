@@ -15,26 +15,29 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.model.broker.Broker;
-import io.dataspaceconnector.model.broker.BrokerDesc;
-import io.dataspaceconnector.repository.BrokerRepository;
-import io.dataspaceconnector.service.resource.base.BaseEntityService;
-import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
+import io.dataspaceconnector.model.base.AbstractFactory;
+import io.dataspaceconnector.model.base.RegistrationStatus;
+import io.dataspaceconnector.model.broker.Broker;
+import io.dataspaceconnector.model.broker.BrokerDesc;
+import io.dataspaceconnector.repository.BaseEntityRepository;
+import io.dataspaceconnector.repository.BrokerRepository;
+import io.dataspaceconnector.service.resource.base.BaseEntityService;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * Service class for brokers.
  */
-@Service("ConfigurationBrokerService") // Clashes with IDS-Messaging-Services brokerService Bean
-@NoArgsConstructor
 @Transactional
 public class BrokerService extends BaseEntityService<Broker, BrokerDesc> {
+
+    public BrokerService(final BaseEntityRepository<Broker> repository,
+                         final AbstractFactory<Broker, BrokerDesc> factory) {
+        super(repository, factory);
+    }
 
     /**
      * Finds a broker by the uri.
