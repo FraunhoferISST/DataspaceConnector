@@ -24,6 +24,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.RouteController;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -54,6 +55,12 @@ public class RoutesControllerTest {
     @Autowired
     private RoutesController routesController;
 
+    @BeforeEach
+    public void setup() {
+        doReturn(camelContext).when(camelContext).adapt(ModelCamelContext.class);
+        doReturn(routeController).when(camelContext).getRouteController();
+    }
+
     @Test
     public void addRoutes_fileNull_returnStatusCode400() {
         /* ACT */
@@ -67,7 +74,6 @@ public class RoutesControllerTest {
     public void addRoutes_validRouteFile_returnStatusCode200() throws Exception {
         /* ARRANGE */
         when(unmarshaller.unmarshal(any(InputStream.class))).thenReturn(new RoutesDefinition());
-        doReturn(camelContext).when(camelContext).adapt(ModelCamelContext.class);
         doNothing().when(camelContext).addRouteDefinitions(any());
 
         final var file = new MockMultipartFile("file", "routes.xml",
@@ -142,7 +148,6 @@ public class RoutesControllerTest {
     @Test
     public void removeRoute_routeCannotBeStopped_returnStatusCode500() throws Exception {
         /* ARRANGE */
-        doReturn(routeController).when(camelContext).getRouteController();
         doNothing().when(camelContext).stopRoute(any());
         when(camelContext.removeRoute(anyString())).thenReturn(false);
 
