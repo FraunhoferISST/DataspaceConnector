@@ -21,10 +21,10 @@ set -eo pipefail
 
 echo "Setup provider and consumer"
 
-# Consumer setup
+# Provider setup
 helm install provider charts/dataspace-connector --set env.config.SPRING_APPLICATION_NAME="Provider Connector" 2>&1 > /dev/null
 
-# Provider setup
+# Consumer setup
 sed -i "s/^appVersion:.*$/appVersion: ci/" charts/dataspace-connector/Chart.yaml
 helm install consumer charts/dataspace-connector --set env.config.SPRING_APPLICATION_NAME="Consumer Connector" 2>&1 > /dev/null
 
