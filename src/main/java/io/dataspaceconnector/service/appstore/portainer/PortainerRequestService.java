@@ -195,7 +195,7 @@ public class PortainerRequestService {
         final var requestBody = new JSONObject();
         requestBody.put("url", templateObject.getString("registry"));
         requestBody.put("name", templateObject.getString("registry")); //name of registry will be the url
-        requestBody.put("type", 1); //TODO: correct for portainer?
+        requestBody.put("type", 3); //Custom Registry
         requestBody.put("authentication", false);
 
         if (templateObject.has("username") && templateObject.has("password")) {
