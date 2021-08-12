@@ -231,7 +231,8 @@ public class PortainerRequestService {
         builder.post(RequestBody.create(requestBody.toString(), null));
 
         final var request = builder.build();
-        return httpService.send(request);
+        final var response = httpService.send(request);
+        return response;
     }
 
     /**
@@ -258,17 +259,11 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments(
-                        String.format(
-                                "api/endpoints/1/docker/images/create?fromImage=%s%%2F%s",
-                                registryUrl,
-                                image
-                        )
-                );
+                .addPathSegments("api/endpoints/1/docker/images/create");
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + jwt);
         builder.url(url);
-        builder.post(RequestBody.create(new byte[0], null));
+        builder.post(RequestBody.create(new JSONObject().put("fromImage", templateObject.getString("image")).toString(), null));
 
         final var request = builder.build();
         return httpService.send(request);

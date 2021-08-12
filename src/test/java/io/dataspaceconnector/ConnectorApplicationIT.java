@@ -15,14 +15,49 @@
  */
 package io.dataspaceconnector;
 
+import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class ConnectorApplicationIT {
+
+	@Autowired
+	private PortainerRequestService portainerRequestSvc;
+
 	@Test
-	void contextLoads() {
+	void contextLoads() throws Exception {
+		String appStoreTemplate = "{\n" +
+				"    \"type\": 1,\n" +
+				"    \"title\": \"Nginx\",\n" +
+				"    \"description\": \"High performance web server\",\n" +
+				"    \"categories\": [\n" +
+				"        \"webserver\"\n" +
+				"    ],\n" +
+				"    \"platform\": \"linux\",\n" +
+				"    \"logo\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/logos/nginx.png\",\n" +
+				"    \"image\": \"nginx:latest\",\n" +
+				"    \"ports\": [\n" +
+				"        \"80/tcp\",\n" +
+				"        \"443/tcp\"\n" +
+				"    ],\n" +
+				"    \"volumes\": [\n" +
+				"        {\n" +
+				"            \"container\": \"/etc/nginx\"\n" +
+				"        },\n" +
+				"        {\n" +
+				"            \"container\": \"/usr/share/nginx/html\"\n" +
+				"        }\n" +
+				"    ],\n" +
+				"    \"registry\":\"https://registry.hub.docker.com/library\",\n" +
+				"}";
+		portainerRequestSvc.createRegistry(appStoreTemplate);
+		portainerRequestSvc.pullImage(appStoreTemplate);
+		var volumeMap = portainerRequestSvc.createVolumes(appStoreTemplate);
+		var containerId = portainerRequestSvc.createContainer(appStoreTemplate, volumeMap);
+		portainerRequestSvc.startContainer(containerId);
 	}
 }
