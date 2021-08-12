@@ -20,7 +20,6 @@ import io.dataspaceconnector.controller.resource.relation.RepresentationsToArtif
 import io.dataspaceconnector.controller.resource.relation.RepresentationsToOfferedResourcesController;
 import io.dataspaceconnector.controller.resource.relation.RepresentationsToRequestsController;
 import io.dataspaceconnector.controller.resource.type.RepresentationController;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.representation.RepresentationDesc;
 import io.dataspaceconnector.model.representation.RepresentationFactory;
@@ -52,13 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
 
-@SpringBootTest(classes = {
-        RepresentationViewAssembler.class,
-        ViewAssemblerHelper.class,
-        RepresentationFactory.class,
-        OfferedResourceFactory.class,
-        RequestedResourceFactory.class
-})
+@SpringBootTest
 public class RepresentationViewAssemblerTest {
 
     @Autowired

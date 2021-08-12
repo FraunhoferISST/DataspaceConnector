@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.ids.builder;
 
-import de.fraunhofer.ids.messaging.util.SerializerProvider;
-import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
@@ -55,12 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {CatalogFactory.class, OfferedResourceFactory.class,
-        RepresentationFactory.class, ArtifactFactory.class, ContractFactory.class,
-        ContractRuleFactory.class, IdsCatalogBuilder.class, IdsResourceBuilder.class,
-        IdsRepresentationBuilder.class, IdsArtifactBuilder.class, IdsContractBuilder.class,
-        IdsPermissionBuilder.class, IdsProhibitionBuilder.class, IdsDutyBuilder.class,
-        DeserializationService.class, SerializerProvider.class})
+@SpringBootTest
 public class IdsCatalogBuilderTest {
 
     @Autowired
