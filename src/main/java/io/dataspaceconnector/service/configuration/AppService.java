@@ -126,6 +126,7 @@ public class AppService extends BaseEntityService<App, AppDesc> {
             // POST http://localhost:9000/api/endpoints/1/docker/images/create?fromImage=<REGISTRY-URL>%2F<IMAGE>
             // Portainer knows registry URL and credentials if auth required (see step 1)
             // (infos from AppStore Template)
+            portainerRequestSvc.pullImage(appStoreTemplate);
 
             //3. Create volumes if needed (infos from AppStore Template)
             // POST http://localhost:9000/api/endpoints/1/docker/volumes/create

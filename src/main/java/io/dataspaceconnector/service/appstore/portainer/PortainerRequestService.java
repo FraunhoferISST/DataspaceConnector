@@ -28,6 +28,8 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Service class for app store registries. It allows communicating with Portainer's API to manage
@@ -215,6 +217,36 @@ public class PortainerRequestService {
         builder.addHeader("Authorization", "Bearer " + jwt);
         builder.url(url);
         builder.post(RequestBody.create(requestBody.toString(), null));
+
+        final var request = builder.build();
+        return httpService.send(request);
+    }
+
+    /**
+     * @param appStoreTemplate The template provided by the AppStore decribing 1 App.
+     * @return Response of portainer.
+     * @throws IOException If an error occurs while connection to portainer.
+     */
+    public Response pullImage(final String appStoreTemplate) throws IOException {
+        final var templateObject = toJsonObject(appStoreTemplate);
+        final var registryUrl = URLEncoder.encode(templateObject.getString("registry"), StandardCharsets.UTF_8);
+        final var image = URLEncoder.encode(templateObject.getString("image"), StandardCharsets.UTF_8);
+
+        //Needed info from AppStore template for URL params:
+        //Registry-URL and Image-Details
+
+        final var jwt = getJwtToken();
+        final var builder = getRequestBuilder();
+
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments("api/endpoints/1/docker/images/create?fromImage=" + registryUrl + "%2F" + image);
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.url(url);
+        builder.post(RequestBody.create(new byte[0], null));
 
         final var request = builder.build();
         return httpService.send(request);
