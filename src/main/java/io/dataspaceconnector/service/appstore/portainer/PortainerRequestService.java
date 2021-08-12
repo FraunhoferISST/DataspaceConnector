@@ -378,10 +378,24 @@ public class PortainerRequestService {
         jsonPayload.put("Env", new JSONArray());
         jsonPayload.put("OpenStdin", false);
         jsonPayload.put("Tty", false);
-        //TODO fill ports, hostconfig and volumes
-        jsonPayload.put("ExposedPorts", "{}");
-        jsonPayload.put("HostConfig", "{}");
-        jsonPayload.put("Volumes", "{}");
+        //TODO fill exposed ports
+        final var exposedPorts = new JSONObject();
+        jsonPayload.put("ExposedPorts", exposedPorts);
+        final var hostConfig = new JSONObject();
+        hostConfig.put("RestartPolicy", new JSONObject(
+                String.format("{\"Name\":\"%s\"}", templateObject.getString("restart_policy")))
+        );
+        //TODO add port bindings
+        hostConfig.put("PortBindings", new JSONObject());
+        //TODO add binds
+        hostConfig.put("Binds", new JSONArray());
+        hostConfig.put("Privileged", false);
+        hostConfig.put("ExtraHosts", new JSONArray());
+        hostConfig.put("NetworkMode", "bridge");
+        jsonPayload.put("HostConfig", hostConfig);
+        //TODO fill volumes
+        final var volumesJSON = new JSONObject();
+        jsonPayload.put("Volumes", volumesJSON);
         jsonPayload.put("Labels", new JSONObject());
         jsonPayload.put("name", "");
         jsonPayload.put("Cmd", new JSONArray());
