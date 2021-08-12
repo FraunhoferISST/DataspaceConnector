@@ -291,6 +291,73 @@ public class PortainerRequestService {
         return volumeNames;
     }
 
+    /**
+     * @param appStoreTemplate The template provided by the AppStore describing 1 App.
+     * @return portainer response.
+     * @throws IOException If an error occurs while connection to portainer.
+     *
+     * Example JSON payload:
+     * {
+     *     "Env": [],
+     *     "OpenStdin": false,
+     *     "Tty": false,
+     *     "ExposedPorts": {
+     *         "80/tcp": {},
+     *         "443/tcp": {}
+     *     },
+     *     "HostConfig": {
+     *         "RestartPolicy": {
+     *             "Name": "always"
+     *         },
+     *         "PortBindings": {
+     *             "80/tcp": [
+     *                 {}
+     *             ],
+     *             "443/tcp": [
+     *                 {}
+     *             ]
+     *         },
+     *         "Binds": [
+     *             "894eefe46f554af770e48771950df183ea0bfc8874eab6e05d8b3611da10a8a9:/etc/nginx",
+     *             "bba9eb7e8ea30fc7c8e0b5e41d3cc36e277a35f38eb9ca09b50d0b971db36f4c:/usr/share/nginx/html"
+     *         ],
+     *         "Privileged": false,
+     *         "ExtraHosts": [],
+     *         "NetworkMode": "bridge"
+     *     },
+     *     "Volumes": {
+     *         "/etc/nginx": {},
+     *         "/usr/share/nginx/html": {}
+     *     },
+     *     "Labels": {},
+     *     "name": "",
+     *     "Cmd": [],
+     *     "Image": "nginx:latest"
+     * }
+     */
+    public Response createContainer(final String appStoreTemplate) throws IOException {
+        final Map<String, String> volumeNames = new HashMap<>();
+        final var templateObject = toJsonObject(appStoreTemplate);
+        final var image = templateObject.getJSONArray("image");
+
+        final var jwt = getJwtToken();
+        final var builder = getRequestBuilder();
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments("api/endpoints/1/docker/containers/create?name=" + image);
+
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.url(url);
+        //TODO build requestbody
+        builder.post(RequestBody.create(new byte[0], null));
+
+        final var request = builder.build();
+        return httpService.send(request);
+    }
+
     private Request.Builder getRequestBuilder() {
         return new Request.Builder();
     }
