@@ -18,7 +18,6 @@ package io.dataspaceconnector.service.resource.type;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.rule.ContractRuleFactory;
 import io.dataspaceconnector.repository.RuleRepository;
-import io.dataspaceconnector.service.resource.type.RuleService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

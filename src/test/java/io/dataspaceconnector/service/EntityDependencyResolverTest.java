@@ -23,7 +23,6 @@ import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.rule.ContractRule;
-import io.dataspaceconnector.service.EntityDependencyResolver;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.resource.type.ContractService;
 import io.dataspaceconnector.service.resource.type.RuleService;

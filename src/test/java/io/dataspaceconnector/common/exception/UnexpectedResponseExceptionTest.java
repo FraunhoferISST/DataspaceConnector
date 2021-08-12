@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.common.exception;
 
-import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

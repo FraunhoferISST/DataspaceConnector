@@ -21,9 +21,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.dataspaceconnector.model.resource.RequestedResourceDesc;
-import io.dataspaceconnector.model.resource.RequestedResourceFactory;
-import io.dataspaceconnector.model.resource.ResourceFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

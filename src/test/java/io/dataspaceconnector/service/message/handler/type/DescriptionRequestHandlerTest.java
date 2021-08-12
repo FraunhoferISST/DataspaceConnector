@@ -35,7 +35,6 @@ import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.model.message.DescriptionResponseMessageDesc;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.common.ids.ConnectorService;
-import io.dataspaceconnector.service.message.handler.type.DescriptionRequestHandler;
 import io.dataspaceconnector.service.message.builder.type.DescriptionResponseService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;

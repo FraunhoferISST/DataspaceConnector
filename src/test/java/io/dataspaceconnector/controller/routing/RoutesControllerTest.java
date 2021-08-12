@@ -15,8 +15,16 @@
  */
 package io.dataspaceconnector.controller.routing;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.spi.RouteController;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,15 +32,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -43,10 +47,19 @@ public class RoutesControllerTest {
     private DefaultCamelContext camelContext;
 
     @MockBean
+    private RouteController routeController;
+
+    @MockBean
     private Unmarshaller unmarshaller;
 
     @Autowired
     private RoutesController routesController;
+
+    @BeforeEach
+    public void setup() {
+        doReturn(camelContext).when(camelContext).adapt(ModelCamelContext.class);
+        doReturn(routeController).when(camelContext).getRouteController();
+    }
 
     @Test
     public void addRoutes_fileNull_returnStatusCode400() {

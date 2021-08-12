@@ -24,8 +24,6 @@ import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.representation.RepresentationDesc;
 import io.dataspaceconnector.model.representation.RepresentationFactory;
-import io.dataspaceconnector.service.resource.ids.builder.IdsArtifactBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsRepresentationBuilder;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

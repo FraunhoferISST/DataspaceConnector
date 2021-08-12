@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.controller.exceptionhandler;
 
-import io.dataspaceconnector.controller.exceptionhandler.GlobalExceptionHandler;
 import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

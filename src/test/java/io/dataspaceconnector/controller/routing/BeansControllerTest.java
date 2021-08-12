@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.controller.routing;
 
-import io.dataspaceconnector.controller.routing.BeansController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;

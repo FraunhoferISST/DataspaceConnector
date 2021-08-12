@@ -21,8 +21,6 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.dataspaceconnector.model.contract.ContractDesc;
-import io.dataspaceconnector.model.contract.ContractFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
