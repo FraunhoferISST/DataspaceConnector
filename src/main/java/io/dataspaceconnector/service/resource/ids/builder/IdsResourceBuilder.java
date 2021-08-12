@@ -21,11 +21,17 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
+import io.dataspaceconnector.common.net.EndpointUtils;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.resource.Resource;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
+import io.dataspaceconnector.service.resource.type.ResourceService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Converts dsc resource to ids resource.
@@ -46,6 +52,11 @@ public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBui
      * The builder for ids contract offer.
      */
     private final @NonNull IdsContractBuilder contractBuilder;
+
+    /**
+     * The service for resource handling.
+     */
+    private final @NonNull ResourceService<T, OfferedResourceDesc> resourceSvc;
 
     @Override
     protected de.fraunhofer.iais.eis.Resource createInternal(final Resource resource,
@@ -68,6 +79,8 @@ public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBui
         final var keywords = ToIdsObjectMapper.getKeywordsAsTypedLiteral(resource.getKeywords(),
                 language);
         final var license = resource.getLicense();
+        final var paymentModality
+                = ToIdsObjectMapper.getPaymentModality(resource.getPaymentMethod());
         final var publisher = resource.getPublisher();
         final var sovereign = resource.getSovereign();
         final var title = resource.getTitle();
@@ -79,6 +92,13 @@ public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBui
                 ._endpointDocumentation_(Util.asList(endpointDocs))
                 .build();
 
+        // Get sample resources as list.
+        final var samples = resource.getSamples()
+                .stream()
+                .map(x -> this.create(resourceSvc.get(EndpointUtils.getUUIDFromPath(x)), -1))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
         // Build resource only if at least one representation and one contract is present.
         if (representations.isEmpty() || contracts.isEmpty() || representations.get().isEmpty()
                 || contracts.get().isEmpty()) {
@@ -86,24 +106,22 @@ public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBui
         }
 
         final var builder = new ResourceBuilder(selfLink)
-//                ._accrualPeriodicity_()
-//                ._assetRefinement_()
-//                ._contentType_()
                 ._created_(created)
                 ._description_(Util.asList(new TypedLiteral(description, language)))
                 ._language_(Util.asList(idsLanguage))
                 ._keyword_(keywords)
                 ._modified_(modified)
+                ._paymentModality_(paymentModality)
                 ._publisher_(publisher)
                 ._resourceEndpoint_(Util.asList(endpoint))
                 ._sovereign_(sovereign)
-//                ._spatialCoverage_()
-//                ._shapesGraph_()
                 ._standardLicense_(license)
-//                ._temporalCoverage_()
-//                ._temporalResolution_()
                 ._title_(Util.asList(new TypedLiteral(title, language)))
                 ._version_(String.valueOf(version));
+
+        if (!samples.isEmpty()) {
+            builder._sample_(samples);
+        }
 
         representations.ifPresent(builder::_representation_);
         contracts.ifPresent(builder::_contractOffer_);
