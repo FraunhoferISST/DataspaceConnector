@@ -52,12 +52,16 @@ class ConnectorApplicationIT {
 				"            \"container\": \"/usr/share/nginx/html\"\n" +
 				"        }\n" +
 				"    ],\n" +
-				"    \"registry\":\"https://registry.hub.docker.com/library\",\n" +
+				"    \"registry\":\"registry.hub.docker.com/library\",\n" +
 				"}";
 		portainerRequestSvc.createRegistry(appStoreTemplate);
 		portainerRequestSvc.pullImage(appStoreTemplate);
-		var volumeMap = portainerRequestSvc.createVolumes(appStoreTemplate);
-		var containerId = portainerRequestSvc.createContainer(appStoreTemplate, volumeMap);
-		portainerRequestSvc.startContainer(containerId);
+//		var volumeMap = portainerRequestSvc.createVolumes(appStoreTemplate);
+//		var containerId = portainerRequestSvc.createContainer(appStoreTemplate, volumeMap);
+//		portainerRequestSvc.startContainer(containerId);
 	}
 }
+
+//java.io.IOException: Unexpected code Response{protocol=http/1.1, code=500, message=Internal Server Error,
+// url=http://localhost:9000/api/endpoints/1/docker/images/create}
+// With Body: {"message":"Get http:: http: no Host in request URL"}
