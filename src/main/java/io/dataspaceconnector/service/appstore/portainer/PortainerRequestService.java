@@ -335,7 +335,7 @@ public class PortainerRequestService {
      *     "Image": "nginx:latest"
      * }
      */
-    public Response createContainer(final String appStoreTemplate) throws IOException {
+    public String createContainer(final String appStoreTemplate) throws IOException {
         final Map<String, String> volumeNames = new HashMap<>();
         final var templateObject = toJsonObject(appStoreTemplate);
         final var image = templateObject.getJSONArray("image");
@@ -355,7 +355,7 @@ public class PortainerRequestService {
         builder.post(RequestBody.create(new byte[0], null));
 
         final var request = builder.build();
-        return httpService.send(request);
+        return new JSONObject(httpService.send(request).body().string()).getString("Id");
     }
 
     private Request.Builder getRequestBuilder() {
