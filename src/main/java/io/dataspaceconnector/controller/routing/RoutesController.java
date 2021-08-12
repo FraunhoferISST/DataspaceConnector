@@ -25,7 +25,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.CamelContext;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RoutesDefinition;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +53,7 @@ public class RoutesController {
     /**
      * The Camel context.
      */
-    private final @NonNull DefaultCamelContext camelContext;
+    private final @NonNull CamelContext camelContext;
 
     /**
      * Unmarshaller for reading route definitions from XML.
@@ -85,7 +86,7 @@ public class RoutesController {
 
             final var inputStream = file.getInputStream();
             final var routes = (RoutesDefinition) unmarshaller.unmarshal(inputStream);
-            camelContext.addRouteDefinitions(routes.getRoutes());
+            camelContext.adapt(ModelCamelContext.class).addRouteDefinitions(routes.getRoutes());
 
             if (log.isInfoEnabled()) {
                 log.info("Added {} routes to the Camel Context.", routes.getRoutes().size());
@@ -133,7 +134,7 @@ public class RoutesController {
                     description = ResponseDescription.INTERNAL_SERVER_ERROR)})
     public ResponseEntity<String> removeRoute(@PathVariable("routeId") final String routeId) {
         try {
-            camelContext.stopRoute(routeId);
+            camelContext.getRouteController().stopRoute(routeId);
             if (!camelContext.removeRoute(routeId)) {
                 throw new Exception("Could not remove route because route was not stopped.");
             }
