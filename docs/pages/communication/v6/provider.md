@@ -64,7 +64,9 @@ curl -X 'POST' \
   "sovereign": "https://openweathermap.org/",
   "endpointDocumentation": "https://example.com",
   "key": "value",
-  "samples": ["https://localhost:8080/api/offers/ca502fbc-bd65-4125-fbeb-97536647d623"]
+  "samples": [
+    "https://localhost:8080/api/offers/ca502fbc-bd65-4125-fbeb-97536647d623"
+  ]
 }'
 ```
 
@@ -136,6 +138,10 @@ Response body:
   "version": 1,
   "sovereign": "https://openweathermap.org/",
   "endpointDocumentation": "https://example.com",
+  "paymentModality": "fixedPrice",
+  "samples": [
+    "https://localhost:8080/api/offers/ca502fbc-bd65-4125-fbeb-97536647d623"
+  ],
   "additional": {
     "key": "value"
   },
