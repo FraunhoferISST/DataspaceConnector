@@ -259,7 +259,8 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/1/docker/images/create");
+                .addPathSegments("api/endpoints/1/docker/images/create")
+                .addQueryParameter("fromImage", templateObject.getString("image"));
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + jwt);
         builder.url(url);
