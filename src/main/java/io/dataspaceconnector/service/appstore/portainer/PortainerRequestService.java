@@ -19,6 +19,7 @@ import de.fraunhofer.ids.messaging.protocol.http.HttpService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import net.minidev.json.JSONArray;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.Request;
@@ -373,7 +374,22 @@ public class PortainerRequestService {
         builder.addHeader("Authorization", "Bearer " + jwt);
         builder.url(url);
         //TODO build requestbody
-        builder.post(RequestBody.create(new byte[0], null));
+        final var jsonPayload = new JSONObject();
+        jsonPayload.put("Env", new JSONArray());
+        jsonPayload.put("OpenStdin", false);
+        jsonPayload.put("Tty", false);
+        //TODO fill ports, hostconfig and volumes
+        jsonPayload.put("ExposedPorts", "{}");
+        jsonPayload.put("HostConfig", "{}");
+        jsonPayload.put("Volumes", "{}");
+        jsonPayload.put("Labels", new JSONObject());
+        jsonPayload.put("name", "");
+        jsonPayload.put("Cmd", new JSONArray());
+        jsonPayload.put("Image", templateObject.getString("image"));
+
+        builder.post(
+                RequestBody.create(jsonPayload.toString(), MediaType.parse("application/json"))
+        );
 
         final var request = builder.build();
         return new JSONObject(httpService.send(request).body().string()).getString("Id");
