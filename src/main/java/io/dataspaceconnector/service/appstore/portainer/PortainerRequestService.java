@@ -30,6 +30,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Service class for app store registries. It allows communicating with Portainer's API to manage
@@ -250,6 +252,43 @@ public class PortainerRequestService {
 
         final var request = builder.build();
         return httpService.send(request);
+    }
+
+    /**
+     * @param appStoreTemplate The template provided by the AppStore describing 1 App.
+     * @return Map of portainer responses for every volume to create.
+     * @throws IOException If an error occurs while connection to portainer.
+     */
+    public Map<String, String> createVolumes(final String appStoreTemplate) throws IOException {
+        final Map<String, String> volumeNames = new HashMap<>();
+        final var templateObject = toJsonObject(appStoreTemplate);
+        final var volumes = templateObject.getJSONArray("volumes");
+
+        final var jwt = getJwtToken();
+
+        for (int i = 0; i < volumes.length(); i++) {
+            final var currentVolume = volumes.getJSONObject(i);
+            final var req = new JSONObject();
+            final var templateName = currentVolume.getString("container");
+            req.put("Name", templateName);
+            final var builder = getRequestBuilder();
+            final var urlBuilder = new HttpUrl.Builder()
+                    .scheme("http")
+                    .host(portainerConfig.getPortainerHost())
+                    .port(portainerConfig.getPortainerPort())
+                    .addPathSegments("api/endpoints/1/docker/volumes/create");
+            final var url = urlBuilder.build();
+            builder.addHeader("Authorization", "Bearer " + jwt);
+            builder.url(url);
+            builder.post(
+                    RequestBody.create(req.toString(), MediaType.parse("application/json"))
+            );
+
+            final var request = builder.build();
+            final var response = httpService.send(request);
+            volumeNames.put(templateName, response.body().string());
+        }
+        return volumeNames;
     }
 
     private Request.Builder getRequestBuilder() {
