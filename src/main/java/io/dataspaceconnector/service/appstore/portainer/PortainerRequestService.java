@@ -63,6 +63,11 @@ public class PortainerRequestService {
     private static final int LAST_INDEX = 3;
 
     /**
+     * Registry Type for requests.
+     */
+    private static final int REGISTRY_TYPE = 3;
+
+    /**
      * @return If successful, a jwt token is returned for authentication.
      */
     public String authenticate() {
@@ -196,14 +201,16 @@ public class PortainerRequestService {
         //Authentication true/false, Name, Password, Type, URL, Username
         final var requestBody = new JSONObject();
         requestBody.put("url", templateObject.getString("registry"));
-        requestBody.put("name", templateObject.getString("registry")); //name of registry will be the url
-        requestBody.put("type", 3); //Custom Registry
+        //name of registry will be the url
+        requestBody.put("name", templateObject.getString("registry"));
+        requestBody.put("type", REGISTRY_TYPE); //Custom Registry
         requestBody.put("authentication", false);
 
         if (templateObject.has("username") && templateObject.has("password")) {
             requestBody.put("authentication", true);
-            requestBody.put("username", templateObject.getString("username")); //TODO: Where does AppStore template provide credentials?
-            requestBody.put("password", templateObject.getString("password")); //TODO: Where does AppStore template provide credentials?
+            //TODO: Where does AppStore template provide credentials?
+            requestBody.put("username", templateObject.getString("username"));
+            requestBody.put("password", templateObject.getString("password"));
         }
 
 
@@ -231,8 +238,12 @@ public class PortainerRequestService {
      */
     public Response pullImage(final String appStoreTemplate) throws IOException {
         final var templateObject = toJsonObject(appStoreTemplate);
-        final var registryUrl = URLEncoder.encode(templateObject.getString("registry"), StandardCharsets.UTF_8);
-        final var image = URLEncoder.encode(templateObject.getString("image"), StandardCharsets.UTF_8);
+        final var registryUrl = URLEncoder.encode(
+                templateObject.getString("registry"), StandardCharsets.UTF_8
+        );
+        final var image = URLEncoder.encode(
+                templateObject.getString("image"), StandardCharsets.UTF_8
+        );
 
         //Needed info from AppStore template for URL params:
         //Registry-URL and Image-Details
@@ -244,7 +255,13 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/1/docker/images/create?fromImage=" + registryUrl + "%2F" + image);
+                .addPathSegments(
+                        String.format(
+                                "api/endpoints/1/docker/images/create?fromImage=%s%%2F%s",
+                                registryUrl,
+                                image
+                        )
+                );
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + jwt);
         builder.url(url);
@@ -286,13 +303,16 @@ public class PortainerRequestService {
 
             final var request = builder.build();
             final var response = httpService.send(request);
-            volumeNames.put(templateName, new JSONObject(response.body().string()).getString("Name"));
+            volumeNames.put(templateName, new JSONObject(
+                    response.body().string()).getString("Name")
+            );
         }
         return volumeNames;
     }
 
     /**
      * @param appStoreTemplate The template provided by the AppStore describing 1 App.
+     * @param volumes the map for volume names used in the template.
      * @return portainer response.
      * @throws IOException If an error occurs while connection to portainer.
      *
@@ -335,7 +355,8 @@ public class PortainerRequestService {
      *     "Image": "nginx:latest"
      * }
      */
-    public String createContainer(final String appStoreTemplate, final Map<String, String> volumes) throws IOException {
+    public String createContainer(final String appStoreTemplate, final Map<String, String> volumes)
+            throws IOException {
         final Map<String, String> volumeNames = new HashMap<>();
         final var templateObject = toJsonObject(appStoreTemplate);
         final var image = templateObject.getJSONArray("image");
@@ -381,7 +402,7 @@ public class PortainerRequestService {
         return jsonObject.toString();
     }
 
-    private JSONObject toJsonObject(String string) {
+    private JSONObject toJsonObject(final String string) {
         return new JSONObject(string);
     }
 }

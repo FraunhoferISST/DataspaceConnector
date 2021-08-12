@@ -34,7 +34,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
@@ -63,6 +62,7 @@ public class AppService extends BaseEntityService<App, AppDesc> {
      * Constructor for the app service.
      * @param appStoreService The app store service.
      * @param dataRepo        The data repository.
+     * @param portainerRequestService The service for sending requests to portainer.
      */
     @Autowired
     public AppService(final @NonNull AppStoreService appStoreService,
@@ -123,7 +123,8 @@ public class AppService extends BaseEntityService<App, AppDesc> {
             portainerRequestSvc.createRegistry(appStoreTemplate);
 
             //2. Pull Image from AppStore registry
-            // POST http://localhost:9000/api/endpoints/1/docker/images/create?fromImage=<REGISTRY-URL>%2F<IMAGE>
+            // POST http://localhost:9000/api/endpoints/1/docker/images/create
+            // ?fromImage=<REGISTRY-URL>%2F<IMAGE>
             // Portainer knows registry URL and credentials if auth required (see step 1)
             // (infos from AppStore Template)
             portainerRequestSvc.pullImage(appStoreTemplate);
