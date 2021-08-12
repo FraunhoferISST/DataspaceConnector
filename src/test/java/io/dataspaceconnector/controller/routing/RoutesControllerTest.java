@@ -15,8 +15,15 @@
  */
 package io.dataspaceconnector.controller.routing;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.spi.RouteController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,15 +31,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -41,6 +44,9 @@ public class RoutesControllerTest {
 
     @MockBean
     private DefaultCamelContext camelContext;
+
+    @MockBean
+    private RouteController routeController;
 
     @MockBean
     private Unmarshaller unmarshaller;
@@ -61,6 +67,7 @@ public class RoutesControllerTest {
     public void addRoutes_validRouteFile_returnStatusCode200() throws Exception {
         /* ARRANGE */
         when(unmarshaller.unmarshal(any(InputStream.class))).thenReturn(new RoutesDefinition());
+        doReturn(camelContext).when(camelContext).adapt(ModelCamelContext.class);
         doNothing().when(camelContext).addRouteDefinitions(any());
 
         final var file = new MockMultipartFile("file", "routes.xml",
@@ -135,6 +142,7 @@ public class RoutesControllerTest {
     @Test
     public void removeRoute_routeCannotBeStopped_returnStatusCode500() throws Exception {
         /* ARRANGE */
+        doReturn(routeController).when(camelContext).getRouteController();
         doNothing().when(camelContext).stopRoute(any());
         when(camelContext.removeRoute(anyString())).thenReturn(false);
 
