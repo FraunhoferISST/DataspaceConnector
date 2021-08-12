@@ -9,6 +9,8 @@ All notable changes to this project will be documented in this file.
 - Add property for specifying the path from which Camel routes are loaded.
   * Defaults to the `camel-routes` directory in the `resources` folder.
   * Allows for changing Camel routes without recompilation if an external directory is used.
+- Add payment modality to resource.
+- Add samples to resource.
 
 ### Changed
 - Increase pitest version from 1.6.7 to 1.6.8.
