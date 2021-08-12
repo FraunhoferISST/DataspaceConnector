@@ -31,7 +31,9 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -361,7 +363,12 @@ public class PortainerRequestService {
         final Map<String, String> volumeNames = new HashMap<>();
         final var templateObject = toJsonObject(appStoreTemplate);
         final var image = templateObject.getJSONArray("image");
-
+        final List<String> ports = new ArrayList<>();
+        for(var key : templateObject.getJSONObject("ports").keySet()) {
+            var portString = templateObject.getJSONObject("ports").getString(key);
+            portString = portString.substring(portString.indexOf(":"));
+            ports.add(portString);
+        }
         final var jwt = getJwtToken();
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
@@ -373,28 +380,38 @@ public class PortainerRequestService {
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + jwt);
         builder.url(url);
-        //TODO build requestbody
         final var jsonPayload = new JSONObject();
         jsonPayload.put("Env", new JSONArray());
         jsonPayload.put("OpenStdin", false);
         jsonPayload.put("Tty", false);
-        //TODO fill exposed ports
+
         final var exposedPorts = new JSONObject();
+        for(var port : ports) {
+            exposedPorts.put(port, new JSONObject());
+        }
         jsonPayload.put("ExposedPorts", exposedPorts);
         final var hostConfig = new JSONObject();
         hostConfig.put("RestartPolicy", new JSONObject(
                 String.format("{\"Name\":\"%s\"}", templateObject.getString("restart_policy")))
         );
-        //TODO add port bindings
+        final var portBindings = new JSONObject();
+        for(var port : ports) {
+            portBindings.put(port, new JSONArray().appendElement(new JSONObject()));
+        }
         hostConfig.put("PortBindings", new JSONObject());
-        //TODO add binds
+        final var binds = new JSONArray();
+        for(var bind : volumes.entrySet()){
+            binds.appendElement(new JSONObject().put(bind.getValue(), bind.getKey()));
+        }
         hostConfig.put("Binds", new JSONArray());
         hostConfig.put("Privileged", false);
         hostConfig.put("ExtraHosts", new JSONArray());
         hostConfig.put("NetworkMode", "bridge");
         jsonPayload.put("HostConfig", hostConfig);
-        //TODO fill volumes
         final var volumesJSON = new JSONObject();
+        for(var bind : volumes.entrySet()){
+            volumesJSON.put(bind.getKey(), new JSONObject());
+        }
         jsonPayload.put("Volumes", volumesJSON);
         jsonPayload.put("Labels", new JSONObject());
         jsonPayload.put("name", "");
