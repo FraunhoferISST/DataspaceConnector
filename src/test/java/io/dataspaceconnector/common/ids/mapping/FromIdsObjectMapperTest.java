@@ -41,7 +41,6 @@ import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.TemporalEntityBuilder;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.common.ids.mapping.FromIdsObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
@@ -121,7 +120,6 @@ public class FromIdsObjectMapperTest {
         assertEquals(resource.getModified().toXMLFormat(), additional.get("ids:modified"));
         // assertEquals(resource.getResourceEndpoint().get(0).toString(), additional.get("ids:resourceEndpoint"));
         assertEquals(resource.getResourcePart().get(0).toString(), additional.get("ids:resourcePart"));
-        assertEquals(resource.getSample().get(0).toString(), additional.get("ids:sample"));
         assertEquals(resource.getShapesGraph().toString(), additional.get("ids:shapesGraph"));
         assertEquals(resource.getSpatialCoverage().get(0).toString(), additional.get("ids:spatialCoverage"));
         assertEquals(resource.getTemporalCoverage().get(0).toString(), additional.get("ids:temporalCoverage"));
@@ -169,7 +167,6 @@ public class FromIdsObjectMapperTest {
         assertEquals(resource.getModified().toXMLFormat(), additional.get("ids:modified"));
         // assertEquals(resource.getResourceEndpoint().get(0).toString(), additional.get("ids:resourceEndpoint"));
         assertEquals(resource.getResourcePart().get(0).toString(), additional.get("ids:resourcePart"));
-        assertEquals(resource.getSample().get(0).toString(), additional.get("ids:sample"));
         assertEquals(resource.getShapesGraph().toString(), additional.get("ids:shapesGraph"));
         assertEquals(resource.getSpatialCoverage().get(0).toString(), additional.get("ids:spatialCoverage"));
         assertEquals(resource.getTemporalCoverage().get(0).toString(), additional.get("ids:temporalCoverage"));

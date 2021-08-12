@@ -16,12 +16,13 @@
 package io.dataspaceconnector.model.resource;
 
 import io.dataspaceconnector.common.exception.NotImplemented;
-import io.dataspaceconnector.model.resource.Resource;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ResourceTest {
     @Test
@@ -40,5 +41,23 @@ public class ResourceTest {
 
         /* ACT && ASSERT */
         assertThrows(NotImplemented.class, resource::getCatalogs);
+    }
+
+    @Test
+    public void default_sample_is_empty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertTrue(ResourceFactory.DEFAULT_SAMPLES.isEmpty());
+    }
+
+    @Test
+    public void default_paymentMethod_is_free() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertEquals(PaymentMethod.FREE, ResourceFactory.DEFAULT_PAYMENT_MODALITY);
     }
 }

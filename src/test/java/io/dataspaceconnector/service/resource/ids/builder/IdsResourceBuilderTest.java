@@ -16,32 +16,23 @@
 package io.dataspaceconnector.service.resource.ids.builder;
 
 import de.fraunhofer.iais.eis.Language;
-import de.fraunhofer.ids.messaging.util.SerializerProvider;
-import io.dataspaceconnector.common.ids.DeserializationService;
-import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.contract.ContractDesc;
 import io.dataspaceconnector.model.contract.ContractFactory;
-import io.dataspaceconnector.model.rule.ContractRule;
-import io.dataspaceconnector.model.rule.ContractRuleDesc;
-import io.dataspaceconnector.model.rule.ContractRuleFactory;
-import io.dataspaceconnector.model.resource.OfferedResource;
-import io.dataspaceconnector.model.resource.OfferedResourceDesc;
-import io.dataspaceconnector.model.resource.OfferedResourceFactory;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.representation.RepresentationDesc;
 import io.dataspaceconnector.model.representation.RepresentationFactory;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.OfferedResourceFactory;
 import io.dataspaceconnector.model.resource.Resource;
-import io.dataspaceconnector.service.resource.ids.builder.IdsArtifactBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsContractBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsDutyBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsPermissionBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsProhibitionBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsRepresentationBuilder;
-import io.dataspaceconnector.service.resource.ids.builder.IdsResourceBuilder;
+import io.dataspaceconnector.model.rule.ContractRule;
+import io.dataspaceconnector.model.rule.ContractRuleDesc;
+import io.dataspaceconnector.model.rule.ContractRuleFactory;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,11 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {OfferedResourceFactory.class, RepresentationFactory.class,
-        ArtifactFactory.class, ContractFactory.class, ContractRuleFactory.class,
-        IdsResourceBuilder.class, IdsRepresentationBuilder.class, IdsArtifactBuilder.class,
-        IdsContractBuilder.class, IdsPermissionBuilder.class, IdsProhibitionBuilder.class,
-        IdsDutyBuilder.class, DeserializationService.class, SerializerProvider.class})
+@SpringBootTest
 public class IdsResourceBuilderTest {
 
     @Autowired
