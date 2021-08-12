@@ -903,7 +903,7 @@ public class OfferedResourceFactoryTest {
         factory.update(resource, desc);
 
         /* ASSERT */
-        assertEquals(desc.getPaymentMethod(), resource.getPaymentMethod());
+        assertEquals(desc.getPaymentMethod(), resource.getPaymentModality());
     }
 
     @Test

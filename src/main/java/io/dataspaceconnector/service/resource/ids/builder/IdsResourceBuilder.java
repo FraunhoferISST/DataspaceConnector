@@ -80,7 +80,7 @@ public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBui
                 language);
         final var license = resource.getLicense();
         final var paymentModality
-                = ToIdsObjectMapper.getPaymentModality(resource.getPaymentMethod());
+                = ToIdsObjectMapper.getPaymentModality(resource.getPaymentModality());
         final var publisher = resource.getPublisher();
         final var sovereign = resource.getSovereign();
         final var title = resource.getTitle();

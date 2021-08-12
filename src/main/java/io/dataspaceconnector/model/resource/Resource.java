@@ -114,7 +114,7 @@ public class Resource extends NamedEntity {
      * The payment method.
      */
     @Enumerated(EnumType.STRING)
-    private PaymentMethod paymentMethod;
+    private PaymentMethod paymentModality;
 
     /**
      * Links to sample resources.

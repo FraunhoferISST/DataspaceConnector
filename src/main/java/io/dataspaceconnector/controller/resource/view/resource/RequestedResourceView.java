@@ -103,7 +103,7 @@ public class RequestedResourceView extends RepresentationModel<RequestedResource
     /**
      * The payment modality.
      */
-    private PaymentMethod paymentMethod;
+    private PaymentMethod paymentModality;
 
     /**
      * A list of resource IDs pointing at sample resources.

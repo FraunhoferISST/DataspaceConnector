@@ -98,7 +98,7 @@ public class OfferedResourceView extends RepresentationModel<OfferedResourceView
     /**
      * The payment modality.
      */
-    private PaymentMethod paymentMethod;
+    private PaymentMethod paymentModality;
 
     /**
      * A list of resource IDs pointing at sample resources.

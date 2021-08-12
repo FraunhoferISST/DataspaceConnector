@@ -234,11 +234,11 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
     protected final boolean updatePaymentMethod(final Resource resource,
                                                 final PaymentMethod paymentMethod) {
         final var tmp = paymentMethod == null ? DEFAULT_PAYMENT_MODALITY : paymentMethod;
-        if (tmp.equals(resource.getPaymentMethod())) {
+        if (tmp.equals(resource.getPaymentModality())) {
             return false;
         }
 
-        resource.setPaymentMethod(tmp);
+        resource.setPaymentModality(tmp);
         return true;
     }
 
