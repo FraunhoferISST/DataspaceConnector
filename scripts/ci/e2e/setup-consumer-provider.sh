@@ -22,11 +22,11 @@ set -eo pipefail
 echo "Setup provider and consumer"
 
 # Consumer setup
-helm install consumer charts/dataspace-connector --set env.config.SPRING_APPLICATION_NAME="Consumer Connector" 2>&1 > /dev/null
+helm install provider charts/dataspace-connector --set env.config.SPRING_APPLICATION_NAME="Provider Connector" 2>&1 > /dev/null
 
 # Provider setup
 sed -i "s/^appVersion:.*$/appVersion: ci/" charts/dataspace-connector/Chart.yaml
-helm install provider charts/dataspace-connector --set env.config.SPRING_APPLICATION_NAME="Provider Connector" 2>&1 > /dev/null
+helm install consumer charts/dataspace-connector --set env.config.SPRING_APPLICATION_NAME="Consumer Connector" 2>&1 > /dev/null
 
 echo "Waiting for readiness"
 kubectl rollout status deployments/provider-dataspace-connector --timeout=360s 2>&1 > /dev/null
