@@ -239,3 +239,4 @@ jobs:
       - name: Run scripts
         run: |
           ./scripts/ci/e2e/setup-provider-consumer.sh
+          ./scripts/ci/e2e/setup-consumer-provider.sh
