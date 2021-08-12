@@ -51,7 +51,7 @@ provider = ResourceApi(providerUrl)
 dataValue = "SOME LONG VALUE"
 catalog = provider.create_catalog()
 offers = provider.create_offered_resource()
-offers2 = provider.create_offered_resource(data={"samples": [offers]})
+offers2 = provider.create_offered_resource()
 representation = provider.create_representation()
 representation2 = provider.create_representation()
 local_artifact = provider.create_artifact(data={"value": dataValue})
