@@ -21,7 +21,6 @@ import java.util.UUID;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.agreement.AgreementFactory;
 import io.dataspaceconnector.repository.AgreementRepository;
-import io.dataspaceconnector.service.resource.type.AgreementService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -30,7 +30,6 @@ import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.common.exception.MessageEmptyException;
 import io.dataspaceconnector.common.exception.VersionNotSupportedException;
-import io.dataspaceconnector.common.ids.message.MessageUtils;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;

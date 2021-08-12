@@ -17,7 +17,6 @@ package io.dataspaceconnector.service.resource.type;
 
 import io.dataspaceconnector.model.representation.RepresentationFactory;
 import io.dataspaceconnector.repository.RepresentationRepository;
-import io.dataspaceconnector.service.resource.type.RepresentationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -26,7 +26,6 @@ import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.model.message.MessageProcessedNotificationMessageDesc;
 import io.dataspaceconnector.common.ids.ConnectorService;
-import io.dataspaceconnector.service.message.handler.type.NotificationMessageHandler;
 import io.dataspaceconnector.service.message.builder.type.MessageProcessedNotificationService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;

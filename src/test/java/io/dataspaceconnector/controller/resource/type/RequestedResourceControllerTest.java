@@ -16,7 +16,6 @@
 package io.dataspaceconnector.controller.resource.type;
 
 import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
-import io.dataspaceconnector.controller.resource.type.RequestedResourceController;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.service.message.SubscriberNotificationService;
 import org.junit.jupiter.api.Test;

@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
-import io.dataspaceconnector.model.endpoint.ConnectorEndpointDesc;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 

@@ -24,7 +24,6 @@ import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.service.message.handler.ClearingHouseLoggingProcessor;
-import io.dataspaceconnector.service.message.handler.type.ArtifactRequestHandler;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

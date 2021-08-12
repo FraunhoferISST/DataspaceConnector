@@ -18,7 +18,6 @@ package io.dataspaceconnector.service.resource.type;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.broker.BrokerFactory;
 import io.dataspaceconnector.repository.BrokerRepository;
-import io.dataspaceconnector.service.resource.type.BrokerService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;

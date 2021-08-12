@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.common.exception;
 
-import io.dataspaceconnector.common.exception.RouteCreationException;
-import io.dataspaceconnector.common.exception.RouteDeletionException;
 import io.dataspaceconnector.service.routing.exception.NoSuitableTemplateException;
 import org.junit.jupiter.api.Test;
 

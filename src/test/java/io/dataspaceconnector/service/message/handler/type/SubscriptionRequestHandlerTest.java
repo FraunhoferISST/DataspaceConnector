@@ -30,7 +30,6 @@ import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.message.builder.type.MessageProcessedNotificationService;
-import io.dataspaceconnector.service.message.handler.type.SubscriptionMessageHandler;
 import io.dataspaceconnector.service.resource.type.SubscriptionService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;

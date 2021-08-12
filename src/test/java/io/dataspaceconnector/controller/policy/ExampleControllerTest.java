@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.controller.policy;
 
-import io.dataspaceconnector.controller.policy.ExampleController;
 import io.dataspaceconnector.model.pattern.ConnectorRestrictionDesc;
 import io.dataspaceconnector.model.pattern.DeletionDesc;
 import io.dataspaceconnector.model.pattern.DurationDesc;

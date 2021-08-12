@@ -19,8 +19,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.dataspaceconnector.model.representation.RepresentationDesc;
-import io.dataspaceconnector.model.representation.RepresentationFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

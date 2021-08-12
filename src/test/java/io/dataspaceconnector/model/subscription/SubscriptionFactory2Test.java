@@ -17,9 +17,6 @@ package io.dataspaceconnector.model.subscription;
 
 import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.config.ConnectorConfig;
-import io.dataspaceconnector.model.subscription.Subscription;
-import io.dataspaceconnector.model.subscription.SubscriptionDesc;
-import io.dataspaceconnector.model.subscription.SubscriptionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
