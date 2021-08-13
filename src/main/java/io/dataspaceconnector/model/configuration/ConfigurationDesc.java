@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.model.configuration;
 
-import java.net.URI;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.named.NamedDescription;
@@ -26,12 +23,20 @@ import io.dataspaceconnector.model.truststore.TruststoreDesc;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.net.URI;
+import java.util.List;
+
 /**
  * Describing the configuration's properties.
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ConfigurationDesc extends NamedDescription {
+
+    /**
+     * The id of the connector.
+     */
+    private URI connectorId;
 
     /**
      * The access url of the connector.

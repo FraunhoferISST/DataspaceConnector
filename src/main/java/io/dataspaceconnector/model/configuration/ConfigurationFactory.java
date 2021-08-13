@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.model.configuration;
 
-import java.net.URI;
-import java.util.List;
-
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
@@ -29,6 +26,9 @@ import io.dataspaceconnector.model.util.FactoryUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.List;
 
 /**
  * Creates and updates a configuration.
@@ -63,10 +63,14 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     public static final DeployMode DEFAULT_DEPLOY_MODE = DeployMode.TEST;
 
     /**
+     * Default connector id.
+     */
+    public static final URI DEFAULT_CONNECTOR_ID = URI.create("https://localhost:8080");
+
+    /**
      * Default connector endpoint.
      */
-    public static final URI DEFAULT_CONNECTOR_ENDPOINT =
-            URI.create("https://localhost:8080/api/ids/data");
+    public static final URI DEFAULT_ENDPOINT = URI.create(DEFAULT_CONNECTOR_ID + "/api/ids/data");
 
     /**
      * The default version.
@@ -121,6 +125,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     protected boolean updateInternal(final Configuration config, final ConfigurationDesc desc) {
         final var hasUpdatedDefaultEndpoint = updateDefaultEndpoint(config,
                 desc.getDefaultEndpoint());
+        final var hasUpdatedConnectorId = updateConnectorId(config, desc.getConnectorId());
         final var hasUpdatedVersion = updateVersion(config, desc.getVersion());
         final var hasUpdatedCurator = updateCurator(config, desc.getCurator());
         final var hasUpdatedMaintainer = updateMaintainer(config, desc.getMaintainer());
@@ -138,6 +143,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
         final var hasUpdatedStatus = updateStatus(config, desc.getStatus());
 
         return hasUpdatedDefaultEndpoint
+                || hasUpdatedConnectorId
                 || hasUpdatedVersion
                 || hasUpdatedCurator
                 || hasUpdatedMaintainer
@@ -199,6 +205,19 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     }
 
     /**
+     * @param config      The configuration.
+     * @param connectorId The new connector id.
+     * @return True, if connector id is updated.
+     */
+    private boolean updateConnectorId(final Configuration config, final URI connectorId) {
+        final var newUri = FactoryUtils.updateUri(config.getConnectorId(),
+                connectorId, DEFAULT_CONNECTOR_ID);
+        newUri.ifPresent(config::setConnectorId);
+
+        return newUri.isPresent();
+    }
+
+    /**
      * @param config     The configuration.
      * @param maintainer The new maintainer.
      * @return True, if maintainer is updated.
@@ -248,7 +267,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     private boolean updateDefaultEndpoint(final Configuration config,
                                           final URI defaultEndpoint) {
         final var newUri = FactoryUtils.updateUri(config.getDefaultEndpoint(),
-                defaultEndpoint, DEFAULT_CONNECTOR_ENDPOINT);
+                defaultEndpoint, DEFAULT_ENDPOINT);
         newUri.ifPresent(config::setDefaultEndpoint);
 
         return newUri.isPresent();

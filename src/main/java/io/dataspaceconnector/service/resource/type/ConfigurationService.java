@@ -82,7 +82,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
      * @param newConfig Id of the new active configuration.
      */
     public void swapActiveConfig(final UUID newConfig) throws ConfigUpdateException {
-        var activeConfig = findActiveConfig();
+        final var activeConfig = findActiveConfig();
 
         if (activeConfig.isPresent()) {
             replaceActiveConfig(newConfig, activeConfig.get());
@@ -111,6 +111,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
                 reload(config.getId());
             }
         } catch (ConfigUpdateException ignored) { }
+
         return config;
     }
 

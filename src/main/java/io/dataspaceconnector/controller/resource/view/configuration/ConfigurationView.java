@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.controller.resource.view.configuration;
 
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.view.keystore.KeystoreView;
@@ -34,6 +30,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
+
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.util.List;
 
 /**
  * A DTO for controlled exposing of configuration information in API responses.
@@ -55,6 +55,11 @@ public class ConfigurationView extends RepresentationModel<ConfigurationView> {
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ViewConstants.DATE_TIME_FORMAT)
     private ZonedDateTime modificationDate;
+
+    /**
+     * The id of the connector.
+     */
+    private URI connectorId;
 
     /**
      * The title of the configuration.

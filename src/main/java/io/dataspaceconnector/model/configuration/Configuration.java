@@ -42,6 +42,8 @@ import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
 
+import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
+
 /**
  * The configuration describes the configuration of a connector.
  */
@@ -61,9 +63,17 @@ public class Configuration extends NamedEntity {
     private static final long serialVersionUID = 1L;
 
     /**
+     * The id of the connector.
+     */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private URI connectorId;
+
+    /**
      * The access url of the connector.
      */
     @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI defaultEndpoint;
 
     /**
@@ -75,12 +85,14 @@ public class Configuration extends NamedEntity {
      * The curator.
      */
     @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI curator;
 
     /**
      * The maintainer.
      */
     @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI maintainer;
 
     /**

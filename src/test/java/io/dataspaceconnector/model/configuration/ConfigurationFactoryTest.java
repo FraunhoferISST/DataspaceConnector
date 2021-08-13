@@ -48,7 +48,8 @@ public class ConfigurationFactoryTest {
         final var result = factory.create(new ConfigurationDesc());
 
         /* ASSERT */
-        assertEquals(ConfigurationFactory.DEFAULT_CONNECTOR_ENDPOINT, result.getDefaultEndpoint());
+        assertEquals(ConfigurationFactory.DEFAULT_CONNECTOR_ID, result.getConnectorId());
+        assertEquals(ConfigurationFactory.DEFAULT_ENDPOINT, result.getDefaultEndpoint());
         assertEquals(ConfigurationFactory.DEFAULT_DEPLOY_MODE, result.getDeployMode());
         assertEquals(ConfigurationFactory.DEFAULT_VERSION, result.getVersion());
         assertEquals(ConfigurationFactory.DEFAULT_CURATOR, result.getCurator());
@@ -62,6 +63,7 @@ public class ConfigurationFactoryTest {
     void create_validDesc_returnNew() {
         /* ARRANGE */
         final var desc = new ConfigurationDesc();
+        desc.setConnectorId(URI.create("https://connectorId"));
         desc.setDefaultEndpoint(URI.create("https://endpoint"));
         desc.setSecurityProfile(SecurityProfile.TRUST_PLUS_SECURITY);
         desc.setOutboundModelVersion("fred");
@@ -76,6 +78,7 @@ public class ConfigurationFactoryTest {
         final var result = factory.create(desc);
 
         /* ASSERT */
+        assertEquals(desc.getConnectorId(), result.getConnectorId());
         assertEquals(desc.getDefaultEndpoint(), result.getDefaultEndpoint());
         assertEquals(desc.getDeployMode(), result.getDeployMode());
         assertEquals(desc.getVersion(), result.getVersion());
@@ -143,6 +146,21 @@ public class ConfigurationFactoryTest {
         /* ASSERT */
         assertTrue(result);
         assertEquals(desc.getInboundModelVersion(), config.getInboundModelVersion());
+    }
+
+    @Test
+    void update_newConnectorId_willUpdate() {
+        /* ARRANGE */
+        final var config = factory.create(new ConfigurationDesc());
+        final var desc = new ConfigurationDesc();
+        desc.setConnectorId(URI.create("https://connectorId"));
+
+        /* ACT */
+        final var result = factory.update(config, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(desc.getConnectorId(), config.getConnectorId());
     }
 
     @Test
@@ -314,6 +332,21 @@ public class ConfigurationFactoryTest {
         /* ASSERT */
         assertFalse(result);
         assertEquals(desc.getInboundModelVersion(), config.getInboundModelVersion());
+    }
+
+    @Test
+    void update_sameConnectorId_willNotUpdate() {
+        /* ARRANGE */
+        final var desc = new ConfigurationDesc();
+        desc.setConnectorId(URI.create("https://connectorId"));
+        final var config = factory.create(desc);
+
+        /* ACT */
+        final var result = factory.update(config, desc);
+
+        /* ASSERT */
+        assertFalse(result);
+        assertEquals(desc.getConnectorId(), config.getConnectorId());
     }
 
     @Test
