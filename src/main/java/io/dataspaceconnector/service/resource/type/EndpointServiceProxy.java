@@ -71,6 +71,7 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
         return (EntityService<X, Y>) generic;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Endpoint create(final EndpointDesc desc) {
         return getService(desc.getClass()).create(desc);
