@@ -15,12 +15,14 @@
  */
 package io.dataspaceconnector.model.configuration;
 
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
 import io.dataspaceconnector.model.proxy.ProxyDesc;
 import io.dataspaceconnector.model.proxy.ProxyFactory;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
 import io.dataspaceconnector.model.truststore.TruststoreFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
@@ -33,12 +35,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConfigurationFactoryTest {
 
-    final ProxyFactory proxyFactory = new ProxyFactory();
-    final TruststoreFactory truststoreFactory = new TruststoreFactory();
-    final KeystoreFactory keystoreFactory =  new KeystoreFactory();
+    private final ConnectorConfig connectorConfig = new ConnectorConfig();
+    private final ProxyFactory proxyFactory = new ProxyFactory();
+    private final TruststoreFactory truststoreFactory = new TruststoreFactory();
+    private final KeystoreFactory keystoreFactory = new KeystoreFactory();
 
-    final ConfigurationFactory factory =
-            new ConfigurationFactory(proxyFactory,truststoreFactory, keystoreFactory);
+    private ConfigurationFactory factory;
+
+    @BeforeEach
+    public void init() {
+        factory = new ConfigurationFactory(proxyFactory, truststoreFactory, keystoreFactory,
+                connectorConfig, "6.0.0");
+    }
 
     @Test
     void create_emptyDesc_returnNew() {
@@ -49,12 +57,13 @@ public class ConfigurationFactoryTest {
 
         /* ASSERT */
         assertEquals(ConfigurationFactory.DEFAULT_CONNECTOR_ID, result.getConnectorId());
-        assertEquals(ConfigurationFactory.DEFAULT_ENDPOINT, result.getDefaultEndpoint());
+        assertEquals(URI.create(ConfigurationFactory.DEFAULT_CONNECTOR_ID
+                + ConfigurationFactory.DEFAULT_ENDPOINT), result.getDefaultEndpoint());
         assertEquals(ConfigurationFactory.DEFAULT_DEPLOY_MODE, result.getDeployMode());
-        assertEquals(ConfigurationFactory.DEFAULT_VERSION, result.getVersion());
+        assertEquals(factory.defaultVersion, result.getVersion());
         assertEquals(ConfigurationFactory.DEFAULT_CURATOR, result.getCurator());
-        assertEquals(ConfigurationFactory.DEFAULT_INBOUND_VERSION, result.getInboundModelVersion());
-        assertEquals(ConfigurationFactory.DEFAULT_OUTBOUND_VERSION, result.getOutboundModelVersion());
+        assertEquals(connectorConfig.getInboundVersions(), result.getInboundModelVersion());
+        assertEquals(connectorConfig.getOutboundVersion(), result.getOutboundModelVersion());
         assertEquals(ConfigurationFactory.DEFAULT_SECURITY_PROFILE, result.getSecurityProfile());
         assertEquals(ConfigurationFactory.DEFAULT_STATUS, result.getStatus());
     }
