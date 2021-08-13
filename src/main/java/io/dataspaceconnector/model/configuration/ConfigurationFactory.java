@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model.configuration;
 
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
@@ -25,6 +26,7 @@ import io.dataspaceconnector.model.truststore.TruststoreFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -53,6 +55,17 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     private final @NonNull KeystoreFactory keystoreFactory;
 
     /**
+     * Service for connector configurations.
+     */
+    private final @NonNull ConnectorConfig connectorConfig;
+
+    /**
+     * The default version.
+     */
+    @Value("${version}")
+    public final String defaultVersion;
+
+    /**
      * Default log level.
      */
     public static final LogLevel DEFAULT_LOG_LEVEL = LogLevel.WARN;
@@ -70,22 +83,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     /**
      * Default connector endpoint.
      */
-    public static final URI DEFAULT_ENDPOINT = URI.create(DEFAULT_CONNECTOR_ID + "/api/ids/data");
-
-    /**
-     * The default version.
-     */
-    public static final String DEFAULT_VERSION = "6.0.0";
-
-    /**
-     * The default outbound model version.
-     */
-    public static final String DEFAULT_OUTBOUND_VERSION = "4.1.0";
-
-    /**
-     * The default inbound model versions.
-     */
-    public static final List<String> DEFAULT_INBOUND_VERSION = List.of("4.0.0", "4.1.0");
+    public static final String DEFAULT_ENDPOINT = "/api/ids/data";
 
     /**
      * The default maintainer.
@@ -105,7 +103,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     /**
      * The default connector status.
      */
-    public static final ConnectorStatus DEFAULT_STATUS = ConnectorStatus.OFFLINE;
+    public static final ConnectorStatus DEFAULT_STATUS = ConnectorStatus.ONLINE;
 
     /**
      * @param desc The description of the entity.
@@ -123,9 +121,9 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
      */
     @Override
     protected boolean updateInternal(final Configuration config, final ConfigurationDesc desc) {
+        final var hasUpdatedConnectorId = updateConnectorId(config, desc.getConnectorId());
         final var hasUpdatedDefaultEndpoint = updateDefaultEndpoint(config,
                 desc.getDefaultEndpoint());
-        final var hasUpdatedConnectorId = updateConnectorId(config, desc.getConnectorId());
         final var hasUpdatedVersion = updateVersion(config, desc.getVersion());
         final var hasUpdatedCurator = updateCurator(config, desc.getCurator());
         final var hasUpdatedMaintainer = updateMaintainer(config, desc.getMaintainer());
@@ -183,7 +181,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
                                                final String outboundModelVersion) {
         final var newOutboundVersion =
                 FactoryUtils.updateString(config.getOutboundModelVersion(), outboundModelVersion,
-                        DEFAULT_OUTBOUND_VERSION);
+                        connectorConfig.getOutboundVersion());
         newOutboundVersion.ifPresent(config::setOutboundModelVersion);
 
         return newOutboundVersion.isPresent();
@@ -198,7 +196,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
                                               final List<String> inboundModelVersion) {
         final var newInboundModelVersionList =
                 FactoryUtils.updateStringList(config.getInboundModelVersion(), inboundModelVersion,
-                        DEFAULT_INBOUND_VERSION);
+                        connectorConfig.getInboundVersions());
         newInboundModelVersionList.ifPresent(config::setInboundModelVersion);
 
         return newInboundModelVersionList.isPresent();
@@ -253,7 +251,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     private boolean updateVersion(final Configuration config,
                                   final String version) {
         final var newVersion = FactoryUtils.updateString(config.getVersion(),
-                version, DEFAULT_VERSION);
+                version, defaultVersion);
         newVersion.ifPresent(config::setVersion);
 
         return newVersion.isPresent();
@@ -264,10 +262,9 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
      * @param defaultEndpoint The new connector endpoint.
      * @return True, if connector endpoint is updated.
      */
-    private boolean updateDefaultEndpoint(final Configuration config,
-                                          final URI defaultEndpoint) {
+    private boolean updateDefaultEndpoint(final Configuration config, final URI defaultEndpoint) {
         final var newUri = FactoryUtils.updateUri(config.getDefaultEndpoint(),
-                defaultEndpoint, DEFAULT_ENDPOINT);
+                defaultEndpoint, URI.create(config.getConnectorId() + DEFAULT_ENDPOINT));
         newUri.ifPresent(config::setDefaultEndpoint);
 
         return newUri.isPresent();
