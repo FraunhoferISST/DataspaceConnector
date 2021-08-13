@@ -16,14 +16,8 @@
 package io.dataspaceconnector.model.resource;
 
 import io.dataspaceconnector.common.exception.InvalidEntityException;
-import io.dataspaceconnector.service.resource.type.OfferedResourceService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -825,6 +819,7 @@ public class OfferedResourceFactoryTest {
         /* ARRANGE */
         final var desc = new OfferedResourceDesc();
         desc.setSamples(List.of(URI.create("https://api/resources/d8a6f765-9b94-4a27-a18d-fbe81636a784")));
+        factory.setDoesExist(x -> { throw new InvalidEntityException(""); });
 
         final var resource = factory.create(new OfferedResourceDesc());
 
