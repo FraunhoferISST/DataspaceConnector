@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.UUID;
+
 /**
  * Offers the endpoints for managing configurations.
  */
@@ -67,7 +68,8 @@ public class ConfigurationController extends BaseResourceController<Configuratio
     @PutMapping(value = "/{id}/active", consumes = {"*/*"})
     @Operation(summary = "Update current configuration")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+            @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
+                    description = ResponseDescription.NO_CONTENT),
             @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
                     description = ResponseDescription.BAD_REQUEST),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
