@@ -27,6 +27,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
+import org.springframework.util.SocketUtils;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -384,7 +385,7 @@ public class PortainerRequestService {
         );
         final var portBindings = new JSONObject();
         for (var port : ports) {
-            portBindings.put(port, new JSONArray().appendElement(new JSONObject()));
+            portBindings.put(port, new JSONArray().appendElement(new JSONObject().put("HostPort", String.valueOf(SocketUtils.findAvailableTcpPort()))));
         }
         hostConfig.put("PortBindings", portBindings);
         final var binds = new JSONArray();
