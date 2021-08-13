@@ -26,7 +26,6 @@ import io.dataspaceconnector.model.truststore.TruststoreFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -58,12 +57,6 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
      * Service for connector configurations.
      */
     private final @NonNull ConnectorConfig connectorConfig;
-
-    /**
-     * The default version.
-     */
-    @Value("${version}")
-    public final String defaultVersion;
 
     /**
      * Default log level.
@@ -251,7 +244,7 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
     private boolean updateVersion(final Configuration config,
                                   final String version) {
         final var newVersion = FactoryUtils.updateString(config.getVersion(),
-                version, defaultVersion);
+                version, connectorConfig.getDefaultVersion());
         newVersion.ifPresent(config::setVersion);
 
         return newVersion.isPresent();

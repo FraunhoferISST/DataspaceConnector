@@ -32,7 +32,7 @@ public class ConnectorConfig {
     /**
      * The clearing house access url.
      */
-    @Value("${clearing.house.url}")
+    @Value("${clearing.house.url:}")
     private URI clearingHouse;
 
     /**
@@ -58,6 +58,12 @@ public class ConnectorConfig {
      */
     @Value("${idscp2.enabled}")
     private boolean idscpEnabled;
+
+    /**
+     * The default version.
+     */
+    @Value("${version}")
+    private String defaultVersion;
 
     /**
      * The outbound model version.

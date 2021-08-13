@@ -45,7 +45,8 @@ public class ConfigurationFactoryTest {
     @BeforeEach
     public void init() {
         factory = new ConfigurationFactory(proxyFactory, truststoreFactory, keystoreFactory,
-                connectorConfig, "6.0.0");
+                connectorConfig);
+        connectorConfig.setDefaultVersion("6.0.0");
     }
 
     @Test
@@ -60,7 +61,7 @@ public class ConfigurationFactoryTest {
         assertEquals(URI.create(ConfigurationFactory.DEFAULT_CONNECTOR_ID
                 + ConfigurationFactory.DEFAULT_ENDPOINT), result.getDefaultEndpoint());
         assertEquals(ConfigurationFactory.DEFAULT_DEPLOY_MODE, result.getDeployMode());
-        assertEquals(factory.defaultVersion, result.getVersion());
+        assertEquals(connectorConfig.getDefaultVersion(), result.getVersion());
         assertEquals(ConfigurationFactory.DEFAULT_CURATOR, result.getCurator());
         assertEquals(connectorConfig.getInboundVersions(), result.getInboundModelVersion());
         assertEquals(connectorConfig.getOutboundVersion(), result.getOutboundModelVersion());

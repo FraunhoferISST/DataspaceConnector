@@ -31,7 +31,6 @@ import io.dataspaceconnector.model.proxy.ProxyFactory;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
 import io.dataspaceconnector.model.truststore.TruststoreFactory;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -83,7 +82,7 @@ public class ConfigurationViewAssemblerTest {
         final var trustStoreFactory = new TruststoreFactory();
         final var keyStoreFactory = new KeystoreFactory();
         final var factory = new ConfigurationFactory(proxyFactory, trustStoreFactory,
-                keyStoreFactory, connectorConfig,"6.0.0");
+                keyStoreFactory, connectorConfig);
         return factory.create(getConfigurationDesc());
     }
 
