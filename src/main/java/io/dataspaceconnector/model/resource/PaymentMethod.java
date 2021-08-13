@@ -13,25 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.common.exception;
+package io.dataspaceconnector.model.resource;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Thrown during creation or update of an entity to indicate the entity is invalid.
+ * Enumeration for resource payment modality.
  */
-public class InvalidEntityException extends RuntimeException {
+public enum PaymentMethod {
 
     /**
-     * Default serial version uid.
+     * To express that the exchange of resource is with a fixed price.
      */
-    private static final long serialVersionUID = 1L;
+    @JsonProperty("fixedPrice")
+    FIXED_PRICE,
 
     /**
-     * Construct a InvalidEntityException with the specified detail message and cause.
-     *
-     * @param msg The detail message.
+     * To express that the exchange of resource is free.
      */
-    public InvalidEntityException(final String msg) {
-        super(msg);
-    }
+    @JsonProperty("free")
+    FREE,
 
+    /**
+     * To express that the exchange of resource is negotiation-based.
+     */
+    @JsonProperty("negotiationBasis")
+    NEGOTIATION_BASIS
 }

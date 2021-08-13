@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.exceptionhandler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.dataspaceconnector.common.exception.InvalidEntityException;
 import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONObject;
 import org.springframework.core.annotation.Order;
@@ -40,9 +41,8 @@ public class JsonProcessingExceptionHandler {
      * @param exception The thrown exception.
      * @return A http response.
      */
-    @ExceptionHandler(JsonProcessingException.class)
-    public ResponseEntity<JSONObject> handleJsonProcessingException(
-            final JsonProcessingException exception) {
+    @ExceptionHandler({JsonProcessingException.class, InvalidEntityException.class})
+    public ResponseEntity<JSONObject> handleJsonProcessingException(final Exception exception) {
         if (log.isWarnEnabled()) {
             log.warn("Invalid input. [exception=({})]", exception == null ? ""
                     : exception.getMessage());
