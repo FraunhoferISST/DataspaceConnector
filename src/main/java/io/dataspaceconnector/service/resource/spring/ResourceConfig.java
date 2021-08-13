@@ -64,13 +64,13 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ResourceConfig {
-    @Bean
+    @Bean("agreementService")
     public AgreementService getAgreementService(
             @Qualifier("agreementRepository") final AgreementRepository repo) {
         return new AgreementService(repo, new AgreementFactory());
     }
 
-    @Bean
+    @Bean("artifactService")
     public ArtifactService getArtifactService(
             final ArtifactRepository repository,
             final ArtifactFactory factory,
@@ -80,17 +80,17 @@ public class ResourceConfig {
         return new ArtifactService(repository, factory, dataRepository, httpService, authRepo);
     }
 
-    @Bean("ConfigurationBrokerService")
+    @Bean("configurationBrokerService")
     public BrokerService getBrokerService(final BrokerRepository repo) {
         return new BrokerService(repo, new BrokerFactory());
     }
 
-    @Bean
+    @Bean("catalogService")
     public CatalogService getCatalogService(final CatalogRepository repo) {
         return new CatalogService(repo, new CatalogFactory());
     }
 
-    @Bean
+    @Bean("configurationService")
     public ConfigurationService getConfigurationService(final ConfigurationRepository repo,
                                                         final ConfigurationFactory factory,
                                                         final ApplicationContext context,
@@ -98,7 +98,7 @@ public class ResourceConfig {
         return new ConfigurationService(repo, factory, context, configBuilder);
     }
 
-    @Bean
+    @Bean("connectorEndpointService")
     public ConnectorEndpointService getConnectorEndpointService(
             final ConnectorEndpointRepository repo,
             final ConnectorEndpointFactory factory,
@@ -107,34 +107,34 @@ public class ResourceConfig {
         return new ConnectorEndpointService(repo, factory, routeRepository, camelRouteHelper);
     }
 
-    @Bean
+    @Bean("contractService")
     public ContractService getContractService(final ContractRepository repo) {
         return new ContractService(repo, new ContractFactory());
     }
 
-    @Bean
+    @Bean("dataSourceService")
     public DataSourceService getDataSourceService(final DataSourceRepository repo) {
         return new DataSourceService(repo, new DataSourceFactory());
     }
 
-    @Bean
+    @Bean("offeredResourceService")
     public OfferedResourceService getOfferedResourceService(
             @Qualifier("offeredResourcesRepository") final OfferedResourcesRepository repo) {
         return new OfferedResourceService(repo, new OfferedResourceFactory());
     }
 
-    @Bean
+    @Bean("representationService")
     public RepresentationService getRepresentationService(final RepresentationRepository repo) {
         return new RepresentationService(repo, new RepresentationFactory());
     }
 
-    @Bean
+    @Bean("requestedResourceService")
     public RequestedResourceService getRequestedResourceService(
             @Qualifier("requestedResourcesRepository") final RequestedResourcesRepository repo) {
         return new RequestedResourceService(repo, new RequestedResourceFactory());
     }
 
-    @Bean
+    @Bean("ruleService")
     public RuleService getRuleService(final RuleRepository repo) {
         return new RuleService(repo, new ContractRuleFactory());
     }
