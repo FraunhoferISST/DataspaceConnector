@@ -291,7 +291,10 @@ public class PortainerRequestService {
             final var currentVolume = volumes.getJSONObject(i);
             final var req = new JSONObject();
             final var templateName = currentVolume.getString("container");
-            req.put("Name", templateName);
+            final var validTemplateName = templateName
+                    .substring(templateName.indexOf("/") + 1)
+                    .replace("/", "_");
+            req.put("Name", validTemplateName);
             final var builder = getRequestBuilder();
             final var urlBuilder = new HttpUrl.Builder()
                     .scheme("http")
@@ -322,15 +325,13 @@ public class PortainerRequestService {
      */
     public String createContainer(final String appStoreTemplate, final Map<String, String> volumes)
             throws IOException {
-        final Map<String, String> volumeNames = new HashMap<>();
         final var templateObject = toJsonObject(appStoreTemplate);
-        final var image = templateObject.getJSONArray("image");
+        final var image = templateObject.getString("image");
         final List<String> ports = new ArrayList<>();
 
         //get all ports from the appTemplate
-        for (var key : templateObject.getJSONObject("ports").keySet()) {
-            var portString = templateObject.getJSONObject("ports").getString(key);
-            portString = portString.substring(portString.indexOf(":"));
+        for (int i = 0; i < templateObject.getJSONArray("ports").length(); i++) {
+            var portString = templateObject.getJSONArray("ports").getString(i);
             ports.add(portString);
         }
         final var jwt = getJwtToken();
@@ -339,7 +340,7 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/1/docker/containers/create?name=" + image);
+                .addPathSegments("api/endpoints/1/docker/containers/create");
 
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + jwt);
@@ -355,7 +356,7 @@ public class PortainerRequestService {
         jsonPayload.put("Labels", new JSONObject());
         jsonPayload.put("name", "");
         jsonPayload.put("Cmd", new JSONArray());
-        jsonPayload.put("Image", templateObject.getString("image"));
+        jsonPayload.put("Image", image);
 
         //build exposed ports part of json payload
         final var exposedPorts = new JSONObject();
@@ -369,8 +370,14 @@ public class PortainerRequestService {
         hostConfig.put("Privileged", false);
         hostConfig.put("ExtraHosts", new JSONArray());
         hostConfig.put("NetworkMode", "bridge");
+        final String restartPolicy;
+        if(templateObject.has("restart_policy")) {
+            restartPolicy = templateObject.getString("restart_policy");
+        } else {
+            restartPolicy = "always";
+        }
         hostConfig.put("RestartPolicy", new JSONObject(
-                String.format("{\"Name\":\"%s\"}", templateObject.getString("restart_policy")))
+                String.format("{\"Name\":\"%s\"}", restartPolicy))
         );
         final var portBindings = new JSONObject();
         for (var port : ports) {
@@ -383,6 +390,8 @@ public class PortainerRequestService {
         }
         hostConfig.put("Binds", binds);
         jsonPayload.put("HostConfig", hostConfig);
+
+        jsonPayload.put("name", image);
 
         //build volumes part of json payload
         final var volumesJSON = new JSONObject();

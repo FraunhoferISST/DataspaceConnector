@@ -56,8 +56,8 @@ class ConnectorApplicationIT {
 				"}";
 		portainerRequestSvc.createRegistry(appStoreTemplate);
 		portainerRequestSvc.pullImage(appStoreTemplate);
-//		var volumeMap = portainerRequestSvc.createVolumes(appStoreTemplate);
-//		var containerId = portainerRequestSvc.createContainer(appStoreTemplate, volumeMap);
+		var volumeMap = portainerRequestSvc.createVolumes(appStoreTemplate);
+		var containerId = portainerRequestSvc.createContainer(appStoreTemplate, volumeMap);
 //		portainerRequestSvc.startContainer(containerId);
 	}
 }
