@@ -35,12 +35,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import org.springframework.stereotype.Service;
 
 /**
  * Service class for routes.
  */
-@Service
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.NONE)
 public class RouteService extends BaseEntityService<Route, RouteDesc> {

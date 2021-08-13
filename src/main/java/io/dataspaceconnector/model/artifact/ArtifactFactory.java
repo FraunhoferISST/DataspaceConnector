@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.model.artifact;
 
+
 import io.dataspaceconnector.model.auth.ApiKey;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
-import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.net.URL;
@@ -31,7 +31,6 @@ import java.util.zip.CRC32C;
 /**
  * Creates and updates an artifact.
  */
-@Component
 public final class ArtifactFactory extends AbstractNamedFactory<Artifact, ArtifactDesc> {
 
     /**

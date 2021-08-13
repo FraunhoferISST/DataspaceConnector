@@ -18,7 +18,6 @@ package io.dataspaceconnector.model.broker;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
-import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ import java.util.Objects;
 /**
  * Creates and updates a broker.
  */
-@Component
 public class BrokerFactory extends AbstractNamedFactory<Broker, BrokerDesc> {
 
     /**

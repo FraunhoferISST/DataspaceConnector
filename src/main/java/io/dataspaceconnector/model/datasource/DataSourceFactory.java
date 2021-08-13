@@ -18,12 +18,10 @@ package io.dataspaceconnector.model.datasource;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.base.AbstractFactory;
-import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates data sources.
  */
-@Component
 public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDesc> {
 
     /**

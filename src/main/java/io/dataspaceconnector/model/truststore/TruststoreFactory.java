@@ -17,14 +17,11 @@ package io.dataspaceconnector.model.truststore;
 
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
 
 /**
  * Factory class for the trust store.
  */
-@Component
 public class TruststoreFactory extends AbstractFactory<Truststore, TruststoreDesc> {
 
     /**

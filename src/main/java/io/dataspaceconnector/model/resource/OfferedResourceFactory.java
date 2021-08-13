@@ -15,12 +15,9 @@
  */
 package io.dataspaceconnector.model.resource;
 
-import org.springframework.stereotype.Component;
-
 /**
  * Creates and updates a resource.
  */
-@Component
 public final class OfferedResourceFactory extends ResourceFactory<OfferedResource,
         OfferedResourceDesc> {
     @Override

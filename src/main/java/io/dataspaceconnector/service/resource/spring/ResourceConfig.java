@@ -24,10 +24,14 @@ import io.dataspaceconnector.model.configuration.ConfigurationFactory;
 import io.dataspaceconnector.model.contract.ContractFactory;
 import io.dataspaceconnector.model.datasource.DataSourceFactory;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpointFactory;
+import io.dataspaceconnector.model.keystore.KeystoreFactory;
+import io.dataspaceconnector.model.proxy.ProxyFactory;
 import io.dataspaceconnector.model.representation.RepresentationFactory;
 import io.dataspaceconnector.model.resource.OfferedResourceFactory;
 import io.dataspaceconnector.model.resource.RequestedResourceFactory;
+import io.dataspaceconnector.model.route.RouteFactory;
 import io.dataspaceconnector.model.rule.ContractRuleFactory;
+import io.dataspaceconnector.model.truststore.TruststoreFactory;
 import io.dataspaceconnector.repository.AgreementRepository;
 import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.AuthenticationRepository;
@@ -38,6 +42,7 @@ import io.dataspaceconnector.repository.ConnectorEndpointRepository;
 import io.dataspaceconnector.repository.ContractRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.repository.DataSourceRepository;
+import io.dataspaceconnector.repository.EndpointRepository;
 import io.dataspaceconnector.repository.OfferedResourcesRepository;
 import io.dataspaceconnector.repository.RepresentationRepository;
 import io.dataspaceconnector.repository.RequestedResourcesRepository;
@@ -52,9 +57,11 @@ import io.dataspaceconnector.service.resource.type.ConfigurationService;
 import io.dataspaceconnector.service.resource.type.ConnectorEndpointService;
 import io.dataspaceconnector.service.resource.type.ContractService;
 import io.dataspaceconnector.service.resource.type.DataSourceService;
+import io.dataspaceconnector.service.resource.type.EndpointServiceProxy;
 import io.dataspaceconnector.service.resource.type.OfferedResourceService;
 import io.dataspaceconnector.service.resource.type.RepresentationService;
 import io.dataspaceconnector.service.resource.type.RequestedResourceService;
+import io.dataspaceconnector.service.resource.type.RouteService;
 import io.dataspaceconnector.service.resource.type.RuleService;
 import io.dataspaceconnector.service.routing.RouteHelper;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -73,11 +80,11 @@ public class ResourceConfig {
     @Bean("artifactService")
     public ArtifactService getArtifactService(
             final ArtifactRepository repository,
-            final ArtifactFactory factory,
             final DataRepository dataRepository,
             final HttpService httpService,
             final AuthenticationRepository authRepo) {
-        return new ArtifactService(repository, factory, dataRepository, httpService, authRepo);
+        return new ArtifactService(repository, new ArtifactFactory(),
+                                   dataRepository, httpService, authRepo);
     }
 
     @Bean("configurationBrokerService")
@@ -92,10 +99,12 @@ public class ResourceConfig {
 
     @Bean("configurationService")
     public ConfigurationService getConfigurationService(final ConfigurationRepository repo,
-                                                        final ConfigurationFactory factory,
                                                         final ApplicationContext context,
                                                         final IdsConfigModelBuilder configBuilder) {
-        return new ConfigurationService(repo, factory, context, configBuilder);
+        return new ConfigurationService(repo, new ConfigurationFactory(new ProxyFactory(),
+                                                                       new TruststoreFactory(),
+                                                                       new KeystoreFactory()),
+                                        context, configBuilder);
     }
 
     @Bean("connectorEndpointService")
@@ -104,7 +113,8 @@ public class ResourceConfig {
             final ConnectorEndpointFactory factory,
             final RouteRepository routeRepository,
             final RouteHelper camelRouteHelper) {
-        return new ConnectorEndpointService(repo, factory, routeRepository, camelRouteHelper);
+        return new ConnectorEndpointService(repo, factory,
+                                            routeRepository, camelRouteHelper);
     }
 
     @Bean("contractService")
@@ -134,8 +144,22 @@ public class ResourceConfig {
         return new RequestedResourceService(repo, new RequestedResourceFactory());
     }
 
+    @Bean("routeService")
+    public RouteService getResourceService(final RouteRepository repo,
+                                           final EndpointRepository endpointRepository,
+                                           final EndpointServiceProxy endpointServiceProxy,
+                                           final RouteHelper routeHelper) {
+        return new RouteService(repo, new RouteFactory(), endpointRepository,
+                                endpointServiceProxy, routeHelper);
+    }
+
     @Bean("ruleService")
     public RuleService getRuleService(final RuleRepository repo) {
         return new RuleService(repo, new ContractRuleFactory());
+    }
+
+    @Bean("connectorEndpointFactory")
+    public ConnectorEndpointFactory getConnectorEndpointFactory() {
+        return new ConnectorEndpointFactory();
     }
 }
