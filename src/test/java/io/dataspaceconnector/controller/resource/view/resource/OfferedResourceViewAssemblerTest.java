@@ -46,7 +46,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
 
-@SpringBootTest
+@SpringBootTest(classes = {
+        OfferedResourceViewAssembler.class
+})
 public class OfferedResourceViewAssemblerTest {
 
     @Autowired
