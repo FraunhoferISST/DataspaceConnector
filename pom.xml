@@ -102,7 +102,7 @@
 		<jackson.version>2.12.4</jackson.version>
 		<postgres.version>42.2.23</postgres.version>
 		<springdoc.version>1.5.10</springdoc.version>
-		<equalsverifier.version>3.7</equalsverifier.version>
+		<equalsverifier.version>3.7.1</equalsverifier.version>
 		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
 		<velocity.version>1.7</velocity.version>
