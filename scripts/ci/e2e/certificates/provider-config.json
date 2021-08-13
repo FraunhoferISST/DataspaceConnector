@@ -54,7 +54,7 @@
       "@id" : "/var/run/certificates/tls.key"
     },
     "ids:connectorStatus" : {
-      "@id" : "idsc:CONNECTOR_OFFLINE"
+      "@id" : "idsc:CONNECTOR_ONLINE"
     },
     "ids:keyStore" : {
         "@id" : "/var/run/keystore-localhost.p12"
