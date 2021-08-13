@@ -37,7 +37,6 @@ import java.util.Properties;
 @SpringBootApplication
 @ComponentScan({
         "io.dataspaceconnector",
-        "io.configmanager",
         "de.fraunhofer.ids.*",
         "de.fraunhofer.ids.messaging.*"
 })
