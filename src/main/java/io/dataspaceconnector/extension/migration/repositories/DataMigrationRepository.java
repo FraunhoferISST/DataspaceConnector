@@ -20,25 +20,43 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Contains logic for data migration.
+ */
 @Repository
 public interface DataMigrationRepository extends DataRepository {
+
+    /**
+     * Get username of a remote data.
+     * @param id The remote data.
+     * @return The username.
+     */
     @Query("SELECT a.username "
            + "FROM RemoteData a "
            + "WHERE a.id = :id "
            + "AND a.migration <> 'v6' "
            + "AND a.username IS NOT NULL")
-    String migrateV5ToV6_getUsername(Long id);
+    String migrateV5ToV6GetUsername(Long id);
 
+    /**
+     * Get password of a remote data.
+     * @param id The remote data.
+     * @return The password.
+     */
     @Query("SELECT a.password "
            + "FROM RemoteData a "
            + "WHERE a.id = :id "
            + "AND a.migration <> 'v6' "
            + "AND a.password IS NOT NULL")
-    String migrateV5Tov6_getPassword(Long id);
+    String migrateV5Tov6GetPassword(Long id);
 
+    /**
+     * Remove username and password of a remote data.
+     * @param id The remote data.
+     */
     @Modifying
     @Query("UPDATE RemoteData a "
            + "SET a.username = NULL, a.password = NULL, a.migration = 'v6' "
            + "WHERE a.id = :id")
-    void migrateV5Tov6_removeUsernameAndPassword(Long id);
+    void migrateV5Tov6RemoveUsernameAndPassword(Long id);
 }

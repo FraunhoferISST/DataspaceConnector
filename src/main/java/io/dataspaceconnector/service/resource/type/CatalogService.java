@@ -25,6 +25,12 @@ import io.dataspaceconnector.service.resource.base.BaseEntityService;
  * Handles the basic logic for catalogs.
  */
 public class CatalogService extends BaseEntityService<Catalog, CatalogDesc> {
+
+    /**
+     * Constructor.
+     * @param repository The catalog repository.
+     * @param factory The catalog logic.
+     */
     public CatalogService(final BaseEntityRepository<Catalog> repository,
                           final AbstractFactory<Catalog, CatalogDesc> factory) {
         super(repository, factory);

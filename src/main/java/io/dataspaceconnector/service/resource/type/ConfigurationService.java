@@ -48,20 +48,27 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
     /**
      * The current context.
      */
-    private final @NonNull ApplicationContext context;
+    private final @NonNull ApplicationContext ctx;
 
     /**
      * Builds the ids config.
      */
     private final @NonNull IdsConfigModelBuilder configBuilder;
 
+    /**
+     * Constructor.
+     * @param repository The configuration repository.
+     * @param factory The configuration logic.
+     * @param context The application context.
+     * @param idsConfigBuilder The ids Config model builder.
+     */
     public ConfigurationService(final BaseEntityRepository<Configuration> repository,
                                 final AbstractFactory<Configuration, ConfigurationDesc> factory,
                                 final @NonNull ApplicationContext context,
-                                final @NonNull IdsConfigModelBuilder configBuilder) {
+                                final @NonNull IdsConfigModelBuilder idsConfigBuilder) {
         super(repository, factory);
-        this.context = context;
-        this.configBuilder = configBuilder;
+        this.ctx = context;
+        this.configBuilder = idsConfigBuilder;
     }
 
     /**
@@ -140,7 +147,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
 
     private Optional<ConfigContainer> findConfigContainer() {
         try {
-            return Optional.of(context.getBean(ConfigContainer.class));
+            return Optional.of(ctx.getBean(ConfigContainer.class));
         } catch (NoSuchBeanDefinitionException ignored) { }
 
         return Optional.empty();

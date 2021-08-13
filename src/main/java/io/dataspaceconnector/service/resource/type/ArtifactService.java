@@ -81,15 +81,17 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
 
     /**
      * Constructor for ArtifactService.
-     *  @param dataRepository           The data repository.
+     * @param repository The artifact repository.
+     * @param factory The artifact logic repository.
+     * @param dataRepository           The data repository.
      * @param httpService              The HTTP service for fetching remote data.
      * @param authenticationRepository The AuthType repository.
      */
     public ArtifactService(final BaseEntityRepository<Artifact> repository,
             final AbstractFactory<Artifact, ArtifactDesc> factory,
-            @NonNull DataRepository dataRepository,
-            @NonNull HttpService httpService,
-            @NonNull AuthenticationRepository authenticationRepository) {
+            final @NonNull DataRepository dataRepository,
+            final @NonNull HttpService httpService,
+            final @NonNull AuthenticationRepository authenticationRepository) {
         super(repository, factory);
         this.dataRepo = dataRepository;
         this.httpSvc = httpService;

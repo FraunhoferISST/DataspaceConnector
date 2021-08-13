@@ -32,6 +32,11 @@ import io.dataspaceconnector.service.resource.base.BaseEntityService;
  */
 public class ContractService extends BaseEntityService<Contract, ContractDesc> {
 
+    /**
+     * Constructor.
+     * @param repository The contract repository.
+     * @param factory The contract logic.
+     */
     public ContractService(final BaseEntityRepository<Contract> repository,
                            final AbstractFactory<Contract, ContractDesc> factory) {
         super(repository, factory);

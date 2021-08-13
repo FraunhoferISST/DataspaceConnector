@@ -13,30 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.extension.migration;
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 /**
- * Loads the migration of startup.
+ * Contains repositories with functions for migrating data.
  */
-@Service
-public class MigrationLoader {
-
-    /**
-     * The data migrator.
-     */
-    @Autowired
-    private Migrator migrator;
-
-    /**
-     * Performs the data migrations.
-     */
-    @PostConstruct
-    public void migrate() {
-        migrator.migrate();
-    }
-}
+package io.dataspaceconnector.extension.migration.repositories;

@@ -21,13 +21,21 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Repo for migration agreements.
+ */
 @Repository
 public interface AgreementMigrationRepository
         extends io.dataspaceconnector.repository.AgreementRepository {
 
+    /**
+     * Will update ids agreements.
+     * @param entityId The agreement.
+     * @param value The new agreement.
+     */
     @Modifying
     @Query("UPDATE Agreement a "
            + "SET a.value = :value "
            + "WHERE a.id = :entityId")
-    void migrateV5ToV6_upgradeIDS(UUID entityId, String value);
+    void migrateV5ToV6UpgradeIDS(UUID entityId, String value);
 }

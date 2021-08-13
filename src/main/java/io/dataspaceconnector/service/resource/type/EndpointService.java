@@ -44,8 +44,10 @@ public class EndpointService<T extends Endpoint, D extends EndpointDesc>
     private final @NonNull RouteHelper routeHelper;
 
     /**
-     * Constructor for injection.
-     *  @param routeRepository the service for managing routes.
+     * Constructor.
+     * @param repository The endpoint repository.
+     * @param factory The endpoint logic.
+     * @param routeRepository the service for managing routes.
      * @param camelRouteHelper The helper class for Camel routes.
      */
     public EndpointService(

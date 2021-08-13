@@ -103,6 +103,9 @@ public class OfferedResource extends Resource {
         v5 -> v6 migration
      */
 
+    /**
+     * Old v5 license field.
+     */
     @Setter(AccessLevel.PRIVATE)
     @Getter(AccessLevel.PRIVATE)
     @Convert(converter = UriConverter.class)

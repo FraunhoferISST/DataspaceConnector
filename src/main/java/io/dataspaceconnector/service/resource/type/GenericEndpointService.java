@@ -45,31 +45,22 @@ public class GenericEndpointService
     private final @NonNull DataSourceService dataSourceSvc;
 
     /**
-     * Constructor for injection.
-     * @param repository
-     * @param factory
+     * Constructor.
+     * @param repository Generic endpoint repository.
+     * @param factory The generic endpoint factory.
      * @param routeRepository  the service for managing routes.
      * @param camelRouteHelper The helper class for Camel routes.
-     * @param dataSourceSvc
+     * @param dataSourceService The datasource service.
      */
     public GenericEndpointService(
             final BaseEntityRepository<GenericEndpoint> repository,
             final AbstractFactory<GenericEndpoint, GenericEndpointDesc> factory,
             final RouteRepository routeRepository,
             final RouteHelper camelRouteHelper,
-            final DataSourceService dataSourceSvc) {
+            final DataSourceService dataSourceService) {
         super(repository, factory, routeRepository, camelRouteHelper);
-        this.dataSourceSvc = dataSourceSvc;
+        this.dataSourceSvc = dataSourceService;
     }
-
-    /**
-     * Constructor for injection.
-     *
-     * @param dataSourceService The data source repository.
-     * @param routeRepository The service for managing routes.
-     * @param camelRouteHelper The helper class for Camel routes.
-     */
-
 
     /**
      * This method allows to modify the generic endpoint and set a data source.

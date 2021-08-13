@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.agreement.AgreementDesc;
 import io.dataspaceconnector.model.base.AbstractFactory;
@@ -30,6 +29,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AgreementService extends BaseEntityService<Agreement, AgreementDesc> {
 
+    /**
+     * Constructor.
+     * @param repository The underlying agreement repo.
+     * @param factory The factory for the agreement logic.
+     */
     public AgreementService(
             final BaseEntityRepository<Agreement> repository,
             final AbstractFactory<Agreement, AgreementDesc> factory) {
@@ -42,7 +46,7 @@ public class AgreementService extends BaseEntityService<Agreement, AgreementDesc
      *
      * @param agreement The agreement that should be confirmed.
      * @return true - if the was unconfirmed and has been changed to confirmed.
-     * @throws ResourceNotFoundException if the agreement
+     * @throws io.dataspaceconnector.common.exception.ResourceNotFoundException if the agreement
      * does no longer exist.
      */
     public boolean confirmAgreement(final Agreement agreement) {

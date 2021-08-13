@@ -34,6 +34,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class BrokerService extends BaseEntityService<Broker, BrokerDesc> {
 
+    /**
+     * Constructor.
+     * @param repository The broker repository.
+     * @param factory The broker object logic.
+     */
     public BrokerService(final BaseEntityRepository<Broker> repository,
                          final AbstractFactory<Broker, BrokerDesc> factory) {
         super(repository, factory);

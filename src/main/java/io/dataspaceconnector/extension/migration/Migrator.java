@@ -28,17 +28,42 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Migrates data between DSC version 5 and 6.
+ */
 @Component
 @Log4j2
 @Transactional
 @RequiredArgsConstructor
 public class Migrator {
+    /**
+     * The offered resource migration repo.
+     */
     private final @NonNull OfferedResourcesMigrationRepository   offeredResourcesRepository;
+
+    /**
+     * The requested resource migration repo.
+     */
     private final @NonNull RequestedResourcesMigrationRepository requestedResourcesRepository;
+
+    /**
+     * The remote data resource migration repo.
+     */
     private final @NonNull DataMigrationRepository               dataRepository;
+
+    /**
+     * Authentication repo.
+     */
     private final @NonNull AuthenticationRepository     authRepo;
+
+    /**
+     * The agreement migration repo.
+     */
     private final @NonNull AgreementMigrationRepository agreementRepo;
 
+    /**
+     * Performs data migration.
+     */
     public void migrate() {
         offeredResourcesRepository.migrateV5ToV6();
         requestedResourcesRepository.migrateV5ToV6();
@@ -56,14 +81,14 @@ public class Migrator {
 
     private void migrateRemoteData(final RemoteData remoteData) {
         final var id = remoteData.getId();
-        final var user = dataRepository.migrateV5ToV6_getUsername(id);
-        final var pwd = dataRepository.migrateV5Tov6_getPassword(id);
+        final var user = dataRepository.migrateV5ToV6GetUsername(id);
+        final var pwd = dataRepository.migrateV5Tov6GetPassword(id);
 
         if (user != null && pwd != null) {
             remoteData.addAuthentication(new BasicAuth(user, pwd));
             remoteData.getAuthentication().forEach(authRepo::saveAndFlush);
             dataRepository.saveAndFlush(remoteData);
-            dataRepository.migrateV5Tov6_removeUsernameAndPassword(id);
+            dataRepository.migrateV5Tov6RemoveUsernameAndPassword(id);
         } else {
             if (log.isWarnEnabled()) {
                log.warn("Data not eligible for migration. [id={}]", id);
@@ -77,7 +102,7 @@ public class Migrator {
                 // TODO: This will make problems with IDS @context elements defining idsc
                 final var val = ag.getValue()
                                   .replace("idsc:", "https://w3id.org/idsa/code/");
-                agreementRepo.migrateV5ToV6_upgradeIDS(ag.getId(), val);
+                agreementRepo.migrateV5ToV6UpgradeIDS(ag.getId(), val);
             }
         }
     }
