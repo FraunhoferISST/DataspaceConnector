@@ -29,7 +29,6 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalMatchers;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -46,10 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CatalogServiceTest {
-    @Mock
     private CatalogFactory factory = Mockito.mock(CatalogFactory.class);
-
-    @Mock
     private CatalogRepository repository = Mockito.mock(CatalogRepository.class);
 
     private CatalogService service;
