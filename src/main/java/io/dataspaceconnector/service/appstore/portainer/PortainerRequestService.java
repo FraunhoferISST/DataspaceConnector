@@ -356,7 +356,7 @@ public class PortainerRequestService {
         jsonPayload.put("Labels", new JSONObject());
         jsonPayload.put("name", "");
         jsonPayload.put("Cmd", new JSONArray());
-        jsonPayload.put("Image", image);
+        jsonPayload.put("Image", templateObject.getString("registry") + "/" + templateObject.getString("image"));
 
         //build exposed ports part of json payload
         final var exposedPorts = new JSONObject();
@@ -383,10 +383,10 @@ public class PortainerRequestService {
         for (var port : ports) {
             portBindings.put(port, new JSONArray().appendElement(new JSONObject()));
         }
-        hostConfig.put("PortBindings", new JSONObject());
+        hostConfig.put("PortBindings", portBindings);
         final var binds = new JSONArray();
         for (var bind : volumes.entrySet()) {
-            binds.appendElement(new JSONObject().put(bind.getValue(), bind.getKey()));
+            binds.appendElement(bind.getValue() + ":" + bind.getKey());
         }
         hostConfig.put("Binds", binds);
         jsonPayload.put("HostConfig", hostConfig);

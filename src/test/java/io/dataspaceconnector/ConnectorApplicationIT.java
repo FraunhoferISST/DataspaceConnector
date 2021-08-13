@@ -58,7 +58,7 @@ class ConnectorApplicationIT {
 		portainerRequestSvc.pullImage(appStoreTemplate);
 		var volumeMap = portainerRequestSvc.createVolumes(appStoreTemplate);
 		var containerId = portainerRequestSvc.createContainer(appStoreTemplate, volumeMap);
-//		portainerRequestSvc.startContainer(containerId);
+		portainerRequestSvc.startContainer(containerId);
 	}
 }
 
