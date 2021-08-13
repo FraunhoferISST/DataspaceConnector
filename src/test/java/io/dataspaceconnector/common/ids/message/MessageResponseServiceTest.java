@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.common.ids.message;
 
+import java.net.URI;
+
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.common.exception.MessageEmptyException;
@@ -24,24 +26,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {MessageResponseService.class})
 class MessageResponseServiceTest {
 
-    @MockBean
-    ConnectorService connectorService;
-
-    @Autowired
-    MessageResponseService service;
+    private ConnectorService connectorService = Mockito.mock(ConnectorService.class);
+    private MessageResponseService service = new MessageResponseService(connectorService);
 
     private final URI connectorId = URI.create("https://someConnectorId");
     private final String outboundVersion = "4.0.0";
