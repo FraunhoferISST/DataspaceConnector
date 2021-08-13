@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.model.resource;
 
-/**
- * Creates and updates a resource.
- */
 import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.common.net.EndpointUtils;
 import io.dataspaceconnector.common.util.ValidationUtils;
