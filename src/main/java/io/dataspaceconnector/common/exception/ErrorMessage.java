@@ -201,11 +201,6 @@ public enum ErrorMessage {
             + "Cannot enforce security restricted policy. Access denied."),
 
     /**
-     * No valid entity could be created from a given input.
-     */
-    INVALID_ENTITY_INPUT("Could not create valid entity with given input."),
-
-    /**
      * If a resource update message could not be sent.
      */
     UPDATE_MESSAGE_FAILED("Failed to send update message.");

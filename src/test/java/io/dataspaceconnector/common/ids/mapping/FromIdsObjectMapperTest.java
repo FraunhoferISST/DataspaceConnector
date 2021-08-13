@@ -120,7 +120,6 @@ public class FromIdsObjectMapperTest {
         assertEquals(resource.getModified().toXMLFormat(), additional.get("ids:modified"));
         // assertEquals(resource.getResourceEndpoint().get(0).toString(), additional.get("ids:resourceEndpoint"));
         assertEquals(resource.getResourcePart().get(0).toString(), additional.get("ids:resourcePart"));
-        assertEquals(resource.getSample().get(0).toString(), additional.get("ids:sample"));
         assertEquals(resource.getShapesGraph().toString(), additional.get("ids:shapesGraph"));
         assertEquals(resource.getSpatialCoverage().get(0).toString(), additional.get("ids:spatialCoverage"));
         assertEquals(resource.getTemporalCoverage().get(0).toString(), additional.get("ids:temporalCoverage"));
@@ -168,7 +167,6 @@ public class FromIdsObjectMapperTest {
         assertEquals(resource.getModified().toXMLFormat(), additional.get("ids:modified"));
         // assertEquals(resource.getResourceEndpoint().get(0).toString(), additional.get("ids:resourceEndpoint"));
         assertEquals(resource.getResourcePart().get(0).toString(), additional.get("ids:resourcePart"));
-        assertEquals(resource.getSample().get(0).toString(), additional.get("ids:sample"));
         assertEquals(resource.getShapesGraph().toString(), additional.get("ids:shapesGraph"));
         assertEquals(resource.getSpatialCoverage().get(0).toString(), additional.get("ids:spatialCoverage"));
         assertEquals(resource.getTemporalCoverage().get(0).toString(), additional.get("ids:temporalCoverage"));
