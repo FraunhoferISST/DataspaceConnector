@@ -260,14 +260,16 @@ public class PortainerRequestService {
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
                 .addPathSegments("api/endpoints/1/docker/images/create")
-                .addQueryParameter("fromImage", templateObject.getString("registry") + "/" + templateObject.getString("image"));
+                .addQueryParameter("fromImage", templateObject.getString("registry")
+                        + "/" + templateObject.getString("image"));
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + jwt);
         builder.url(url);
         builder.post(
                 RequestBody.create(
                         new JSONObject()
-                                .put("fromImage", templateObject.getString("registry") + "/" + templateObject.getString("image"))
+                                .put("fromImage", templateObject.getString("registry")
+                                        + "/" + templateObject.getString("image"))
                                 .toString(),
                         null));
 
@@ -356,7 +358,8 @@ public class PortainerRequestService {
         jsonPayload.put("Labels", new JSONObject());
         jsonPayload.put("name", "");
         jsonPayload.put("Cmd", new JSONArray());
-        jsonPayload.put("Image", templateObject.getString("registry") + "/" + templateObject.getString("image"));
+        jsonPayload.put("Image", templateObject.getString("registry")
+                + "/" + templateObject.getString("image"));
 
         //build exposed ports part of json payload
         final var exposedPorts = new JSONObject();
@@ -371,7 +374,7 @@ public class PortainerRequestService {
         hostConfig.put("ExtraHosts", new JSONArray());
         hostConfig.put("NetworkMode", "bridge");
         final String restartPolicy;
-        if(templateObject.has("restart_policy")) {
+        if (templateObject.has("restart_policy")) {
             restartPolicy = templateObject.getString("restart_policy");
         } else {
             restartPolicy = "always";
