@@ -73,7 +73,7 @@ import org.springframework.context.annotation.Configuration;
  * Publish resource service to spring.
  */
 @Configuration
-public final class ResourceConfig {
+public class ResourceConfig {
 
     /**
      * Create an agreement service bean.

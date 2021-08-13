@@ -25,12 +25,14 @@ import io.dataspaceconnector.repository.AuthenticationRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Migrates data between DSC version 5 and 6.
  */
+@ConditionalOnProperty(value = "migration.enabled", havingValue = "true")
 @Component
 @Log4j2
 @Transactional

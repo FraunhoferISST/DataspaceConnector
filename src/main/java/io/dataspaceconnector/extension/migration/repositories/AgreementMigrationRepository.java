@@ -17,6 +17,7 @@ package io.dataspaceconnector.extension.migration.repositories;
 
 import java.util.UUID;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Repository;
 /**
  * Repo for migration agreements.
  */
+@ConditionalOnProperty(value = "migration.enabled", havingValue = "true")
 @Repository
 public interface AgreementMigrationRepository
         extends io.dataspaceconnector.repository.AgreementRepository {

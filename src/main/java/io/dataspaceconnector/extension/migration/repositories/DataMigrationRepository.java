@@ -16,6 +16,7 @@
 package io.dataspaceconnector.extension.migration.repositories;
 
 import io.dataspaceconnector.repository.DataRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Repository;
 /**
  * Contains logic for data migration.
  */
+@ConditionalOnProperty(value = "migration.enabled", havingValue = "true")
 @Repository
 public interface DataMigrationRepository extends DataRepository {
 

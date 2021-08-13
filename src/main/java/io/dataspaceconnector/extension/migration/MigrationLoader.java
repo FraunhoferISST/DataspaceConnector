@@ -18,11 +18,13 @@ package io.dataspaceconnector.extension.migration;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 /**
  * Loads the migration of startup.
  */
+@ConditionalOnProperty(value = "migration.enabled", havingValue = "true")
 @Service
 public class MigrationLoader {
 

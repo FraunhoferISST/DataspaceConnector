@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.extension.migration.repositories;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Repository;
 /**
  * Repository for migrating offered resources.
  */
+@ConditionalOnProperty(value = "migration.enabled", havingValue = "true")
 @Repository
 public interface OfferedResourcesMigrationRepository
         extends io.dataspaceconnector.repository.OfferedResourcesRepository {
