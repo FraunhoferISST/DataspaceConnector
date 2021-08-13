@@ -99,9 +99,8 @@ public class Migrator {
     private void migrateAgreementIDSVersion() {
         for (final var ag : agreementRepo.findAll()) {
             if (ag.getValue() != null) {
-                // TODO: This will make problems with IDS @context elements defining idsc
                 final var val = ag.getValue()
-                                  .replace("idsc:", "https://w3id.org/idsa/code/");
+                                  .replaceAll("idsc:[^ ]", "https://w3id.org/idsa/code/");
                 agreementRepo.migrateV5ToV6UpgradeIDS(ag.getId(), val);
             }
         }
