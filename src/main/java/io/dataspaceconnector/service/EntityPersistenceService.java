@@ -30,7 +30,7 @@ import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.relation.AgreementArtifactLinker;
 import io.dataspaceconnector.service.resource.type.AgreementService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
-import io.dataspaceconnector.service.resource.TemplateBuilder;
+import io.dataspaceconnector.service.resource.templatebuilder.AbstractResourceTemplateBuilder;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
 import io.dataspaceconnector.common.net.EndpointUtils;
 import lombok.NonNull;
@@ -95,7 +95,8 @@ public class EntityPersistenceService {
     /**
      * Template builder.
      */
-    private final @NonNull TemplateBuilder<RequestedResource, RequestedResourceDesc> tempBuilder;
+    private final @NonNull AbstractResourceTemplateBuilder<RequestedResource, RequestedResourceDesc>
+            tempBuilder;
 
     /**
      * Save contract agreement to database (consumer side).

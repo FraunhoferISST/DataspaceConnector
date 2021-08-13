@@ -13,45 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.resource;
+package io.dataspaceconnector.service.resource.templatebuilder;
 
-import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.template.ResourceTemplate;
-import io.dataspaceconnector.service.resource.relation.AbstractResourceRepresentationLinker;
+import io.dataspaceconnector.repository.OfferedResourcesRepository;
 import io.dataspaceconnector.service.resource.relation.OfferedResourceContractLinker;
+import io.dataspaceconnector.service.resource.relation.OfferedResourceRepresentationLinker;
+import io.dataspaceconnector.service.resource.type.OfferedResourceService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 
-@SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class TemplateBuilderOfferedResourceTest {
+class OfferedResourceTemplateBuilderTest {
 
-    @MockBean
-    private AbstractResourceRepresentationLinker<OfferedResource> offeredResourceRepresentationLinker;
+    private OfferedResourcesRepository repository = Mockito.mock(OfferedResourcesRepository.class);
+    private OfferedResourceRepresentationLinker offeredResourceRepresentationLinker = Mockito.mock(OfferedResourceRepresentationLinker.class);
+    private OfferedResourceContractLinker offeredResourceContractLinker = Mockito.mock(OfferedResourceContractLinker.class);
 
-    @MockBean
-    private OfferedResourceContractLinker offeredResourceContractLinker;
+    private OfferedResourceTemplateBuilder builder = new OfferedResourceTemplateBuilder(
+            new OfferedResourceService(repository),
+            offeredResourceRepresentationLinker,
+            offeredResourceContractLinker,
+            Mockito.mock(RepresentationTemplateBuilder.class),
+            Mockito.mock(ContractTemplateBuilder.class)
+    );
 
-    @Autowired
-    TemplateBuilder<OfferedResource, OfferedResourceDesc> builder;
-
-    /***********************************************************************************************
-     * ResourceTemplate.                                                                           *
-     **********************************************************************************************/
+    @BeforeEach
+    public void setup() {
+        Mockito.doAnswer(returnsFirstArg())
+               .when(repository)
+               .saveAndFlush(Mockito.any());
+    }
 
     @Test
     public void build_ResourceTemplateNull_throwIllegalArgumentException() {
         /* ACT && ASSERT */
         assertThrows(IllegalArgumentException.class,
-                () -> builder.build((ResourceTemplate<OfferedResourceDesc>) null));
+                () -> builder.build(null));
     }
 
     @Test

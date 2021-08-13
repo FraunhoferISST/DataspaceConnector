@@ -20,10 +20,12 @@ import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.resource.OfferedResourceFactory;
 import io.dataspaceconnector.repository.BaseEntityRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Handles the basic logic for offered resources.
  */
+@Transactional
 public class OfferedResourceService extends ResourceService<OfferedResource, OfferedResourceDesc> {
 
     /**

@@ -41,11 +41,13 @@ import io.dataspaceconnector.service.resource.relation.RequestedResourceSubscrip
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Handles the basic logic for subscriptions.
  */
 @Service
+@Transactional
 public class SubscriptionService extends BaseEntityService<Subscription, SubscriptionDesc> {
 
     /**

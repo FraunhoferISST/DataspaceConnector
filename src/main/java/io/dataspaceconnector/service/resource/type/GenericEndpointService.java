@@ -29,6 +29,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class for generic endpoints.
@@ -36,6 +37,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.NONE)
+@Transactional
 public class GenericEndpointService
         extends EndpointService<GenericEndpoint, GenericEndpointDesc> {
 

@@ -21,10 +21,12 @@ import io.dataspaceconnector.model.endpoint.ConnectorEndpointDesc;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.routing.RouteHelper;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class for connector endpoints.
  */
+@Transactional
 public class ConnectorEndpointService
         extends EndpointService<ConnectorEndpoint, ConnectorEndpointDesc> {
 

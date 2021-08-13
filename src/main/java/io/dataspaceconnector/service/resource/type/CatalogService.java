@@ -20,10 +20,12 @@ import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Handles the basic logic for catalogs.
  */
+@Transactional
 public class CatalogService extends BaseEntityService<Catalog, CatalogDesc> {
 
     /**

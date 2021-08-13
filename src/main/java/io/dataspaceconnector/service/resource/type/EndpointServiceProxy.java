@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpointDesc;
@@ -26,13 +28,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class for endpoint proxy.
  */
 @Service
+@Transactional
 public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDesc> {
 
     /**

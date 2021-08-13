@@ -35,7 +35,7 @@ import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.relation.AgreementArtifactLinker;
 import io.dataspaceconnector.service.resource.type.AgreementService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
-import io.dataspaceconnector.service.resource.TemplateBuilder;
+import io.dataspaceconnector.service.resource.templatebuilder.AbstractResourceTemplateBuilder;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -57,7 +57,8 @@ public class EntityPersistenceServiceTest {
     private DeserializationService deserializationService;
 
     @MockBean
-    private TemplateBuilder<RequestedResource, RequestedResourceDesc> templateBuilder;
+    private AbstractResourceTemplateBuilder<RequestedResource, RequestedResourceDesc>
+            templateBuilder;
 
     @MockBean
     private ArtifactService artifactService;

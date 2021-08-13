@@ -26,10 +26,12 @@ import io.dataspaceconnector.model.contract.ContractDesc;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.ContractRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Handles the basic logic for contracts.
  */
+@Transactional
 public class ContractService extends BaseEntityService<Contract, ContractDesc> {
 
     /**
