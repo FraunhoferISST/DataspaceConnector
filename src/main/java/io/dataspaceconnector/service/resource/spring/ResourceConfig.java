@@ -69,16 +69,33 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Publish resource service to spring.
+ */
 @Configuration
-public class ResourceConfig {
+public final class ResourceConfig {
+
+    /**
+     * Create an agreement service bean.
+     * @param repo The agreement repo.
+     * @return The agreement service.
+     */
     @Bean("agreementService")
-    public AgreementService getAgreementService(
+    public AgreementService createAgreementService(
             @Qualifier("agreementRepository") final AgreementRepository repo) {
         return new AgreementService(repo, new AgreementFactory());
     }
 
+    /**
+     * Create an artifact service bean.
+     * @param repository The artifact repository.
+     * @param dataRepository The data repository.
+     * @param httpService The http service.
+     * @param authRepo The auth repo.
+     * @return The artifact service bean.
+     */
     @Bean("artifactService")
-    public ArtifactService getArtifactService(
+    public ArtifactService createArtifactService(
             final ArtifactRepository repository,
             final DataRepository dataRepository,
             final HttpService httpService,
@@ -87,18 +104,35 @@ public class ResourceConfig {
                                    dataRepository, httpService, authRepo);
     }
 
+    /**
+     * Create a broker service bean.
+     * @param repo The broker repository.
+     * @return The broker service bean.
+     */
     @Bean("configurationBrokerService")
-    public BrokerService getBrokerService(final BrokerRepository repo) {
+    public BrokerService createBrokerService(final BrokerRepository repo) {
         return new BrokerService(repo, new BrokerFactory());
     }
 
+    /**
+     * Create a catalog service bean.
+     * @param repo The catalog repository.
+     * @return The catalog bean.
+     */
     @Bean("catalogService")
-    public CatalogService getCatalogService(final CatalogRepository repo) {
+    public CatalogService createCatalogService(final CatalogRepository repo) {
         return new CatalogService(repo, new CatalogFactory());
     }
 
+    /**
+     * Create a configuration service bean.
+     * @param repo The configuration repository.
+     * @param context The application context.
+     * @param configBuilder The IDS configuration builder.
+     * @return The configuration service bean.
+     */
     @Bean("configurationService")
-    public ConfigurationService getConfigurationService(final ConfigurationRepository repo,
+    public ConfigurationService createConfigurationService(final ConfigurationRepository repo,
                                                         final ApplicationContext context,
                                                         final IdsConfigModelBuilder configBuilder) {
         return new ConfigurationService(repo, new ConfigurationFactory(new ProxyFactory(),
@@ -107,8 +141,16 @@ public class ResourceConfig {
                                         context, configBuilder);
     }
 
+    /**
+     * Create a connectorendpoint service bean.
+     * @param repo The connectorendpoint repository.
+     * @param factory The connectorendpoint factory.
+     * @param routeRepository The route repository.
+     * @param camelRouteHelper The camel route helper.
+     * @return The connectorendpoint service bean.
+     */
     @Bean("connectorEndpointService")
-    public ConnectorEndpointService getConnectorEndpointService(
+    public ConnectorEndpointService createConnectorEndpointService(
             final ConnectorEndpointRepository repo,
             final ConnectorEndpointFactory factory,
             final RouteRepository routeRepository,
@@ -117,35 +159,69 @@ public class ResourceConfig {
                                             routeRepository, camelRouteHelper);
     }
 
+    /**
+     * Creat a contract service bean.
+     * @param repo The contract repository.
+     * @return The contract service bean.
+     */
     @Bean("contractService")
-    public ContractService getContractService(final ContractRepository repo) {
+    public ContractService createContractService(final ContractRepository repo) {
         return new ContractService(repo, new ContractFactory());
     }
 
+    /**
+     * Create a datasource service bean.
+     * @param repo The datasource repository.
+     * @return The datasource service bean.
+     */
     @Bean("dataSourceService")
-    public DataSourceService getDataSourceService(final DataSourceRepository repo) {
+    public DataSourceService createDataSourceService(final DataSourceRepository repo) {
         return new DataSourceService(repo, new DataSourceFactory());
     }
 
+    /**
+     * Create an offeredresource service bean.
+     * @param repo The offeredresource repository.
+     * @return The offeredresource service bean.
+     */
     @Bean("offeredResourceService")
-    public OfferedResourceService getOfferedResourceService(
+    public OfferedResourceService createOfferedResourceService(
             @Qualifier("offeredResourcesRepository") final OfferedResourcesRepository repo) {
         return new OfferedResourceService(repo, new OfferedResourceFactory());
     }
 
+
+    /**
+     * Create a representation service bean.
+     * @param repo The representation repository.
+     * @return The representation service bean.
+     */
     @Bean("representationService")
-    public RepresentationService getRepresentationService(final RepresentationRepository repo) {
+    public RepresentationService createRepresentationService(final RepresentationRepository repo) {
         return new RepresentationService(repo, new RepresentationFactory());
     }
 
+    /**
+     * Create a requestedresource service bean.
+     * @param repo The requestedresource repository.
+     * @return The requestedresource service bean.
+     */
     @Bean("requestedResourceService")
-    public RequestedResourceService getRequestedResourceService(
+    public RequestedResourceService createRequestedResourceService(
             @Qualifier("requestedResourcesRepository") final RequestedResourcesRepository repo) {
         return new RequestedResourceService(repo, new RequestedResourceFactory());
     }
 
+    /**
+     * Create a route service bean.
+     * @param repo The route repository.
+     * @param endpointRepository The endpoint repository.
+     * @param endpointServiceProxy The endpoint service proxy.
+     * @param routeHelper The route helper.
+     * @return The route service bean.
+     */
     @Bean("routeService")
-    public RouteService getResourceService(final RouteRepository repo,
+    public RouteService createResourceService(final RouteRepository repo,
                                            final EndpointRepository endpointRepository,
                                            final EndpointServiceProxy endpointServiceProxy,
                                            final RouteHelper routeHelper) {
@@ -153,13 +229,22 @@ public class ResourceConfig {
                                 endpointServiceProxy, routeHelper);
     }
 
+    /**
+     * Create a rule service bean.
+     * @param repo The rule repository.
+     * @return The rule service bean.
+     */
     @Bean("ruleService")
-    public RuleService getRuleService(final RuleRepository repo) {
+    public RuleService createRuleService(final RuleRepository repo) {
         return new RuleService(repo, new ContractRuleFactory());
     }
 
+    /**
+     * Create a connectorendpoint factory.
+     * @return The connectorendpoint factory.
+     */
     @Bean("connectorEndpointFactory")
-    public ConnectorEndpointFactory getConnectorEndpointFactory() {
+    public ConnectorEndpointFactory createConnectorEndpointFactory() {
         return new ConnectorEndpointFactory();
     }
 }

@@ -32,6 +32,11 @@ import io.dataspaceconnector.service.resource.base.RemoteResolver;
 public final class RequestedResourceService extends ResourceService<RequestedResource,
         RequestedResourceDesc> implements RemoteResolver {
 
+    /**
+     * Constructor.
+     * @param repository The requested resource repository.
+     * @param factory The requested resource factory.
+     */
     public RequestedResourceService(final BaseEntityRepository<RequestedResource> repository,
             final AbstractFactory<RequestedResource, RequestedResourceDesc> factory) {
         super(repository, factory);

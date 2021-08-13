@@ -19,9 +19,16 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Repository for migrating offered resources.
+ */
 @Repository
 public interface OfferedResourcesMigrationRepository
         extends io.dataspaceconnector.repository.OfferedResourcesRepository {
+
+    /**
+     * Migrate the license field.
+     */
     @Modifying
     @Query("UPDATE OfferedResource a "
            + "SET a.license = a.licence "

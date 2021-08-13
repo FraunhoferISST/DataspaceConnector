@@ -32,6 +32,11 @@ import io.dataspaceconnector.service.resource.base.BaseEntityService;
  */
 public class RuleService extends BaseEntityService<ContractRule, ContractRuleDesc> {
 
+    /**
+     * Constructor.
+     * @param repository The rule repository.
+     * @param factory The rule factory.
+     */
     public RuleService(final BaseEntityRepository<ContractRule> repository,
             final AbstractFactory<ContractRule, ContractRuleDesc> factory) {
         super(repository, factory);

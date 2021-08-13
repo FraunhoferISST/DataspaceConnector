@@ -90,6 +90,9 @@ public class RequestedResource extends Resource implements RemoteObject {
         v5 -> v6 migration
      */
 
+    /**
+     * v5 licence.
+     */
     @Setter(AccessLevel.PRIVATE)
     @Getter(AccessLevel.PRIVATE)
     @Convert(converter = UriConverter.class)

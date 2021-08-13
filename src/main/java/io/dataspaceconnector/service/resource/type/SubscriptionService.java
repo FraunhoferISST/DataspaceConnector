@@ -78,6 +78,11 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
     @Autowired
     private EntityResolver entityResolver;
 
+    /**
+     * Constructor.
+     * @param repository The subscription repository.
+     * @param factory The subscription factory.
+     */
     @Autowired
     public SubscriptionService(
             final BaseEntityRepository<Subscription> repository,

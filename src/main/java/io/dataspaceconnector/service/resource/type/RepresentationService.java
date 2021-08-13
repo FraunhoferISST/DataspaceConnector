@@ -33,6 +33,11 @@ import io.dataspaceconnector.service.resource.base.RemoteResolver;
 public final class RepresentationService extends BaseEntityService<Representation,
         RepresentationDesc> implements RemoteResolver {
 
+    /**
+     * Constructor.
+     * @param repository The representation repository.
+     * @param factory The representation factory.
+     */
     public RepresentationService(final BaseEntityRepository<Representation> repository,
             final AbstractFactory<Representation, RepresentationDesc> factory) {
         super(repository, factory);

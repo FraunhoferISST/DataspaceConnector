@@ -29,6 +29,12 @@ import io.dataspaceconnector.service.resource.base.BaseEntityService;
  */
 public class ResourceService<T extends Resource, D extends ResourceDesc>
         extends BaseEntityService<T, D> {
+
+    /**
+     * Constructor.
+     * @param repository The resource repository.
+     * @param factory The resource factory.
+     */
     public ResourceService(final BaseEntityRepository<T> repository,
                            final AbstractFactory<T, D> factory) {
         super(repository, factory);

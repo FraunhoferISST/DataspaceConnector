@@ -60,6 +60,8 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
 
     /**
      * Constructor for route service.
+     * @param repository The route repository.
+     * @param factory The route factory.
      * @param endpointRepository   The endpoint repository.
      * @param endpointServiceProxy The endpoint service.
      * @param camelRouteHelper     The helper class for Camel routes.

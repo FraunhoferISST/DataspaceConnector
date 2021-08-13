@@ -24,6 +24,11 @@ import io.dataspaceconnector.repository.BaseEntityRepository;
  * Handles the basic logic for offered resources.
  */
 public class OfferedResourceService extends ResourceService<OfferedResource, OfferedResourceDesc> {
+    /**
+     * Constructor.
+     * @param repository The offered resource repository.
+     * @param factory The offered resource factory.
+     */
     public OfferedResourceService(final BaseEntityRepository<OfferedResource> repository,
             final AbstractFactory<OfferedResource, OfferedResourceDesc> factory) {
         super(repository, factory);
