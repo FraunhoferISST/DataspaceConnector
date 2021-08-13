@@ -21,7 +21,6 @@ import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpointDesc;
 import io.dataspaceconnector.model.endpoint.GenericEndpointFactory;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.net.URI;
 
@@ -29,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
 public class GenericEndpointViewAssemblerTest {
 
     @Test

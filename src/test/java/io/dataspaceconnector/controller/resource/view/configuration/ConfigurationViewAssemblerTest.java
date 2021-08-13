@@ -30,7 +30,6 @@ import io.dataspaceconnector.model.proxy.ProxyFactory;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
 import io.dataspaceconnector.model.truststore.TruststoreFactory;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -38,7 +37,6 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
 public class ConfigurationViewAssemblerTest {
 
     @Test

@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.controller.resource.view.broker;
 
+import java.net.URI;
+
 import io.dataspaceconnector.controller.resource.type.BrokerController;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.base.RegistrationStatus;
@@ -22,14 +24,10 @@ import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.broker.BrokerDesc;
 import io.dataspaceconnector.model.broker.BrokerFactory;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
 public class BrokerViewAssemblerTest {
 
     @Test
