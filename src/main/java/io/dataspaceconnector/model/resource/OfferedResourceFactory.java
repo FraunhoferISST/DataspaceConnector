@@ -18,10 +18,61 @@ package io.dataspaceconnector.model.resource;
 /**
  * Creates and updates a resource.
  */
+import io.dataspaceconnector.common.exception.InvalidEntityException;
+import io.dataspaceconnector.common.net.EndpointUtils;
+import io.dataspaceconnector.common.util.ValidationUtils;
+import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
+
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Function;
+
+/**
+ * Creates and updates a resource.
+ */
+@Log4j2
+@Setter
 public final class OfferedResourceFactory extends ResourceFactory<OfferedResource,
         OfferedResourceDesc> {
+
+    /**
+     * The service for resource handling.
+     */
+    private Function<UUID, Boolean> doesExist;
+
     @Override
     protected OfferedResource createInternal(final OfferedResourceDesc desc) {
         return new OfferedResource();
+    }
+
+    /**
+     * Check if uri is a valid id of an existing resource.
+     *
+     * @param resource The resource passed to the factory.
+     * @param samples  The new samples.
+     */
+    @Override
+    protected void validateSamples(final Resource resource, final List<URI> samples) {
+        for (final var sample : samples) {
+            if (ValidationUtils.isInvalidUri(sample.toString())) {
+                throw new InvalidEntityException("Sample is not a valid uri.");
+            }
+
+            UUID resourceId;
+            try {
+                resourceId = EndpointUtils.getUUIDFromPath(sample);
+            } catch (Exception exception) {
+                throw new InvalidEntityException("Sample is not a valid uri.");
+            }
+
+            if (!doesExist.apply(resourceId)) {
+                if (log.isWarnEnabled()) {
+                    log.warn("Could not find matching resource. [id=({})]", sample);
+                }
+                throw new InvalidEntityException("Could not find matching resource.");
+            }
+        }
     }
 }

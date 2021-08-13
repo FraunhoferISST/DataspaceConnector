@@ -18,6 +18,7 @@ package io.dataspaceconnector.model.resource;
 import io.dataspaceconnector.model.util.FactoryUtils;
 
 import java.net.URI;
+import java.util.List;
 
 /**
  * Creates and updates a resource.
@@ -33,6 +34,14 @@ public final class RequestedResourceFactory
     @Override
     protected RequestedResource createInternal(final RequestedResourceDesc desc) {
         return new RequestedResource();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void validateSamples(final Resource resource, final List<URI> samples) {
+        // Nothing to do here.
     }
 
     @Override

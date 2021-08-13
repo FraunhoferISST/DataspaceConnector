@@ -27,7 +27,6 @@ import io.dataspaceconnector.model.endpoint.ConnectorEndpointFactory;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
 import io.dataspaceconnector.model.proxy.ProxyFactory;
 import io.dataspaceconnector.model.representation.RepresentationFactory;
-import io.dataspaceconnector.model.resource.OfferedResourceFactory;
 import io.dataspaceconnector.model.resource.RequestedResourceFactory;
 import io.dataspaceconnector.model.route.RouteFactory;
 import io.dataspaceconnector.model.rule.ContractRuleFactory;
@@ -187,7 +186,7 @@ public class ResourceConfig {
     @Bean("offeredResourceService")
     public OfferedResourceService createOfferedResourceService(
             @Qualifier("offeredResourcesRepository") final OfferedResourcesRepository repo) {
-        return new OfferedResourceService(repo, new OfferedResourceFactory());
+        return new OfferedResourceService(repo);
     }
 
 

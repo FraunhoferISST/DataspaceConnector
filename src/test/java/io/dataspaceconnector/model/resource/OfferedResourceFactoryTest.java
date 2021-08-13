@@ -15,16 +15,25 @@
  */
 package io.dataspaceconnector.model.resource;
 
+import io.dataspaceconnector.common.exception.InvalidEntityException;
+import io.dataspaceconnector.service.resource.type.OfferedResourceService;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -780,6 +789,138 @@ public class OfferedResourceFactoryTest {
 
         /* ASSERT */
         assertEquals(2, resource.getVersion());
+    }
+
+    /**
+     * samples
+     */
+
+    @Test
+    public void create_validDesc_samplesDefault() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT */
+        final var result = factory.create(new OfferedResourceDesc());
+
+        /* ASSERT */
+        assertNotNull(result.getSamples());
+        assertTrue(result.getSamples().isEmpty());
+    }
+
+    @Test
+    public void create_invalidUri_throwInvalidEntityException() {
+        /* ARRANGE */
+        final var desc = new OfferedResourceDesc();
+        desc.setSamples(List.of(URI.create("https://resources/")));
+
+        final var resource = factory.create(new OfferedResourceDesc());
+
+        /* ACT & ASSERT*/
+        assertThrows(InvalidEntityException.class, () -> factory.update(resource, desc));
+    }
+
+    @Test
+    public void create_invalidResourceId_throwInvalidEntityException() {
+        /* ARRANGE */
+        final var desc = new OfferedResourceDesc();
+        desc.setSamples(List.of(URI.create("https://api/resources/d8a6f765-9b94-4a27-a18d-fbe81636a784")));
+
+        final var resource = factory.create(new OfferedResourceDesc());
+
+        /* ACT & ASSERT*/
+        assertThrows(InvalidEntityException.class, () -> factory.update(resource, desc));
+    }
+
+    @Test
+    public void update_differentSamples_setSamples() {
+        /* ARRANGE */
+        final var desc = new OfferedResourceDesc();
+        desc.setSamples(List.of(URI.create("https://api/resources/d8a6f765-9b94-4a27-a18d-fbe81636a784")));
+
+        final var resource = factory.create(new OfferedResourceDesc());
+        factory.setDoesExist(x -> true);
+
+        /* ACT */
+        factory.update(resource, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getSamples(), resource.getSamples());
+    }
+
+    @Test
+    public void update_differentSamples_returnTrue() {
+        /* ARRANGE */
+        final var desc = new OfferedResourceDesc();
+        desc.setSamples(List.of(URI.create("https://api/resources/d8a6f765-9b94-4a27-a18d-fbe81636a784")));
+
+        final var resource = factory.create(new OfferedResourceDesc());
+        factory.setDoesExist(x -> true);
+
+        /* ACT */
+        final var result = factory.update(resource, desc);
+
+        /* ASSERT */
+        Assertions.assertTrue(result);
+    }
+
+    @Test
+    public void update_differentSamples_returnFalse() {
+        /* ARRANGE */
+        final var resource = factory.create(new OfferedResourceDesc());
+        factory.setDoesExist(x -> true);
+
+        /* ACT */
+        final var result = factory.update(resource, new OfferedResourceDesc());
+
+        /* ASSERT */
+        Assertions.assertFalse(result);
+    }
+
+    /**
+     * payment modality
+     */
+
+    @Test
+    public void update_differentPaymentModality_setPaymentModality() {
+        /* ARRANGE */
+        final var desc = new OfferedResourceDesc();
+        desc.setPaymentMethod(PaymentMethod.FIXED_PRICE);
+
+        final var resource = factory.create(new OfferedResourceDesc());
+
+        /* ACT */
+        factory.update(resource, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getPaymentMethod(), resource.getPaymentModality());
+    }
+
+    @Test
+    public void update_differentPaymentModality_returnTrue() {
+        /* ARRANGE */
+        final var desc = new OfferedResourceDesc();
+        desc.setPaymentMethod(PaymentMethod.FIXED_PRICE);
+
+        final var resource = factory.create(new OfferedResourceDesc());
+
+        /* ACT */
+        final var result = factory.update(resource, desc);
+
+        /* ASSERT */
+        Assertions.assertTrue(result);
+    }
+
+    @Test
+    public void update_differentPaymentModality_returnFalse() {
+        /* ARRANGE */
+        final var resource = factory.create(new OfferedResourceDesc());
+
+        /* ACT */
+        final var result = factory.update(resource, new OfferedResourceDesc());
+
+        /* ASSERT */
+        Assertions.assertFalse(result);
     }
 
     /**

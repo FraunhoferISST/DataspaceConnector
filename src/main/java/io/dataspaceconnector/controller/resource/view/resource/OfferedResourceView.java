@@ -17,6 +17,7 @@ package io.dataspaceconnector.controller.resource.view.resource;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dataspaceconnector.controller.resource.view.util.ViewConstants;
+import io.dataspaceconnector.model.resource.PaymentMethod;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -93,6 +94,16 @@ public class OfferedResourceView extends RepresentationModel<OfferedResourceView
      * The endpoint of the resource.
      */
     private URI endpointDocumentation;
+
+    /**
+     * The payment modality.
+     */
+    private PaymentMethod paymentModality;
+
+    /**
+     * A list of resource IDs pointing at sample resources.
+     */
+    private List<URI> samples;
 
     /**
      * Additional properties.

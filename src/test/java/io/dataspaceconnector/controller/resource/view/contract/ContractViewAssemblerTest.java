@@ -20,7 +20,6 @@ import io.dataspaceconnector.controller.resource.relation.ContractsToOfferedReso
 import io.dataspaceconnector.controller.resource.relation.ContractsToRequestedResourcesController;
 import io.dataspaceconnector.controller.resource.relation.ContractsToRulesController;
 import io.dataspaceconnector.controller.resource.type.ContractController;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.contract.ContractDesc;
 import io.dataspaceconnector.model.contract.ContractFactory;
@@ -52,13 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
 
-@SpringBootTest(classes = {
-        ContractViewAssembler.class,
-        ViewAssemblerHelper.class,
-        ContractFactory.class,
-        OfferedResourceFactory.class,
-        RequestedResourceFactory.class
-})
+@SpringBootTest
 public class ContractViewAssemblerTest {
 
     @Autowired

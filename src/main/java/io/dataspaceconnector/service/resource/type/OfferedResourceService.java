@@ -18,12 +18,23 @@ package io.dataspaceconnector.service.resource.type;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.OfferedResourceFactory;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 
 /**
  * Handles the basic logic for offered resources.
  */
 public class OfferedResourceService extends ResourceService<OfferedResource, OfferedResourceDesc> {
+
+    /**
+     * Constructor.
+     * @param repository The offered resource repository.
+     */
+    public OfferedResourceService(final BaseEntityRepository<OfferedResource> repository) {
+        this(repository, new OfferedResourceFactory());
+        ((OfferedResourceFactory) this.getFactory()).setDoesExist(super::doesExist);
+    }
+
     /**
      * Constructor.
      * @param repository The offered resource repository.
