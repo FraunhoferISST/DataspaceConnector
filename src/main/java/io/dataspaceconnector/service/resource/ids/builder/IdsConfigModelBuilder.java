@@ -45,7 +45,7 @@ public final class IdsConfigModelBuilder extends AbstractIdsBuilder<Configuratio
         final var connector = ToIdsObjectMapper.getConnectorFromConfiguration(config);
         final var status = ToIdsObjectMapper.getConnectorStatus(config.getStatus());
 
-        final var configurationBuilder = new ConfigurationModelBuilder()
+        final var configBuilder = new ConfigurationModelBuilder()
                 ._connectorDeployMode_(deployMode)
                 ._keyStore_(config.getKeystore().getLocation())
                 ._keyStorePassword_(config.getKeystore().getPassword())
@@ -58,9 +58,9 @@ public final class IdsConfigModelBuilder extends AbstractIdsBuilder<Configuratio
                 ._connectorDescription_(connector);
 
         if (config.getProxy() != null) {
-            configurationBuilder._connectorProxy_(List.of(ToIdsObjectMapper.getProxy(config.getProxy())));
+            configBuilder._connectorProxy_(List.of(ToIdsObjectMapper.getProxy(config.getProxy())));
         }
 
-        return configurationBuilder.build();
+        return configBuilder.build();
     }
 }
