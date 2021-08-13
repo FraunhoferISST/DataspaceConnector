@@ -85,10 +85,10 @@ public class ResourceUnavailableMessageControllerTest {
     @SpyBean
     private GlobalMessageService globalMessageService;
 
-    @SpyBean
+    @MockBean
     private ProducerTemplate producerTemplate;
 
-    @MockBean
+    @SpyBean
     private ConnectorConfig connectorConfig;
 
     @Autowired
