@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.model.artifact;
 
-import java.net.URI;
-import java.net.URL;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.named.NamedDescription;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.net.URI;
+import java.net.URL;
 
 /**
  * A description of an artifact.

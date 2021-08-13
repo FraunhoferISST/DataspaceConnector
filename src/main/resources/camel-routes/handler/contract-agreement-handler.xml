@@ -1,0 +1,47 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="contractAgreementHandler">
+
+        <!-- payload stream cannot be read -->
+        <onException>
+            <exception>io.dataspaceconnector.common.exception.MessageRequestException</exception>
+            <to uri="direct:handleMessagePayloadException"/>
+        </onException>
+
+        <!-- the agreements to not match -->
+        <onException>
+            <exception>io.dataspaceconnector.common.exception.ContractException</exception>
+            <to uri="direct:handleContractException"/>
+        </onException>
+
+        <!-- failed to persist the confirmation of the agreement -->
+        <onException>
+            <exception>io.dataspaceconnector.service.message.handler.exception.UnconfirmedAgreementException</exception>
+            <to uri="direct:handleUnconfirmedAgreementException"/>
+        </onException>
+
+        <!-- no agreement with a matching ID was found in the database -->
+        <onException>
+            <exception>io.dataspaceconnector.common.exception.ResourceNotFoundException</exception>
+            <to uri="direct:handleMessageProcessingFailedForAgreement"/>
+        </onException>
+
+        <!-- any required input parameter is missing -->
+        <onException>
+            <exception>java.lang.IllegalArgumentException</exception>
+            <to uri="direct:handleIllegalArgumentException"/>
+        </onException>
+
+        <!-- the response cannot be built -->
+        <onException>
+            <exception>de.fraunhofer.iais.eis.util.ConstraintViolationException</exception>
+            <to uri="direct:handleResponseMessageBuilderException"/>
+        </onException>
+
+        <from uri="direct:contractAgreementHandler"/>
+        <transacted ref="transactionPolicy"/>
+        <to uri="direct:idsValidation"/>
+        <process ref="AgreementDeserializer"/>
+        <process ref="AgreementComparisonProcessor"/>
+
+    </route>
+</routes>

@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.model.resource;
 
-import io.dataspaceconnector.model.subscription.Subscription;
+import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.util.UriConverter;
-import io.dataspaceconnector.util.exception.NotImplemented;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

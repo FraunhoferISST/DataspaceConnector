@@ -15,10 +15,10 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
-import java.net.URI;
-
 import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.model.util.FactoryUtils;
+
+import java.net.URI;
 
 /**
  * Base class for creating and updating endpoints.
@@ -76,7 +76,7 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
     private boolean updateInfo(final Endpoint endpoint,
                                final String info) {
         final var newInfo =
-                MetadataUtils.updateString(endpoint.getInfo(), info, DEFAULT_INFORMATION);
+                FactoryUtils.updateString(endpoint.getInfo(), info, DEFAULT_INFORMATION);
         newInfo.ifPresent(endpoint::setInfo);
 
         return newInfo.isPresent();
@@ -90,7 +90,7 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
      */
     private boolean updateDocs(final Endpoint endpoint,
                                final URI docs) {
-        final var newDocs = MetadataUtils.updateUri(endpoint.getDocs(), docs, DEFAULT_URI);
+        final var newDocs = FactoryUtils.updateUri(endpoint.getDocs(), docs, DEFAULT_URI);
         newDocs.ifPresent(endpoint::setDocs);
 
         return newDocs.isPresent();
@@ -103,7 +103,7 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
      */
     private boolean updateLocation(final Endpoint endpoint,
                                    final URI location) {
-        final var newLocation = MetadataUtils.updateUri(endpoint.getDocs(), location, DEFAULT_URI);
+        final var newLocation = FactoryUtils.updateUri(endpoint.getDocs(), location, DEFAULT_URI);
         newLocation.ifPresent(endpoint::setLocation);
 
         return newLocation.isPresent();

@@ -1,0 +1,20 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="querySender">
+
+        <!-- an error occurred in IDSCP2 communication -->
+        <onException>
+            <exception>de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception</exception>
+            <to uri="direct:handleIdscp2Exception"/>
+        </onException>
+
+        <from uri="direct:querySender"/>
+        <setProperty name="idscp2-client-uri">
+            <simple>${bean:io.dataspaceconnector.common.routing.ParameterUtils?method=getIdscp2ClientUri(${exchangeProperty.recipient})}</simple>
+        </setProperty>
+        <process ref="QueryMessageBuilder"/>
+        <process ref="QueryPreparer"/>
+        <toD uri="${exchangeProperty.idscp2-client-uri}"/>
+        <process ref="ResponseToDtoConverter"/>
+
+    </route>
+</routes>

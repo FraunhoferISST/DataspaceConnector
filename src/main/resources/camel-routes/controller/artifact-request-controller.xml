@@ -1,0 +1,27 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="artifactRequestSender">
+
+        <!-- an unexpected message type has been received as the response to a request -->
+        <onException>
+            <exception>io.dataspaceconnector.service.message.handler.exception.InvalidResponseException</exception>
+            <process ref="PolicyRestrictionProcessor"/>
+        </onException>
+
+        <!-- an error occurred in IDSCP2 communication -->
+        <onException>
+            <exception>de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception</exception>
+            <to uri="direct:handleIdscp2Exception"/>
+        </onException>
+
+        <from uri="direct:artifactRequestSender"/>
+        <setProperty name="idscp2-client-uri">
+            <simple>${bean:io.dataspaceconnector.common.routing.ParameterUtils?method=getIdscp2ClientUri(${exchangeProperty.recipient})}</simple>
+        </setProperty>
+        <process ref="ArtifactRequestMessageBuilder"/>
+        <process ref="RequestWithoutPayloadPreparer"/>
+        <toD uri="${exchangeProperty.idscp2-client-uri}"/>
+        <process ref="ResponseToDtoConverter"/>
+        <process ref="ArtifactResponseValidator"/>
+
+    </route>
+</routes>

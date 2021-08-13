@@ -15,7 +15,8 @@
  */
 package io.dataspaceconnector.controller.resource.view;
 
-import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.type.ArtifactController;
+import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,12 +49,12 @@ public class ViewAssemblerHelperTest {
     public void getSelfLink_entityIdNull_returnBasePathWithoutId() {
         /* ARRANGE */
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.ArtifactController.class
+        final var path = ArtifactController.class
                 .getAnnotation(RequestMapping.class).value()[0];
 
         /* ACT */
         final var result = ViewAssemblerHelper.getSelfLink(null,
-                ResourceControllers.ArtifactController.class);
+                ArtifactController.class);
 
         /* ASSERT */
         assertNotNull(result);
@@ -66,12 +67,12 @@ public class ViewAssemblerHelperTest {
         /* ARRANGE */
         final var resourceId = UUID.randomUUID();
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        final var path = ResourceControllers.ArtifactController.class
+        final var path = ArtifactController.class
                 .getAnnotation(RequestMapping.class).value()[0];
 
         /* ACT */
         final var result = ViewAssemblerHelper.getSelfLink(resourceId,
-                ResourceControllers.ArtifactController.class);
+                ArtifactController.class);
 
         /* ASSERT */
         assertNotNull(result);

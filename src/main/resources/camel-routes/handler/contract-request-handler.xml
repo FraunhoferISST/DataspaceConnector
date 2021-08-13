@@ -1,0 +1,80 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="contractRequestHandler">
+
+        <!-- target artifact cannot be found -->
+        <onException>
+            <exception>io.dataspaceconnector.common.exception.ResourceNotFoundException</exception>
+            <to uri="direct:handleResourceNotFoundException"/>
+        </onException>
+
+        <!-- any required input parameter is missing -->
+        <onException>
+            <exception>java.lang.IllegalArgumentException</exception>
+            <to uri="direct:handleIllegalArgumentExceptionWithTransformer"/>
+        </onException>
+
+        <!-- payload stream cannot be read -->
+        <onException>
+            <exception>io.dataspaceconnector.common.exception.MessageRequestException</exception>
+            <to uri="direct:handleMessagePayloadException"/>
+        </onException>
+
+        <!-- contract request does not contain any rules -->
+        <onException>
+            <exception>io.dataspaceconnector.service.message.handler.exception.MissingRulesException</exception>
+            <to uri="direct:handleMissingRulesException"/>
+        </onException>
+
+        <!-- at least on rule in the contract is missing a target -->
+        <onException>
+            <exception>io.dataspaceconnector.service.message.handler.exception.MissingTargetInRuleException</exception>
+            <to uri="direct:handleMissingTargetInRuleException"/>
+        </onException>
+
+        <!-- the response cannot be built -->
+        <onException>
+            <exception>java.lang.IllegalStateException</exception>
+            <exception>de.fraunhofer.iais.eis.util.ConstraintViolationException</exception>
+            <exception>io.dataspaceconnector.common.exception.RdfBuilderException</exception>
+            <to uri="direct:handleResponseMessageBuilderException"/>
+        </onException>
+
+        <!-- the agreement cannot be built or persisted -->
+        <onException>
+            <exception>io.dataspaceconnector.service.message.handler.exception.AgreementPersistenceException</exception>
+            <to uri="direct:handleAgreementPersistenceException"/>
+        </onException>
+
+        <from uri="direct:contractRequestHandler"/>
+        <transacted ref="transactionPolicy"/>
+        <to uri="direct:idsValidation"/>
+        <process ref="ContractDeserializer"/>
+        <process ref="ContractRuleListTransformer"/>
+        <process ref="RuleListValidator"/>
+        <process ref="ContractTargetRuleMapTransformer"/>
+        <process ref="TargetRuleMapValidator"/>
+        <doTry>
+            <process ref="RuleValidator"/>
+            <doCatch>
+                <!-- at least one rule in the contract is malformed -->
+                <exception>io.dataspaceconnector.service.message.handler.exception.MalformedRuleException</exception>
+                <to uri="direct:handleMalformedRules"/>-->
+                <stop/>
+            </doCatch>
+            <doCatch>
+                <!-- there are no contract offers for the target artifact or none for the requesting consumer -->
+                <exception>io.dataspaceconnector.service.message.handler.exception.ContractListEmptyException</exception>
+                <to uri="direct:handleContractListEmptyException"/>
+                <stop/>
+            </doCatch>
+            <doCatch>
+                <!-- the contract request will be rejected -->
+                <exception>io.dataspaceconnector.service.message.handler.exception.ContractRejectedException</exception>
+                <process ref="RejectContractProcessor"/>
+                <stop/>
+            </doCatch>
+        </doTry>
+        <process ref="AcceptContractProcessor"/>
+
+    </route>
+</routes>

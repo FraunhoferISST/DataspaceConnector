@@ -32,5 +32,5 @@ public enum RegistrationStatus {
      * Registered status.
      */
     @JsonProperty("Registered")
-    REGISTERED;
+    REGISTERED
 }

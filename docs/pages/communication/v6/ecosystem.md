@@ -396,7 +396,7 @@ The response:
 
 ## Clearing House
 
-The Clearing House is available at [https://ch-ids.aisec.fraunhofer.de/](https://ch-ids.aisec.fraunhofer.de/e).
+The Clearing House is available at [https://ch-ids.aisec.fraunhofer.de/](https://ch-ids.aisec.fraunhofer.de/).
 The repositories for [core](https://github.com/International-Data-Spaces-Association/ids-clearing-house-core)
 and [service](https://github.com/International-Data-Spaces-Association/ids-clearing-house-service)
 are open source and can be accessed at GitHub. Further documentation about the IDS Clearing House

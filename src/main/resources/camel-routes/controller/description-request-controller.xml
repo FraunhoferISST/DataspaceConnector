@@ -1,0 +1,36 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="descriptionRequestSender">
+
+        <onException>
+            <exception>io.dataspaceconnector.common.exception.MessageException</exception>
+            <to uri="direct:handleMessageException"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.common.exception.MessageResponseException</exception>
+            <to uri="direct:handleReceivedInvalidResponse"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.service.message.handler.exception.InvalidResponseException</exception>
+            <to uri="direct:handleInvalidResponseException"/>
+        </onException>
+
+        <!-- an error occurred in IDSCP2 communication -->
+        <onException>
+            <exception>de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception</exception>
+            <to uri="direct:handleIdscp2Exception"/>
+        </onException>
+
+        <from uri="direct:descriptionRequestSender"/>
+        <setProperty name="idscp2-client-uri">
+            <simple>${bean:io.dataspaceconnector.common.routing.ParameterUtils?method=getIdscp2ClientUri(${exchangeProperty.recipient})}</simple>
+        </setProperty>
+        <process ref="DescriptionRequestMessageBuilder"/>
+        <process ref="RequestWithoutPayloadPreparer"/>
+        <toD uri="${exchangeProperty.idscp2-client-uri}"/>
+        <process ref="ResponseToDtoConverter"/>
+        <process ref="DescriptionResponseValidator"/>
+
+    </route>
+</routes>

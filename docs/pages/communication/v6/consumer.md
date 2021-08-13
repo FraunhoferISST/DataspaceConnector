@@ -22,7 +22,7 @@ The self-description is returned as JSON-LD and contains several information abo
 connector instance. This includes e.g. the title, the maintainer, the IDS Infomodel version, and
 the resource catalog. At the public endpoint `/`, the resource catalog is not displayed. It can only
 be accessed with admin credentials at `GET /api/connector` or by sending an IDS description request
-message as explained [here](pages/communication/v6/consumer.md#step-1-request-a-connectors-self-description)).
+message as explained [here](#step-1-query-provider---request-a-connectors-self-description).
 
 ![Selfservice Endpoints](../../../assets/images/v6/swagger_connector.png)
 
@@ -126,7 +126,7 @@ rejection reason from the provider connector. E.g.:
 With this, you can navigate yourself through the data offers of the provider and choose the artifact
 whose data you want to retrieve. A response will never contain the raw data.
 
-Following the example data, that was provided within the [provider guide](pages/communication/v6/provider.md), we would end
+Following the example data, that was provided within the [provider guide](provider.md), we would end
 up with the following information when requesting
 [https://localhost:8080/api/catalogs/eda0cda2-10f2-4b39-b462-5d4f2b1bb758](https://localhost:8080/api/catalogs/eda0cda2-10f2-4b39-b462-5d4f2b1bb758)
 and its resource offer [https://localhost:8080/api/offers/98d6818b-a1b7-4171-a318-a0e11837bf10](https://localhost:8080/api/offers/98d6818b-a1b7-4171-a318-a0e11837bf10):
@@ -338,6 +338,11 @@ As a response, we now receive the closed contract agreement:
 }
 ```
 
+To get to the artifacts and their data links, make a request on (in this example):
+`https://localhost:8080/api/agreements/e6464bac-bed9-49ca-bafb-86fb4142b49c/artifacts`.
+Due to HATEOAS, all responses contain information about related objects. So you can just
+search your way through the data model.
+
 The corresponding contract agreement has been sent to the Clearing House and stored inside the
 consumer's and provider's internal database for later access and usage control.
 
@@ -362,8 +367,9 @@ rules, you are able to handle out contract agreements for multiple artifacts at 
 
 ---
 
-The Dataspace Connector will automatically start sending `DescriptionRequestMessages` and
-`ArtifactRequestMessages` for the requested elements and store metadata and data to its database.
+After the contract negotiation, the Dataspace Connector will automatically start sending
+`DescriptionRequestMessages` and `ArtifactRequestMessages` for the requested elements and store
+metadata and data to its database.
 
 ### Step 4: Access the Data
 
@@ -400,7 +406,7 @@ policies of the requested data resource are checked for the following patterns:
 `USAGE_NOTIFICATION`, and `N_TIMES_USAGE`. The policy is then implemented using the detected
 pattern.
 
-As described [here](pages/communication/v6/provider.md#policy-enforcement), depending on the rule
+As described [here](provider.md#policy-enforcement), depending on the rule
 values, the access permission will be set to true or false, and correspondingly, the data is either
 returned or not.
 

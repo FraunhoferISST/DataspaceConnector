@@ -15,8 +15,13 @@
  */
 package io.dataspaceconnector.model.subscription;
 
-import io.dataspaceconnector.exception.InvalidEntityException;
+import io.dataspaceconnector.common.exception.InvalidEntityException;
+import io.dataspaceconnector.config.ConnectorConfig;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
 
@@ -26,10 +31,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(MockitoExtension.class)
 class SubscriptionFactoryTest {
 
-    final SubscriptionDesc desc = new SubscriptionDesc();
-    final SubscriptionFactory factory = new SubscriptionFactory();
+    @Mock
+    private ConnectorConfig connectorConfig;
+
+    private final SubscriptionDesc desc = new SubscriptionDesc();
+    private SubscriptionFactory factory;
+
+    @BeforeEach
+    public void init() {
+        factory = new SubscriptionFactory(connectorConfig);
+    }
 
     @Test
     void create_validDesc_returnNew() {

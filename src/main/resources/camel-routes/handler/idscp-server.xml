@@ -1,0 +1,155 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+
+    <route id="idscp2Server">
+
+        <from uri="idscp2server://0.0.0.0:29292?sslContextParameters=#serverSslContext&amp;useIdsMessages=true"/>
+        <log message="${body}"/>
+        <process ref="TypeExtractionProcessor"/>
+        <process ref="IncomingIdscpMessageParser"/>
+        <choice>
+            <when>
+                <simple>${exchangeProperty.ids-type} == 'DescriptionRequestMessage'</simple>
+                <doTry>
+                    <to uri="direct:descriptionRequestHandler"/>
+                    <doCatch>
+                        <!-- ignore exception as they have been handled in the message handler routes -->
+                        <exception>java.lang.Exception</exception>
+                    </doCatch>
+                </doTry>
+            </when>
+            <when>
+                <simple>${exchangeProperty.ids-type} == 'DescriptionRequestMessageImpl'</simple>
+                <doTry>
+                    <to uri="direct:descriptionRequestHandler"/>
+                    <doCatch>
+                        <!-- ignore exception as they have been handled in the message handler routes -->
+                        <exception>java.lang.Exception</exception>
+                    </doCatch>
+                </doTry>
+            </when>
+            <when>
+                <simple>${exchangeProperty.ids-type} == 'ContractRequestMessage'</simple>
+                <doTry>
+                    <to uri="direct:contractRequestHandler"/>
+                    <doCatch>
+                        <!-- ignore exception as they have been handled in the message handler routes -->
+                        <exception>java.lang.Exception</exception>
+                    </doCatch>
+                </doTry>
+            </when>
+            <when>
+                <simple>${exchangeProperty.ids-type} == 'ContractRequestMessageImpl'</simple>
+                <doTry>
+                    <to uri="direct:contractRequestHandler"/>
+                    <doCatch>
+                        <!-- ignore exception as they have been handled in the message handler routes -->
+                        <exception>java.lang.Exception</exception>
+                    </doCatch>
+                </doTry>
+            </when>
+            <when>
+                <simple>${exchangeProperty.ids-type} == 'ContractAgreementMessage'</simple>
+                <doTry>
+                    <to uri="direct:contractAgreementHandler"/>
+                    <doCatch>
+                        <!-- ignore exception as they have been handled in the message handler routes -->
+                        <exception>java.lang.Exception</exception>
+                    </doCatch>
+                </doTry>
+            </when>
+            <when>
+                <simple>${exchangeProperty.ids-type} == 'ContractAgreementMessageImpl'</simple>
+                <doTry>
+                    <to uri="direct:contractAgreementHandler"/>
+                    <doCatch>
+                        <!-- ignore exception as they have been handled in the message handler routes -->
+                        <exception>java.lang.Exception</exception>
+                    </doCatch>
+                </doTry>
+            </when>
+            <when>
+                <simple>${exchangeProperty.ids-type} == 'ArtifactRequestMessage'</simple>
+                <doTry>
+                    <to uri="direct:artifactRequestHandler"/>
+                    <doCatch>
+                        <!-- ignore exception as they have been handled in the message handler routes -->
+                        <exception>java.lang.Exception</exception>
+                    </doCatch>
+                </doTry>
+            </when>
+            <when>
+                <simple>${exchangeProperty.ids-type} == 'ArtifactRequestMessageImpl'</simple>
+                <doTry>
+                    <to uri="direct:artifactRequestHandler"/>
+                    <doCatch>
+                        <!-- ignore exception as they have been handled in the message handler routes -->
+                        <exception>java.lang.Exception</exception>
+                    </doCatch>
+                </doTry>
+            </when>
+            <when>
+                <simple>${exchangeProperty.ids-type} == 'NotificationMessage'</simple>
+                <doTry>
+                    <to uri="direct:notificationMsgHandler"/>
+                    <doCatch>
+                        <!-- ignore exception as they have been handled in the message handler routes -->
+                        <exception>java.lang.Exception</exception>
+                    </doCatch>
+                </doTry>
+            </when>
+            <when>
+                <simple>${exchangeProperty.ids-type} == 'NotificationMessageImpl'</simple>
+                <doTry>
+                    <to uri="direct:notificationMsgHandler"/>
+                    <doCatch>
+                        <!-- ignore exception as they have been handled in the message handler routes -->
+                        <exception>java.lang.Exception</exception>
+                    </doCatch>
+                </doTry>
+            </when>
+            <when>
+                <simple>${exchangeProperty.ids-type} == 'ResourceUpdateMessage'</simple>
+                <doTry>
+                    <to uri="direct:resourceUpdateHandler"/>
+                    <doCatch>
+                        <!-- ignore exception as they have been handled in the message handler routes -->
+                        <exception>java.lang.Exception</exception>
+                    </doCatch>
+                </doTry>
+            </when>
+            <when>
+                <simple>${exchangeProperty.ids-type} == 'ResourceUpdateMessageImpl'</simple>
+                <doTry>
+                    <to uri="direct:resourceUpdateHandler"/>
+                    <doCatch>
+                        <!-- ignore exception as they have been handled in the message handler routes -->
+                        <exception>java.lang.Exception</exception>
+                    </doCatch>
+                </doTry>
+            </when>
+            <when>
+                <simple>${exchangeProperty.ids-type} == 'RequestMessage'</simple>
+                <doTry>
+                    <to uri="direct:subscriptionMsgHandler"/>
+                    <doCatch>
+                        <!-- ignore exception as they have been handled in the message handler routes -->
+                        <exception>java.lang.Exception</exception>
+                    </doCatch>
+                </doTry>
+            </when>
+            <when>
+                <simple>${exchangeProperty.ids-type} == 'RequestMessageImpl'</simple>
+                <doTry>
+                    <to uri="direct:subscriptionMsgHandler"/>
+                    <doCatch>
+                        <!-- ignore exception as they have been handled in the message handler routes -->
+                        <exception>java.lang.Exception</exception>
+                    </doCatch>
+                </doTry>
+            </when>
+        </choice>
+        <process ref="DefaultErrorResponseProcessor"/>
+        <process ref="OutgoingIdscpMessageParser"/>
+    </route>
+
+</routes>

@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.service.resource;
 
+import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;
@@ -32,8 +34,19 @@ import io.dataspaceconnector.model.template.ContractTemplate;
 import io.dataspaceconnector.model.template.RepresentationTemplate;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.Utils;
+import io.dataspaceconnector.service.resource.relation.AbstractResourceContractLinker;
+import io.dataspaceconnector.service.resource.relation.AbstractResourceRepresentationLinker;
+import io.dataspaceconnector.service.resource.relation.ContractRuleLinker;
+import io.dataspaceconnector.service.resource.relation.RepresentationArtifactLinker;
+import io.dataspaceconnector.service.resource.type.ArtifactService;
+import io.dataspaceconnector.service.resource.relation.CatalogOfferedResourceLinker;
+import io.dataspaceconnector.service.resource.relation.CatalogRequestedResourceLinker;
+import io.dataspaceconnector.service.resource.type.CatalogService;
+import io.dataspaceconnector.service.resource.type.ContractService;
+import io.dataspaceconnector.service.resource.base.RemoteResolver;
+import io.dataspaceconnector.service.resource.type.RepresentationService;
+import io.dataspaceconnector.service.resource.type.ResourceService;
+import io.dataspaceconnector.service.resource.type.RuleService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,8 +95,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
     /**
      * The linker for representation-artifact relations.
      */
-    private final @NonNull
-    RelationServices.RepresentationArtifactLinker representationArtifactLinker;
+    private final @NonNull RepresentationArtifactLinker representationArtifactLinker;
 
     /**
      * The service for contracts.
@@ -99,7 +111,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
     /**
      * The linker for contract-rule relations.
      */
-    private final @NonNull RelationServices.ContractRuleLinker contractRuleLinker;
+    private final @NonNull ContractRuleLinker contractRuleLinker;
 
     /**
      * The service for artifacts.
@@ -302,9 +314,9 @@ class TemplateBuilderOfferedResource
                     resourceRepresentationLinker,
             final AbstractResourceContractLinker<OfferedResource> resourceContractLinker,
             final RepresentationService representationService,
-            final RelationServices.RepresentationArtifactLinker representationArtifactLinker,
+            final RepresentationArtifactLinker representationArtifactLinker,
             final ContractService contractService,
-            final RelationServices.ContractRuleLinker contractRuleLinker) {
+            final ContractRuleLinker contractRuleLinker) {
         super(resourceService, resourceRepresentationLinker,
                 resourceContractLinker, representationService, representationArtifactLinker,
                 contractService, contractRuleLinker);
@@ -341,9 +353,9 @@ class TemplateBuilderRequestedResource
                     resourceRepresentationLinker,
             final AbstractResourceContractLinker<RequestedResource> resourceContractLinker,
             final RepresentationService representationService,
-            final RelationServices.RepresentationArtifactLinker representationArtifactLinker,
+            final RepresentationArtifactLinker representationArtifactLinker,
             final ContractService contractService,
-            final RelationServices.ContractRuleLinker contractRuleLinker) {
+            final ContractRuleLinker contractRuleLinker) {
         super(resourceService, resourceRepresentationLinker,
                 resourceContractLinker, representationService, representationArtifactLinker,
                 contractService, contractRuleLinker);

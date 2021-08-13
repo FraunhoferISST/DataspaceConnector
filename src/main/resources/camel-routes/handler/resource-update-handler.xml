@@ -1,0 +1,52 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="resourceUpdateHandler">
+
+        <!-- affected resource is missing from message header -->
+        <onException>
+            <exception>io.dataspaceconnector.service.message.handler.exception.NoAffectedResourceException</exception>
+            <to uri="direct:handleNoAffectedResourceException"/>
+        </onException>
+
+        <!-- affected resource from message header does not match resource ID in payload -->
+        <onException>
+            <exception>io.dataspaceconnector.service.message.handler.exception.InvalidAffectedResourceException</exception>
+            <to uri="direct:handleInvalidAffectedResourceException"/>
+        </onException>
+
+        <!-- building the response fails -->
+        <onException>
+            <exception>java.lang.IllegalStateException</exception>
+            <to uri="direct:handleResponseMessageBuilderException"/>
+        </onException>
+
+        <!-- reading the payload stream fails -->
+        <onException>
+            <exception>java.io.IOException</exception>
+            <exception>java.lang.IllegalArgumentException</exception>
+            <to uri="direct:handleMessagePayloadException"/>
+        </onException>
+
+        <from uri="direct:resourceUpdateHandler"/>
+        <transacted ref="transactionPolicy"/>
+        <to uri="direct:idsValidation"/>
+        <process ref="AffectedResourceValidator"/>
+        <doTry>
+            <process ref="ResourceDeserializer"/>
+            <doCatch>
+                <!-- deserializing the message payload fails -->
+                <exception>io.dataspaceconnector.service.message.handler.exception.DeserializationException</exception>
+                <to uri="direct:handleWrappedIllegalArgumentException"/>
+                <stop/>
+            </doCatch>
+            <doCatch>
+                <!-- payload is empty -->
+                <exception>io.dataspaceconnector.service.message.handler.exception.MissingPayloadException</exception>
+                <to uri="direct:handleMissingPayloadException"/>
+                <stop/>
+            </doCatch>
+        </doTry>
+        <process ref="CorrectAffectedResourceValidator"/>
+        <process ref="ResourceUpdateProcessor"/>
+
+    </route>
+</routes>

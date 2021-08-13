@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.service;
 
-import io.dataspaceconnector.util.QueryInput;
+import io.dataspaceconnector.common.net.QueryInput;
 
 import java.io.InputStream;
 import java.net.URI;

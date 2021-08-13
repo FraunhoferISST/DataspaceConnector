@@ -18,21 +18,21 @@ package io.dataspaceconnector.service;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.dataspaceconnector.controller.resource.ResourceControllers;
-import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.ids.mapping.RdfConverter;
+import io.dataspaceconnector.common.ids.message.MessageUtils;
+import io.dataspaceconnector.common.ids.model.TemplateUtils;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.controller.resource.type.AgreementController;
 import io.dataspaceconnector.model.agreement.AgreementDesc;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
-import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.service.resource.AgreementService;
-import io.dataspaceconnector.service.resource.ArtifactService;
-import io.dataspaceconnector.service.resource.RelationServices;
+import io.dataspaceconnector.common.ids.DeserializationService;
+import io.dataspaceconnector.service.resource.relation.AgreementArtifactLinker;
+import io.dataspaceconnector.service.resource.type.AgreementService;
+import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.resource.TemplateBuilder;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
-import io.dataspaceconnector.service.util.EndpointUtils;
-import io.dataspaceconnector.util.IdsUtils;
-import io.dataspaceconnector.util.MessageUtils;
-import io.dataspaceconnector.util.TemplateUtils;
+import io.dataspaceconnector.common.net.EndpointUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -80,7 +80,7 @@ public class EntityPersistenceService {
     /**
      * Service for linking agreements and artifacts.
      */
-    private final @NonNull RelationServices.AgreementArtifactLinker linker;
+    private final @NonNull AgreementArtifactLinker linker;
 
     /**
      * Service for contract processing.
@@ -108,7 +108,7 @@ public class EntityPersistenceService {
             throws PersistenceException {
         try {
             final var agreementId = agreement.getId();
-            final var rdf = IdsUtils.toRdf(agreement);
+            final var rdf = RdfConverter.toRdf(agreement);
 
             final var desc = new AgreementDesc(agreementId, true, rdf, null);
 
@@ -141,7 +141,7 @@ public class EntityPersistenceService {
         try {
             // Get base URL of application and path to agreements API.
             final var applicationBaseUrl = getApplicationBaseUrl();
-            final var path = ResourceControllers.AgreementController.class.getAnnotation(
+            final var path = AgreementController.class.getAnnotation(
                     RequestMapping.class).value()[0];
 
             // Persist empty agreement to generate UUID.
@@ -161,7 +161,7 @@ public class EntityPersistenceService {
                 artifactList.add(uuid);
             }
 
-            final var rdf = IdsUtils.toRdf(agreement);
+            final var rdf = RdfConverter.toRdf(agreement);
 
             final var desc = new AgreementDesc();
             desc.setConfirmed(false);

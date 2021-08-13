@@ -1,0 +1,20 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="idsValidation">
+
+        <!-- Infomodel version specified in message header is not supported by connector -->
+        <onException>
+            <exception>io.dataspaceconnector.common.exception.VersionNotSupportedException</exception>
+            <to uri="direct:handleVersionNotSupportedException"/>
+        </onException>
+
+        <!-- message header is empty -->
+        <onException>
+            <exception>io.dataspaceconnector.common.exception.MessageEmptyException</exception>
+            <to uri="direct:handleMessageEmptyException"/>
+        </onException>
+
+        <from uri="direct:idsValidation"/>
+        <process ref="MessageHeaderValidator"/>
+
+    </route>
+</routes>

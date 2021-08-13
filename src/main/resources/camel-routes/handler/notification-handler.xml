@@ -1,0 +1,17 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="notification-handler-route">
+
+        <!-- the response could not be built -->
+        <onException>
+            <exception>java.lang.IllegalStateException</exception>
+            <exception>de.fraunhofer.iais.eis.util.ConstraintViolationException</exception>
+            <to uri="direct:handleResponseMessageBuilderException"/>
+        </onException>
+
+        <from uri="direct:notificationMsgHandler"/>
+        <transacted ref="transactionPolicy"/>
+        <to uri="direct:idsValidation"/>
+        <process ref="ProcessedNotification"/>
+
+    </route>
+</routes>

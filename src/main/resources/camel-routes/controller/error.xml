@@ -1,0 +1,66 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+
+    <route id="messageException">
+        <from uri="direct:handleMessageException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling MessageException called."/>
+        <to uri="bean:io.dataspaceconnector.controller.util.ResponseUtils?method=respondIdsMessageFailed(${exception})"/>
+    </route>
+
+    <route id="invalidResponseException">
+        <from uri="direct:handleInvalidResponseException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling invalid response called."/>
+        <process ref="ResponseMapCreator"/>
+        <to uri="bean:io.dataspaceconnector.controller.util.ResponseUtils?method=respondWithContent(${body})"/>
+    </route>
+
+    <route id="invalidInputException">
+        <from uri="direct:handleInvalidInputException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling InvalidInputException called."/>
+        <to uri="bean:io.dataspaceconnector.controller.util.ResponseUtils?method=respondInvalidInput(${exception})"/>
+    </route>
+
+    <route id="failedToBuildContractRequest">
+        <from uri="direct:handleFailedToBuildContractRequest"/>
+        <log loggingLevel="DEBUG" message="Error route for handling failed contract building called."/>
+        <to uri="bean:io.dataspaceconnector.controller.util.ResponseUtils?method=respondFailedToBuildContractRequest(${exception})"/>
+    </route>
+
+    <route id="receivedInvalidResponse">
+        <from uri="direct:handleReceivedInvalidResponse"/>
+        <log loggingLevel="DEBUG" message="Error route for handling received invalid response called."/>
+        <to uri="bean:io.dataspaceconnector.controller.util.ResponseUtils?method=respondReceivedInvalidResponse(${exception})"/>
+    </route>
+
+    <route id="persistenceException">
+        <from uri="direct:handlePersistenceException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling PersistenceException called."/>
+        <to uri="bean:io.dataspaceconnector.controller.util.ResponseUtils?method=respondFailedToStoreEntity(${exception})"/>
+    </route>
+
+    <route id="idsMessageFailed">
+        <from uri="direct:handleIdsMessageFailed"/>
+        <log loggingLevel="DEBUG" message="Error route for handling failed IDS message called."/>
+        <to uri="bean:io.dataspaceconnector.controller.util.ResponseUtils?method=respondIdsMessageFailed(${exception})"/>
+    </route>
+
+    <route id="resourceNotFoundForController">
+        <from uri="direct:handleResourceNotFoundForController"/>
+        <log loggingLevel="DEBUG" message="Error route for handling resource not found called."/>
+        <to uri="bean:io.dataspaceconnector.controller.util.ResponseUtils?method=respondResourceNotFound(${exchangeProperty.resourceId})"/>
+    </route>
+
+    <route id="configUpdateException">
+        <from uri="direct:handleConfigUpdateException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling ConfigUpdateException called."/>
+        <to uri="bean:io.dataspaceconnector.controller.util.ResponseUtils?method=respondConfigurationUpdateError(${exception})"/>
+    </route>
+
+    <route id="idscp2Exception">
+        <from uri="direct:handleIdscp2Exception"/>
+        <log loggingLevel="DEBUG" message="Error route for handling IDSCP2 exception called."/>
+        <to uri="bean:io.dataspaceconnector.controller.util.ResponseUtils?method=respondIdscp2Error(
+        ${exchangeProperty.recipient},
+        ${exception.cause})"/>
+    </route>
+
+</routes>

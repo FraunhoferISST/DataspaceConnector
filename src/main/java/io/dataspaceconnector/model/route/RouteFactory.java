@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.model.route;
 
-import java.util.ArrayList;
-import java.util.Objects;
-
 import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.model.util.FactoryUtils;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Creates and updates a route.
@@ -82,7 +82,7 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
      * @return True, if route configuration is updated.
      */
     private boolean updateRouteConfiguration(final Route route, final String routeConfiguration) {
-        final var newRouteConfig = MetadataUtils.updateString(route.getConfiguration(),
+        final var newRouteConfig = FactoryUtils.updateString(route.getConfiguration(),
                 routeConfiguration, DEFAULT_CONFIGURATION);
         newRouteConfig.ifPresent(route::setConfiguration);
 

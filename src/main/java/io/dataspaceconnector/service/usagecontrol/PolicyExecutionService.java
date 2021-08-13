@@ -18,12 +18,12 @@ package io.dataspaceconnector.service.usagecontrol;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Rule;
-import io.dataspaceconnector.exception.PolicyExecutionException;
-import io.dataspaceconnector.service.ids.ConnectorService;
-import io.dataspaceconnector.service.message.processing.ClearingHouseService;
-import io.dataspaceconnector.service.message.type.NotificationService;
-import io.dataspaceconnector.util.IdsUtils;
-import io.dataspaceconnector.util.RuleUtils;
+import io.dataspaceconnector.common.ids.mapping.RdfConverter;
+import io.dataspaceconnector.common.ids.policy.RuleUtils;
+import io.dataspaceconnector.common.exception.PolicyExecutionException;
+import io.dataspaceconnector.common.ids.ConnectorService;
+import io.dataspaceconnector.common.ids.message.ClearingHouseService;
+import io.dataspaceconnector.service.message.builder.type.NotificationService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -65,7 +65,7 @@ public class PolicyExecutionService {
     public void sendAgreement(final ContractAgreement agreement) {
         try {
             final var agreementId = agreement.getId();
-            final var logItem = IdsUtils.toRdf(agreement);
+            final var logItem = RdfConverter.toRdf(agreement);
 
             clearingHouseSvc.sendToClearingHouse(agreementId, logItem);
         } catch (Exception exception) {

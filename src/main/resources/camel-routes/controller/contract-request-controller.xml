@@ -1,0 +1,100 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="contractRequestSender">
+
+        <onException>
+            <exception>io.dataspaceconnector.common.exception.InvalidInputException</exception>
+            <to uri="direct:handleInvalidInputException"/>
+        </onException>
+
+        <onException>
+            <exception>de.fraunhofer.iais.eis.util.ConstraintViolationException</exception>
+            <to uri="direct:handleFailedToBuildContractRequest"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.service.message.handler.exception.InvalidResponseException</exception>
+            <to uri="direct:handleInvalidResponseException"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.common.exception.MessageException</exception>
+            <to uri="direct:handleMessageException"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.common.exception.MessageResponseException</exception>
+            <exception>io.dataspaceconnector.common.exception.ContractException</exception>
+            <exception>java.lang.IllegalArgumentException</exception>
+            <to uri="direct:handleReceivedInvalidResponse"/>
+        </onException>
+
+        <onException>
+            <exception>javax.persistence.PersistenceException</exception>
+            <to uri="direct:handlePersistenceException"/>
+        </onException>
+
+        <!-- an error occurred in IDSCP2 communication -->
+        <onException>
+            <exception>de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception</exception>
+            <to uri="direct:handleIdscp2Exception"/>
+        </onException>
+
+        <onException>
+            <exception>java.io.IOException</exception>
+            <exception>io.dataspaceconnector.common.exception.ResourceNotFoundException</exception>
+            <exception>io.dataspaceconnector.common.exception.MessageResponseException</exception>
+            <log loggingLevel="DEBUG" message="Could not save data for artifact. [artifact=(${exchangeProperty.currentArtifact}), exception=(${exception.message})]"/>
+        </onException>
+
+        <!-- an error occurred in IDSCP2 communication -->
+        <onException>
+            <exception>de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception</exception>
+            <to uri="direct:handleIdscp2Exception"/>
+        </onException>
+
+        <from uri="direct:contractRequestSender"/>
+        <setProperty name="idscp2-client-uri">
+            <simple>${bean:io.dataspaceconnector.common.routing.ParameterUtils?method=getIdscp2ClientUri(${exchangeProperty.recipient})}</simple>
+        </setProperty>
+        <process ref="RuleListInputValidator"/>
+        <process ref="ContractRequestMessageBuilder"/>
+        <process ref="ContractRequestPreparer"/>
+        <toD uri="${exchangeProperty.idscp2-client-uri}"/>
+        <process ref="ResponseToDtoConverter"/>
+        <process ref="ContractResponseValidator"/>
+        <process ref="ContractAgreementValidator"/>
+        <process ref="ContractAgreementMessageBuilder"/>
+        <process ref="ContractAgreementPreparer"/>
+        <toD uri="${exchangeProperty.idscp2-client-uri}"/>
+        <process ref="ResponseToDtoConverter"/>
+        <process ref="ContractAgreementResponseValidator"/>
+        <process ref="ContractAgreementPersistenceProcessor"/>
+
+        <loop>
+            <simple>${exchangeProperty.resources.size()}</simple>
+            <process ref="DescriptionRequestMessageBuilder"/>
+            <process ref="RequestWithoutPayloadPreparer"/>
+            <toD uri="${exchangeProperty.idscp2-client-uri}"/>
+            <process ref="ResponseToDtoConverter"/>
+            <process ref="DescriptionResponseValidator"/>
+            <process ref="MetadataPersistenceProcessor"/>
+        </loop>
+        <process ref="AgreementToArtifactsLinker"/>
+
+        <choice>
+            <when>
+                <simple>${exchangeProperty.download}</simple>
+                <loop>
+                    <simple>${exchangeProperty.artifacts.size()}</simple>
+                    <process ref="ArtifactRequestMessageBuilder"/>
+                    <process ref="RequestWithoutPayloadPreparer"/>
+                    <toD uri="${exchangeProperty.idscp2-client-uri}"/>
+                    <process ref="ResponseToDtoConverter"/>
+                    <process ref="ArtifactResponseValidator"/>
+                    <process ref="DataPersistenceProcessor"/>
+                </loop>
+            </when>
+        </choice>
+
+    </route>
+</routes>

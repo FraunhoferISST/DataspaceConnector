@@ -15,20 +15,29 @@
  */
 package io.dataspaceconnector.model.subscription;
 
-import java.net.URI;
-
-import io.dataspaceconnector.exception.InvalidEntityException;
+import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.exception.InvalidEntityException;
+import io.dataspaceconnector.common.util.ValidationUtils;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.MetadataUtils;
-import io.dataspaceconnector.util.ValidationUtils;
+import io.dataspaceconnector.model.util.FactoryUtils;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
 
 /**
  * Creates and updates a subscription.
  */
 @Component
+@RequiredArgsConstructor
 public class SubscriptionFactory extends AbstractNamedFactory<Subscription, SubscriptionDesc> {
+
+    /**
+     * Service for the current connector configuration.
+     */
+    private final @NonNull ConnectorConfig connectorConfig;
 
     /** {@inheritDoc} */
     @Override
@@ -58,20 +67,29 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
      * Updates the URL of a subscription.
      *
      * @param subscription The subscription.
-     * @param url          The new URL.
+     * @param uri          The new URL.
      * @return true, if the URL was updated; false otherwise.
      */
-    private boolean updateLocation(final Subscription subscription, final URI url) {
-        // TODO Should not throw?
-        if (url == null || ValidationUtils.isInvalidUri(String.valueOf(url))) {
-            throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT.toString());
-        }
+    private boolean updateLocation(final Subscription subscription, final URI uri) {
+        validateInput(uri);
 
-        final var newUri = MetadataUtils.updateUri(subscription.getLocation(), url, null);
+        final var newUri = FactoryUtils.updateUri(subscription.getLocation(), uri, null);
         newUri.ifPresent(subscription::setLocation);
 
         return newUri.isPresent();
     }
+
+    private void validateInput(final URI uri) {
+        // TODO Should not throw?
+        final var cond1 = connectorConfig.isIdscpEnabled()
+                          && (uri == null || uri.toString().isBlank());
+        final var cond2 = uri == null || ValidationUtils.isInvalidUri(String.valueOf(uri));
+
+        if (cond1 || cond2) {
+            throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT);
+        }
+    }
+
 
     /**
      * Updates the target of a subscription.
@@ -82,10 +100,10 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
      */
     private boolean updateTarget(final Subscription subscription, final URI target) {
         if (target == null || ValidationUtils.isInvalidUri(String.valueOf(target))) {
-            throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT.toString());
+            throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT);
         }
 
-        final var newTarget = MetadataUtils.updateUri(subscription.getTarget(), target, null);
+        final var newTarget = FactoryUtils.updateUri(subscription.getTarget(), target, null);
         newTarget.ifPresent(subscription::setTarget);
 
         return newTarget.isPresent();
@@ -100,11 +118,11 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
      */
     private boolean updateSubscriber(final Subscription subscription, final URI subscriber) {
         if (subscriber == null || ValidationUtils.isInvalidUri(String.valueOf(subscriber))) {
-            throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT.toString());
+            throw new InvalidEntityException(ErrorMessage.INVALID_ENTITY_INPUT);
         }
 
         final var newSubscriber =
-                MetadataUtils.updateUri(subscription.getSubscriber(), subscriber, null);
+                FactoryUtils.updateUri(subscription.getSubscriber(), subscriber, null);
         newSubscriber.ifPresent(subscription::setSubscriber);
 
         return newSubscriber.isPresent();
@@ -119,7 +137,7 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
      */
     private boolean updatePushData(final Subscription subscription, final boolean push) {
         final var newPushValue =
-                MetadataUtils.updateBoolean(subscription.isPushData(), push, false);
+                FactoryUtils.updateBoolean(subscription.isPushData(), push, false);
         newPushValue.ifPresent(subscription::setPushData);
 
         return newPushValue.isPresent();
@@ -134,7 +152,7 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
      */
     private boolean updateIdsValue(final Subscription subscription, final boolean ids) {
         final var newIdsValue =
-                MetadataUtils.updateBoolean(subscription.isIdsProtocol(), ids, false);
+                FactoryUtils.updateBoolean(subscription.isIdsProtocol(), ids, false);
         newIdsValue.ifPresent(subscription::setIdsProtocol);
 
         return newIdsValue.isPresent();

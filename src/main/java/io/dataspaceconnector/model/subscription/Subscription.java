@@ -17,6 +17,7 @@ package io.dataspaceconnector.model.subscription;
 
 import io.dataspaceconnector.model.base.RemoteService;
 import io.dataspaceconnector.model.named.NamedEntity;
+import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,9 +26,13 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.net.URI;
+
+import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
  * Represents a backend subscribed for updates to a requested resource.
@@ -50,16 +55,22 @@ public class Subscription extends NamedEntity implements RemoteService {
     /**
      * The id of the resource or artifact that the subscriber subscribed to.
      */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI target;
 
     /**
      * The URL to use when notifying the subscriber about updates to a resource.
      */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI location;
 
     /**
      * A connector or backend system identifier.
      */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI subscriber;
 
     /**

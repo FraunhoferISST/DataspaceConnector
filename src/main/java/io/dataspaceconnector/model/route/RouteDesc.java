@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.model.route;
 
-import io.dataspaceconnector.model.named.NamedDescription;
 import io.dataspaceconnector.model.configuration.DeployMethod;
+import io.dataspaceconnector.model.named.NamedDescription;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

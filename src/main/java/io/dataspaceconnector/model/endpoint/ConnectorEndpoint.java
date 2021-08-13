@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
-import javax.persistence.Entity;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import javax.persistence.Entity;
 
 /**
  * Entity for managing connector endpoints.

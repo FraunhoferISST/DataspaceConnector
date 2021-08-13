@@ -1,0 +1,43 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="artifactRequestHandler">
+
+        <!-- the requested artifact is missing from the message header -->
+        <onException>
+            <exception>io.dataspaceconnector.service.message.handler.exception.NoRequestedArtifactException</exception>
+            <to uri="direct:handleNoRequestedArtifactException"/>
+        </onException>
+
+        <!-- the query input from the consumer for fetching the data is invalid -->
+        <onException>
+            <exception>io.dataspaceconnector.common.exception.InvalidInputException</exception>
+            <to uri="direct:handleInvalidInputException"/>
+        </onException>
+
+        <!-- the response could not be built -->
+        <onException>
+            <exception>java.io.IOException</exception>
+            <exception>de.fraunhofer.iais.eis.util.ConstraintViolationException</exception>
+            <to uri="direct:handleResponseMessageBuilderException"/>
+        </onException>
+
+        <!-- failed to retrieve the artifact's data -->
+        <onException>
+            <exception>java.lang.Exception</exception>
+            <to uri="direct:handleDataRetrievalError"/>
+        </onException>
+
+        <from uri="direct:artifactRequestHandler"/>
+        <transacted ref="transactionPolicy"/>
+        <to uri="direct:idsValidation"/>
+        <process ref="RequestedArtifactValidator"/>
+        <process ref="ClearingHouseLoggingProcessor"/>
+        <choice>
+            <when>
+                <simple>${bean:connectorConfig.isPolicyNegotiation} == true</simple>
+                <to uri="direct:policyCheck"/>
+            </when>
+        </choice>
+        <process ref="DataRequestProcessor"/>
+        <process ref="ClearingHouseLoggingProcessor"/>
+    </route>
+</routes>
