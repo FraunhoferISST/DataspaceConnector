@@ -129,6 +129,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
             if (log.isInfoEnabled()) {
                log.info("Changing configuration profile [id=({})]", newConfig);
             }
+            // TODO Change loglevel during runtime.
         }
     }
 

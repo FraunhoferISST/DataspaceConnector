@@ -28,6 +28,8 @@ import de.fraunhofer.ids.messaging.core.daps.ConnectorMissingCertExtensionExcept
 import de.fraunhofer.ids.messaging.core.daps.DapsConnectionException;
 import de.fraunhofer.ids.messaging.core.daps.DapsEmptyResponseException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenProvider;
+import io.dataspaceconnector.common.ids.mapping.FromIdsObjectMapper;
+import io.dataspaceconnector.model.configuration.ConnectorStatus;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.service.resource.ids.builder.IdsCatalogBuilder;
 import io.dataspaceconnector.service.resource.ids.builder.IdsResourceBuilder;
@@ -93,6 +95,18 @@ public class ConnectorService {
     public URI getConnectorId() {
         final var connector = configContainer.getConnector();
         return connector.getId();
+    }
+
+    /**
+     * Get the current connector status.
+     *
+     * @return The connector status.
+     */
+    public ConnectorStatus getConnectorStatus() {
+        final var connector = configContainer.getConfigurationModel();
+        final var status = connector.getConnectorStatus();
+
+        return FromIdsObjectMapper.fromIdsConnectorStatus(status);
     }
 
     /**

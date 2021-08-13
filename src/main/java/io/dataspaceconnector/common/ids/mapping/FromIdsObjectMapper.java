@@ -630,7 +630,7 @@ public final class FromIdsObjectMapper {
      * @param status The ids connector status.
      * @return The internal connector status.
      */
-    private static ConnectorStatus fromIdsConnectorStatus(
+    public static ConnectorStatus fromIdsConnectorStatus(
             final de.fraunhofer.iais.eis.ConnectorStatus status) {
         switch (status) {
             case CONNECTOR_ONLINE:
