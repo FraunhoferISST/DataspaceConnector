@@ -52,7 +52,7 @@ class OnlineStatusValidator extends IdsValidator<Request<? extends Message, ?,
     @Override
     protected void processInternal(final Request<? extends Message, ?, Optional<Jws<Claims>>> msg)
             throws Exception {
-        if (connectorSvc.getConnectorStatus() != ConnectorStatus.ONLINE) {
+        if (connectorSvc.getConnectorStatus() == ConnectorStatus.OFFLINE) {
             throw new ConnectorOfflineException();
         }
     }
