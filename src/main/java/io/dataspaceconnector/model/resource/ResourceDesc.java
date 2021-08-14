@@ -58,4 +58,14 @@ public class ResourceDesc extends NamedDescription {
      * The endpoint of the resource.
      */
     private URI endpointDocumentation;
+
+    /**
+     * The payment modality.
+     */
+    private PaymentMethod paymentMethod;
+
+    /**
+     * A list of resource IDs pointing at sample resources.
+     */
+    private List<URI> samples;
 }

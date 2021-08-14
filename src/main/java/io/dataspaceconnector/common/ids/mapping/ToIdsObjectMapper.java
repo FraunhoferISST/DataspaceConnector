@@ -21,8 +21,10 @@ import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.ConnectorDeployMode;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
+import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.Language;
 import de.fraunhofer.iais.eis.LogLevel;
+import de.fraunhofer.iais.eis.PaymentModality;
 import de.fraunhofer.iais.eis.Proxy;
 import de.fraunhofer.iais.eis.ProxyBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
@@ -32,6 +34,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.DeployMode;
+import io.dataspaceconnector.model.resource.PaymentMethod;
 import lombok.SneakyThrows;
 
 import javax.xml.datatype.DatatypeFactory;
@@ -169,6 +172,23 @@ public final class ToIdsObjectMapper {
     }
 
     /**
+     * Get the ids connector status from dsc connector status.
+     * @param status The internal connector status.
+     * @return The ids connector status.
+     */
+    public static ConnectorStatus getConnectorStatus(
+            final io.dataspaceconnector.model.configuration.ConnectorStatus status) {
+        switch (status) {
+            case ONLINE:
+                return ConnectorStatus.CONNECTOR_ONLINE;
+            case OFFLINE:
+                return ConnectorStatus.CONNECTOR_OFFLINE;
+            default:
+                return ConnectorStatus.CONNECTOR_BADLY_CONFIGURED;
+        }
+    }
+
+    /**
      * Get ids proxy from dsc proxy.
      *
      * @param proxy The internal proxy.
@@ -181,8 +201,8 @@ public final class ToIdsObjectMapper {
                 .map(URI::create)
                 .collect(Collectors.toList()))
                 ._proxyAuthentication_(proxy.getAuthentication() == null
-                                               ? null
-                                               : getBasicAuthHeader(proxy.getAuthentication()))
+                        ? null
+                        : getBasicAuthHeader(proxy.getAuthentication()))
                 ._proxyURI_(proxy.getLocation())
                 .build();
     }
@@ -212,6 +232,7 @@ public final class ToIdsObjectMapper {
                         .build())
                 ._outboundModelVersion_(config.getOutboundModelVersion())
                 ._inboundModelVersion_(config.getInboundModelVersion())
+                ._version_(config.getVersion())
                 .build();
     }
 
@@ -230,6 +251,25 @@ public final class ToIdsObjectMapper {
                 return SecurityProfile.TRUST_PLUS_SECURITY_PROFILE;
             default:
                 return SecurityProfile.BASE_SECURITY_PROFILE;
+        }
+    }
+
+    /**
+     * Get ids payment modality from dsc payment method.
+     *
+     * @param paymentMethod The payment method.
+     * @return The ids payment modality.
+     */
+    public static PaymentModality getPaymentModality(final PaymentMethod paymentMethod) {
+        switch (paymentMethod) {
+            case FREE:
+                return PaymentModality.FREE;
+            case NEGOTIATION_BASIS:
+                return PaymentModality.NEGOTIATION_BASIS;
+            case FIXED_PRICE:
+                return PaymentModality.FIXED_PRICE;
+            default:
+                return null;
         }
     }
 }

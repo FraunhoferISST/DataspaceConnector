@@ -22,6 +22,7 @@ import de.fraunhofer.iais.eis.ConnectorDeployMode;
 import de.fraunhofer.iais.eis.ConnectorEndpoint;
 import de.fraunhofer.iais.eis.ConnectorEndpointImpl;
 import de.fraunhofer.iais.eis.Contract;
+import de.fraunhofer.iais.eis.PaymentModality;
 import de.fraunhofer.iais.eis.Proxy;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
@@ -33,6 +34,7 @@ import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
+import io.dataspaceconnector.model.configuration.ConnectorStatus;
 import io.dataspaceconnector.model.configuration.DeployMode;
 import io.dataspaceconnector.model.configuration.LogLevel;
 import io.dataspaceconnector.model.configuration.SecurityProfile;
@@ -41,6 +43,7 @@ import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.proxy.ProxyDesc;
 import io.dataspaceconnector.model.representation.RepresentationDesc;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.resource.PaymentMethod;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.resource.ResourceDesc;
 import io.dataspaceconnector.model.rule.ContractRuleDesc;
@@ -114,7 +117,6 @@ public final class FromIdsObjectMapper {
         final var modified = resource.getModified();
         final var resourceEndpoint = resource.getResourceEndpoint();
         final var resourcePart = resource.getResourcePart();
-        final var sample = resource.getSample();
         final var shapesGraph = resource.getShapesGraph();
         final var spatialCoverage = resource.getSpatialCoverage();
         final var temporalCoverage = resource.getTemporalCoverage();
@@ -163,10 +165,6 @@ public final class FromIdsObjectMapper {
             addListToAdditional(resourcePart, additional, "ids:resourcePart");
         }
 
-        if (sample != null && !sample.isEmpty()) {
-            addListToAdditional(sample, additional, "ids:sample");
-        }
-
         if (shapesGraph != null) {
             additional.put("ids:shapesGraph", shapesGraph.toString());
         }
@@ -207,6 +205,8 @@ public final class FromIdsObjectMapper {
         final var standardLicense = resource.getStandardLicense();
         final var title = resource.getTitle();
         final var resourceEndpoint = resource.getResourceEndpoint();
+        final var paymentModality = resource.getPaymentModality();
+        final var samples = resource.getSample();
 
         desc.setAdditional(buildAdditionalForResource(resource));
         desc.setKeywords(keywords);
@@ -231,6 +231,18 @@ public final class FromIdsObjectMapper {
         if (resourceEndpoint != null && !resourceEndpoint.isEmpty()) {
             getFirstEndpointDocumentation(resourceEndpoint)
                     .ifPresent(desc::setEndpointDocumentation);
+        }
+
+        if (paymentModality != null && !paymentModality.isEmpty()) {
+            desc.setPaymentMethod(fromIdsPaymentModality(paymentModality));
+        }
+
+        if (samples != null && !samples.isEmpty()) {
+            final var sampleUris = new ArrayList<URI>();
+            for (final var sample : samples) {
+                sampleUris.add(sample.getId());
+            }
+            desc.setSamples(sampleUris);
         }
     }
 
@@ -444,9 +456,9 @@ public final class FromIdsObjectMapper {
      *
      * @param rule The ids rule.
      * @return The rule template.
-     * @throws IllegalArgumentException if the rule is null.
+     * @throws IllegalArgumentException                                   if the rule is null.
      * @throws io.dataspaceconnector.common.exception.RdfBuilderException if the rule cannot be
-     * converted to string.
+     *                                                                    converted to string.
      */
     public static RuleTemplate fromIdsRule(final Rule rule) {
         Utils.requireNonNull(rule, ErrorMessage.ENTITY_NULL);
@@ -461,6 +473,24 @@ public final class FromIdsObjectMapper {
         }
 
         return new RuleTemplate(desc);
+    }
+
+    /**
+     * Get list of ids keywords as list of strings.
+     * If the passed list is null, an empty list is returned.
+     *
+     * @param keywords List of typed literals.
+     * @return List of strings.
+     */
+    public static List<String> getKeywordsAsString(final List<? extends TypedLiteral> keywords) {
+        final var list = new ArrayList<String>();
+        if (keywords != null && !keywords.isEmpty()) {
+            for (final var keyword : keywords) {
+                list.add(keyword.getValue());
+            }
+        }
+
+        return list;
     }
 
     /**
@@ -518,42 +548,6 @@ public final class FromIdsObjectMapper {
     }
 
     /**
-     * Get dsc log level from ids log level.
-     *
-     * @param logLevel The ids log level.
-     * @return The internal log level.
-     */
-    public static LogLevel fromIdsLogLevel(final de.fraunhofer.iais.eis.LogLevel logLevel) {
-        switch (logLevel) {
-            // TODO infomodel has less log levels than DSC, info will get lost
-            case MINIMAL_LOGGING:
-                return LogLevel.WARN;
-            case DEBUG_LEVEL_LOGGING:
-                return LogLevel.DEBUG;
-            default:
-                return LogLevel.OFF;
-        }
-    }
-
-    /**
-     * Get dsc security profile from ids security profile.
-     *
-     * @param securityProfile The ids security profile.
-     * @return The internal security profile.
-     */
-    public static SecurityProfile fromIdsSecurityProfile(
-            final de.fraunhofer.iais.eis.SecurityProfile securityProfile) {
-        switch (securityProfile) {
-            case TRUST_SECURITY_PROFILE:
-                return SecurityProfile.TRUST_SECURITY;
-            case TRUST_PLUS_SECURITY_PROFILE:
-                return SecurityProfile.TRUST_PLUS_SECURITY;
-            default:
-                return SecurityProfile.BASE_SECURITY;
-        }
-    }
-
-    /**
      * Build internal configuration desc from ids configModel.
      *
      * @param configModel The ids configuration model.
@@ -580,15 +574,72 @@ public final class FromIdsObjectMapper {
                 configModel.getConnectorDescription().getOutboundModelVersion());
         description.setKeystoreSettings(new KeystoreDesc(
                 configModel.getKeyStore(),
-                configModel.getKeyStorePassword()));
+                configModel.getKeyStorePassword(),
+                configModel.getKeyStoreAlias()));
         description.setLogLevel(fromIdsLogLevel(configModel.getConfigurationModelLogLevel()));
         description.setMaintainer(configModel.getConnectorDescription().getMaintainer());
         description.setProxySettings(fromIdsProxy(configModel.getConnectorProxy()));
         description.setSecurityProfile(
                 fromIdsSecurityProfile(configModel.getConnectorDescription().getSecurityProfile()));
         description.setTruststoreSettings(new TruststoreDesc(
-                configModel.getTrustStore(), configModel.getTrustStorePassword()));
+                configModel.getTrustStore(),
+                configModel.getTrustStorePassword(),
+                configModel.getTrustStoreAlias()));
+        description.setStatus(fromIdsConnectorStatus(configModel.getConnectorStatus()));
         return description;
+    }
+
+    /**
+     * Get dsc log level from ids log level.
+     *
+     * @param logLevel The ids log level.
+     * @return The internal log level.
+     */
+    private static LogLevel fromIdsLogLevel(final de.fraunhofer.iais.eis.LogLevel logLevel) {
+        switch (logLevel) {
+            // TODO infomodel has less log levels than DSC, info will get lost
+            case MINIMAL_LOGGING:
+                return LogLevel.WARN;
+            case DEBUG_LEVEL_LOGGING:
+                return LogLevel.DEBUG;
+            default:
+                return LogLevel.OFF;
+        }
+    }
+
+    /**
+     * Get dsc security profile from ids security profile.
+     *
+     * @param securityProfile The ids security profile.
+     * @return The internal security profile.
+     */
+    private static SecurityProfile fromIdsSecurityProfile(
+            final de.fraunhofer.iais.eis.SecurityProfile securityProfile) {
+        switch (securityProfile) {
+            case TRUST_SECURITY_PROFILE:
+                return SecurityProfile.TRUST_SECURITY;
+            case TRUST_PLUS_SECURITY_PROFILE:
+                return SecurityProfile.TRUST_PLUS_SECURITY;
+            default:
+                return SecurityProfile.BASE_SECURITY;
+        }
+    }
+
+    /**
+     * Get dsc connector status from ids connector status.
+     * @param status The ids connector status.
+     * @return The internal connector status.
+     */
+    public static ConnectorStatus fromIdsConnectorStatus(
+            final de.fraunhofer.iais.eis.ConnectorStatus status) {
+        switch (status) {
+            case CONNECTOR_ONLINE:
+                return ConnectorStatus.ONLINE;
+            case CONNECTOR_OFFLINE:
+                return ConnectorStatus.OFFLINE;
+            default:
+                return ConnectorStatus.FAULTY;
+        }
     }
 
     private static DeployMode fromIdsDeployMode(final ConnectorDeployMode deployMode) {
@@ -610,22 +661,15 @@ public final class FromIdsObjectMapper {
                 new AuthenticationDesc(auth.getAuthUsername(), auth.getAuthPassword()));
     }
 
-    /**
-     * Get list of ids keywords as list of strings.
-     * If the passed list is null, an empty list is returned.
-     *
-     * @param keywords List of typed literals.
-     * @return List of strings.
-     */
-    public static List<String> getKeywordsAsString(final List<? extends TypedLiteral> keywords) {
-
-        final var list = new ArrayList<String>();
-        if (keywords != null && !keywords.isEmpty()) {
-            for (final var keyword : keywords) {
-                list.add(keyword.getValue());
-            }
+    private static PaymentMethod fromIdsPaymentModality(final List<PaymentModality> modalities) {
+        final var paymentModality = modalities.get(0);
+        switch (paymentModality) {
+            case FIXED_PRICE:
+                return PaymentMethod.FIXED_PRICE;
+            case NEGOTIATION_BASIS:
+                return PaymentMethod.NEGOTIATION_BASIS;
+            default:
+                return PaymentMethod.FREE;
         }
-
-        return list;
     }
 }

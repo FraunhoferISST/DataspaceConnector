@@ -1,5 +1,11 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
 
+    <route id="handleConnectorOfflineException">
+        <from uri="direct:handleConnectorOfflineException"/>
+        <log loggingLevel="DEBUG" message="Error route for handling ConnectorOfflineException called."/>
+        <to uri="bean:messageResponseService?method=handleConnectorOfflineException()"/>
+    </route>
+
     <route id="versionNotSupportedException">
         <from uri="direct:handleVersionNotSupportedException"/>
         <log loggingLevel="DEBUG" message="Error route for handling VersionNotSupportedException called."/>

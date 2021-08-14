@@ -19,7 +19,6 @@ import io.dataspaceconnector.controller.resource.relation.OfferedResourcesToCata
 import io.dataspaceconnector.controller.resource.relation.OfferedResourcesToContractsController;
 import io.dataspaceconnector.controller.resource.relation.OfferedResourcesToRepresentationsController;
 import io.dataspaceconnector.controller.resource.type.OfferedResourceController;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.resource.OfferedResourceFactory;
@@ -46,11 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
 
-@SpringBootTest(classes = {
-        OfferedResourceViewAssembler.class,
-        ViewAssemblerHelper.class,
-        OfferedResourceFactory.class
-})
+@SpringBootTest
 public class OfferedResourceViewAssemblerTest {
 
     @Autowired

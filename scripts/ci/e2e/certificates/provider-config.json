@@ -26,7 +26,7 @@
         "@value" : "IDS Connector with static example resources hosted by the Fraunhofer ISST",
         "@type" : "http://www.w3.org/2001/XMLSchema#string"
       } ],
-      "ids:version" : "test-version",
+      "ids:version" : "@project.version@",
       "ids:hasDefaultEndpoint" : {
         "@type" : "ids:ConnectorEndpoint",
         "@id" : "https://w3id.org/idsa/autogen/connectorEndpoint/e5e2ab04-633a-44b9-87d9-a097ae6da3cf",
@@ -34,8 +34,8 @@
           "@id" : "https://localhost:8080/api/ids/data"
         }
       },
-      "ids:outboundModelVersion" : "4.0.10",
-      "ids:inboundModelVersion" : [ "4.0.0", "4.0.10" ],
+      "ids:outboundModelVersion" : "4.1.0",
+      "ids:inboundModelVersion" : [ "4.0.0", "4.1.0" ],
       "ids:title" : [ {
         "@value" : "Dataspace Connector",
         "@type" : "http://www.w3.org/2001/XMLSchema#string"
@@ -54,7 +54,7 @@
       "@id" : "/var/run/certificates/tls.key"
     },
     "ids:connectorStatus" : {
-      "@id" : "idsc:CONNECTOR_OFFLINE"
+      "@id" : "idsc:CONNECTOR_ONLINE"
     },
     "ids:keyStore" : {
         "@id" : "/var/run/keystore-localhost.p12"
