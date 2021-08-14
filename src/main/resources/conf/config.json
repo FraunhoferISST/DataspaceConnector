@@ -54,7 +54,7 @@
     "@id" : "file:///conf/truststore.p12"
   },
   "ids:connectorStatus" : {
-    "@id" : "idsc:CONNECTOR_OFFLINE"
+    "@id" : "idsc:CONNECTOR_ONLINE"
   },
   "ids:keyStore" : {
     "@id" : "file:///conf/keystore-localhost.p12"

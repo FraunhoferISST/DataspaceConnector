@@ -53,6 +53,28 @@ class MessageResponseServiceTest {
     }
 
     /**
+     * handleConnectorOfflineException
+     */
+
+    @Test
+    public void handleConnectorOfflineException_nothing_temporarilyUnavailableResponse() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT */
+        final var result = service.handleConnectorOfflineException();
+
+        /* ASSERT */
+        assertTrue(result instanceof ErrorResponse);
+
+        final var error = (ErrorResponse) result;
+        assertEquals(RejectionReason.TEMPORARILY_NOT_AVAILABLE,
+                error.getRejectionMessage().getRejectionReason());
+        assertEquals(connectorId, error.getRejectionMessage().getIssuerConnector());
+        assertEquals(outboundVersion, error.getRejectionMessage().getModelVersion());
+    }
+
+    /**
      * handleMessageEmptyException
      */
 

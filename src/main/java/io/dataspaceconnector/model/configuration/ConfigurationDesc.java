@@ -34,6 +34,11 @@ import java.util.List;
 public class ConfigurationDesc extends NamedDescription {
 
     /**
+     * The id of the connector.
+     */
+    private URI connectorId;
+
+    /**
      * The access url of the connector.
      */
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -58,6 +63,7 @@ public class ConfigurationDesc extends NamedDescription {
     /**
      * The list of inbound model version.
      */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<String> inboundModelVersion;
 
     /**
@@ -69,12 +75,18 @@ public class ConfigurationDesc extends NamedDescription {
     /**
      * The security profile.
      */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private SecurityProfile securityProfile;
 
     /**
      * The log level.
      */
     private LogLevel logLevel;
+
+    /**
+     * The status of the connector.
+     */
+    private ConnectorStatus status;
 
     /**
      * The deploy mode of the connector.

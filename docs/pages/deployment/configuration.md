@@ -35,6 +35,11 @@ The resource folder `resources/conf` provides three important files that are loa
   communication. It ensures the connection to trusted addresses.
 * `config.json`: The configuration is used to set important properties for IDS message handling.
 
+In a Docker or Kubernetes deployment, for a custom setup at least these files have to be set via
+environment variables. Find more details [here](build.md#docker) and in the docs for
+[Docker](https://docs.docker.com/compose/environment-variables/) and
+[Kubernetes](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/).
+
 ## Step 1: Connector Properties
 
 When starting the application, the `config.json` will be scanned for important connector
@@ -67,6 +72,15 @@ be set in the `resources/conf/config.json`.
 Check if your system is running behind a proxy. If this is the case, specify the `ids:proxyURI` and
 change `ids:noProxy` if necessary. Otherwise, delete the key `ids:connectorProxy` and its values.
 
+---
+
+**Note**: If you want to connect to a running connector or any other system running at `https://`,
+keep in mind that you need to add the keystore to your truststore. Otherwise, the communication
+will fail. With the provided truststore, the Dataspace Connector accepts its own localhost
+certificate, public certificates, and any IDS keystore that was provided by the Fraunhofer AISEC.
+
+---
+
 A full configuration example may look like this:
 ```json
 {
@@ -84,7 +98,7 @@ A full configuration example may look like this:
   },
   "ids:connectorDescription" : {
     "@type" : "ids:BaseConnector",
-    "@id" : "https://w3id.org/idsa/autogen/baseConnector/7b934432-a85e-41c5-9f65-669219dde4ea",
+    "@id" : "https://my.ids.connector.com",
     "ids:publicKey" : {
       "@type" : "ids:PublicKey",
       "@id" : "https://w3id.org/idsa/autogen/publicKey/78eb73a3-3a2a-4626-a0ff-631ab50a00f9",
@@ -97,12 +111,12 @@ A full configuration example may look like this:
       "@value" : "IDS Connector with static example resources hosted by the Fraunhofer ISST",
       "@type" : "http://www.w3.org/2001/XMLSchema#string"
     } ],
-    "ids:version" : "1.0",
+    "ids:version" : "6.0.0",
     "ids:hasDefaultEndpoint" : {
       "@type" : "ids:ConnectorEndpoint",
       "@id" : "https://w3id.org/idsa/autogen/connectorEndpoint/e5e2ab04-633a-44b9-87d9-a097ae6da3cf",
       "ids:accessURL" : {
-        "@id" : "https://localhost:8080/api/ids/data"
+        "@id" : "https://my.ids.connector.com/api/ids/data"
       }
     },
     "ids:outboundModelVersion" : "4.0.4",
@@ -153,18 +167,72 @@ A full configuration example may look like this:
 }
 ```
 
+**New**: Since v6.0.0, the Dataspace Connector offers CRUD endpoints for managing multiple
+configurations. For a first start, the `config.json` will be loaded. All settings will then be
+persisted in the database, so the application does not "forget" them on a restart.
+On top of that, you can switch between multiple configurations. Just use the corresponding endpoints
+to see what configuration is active and change it, if wanted.
+
+![Swagger Configuration Endpoints](../../assets/images/v6/swagger_configuration.png)
+
+With this, e.g. the deploy mode can be changed at runtime. On top of that, with v6.1.0, the
+connector offers the possibility to be set to `offline`. Only if the connector status is set to
+`online`, incoming requests at `/api/ids/data` will be processed. Otherwise, the requesting
+connector receives a rejection message:
+
+````json
+{
+  "reason": {
+    "@id": "https://w3id.org/idsa/code/TEMPORARILY_NOT_AVAILABLE",
+    "properties": None
+  },
+  "payload": "This connector is offline. Your messages will not be processed or persisted.",
+  "type": "de.fraunhofer.iais.eis.RejectionMessageImpl"
+}
+````
+
+Per default, the connector status is set to `online`.
+
 ---
 
-**Note**: If you are not familiar with the IDS Information Model, the API provides an
-endpoint `GET /api/examples/configuration` to print a filled in Java object as JSON-LD. Adapt
-this to your needs, take the received string and place it in the `config.json`.
-
-If you want to connect to a running connector or any other system running at `https://`,
-keep in mind that you need to add the keystore to your truststore. Otherwise, the communication
-will fail. With the provided truststore, the Dataspace Connector accepts its own localhost
-certificate, public certificates, and any IDS keystore that was provided by the Fraunhofer AISEC.
+**Note**: Since the application has a few technical prerequisites, some of the configuration
+properties are read-only: the version, the inbound and outbound infomodel versions, the security
+profile, and the default endpoint. The latter results from the set connector id.
 
 ---
+
+An example configuration could look like this:
+
+```json
+{
+  "connectorId": "https://localhost:8080",
+  "title": "Dataspace Connector",
+  "description": "IDS Connector with static example resources hosted by the Fraunhofer ISST",
+  "defaultEndpoint": "https://localhost:8080/api/ids/data",
+  "version": "6.1.0",
+  "curator": "https://www.isst.fraunhofer.de/",
+  "maintainer": "https://www.isst.fraunhofer.de/",
+  "inboundModelVersion": [
+    "4.0.0",
+    "4.1.0"
+  ],
+  "outboundModelVersion": "4.1.0",
+  "securityProfile": "Base Security",
+  "status": "Online",
+  "logLevel": "Warn",
+  "deployMode": "Test",
+  "proxy": null,
+  "trustStore": {
+    "location": "file:///conf/truststore.p12",
+    "alias": "1"
+  },
+  "keyStore": {
+    "location": "file:///conf/keystore-localhost.p12",
+    "alias": "1"
+  }
+}
+```
+
 
 ## Step 2: IDS Certificate
 
@@ -180,13 +248,13 @@ To turn on the [DAT](https://github.com/International-Data-Spaces-Association/ID
 checking, you need to set the `ids:connectorDeployMode` to`idsc:PRODUCTIVE_DEPLOYMENT`. For getting
 a trusted certificate, contact[Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de). Add the keystore
 with the IDS certificate inside to the `resources/conf` and change the filename at `ids:keyStore`
-accordingly. In addition, set your connector id to uniquely identify your connector towards e.g. the
-IDS Metadata Broker:
+accordingly. **In addition, set your connector id to a meaningful URL that uniquely identifies your
+connector towards e.g. the IDS Metadata Broker**:
 
 ```json
 "ids:connectorDescription" : {
     "@type" : "ids:BaseConnector",
-    "@id" : "CONNECTOR_URL",
+    "@id" : "https://my.ids.connector.com",
 ```
 
 ---

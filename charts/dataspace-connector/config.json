@@ -54,7 +54,7 @@
     "@id" : "file:///var/run/certs/truststore.p12"
   },
   "ids:connectorStatus" : {
-    "@id" : "idsc:CONNECTOR_OFFLINE"
+    "@id" : "idsc:CONNECTOR_ONLINE"
   },
   "ids:keyStore" : {
     "@id" : "file:///var/run/certs/keystore.p12"

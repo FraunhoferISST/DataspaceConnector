@@ -21,6 +21,7 @@ import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.ConnectorDeployMode;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
+import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.Language;
 import de.fraunhofer.iais.eis.LogLevel;
 import de.fraunhofer.iais.eis.PaymentModality;
@@ -171,6 +172,23 @@ public final class ToIdsObjectMapper {
     }
 
     /**
+     * Get the ids connector status from dsc connector status.
+     * @param status The internal connector status.
+     * @return The ids connector status.
+     */
+    public static ConnectorStatus getConnectorStatus(
+            final io.dataspaceconnector.model.configuration.ConnectorStatus status) {
+        switch (status) {
+            case ONLINE:
+                return ConnectorStatus.CONNECTOR_ONLINE;
+            case OFFLINE:
+                return ConnectorStatus.CONNECTOR_OFFLINE;
+            default:
+                return ConnectorStatus.CONNECTOR_BADLY_CONFIGURED;
+        }
+    }
+
+    /**
      * Get ids proxy from dsc proxy.
      *
      * @param proxy The internal proxy.
@@ -214,6 +232,7 @@ public final class ToIdsObjectMapper {
                         .build())
                 ._outboundModelVersion_(config.getOutboundModelVersion())
                 ._inboundModelVersion_(config.getInboundModelVersion())
+                ._version_(config.getVersion())
                 .build();
     }
 

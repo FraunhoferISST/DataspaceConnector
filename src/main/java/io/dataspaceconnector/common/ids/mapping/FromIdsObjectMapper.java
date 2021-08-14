@@ -34,6 +34,7 @@ import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
+import io.dataspaceconnector.model.configuration.ConnectorStatus;
 import io.dataspaceconnector.model.configuration.DeployMode;
 import io.dataspaceconnector.model.configuration.LogLevel;
 import io.dataspaceconnector.model.configuration.SecurityProfile;
@@ -573,14 +574,18 @@ public final class FromIdsObjectMapper {
                 configModel.getConnectorDescription().getOutboundModelVersion());
         description.setKeystoreSettings(new KeystoreDesc(
                 configModel.getKeyStore(),
-                configModel.getKeyStorePassword()));
+                configModel.getKeyStorePassword(),
+                configModel.getKeyStoreAlias()));
         description.setLogLevel(fromIdsLogLevel(configModel.getConfigurationModelLogLevel()));
         description.setMaintainer(configModel.getConnectorDescription().getMaintainer());
         description.setProxySettings(fromIdsProxy(configModel.getConnectorProxy()));
         description.setSecurityProfile(
                 fromIdsSecurityProfile(configModel.getConnectorDescription().getSecurityProfile()));
         description.setTruststoreSettings(new TruststoreDesc(
-                configModel.getTrustStore(), configModel.getTrustStorePassword()));
+                configModel.getTrustStore(),
+                configModel.getTrustStorePassword(),
+                configModel.getTrustStoreAlias()));
+        description.setStatus(fromIdsConnectorStatus(configModel.getConnectorStatus()));
         return description;
     }
 
@@ -617,6 +622,23 @@ public final class FromIdsObjectMapper {
                 return SecurityProfile.TRUST_PLUS_SECURITY;
             default:
                 return SecurityProfile.BASE_SECURITY;
+        }
+    }
+
+    /**
+     * Get dsc connector status from ids connector status.
+     * @param status The ids connector status.
+     * @return The internal connector status.
+     */
+    public static ConnectorStatus fromIdsConnectorStatus(
+            final de.fraunhofer.iais.eis.ConnectorStatus status) {
+        switch (status) {
+            case CONNECTOR_ONLINE:
+                return ConnectorStatus.ONLINE;
+            case CONNECTOR_OFFLINE:
+                return ConnectorStatus.OFFLINE;
+            default:
+                return ConnectorStatus.FAULTY;
         }
     }
 
