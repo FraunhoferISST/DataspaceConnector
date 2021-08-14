@@ -238,7 +238,7 @@ jobs:
           kubectl cluster-info
       - name: Run scripts
         run: |
-          ./scripts/ci/e2e/setup-new-provider-old-consumer.sh
+          ./scripts/ci/e2e/setup-old-consumer-new-provider.sh
 
   e2e-test-consumer:
     needs: build-test-image
@@ -267,7 +267,7 @@ jobs:
           kubectl cluster-info
       - name: Run scripts
         run: |
-          ./scripts/ci/e2e/setup-new-consumer-old-provider.sh
+          ./scripts/ci/e2e/setup-old-provider-new-consumer.sh
 
   e2e-test-both:
     needs: build-test-image
