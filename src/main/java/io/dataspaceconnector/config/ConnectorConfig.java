@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import java.net.URI;
+import java.util.List;
+
 /**
  * This class handles policy settings: negotiation, pattern support, and usage control framework.
  */
@@ -56,4 +58,20 @@ public class ConnectorConfig {
      */
     @Value("${idscp2.enabled}")
     private boolean idscpEnabled;
+
+    /**
+     * The default version.
+     */
+    @Value("${version}")
+    private String defaultVersion;
+
+    /**
+     * The outbound model version.
+     */
+    private final String outboundVersion = "4.1.0";
+
+    /**
+     * The inbound model versions.
+     */
+    private final List<String> inboundVersions = List.of("4.0.0", "4.1.0");
 }

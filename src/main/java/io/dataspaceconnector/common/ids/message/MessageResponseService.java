@@ -51,6 +51,22 @@ public class MessageResponseService {
     private final @NonNull ConnectorService connectorSvc;
 
     /**
+     * Handles thrown
+     * {@link io.dataspaceconnector.service.message.handler.exception.ConnectorOfflineException}.
+     *
+     * @return A message response.
+     */
+    public MessageResponse handleConnectorOfflineException() {
+        if (log.isDebugEnabled()) {
+            log.debug("Connector is offline. Will not process ids requests.");
+        }
+        return ErrorResponse.withDefaultHeader(
+                RejectionReason.TEMPORARILY_NOT_AVAILABLE, "This connector is offline "
+                        + "and will not process any ids requests.",
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
+    }
+
+    /**
      * Handles thrown {@link MessageEmptyException}.
      *
      * @param exception Exception that was thrown when checking if the message is null.
@@ -441,10 +457,10 @@ public class MessageResponseService {
      * @return A message response.
      */
     public MessageResponse handleInvalidInput(final InvalidInputException exception,
-                                                   final URI requestedArtifact,
-                                                   final URI transferContract,
-                                                   final URI issuerConnector,
-                                                   final URI messageId) {
+                                              final URI requestedArtifact,
+                                              final URI transferContract,
+                                              final URI issuerConnector,
+                                              final URI messageId) {
         if (log.isDebugEnabled()) {
             log.debug("Invalid input. [exception=({}), artifact=({}), contract=({}), "
                             + "issuer=({}), messageId=({})]", exception.getMessage(),
@@ -589,7 +605,7 @@ public class MessageResponseService {
      * Respond with error if no valid subscriptions could be created from supplied input.
      *
      * @param exception The exception.
-     * @param input String representation of the input for creating the subscription.
+     * @param input     String representation of the input for creating the subscription.
      * @return A message response.
      */
     public MessageResponse handleInvalidSubscription(final Exception exception,

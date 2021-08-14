@@ -38,16 +38,16 @@ public final class FactoryUtils {
     /**
      * Update string.
      *
-     * @param oldTitle     Old string.
-     * @param newTitle     New string.
-     * @param defaultTitle Default value.
+     * @param oldString     Old string.
+     * @param newString     New string.
+     * @param defaultString Default value.
      * @return Optional with the new value or without a value.
      */
-    public static Optional<String> updateString(final String oldTitle,
-                                                final String newTitle,
-                                                final String defaultTitle) {
-        final var newValue = newTitle == null ? defaultTitle : newTitle;
-        if (oldTitle == null || !oldTitle.equals(newValue)) {
+    public static Optional<String> updateString(final String oldString,
+                                                final String newString,
+                                                final String defaultString) {
+        final var newValue = newString == null ? defaultString : newString;
+        if (oldString == null || !oldString.equals(newValue)) {
             return Optional.of(newValue);
         }
 
@@ -57,16 +57,16 @@ public final class FactoryUtils {
     /**
      * Update integer.
      *
-     * @param oldPort Old port.
-     * @param newPort New port.
+     * @param oldInt Old port.
+     * @param newInt New port.
      * @return New port, if new port is different from the old port.
      */
-    public static Integer updateInteger(final int oldPort, final int newPort) {
-        if (oldPort != newPort) {
-            return newPort;
+    public static Integer updateInteger(final int oldInt, final int newInt) {
+        if (oldInt != newInt) {
+            return newInt;
         }
 
-        return oldPort;
+        return oldInt;
     }
 
     /**

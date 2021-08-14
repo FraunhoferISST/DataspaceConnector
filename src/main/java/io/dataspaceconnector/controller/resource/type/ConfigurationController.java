@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.controller.resource.type;
 
-import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.BaseResourceController;
@@ -55,12 +54,6 @@ import java.util.UUID;
 @Tag(name = ResourceName.CONFIGURATIONS, description = ResourceDescription.CONFIGURATIONS)
 public class ConfigurationController extends BaseResourceController<Configuration,
         ConfigurationDesc, ConfigurationView, ConfigurationService> {
-
-    /**
-     * The current connector configuration.
-     */
-    private final @NonNull ConfigContainer configContainer;
-
     /**
      * Configuration Service, to read and set current config in DB.
      */
@@ -75,7 +68,8 @@ public class ConfigurationController extends BaseResourceController<Configuratio
     @PutMapping(value = "/{id}/active", consumes = {"*/*"})
     @Operation(summary = "Update current configuration")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+            @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
+                    description = ResponseDescription.NO_CONTENT),
             @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
                     description = ResponseDescription.BAD_REQUEST),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
@@ -110,21 +104,5 @@ public class ConfigurationController extends BaseResourceController<Configuratio
     @ResponseBody
     public ConfigurationView getConfiguration() {
         return get(configurationSvc.getActiveConfig().getId());
-    }
-
-    /**
-     * Return the connector's current configuration.
-     *
-     * @return The configuration object or an error.
-     */
-    @GetMapping(value = "/active", produces = "application/ld+json")
-    @Operation(summary = "Get current configuration")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseCode.UNAUTHORIZED)})
-    @ResponseBody
-    public ResponseEntity<Object> getIdsConfiguration() {
-        return ResponseEntity.ok(configContainer.getConfigurationModel().toRdf());
     }
 }
