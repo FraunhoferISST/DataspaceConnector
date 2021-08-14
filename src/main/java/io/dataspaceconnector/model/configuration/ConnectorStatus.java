@@ -13,37 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model.keystore;
+package io.dataspaceconnector.model.configuration;
 
-import io.dataspaceconnector.model.base.Description;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-
-import java.net.URI;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * This class describes key stores properties.
+ * The states of the connector.
  */
-@AllArgsConstructor
-@Data
-@EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
-public class KeystoreDesc extends Description {
+public enum ConnectorStatus {
+    /**
+     * Something is wrong.
+     */
+    @JsonProperty("Faulty")
+    FAULTY,
 
     /**
-     * The key store.
+     * Connector is offline.
      */
-    private URI location;
+    @JsonProperty("Offline")
+    OFFLINE,
 
     /**
-     * The key store password.
+     * Connector is online.
      */
-    private String password;
-
-    /**
-     * Alias for the key store.
-     */
-    private String alias;
+    @JsonProperty("Online")
+    ONLINE
 }

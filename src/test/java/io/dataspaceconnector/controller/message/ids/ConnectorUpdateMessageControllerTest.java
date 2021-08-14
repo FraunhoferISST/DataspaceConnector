@@ -36,6 +36,7 @@ import lombok.SneakyThrows;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -87,7 +88,7 @@ public class ConnectorUpdateMessageControllerTest {
     @MockBean
     private ProducerTemplate producerTemplate;
 
-    @MockBean
+    @SpyBean
     private ConnectorConfig connectorConfig;
 
     @Autowired
@@ -98,6 +99,11 @@ public class ConnectorUpdateMessageControllerTest {
             ._tokenValue_("token")
             ._tokenFormat_(TokenFormat.JWT)
             .build();
+
+    @BeforeEach
+    public void init() {
+        Mockito.doReturn("6.0.0").when(connectorConfig).getDefaultVersion();
+    }
 
     @Test
     @WithMockUser("ADMIN")

@@ -53,6 +53,26 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RuleUtilsTest {
 
+    /**
+     * policy validation
+     */
+
+    @Test
+    public void getPatternByRule_invalidInput_returnNull() {
+        /* ARRANGE */
+        final var rule = new PermissionBuilder()._action_(Action.DELETE).build();
+
+        /* ACT */
+        final var result = RuleUtils.getPatternByRule(rule);
+
+        /* ASSERT */
+        assertEquals(PolicyPattern.PROVIDE_ACCESS, result);
+    }
+
+    /**
+     * helper methods
+     */
+
     @Test
     public void extractRulesFromContract_contractWithoutRules_returnEmptyList() {
         /* ARRANGE */

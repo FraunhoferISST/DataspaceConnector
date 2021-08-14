@@ -21,6 +21,7 @@ import io.dataspaceconnector.controller.resource.view.keystore.KeystoreView;
 import io.dataspaceconnector.controller.resource.view.proxy.ProxyView;
 import io.dataspaceconnector.controller.resource.view.truststore.TruststoreView;
 import io.dataspaceconnector.controller.resource.view.util.ViewConstants;
+import io.dataspaceconnector.model.configuration.ConnectorStatus;
 import io.dataspaceconnector.model.configuration.DeployMode;
 import io.dataspaceconnector.model.configuration.LogLevel;
 import io.dataspaceconnector.model.configuration.SecurityProfile;
@@ -54,6 +55,11 @@ public class ConfigurationView extends RepresentationModel<ConfigurationView> {
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ViewConstants.DATE_TIME_FORMAT)
     private ZonedDateTime modificationDate;
+
+    /**
+     * The id of the connector.
+     */
+    private URI connectorId;
 
     /**
      * The title of the configuration.
@@ -99,6 +105,11 @@ public class ConfigurationView extends RepresentationModel<ConfigurationView> {
      * The security profile.
      */
     private SecurityProfile securityProfile;
+
+    /**
+     * The connector status.
+     */
+    private ConnectorStatus status;
 
     /**
      * The log level.

@@ -34,4 +34,9 @@ public class TruststoreView extends RepresentationModel<TruststoreView> {
      * The name of the trust store.
      */
     private URI location;
+
+    /**
+     * Alias for the key store.
+     */
+    private String alias;
 }

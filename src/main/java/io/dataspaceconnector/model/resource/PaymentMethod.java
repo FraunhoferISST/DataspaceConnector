@@ -13,37 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model.keystore;
+package io.dataspaceconnector.model.resource;
 
-import io.dataspaceconnector.model.base.Description;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-
-import java.net.URI;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * This class describes key stores properties.
+ * Enumeration for resource payment modality.
  */
-@AllArgsConstructor
-@Data
-@EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
-public class KeystoreDesc extends Description {
+public enum PaymentMethod {
 
     /**
-     * The key store.
+     * To express that the exchange of resource is with a fixed price.
      */
-    private URI location;
+    @JsonProperty("fixedPrice")
+    FIXED_PRICE,
 
     /**
-     * The key store password.
+     * To express that the exchange of resource is free.
      */
-    private String password;
+    @JsonProperty("free")
+    FREE,
 
     /**
-     * Alias for the key store.
+     * To express that the exchange of resource is negotiation-based.
      */
-    private String alias;
+    @JsonProperty("negotiationBasis")
+    NEGOTIATION_BASIS
 }
