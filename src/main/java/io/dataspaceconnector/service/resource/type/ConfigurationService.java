@@ -28,6 +28,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -124,12 +126,29 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
     private void reload(final UUID newConfig) throws ConfigUpdateException {
         final var configContainer = findConfigContainer();
         if (configContainer.isPresent()) {
-            final var configuration = configBuilder.create(getActiveConfig());
+            final var activeConfig = getActiveConfig();
+            final var configuration = configBuilder.create(activeConfig);
             configContainer.get().updateConfiguration(configuration);
             if (log.isInfoEnabled()) {
                log.info("Changing configuration profile [id=({})]", newConfig);
             }
+
             // TODO Change loglevel during runtime.
+            switch (activeConfig.getLogLevel()) {
+                case TRACE:
+                    Configurator.setRootLevel(Level.TRACE);
+                case ERROR:
+                    Configurator.setRootLevel(Level.ERROR);
+                case DEBUG:
+                    Configurator.setRootLevel(Level.DEBUG);
+                case WARN:
+                    Configurator.setRootLevel(Level.WARN);
+                case OFF:
+                    Configurator.setRootLevel(Level.OFF);
+                case INFO:
+                default:
+                    Configurator.setRootLevel(Level.INFO);
+            }
         }
     }
 

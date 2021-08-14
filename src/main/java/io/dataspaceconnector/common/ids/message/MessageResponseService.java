@@ -61,8 +61,8 @@ public class MessageResponseService {
             log.debug("Connector is offline. Will not process ids requests.");
         }
         return ErrorResponse.withDefaultHeader(
-                RejectionReason.TEMPORARILY_NOT_AVAILABLE, "This connector is offline. "
-                        + "Your messages will not be processed or persisted.",
+                RejectionReason.TEMPORARILY_NOT_AVAILABLE, "This connector is offline "
+                        + "and will not process any ids requests.",
                 connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
