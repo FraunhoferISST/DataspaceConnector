@@ -74,6 +74,7 @@ public class ConfigurationDesc extends NamedDescription {
     /**
      * The security profile.
      */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private SecurityProfile securityProfile;
 
     /**
