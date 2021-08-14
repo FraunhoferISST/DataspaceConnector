@@ -90,8 +90,9 @@ class ArtifactControllerTest {
         final var artifactId = UUID.randomUUID();
         final byte[] data = {0 , 1, 2, 3};
 
-
         Mockito.doReturn(null).when(service).setData(eq(artifactId), any());
+        Mockito.doReturn(null).when(service).get(any());
+        Mockito.doNothing().when(subscriberNotificationService).notifyOnUpdate(any());
 
         /* ACT */
         final var result = controller.putData(artifactId, data);
