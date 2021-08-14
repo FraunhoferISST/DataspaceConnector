@@ -29,6 +29,7 @@ import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
+import io.dataspaceconnector.service.message.SubscriberNotificationService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
 import io.swagger.v3.oas.annotations.Operation;
@@ -84,6 +85,11 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      * The verifier for the data access.
      */
     private final @NonNull DataAccessVerifier accessVerifier;
+
+    /**
+     * Service for notifying subscribers about an entity update.
+     */
+    private final @NonNull SubscriberNotificationService subscriberNotificationSvc;
 
     /**
      * Returns data from the local database or a remote data source. In case of a remote data
@@ -210,6 +216,10 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
             @Valid @PathVariable(name = "id") final UUID artifactId,
             @RequestBody final byte[] inputStream) throws IOException {
         artifactSvc.setData(artifactId, new ByteArrayInputStream(inputStream));
+
+        // Notify subscribers on update event.
+        subscriberNotificationSvc.notifyOnUpdate(getService().get(artifactId));
+
         return ResponseEntity.noContent().build();
     }
 }
