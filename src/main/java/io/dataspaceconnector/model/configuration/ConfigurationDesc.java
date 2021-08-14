@@ -63,6 +63,7 @@ public class ConfigurationDesc extends NamedDescription {
     /**
      * The list of inbound model version.
      */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<String> inboundModelVersion;
 
     /**
