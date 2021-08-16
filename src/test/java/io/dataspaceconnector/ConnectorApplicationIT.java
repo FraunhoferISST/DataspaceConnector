@@ -30,6 +30,15 @@ class ConnectorApplicationIT {
 
     @Test
     void contextLoads() throws Exception {
+        //DSC UI Flow (current AppStore endpoint for IDS-Messages: https://binac.fit.fraunhofer.de/api/ids/data):
+        // 1. POST /api/appstores - create new AppStore
+        //    - AppStore can be requested for App catalog
+        // 2. POST /api/ids/app with Recipient URI - DescriptionRequestMessage to AppStore (returns App catalog?)
+        //    - DSC UI shows App catalog of AppStore (?)
+        // 3. POST /api/ids/app with Recipient and App URI - DescriptionRequestMessage to AppStore to get metadata of single App and App-Template
+        //    - The following flow begins automatically with 3. and deploys the App involving the AppStore Registry
+
+        //Exmaple AppStore Template describing an App (Docker-Image/Container)
         final var appStoreTemplate = "{\n" +
                 "    \"type\": 1,\n" +
                 "    \"title\": \"Dataspace Connector\",\n" +
@@ -45,14 +54,22 @@ class ConnectorApplicationIT {
                 "    ],\n" +
                 "    \"registry\":\"ghcr.io/international-data-spaces-association\",\n" +
                 "}";
+
+        //1. Create Registry with given information from AppStore template
+        //TODO: Where does the AppStore template provide credentials for private registry?
         portainerRequestSvc.createRegistry(appStoreTemplate);
+
+        //2. Pull Image with given information from AppStore template
         portainerRequestSvc.pullImage(appStoreTemplate);
-        var volumeMap = portainerRequestSvc.createVolumes(appStoreTemplate);
-        var containerId = portainerRequestSvc.createContainer(appStoreTemplate, volumeMap);
+
+        //3. Create volumes with given information from AppStore template
+        final var volumeMap = portainerRequestSvc.createVolumes(appStoreTemplate);
+
+        //4. Create Container with given information from AppStore template and new volume
+        //TODO: Check if same network and stack necessary?
+        final var containerId = portainerRequestSvc.createContainer(appStoreTemplate, volumeMap);
+
+        //5. Start the App (container)
         portainerRequestSvc.startContainer(containerId);
     }
 }
-
-//java.io.IOException: Unexpected code Response{protocol=http/1.1, code=500, message=Internal Server Error,
-// url=http://localhost:9000/api/endpoints/1/docker/images/create}
-// With Body: {"message":"Get http:: http: no Host in request URL"}
