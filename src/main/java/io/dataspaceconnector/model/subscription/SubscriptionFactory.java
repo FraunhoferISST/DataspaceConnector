@@ -18,7 +18,7 @@ package io.dataspaceconnector.model.subscription;
 import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.common.util.ValidationUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
-import io.dataspaceconnector.model.named.AbstractNamedFactory;
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ import java.net.URI;
  */
 @Component
 @RequiredArgsConstructor
-public class SubscriptionFactory extends AbstractNamedFactory<Subscription, SubscriptionDesc> {
+public class SubscriptionFactory extends AbstractFactory<Subscription, SubscriptionDesc> {
 
     /**
      * Service for the current connector configuration.
