@@ -663,6 +663,10 @@ public final class FromIdsObjectMapper {
 
     private static PaymentMethod fromIdsPaymentModality(final List<PaymentModality> modalities) {
         final var paymentModality = modalities.get(0);
+        if (paymentModality == null) {
+            return PaymentMethod.UNDEFINED;
+        }
+
         switch (paymentModality) {
             case FIXED_PRICE:
                 return PaymentMethod.FIXED_PRICE;
