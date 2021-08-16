@@ -29,6 +29,7 @@ All notable changes to this project will be documented in this file.
 - Return data with correct content-type in headers, if possible. Fallback stays
   application/octet-stream.
 - Set default status in `config.json` to `CONNECTOR_ONLINE.`
+- Increase pitest-maven version from 1.6.8 to 1.6.9.
 
 ### Fixed
 - Restrict access to POST/PUT/DELETE `{entity}/subscriptions` for artifacts and representations.
