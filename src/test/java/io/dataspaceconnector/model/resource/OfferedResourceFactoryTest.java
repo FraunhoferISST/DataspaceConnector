@@ -838,6 +838,7 @@ public class OfferedResourceFactoryTest {
         desc.setSamples(List.of(URI.create("https://api/resources/d8a6f765-9b94-4a27-a18d-fbe81636a784")));
 
         final var resource = factory.create(new OfferedResourceDesc());
+        ReflectionTestUtils.setField(resource, "id", UUID.randomUUID());
         factory.setDoesExist(x -> true);
 
         /* ACT */
@@ -854,6 +855,7 @@ public class OfferedResourceFactoryTest {
         desc.setSamples(List.of(URI.create("https://api/resources/d8a6f765-9b94-4a27-a18d-fbe81636a784")));
 
         final var resource = factory.create(new OfferedResourceDesc());
+        ReflectionTestUtils.setField(resource, "id", UUID.randomUUID());
         factory.setDoesExist(x -> true);
 
         /* ACT */
