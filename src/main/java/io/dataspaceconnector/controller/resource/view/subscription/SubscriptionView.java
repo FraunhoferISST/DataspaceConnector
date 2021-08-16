@@ -50,6 +50,16 @@ public class SubscriptionView extends RepresentationModel<SubscriptionView> {
     private ZonedDateTime modificationDate;
 
     /**
+     * The title of the subscription.
+     */
+    private String title;
+
+    /**
+     * The description of the subscription.
+     */
+    private String description;
+
+    /**
      * The id of the resource or artifact that the subscriber subscribed to.
      */
     private URI target;
