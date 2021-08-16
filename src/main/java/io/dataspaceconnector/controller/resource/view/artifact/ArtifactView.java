@@ -59,6 +59,11 @@ public class ArtifactView extends RepresentationModel<ArtifactView> {
     private String title;
 
     /**
+     * The description of the artifact.
+     */
+    private String description;
+
+    /**
      * Number of data accesses.
      */
     private Long numAccessed;

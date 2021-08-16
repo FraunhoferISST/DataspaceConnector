@@ -98,7 +98,7 @@ public class SubscriptionController extends BaseResourceController<Subscription,
 
         final var connectorId = connectorSvc.getConnectorId();
         final var list = Utils.toPage(getService()
-                                              .getBySubscriber(pageable, connectorId), pageable);
+                .getBySubscriber(pageable, connectorId), pageable);
         return getPagedModel(list);
     }
 }
