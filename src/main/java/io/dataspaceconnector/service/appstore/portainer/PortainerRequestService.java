@@ -24,6 +24,7 @@ import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
@@ -227,7 +228,8 @@ public class PortainerRequestService {
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + jwt);
         builder.url(url);
-        builder.post(RequestBody.create(requestBody.toString(), null));
+        builder.post(RequestBody.create(requestBody.toString(),
+                MediaType.parse("application/json")));
 
         final var request = builder.build();
         final var response = httpService.send(request);
@@ -270,8 +272,7 @@ public class PortainerRequestService {
                         new JSONObject()
                                 .put("fromImage", templateObject.getString("registry")
                                         + "/" + templateObject.getString("image"))
-                                .toString(),
-                        null));
+                                .toString(), MediaType.parse("application/json")));
 
         final var request = builder.build();
         return httpService.send(request);
@@ -285,7 +286,10 @@ public class PortainerRequestService {
     public Map<String, String> createVolumes(final String appStoreTemplate) throws IOException {
         final Map<String, String> volumeNames = new HashMap<>();
         final var templateObject = toJsonObject(appStoreTemplate);
-        final var volumes = templateObject.getJSONArray("volumes");
+        var volumes = new JSONArray();
+        if (!templateObject.isNull("volumes")) {
+            volumes = templateObject.getJSONArray("volumes");
+        }
 
         final var jwt = getJwtToken();
 
