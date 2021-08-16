@@ -16,8 +16,11 @@
 package io.dataspaceconnector.model.resource;
 
 import io.dataspaceconnector.common.exception.InvalidEntityException;
+import io.dataspaceconnector.model.contract.Contract;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -25,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -821,7 +825,7 @@ public class OfferedResourceFactoryTest {
         desc.setSamples(List.of(URI.create("https://api/resources/d8a6f765-9b94-4a27-a18d-fbe81636a784")));
         factory.setDoesExist(x -> { throw new InvalidEntityException(""); });
 
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = getResource();
 
         /* ACT & ASSERT*/
         assertThrows(InvalidEntityException.class, () -> factory.update(resource, desc));
@@ -939,5 +943,18 @@ public class OfferedResourceFactoryTest {
 
         /* ACT && ASSERT */
         assertThrows(IllegalArgumentException.class, () -> factory.update(contract, null));
+    }
+
+    @SneakyThrows
+    private OfferedResource getResource() {
+        final var constructor = OfferedResource.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+
+        final var resource = constructor.newInstance();
+        ReflectionTestUtils.setField(resource, "title", "Hello");
+        ReflectionTestUtils.setField(resource, "representations", new ArrayList<Contract>());
+        ReflectionTestUtils.setField(resource, "id", UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
+
+        return resource;
     }
 }

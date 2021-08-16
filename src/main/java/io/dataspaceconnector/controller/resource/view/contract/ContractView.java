@@ -54,6 +54,11 @@ public class ContractView  extends RepresentationModel<ContractView> {
     private String title;
 
     /**
+     * The description of the contract.
+     */
+    private String description;
+
+    /**
      * The start date of the contract.
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ViewConstants.DATE_TIME_FORMAT)

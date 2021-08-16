@@ -116,14 +116,14 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/SubscriptionView'
-        "204":
-          description: No Content
+        "201":
+          description: Created
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/SubscriptionView'
-        "201":
-          description: Created
+        "204":
+          description: No content
           content:
             '*/*':
               schema:
@@ -144,7 +144,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/rules/{id}:
     get:
       tags:
@@ -196,14 +196,14 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ContractRuleView'
-        "204":
-          description: No Content
+        "201":
+          description: Created
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ContractRuleView'
-        "201":
-          description: Created
+        "204":
+          description: No content
           content:
             '*/*':
               schema:
@@ -224,7 +224,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/rules/{id}/contracts:
     get:
       tags:
@@ -290,7 +290,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
     post:
       tags:
         - Rules
@@ -350,7 +350,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/routes/{id}:
     get:
       tags:
@@ -402,14 +402,14 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/RouteView'
-        "204":
-          description: No Content
+        "201":
+          description: Created
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/RouteView'
-        "201":
-          description: Created
+        "204":
+          description: No content
           content:
             '*/*':
               schema:
@@ -430,7 +430,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/routes/{id}/steps:
     get:
       tags:
@@ -496,7 +496,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
     post:
       tags:
         - Routes
@@ -556,7 +556,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/routes/{id}/outputs:
     get:
       tags:
@@ -622,7 +622,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
     post:
       tags:
         - Routes
@@ -682,7 +682,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/routes/{id}/endpoint/start:
     put:
       tags:
@@ -711,7 +711,7 @@ paths:
               schema:
                 type: string
         "204":
-          description: No Content
+          description: No content
           content:
             '*/*':
               schema:
@@ -736,7 +736,7 @@ paths:
               schema:
                 type: string
         "204":
-          description: No Content
+          description: No content
           content:
             '*/*':
               schema:
@@ -769,7 +769,7 @@ paths:
               schema:
                 type: string
         "204":
-          description: No Content
+          description: No content
           content:
             '*/*':
               schema:
@@ -794,7 +794,7 @@ paths:
               schema:
                 type: string
         "204":
-          description: No Content
+          description: No content
           content:
             '*/*':
               schema:
@@ -850,14 +850,14 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/RequestedResourceView'
-        "204":
-          description: No Content
+        "201":
+          description: Created
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/RequestedResourceView'
-        "201":
-          description: Created
+        "204":
+          description: No content
           content:
             '*/*':
               schema:
@@ -878,7 +878,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/requests/{id}/representations:
     get:
       tags:
@@ -944,7 +944,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
     post:
       tags:
         - Requested Resources
@@ -1004,7 +1004,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/requests/{id}/contracts:
     get:
       tags:
@@ -1070,7 +1070,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
     post:
       tags:
         - Requested Resources
@@ -1130,7 +1130,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/requests/{id}/catalogs:
     get:
       tags:
@@ -1196,7 +1196,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
     post:
       tags:
         - Requested Resources
@@ -1256,7 +1256,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/representations/{id}:
     get:
       tags:
@@ -1308,14 +1308,14 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/RepresentationView'
-        "204":
-          description: No Content
+        "201":
+          description: Created
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/RepresentationView'
-        "201":
-          description: Created
+        "204":
+          description: No content
           content:
             '*/*':
               schema:
@@ -1336,7 +1336,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/representations/{id}/requests:
     get:
       tags:
@@ -1402,7 +1402,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
     post:
       tags:
         - Representations
@@ -1462,7 +1462,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/representations/{id}/offers:
     get:
       tags:
@@ -1528,7 +1528,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
     post:
       tags:
         - Representations
@@ -1588,7 +1588,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/representations/{id}/artifacts:
     get:
       tags:
@@ -1654,7 +1654,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
     post:
       tags:
         - Representations
@@ -1714,7 +1714,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/offers/{id}:
     get:
       tags:
@@ -1766,14 +1766,14 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/OfferedResourceView'
-        "204":
-          description: No Content
+        "201":
+          description: Created
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/OfferedResourceView'
-        "201":
-          description: Created
+        "204":
+          description: No content
           content:
             '*/*':
               schema:
@@ -1794,7 +1794,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/offers/{id}/representations:
     get:
       tags:
@@ -1860,7 +1860,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
     post:
       tags:
         - Offered Resources
@@ -1920,7 +1920,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/offers/{id}/contracts:
     get:
       tags:
@@ -1986,7 +1986,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
     post:
       tags:
         - Offered Resources
@@ -2046,7 +2046,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/offers/{id}/catalogs:
     get:
       tags:
@@ -2112,7 +2112,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
     post:
       tags:
         - Offered Resources
@@ -2172,7 +2172,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/notify:
     put:
       tags:
@@ -2268,14 +2268,14 @@ paths:
             '*/*':
               schema:
                 type: object
-        "204":
-          description: No Content
+        "201":
+          description: Created
           content:
             '*/*':
               schema:
                 type: object
-        "201":
-          description: Created
+        "204":
+          description: No content
           content:
             '*/*':
               schema:
@@ -2296,7 +2296,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/endpoints/{id}/datasource/{dataSourceId}:
     put:
       tags:
@@ -2317,8 +2317,10 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/datasources/{id}:
     get:
       tags:
@@ -2370,14 +2372,14 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DataSourceView'
-        "204":
-          description: No Content
+        "201":
+          description: Created
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/DataSourceView'
-        "201":
-          description: Created
+        "204":
+          description: No content
           content:
             '*/*':
               schema:
@@ -2398,7 +2400,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/contracts/{id}:
     get:
       tags:
@@ -2450,14 +2452,14 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ContractView'
-        "204":
-          description: No Content
+        "201":
+          description: Created
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ContractView'
-        "201":
-          description: Created
+        "204":
+          description: No content
           content:
             '*/*':
               schema:
@@ -2478,7 +2480,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/contracts/{id}/rules:
     get:
       tags:
@@ -2544,7 +2546,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
     post:
       tags:
         - Contracts
@@ -2604,7 +2606,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/contracts/{id}/requests:
     get:
       tags:
@@ -2670,7 +2672,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
     post:
       tags:
         - Contracts
@@ -2730,7 +2732,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/contracts/{id}/offers:
     get:
       tags:
@@ -2796,7 +2798,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
     post:
       tags:
         - Contracts
@@ -2856,7 +2858,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/configurations/{id}:
     get:
       tags:
@@ -2908,14 +2910,14 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ConfigurationView'
-        "204":
-          description: No Content
+        "201":
+          description: Created
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ConfigurationView'
-        "201":
-          description: Created
+        "204":
+          description: No content
           content:
             '*/*':
               schema:
@@ -2936,7 +2938,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/configurations/{id}/active:
     put:
       tags:
@@ -2964,19 +2966,19 @@ paths:
               schema:
                 type: object
         "400":
-          description: Failed to deserialize.
+          description: Bad request
           content:
             '*/*':
               schema:
                 type: object
         "415":
-          description: Wrong media type.
+          description: Unsupported media type
           content:
             '*/*':
               schema:
                 type: object
-        "200":
-          description: Ok
+        "204":
+          description: No content
           content:
             '*/*':
               schema:
@@ -3161,14 +3163,14 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/CatalogView'
-        "204":
-          description: No Content
+        "201":
+          description: Created
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/CatalogView'
-        "201":
-          description: Created
+        "204":
+          description: No content
           content:
             '*/*':
               schema:
@@ -3189,7 +3191,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/catalogs/{id}/offers:
     get:
       tags:
@@ -3255,7 +3257,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
     post:
       tags:
         - Catalogs
@@ -3315,7 +3317,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/brokers/{id}:
     get:
       tags:
@@ -3367,14 +3369,14 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/BrokerView'
-        "204":
-          description: No Content
+        "201":
+          description: Created
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/BrokerView'
-        "201":
-          description: Created
+        "204":
+          description: No content
           content:
             '*/*':
               schema:
@@ -3395,7 +3397,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/artifacts/{id}:
     get:
       tags:
@@ -3447,14 +3449,14 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ArtifactView'
-        "204":
-          description: No Content
+        "201":
+          description: Created
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ArtifactView'
-        "201":
-          description: Created
+        "204":
+          description: No content
           content:
             '*/*':
               schema:
@@ -3475,7 +3477,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/artifacts/{id}/representations:
     get:
       tags:
@@ -3541,7 +3543,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
     post:
       tags:
         - Artifacts
@@ -3601,7 +3603,7 @@ paths:
         "401":
           description: Unauthorized
         "204":
-          description: No Content
+          description: No content
   /api/artifacts/{id}/data:
     put:
       tags:
@@ -3624,8 +3626,10 @@ paths:
                 format: byte
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "200":
-          description: OK
+          description: Ok
     post:
       tags:
         - Artifacts
@@ -3644,6 +3648,12 @@ paths:
             schema:
               $ref: '#/components/schemas/QueryInput'
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/StreamingResponseBody'
         "200":
           description: Ok
           content:
@@ -4619,7 +4629,7 @@ paths:
               schema:
                 type: object
         "400":
-          description: Bad Request
+          description: Bad request
           content:
             '*/*':
               schema:
@@ -5060,6 +5070,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelSubscriptionView'
         "405":
           description: Not allowed
           content:
@@ -5290,20 +5306,20 @@ paths:
       tags:
         - Configurations
       summary: Get current configuration
-      operationId: getIdsConfiguration_1
+      operationId: getConfiguration
       responses:
         "401":
           description: Unauthorized
           content:
-            application/ld+json:
+            application/hal+json:
               schema:
-                type: object
+                $ref: '#/components/schemas/ConfigurationView'
         "200":
           description: Ok
           content:
-            application/ld+json:
+            application/hal+json:
               schema:
-                type: object
+                $ref: '#/components/schemas/ConfigurationView'
   /api/brokers/{id}/offers:
     get:
       tags:
@@ -5409,6 +5425,12 @@ paths:
             type: string
             format: uri
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/StreamingResponseBody'
         "200":
           description: Ok
           content:
@@ -5654,6 +5676,8 @@ components:
           format: date-time
         title:
           type: string
+        description:
+          type: string
         value:
           type: string
         additional:
@@ -5762,6 +5786,17 @@ components:
         endpointDocumentation:
           type: string
           format: uri
+        paymentMethod:
+          type: string
+          enum:
+            - fixedPrice
+            - free
+            - negotiationBasis
+        samples:
+          type: array
+          items:
+            type: string
+            format: uri
         remoteId:
           type: string
           format: uri
@@ -5803,6 +5838,17 @@ components:
         endpointDocumentation:
           type: string
           format: uri
+        paymentModality:
+          type: string
+          enum:
+            - fixedPrice
+            - free
+            - negotiationBasis
+        samples:
+          type: array
+          items:
+            type: string
+            format: uri
         additional:
           type: object
           additionalProperties:
@@ -5840,6 +5886,8 @@ components:
           format: uri
         title:
           type: string
+        description:
+          type: string
         mediaType:
           type: string
         language:
@@ -5875,6 +5923,17 @@ components:
         endpointDocumentation:
           type: string
           format: uri
+        paymentMethod:
+          type: string
+          enum:
+            - fixedPrice
+            - free
+            - negotiationBasis
+        samples:
+          type: array
+          items:
+            type: string
+            format: uri
     OfferedResourceView:
       type: object
       properties:
@@ -5909,6 +5968,17 @@ components:
         endpointDocumentation:
           type: string
           format: uri
+        paymentModality:
+          type: string
+          enum:
+            - fixedPrice
+            - free
+            - negotiationBasis
+        samples:
+          type: array
+          items:
+            type: string
+            format: uri
         additional:
           type: object
           additionalProperties:
@@ -6010,6 +6080,8 @@ components:
           format: date-time
         title:
           type: string
+        description:
+          type: string
         start:
           type: string
           format: date-time
@@ -6032,6 +6104,9 @@ components:
           type: string
         description:
           type: string
+        connectorId:
+          type: string
+          format: uri
         defaultEndpoint:
           type: string
           format: uri
@@ -6047,6 +6122,7 @@ components:
           format: uri
         inboundModelVersion:
           type: array
+          readOnly: true
           items:
             type: string
         outboundModelVersion:
@@ -6054,6 +6130,7 @@ components:
           readOnly: true
         securityProfile:
           type: string
+          readOnly: true
           enum:
             - Base Security
             - Trust Plus Security
@@ -6067,6 +6144,12 @@ components:
             - Info
             - Warn
             - Error
+        status:
+          type: string
+          enum:
+            - Faulty
+            - Offline
+            - Online
         deployMode:
           type: string
           enum:
@@ -6085,6 +6168,8 @@ components:
           type: string
           format: uri
         password:
+          type: string
+        alias:
           type: string
     ProxyDesc:
       type: object
@@ -6106,6 +6191,8 @@ components:
           format: uri
         password:
           type: string
+        alias:
+          type: string
     ConfigurationView:
       type: object
       properties:
@@ -6115,6 +6202,9 @@ components:
         modificationDate:
           type: string
           format: date-time
+        connectorId:
+          type: string
+          format: uri
         title:
           type: string
         description:
@@ -6142,6 +6232,12 @@ components:
             - Base Security
             - Trust Plus Security
             - Trust Security
+        status:
+          type: string
+          enum:
+            - Faulty
+            - Offline
+            - Online
         logLevel:
           type: string
           enum:
@@ -6170,6 +6266,8 @@ components:
         location:
           type: string
           format: uri
+        alias:
+          type: string
         _links:
           $ref: '#/components/schemas/Links'
     ProxyView:
@@ -6190,6 +6288,8 @@ components:
         location:
           type: string
           format: uri
+        alias:
+          type: string
         _links:
           $ref: '#/components/schemas/Links'
     CatalogDesc:
@@ -6296,6 +6396,8 @@ components:
           type: string
           format: uri
         title:
+          type: string
+        description:
           type: string
         numAccessed:
           type: integer
@@ -6463,9 +6565,6 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
-            ids:unit:
-              type: string
-              format: uri
             ids:leftOperand:
               type: string
               enum:
@@ -6486,8 +6585,14 @@ components:
                 - https://w3id.org/idsa/code/STATE
                 - https://w3id.org/idsa/code/SYSTEM
                 - https://w3id.org/idsa/code/USER
+            ids:unit:
+              type: string
+              format: uri
             ids:rightOperand:
               $ref: '#/components/schemas/RdfResource'
+            ids:pipEndpoint:
+              type: string
+              format: uri
             ids:operator:
               type: string
               enum:
@@ -6540,9 +6645,6 @@ components:
             ids:rightOperandReference:
               type: string
               format: uri
-            ids:pipEndpoint:
-              type: string
-              format: uri
             '@type':
               type: string
     Duty:
@@ -6574,11 +6676,11 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
-            ids:xone:
+            ids:or:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
-            ids:or:
+            ids:xone:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
@@ -6646,12 +6748,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
-        '@id':
-          type: string
-          format: uri
-        ids:target:
-          type: string
-          format: uri
+        ids:assignee:
+          type: array
+          items:
+            type: string
+            format: uri
+        ids:assigner:
+          type: array
+          items:
+            type: string
+            format: uri
         ids:action:
           type: array
           items:
@@ -6682,16 +6788,9 @@ components:
           oneOf:
             - $ref: '#/components/schemas/Constraint'
             - $ref: '#/components/schemas/LogicalConstraint'
-        ids:assigner:
-          type: array
-          items:
-            type: string
-            format: uri
-        ids:assignee:
-          type: array
-          items:
-            type: string
-            format: uri
+        ids:target:
+          type: string
+          format: uri
         ids:description:
           type: array
           items:
@@ -6700,6 +6799,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
+        '@id':
+          type: string
+          format: uri
         '@type':
           type: string
       discriminator:
