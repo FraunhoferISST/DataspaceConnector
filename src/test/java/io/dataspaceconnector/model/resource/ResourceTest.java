@@ -58,6 +58,6 @@ public class ResourceTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertEquals(PaymentMethod.FREE, ResourceFactory.DEFAULT_PAYMENT_MODALITY);
+        assertEquals(PaymentMethod.UNDEFINED, ResourceFactory.DEFAULT_PAYMENT_MODALITY);
     }
 }
