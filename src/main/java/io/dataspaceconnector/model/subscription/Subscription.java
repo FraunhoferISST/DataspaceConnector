@@ -16,6 +16,7 @@
 package io.dataspaceconnector.model.subscription;
 
 import io.dataspaceconnector.model.base.RemoteService;
+import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -44,7 +45,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class Subscription extends io.dataspaceconnector.model.base.Entity implements RemoteService {
+public class Subscription extends NamedEntity implements RemoteService {
 
     /**
      * Serial version uid.
