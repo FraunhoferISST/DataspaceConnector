@@ -385,7 +385,9 @@ public class PortainerRequestService {
         );
         final var portBindings = new JSONObject();
         for (var port : ports) {
-            portBindings.put(port, new JSONArray().appendElement(new JSONObject().put("HostPort", String.valueOf(SocketUtils.findAvailableTcpPort()))));
+            portBindings.put(port, new JSONArray()
+                    .appendElement(new JSONObject()
+                            .put("HostPort", String.valueOf(SocketUtils.findAvailableTcpPort()))));
         }
         hostConfig.put("PortBindings", portBindings);
         final var binds = new JSONArray();
