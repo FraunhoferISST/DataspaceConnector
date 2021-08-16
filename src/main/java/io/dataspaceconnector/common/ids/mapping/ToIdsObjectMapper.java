@@ -261,6 +261,10 @@ public final class ToIdsObjectMapper {
      * @return The ids payment modality.
      */
     public static PaymentModality getPaymentModality(final PaymentMethod paymentMethod) {
+        if (paymentMethod == null) {
+            return null;
+        }
+
         switch (paymentMethod) {
             case FREE:
                 return PaymentModality.FREE;
