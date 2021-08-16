@@ -30,15 +30,15 @@ class ConnectorApplicationIT {
 
     @Test
     void contextLoads() throws Exception {
-        String appStoreTemplate = "{\n" +
+        final var appStoreTemplate = "{\n" +
                 "    \"type\": 1,\n" +
-                "    \"title\": \"Nginx\",\n" +
-                "    \"description\": \"High performance web server\",\n" +
+                "    \"title\": \"Dataspace Connector\",\n" +
+                "    \"description\": \"High performance IDS-Connector\",\n" +
                 "    \"categories\": [\n" +
-                "        \"webserver\"\n" +
+                "        \"ids\"\n" +
                 "    ],\n" +
                 "    \"platform\": \"linux\",\n" +
-                "    \"logo\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/logos/nginx.png\",\n" +
+                "    \"logo\": \"https://camo.githubusercontent.com/23b18b3572aadf5a1e1a072165cfcb8537e18ec2c66b5cc6cc62b7170261960e/68747470733a2f2f6461746173706163652d636f6e6e6563746f722e64652f6473635f6c6f676f2e737667\",\n" +
                 "    \"image\": \"dataspace-connector:latest\",\n" +
                 "    \"ports\": [\n" +
                 "        \"8080/tcp\",\n" +
