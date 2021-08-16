@@ -53,6 +53,11 @@ public class ContractRuleView extends RepresentationModel<ContractRuleView> {
     private String title;
 
     /**
+     * The description of the rule.
+     */
+    private String description;
+
+    /**
      * The ids rule as rdf string.
      */
     private String value;
