@@ -79,7 +79,9 @@ public class MetadataDownloader {
             throws UnexpectedResponseException {
         Map<String, String> response;
         response = descReqSvc.sendMessage(recipient, appResource);
-        persistenceSvc.saveAppMetadata(response, appResource);
+        if (appResource != null) {
+            persistenceSvc.saveAppMetadata(response, appResource);
+        }
         return response;
     }
 }

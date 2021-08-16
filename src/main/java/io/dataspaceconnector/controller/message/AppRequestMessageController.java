@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import de.fraunhofer.iais.eis.AppRepresentation;
 import de.fraunhofer.iais.eis.AppResource;
 import de.fraunhofer.ids.messaging.util.SerializerProvider;
@@ -45,6 +40,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This controller provides the endpoint for sending an app request message and starting the
@@ -92,19 +92,22 @@ public class AppRequestMessageController {
     public ResponseEntity<Object> sendMessage(
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
-            @Parameter(description = "The app url.", required = true)
-            @RequestParam("app") final URI app) {
+            @Parameter(description = "The app url.")
+            @RequestParam(value = "app", required = false) final URI app) {
 
         try {
+            var response = downloadAppStoreMetaData(recipient, app);
+            if (app == null) {
+                return ResponseEntity.ok(MessageUtils.extractPayloadFromMultipartMessage(response));
+            }
             // Send description request message and save the app
-            var response = downloadApp(recipient, app);
             var appResource = parseAppResource(response);
             var instanceId = getInstanceID(appResource);
 
             // Send artifact request message
             if (instanceId != null) {
-                 artifactDataDownloader.downloadAppArtifact(recipient, instanceId);
-                 return ResponseEntity.ok("Successfully downloaded the app artifact");
+                artifactDataDownloader.downloadAppArtifact(recipient, instanceId);
+                return ResponseEntity.ok("Successfully downloaded the app artifact");
             } else {
                 return ResponseEntity.badRequest().body("Could not find app artifact");
             }
@@ -125,12 +128,12 @@ public class AppRequestMessageController {
     /**
      * Get AppResource from AppStore.
      *
-     * @param recipient The recipient connector.
+     * @param recipient   The recipient connector.
      * @param appResource The app resource.
-     * @throws UnexpectedResponseException if the response type is not as expected.
      * @return the appstore response.
+     * @throws UnexpectedResponseException if the response type is not as expected.
      */
-    private Map<String, String> downloadApp(final URI recipient, final URI appResource)
+    private Map<String, String> downloadAppStoreMetaData(final URI recipient, final URI appResource)
             throws UnexpectedResponseException {
         return metadataDownloader.downloadAppResource(recipient, appResource);
     }
