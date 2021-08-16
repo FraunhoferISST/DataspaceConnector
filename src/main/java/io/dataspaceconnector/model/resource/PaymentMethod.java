@@ -23,6 +23,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public enum PaymentMethod {
 
     /**
+     * To express that the payment method is not set.
+     */
+    @JsonProperty("undefined")
+    UNDEFINED,
+
+    /**
      * To express that the exchange of resource is with a fixed price.
      */
     @JsonProperty("fixedPrice")
