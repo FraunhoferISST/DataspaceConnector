@@ -61,4 +61,9 @@ public class Truststore extends Entity {
      * The password of the trust store.
      */
     private String password;
+
+    /**
+     * Alias for the trust store.
+     */
+    private String alias;
 }

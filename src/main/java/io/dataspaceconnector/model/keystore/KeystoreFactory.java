@@ -34,6 +34,11 @@ public class KeystoreFactory extends AbstractFactory<Keystore, KeystoreDesc> {
      */
     public static final URI DEFAULT_LOCATION = URI.create("file:///conf/keystore-localhost.p12");
 
+    /**
+     * The default alias.
+     */
+    public static final String DEFAULT_ALIAS = "1";
+
     @Override
     protected final Keystore initializeEntity(final KeystoreDesc desc) {
         return new Keystore();
@@ -43,8 +48,9 @@ public class KeystoreFactory extends AbstractFactory<Keystore, KeystoreDesc> {
     public final boolean updateInternal(final Keystore keystore, final KeystoreDesc desc) {
         final var hasUpdatedLocation = updateLocation(keystore, desc.getLocation());
         final var hasUpdatedPassword = updatePassword(keystore, desc.getPassword());
+        final var hasUpdatedAlias = updateAlias(keystore, desc.getAlias());
 
-        return hasUpdatedLocation || hasUpdatedPassword;
+        return hasUpdatedLocation || hasUpdatedPassword || hasUpdatedAlias;
     }
 
     private boolean updatePassword(final Keystore keystore, final String password) {
@@ -65,5 +71,17 @@ public class KeystoreFactory extends AbstractFactory<Keystore, KeystoreDesc> {
         newLocation.ifPresent(keystore::setLocation);
 
         return newLocation.isPresent();
+    }
+
+    private boolean updateAlias(final Keystore keystore, final String alias) {
+        if (keystore.getAlias() != null && alias == null) {
+            return false;
+        }
+
+        final var newAlias = FactoryUtils.updateString(keystore.getAlias(),
+                alias, DEFAULT_ALIAS);
+        newAlias.ifPresent(keystore::setAlias);
+
+        return newAlias.isPresent();
     }
 }

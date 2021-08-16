@@ -36,6 +36,7 @@ import lombok.SneakyThrows;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -43,6 +44,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -81,7 +83,7 @@ public class QueryMessageControllerTest {
     @MockBean
     private ProducerTemplate producerTemplate;
 
-    @MockBean
+    @SpyBean
     private ConnectorConfig connectorConfig;
 
     @Autowired
@@ -95,6 +97,11 @@ public class QueryMessageControllerTest {
             ._tokenValue_("token")
             ._tokenFormat_(TokenFormat.JWT)
             .build();
+
+    @BeforeEach
+    public void init() {
+        Mockito.doReturn("6.0.0").when(connectorConfig).getDefaultVersion();
+    }
 
     @Test
     @WithMockUser("ADMIN")

@@ -41,4 +41,9 @@ public class TruststoreDesc extends Description {
      * The password of the trust store.
      */
     private String password;
+
+    /**
+     * Alias for the key store.
+     */
+    private String alias;
 }

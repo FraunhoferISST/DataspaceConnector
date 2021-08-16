@@ -13,37 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model.keystore;
-
-import io.dataspaceconnector.model.base.Description;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-
-import java.net.URI;
+package io.dataspaceconnector.service.message.handler.exception;
 
 /**
- * This class describes key stores properties.
+ * Thrown to indicate that the connector is offline.
  */
-@AllArgsConstructor
-@Data
-@EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
-public class KeystoreDesc extends Description {
+public class ConnectorOfflineException extends RuntimeException {
 
     /**
-     * The key store.
+     * Default serial version uid.
      */
-    private URI location;
+    private static final long serialVersionUID = 1L;
 
     /**
-     * The key store password.
+     * Constructs an ConnectorOfflineException without any arguments.
      */
-    private String password;
+    public ConnectorOfflineException() {
+        super();
+    }
 
-    /**
-     * Alias for the key store.
-     */
-    private String alias;
 }

@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view.configuration;
 
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.controller.resource.type.ConfigurationController;
 import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.configuration.Configuration;
@@ -38,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConfigurationViewAssemblerTest {
+
+    private final ConnectorConfig connectorConfig = new ConnectorConfig();
 
     @Test
     public void create_ValidBroker_returnBrokerView() {
@@ -78,7 +81,8 @@ public class ConfigurationViewAssemblerTest {
         final var proxyFactory = new ProxyFactory();
         final var trustStoreFactory = new TruststoreFactory();
         final var keyStoreFactory = new KeystoreFactory();
-        final var factory = new ConfigurationFactory(proxyFactory, trustStoreFactory, keyStoreFactory);
+        final var factory = new ConfigurationFactory(proxyFactory, trustStoreFactory,
+                keyStoreFactory, connectorConfig);
         return factory.create(getConfigurationDesc());
     }
 

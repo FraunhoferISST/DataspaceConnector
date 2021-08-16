@@ -96,7 +96,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
      * @param newConfig Id of the new active configuration.
      */
     public void swapActiveConfig(final UUID newConfig) throws ConfigUpdateException {
-        var activeConfig = findActiveConfig();
+        final var activeConfig = findActiveConfig();
 
         if (activeConfig.isPresent()) {
             replaceActiveConfig(newConfig, activeConfig.get());
@@ -125,6 +125,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
                 reload(config.getId());
             }
         } catch (ConfigUpdateException ignored) { }
+
         return config;
     }
 
@@ -137,11 +138,14 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
     private void reload(final UUID newConfig) throws ConfigUpdateException {
         final var configContainer = findConfigContainer();
         if (configContainer.isPresent()) {
-            final var configuration = configBuilder.create(getActiveConfig());
+            final var activeConfig = getActiveConfig();
+            final var configuration = configBuilder.create(activeConfig);
             configContainer.get().updateConfiguration(configuration);
             if (log.isInfoEnabled()) {
                log.info("Changing configuration profile [id=({})]", newConfig);
             }
+
+            // TODO Change loglevel during runtime.
         }
     }
 
