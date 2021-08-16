@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file.
 - Automatically notify subscribers on a local data update via `PUT /data`.
 
 ### Changed
-- Increase pitest version from 1.6.7 to 1.6.8.
+- Increase pitest version from 1.6.7 to 1.6.9.
 - Use XML DSL instead of Java DSL for definition of Camel routes.
 - Dropping jsonld dependency.
 - Increase maven-enforcer-plugin version from 3.0.0-M3 to 3.0.0.
@@ -29,6 +29,7 @@ All notable changes to this project will be documented in this file.
 - Return data with correct content-type in headers, if possible. Fallback stays
   application/octet-stream.
 - Set default status in `config.json` to `CONNECTOR_ONLINE.`
+- Increase equalsverifier from 3.7.0 to 3.7.1.
 
 ### Fixed
 - Restrict access to POST/PUT/DELETE `{entity}/subscriptions` for artifacts and representations.
