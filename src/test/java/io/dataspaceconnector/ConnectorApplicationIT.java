@@ -72,11 +72,11 @@ class ConnectorApplicationIT {
         //2. Pull Image with given information from AppStore template
         portainerRequestSvc.pullImage(appStoreTemplate);
 
+
         //3. Create volumes with given information from AppStore template
         final var volumeMap = portainerRequestSvc.createVolumes(appStoreTemplate);
 
         //4. Create Container with given information from AppStore template and new volume
-        //TODO: Check if same network and stack necessary?
         final var containerId = portainerRequestSvc.createContainer(appStoreTemplate, volumeMap);
 
         //POST: http://localhost:9000/api/endpoints/1/docker/networks/{networkID}/connect

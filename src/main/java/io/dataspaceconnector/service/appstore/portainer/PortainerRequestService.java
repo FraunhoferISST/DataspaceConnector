@@ -199,13 +199,16 @@ public class PortainerRequestService {
      */
     public Response createRegistry(final String appStoreTemplate) throws IOException {
         final var templateObject = toJsonObject(appStoreTemplate);
+        final var registryURL = templateObject.getString("registry");
+
+        if (registryExists(registryURL)) return null;
 
         //Needed registry info from AppStore template for request body:
         //Authentication true/false, Name, Password, Type, URL, Username
         final var requestBody = new JSONObject();
-        requestBody.put("url", templateObject.getString("registry"));
+        requestBody.put("url", registryURL);
         //name of registry will be the url
-        requestBody.put("name", templateObject.getString("registry"));
+        requestBody.put("name", registryURL);
         requestBody.put("type", REGISTRY_TYPE); //Custom Registry
         requestBody.put("authentication", false);
 
@@ -234,6 +237,25 @@ public class PortainerRequestService {
         final var request = builder.build();
         final var response = httpService.send(request);
         return response;
+    }
+
+    public boolean registryExists(final String registryURL) throws IOException {
+        final var jwt = getJwtToken();
+        final var builder = getRequestBuilder();
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments("api/registries");
+
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.url(url);
+        builder.get();
+
+        final var request = builder.build();
+        var response = httpService.send(request);
+        return response.body().string().contains(registryURL);
     }
 
     /**
