@@ -92,15 +92,12 @@ public class AppRequestMessageController {
     public ResponseEntity<Object> sendMessage(
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
-            @Parameter(description = "The app url.")
-            @RequestParam(value = "app", required = false) final URI app) {
+            @Parameter(description = "The app url.", required = true)
+            @RequestParam(value = "app") final URI app) {
 
+        // Send description request message and save the app
         try {
             var response = downloadAppStoreMetaData(recipient, app);
-            if (app == null) {
-                return ResponseEntity.ok(MessageUtils.extractPayloadFromMultipartMessage(response));
-            }
-            // Send description request message and save the app
             var appResource = parseAppResource(response);
             var instanceId = getInstanceID(appResource);
 
