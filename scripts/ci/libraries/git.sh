@@ -16,11 +16,6 @@
 #
 
 
-set -eo pipefail
-
-# shellcheck source=scripts/ci/libraries/test.sh
-. "${FILE_PATH}"/test.sh
-# shellcheck source=scripts/ci/libraries/dsc.sh
-. "${FILE_PATH}"/dsc.sh
-# shellcheck source=scripts/ci/libraries/git.sh
-. "${FILE_PATH}"/git.sh
+function git::get_last_tag() {
+    echo $(git describe --tags `git rev-list --tags --max-count=1`)
+}
