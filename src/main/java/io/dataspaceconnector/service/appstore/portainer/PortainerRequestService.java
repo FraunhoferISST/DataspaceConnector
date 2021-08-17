@@ -201,7 +201,9 @@ public class PortainerRequestService {
         final var templateObject = toJsonObject(appStoreTemplate);
         final var registryURL = templateObject.getString("registry");
 
-        if (registryExists(registryURL)) return null;
+        if (registryExists(registryURL)) {
+            return null;
+        }
 
         //Needed registry info from AppStore template for request body:
         //Authentication true/false, Name, Password, Type, URL, Username
@@ -239,6 +241,11 @@ public class PortainerRequestService {
         return response;
     }
 
+    /**
+     * @param registryURL The new registry url.
+     * @return true, if the new registry url already exists.
+     * @throws IOException If an error occurs while connection to portainer.
+     */
     public boolean registryExists(final String registryURL) throws IOException {
         final var jwt = getJwtToken();
         final var builder = getRequestBuilder();
