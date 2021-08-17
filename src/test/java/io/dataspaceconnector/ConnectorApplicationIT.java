@@ -38,7 +38,6 @@ class ConnectorApplicationIT {
         // 3. POST /api/ids/app with Recipient and App URI - DescriptionRequestMessage to AppStore to get metadata of single App and App-Template
         //    - The following flow begins automatically with 3. and deploys the App involving the AppStore Registry
 
-        var networkID = portainerRequestSvc.createNetwork("testnet", true, false);
         //Exmaple AppStore Template describing an App (Docker-Image/Container)
         String appStoreTemplate = "{\n" +
                 "    \"type\": 1,\n" +
@@ -81,12 +80,11 @@ class ConnectorApplicationIT {
 
         //POST: http://localhost:9000/api/endpoints/1/docker/networks/{networkID}/connect
         //payload: {"Container":"{containerID}"}
-        var response = portainerRequestSvc.joinNetwork(containerId, networkID);
-        var string = response.body().string();
+        //TODO: Get network of currently running DSC and put App in same network
+        final var networkID = portainerRequestSvc.createNetwork("testnet", true, false);
+        final var networkResponse = portainerRequestSvc.joinNetwork(containerId, networkID);
 
         //5. Start the App (container)
         portainerRequestSvc.startContainer(containerId);
-
-
     }
 }
