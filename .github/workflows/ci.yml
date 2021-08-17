@@ -196,7 +196,7 @@ jobs:
           docker build . -t $IMAGE:ci
         env:
           IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
-#          DOCKER_BUILDKIT: 1
+          DOCKER_BUILDKIT: 1
       - name: Push image
         run: docker push $IMAGE:ci
         env:
@@ -211,7 +211,7 @@ jobs:
           vuln-type: 'os,library'
           severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
 
-  e2e-test-provider:
+  e2e-test:
     needs: build-test-image
     timeout-minutes: 30
     runs-on: ubuntu-latest
@@ -238,62 +238,4 @@ jobs:
           kubectl cluster-info
       - name: Run scripts
         run: |
-          ./scripts/ci/e2e/setup-old-consumer-new-provider.sh
-
-  e2e-test-consumer:
-    needs: build-test-image
-    timeout-minutes: 30
-    runs-on: ubuntu-latest
-    concurrency:
-      group: e2e
-
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v2
-      - name: Cache maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      - name: Setup environment
-        run: |
-          curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE=777 sh -
-          cat /etc/rancher/k3s/k3s.yaml
-          mkdir -p ~/.kube
-          cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
-      - name: Test environment
-        run: |
-          kubectl cluster-info
-      - name: Run scripts
-        run: |
-          ./scripts/ci/e2e/setup-old-provider-new-consumer.sh
-
-  e2e-test-both:
-    needs: build-test-image
-    timeout-minutes: 30
-    runs-on: ubuntu-latest
-    concurrency:
-      group: e2e
-
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v2
-      - name: Cache maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      - name: Setup environment
-        run: |
-          curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE=777 sh -
-          cat /etc/rancher/k3s/k3s.yaml
-          mkdir -p ~/.kube
-          cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
-      - name: Test environment
-        run: |
-          kubectl cluster-info
-      - name: Run scripts
-        run: |
-          ./scripts/ci/e2e/setup-new-consumer-new-provider.sh
+          ./scripts/ci/e2e/test-provider-consumer.sh
