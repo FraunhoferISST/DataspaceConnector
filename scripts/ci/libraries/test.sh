@@ -44,6 +44,7 @@ function test::run_test_script() {
     else
         echo "$LINE_BREAK_STAR"
         export TEST_FAILURES=$(($TEST_FAILURES+1))
+        export TEST_SUITE_FAILURES=$(($TEST_SUITE_FAILURES + $TEST_FAILURES+1))
         echo "${COLOR_RED}FAILED${COLOR_DEFAULT} $CURRENT_TEST_SCRIPT"
         echo "$LINE_BREAK_STAR"
         echo ${SCRIPT_OUTPUT}
