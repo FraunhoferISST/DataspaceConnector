@@ -38,21 +38,31 @@ class ConnectorApplicationIT {
         // 3. POST /api/ids/app with Recipient and App URI - DescriptionRequestMessage to AppStore to get metadata of single App and App-Template
         //    - The following flow begins automatically with 3. and deploys the App involving the AppStore Registry
 
+        var networkID = portainerRequestSvc.createNetwork("testnet", true, false);
         //Exmaple AppStore Template describing an App (Docker-Image/Container)
-        final var appStoreTemplate = "{\n" +
+        String appStoreTemplate = "{\n" +
                 "    \"type\": 1,\n" +
-                "    \"title\": \"Dataspace Connector\",\n" +
-                "    \"description\": \"High performance IDS-Connector\",\n" +
+                "    \"title\": \"Nginx\",\n" +
+                "    \"description\": \"High performance web server\",\n" +
                 "    \"categories\": [\n" +
-                "        \"ids\"\n" +
+                "        \"webserver\"\n" +
                 "    ],\n" +
                 "    \"platform\": \"linux\",\n" +
-                "    \"logo\": \"https://camo.githubusercontent.com/23b18b3572aadf5a1e1a072165cfcb8537e18ec2c66b5cc6cc62b7170261960e/68747470733a2f2f6461746173706163652d636f6e6e6563746f722e64652f6473635f6c6f676f2e737667\",\n" +
-                "    \"image\": \"dataspace-connector:latest\",\n" +
+                "    \"logo\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/logos/nginx.png\",\n" +
+                "    \"image\": \"nginx:latest\",\n" +
                 "    \"ports\": [\n" +
-                "        \"8080/tcp\",\n" +
+                "        \"80/tcp\",\n" +
+                "        \"443/tcp\"\n" +
                 "    ],\n" +
-                "    \"registry\":\"ghcr.io/international-data-spaces-association\",\n" +
+                "    \"volumes\": [\n" +
+                "        {\n" +
+                "            \"container\": \"/etc/nginx\"\n" +
+                "        },\n" +
+                "        {\n" +
+                "            \"container\": \"/usr/share/nginx/html\"\n" +
+                "        }\n" +
+                "    ],\n" +
+                "    \"registry\":\"registry.hub.docker.com/library\",\n" +
                 "}";
 
         //1. Create Registry with given information from AppStore template
@@ -69,7 +79,14 @@ class ConnectorApplicationIT {
         //TODO: Check if same network and stack necessary?
         final var containerId = portainerRequestSvc.createContainer(appStoreTemplate, volumeMap);
 
+        //POST: http://localhost:9000/api/endpoints/1/docker/networks/{networkID}/connect
+        //payload: {"Container":"{containerID}"}
+        var response = portainerRequestSvc.joinNetwork(containerId, networkID);
+        var string = response.body().string();
+
         //5. Start the App (container)
         portainerRequestSvc.startContainer(containerId);
+
+
     }
 }

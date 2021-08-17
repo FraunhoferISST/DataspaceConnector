@@ -367,6 +367,77 @@ public class PortainerRequestService {
         return new JSONObject(httpService.send(request).body().string()).getString("Id");
     }
 
+    /**
+     * @param networkName name of the network to create
+     * @param pub true if network is public
+     * @param adminOnly true if only visible for admins
+     * @return Response from portainer
+     * @throws IOException if sending request to portainer fails
+     */
+    public String createNetwork(final String networkName, final boolean pub,
+                                  final boolean adminOnly) throws IOException {
+
+        final var jwt = getJwtToken();
+        final var builder = getRequestBuilder();
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments("api/endpoints/1/docker/networks/create");
+
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.url(url);
+
+        var jsonPayload = PortainerUtil.createNetworkPayload(
+                networkName, pub, adminOnly
+        );
+
+        //add json payload to request
+        builder.post(
+                RequestBody.create(jsonPayload.toString(), MediaType.parse("application/json"))
+        );
+
+        final var request = builder.build();
+        var response = httpService.send(request);
+        var jsonResp = new JSONObject(response.body().string());
+        return jsonResp.getString("Id");
+    }
+
+    /**
+     * @param containerID Id of the container to add to the network
+     * @param networkID networkID to add to
+     * @return response from portainer
+     * @throws IOException if sending request to portainer fails
+     */
+    public Response joinNetwork(final String containerID, final String networkID)
+            throws IOException {
+        final var jwt = getJwtToken();
+        final var builder = getRequestBuilder();
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments(
+                        String.format("api/endpoints/1/docker/networks/%s/connect", networkID)
+                );
+
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.url(url);
+
+        var jsonPayload = new JSONObject();
+        jsonPayload.put("Container", containerID);
+
+        //add json payload to request
+        builder.post(
+                RequestBody.create(jsonPayload.toString(), MediaType.parse("application/json"))
+        );
+
+        final var request = builder.build();
+        return httpService.send(request);
+    }
+
     private Request.Builder getRequestBuilder() {
         return new Request.Builder();
     }

@@ -103,4 +103,28 @@ public final class PortainerUtil {
 
         return jsonPayload;
     }
+
+    /**
+     * @param networkName name of network to create
+     * @param pub true, if network should be public
+     * @param adminOnly true if only visible by admin
+     * @return json payload for network creation requests
+     */
+    public static JSONObject createNetworkPayload(final String networkName,
+                                                  final boolean pub,
+                                                  final boolean adminOnly) {
+        var jsonPayload = new JSONObject();
+        jsonPayload.put("Name", networkName);
+        jsonPayload.put("CheckDuplicate", true);
+        var portainerJson = new JSONObject();
+        var resourceControl = new JSONObject();
+        resourceControl.put("TeamAccess", new org.json.JSONArray());
+        resourceControl.put("Public", pub);
+        resourceControl.put("AdministratorOnly", adminOnly);
+        resourceControl.put("System", false);
+        portainerJson.put("ResourceControl", resourceControl);
+        jsonPayload.put("Portainer", new JSONObject());
+        jsonPayload.put("Warning", "");
+        return jsonPayload;
+    }
 }
