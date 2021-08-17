@@ -21,11 +21,13 @@ import io.dataspaceconnector.controller.resource.swagger.response.ResponseCode;
 import io.dataspaceconnector.controller.resource.swagger.response.ResponseDescription;
 import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.tag.ResourceName;
+import io.dataspaceconnector.controller.util.ActionType;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
+import io.dataspaceconnector.model.app.AppImpl;
 import io.dataspaceconnector.model.appstore.AppStore;
+import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
-import io.dataspaceconnector.controller.util.ActionType;
 import io.dataspaceconnector.service.configuration.AppService;
 import io.dataspaceconnector.util.Utils;
 import io.dataspaceconnector.view.app.AppView;
@@ -38,6 +40,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
@@ -68,7 +71,12 @@ public final class AppControllers {
             AppView, AppService> {
 
         /**
-         * App store registry service.
+         * App service.
+         */
+        private final @NonNull AppService appService;
+
+        /**
+         * Portainer request service.
          */
         private final @NonNull PortainerRequestService portainerRequestService;
 
@@ -101,8 +109,8 @@ public final class AppControllers {
         }
 
         /**
-         * @param containerId The id of the container.
-         * @param actionType  The action type.
+         * @param appId      The id of the container.
+         * @param actionType The action type.
          * @return Response depending on the action on an app.
          */
         @PutMapping("/{id}/actions")
@@ -113,39 +121,79 @@ public final class AppControllers {
         @ApiResponse(responseCode = "500", description = "Internal server error")
         @ResponseBody
         public final ResponseEntity<String> containerManagement(
-                final @PathVariable("id") String containerId,
+                final @PathVariable("id") UUID appId,
                 final @RequestParam("actionType") String actionType) {
 
+            final var app = appService.get(appId);
             final var action = actionType.toUpperCase();
             ResponseEntity<String> response = null;
+
             try {
                 if (ActionType.START.name().equals(action)) {
-                    final var startResponse = portainerRequestService.startContainer(containerId);
-                    if (startResponse.isSuccessful()) {
-                        response = ResponseEntity.ok("Successfully started the app.");
+                    var containerID = ((AppImpl) app).getContainerID();
+                    if (containerID != null) {
+                        final var startResponse = portainerRequestService
+                                .startContainer(containerID);
+                        if (startResponse.isSuccessful()) {
+                            response = ResponseEntity.ok("Successfully started the app.");
+                        } else {
+                            response = ResponseEntity.internalServerError()
+                                    .body(startResponse.body().string());
+                        }
                     } else {
-                        response = ResponseEntity.internalServerError()
-                                .body(startResponse.body().string());
+                        var appData = ((AppImpl) app).getData();
+                        final var templateInput = ((LocalData) appData).getValue();
+                        final var appStoreTemplate = IOUtils.toString(templateInput,
+                                "UTF-8");
+
+                        //1. Create Registry with given information from AppStore template
+                        portainerRequestService.createRegistry(appStoreTemplate);
+
+                        //2. Pull Image with given information from AppStore template
+                        portainerRequestService.pullImage(appStoreTemplate);
+
+
+                        //3. Create volumes with given information from AppStore template
+                        final var volumeMap = portainerRequestService
+                                .createVolumes(appStoreTemplate);
+
+                        //4. Create Container with given information from AppStore template
+                        // and new volume
+                        final var containerId = portainerRequestService
+                                .createContainer(appStoreTemplate, volumeMap);
+
+                        // Persist containerID
+                        appService.setContainerIdForApp(appId, containerID);
+
+                //POST: http://localhost:9000/api/endpoints/1/docker/networks/{networkID}/connect
+                        //payload: {"Container":"{containerID}"}
+                        //TODO: Get network of currently running DSC and put App in same network
+                        final var networkID = portainerRequestService
+                                .createNetwork("testnet", true, false);
+                        portainerRequestService.joinNetwork(containerId, networkID);
+
+                        //5. Start the App (container)
+                        portainerRequestService.startContainer(containerId);
                     }
                 }
-                if (ActionType.STOP.name().equals(action)) {
-                    final var stopResponse = portainerRequestService.stopContainer(containerId);
-                    if (stopResponse.isSuccessful()) {
-                        response = ResponseEntity.ok("Successfully stopped the app.");
-                    } else {
-                        response = ResponseEntity.internalServerError()
-                                .body(stopResponse.body().string());
-                    }
-                }
-                if (ActionType.DELETE.name().equals(action)) {
-                    final var deleteResponse = portainerRequestService.deleteContainer(containerId);
-                    if (deleteResponse.isSuccessful()) {
-                        response = ResponseEntity.ok("Successfully deleted the app.");
-                    } else {
-                        response = ResponseEntity.internalServerError()
-                                .body(deleteResponse.body().string());
-                    }
-                }
+//                if (ActionType.STOP.name().equals(action)) {
+//                    final var stopResponse = portainerRequestService.stopContainer(containerId);
+//                    if (stopResponse.isSuccessful()) {
+//                        response = ResponseEntity.ok("Successfully stopped the app.");
+//                    } else {
+//                        response = ResponseEntity.internalServerError()
+//                                .body(stopResponse.body().string());
+//                    }
+//                }
+//                if (ActionType.DELETE.name().equals(action)) {
+//                 final var deleteResponse = portainerRequestService.deleteContainer(containerId);
+//                    if (deleteResponse.isSuccessful()) {
+//                        response = ResponseEntity.ok("Successfully deleted the app.");
+//                    } else {
+//                        response = ResponseEntity.internalServerError()
+//                                .body(deleteResponse.body().string());
+//                    }
+//                }
             } catch (IOException e) {
                 response = ResponseEntity.badRequest().body(e.getMessage());
             }
@@ -185,8 +233,8 @@ public final class AppControllers {
          * Get the AppStores related to the given app.
          *
          * @param resourceId id of app for which related appstores should be found.
-         * @param page number of the page to get.
-         * @param size size of response pages.
+         * @param page       number of the page to get.
+         * @param size       size of response pages.
          * @return Pageable of AppStores.
          */
         @GetMapping("/{id}/appstore")

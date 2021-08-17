@@ -54,4 +54,9 @@ public class AppImpl extends App {
     @JsonInclude
     @ToString.Exclude
     private Data data;
+
+    /**
+     * The deployed container id.
+     */
+    private String containerID;
 }

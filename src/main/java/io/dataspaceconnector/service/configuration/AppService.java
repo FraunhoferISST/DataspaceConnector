@@ -17,6 +17,7 @@ package io.dataspaceconnector.service.configuration;
 
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
+import io.dataspaceconnector.model.app.AppFactory;
 import io.dataspaceconnector.model.app.AppImpl;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.artifact.LocalData;
@@ -153,5 +154,15 @@ public class AppService extends BaseEntityService<App, AppDesc> {
 
             throw new IOException("Failed to store data.", e);
         }
+    }
+
+    /**
+     * @param appId The id of the app.
+     * @param containerID The id of the container.
+     */
+    public void setContainerIdForApp(final UUID appId, final String containerID) {
+        final var app = ((AppImpl) get(appId));
+        ((AppFactory) getFactory()).setContainerId(app, containerID);
+        getRepository().save(app);
     }
 }

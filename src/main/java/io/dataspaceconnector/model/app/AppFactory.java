@@ -225,4 +225,12 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
 
         return newValue.isPresent();
     }
+
+    /**
+     * @param app The app entity.
+     * @param containerId The id of the container which is set.
+     */
+    public void setContainerId(final AppImpl app, final String containerId) {
+        app.setContainerID(containerId);
+    }
 }
