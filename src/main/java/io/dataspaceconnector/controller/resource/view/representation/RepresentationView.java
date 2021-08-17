@@ -59,6 +59,11 @@ public class RepresentationView extends RepresentationModel<RepresentationView> 
     private String title;
 
     /**
+     * The description of the representation.
+     */
+    private String description;
+
+    /**
      * The media type of the representation.
      */
     private String mediaType;
