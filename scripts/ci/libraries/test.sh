@@ -32,6 +32,10 @@ function test::run_test_suite() {
         export CURRENT_TEST_SCRIPT=$INPUT
         test::run_test_script
     done <./scripts/ci/e2e/active-tests.txt
+
+    if [ "$TEST_FAILURES" -gt 0 ]; then
+        export TEST_SUITE_FAILURES=$(($TEST_SUITE_FAILURES+1))
+    fi
 }
 
 function test::run_test_script() {
@@ -44,7 +48,6 @@ function test::run_test_script() {
     else
         echo "$LINE_BREAK_STAR"
         export TEST_FAILURES=$(($TEST_FAILURES+1))
-        export TEST_SUITE_FAILURES=$(($TEST_SUITE_FAILURES + $TEST_FAILURES+1))
         echo "${COLOR_RED}FAILED${COLOR_DEFAULT} $CURRENT_TEST_SCRIPT"
         echo "$LINE_BREAK_STAR"
         echo ${SCRIPT_OUTPUT}
