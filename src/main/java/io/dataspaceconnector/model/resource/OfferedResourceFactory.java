@@ -67,6 +67,10 @@ public final class OfferedResourceFactory extends ResourceFactory<OfferedResourc
                 throw new InvalidEntityException("Sample is not a valid uri.");
             }
 
+            if (resource.getId().equals(resourceId)) {
+                throw new InvalidEntityException("Resource cannot reference itself.");
+            }
+
             if (!resourceService.doesExist(resourceId)) {
                 if (log.isWarnEnabled()) {
                     log.warn("Could not find matching resource. [id=({})]", sample);

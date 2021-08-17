@@ -64,7 +64,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
     /**
      * The default payment modality assigned to all resources.
      */
-    public static final PaymentMethod DEFAULT_PAYMENT_MODALITY = PaymentMethod.FREE;
+    public static final PaymentMethod DEFAULT_PAYMENT_MODALITY = PaymentMethod.UNDEFINED;
 
     /**
      * The default sample list assigned to all resources.

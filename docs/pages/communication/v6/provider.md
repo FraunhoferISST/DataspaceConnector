@@ -74,8 +74,8 @@ The values `title`, `description`, `keywords`, `publisher`, `sovereign`, `licens
 the data resource and will be used to fill in the IDS Information Model attributes for IDS
 communication with a connector as data consumer.
 
-**New**: You can add a payment modality to your resource (one of `free`, `fixedPrice`, or
-`negotiationBasis`). On top of that, you can add a list of resources as a sample of another
+**New**: You can add a payment modality to your resource (one of `undefined`, `free`, `fixedPrice`,
+or `negotiationBasis`). On top of that, you can add a list of resources as a sample of another
 resource. For this, add the IDs to the sample list. The connector checks if the values are valid
 uri and match known resource offers. If this is not the case, you will get a code 400 as a response.
 

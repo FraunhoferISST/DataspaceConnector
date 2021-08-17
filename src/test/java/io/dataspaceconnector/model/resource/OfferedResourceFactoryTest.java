@@ -16,7 +16,9 @@
 package io.dataspaceconnector.model.resource;
 
 import io.dataspaceconnector.common.exception.InvalidEntityException;
+import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.service.resource.type.OfferedResourceService;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +26,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -31,6 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -836,7 +840,7 @@ public class OfferedResourceFactoryTest {
         final var desc = new OfferedResourceDesc();
         desc.setSamples(List.of(URI.create("https://api/resources/d8a6f765-9b94-4a27-a18d-fbe81636a784")));
 
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = getResource();
 
         /* ACT & ASSERT*/
         assertThrows(InvalidEntityException.class, () -> factory.update(resource, desc));
@@ -848,7 +852,7 @@ public class OfferedResourceFactoryTest {
         final var desc = new OfferedResourceDesc();
         desc.setSamples(List.of(URI.create("https://api/resources/d8a6f765-9b94-4a27-a18d-fbe81636a784")));
 
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = getResource();
         Mockito.doReturn(true).when(service).doesExist(Mockito.any());
 
         /* ACT */
@@ -864,7 +868,7 @@ public class OfferedResourceFactoryTest {
         final var desc = new OfferedResourceDesc();
         desc.setSamples(List.of(URI.create("https://api/resources/d8a6f765-9b94-4a27-a18d-fbe81636a784")));
 
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = getResource();
         Mockito.doReturn(true).when(service).doesExist(Mockito.any());
 
         /* ACT */
@@ -954,5 +958,18 @@ public class OfferedResourceFactoryTest {
 
         /* ACT && ASSERT */
         assertThrows(IllegalArgumentException.class, () -> factory.update(contract, null));
+    }
+
+    @SneakyThrows
+    private OfferedResource getResource() {
+        final var constructor = OfferedResource.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+
+        final var resource = constructor.newInstance();
+        ReflectionTestUtils.setField(resource, "title", "Hello");
+        ReflectionTestUtils.setField(resource, "representations", new ArrayList<Contract>());
+        ReflectionTestUtils.setField(resource, "id", UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
+
+        return resource;
     }
 }

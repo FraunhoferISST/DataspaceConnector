@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.resource.type;
 
 import de.fraunhofer.ids.messaging.protocol.UnexpectedResponseException;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.net.RetrievalInformation;
 import io.dataspaceconnector.common.util.ValidationUtils;
@@ -29,6 +30,7 @@ import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
+import io.dataspaceconnector.service.message.SubscriberNotificationService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +39,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -63,6 +67,7 @@ import java.util.UUID;
 /**
  * Offers the endpoints for managing artifacts.
  */
+@Log4j2
 @RestController
 @RequestMapping(BasePath.ARTIFACTS)
 @Tag(name = ResourceName.ARTIFACTS, description = ResourceDescription.ARTIFACTS)
@@ -84,6 +89,11 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      * The verifier for the data access.
      */
     private final @NonNull DataAccessVerifier accessVerifier;
+
+    /**
+     * Service for notifying subscribers about an entity update.
+     */
+    private final @NonNull SubscriberNotificationService subscriberNotificationSvc;
 
     /**
      * Returns data from the local database or a remote data source. In case of a remote data
@@ -187,10 +197,27 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
         final var outputHeader = new HttpHeaders();
         outputHeader.set("Content-Disposition", "attachment;filename=" + artifactId.toString());
 
+        final var type = getMediaTypeOfArtifact(artifactId);
         return ResponseEntity.ok()
                 .headers(outputHeader)
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentType(type)
                 .body(body);
+    }
+
+    private MediaType getMediaTypeOfArtifact(final UUID artifactId) {
+        // Get type to set the correct content type.
+        // NOTE: Assume that an artifact has only one representation.
+        try {
+            final var artifact = getService().get(artifactId);
+            final var mediaType = artifact.getRepresentations().get(0).getMediaType();
+            return MediaType.parseMediaType("application/" + mediaType);
+        } catch (ResourceNotFoundException | NullPointerException | InvalidMediaTypeException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Could not resolve media type. Return data as stream. [exception=({})]",
+                        e.getMessage());
+            }
+        }
+        return MediaType.APPLICATION_OCTET_STREAM;
     }
 
     /**
@@ -210,6 +237,10 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
             @Valid @PathVariable(name = "id") final UUID artifactId,
             @RequestBody final byte[] inputStream) throws IOException {
         artifactSvc.setData(artifactId, new ByteArrayInputStream(inputStream));
+
+        // Notify subscribers on update event.
+        subscriberNotificationSvc.notifyOnUpdate(getService().get(artifactId));
+
         return ResponseEntity.noContent().build();
     }
 }
