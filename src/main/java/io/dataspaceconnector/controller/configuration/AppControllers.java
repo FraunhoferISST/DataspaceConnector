@@ -159,21 +159,21 @@ public final class AppControllers {
 
                         //4. Create Container with given information from AppStore template
                         // and new volume
-                        final var containerId = portainerRequestService
+                        final var createdContainerId = portainerRequestService
                                 .createContainer(appStoreTemplate, volumeMap);
 
                         // Persist containerID
-                        appService.setContainerIdForApp(appId, containerID);
+                        appService.setContainerIdForApp(appId, createdContainerId);
 
-                //POST: http://localhost:9000/api/endpoints/1/docker/networks/{networkID}/connect
-                        //payload: {"Container":"{containerID}"}
+                        //5. Create Network for the container
                         //TODO: Get network of currently running DSC and put App in same network
                         final var networkID = portainerRequestService
                                 .createNetwork("testnet", true, false);
-                        portainerRequestService.joinNetwork(containerId, networkID);
+                        //6. Join container into the new created network
+                        portainerRequestService.joinNetwork(createdContainerId, networkID);
 
                         //5. Start the App (container)
-                        portainerRequestService.startContainer(containerId);
+                        portainerRequestService.startContainer(createdContainerId);
                     }
                 }
 //                if (ActionType.STOP.name().equals(action)) {
