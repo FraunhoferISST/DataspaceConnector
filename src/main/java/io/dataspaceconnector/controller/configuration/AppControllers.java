@@ -126,11 +126,11 @@ public final class AppControllers {
 
             final var app = appService.get(appId);
             final var action = actionType.toUpperCase();
+            final var containerID = ((AppImpl) app).getContainerID();
             ResponseEntity<String> response = null;
 
             try {
                 if (ActionType.START.name().equals(action)) {
-                    var containerID = ((AppImpl) app).getContainerID();
                     if (containerID != null) {
                         final var startResponse = portainerRequestService
                                 .startContainer(containerID);
@@ -168,7 +168,7 @@ public final class AppControllers {
                         //5. Create Network for the container
                         //TODO: Get network of currently running DSC and put App in same network
                         final var networkID = portainerRequestService
-                                .createNetwork("testnet", true, false);
+                                .createNetwork("bridge", true, false);
                         //6. Join container into the new created network
                         portainerRequestService.joinNetwork(createdContainerId, networkID);
 
@@ -176,24 +176,34 @@ public final class AppControllers {
                         portainerRequestService.startContainer(createdContainerId);
                     }
                 }
-//                if (ActionType.STOP.name().equals(action)) {
-//                    final var stopResponse = portainerRequestService.stopContainer(containerId);
-//                    if (stopResponse.isSuccessful()) {
-//                        response = ResponseEntity.ok("Successfully stopped the app.");
-//                    } else {
-//                        response = ResponseEntity.internalServerError()
-//                                .body(stopResponse.body().string());
-//                    }
-//                }
-//                if (ActionType.DELETE.name().equals(action)) {
-//                 final var deleteResponse = portainerRequestService.deleteContainer(containerId);
-//                    if (deleteResponse.isSuccessful()) {
-//                        response = ResponseEntity.ok("Successfully deleted the app.");
-//                    } else {
-//                        response = ResponseEntity.internalServerError()
-//                                .body(deleteResponse.body().string());
-//                    }
-//                }
+                if (ActionType.STOP.name().equals(action)) {
+                    if (containerID != null) {
+                        final var stopResponse = portainerRequestService
+                                .stopContainer(containerID);
+                        if (stopResponse.isSuccessful()) {
+                            response = ResponseEntity.ok("Successfully stopped the app.");
+                        } else {
+                            response = ResponseEntity.internalServerError()
+                                    .body(stopResponse.body().string());
+                        }
+                    } else {
+                        response = ResponseEntity.badRequest().body("No container id provided");
+                    }
+                }
+                if (ActionType.DELETE.name().equals(action)) {
+                    if (containerID != null) {
+                        final var deleteResponse = portainerRequestService
+                                .deleteContainer(containerID);
+                        if (deleteResponse.isSuccessful()) {
+                            response = ResponseEntity.ok("Successfully deleted the app.");
+                        } else {
+                            response = ResponseEntity.internalServerError()
+                                    .body(deleteResponse.body().string());
+                        }
+                    } else {
+                        response = ResponseEntity.badRequest().body("No container id provided");
+                    }
+                }
             } catch (IOException e) {
                 response = ResponseEntity.badRequest().body(e.getMessage());
             }
