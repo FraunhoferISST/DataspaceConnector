@@ -247,6 +247,17 @@ public class PortainerRequestService {
      * @throws IOException If an error occurs while connection to portainer.
      */
     public boolean registryExists(final String registryURL) throws IOException {
+        var response = getRegistries();
+        return response.body().string().contains(registryURL);
+    }
+
+    /**
+     * Get list of all registries.
+     *
+     * @return response from portainer
+     * @throws IOException if request to portainer fails.
+     */
+    public Response getRegistries() throws IOException {
         final var jwt = getJwtToken();
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
@@ -261,8 +272,7 @@ public class PortainerRequestService {
         builder.get();
 
         final var request = builder.build();
-        var response = httpService.send(request);
-        return response.body().string().contains(registryURL);
+        return httpService.send(request);
     }
 
     /**
@@ -467,10 +477,69 @@ public class PortainerRequestService {
         return httpService.send(request);
     }
 
+    /**
+     * @return response from portainer
+     * @throws IOException if sending request to portainer fails
+     */
+    public Response getContainers() throws IOException {
+        return getItem("containers/json");
+    }
+
+    /**
+     * @return response from portainer
+     * @throws IOException if sending request to portainer fails
+     */
+    public Response getImages() throws IOException {
+        return getItem("images/json");
+    }
+
+    /**
+     * @return response from portainer
+     * @throws IOException if sending request to portainer fails
+     */
+    public Response getNetworks() throws IOException {
+        return getItem("networks");
+    }
+
+    /**
+     * @return response from portainer
+     * @throws IOException if sending request to portainer fails
+     */
+    public Response getVolumes() throws IOException {
+        return getItem("volumes");
+    }
+
+    /**
+     * @param part api route part depending on requested resource (containers, images...)
+     * @return response from portainer
+     * @throws IOException if sending request to portainer fails
+     */
+    public Response getItem(final String part) throws IOException {
+        final var jwt = getJwtToken();
+        final var builder = getRequestBuilder();
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments("api/endpoints/1/docker/" + part);
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.url(url);
+        builder.get();
+        final var request = builder.build();
+        return httpService.send(request);
+    }
+
+    /**
+     * @return new request builder.
+     */
     private Request.Builder getRequestBuilder() {
         return new Request.Builder();
     }
 
+    /**
+     * @return auth jwt token for portainer.
+     */
     private String getJwtToken() {
         String jwtTokenResponse = authenticate();
         return jwtTokenResponse.substring(START_INDEX, jwtTokenResponse.length() - LAST_INDEX);
