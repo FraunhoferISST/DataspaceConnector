@@ -252,6 +252,39 @@ public class PortainerRequestService {
     }
 
     /**
+     * @param containerID id of the container to disconnect.
+     * @param networkName name of the network the container should be disconnected from.
+     * @param force true if disconnect should be forced.
+     * @return response from portainer.
+     * @throws IOException when request to portainer fails.
+     */
+    public Response disconnectContainerFromNetwork(
+            final String containerID,
+            final String networkName,
+            final boolean force) throws IOException {
+        final var jwt = getJwtToken();
+        final var builder = getRequestBuilder();
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments("api/endpoints/1/docker/networks/" + networkName + "/disconnect");
+
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.url(url);
+        var jsonPayload = new JSONObject();
+        jsonPayload.put("Container", containerID);
+        jsonPayload.put("Force", force);
+        builder.post(RequestBody.create(
+                jsonPayload.toString(),
+                MediaType.parse("application/json"))
+        );
+        final var request = builder.build();
+        return httpService.send(request);
+    }
+
+    /**
      * Get list of all registries.
      *
      * @return response from portainer
@@ -270,6 +303,75 @@ public class PortainerRequestService {
         builder.addHeader("Authorization", "Bearer " + jwt);
         builder.url(url);
         builder.get();
+
+        final var request = builder.build();
+        return httpService.send(request);
+    }
+
+    /**
+     * @param imageId id of the image to delete.
+     * @return response from portainer.
+     * @throws IOException when requesting portainer fails.
+     */
+    public Response deleteImage(final String imageId) throws IOException {
+        final var jwt = getJwtToken();
+        final var builder = getRequestBuilder();
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments("api/endpoints/1/docker/images/" + imageId);
+
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.url(url);
+        builder.delete();
+
+        final var request = builder.build();
+        return httpService.send(request);
+    }
+
+    /**
+     * @param networkId id of the network to delete.
+     * @return response from portainer.
+     * @throws IOException when requesting portainer fails.
+     */
+    public Response deleteNetwork(final String networkId) throws IOException {
+        final var jwt = getJwtToken();
+        final var builder = getRequestBuilder();
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments("api/endpoints/1/docker/networks/" + networkId);
+
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.url(url);
+        builder.delete();
+
+        final var request = builder.build();
+        return httpService.send(request);
+    }
+
+    /**
+     * @param volumeId id of the volume to delete.
+     * @return response from portainer.
+     * @throws IOException when requesting portainer fails.
+     */
+    public Response deleteVolume(final String volumeId) throws IOException {
+        final var jwt = getJwtToken();
+        final var builder = getRequestBuilder();
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments("api/endpoints/1/docker/volumes/" + volumeId);
+
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.url(url);
+        builder.delete();
 
         final var request = builder.build();
         return httpService.send(request);
