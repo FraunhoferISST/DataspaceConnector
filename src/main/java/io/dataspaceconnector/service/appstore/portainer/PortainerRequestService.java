@@ -197,12 +197,12 @@ public class PortainerRequestService {
      * @return Response of portainer.
      * @throws IOException If an error occurs while connection to portainer.
      */
-    public Response createRegistry(final String appStoreTemplate) throws IOException {
+    public boolean createRegistry(final String appStoreTemplate) throws IOException {
         final var templateObject = toJsonObject(appStoreTemplate);
         final var registryURL = templateObject.getString("registry");
 
         if (registryExists(registryURL)) {
-            return null;
+            return true;
         }
 
         //Needed registry info from AppStore template for request body:
@@ -238,7 +238,7 @@ public class PortainerRequestService {
 
         final var request = builder.build();
         final var response = httpService.send(request);
-        return response;
+        return response.isSuccessful();
     }
 
     /**
