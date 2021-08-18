@@ -71,5 +71,8 @@ class GuiControllerTest {
         mockMvc.perform(
                 get("/api/configmanager/enum/securityprofile"))
                 .andExpect(status().isOk()).andReturn();
+        mockMvc.perform(
+                get("/api/configmanager/enum/paymentmethod"))
+                .andExpect(status().isOk()).andReturn();
     }
 }
