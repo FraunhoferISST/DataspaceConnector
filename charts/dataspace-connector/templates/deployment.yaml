@@ -55,18 +55,22 @@ spec:
               containerPort: 8080
           livenessProbe:
             httpGet:
-              path: /
+              path: /actuator/health/liveness
               port: http
               scheme: HTTP
-            initialDelaySeconds: 15
+              httpHeaders:
+              - name: Authorization
+                value: Basic YWRtaW46cGFzc3dvcmQ=
             failureThreshold: 1
             periodSeconds: 3
           readinessProbe:
             httpGet:
-              path: /
+              path: /actuator/health/readiness
               port: http
               scheme: HTTP
-            initialDelaySeconds: 10
+              httpHeaders:
+              - name: Authorization
+                value: Basic YWRtaW46cGFzc3dvcmQ=
             periodSeconds: 3
           startupProbe:
             httpGet:
