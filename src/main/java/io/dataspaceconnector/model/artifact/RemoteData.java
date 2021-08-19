@@ -71,29 +71,4 @@ public class RemoteData extends Data {
     public void addAuthentication(final Authentication type) {
         authentication.add(type);
     }
-
-    /*
-        v5 -> v6 migration
-     */
-
-    /**
-     * v5 username.
-     */
-    @Getter(AccessLevel.PRIVATE)
-    @Setter(AccessLevel.PRIVATE)
-    private String username;
-
-    /**
-     * v5 password.
-     */
-    @Getter(AccessLevel.PRIVATE)
-    @Setter(AccessLevel.PRIVATE)
-    private String password;
-
-    /**
-     * If the entry has already been migrated.
-     */
-    @Getter(AccessLevel.PRIVATE)
-    @Setter(AccessLevel.PRIVATE)
-    private String migration;
 }

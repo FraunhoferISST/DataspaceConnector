@@ -85,17 +85,4 @@ public class RequestedResource extends Resource implements RemoteObject {
     public List<Catalog> getCatalogs() {
         return catalogs;
     }
-
-    /*
-        v5 -> v6 migration
-     */
-
-    /**
-     * v5 licence.
-     */
-    @Setter(AccessLevel.PRIVATE)
-    @Getter(AccessLevel.PRIVATE)
-    @Convert(converter = UriConverter.class)
-    @Column(name = "licence", length = URI_COLUMN_LENGTH)
-    private URI licence;
 }
