@@ -715,9 +715,6 @@
 								<exlcude>charts/dataspace-connector/.helmignore</exlcude>
 								<exclude>**/*.tgz</exclude>
 								<exclude>charts/**/*.tpl</exclude>
-								<exclude>charts/**/*.yaml</exclude>
-								<exclude>charts/**/*.txt</exclude>
-								<exclude>charts/**/*.helmignore</exclude>
 								<exclude>docs/**</exclude>
 								<exclude>.editorconfig</exclude>
 							</excludes>
