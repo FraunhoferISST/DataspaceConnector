@@ -57,6 +57,6 @@
     "@id" : "idsc:CONNECTOR_OFFLINE"
   },
   "ids:keyStore" : {
-    "@id" : "file:///conf/isst_ids_framework_demo_connector.p12"
+    "@id" : "file:///conf/keystore-localhost.p12"
   }
 }
