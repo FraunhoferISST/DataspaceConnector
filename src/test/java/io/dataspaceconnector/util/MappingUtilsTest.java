@@ -220,13 +220,12 @@ public class MappingUtilsTest {
     public void fromIdsAppEndpoint_validInput_returnAppEndpointTemplate() {
         /* ARRANGE */
         final var app = getAppResource();
-        app.setProperty("test", "test");
         final var remoteAddress = URI.create("https://someURL");
 
         /* ACT */
         final var result = MappingUtils.fromIdsApp(app, remoteAddress);
         //TODO check more filled fields
-        assertEquals("IDS APP", result.getDesc().getTitle());
+        assertEquals(remoteAddress, result.getDesc().getRemoteAddress());
     }
 
     @Test
