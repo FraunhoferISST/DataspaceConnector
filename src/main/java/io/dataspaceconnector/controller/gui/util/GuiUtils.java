@@ -110,7 +110,9 @@ public final class GuiUtils {
                         .getAnnotation(JsonProperty.class).value());
                 jsonArray.add(jsonObject);
             } catch (NoSuchFieldException e) {
-                log.debug("Missing JsonProperty found for paymentmethod!");
+                if (log.isDebugEnabled()) {
+                    log.debug("Missing JsonProperty found for paymentmethod!");
+                }
             }
         }
 
@@ -190,7 +192,9 @@ public final class GuiUtils {
                         .getAnnotation(JsonProperty.class).value());
                 jsonArray.add(jsonObject);
             } catch (NoSuchFieldException e) {
-                log.debug("Missing JsonProperty found for connectorDeployMode!");
+                if (log.isDebugEnabled()) {
+                    log.debug("Missing JsonProperty found for connectorDeployMode!");
+                }
             }
         }
 
@@ -223,7 +227,9 @@ public final class GuiUtils {
                         .getAnnotation(JsonProperty.class).value());
                 jsonArray.add(jsonObject);
             } catch (NoSuchFieldException e) {
-                log.debug("Missing JsonProperty found for logLevel!");
+                if (log.isDebugEnabled()) {
+                    log.debug("Missing JsonProperty found for logLevel!");
+                }
             }
         }
 
