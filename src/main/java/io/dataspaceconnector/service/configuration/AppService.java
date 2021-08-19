@@ -15,15 +15,19 @@
  */
 package io.dataspaceconnector.service.configuration;
 
+import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.app.AppFactory;
 import io.dataspaceconnector.model.app.AppImpl;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.artifact.LocalData;
+import io.dataspaceconnector.repository.AppRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
 import io.dataspaceconnector.service.resource.BaseEntityService;
+import io.dataspaceconnector.util.ErrorMessage;
+import io.dataspaceconnector.util.Utils;
 import io.dataspaceconnector.util.exception.NotImplemented;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
@@ -35,6 +39,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -76,6 +82,35 @@ public class AppService extends BaseEntityService<App, AppDesc> {
     }
 
     /**
+     * @return get list of all Apps.
+     */
+    public List<App> getApps() {
+        return getRepository().findAll();
+    }
+
+    /**
+     * Find app by bootstrapId.
+     *
+     * @param bootstrapId bootstrapID of the app to find.
+     * @return optional of found app.
+     */
+    public App getByBootstrap(final URI bootstrapId) {
+        Utils.requireNonNull(bootstrapId, ErrorMessage.ENTITYID_NULL);
+
+        final var entity =
+                ((AppRepository) getRepository()).findByBootstrapId(bootstrapId);
+
+        if (entity.isEmpty()) {
+            // Handle with global exception handler
+            throw new ResourceNotFoundException(
+                    this.getClass().getSimpleName() + ": " + bootstrapId
+            );
+        }
+
+        return entity.get();
+    }
+
+    /**
      * Get AppStores which are offering the given App.
      * @param appId    id of the app to find related appstore for.
      * @param pageable pageable for response as view.
@@ -94,6 +129,7 @@ public class AppService extends BaseEntityService<App, AppDesc> {
     @NonNull
     public void setData(final UUID appArtifactId, final InputStream data)
             throws IOException {
+        //TODO this downcast is not possible
         final var appArtifact = get(appArtifactId);
         final var currentData = ((AppImpl) appArtifact).getData();
         if (currentData instanceof LocalData) {

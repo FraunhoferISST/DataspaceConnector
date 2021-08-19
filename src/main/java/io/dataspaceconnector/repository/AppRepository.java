@@ -18,10 +18,21 @@ package io.dataspaceconnector.repository;
 import io.dataspaceconnector.model.app.App;
 import org.springframework.stereotype.Repository;
 
+import java.net.URI;
+import java.util.Optional;
+
 /**
  * The repository containing all objects of type {@link io.dataspaceconnector.model.app.App}.
  */
 @Repository
 public interface AppRepository extends BaseEntityRepository<App> {
+
+    /**
+     * Find app by bootstrapId.
+     *
+     * @param bootstrapId bootstrapID of the app to find.
+     * @return optional of found app.
+     */
+    Optional<App> findByBootstrapId(URI bootstrapId);
 
 }

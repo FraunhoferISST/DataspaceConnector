@@ -99,11 +99,12 @@ public class AppRequestMessageController {
         try {
             var response = downloadAppStoreMetaData(recipient, app);
             var appResource = parseAppResource(response);
+            var resourceId = appResource.getId();
             var instanceId = getInstanceID(appResource);
 
             // Send artifact request message
             if (instanceId != null) {
-                artifactDataDownloader.downloadAppArtifact(recipient, instanceId);
+                artifactDataDownloader.downloadAppArtifact(recipient, instanceId, resourceId);
                 return ResponseEntity.ok("Successfully downloaded the app artifact");
             } else {
                 return ResponseEntity.badRequest().body("Could not find app artifact");

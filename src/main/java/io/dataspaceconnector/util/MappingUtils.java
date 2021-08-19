@@ -129,6 +129,7 @@ public final class MappingUtils {
         appDesc.setPublisher(resource.getPublisher());
         appDesc.setRemoteId(resource.getId());
         appDesc.setSovereign(resource.getSovereign());
+        appDesc.setBootstrapId(resource.getId());
 
         //set representation fields
         if (resource.getRepresentation() != null) {
@@ -144,7 +145,6 @@ public final class MappingUtils {
                         representation.getDataAppDistributionService()
                 );
                 appDesc.setDataAppRuntimeEnvironment(representation.getDataAppRuntimeEnvironment());
-                appDesc.setBootstrapId(representation.getId());
 
                 if (representation.getDataAppInformation() != null) {
                     //set dataApp fields
@@ -180,9 +180,9 @@ public final class MappingUtils {
         final var representationStandard = representation.getRepresentationStandard();
         final var shapesGraph = representation.getShapesGraph();
 
-        if (dataAppInformation != null) {
-            additional.put("ids:dataAppInformation", dataAppInformation.toRdf());
-        }
+        //if (dataAppInformation != null) {
+        //    additional.put("ids:dataAppInformation", dataAppInformation.toRdf());
+        //}
         if (instance != null) {
             addListToAdditional(instance, additional, "ids:instance");
         }
@@ -244,10 +244,20 @@ public final class MappingUtils {
         final var appEndpointDesc = new AppEndpointDesc();
 
         appEndpointDesc.setAdditional(buildAdditionalForAppEndpoint(appEndpoint));
-        appEndpointDesc.setEndpointPort(appEndpoint.getAppEndpointPort().intValue());
-        appEndpointDesc.setEndpointType(appEndpoint.getAppEndpointType().name());
-        appEndpointDesc.setLanguage(appEndpoint.getLanguage().toString());
-        appEndpointDesc.setMediaType(appEndpoint.getAppEndpointMediaType().getFilenameExtension());
+        if (appEndpoint.getAppEndpointPort() != null) {
+            appEndpointDesc.setEndpointPort(appEndpoint.getAppEndpointPort().intValue());
+        }
+        if (appEndpoint.getAppEndpointType() != null) {
+            appEndpointDesc.setEndpointType(appEndpoint.getAppEndpointType().name());
+        }
+        if (appEndpoint.getLanguage() != null) {
+            appEndpointDesc.setLanguage(appEndpoint.getLanguage().toString());
+        }
+        if (appEndpoint.getAppEndpointMediaType() != null) {
+            appEndpointDesc.setMediaType(
+                    appEndpoint.getAppEndpointMediaType().getFilenameExtension()
+            );
+        }
         appEndpointDesc.setProtocol(appEndpoint.getAppEndpointProtocol());
         appEndpointDesc.setBootstrapId(appEndpoint.getId());
         appEndpointDesc.setDocs(
@@ -256,7 +266,9 @@ public final class MappingUtils {
                         ? appEndpoint.getEndpointDocumentation().get(0)
                         : null
         );
-        appEndpointDesc.setInfo(appEndpoint.getEndpointInformation().toString());
+        if (appEndpoint.getEndpointInformation() != null) {
+            appEndpointDesc.setInfo(appEndpoint.getEndpointInformation().toString());
+        }
         appEndpointDesc.setLocation(appEndpoint.getAccessURL());
 
         return new AppEndpointTemplate(appEndpointDesc);
