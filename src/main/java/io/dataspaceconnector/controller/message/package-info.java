@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Groups all controllers exposing endpoints for sending IDS related messages.
+ * Groups all controllers exposing endpoints for sending messages.
  */
 package io.dataspaceconnector.controller.message;

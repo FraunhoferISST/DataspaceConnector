@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.model.resource;
 
-import io.dataspaceconnector.model.subscription.Subscription;
+import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.representation.Representation;
+import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.util.UriConverter;
-import io.dataspaceconnector.util.exception.NotImplemented;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -35,6 +35,8 @@ import org.springframework.data.annotation.Version;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
@@ -107,6 +109,20 @@ public class Resource extends NamedEntity {
      */
     @Version
     private long version;
+
+    /**
+     * The payment method.
+     */
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentModality;
+
+    /**
+     * Links to sample resources.
+     */
+    @ElementCollection
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private List<URI> samples;
 
     /**
      * The representation available for the resource.

@@ -77,7 +77,7 @@ Please find some detailed explanation of the aforementioned roadmap items below.
   are writing a concept for the IDS-ready label test. This includes exactly the criteria that will
   also be checked during the later certification. At that time, however, the connector has to
   actually implement the requirements.
-* Routing (e.g. Apache Camel): As described [here](pages/documentation/v5/architecture.md), the
+* Routing (e.g. Apache Camel): As described [here](../documentation/v5/architecture.md), the
   integration of a routing framework as e.g. Apache Camel will improve and extend the data flow and
   its interception.
 * Usage Control Extension: Currently, the Dataspace Connector supports ten policy patterns out

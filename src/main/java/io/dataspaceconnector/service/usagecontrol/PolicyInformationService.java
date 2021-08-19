@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
-import io.dataspaceconnector.service.resource.ArtifactService;
-import io.dataspaceconnector.service.util.EndpointUtils;
+import io.dataspaceconnector.service.resource.type.ArtifactService;
+import io.dataspaceconnector.common.net.EndpointUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

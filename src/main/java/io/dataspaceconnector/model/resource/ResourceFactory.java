@@ -16,7 +16,7 @@
 package io.dataspaceconnector.model.resource;
 
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.model.util.FactoryUtils;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -60,6 +60,16 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
      * The default endpoint documentation assigned to all resources.
      */
     public static final URI DEFAULT_ENDPOINT_DOCS = URI.create("");
+
+    /**
+     * The default payment modality assigned to all resources.
+     */
+    public static final PaymentMethod DEFAULT_PAYMENT_MODALITY = PaymentMethod.UNDEFINED;
+
+    /**
+     * The default sample list assigned to all resources.
+     */
+    public static final List<URI> DEFAULT_SAMPLES = new ArrayList<>();
 
     /**
      * Create a new resource.
@@ -107,12 +117,15 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         final var hasUpdatedSovereign = updateSovereign(resource, desc.getSovereign());
         final var hasUpdatedEndpointDocs =
                 updateEndpointDocs(resource, desc.getEndpointDocumentation());
+        final var hasUpdatedPaymentMethod = updatePaymentMethod(resource, desc.getPaymentMethod());
+        final var hasUpdatedSamples = updateSamples(resource, desc.getSamples());
         final var hasChildUpdated = updateInternal(resource, desc);
 
         final var hasUpdated = hasParentUpdated || hasChildUpdated
                 || hasUpdatedKeywords || hasUpdatedPublisher
                 || hasUpdatedLanguage || hasUpdatedLicense
-                || hasUpdatedSovereign || hasUpdatedEndpointDocs;
+                || hasUpdatedSovereign || hasUpdatedEndpointDocs
+                || hasUpdatedPaymentMethod || hasUpdatedSamples;
 
         if (hasUpdated) {
             resource.setVersion(resource.getVersion() + 1);
@@ -130,7 +143,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
      */
     protected final boolean updateKeywords(final Resource resource, final List<String> keywords) {
         final var newKeys =
-                MetadataUtils.updateStringList(resource.getKeywords(), keywords, DEFAULT_KEYWORDS);
+                FactoryUtils.updateStringList(resource.getKeywords(), keywords, DEFAULT_KEYWORDS);
         newKeys.ifPresent(resource::setKeywords);
 
         return newKeys.isPresent();
@@ -145,7 +158,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
      */
     protected final boolean updatePublisher(final Resource resource, final URI publisher) {
         final var newPublisher =
-                MetadataUtils.updateUri(resource.getPublisher(), publisher, DEFAULT_PUBLISHER);
+                FactoryUtils.updateUri(resource.getPublisher(), publisher, DEFAULT_PUBLISHER);
         newPublisher.ifPresent(resource::setPublisher);
 
         return newPublisher.isPresent();
@@ -160,7 +173,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
      */
     protected final boolean updateLanguage(final Resource resource, final String language) {
         final var newLanguage =
-                MetadataUtils.updateString(resource.getLanguage(), language, DEFAULT_LANGUAGE);
+                FactoryUtils.updateString(resource.getLanguage(), language, DEFAULT_LANGUAGE);
         newLanguage.ifPresent(resource::setLanguage);
 
         return newLanguage.isPresent();
@@ -175,7 +188,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
      */
     protected final boolean updateLicense(final Resource resource, final URI license) {
         final var newLicense =
-                MetadataUtils.updateUri(resource.getLicense(), license, DEFAULT_LICENSE);
+                FactoryUtils.updateUri(resource.getLicense(), license, DEFAULT_LICENSE);
         newLicense.ifPresent(resource::setLicense);
 
         return newLicense.isPresent();
@@ -190,7 +203,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
      */
     protected final boolean updateSovereign(final Resource resource, final URI sovereign) {
         final var newPublisher =
-                MetadataUtils.updateUri(resource.getSovereign(), sovereign, DEFAULT_SOVEREIGN);
+                FactoryUtils.updateUri(resource.getSovereign(), sovereign, DEFAULT_SOVEREIGN);
         newPublisher.ifPresent(resource::setSovereign);
 
         return newPublisher.isPresent();
@@ -204,10 +217,54 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
      * @return true if the resource's endpoint documentation has been modified.
      */
     protected final boolean updateEndpointDocs(final Resource resource, final URI endpointDocs) {
-        final var newPublisher = MetadataUtils.updateUri(
+        final var newPublisher = FactoryUtils.updateUri(
                 resource.getEndpointDocumentation(), endpointDocs, DEFAULT_ENDPOINT_DOCS);
         newPublisher.ifPresent(resource::setEndpointDocumentation);
 
         return newPublisher.isPresent();
     }
+
+    /**
+     * Update a resource's payment modality.
+     *
+     * @param resource      The resource.
+     * @param paymentMethod The new payment modality.
+     * @return true if the resource's payment modality has been modified.
+     */
+    protected final boolean updatePaymentMethod(final Resource resource,
+                                                final PaymentMethod paymentMethod) {
+        final var tmp = paymentMethod == null ? DEFAULT_PAYMENT_MODALITY : paymentMethod;
+        if (tmp.equals(resource.getPaymentModality())) {
+            return false;
+        }
+
+        resource.setPaymentModality(tmp);
+        return true;
+    }
+
+    /**
+     * Update a resource's samples.
+     *
+     * @param resource The resource.
+     * @param samples  The new samples.
+     * @return true if the resource's samples have been modified.
+     */
+    protected final boolean updateSamples(final Resource resource, final List<URI> samples) {
+        if (samples != null) {
+            validateSamples(resource, samples);
+        }
+        final var newList
+                = FactoryUtils.updateUriList(resource.getSamples(), samples, DEFAULT_SAMPLES);
+        newList.ifPresent(resource::setSamples);
+
+        return newList.isPresent();
+    }
+
+    /**
+     * Update a resource's samples. Implement type specific stuff here.
+     *
+     * @param resource The resource passed to the factory.
+     * @param samples  The new samples.
+     */
+    protected abstract void validateSamples(Resource resource, List<URI> samples);
 }

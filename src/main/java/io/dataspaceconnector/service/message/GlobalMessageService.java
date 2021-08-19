@@ -32,11 +32,10 @@ import de.fraunhofer.ids.messaging.requests.MessageContainer;
 import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
-import io.dataspaceconnector.controller.util.ControllerUtils;
+import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.service.configuration.BrokerService;
-import io.dataspaceconnector.service.message.processing.BrokerCommunication;
-import io.dataspaceconnector.service.message.type.NotificationService;
+import io.dataspaceconnector.service.message.builder.type.NotificationService;
+import io.dataspaceconnector.service.resource.type.BrokerService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -316,7 +315,7 @@ public class GlobalMessageService {
     public ResponseEntity<Object> validateResponse(final Optional<MessageContainer<?>> response,
                                                    final Class<?> msgType) {
         if (response.isEmpty()) {
-            return ControllerUtils.respondReceivedInvalidResponse();
+            return ResponseUtils.respondReceivedInvalidResponse();
         }
 
         final var header = response.get().getUnderlyingMessage();
@@ -327,7 +326,7 @@ public class GlobalMessageService {
 
         // If response message is not of predefined type.
         final var content = notificationSvc.getResponseContent(header, payload);
-        return ControllerUtils.respondWithContent(content);
+        return ResponseUtils.respondWithContent(content);
     }
 
     /**

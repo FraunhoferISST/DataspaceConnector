@@ -3,26 +3,26 @@
 
         <!-- transfer contract is missing from message header -->
         <onException>
-            <exception>io.dataspaceconnector.camel.exception.NoTransferContractException</exception>
+            <exception>io.dataspaceconnector.service.message.handler.exception.NoTransferContractException</exception>
             <to uri="direct:handleNoTransferContractException"/>
         </onException>
 
         <!-- agreement could not be loaded or deserialized -->
         <onException>
-            <exception>io.dataspaceconnector.exception.ResourceNotFoundException</exception>
+            <exception>io.dataspaceconnector.common.exception.ResourceNotFoundException</exception>
             <exception>java.lang.IllegalArgumentException</exception>
             <to uri="direct:handleMessageProcessingFailedForArtifact"/>
         </onException>
 
         <!-- policy conditions are not fulfilled, data provision is not allowed -->
         <onException>
-            <exception>io.dataspaceconnector.exception.PolicyRestrictionException</exception>
+            <exception>io.dataspaceconnector.common.exception.PolicyRestrictionException</exception>
             <to uri="direct:handlePolicyRestrictionException"/>
         </onException>
 
         <!-- transfer contract is invalid -->
         <onException>
-            <exception>io.dataspaceconnector.exception.ContractException</exception>
+            <exception>io.dataspaceconnector.common.exception.ContractException</exception>
             <to uri="direct:handleInvalidTransferContract"/>
         </onException>
 

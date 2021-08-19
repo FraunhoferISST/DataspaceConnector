@@ -15,9 +15,9 @@
  */
 package io.dataspaceconnector.model.base;
 
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.MetadataUtils;
-import io.dataspaceconnector.util.Utils;
+import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.util.Utils;
+import io.dataspaceconnector.model.util.FactoryUtils;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -76,7 +76,7 @@ public abstract class AbstractFactory<T extends Entity, D extends Description> {
     }
 
     protected final boolean updateAdditional(final T entity, final Map<String, String> additional) {
-        final var newAdditional = MetadataUtils.updateStringMap(
+        final var newAdditional = FactoryUtils.updateStringMap(
                 entity.getAdditional(), additional, new HashMap<>());
         newAdditional.ifPresent(entity::setAdditional);
 
@@ -92,7 +92,7 @@ public abstract class AbstractFactory<T extends Entity, D extends Description> {
         if (bootstrapId == null && entity.getBootstrapId() == null) {
             newBootstrapId = Optional.empty();
         } else {
-            newBootstrapId = MetadataUtils
+            newBootstrapId = FactoryUtils
                     .updateUri(
                             entity.getBootstrapId(),
                             bootstrapId,

@@ -1,28 +1,53 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [6.1.0] - XXXX-XX-XX
+## [6.1.1] - 2021-08-19
+
+### Added
+- Add `paymentModality` enums to GUI controller.
+
+### Fixed
+- Remove ids endpoint definition from Bootstrapping files.
+
+## [6.1.0] - 2021-08-16
 
 ### Added
 - Add value `securityprofile` to GUI helper endpoint.
 - Add default `ids:depth` to `DescriptionRequestMessage`.
 - Add property for specifying the path from which Camel routes are loaded.
   * Defaults to the `camel-routes` directory in the `resources` folder.
-  * Allows for changing Camel routes without recompilation if an external directory is used.
+  * Allow changing Camel routes without recompilation if an external directory is used.
+- Add `paymentModality` and `samples` to resource (for documentation, see
+  [here](https://international-data-spaces-association.github.io/DataspaceConnector/CommunicationGuide/v6/Provider#step-1-register-data-resources)).
+- Add online status validator. Provides the possibility to set the connector `offline`. See how to
+  use this [here](https://international-data-spaces-association.github.io/DataspaceConnector/Deployment/Configuration#step-1-connector-properties).
+- Add `connectorId` to configuration entity.
+- Add alias to keystore and truststore entities.
+- Automatically notify subscribers on a local data update via `PUT /data`.
 
 ### Changed
-- Increase pitest version from 1.6.7 to 1.6.8.
+- Increase pitest version from 1.6.7 to 1.6.9.
 - Use XML DSL instead of Java DSL for definition of Camel routes.
 - Dropping jsonld dependency.
 - Increase maven-enforcer-plugin version from 3.0.0-M3 to 3.0.0.
 - Increase springdoc version from 1.5.9 to 1.5.10.
-- Increase checkstyle version from 8.44 to 8.45.
+- Increase checkstyle version from 8.44 to 8.45.1.
 - Increase pmd version from 6.36.0 to 6.37.0.
+- Increase camel version from 3.11.0 to 3.11.1.
+- Return data with correct content-type in headers, if possible. Fallback stays
+  application/octet-stream.
+- Set default status in `config.json` to `CONNECTOR_ONLINE.`
+- Increase equalsverifier from 3.7.0 to 3.7.1.
 
 ### Fixed
 - Restrict access to POST/PUT/DELETE `{entity}/subscriptions` for artifacts and representations.
 - Restrict access to POST/PUT/DELETE `offers/{id}/brokers`.
 - Fix eager service loading causing "Bean not eligable for..." messages.
+- Make configuration attributes read-only: inbound model versions, security profile.
+- Remove error path from `application.properties`.
+- Set correct default properties for new configurations.
+- Fix persistence errors for configurations.
+- Rename `connectorEndpoint` to `defaultEndpoint`.
 
 ## [6.0.0] - 2021-07-20
 

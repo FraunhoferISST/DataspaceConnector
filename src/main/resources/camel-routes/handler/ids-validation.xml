@@ -1,19 +1,26 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
     <route id="idsValidation">
 
+        <!-- if connector status is set to offline -->
+        <onException>
+            <exception>io.dataspaceconnector.service.message.handler.exception.ConnectorOfflineException</exception>
+            <to uri="direct:handleConnectorOfflineException"/>
+        </onException>
+
         <!-- Infomodel version specified in message header is not supported by connector -->
         <onException>
-            <exception>io.dataspaceconnector.exception.VersionNotSupportedException</exception>
+            <exception>io.dataspaceconnector.common.exception.VersionNotSupportedException</exception>
             <to uri="direct:handleVersionNotSupportedException"/>
         </onException>
 
         <!-- message header is empty -->
         <onException>
-            <exception>io.dataspaceconnector.exception.MessageEmptyException</exception>
+            <exception>io.dataspaceconnector.common.exception.MessageEmptyException</exception>
             <to uri="direct:handleMessageEmptyException"/>
         </onException>
 
         <from uri="direct:idsValidation"/>
+        <process ref="OnlineStatusValidator"/>
         <process ref="MessageHeaderValidator"/>
 
     </route>

@@ -18,4 +18,9 @@
 
 set -eo pipefail
 
-. ${FILE_PATH}test.sh
+# shellcheck source=scripts/ci/libraries/test.sh
+. "${FILE_PATH}"/test.sh
+# shellcheck source=scripts/ci/libraries/dsc.sh
+. "${FILE_PATH}"/dsc.sh
+# shellcheck source=scripts/ci/libraries/git.sh
+. "${FILE_PATH}"/git.sh

@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.model.rule;
 
-import java.net.URI;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dataspaceconnector.model.named.NamedDescription;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.net.URI;
 
 /**
  * The description of a contract rule.

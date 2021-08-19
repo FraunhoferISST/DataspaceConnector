@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.service;
 
-import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.exception.DataRetrievalException;
+import io.dataspaceconnector.common.exception.DataRetrievalException;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
-import io.dataspaceconnector.service.message.type.ArtifactRequestService;
-import io.dataspaceconnector.service.resource.ArtifactService;
+import io.dataspaceconnector.service.message.builder.type.ArtifactRequestService;
+import io.dataspaceconnector.service.resource.type.ArtifactService;
 import lombok.SneakyThrows;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -59,7 +59,7 @@ public class BlockingArtifactReceiverTest {
     private BlockingArtifactReceiver blockingArtifactReceiver;
 
     @MockBean
-    private ConnectorConfiguration connectorConfiguration;
+    private ConnectorConfig connectorConfig;
 
     @Test
     public void retrieve_artifactIdNull_throwIllegalArgumentException() {

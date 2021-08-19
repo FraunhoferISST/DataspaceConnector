@@ -27,11 +27,13 @@ import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
-import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.exception.PolicyRestrictionException;
+import io.dataspaceconnector.common.exception.PolicyRestrictionException;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.service.EntityResolver;
+import io.dataspaceconnector.common.usagecontrol.AccessVerificationInput;
+import io.dataspaceconnector.common.usagecontrol.VerificationResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,7 +57,7 @@ public class DataAccessVerifierTest {
     private RuleValidator ruleValidator;
 
     @MockBean
-    private ConnectorConfiguration connectorConfig;
+    private ConnectorConfig connectorConfig;
 
     @MockBean
     private EntityResolver entityResolver;

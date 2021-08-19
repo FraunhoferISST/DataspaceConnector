@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.model.datasource;
 
-import javax.persistence.CascadeType;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Inheritance;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.base.Entity;
 import lombok.AccessLevel;
@@ -31,6 +24,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import javax.persistence.CascadeType;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Inheritance;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 /**
  * Entity which holds information about the data sources.

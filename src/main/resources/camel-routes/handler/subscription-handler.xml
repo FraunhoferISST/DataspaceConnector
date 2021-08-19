@@ -3,20 +3,20 @@
 
         <!-- the subscription from the consumer is invalid -->
         <onException>
-            <exception>io.dataspaceconnector.exception.InvalidInputException</exception>
-            <exception>io.dataspaceconnector.exception.InvalidEntityException</exception>
+            <exception>io.dataspaceconnector.common.exception.InvalidInputException</exception>
+            <exception>io.dataspaceconnector.common.exception.InvalidEntityException</exception>
             <to uri="direct:handleInvalidSubscriptionInput"/>
         </onException>
 
         <!-- the un/subscription could not be processed -->
         <onException>
-            <exception>io.dataspaceconnector.camel.exception.SubscriptionProcessingException</exception>
+            <exception>io.dataspaceconnector.common.exception.SubscriptionProcessingException</exception>
             <to uri="direct:handleMessageProcessingFailedForSubscription"/>
         </onException>
 
         <!-- an element for the target id could not be found -->
         <onException>
-            <exception>io.dataspaceconnector.exception.ResourceNotFoundException</exception>
+            <exception>io.dataspaceconnector.common.exception.ResourceNotFoundException</exception>
             <to uri="direct:handleResourceNotFoundExceptionForSubscription"/>
         </onException>
 

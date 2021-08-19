@@ -22,16 +22,17 @@ The self-description is returned as JSON-LD and contains several information abo
 connector instance. This includes e.g. the title, the maintainer, the IDS Informodel version, and
 the resource catalog. At the public endpoint `/`, the resource catalog is not displayed. It can only
 be accessed with admin credentials at `GET /api/connector` or by sending an IDS description request
-message as explained [here](pages/communication/v5/consumer.md#step-1-request-a-connectors-self-description).
+message as explained [here](consumer.md#step-1-query-provider---request-a-connectors-self-description).
 
 ![Selfservice Endpoints](../../../assets/images/v6/swagger_connector.png)
 
 ## Step by Step
 
 To understand the structure of a resource, please first take a look at the
-[data model section](pages/documentation/v5/data-model.md) and the [REST API explanation](pages/documentation/v5/rest-api.md).
+[data model section](../../documentation/v6/data-model.md) and the
+[REST API explanation](../../documentation/v6/rest-api.md).
 For adding resources to the running connector as a data provider, have a look at the following
-steps. How resources can be bootstrapped is explained [here](pages/deployment/bootstrapping.md).
+steps. How resources can be bootstrapped is explained [here](../../deployment/bootstrapping.md).
 
 In the following example, we want to provide the raw
 [data](https://samples.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=439d4b804bc8187953eb36d2a8c26a02)
@@ -56,18 +57,38 @@ curl -X 'POST' \
     "data",
     "sample"
   ],
+  "paymentModality": "fixedPrice",
   "publisher": "https://openweathermap.org/",
   "language": "EN",
   "license": "http://opendatacommons.org/licenses/odbl/1.0/",
   "sovereign": "https://openweathermap.org/",
   "endpointDocumentation": "https://example.com",
-  "key": "value"
+  "key": "value",
+  "samples": [
+    "https://localhost:8080/api/offers/ca502fbc-bd65-4125-fbeb-97536647d623"
+  ]
 }'
 ```
 
 The values `title`, `description`, `keywords`, `publisher`, `sovereign`, `license`, etc. describe
 the data resource and will be used to fill in the IDS Information Model attributes for IDS
 communication with a connector as data consumer.
+
+**New**: You can add a payment modality to your resource (one of `undefined`, `free`, `fixedPrice`,
+or `negotiationBasis`). On top of that, you can add a list of resources as a sample of another
+resource. For this, add the IDs to the sample list. The connector checks if the values are valid
+uri and match known resource offers. If this is not the case, you will get a code 400 as a response.
+
+---
+
+**Note**: Be aware that the payment modality attribute has nothing to do with the contract
+negotiation. This has to be done no matter what modality is added to the resource. This is only for
+informative purpose.
+
+Also, the sample feature is only for informative purpose. Handling out a contract agreement for a
+resource does not imply the automated negotiation for sample resources. To use the sample resource
+to provide "free" or "try out" example data, make sure that the sample resource has a usage policy
+without any restriction added.
 
 ---
 
@@ -117,6 +138,10 @@ Response body:
   "version": 1,
   "sovereign": "https://openweathermap.org/",
   "endpointDocumentation": "https://example.com",
+  "paymentModality": "fixedPrice",
+  "samples": [
+    "https://localhost:8080/api/offers/ca502fbc-bd65-4125-fbeb-97536647d623"
+  ],
   "additional": {
     "key": "value"
   },
@@ -154,7 +179,7 @@ entity change, as well as the creation and modification date.
 
 The endpoints `PUT`, `GET`, and`DELETE` `/offers/{id}` provide standard CRUD functions to read,
 update, and delete the metadata, respectively the data resource - as described
-[here](pages/documentation/v5/data-model.md).
+[here](../../documentation/v5/data-model.md).
 
 Next to the resource, we need a catalog as a parent for the offer. Use `POST /api/catalogs` to
 create one. Its location is: [https://localhost:8080/api/catalogs/5ac012e1-ffa5-43b3-af41-9707d2a9137d](https://localhost:8080/api/catalogs/5ac012e1-ffa5-43b3-af41-9707d2a9137d).
@@ -173,7 +198,7 @@ curl -X 'POST' \
 ]'
 ```
 
-As stated [here](pages/documentation/v5/data-model.md), **an offered resource is only complete if it
+As stated [here](../../documentation/v5/data-model.md), **an offered resource is only complete if it
 contains at least one contract offer and at least one representation with at least one artifact.
 Otherwise, it will not be listed in the IDS self-description because there is no complete data offer.**
 
@@ -182,7 +207,7 @@ object, that contains the usage policy as `value`. Since the IDS Usage Control L
 rather complicated and it is not trivial to manually create a valid policy, endpoints are provided
 to obtain example policies (`POST /api/examples/policy`) or to validate created and modified usage
 policies (`POST /api/examples/validation`). How these can be used, is explained
-[here](pages/documentation/v6/usage-control.md#example-endpoint).
+[here](../../documentation/v6/usage-control.md#example-endpoint).
 
 ![Policy Endpoints](../../../assets/images/swagger_policy.png)
 
@@ -267,8 +292,9 @@ local data. The Dataspace Connector automatically classifies an artifact as `rem
 ```
 
 Currently, the Dataspace Connector can natively establish a connection via http, https, and https
-with basic authentication. To connect to other backends, take a look at how to integrate
-routing frameworks as explained [here](pages/deployment/camel.md).
+with basicAuth or apiKey. To use one of the authentications, just add the appropriate object to the
+body of your request. To connect to other backends, take a look at how to integrate routing
+frameworks as explained [here](../../deployment/camel.md).
 
 ---
 
@@ -309,7 +335,7 @@ the data provider returns the data. If not, it will respond with a `RejectionRea
 ---
 
 **Note**: The contract negotiation is enabled by default. To disable it, have a look at the
-[configurations](pages/deployment/configuration.md#ids-settings).
+[configurations](../../deployment/configuration.md#ids-settings).
 
 ---
 

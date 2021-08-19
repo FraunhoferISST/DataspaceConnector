@@ -16,7 +16,7 @@
 package io.dataspaceconnector.model.rule;
 
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.model.util.FactoryUtils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -70,7 +70,7 @@ public class ContractRuleFactory extends AbstractNamedFactory<ContractRule, Cont
     }
 
     private boolean updateRemoteId(final ContractRule contractRule, final URI remoteId) {
-        final var newUri = MetadataUtils.updateUri(contractRule.getRemoteId(),
+        final var newUri = FactoryUtils.updateUri(contractRule.getRemoteId(),
                 remoteId, DEFAULT_REMOTE_ID);
         newUri.ifPresent(contractRule::setRemoteId);
 
@@ -78,7 +78,7 @@ public class ContractRuleFactory extends AbstractNamedFactory<ContractRule, Cont
     }
 
     private boolean updateRule(final ContractRule contractRule, final String rule) {
-        final var newRule = MetadataUtils.updateString(contractRule.getValue(), rule, DEFAULT_RULE);
+        final var newRule = FactoryUtils.updateString(contractRule.getValue(), rule, DEFAULT_RULE);
         newRule.ifPresent(contractRule::setValue);
 
         return newRule.isPresent();

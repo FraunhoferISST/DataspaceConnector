@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Contains the exception handlers used by all controllers.
+ * Provides exception handlers used by controller classes.
  */
 package io.dataspaceconnector.controller.exceptionhandler;

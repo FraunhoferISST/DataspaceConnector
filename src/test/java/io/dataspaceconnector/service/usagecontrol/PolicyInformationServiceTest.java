@@ -17,7 +17,7 @@ package io.dataspaceconnector.service.usagecontrol;
 
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
-import io.dataspaceconnector.service.resource.ArtifactService;
+import io.dataspaceconnector.service.resource.type.ArtifactService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

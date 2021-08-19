@@ -15,19 +15,14 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.time.format.DateTimeParseException;
-
-import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.config.util.UsageControlFramework;
-import io.dataspaceconnector.exception.ResourceNotFoundException;
-import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.service.resource.AgreementService;
-import io.dataspaceconnector.service.resource.ArtifactService;
-import io.dataspaceconnector.util.ContractUtils;
-import io.dataspaceconnector.util.RuleUtils;
+import io.dataspaceconnector.common.ids.policy.ContractUtils;
+import io.dataspaceconnector.common.ids.policy.RuleUtils;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.ids.policy.UsageControlFramework;
+import io.dataspaceconnector.config.ConnectorConfig;
+import io.dataspaceconnector.common.ids.DeserializationService;
+import io.dataspaceconnector.service.resource.type.AgreementService;
+import io.dataspaceconnector.service.resource.type.ArtifactService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -35,6 +30,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.time.format.DateTimeParseException;
 
 /**
  * This class implements automated policy check.
@@ -53,7 +53,7 @@ public class ScheduledDataRemoval {
     /**
      * Service for configuring policy settings.
      */
-    private final @NonNull ConnectorConfiguration connectorConfig;
+    private final @NonNull ConnectorConfig connectorConfig;
 
     /**
      * Service for ids deserialization.

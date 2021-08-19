@@ -15,10 +15,11 @@
  */
 package io.dataspaceconnector.model.resource;
 
-import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.model.util.FactoryUtils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.List;
 
 /**
  * Creates and updates a resource.
@@ -37,6 +38,14 @@ public final class RequestedResourceFactory
         return new RequestedResource();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void validateSamples(final Resource resource, final List<URI> samples) {
+        // Nothing to do here.
+    }
+
     @Override
     protected boolean updateInternal(final RequestedResource resource,
                                      final RequestedResourceDesc desc) {
@@ -46,7 +55,7 @@ public final class RequestedResourceFactory
     }
 
     private boolean updateRemoteId(final RequestedResource resource, final URI remoteId) {
-        final var newUri = MetadataUtils.updateUri(resource.getRemoteId(), remoteId,
+        final var newUri = FactoryUtils.updateUri(resource.getRemoteId(), remoteId,
                 DEFAULT_REMOTE_ID);
         newUri.ifPresent(resource::setRemoteId);
 

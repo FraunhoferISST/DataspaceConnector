@@ -15,23 +15,23 @@
  */
 package io.dataspaceconnector.service;
 
-import javax.persistence.PersistenceException;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.UUID;
-
-import io.dataspaceconnector.exception.UnexpectedResponseException;
+import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.agreement.Agreement;
-import io.dataspaceconnector.service.message.type.ArtifactRequestService;
-import io.dataspaceconnector.service.resource.AgreementService;
+import io.dataspaceconnector.service.message.builder.type.ArtifactRequestService;
+import io.dataspaceconnector.service.resource.type.AgreementService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import javax.persistence.PersistenceException;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;

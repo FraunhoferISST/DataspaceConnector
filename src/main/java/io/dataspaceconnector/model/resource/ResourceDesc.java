@@ -15,12 +15,14 @@
  */
 package io.dataspaceconnector.model.resource;
 
-import java.net.URI;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dataspaceconnector.model.named.NamedDescription;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.net.URI;
+import java.util.List;
 
 /**
  * Base class for describing resources.
@@ -58,4 +60,16 @@ public class ResourceDesc extends NamedDescription {
      * The endpoint of the resource.
      */
     private URI endpointDocumentation;
+
+    /**
+     * The payment modality.
+     */
+    @JsonProperty("paymentMethod")
+    @JsonAlias("paymentModality")
+    private PaymentMethod paymentMethod;
+
+    /**
+     * A list of resource IDs pointing at sample resources.
+     */
+    private List<URI> samples;
 }

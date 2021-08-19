@@ -15,6 +15,21 @@
  */
 package io.dataspaceconnector.service;
 
+import de.fraunhofer.iais.eis.Action;
+import de.fraunhofer.iais.eis.ContractAgreementBuilder;
+import de.fraunhofer.iais.eis.ContractRequestBuilder;
+import de.fraunhofer.iais.eis.PermissionBuilder;
+import de.fraunhofer.iais.eis.Rule;
+import io.dataspaceconnector.common.exception.UnexpectedResponseException;
+import io.dataspaceconnector.service.message.builder.type.ContractAgreementService;
+import io.dataspaceconnector.service.message.builder.type.ContractRequestService;
+import io.dataspaceconnector.service.usagecontrol.ContractManager;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import java.net.URI;
@@ -22,21 +37,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-
-import de.fraunhofer.iais.eis.Action;
-import de.fraunhofer.iais.eis.ContractAgreementBuilder;
-import de.fraunhofer.iais.eis.ContractRequestBuilder;
-import de.fraunhofer.iais.eis.PermissionBuilder;
-import de.fraunhofer.iais.eis.Rule;
-import io.dataspaceconnector.exception.UnexpectedResponseException;
-import io.dataspaceconnector.service.message.type.ContractAgreementService;
-import io.dataspaceconnector.service.message.type.ContractRequestService;
-import io.dataspaceconnector.service.usagecontrol.ContractManager;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;

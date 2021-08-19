@@ -3,7 +3,7 @@
 
         <!-- target artifact cannot be found -->
         <onException>
-            <exception>io.dataspaceconnector.exception.ResourceNotFoundException</exception>
+            <exception>io.dataspaceconnector.common.exception.ResourceNotFoundException</exception>
             <to uri="direct:handleResourceNotFoundException"/>
         </onException>
 
@@ -15,19 +15,19 @@
 
         <!-- payload stream cannot be read -->
         <onException>
-            <exception>io.dataspaceconnector.exception.MessageRequestException</exception>
+            <exception>io.dataspaceconnector.common.exception.MessageRequestException</exception>
             <to uri="direct:handleMessagePayloadException"/>
         </onException>
 
         <!-- contract request does not contain any rules -->
         <onException>
-            <exception>io.dataspaceconnector.camel.exception.MissingRulesException</exception>
+            <exception>io.dataspaceconnector.service.message.handler.exception.MissingRulesException</exception>
             <to uri="direct:handleMissingRulesException"/>
         </onException>
 
         <!-- at least on rule in the contract is missing a target -->
         <onException>
-            <exception>io.dataspaceconnector.camel.exception.MissingTargetInRuleException</exception>
+            <exception>io.dataspaceconnector.service.message.handler.exception.MissingTargetInRuleException</exception>
             <to uri="direct:handleMissingTargetInRuleException"/>
         </onException>
 
@@ -35,13 +35,13 @@
         <onException>
             <exception>java.lang.IllegalStateException</exception>
             <exception>de.fraunhofer.iais.eis.util.ConstraintViolationException</exception>
-            <exception>io.dataspaceconnector.exception.RdfBuilderException</exception>
+            <exception>io.dataspaceconnector.common.exception.RdfBuilderException</exception>
             <to uri="direct:handleResponseMessageBuilderException"/>
         </onException>
 
         <!-- the agreement cannot be built or persisted -->
         <onException>
-            <exception>io.dataspaceconnector.camel.exception.AgreementPersistenceException</exception>
+            <exception>io.dataspaceconnector.service.message.handler.exception.AgreementPersistenceException</exception>
             <to uri="direct:handleAgreementPersistenceException"/>
         </onException>
 
@@ -57,19 +57,19 @@
             <process ref="RuleValidator"/>
             <doCatch>
                 <!-- at least one rule in the contract is malformed -->
-                <exception>io.dataspaceconnector.camel.exception.MalformedRuleException</exception>
+                <exception>io.dataspaceconnector.service.message.handler.exception.MalformedRuleException</exception>
                 <to uri="direct:handleMalformedRules"/>-->
                 <stop/>
             </doCatch>
             <doCatch>
                 <!-- there are no contract offers for the target artifact or none for the requesting consumer -->
-                <exception>io.dataspaceconnector.camel.exception.ContractListEmptyException</exception>
+                <exception>io.dataspaceconnector.service.message.handler.exception.ContractListEmptyException</exception>
                 <to uri="direct:handleContractListEmptyException"/>
                 <stop/>
             </doCatch>
             <doCatch>
                 <!-- the contract request will be rejected -->
-                <exception>io.dataspaceconnector.camel.exception.ContractRejectedException</exception>
+                <exception>io.dataspaceconnector.service.message.handler.exception.ContractRejectedException</exception>
                 <process ref="RejectContractProcessor"/>
                 <stop/>
             </doCatch>

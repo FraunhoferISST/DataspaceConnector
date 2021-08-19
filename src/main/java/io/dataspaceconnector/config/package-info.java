@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * The configurations for spring.
+ * Contains configuration functions and services.
  */
 package io.dataspaceconnector.config;

@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.model.truststore;
 
-import java.net.URI;
-
 import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.model.util.FactoryUtils;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
 
 /**
  * Factory class for the trust store.
@@ -38,6 +38,11 @@ public class TruststoreFactory extends AbstractFactory<Truststore, TruststoreDes
     public static final URI DEFAULT_LOCATION = URI.create("file:///conf/truststore.p12");
 
     /**
+     * The default alias.
+     */
+    public static final String DEFAULT_ALIAS = "1";
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -52,8 +57,9 @@ public class TruststoreFactory extends AbstractFactory<Truststore, TruststoreDes
     public final boolean updateInternal(final Truststore truststore, final TruststoreDesc desc) {
         final var hasUpdatedLocation = updateLocation(truststore, desc.getLocation());
         final var hasUpdatedPassword = updatePassword(truststore, desc.getPassword());
+        final var hasUpdatedAlias = updateAlias(truststore, desc.getAlias());
 
-        return hasUpdatedLocation || hasUpdatedPassword;
+        return hasUpdatedLocation || hasUpdatedPassword || hasUpdatedAlias;
     }
 
     private boolean updatePassword(final Truststore truststore, final String password) {
@@ -61,7 +67,7 @@ public class TruststoreFactory extends AbstractFactory<Truststore, TruststoreDes
             return false;
         }
 
-        final var newPassword = MetadataUtils.updateString(truststore.getPassword(),
+        final var newPassword = FactoryUtils.updateString(truststore.getPassword(),
                 password, DEFAULT_PASSWORD);
         newPassword.ifPresent(truststore::setPassword);
 
@@ -70,9 +76,21 @@ public class TruststoreFactory extends AbstractFactory<Truststore, TruststoreDes
 
     private boolean updateLocation(final Truststore truststore, final URI location) {
         final var newLocation =
-                MetadataUtils.updateUri(truststore.getLocation(), location, DEFAULT_LOCATION);
+                FactoryUtils.updateUri(truststore.getLocation(), location, DEFAULT_LOCATION);
         newLocation.ifPresent(truststore::setLocation);
 
         return newLocation.isPresent();
+    }
+
+    private boolean updateAlias(final Truststore truststore, final String alias) {
+        if (truststore.getAlias() != null && alias == null) {
+            return false;
+        }
+
+        final var newAlias = FactoryUtils.updateString(truststore.getAlias(),
+                alias, DEFAULT_ALIAS);
+        newAlias.ifPresent(truststore::setAlias);
+
+        return newAlias.isPresent();
     }
 }

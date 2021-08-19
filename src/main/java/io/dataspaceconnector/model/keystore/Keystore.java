@@ -61,4 +61,9 @@ public class Keystore extends Entity {
      * The key store password.
      */
     private String password;
+
+    /**
+     * Alias for the key store.
+     */
+    private String alias;
 }

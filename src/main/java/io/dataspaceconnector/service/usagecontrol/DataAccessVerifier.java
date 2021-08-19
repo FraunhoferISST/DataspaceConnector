@@ -15,14 +15,18 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
-import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.exception.PolicyExecutionException;
-import io.dataspaceconnector.exception.PolicyRestrictionException;
+import io.dataspaceconnector.common.ids.policy.ContractUtils;
+import io.dataspaceconnector.common.ids.policy.PolicyPattern;
+import io.dataspaceconnector.common.ids.policy.RuleUtils;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
+import io.dataspaceconnector.common.exception.PolicyExecutionException;
+import io.dataspaceconnector.common.exception.PolicyRestrictionException;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.service.EntityResolver;
-import io.dataspaceconnector.util.ContractUtils;
-import io.dataspaceconnector.util.RuleUtils;
-import io.dataspaceconnector.util.SelfLinkHelper;
+import io.dataspaceconnector.common.usagecontrol.AccessVerificationInput;
+import io.dataspaceconnector.common.usagecontrol.PolicyVerifier;
+import io.dataspaceconnector.common.usagecontrol.VerificationResult;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -49,7 +53,7 @@ public final class DataAccessVerifier implements PolicyVerifier<AccessVerificati
     /**
      * Service for configuring policy settings.
      */
-    private final @NonNull ConnectorConfiguration connectorConfig;
+    private final @NonNull ConnectorConfig connectorConfig;
 
     /**
      * Service for resolving entities.
@@ -92,8 +96,8 @@ public final class DataAccessVerifier implements PolicyVerifier<AccessVerificati
      * @param artifactId  The requested artifact.
      * @param remoteId    The remote id of the requested artifact.
      * @param agreementId The id of the transfer contract (agreement).
-     * @throws io.dataspaceconnector.exception.UnsupportedPatternException If no suitable pattern
-     *                                                                     could be found.
+     * @throws io.dataspaceconnector.common.exception.UnsupportedPatternException if no suitable
+     * pattern could be found.
      */
     public void checkForAccess(final List<PolicyPattern> patterns, final URI artifactId,
                                final URI remoteId, final URI agreementId) {

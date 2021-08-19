@@ -32,10 +32,10 @@ import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.resource.RequestedResourceFactory;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.service.configuration.AppService;
-import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.service.resource.AgreementService;
-import io.dataspaceconnector.service.resource.ArtifactService;
-import io.dataspaceconnector.service.resource.RelationServices;
+import io.dataspaceconnector.common.ids.DeserializationService;
+import io.dataspaceconnector.service.resource.relation.AgreementArtifactLinker;
+import io.dataspaceconnector.service.resource.type.AgreementService;
+import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.resource.TemplateBuilder;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
 import lombok.SneakyThrows;
@@ -67,7 +67,7 @@ public class EntityPersistenceServiceTest {
     private AgreementService agreementService;
 
     @MockBean
-    private RelationServices.AgreementArtifactLinker linker;
+    private AgreementArtifactLinker linker;
 
     @MockBean
     private ContractManager contractManager;

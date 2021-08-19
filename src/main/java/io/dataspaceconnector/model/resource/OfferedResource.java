@@ -18,13 +18,11 @@ package io.dataspaceconnector.model.resource;
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.catalog.Catalog;
 import lombok.EqualsAndHashCode;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import java.util.List;
 
 /**

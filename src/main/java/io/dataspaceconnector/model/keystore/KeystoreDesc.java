@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.model.keystore;
 
-import java.net.URI;
-
 import io.dataspaceconnector.model.base.Description;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import java.net.URI;
 
 /**
  * This class describes key stores properties.
@@ -41,4 +41,9 @@ public class KeystoreDesc extends Description {
      * The key store password.
      */
     private String password;
+
+    /**
+     * Alias for the key store.
+     */
+    private String alias;
 }

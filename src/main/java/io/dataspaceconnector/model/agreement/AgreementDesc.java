@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.model.agreement;
 
-import java.net.URI;
-import java.util.List;
-
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.base.Description;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import java.net.URI;
+import java.util.List;
 
 /**
  * Describes a contract agreement's properties.
