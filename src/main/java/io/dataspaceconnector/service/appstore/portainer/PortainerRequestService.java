@@ -208,17 +208,17 @@ public class PortainerRequestService {
         //Needed registry info from AppStore template for request body:
         //Authentication true/false, Name, Password, Type, URL, Username
         final var requestBody = new JSONObject();
-        requestBody.put("url", registryURL);
+        requestBody.put("URL", registryURL);
         //name of registry will be the url
-        requestBody.put("name", registryURL);
-        requestBody.put("type", REGISTRY_TYPE); //Custom Registry
-        requestBody.put("authentication", false);
+        requestBody.put("Name", registryURL);
+        requestBody.put("Type", REGISTRY_TYPE); //Custom Registry
+        requestBody.put("Authentication", false);
 
-        if (templateObject.has("username") && templateObject.has("password")) {
-            requestBody.put("authentication", true);
-            //TODO: Where does AppStore template provide credentials?
-            requestBody.put("username", templateObject.getString("username"));
-            requestBody.put("password", templateObject.getString("password"));
+        if (templateObject.has("registryUser")) {
+            requestBody.put("Authentication", true);
+            var authObject = templateObject.getJSONObject("registryUser");
+            requestBody.put("Username", authObject.getString("username"));
+            requestBody.put("Password", authObject.getString("password"));
         }
 
 
