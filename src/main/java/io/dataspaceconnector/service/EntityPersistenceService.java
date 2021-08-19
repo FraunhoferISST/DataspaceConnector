@@ -34,7 +34,6 @@ import io.dataspaceconnector.service.util.EndpointUtils;
 import io.dataspaceconnector.util.IdsUtils;
 import io.dataspaceconnector.util.MessageUtils;
 import io.dataspaceconnector.util.TemplateUtils;
-import io.dataspaceconnector.util.UUIDUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -306,12 +305,13 @@ public class EntityPersistenceService {
             throws ResourceNotFoundException, IllegalArgumentException, IOException {
         final var base64Data = MessageUtils.extractPayloadFromMultipartMessage(response);
 
-        final var appUUID = UUIDUtils.uuidFromUri(appId);
-        final var app = appService.get(appUUID);
+        //TODO should the bootstrapID field be used like this? Is not unique, could lead to errors
+        final var app = appService.getByBootstrap(appId);
+
         appService.setData(app.getId(),
                 new ByteArrayInputStream(Base64.decode(base64Data)));
         if (log.isDebugEnabled()) {
-            log.debug("Updated data from artifact. [target=({})]", appUUID);
+            log.debug("Updated data from artifact. [target=({})]", appId);
         }
     }
 }

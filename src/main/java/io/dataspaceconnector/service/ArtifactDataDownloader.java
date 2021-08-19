@@ -90,22 +90,23 @@ public class ArtifactDataDownloader {
     /**
      * Request the App Artifact and update the app.
      * @param recipient The app store where the artifact shall be downloaded.
-     * @param app The app artifact id.
+     * @param instanceId The app artifact id.
+     * @param resourceId Id of the app resource.
      * @throws UnexpectedResponseException When response is not an ArtifactResponseMessage.
      */
-    public void downloadAppArtifact(final URI recipient, final URI app)
+    public void downloadAppArtifact(final URI recipient, final URI instanceId, final URI resourceId)
             throws UnexpectedResponseException {
-        var response = artifactReqSvc.sendMessage(recipient, app, null);
+        var response = artifactReqSvc.sendMessage(recipient, instanceId, null);
 
         // Read and process the response message.
         try {
-            persistenceSvc.saveAppData(response, app);
+            persistenceSvc.saveAppData(response, resourceId);
         } catch (IOException | ResourceNotFoundException
                 | MessageResponseException e) {
             // Ignore that the data saving failed. Another try can take place later.
             if (log.isWarnEnabled()) {
                 log.warn("Could not save data for app artifact. [app artifact=({}), "
-                        + "exception=({})]", app, e.getMessage());
+                        + "exception=({})]", resourceId, e.getMessage());
             }
             throw new PersistenceException(e);
         }

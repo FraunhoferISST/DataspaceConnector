@@ -34,8 +34,8 @@
         "@id" : "https://localhost:8080/api/ids/data"
       }
     },
-    "ids:outboundModelVersion" : "4.1.0",
-    "ids:inboundModelVersion" : [ "4.0.0", "4.1.0" ],
+    "ids:outboundModelVersion" : "4.1.2",
+    "ids:inboundModelVersion" : [ "4.0.0", "4.1.2" ],
     "ids:title" : [ {
       "@value" : "Dataspace Connector",
       "@type" : "http://www.w3.org/2001/XMLSchema#string"
@@ -57,6 +57,6 @@
     "@id" : "idsc:CONNECTOR_OFFLINE"
   },
   "ids:keyStore" : {
-    "@id" : "file:///conf/keystore-localhost.p12"
+    "@id" : "file:///conf/isst_ids_framework_demo_connector.p12"
   }
 }
