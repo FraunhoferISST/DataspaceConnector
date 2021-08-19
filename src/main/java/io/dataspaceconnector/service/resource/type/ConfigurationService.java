@@ -20,6 +20,7 @@ import java.util.UUID;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import io.dataspaceconnector.common.runtime.ServiceResolver;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
@@ -32,8 +33,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -48,7 +47,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
     /**
      * The current context.
      */
-    private final @NonNull ApplicationContext ctx;
+    private final @NonNull ServiceResolver svcResolver;
 
     /**
      * Builds the ids config.
@@ -59,15 +58,15 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
      * Constructor.
      * @param repository The configuration repository.
      * @param factory The configuration logic.
-     * @param context The application context.
+     * @param resolver The application context.
      * @param idsConfigBuilder The ids Config model builder.
      */
     public ConfigurationService(final BaseEntityRepository<Configuration> repository,
                                 final AbstractFactory<Configuration, ConfigurationDesc> factory,
-                                final @NonNull ApplicationContext context,
+                                final @NonNull ServiceResolver resolver,
                                 final @NonNull IdsConfigModelBuilder idsConfigBuilder) {
         super(repository, factory);
-        this.ctx = context;
+        this.svcResolver = resolver;
         this.configBuilder = idsConfigBuilder;
     }
 
@@ -136,7 +135,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
     }
 
     private void reload(final UUID newConfig) throws ConfigUpdateException {
-        final var configContainer = findConfigContainer();
+        final var configContainer = svcResolver.getService(ConfigContainer.class);
         if (configContainer.isPresent()) {
             final var activeConfig = getActiveConfig();
             final var configuration = configBuilder.create(activeConfig);
@@ -149,11 +148,4 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
         }
     }
 
-    private Optional<ConfigContainer> findConfigContainer() {
-        try {
-            return Optional.of(ctx.getBean(ConfigContainer.class));
-        } catch (NoSuchBeanDefinitionException ignored) { }
-
-        return Optional.empty();
-    }
 }

@@ -65,7 +65,6 @@ import io.dataspaceconnector.service.resource.type.RouteService;
 import io.dataspaceconnector.service.resource.type.RuleService;
 import io.dataspaceconnector.service.routing.RouteHelper;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -127,21 +126,21 @@ public class ResourceConfig {
     /**
      * Create a configuration service bean.
      * @param repo The configuration repository.
-     * @param context The application context.
+     * @param lookUp The application context.
      * @param idsConfigBld The IDS configuration builder.
      * @param connectorConfig The connector configuration.
      * @return The configuration service bean.
      */
     @Bean("configurationService")
     public ConfigurationService createConfigurationService(final ConfigurationRepository repo,
-                                                           final ApplicationContext context,
+                                                           final ServiceLookUp lookUp,
                                                            final IdsConfigModelBuilder idsConfigBld,
                                                            final ConnectorConfig connectorConfig) {
         return new ConfigurationService(repo, new ConfigurationFactory(new ProxyFactory(),
                                                                        new TruststoreFactory(),
                                                                        new KeystoreFactory(),
                                                                        connectorConfig),
-                                        context, idsConfigBld);
+                                        lookUp, idsConfigBld);
     }
 
     /**
