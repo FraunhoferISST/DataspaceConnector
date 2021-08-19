@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [6.1.2] - 2021-08-19
+
+### Fixed
+- Add null checking to object mappers.
+
 ## [6.1.1] - 2021-08-19
 
 ### Added
