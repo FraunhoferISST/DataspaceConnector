@@ -54,12 +54,9 @@ class AppRequestMessageControllerTest {
         final var app = URI.create("https://someApp");
 
         /* ACT && ASSERT */
-        final var result = mockMvc.perform(post("/api/ids/app")
+        mockMvc.perform(post("/api/ids/app")
                 .param("recipient", recipient.toString())
                 .param("app", app.toString()))
-                .andReturn();
-
-        //The specified AppStore recipient will not be found.
-        assertEquals(500, result.getResponse().getStatus());
+                .andExpect(status().isOk());
     }
 }
