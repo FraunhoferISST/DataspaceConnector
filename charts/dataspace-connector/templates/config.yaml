@@ -27,7 +27,7 @@ data:
   {{- end}}
   {{- if .Values.postgresql }}
     SPRING_DATASOURCE_PLATFORM: "postgres"
-    SPRING_DATASOURCE_URL: "jdbc:postgresql://dsc-postgresql:5432/test"
+    SPRING_DATASOURCE_URL: "jdbc:postgresql://{{ .Release.Name }}-postgresql:{{ .Values.postgresql.service.port }}/{{ .Values.postgresql.postgresqlDatabase }}"
     SPRING_DATASOURCE_DRIVER_CLASS_NAME: "org.postgresql.Driver"
     SPRING_JPA_DATABASE_PLATFORM: "org.hibernate.dialect.PostgreSQLDialect"
   {{- end}}
