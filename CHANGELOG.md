@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [6.1.1] - 2021-08-19
+
+### Added
+- Add `paymentModality` enums to GUI controller.
+
+### Fixed
+- Remove ids endpoint definition from Bootstrapping files.
+
 ## [6.1.0] - 2021-08-16
 
 ### Added
