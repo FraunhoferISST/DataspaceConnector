@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.dataspaceconnector.extension.migration.repositories.AgreementMigrationRepository;
+import io.dataspaceconnector.extension.migration.repositories.ArtifactMigrationRepository;
 import io.dataspaceconnector.extension.migration.repositories.DataMigrationRepository;
 import io.dataspaceconnector.extension.migration.repositories.OfferedResourcesMigrationRepository;
 import io.dataspaceconnector.extension.migration.repositories.RequestedResourcesMigrationRepository;
@@ -37,13 +38,15 @@ class MigratorTest {
     private DataMigrationRepository dataRepository = Mockito.mock(DataMigrationRepository.class);
     private AuthenticationRepository authRepo = Mockito.mock(AuthenticationRepository.class);
     private AgreementMigrationRepository agreementRepo = Mockito.mock(AgreementMigrationRepository.class);
+    private ArtifactMigrationRepository artifactRepo = Mockito.mock(ArtifactMigrationRepository.class);
 
     private Migrator migrator = new Migrator(
         offeredResourcesMigrationRepository,
         requestedResourcesMigrationRepository,
         dataRepository,
         authRepo,
-        agreementRepo
+        agreementRepo,
+        artifactRepo
     );
 
     @Test

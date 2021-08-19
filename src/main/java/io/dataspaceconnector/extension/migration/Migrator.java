@@ -15,7 +15,12 @@
  */
 package io.dataspaceconnector.extension.migration;
 
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
+import java.net.URI;
+
 import io.dataspaceconnector.extension.migration.repositories.AgreementMigrationRepository;
+import io.dataspaceconnector.extension.migration.repositories.ArtifactMigrationRepository;
 import io.dataspaceconnector.extension.migration.repositories.DataMigrationRepository;
 import io.dataspaceconnector.extension.migration.repositories.OfferedResourcesMigrationRepository;
 import io.dataspaceconnector.extension.migration.repositories.RequestedResourcesMigrationRepository;
@@ -63,6 +68,8 @@ public class Migrator {
      */
     private final @NonNull AgreementMigrationRepository agreementRepo;
 
+    private final @NonNull ArtifactMigrationRepository artifactMigrationRepository;
+
     /**
      * Performs data migration.
      */
@@ -71,6 +78,25 @@ public class Migrator {
         requestedResourcesRepository.migrateV5ToV6();
         migrateAllRemoteData();
         migrateAgreementIDSVersion();
+        migrateBootstrapIds();
+    }
+
+    private void migrateBootstrapIds() {
+        try {
+            if (artifactMigrationRepository.getColumnType() != 12) {
+                // artifactMigrationRepository.addBootstrapTmpColumn(DatabaseConstants.URI_COLUMN_LENGTH);
+                for (final var x : artifactMigrationRepository.getAllIds()) {
+                    final var id = artifactMigrationRepository.getBootstrapId(x);
+                    if (id != null) {
+                        final var obj = new ObjectInputStream(new ByteArrayInputStream(id));
+                        final var uri = (URI) obj.readObject();
+                        artifactMigrationRepository.writeTmpBootstrapId(x, uri.toString());
+                    }
+                }
+                artifactMigrationRepository.dropBootstrapColumn();
+                // artifactMigrationRepository.renameTmpBootstrapColumn();
+            }
+        } catch (Exception ignored) { }
     }
 
     private void migrateAllRemoteData() {

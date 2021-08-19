@@ -96,7 +96,7 @@ public class ResourceConfig {
      */
     @Bean("artifactService")
     public ArtifactService createArtifactService(
-            final ArtifactRepository repository,
+            @Qualifier("artifactRepository") final ArtifactRepository repository,
             final DataRepository dataRepository,
             final HttpService httpService,
             final AuthenticationRepository authRepo) {
