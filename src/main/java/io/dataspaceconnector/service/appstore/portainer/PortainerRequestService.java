@@ -202,6 +202,9 @@ public class PortainerRequestService {
         final var registryURL = templateObject.getString("registry");
 
         if (registryExists(registryURL)) {
+            //TODO: Registry needs to either be deleted after usage or updated with new
+            //credentials, because they change every call to the AppStore -> old credentials
+            //cant be re-used
             return true;
         }
 
