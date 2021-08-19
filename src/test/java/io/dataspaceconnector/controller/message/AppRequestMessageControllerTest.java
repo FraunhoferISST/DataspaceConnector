@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,9 +54,12 @@ class AppRequestMessageControllerTest {
         final var app = URI.create("https://someApp");
 
         /* ACT && ASSERT */
-        mockMvc.perform(post("/api/ids/app")
-                                .param("recipient", recipient.toString())
-                                .param("app", app.toString()))
-               .andExpect(status().isOk());
+        final var result = mockMvc.perform(post("/api/ids/app")
+                .param("recipient", recipient.toString())
+                .param("app", app.toString()))
+                .andReturn();
+
+        //The specified AppStore recipient will not be found.
+        assertEquals(500, result.getResponse().getStatus());
     }
 }
