@@ -79,8 +79,8 @@ public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBui
         final var keywords = ToIdsObjectMapper.getKeywordsAsTypedLiteral(resource.getKeywords(),
                 language);
         final var license = resource.getLicense();
-        final var paymentModality
-                = ToIdsObjectMapper.getPaymentModality(resource.getPaymentModality());
+        final var paymentModality = resource.getPaymentModality() == null
+                ? null : ToIdsObjectMapper.getPaymentModality(resource.getPaymentModality());
         final var publisher = resource.getPublisher();
         final var sovereign = resource.getSovereign();
         final var title = resource.getTitle();

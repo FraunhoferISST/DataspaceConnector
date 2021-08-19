@@ -41,9 +41,11 @@ public final class IdsConfigModelBuilder extends AbstractIdsBuilder<Configuratio
             throws ConstraintViolationException {
         // Prepare configuration attributes.
         final var deployMode = ToIdsObjectMapper.getConnectorDeployMode(config.getDeployMode());
-        final var logLevel = ToIdsObjectMapper.getLogLevel(config.getLogLevel());
+        final var logLevel = config.getLogLevel() == null
+                ? null : ToIdsObjectMapper.getLogLevel(config.getLogLevel());
         final var connector = ToIdsObjectMapper.getConnectorFromConfiguration(config);
-        final var status = ToIdsObjectMapper.getConnectorStatus(config.getStatus());
+        final var status = config.getStatus() == null
+                ? null : ToIdsObjectMapper.getConnectorStatus(config.getStatus());
 
         final var configBuilder = new ConfigurationModelBuilder()
                 ._connectorDeployMode_(deployMode)
@@ -58,7 +60,8 @@ public final class IdsConfigModelBuilder extends AbstractIdsBuilder<Configuratio
                 ._connectorDescription_(connector);
 
         if (config.getProxy() != null) {
-            configBuilder._connectorProxy_(List.of(ToIdsObjectMapper.getProxy(config.getProxy())));
+            configBuilder._connectorProxy_(config.getProxy() == null
+                    ? null : List.of(ToIdsObjectMapper.getProxy(config.getProxy())));
         }
 
         return configBuilder.build();

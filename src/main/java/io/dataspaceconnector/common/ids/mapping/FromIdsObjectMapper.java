@@ -596,6 +596,10 @@ public final class FromIdsObjectMapper {
      * @return The internal log level.
      */
     private static LogLevel fromIdsLogLevel(final de.fraunhofer.iais.eis.LogLevel logLevel) {
+        if (logLevel == null) {
+            return LogLevel.OFF;
+        }
+
         switch (logLevel) {
             // TODO infomodel has less log levels than DSC, info will get lost
             case MINIMAL_LOGGING:
@@ -615,6 +619,10 @@ public final class FromIdsObjectMapper {
      */
     private static SecurityProfile fromIdsSecurityProfile(
             final de.fraunhofer.iais.eis.SecurityProfile securityProfile) {
+        if (securityProfile == null) {
+            return SecurityProfile.BASE_SECURITY;
+        }
+
         switch (securityProfile) {
             case TRUST_SECURITY_PROFILE:
                 return SecurityProfile.TRUST_SECURITY;
@@ -627,11 +635,16 @@ public final class FromIdsObjectMapper {
 
     /**
      * Get dsc connector status from ids connector status.
+     *
      * @param status The ids connector status.
      * @return The internal connector status.
      */
     public static ConnectorStatus fromIdsConnectorStatus(
             final de.fraunhofer.iais.eis.ConnectorStatus status) {
+        if (status == null) {
+            return ConnectorStatus.FAULTY;
+        }
+
         switch (status) {
             case CONNECTOR_ONLINE:
                 return ConnectorStatus.ONLINE;
