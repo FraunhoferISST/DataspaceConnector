@@ -15,16 +15,19 @@
 # limitations under the License.
 #
 
-
 set -eo pipefail
 
-export FILE_PATH=./scripts/ci/libraries/
+export FILE_PATH=./scripts/ci/libraries
 
-. ${FILE_PATH}libs.sh
+# shellcheck source=scripts/ci/libraries/libs.sh
+. "${FILE_PATH}"/libs.sh
 
 function init::setup_env_vars() {
-    export TEST_FAILURES=0
-    export TEST_SUCCESS=0
+    export BUILD_FOLDER=build/e2e
+    export TEST_SUITE=new-version
+    export PROVIDER_VERSION=latest
+    export CONSUMER_VERSION=latest
+    export TEST_SUITE_FAILURES=0
     export COLOR_DEFAULT=$'\e[0m'
     export COLOR_GREEN=$'\e[32m'
     export COLOR_RED=$'\e[31m'

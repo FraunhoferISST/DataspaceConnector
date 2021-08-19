@@ -54,7 +54,7 @@ jobs:
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
          BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
-#         DOCKER_BUILDKIT: 1
+         DOCKER_BUILDKIT: 1
       -
        name: Push tagged image
        run: |
@@ -128,7 +128,7 @@ jobs:
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
          BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
-#         DOCKER_BUILDKIT: 1
+         DOCKER_BUILDKIT: 1
       -
        name: Push tagged image
        run: |

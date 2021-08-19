@@ -15,6 +15,28 @@
 # limitations under the License.
 #
 
+function test::reset_test_suit() {
+    export TEST_SUCCESS=0
+    export TEST_FAILURES=0
+}
+
+function test::exit() {
+    rm -r -f $BUILD_FOLDER
+    if [ "$TEST_SUITE_FAILURES" -gt 0 ]; then
+        exit 1
+    fi
+}
+
+function test::run_test_suite() {
+    while read INPUT; do
+        export CURRENT_TEST_SCRIPT=$INPUT
+        test::run_test_script
+    done <./scripts/ci/e2e/active-tests.txt
+
+    if [ "$TEST_FAILURES" -gt 0 ]; then
+        export TEST_SUITE_FAILURES=$(($TEST_SUITE_FAILURES+1))
+    fi
+}
 
 function test::run_test_script() {
     chmod +x ${CURRENT_TEST_SCRIPT}
@@ -34,7 +56,7 @@ function test::run_test_script() {
     set -eo pipefail
 }
 
-function test::evaluate_test_runs() {
+function test::report_test_runs() {
     echo "$LINE_BREAK_STAR"
     echo "${COLOR_GREEN}SUCCESSES${COLOR_DEFAULT}: ${TEST_SUCCESS} ${COLOR_RED}Failures${COLOR_DEFAULT}: ${TEST_FAILURES}"
 }
