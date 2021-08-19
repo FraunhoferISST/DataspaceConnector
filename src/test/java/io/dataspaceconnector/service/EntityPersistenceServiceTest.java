@@ -31,6 +31,7 @@ import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.resource.RequestedResourceFactory;
 import io.dataspaceconnector.model.template.ResourceTemplate;
+import io.dataspaceconnector.service.configuration.AppService;
 import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.AgreementService;
 import io.dataspaceconnector.service.resource.ArtifactService;
@@ -70,6 +71,9 @@ public class EntityPersistenceServiceTest {
 
     @MockBean
     private ContractManager contractManager;
+
+    @MockBean
+    private AppService appService;
 
     @Autowired
     private EntityPersistenceService entityPersistenceService;
