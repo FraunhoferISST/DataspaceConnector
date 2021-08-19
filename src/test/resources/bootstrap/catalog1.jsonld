@@ -67,13 +67,6 @@
           "ids:modified": "2017-10-03T15:10:40.000Z"
         }
       ],
-      "ids:resourceEndpoint": [
-        {
-          "@type": "ids:ConnectorEndpoint",
-          "@id": "https://w3id.org/idsa/autogen/connectorEndpoint/c02d9dd2-9ab6-41d6-80f1-1844d64ba6ff",
-          "ids:accessURL": "https://example.com"
-        }
-      ],
       "ids:standardLicense": "https://example.com",
       "ids:contractOffer": [
         {
@@ -178,13 +171,6 @@
           "ids:representationStandard": "https://example.com",
           "ids:shapesGraph": "https://example.com",
           "ids:modified": "2016-10-03T15:10:40.000Z"
-        }
-      ],
-      "ids:resourceEndpoint": [
-        {
-          "@type": "ids:ConnectorEndpoint",
-          "@id": "https://w3id.org/idsa/autogen/connectorEndpoint/755d877e-94aa-49e0-90d8-bec2a5186b48",
-          "ids:accessURL": "https://example.com"
         }
       ],
       "ids:standardLicense": "https://example.com",
