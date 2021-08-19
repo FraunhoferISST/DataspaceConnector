@@ -46,7 +46,7 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
      */
     @Override
     protected App initializeEntity(final AppDesc desc) {
-        final var app = new App();
+        final var app = new AppImpl();
         app.setAppEndpoints(new ArrayList<>());
         app.setKeywords(new ArrayList<>());
         app.setSupportedUsagePolicies(new ArrayList<>());

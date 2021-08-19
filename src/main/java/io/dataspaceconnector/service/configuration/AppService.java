@@ -40,6 +40,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -130,7 +131,6 @@ public class AppService extends BaseEntityService<App, AppDesc> {
     @NonNull
     public void setData(final UUID appArtifactId, final InputStream data)
             throws IOException {
-        //TODO this downcast is not possible
         final var appArtifact = get(appArtifactId);
         final var currentData = ((AppImpl) appArtifact).getData();
         if (currentData instanceof LocalData) {
@@ -152,7 +152,8 @@ public class AppService extends BaseEntityService<App, AppDesc> {
 
             //TODO: Deploy app via Portainer APIs using infos of template
             //Assuming localhost:9000 is Portainer URL
-            final var appStoreTemplate = IOUtils.toString(templateInput, "UTF-8");
+            final var appStoreTemplate = IOUtils.toString(templateInput,
+                    StandardCharsets.UTF_8.name());
 
             //1. Create registry where APP is hosted in Portainer if not existing:
             // POST http://localhost:9000/api/registries

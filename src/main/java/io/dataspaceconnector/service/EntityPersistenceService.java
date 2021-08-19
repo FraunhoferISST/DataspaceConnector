@@ -47,6 +47,7 @@ import javax.persistence.PersistenceException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -308,7 +309,8 @@ public class EntityPersistenceService {
         final var id = appService.getByRemoteID(appId);
 
         appService.setData(id,
-                new ByteArrayInputStream(Base64.decode(base64Data)));
+                new ByteArrayInputStream(base64Data.getBytes(StandardCharsets.UTF_8))
+        );
         if (log.isDebugEnabled()) {
             log.debug("Updated data from artifact. [target=({})]", appId);
         }
