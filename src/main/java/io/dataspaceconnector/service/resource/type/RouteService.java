@@ -35,14 +35,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class for routes.
  */
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.NONE)
-@Transactional
 public class RouteService extends BaseEntityService<Route, RouteDesc> {
 
     /**

@@ -26,12 +26,10 @@ import io.dataspaceconnector.model.rule.ContractRuleDesc;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.RuleRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Handles the basic logic for contract rules.
  */
-@Transactional
 public class RuleService extends BaseEntityService<ContractRule, ContractRuleDesc> {
 
     /**

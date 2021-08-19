@@ -20,12 +20,10 @@ import io.dataspaceconnector.model.datasource.DataSource;
 import io.dataspaceconnector.model.datasource.DataSourceDesc;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class for data sources.
  */
-@Transactional
 public class DataSourceService extends BaseEntityService<DataSource, DataSourceDesc> {
     /**
      * Constructor.

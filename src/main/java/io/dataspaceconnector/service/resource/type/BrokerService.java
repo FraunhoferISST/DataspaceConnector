@@ -26,12 +26,10 @@ import io.dataspaceconnector.model.broker.BrokerDesc;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.BrokerRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class for brokers.
  */
-@Transactional
 public class BrokerService extends BaseEntityService<Broker, BrokerDesc> {
 
     /**

@@ -26,12 +26,10 @@ import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.RepresentationRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
 import io.dataspaceconnector.service.resource.base.RemoteResolver;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for managing representations.
  */
-@Transactional
 public class RepresentationService extends BaseEntityService<Representation,
         RepresentationDesc> implements RemoteResolver {
 

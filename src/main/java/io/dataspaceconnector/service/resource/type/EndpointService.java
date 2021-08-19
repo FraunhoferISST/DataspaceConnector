@@ -23,7 +23,6 @@ import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
 import io.dataspaceconnector.service.routing.RouteHelper;
 import lombok.NonNull;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Handles the basic logic for endpoints.
@@ -31,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @param <T> The endpoint type.
  * @param <D> The endpoint description type.
  */
-@Transactional
 public class EndpointService<T extends Endpoint, D extends EndpointDesc>
         extends BaseEntityService<T, D> {
 

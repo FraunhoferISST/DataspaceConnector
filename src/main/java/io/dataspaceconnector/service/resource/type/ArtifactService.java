@@ -53,7 +53,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Handles the basic logic for artifacts.
@@ -61,7 +60,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Log4j2
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.NONE)
-@Transactional
 public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         implements RemoteResolver {
     /**
@@ -217,7 +215,6 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @throws IllegalArgumentException if any of the parameters is null.
      * @throws IOException if IO errors occurr.
      */
-    @Transactional
     public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final RetrievalInformation information)

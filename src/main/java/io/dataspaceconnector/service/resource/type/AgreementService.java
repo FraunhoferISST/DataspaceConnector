@@ -21,12 +21,10 @@ import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.repository.AgreementRepository;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Handles the basic logic for contracts.
  */
-@Transactional
 public class AgreementService extends BaseEntityService<Agreement, AgreementDesc> {
 
     /**

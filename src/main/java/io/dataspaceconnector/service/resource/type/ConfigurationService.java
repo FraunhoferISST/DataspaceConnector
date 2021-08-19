@@ -33,14 +33,12 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class for the configuration.
  */
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.NONE)
-@Transactional
 @Log4j2
 public class ConfigurationService extends BaseEntityService<Configuration, ConfigurationDesc> {
 

@@ -20,7 +20,6 @@ import io.dataspaceconnector.model.resource.Resource;
 import io.dataspaceconnector.model.resource.ResourceDesc;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Handles the basic logic for resources.
@@ -28,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @param <T> The resource type.
  * @param <D> The resource description type.
  */
-@Transactional
 public class ResourceService<T extends Resource, D extends ResourceDesc>
         extends BaseEntityService<T, D> {
 

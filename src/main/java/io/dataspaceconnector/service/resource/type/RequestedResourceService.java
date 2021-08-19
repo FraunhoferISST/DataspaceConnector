@@ -25,12 +25,10 @@ import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.RequestedResourcesRepository;
 import io.dataspaceconnector.service.resource.base.RemoteResolver;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Handles the basic logic for requested resources.
  */
-@Transactional
 public class RequestedResourceService extends ResourceService<RequestedResource,
         RequestedResourceDesc> implements RemoteResolver {
 
