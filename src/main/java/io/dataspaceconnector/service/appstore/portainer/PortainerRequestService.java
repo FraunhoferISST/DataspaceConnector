@@ -478,7 +478,10 @@ public class PortainerRequestService {
 
         //get all ports from the appTemplate
         for (int i = 0; i < templateObject.getJSONArray("ports").length(); i++) {
-            var portString = templateObject.getJSONArray("ports").getString(i);
+            var portObj = templateObject.getJSONArray("ports").getJSONObject(i);
+            //TODO different field names here?
+            var portString = portObj.getString("INPUT_ENDPOINT");
+            portString = portString.substring(portString.indexOf(":") + 1);
             ports.add(portString);
         }
         final var jwt = getJwtToken();
