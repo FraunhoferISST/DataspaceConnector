@@ -305,10 +305,9 @@ public class EntityPersistenceService {
             throws ResourceNotFoundException, IllegalArgumentException, IOException {
         final var base64Data = MessageUtils.extractPayloadFromMultipartMessage(response);
 
-        //TODO should the bootstrapID field be used like this? Is not unique, could lead to errors
-        final var app = appService.getByBootstrap(appId);
+        final var id = appService.getByRemoteID(appId);
 
-        appService.setData(app.getId(),
+        appService.setData(id,
                 new ByteArrayInputStream(Base64.decode(base64Data)));
         if (log.isDebugEnabled()) {
             log.debug("Updated data from artifact. [target=({})]", appId);

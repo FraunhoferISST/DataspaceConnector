@@ -22,8 +22,8 @@ import io.dataspaceconnector.model.app.AppFactory;
 import io.dataspaceconnector.model.app.AppImpl;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.artifact.LocalData;
-import io.dataspaceconnector.repository.AppRepository;
 import io.dataspaceconnector.repository.DataRepository;
+import io.dataspaceconnector.repository.RemoteEntityRepository;
 import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
 import io.dataspaceconnector.service.resource.BaseEntityService;
 import io.dataspaceconnector.util.ErrorMessage;
@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -91,19 +92,19 @@ public class AppService extends BaseEntityService<App, AppDesc> {
     /**
      * Find app by bootstrapId.
      *
-     * @param bootstrapId bootstrapID of the app to find.
+     * @param remoteID remoteID of the app to find.
      * @return optional of found app.
      */
-    public App getByBootstrap(final URI bootstrapId) {
-        Utils.requireNonNull(bootstrapId, ErrorMessage.ENTITYID_NULL);
+    public UUID getByRemoteID(final URI remoteID) {
+        Utils.requireNonNull(remoteID, ErrorMessage.ENTITYID_NULL);
 
-        final var entity =
-                ((AppRepository) getRepository()).findByBootstrapId(bootstrapId);
+        final Optional<UUID> entity =
+                ((RemoteEntityRepository) getRepository()).identifyByRemoteId(remoteID);
 
         if (entity.isEmpty()) {
             // Handle with global exception handler
             throw new ResourceNotFoundException(
-                    this.getClass().getSimpleName() + ": " + bootstrapId
+                    this.getClass().getSimpleName() + ": " + remoteID
             );
         }
 

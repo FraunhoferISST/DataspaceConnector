@@ -118,7 +118,6 @@ public final class MappingUtils {
         final var endpoints = new ArrayList<AppEndpointTemplate>();
 
         //Set app description fields
-
         appDesc.setRemoteAddress(remoteUrl);
         if (resource.getKeyword() != null) {
             appDesc.setKeywords(resource.getKeyword()
