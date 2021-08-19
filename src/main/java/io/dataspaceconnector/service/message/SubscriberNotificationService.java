@@ -232,7 +232,7 @@ public class SubscriberNotificationService {
                         }
                     }
                 } catch (Exception e) {
-                    if (log.isWarnEnabled()) {
+                    if (log.isDebugEnabled()) {
                         log.debug("{} [url=({}), exception=({})]",
                                 ErrorMessage.UPDATE_MESSAGE_FAILED, recipient, e.getMessage());
                     }
@@ -285,7 +285,9 @@ public class SubscriberNotificationService {
             try {
                 return artifactSvc.getData(accessVerifier, dataReceiver, id, new QueryInput());
             } catch (IOException exception) {
-                log.debug("Failed to retrieve data. [exception=({})]", exception.getMessage());
+                if (log.isDebugEnabled()) {
+                    log.debug("Failed to retrieve data. [exception=({})]", exception.getMessage());
+                }
             }
         }
         return InputStream.nullInputStream();

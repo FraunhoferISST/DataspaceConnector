@@ -85,7 +85,7 @@
 
 	<properties>
 		<!-- General -->
-		<revision>6.1.0</revision>
+		<revision>6.1.1</revision>
 		<email>info@dataspace-connector.de</email>
 
 		<!-- Build info -->

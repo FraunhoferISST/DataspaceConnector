@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.model.resource;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dataspaceconnector.model.named.NamedDescription;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -62,6 +64,8 @@ public class ResourceDesc extends NamedDescription {
     /**
      * The payment modality.
      */
+    @JsonProperty("paymentMethod")
+    @JsonAlias("paymentModality")
     private PaymentMethod paymentMethod;
 
     /**
