@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /**
@@ -274,8 +273,8 @@ public class PortainerRequestService {
         final var registries = new JSONArray(Objects.requireNonNull(response.body()).string());
 
         for (final var registry : registries) {
-            if (((JSONObject)registry).get("URL").equals(registryURL)) {
-                return Integer.parseInt(((JSONObject)registry).get("Id").toString());
+            if (((JSONObject) registry).get("URL").equals(registryURL)) {
+                return Integer.parseInt(((JSONObject) registry).get("Id").toString());
             }
         }
 
