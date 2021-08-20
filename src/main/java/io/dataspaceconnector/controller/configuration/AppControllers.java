@@ -173,19 +173,16 @@ public final class AppControllers {
         private String deployApp(final UUID appId) throws IOException {
             var appData = appService.get(appId).getData();
             final var templateInput = ((LocalData) appData).getValue();
-            final var appStoreTemplate = IOUtils.toString(templateInput,
-                    "UTF-8");
+            final var appStoreTemplate = IOUtils.toString(templateInput, "UTF-8");
 
             //1. Create Registry with given information from AppStore template
-            portainerRequestService.createRegistry(appStoreTemplate);
+            final var registryId = portainerRequestService.createRegistry(appStoreTemplate);
 
             //2. Pull Image with given information from AppStore template
             portainerRequestService.pullImage(appStoreTemplate);
 
-
             //3. Create volumes with given information from AppStore template
-            final var volumeMap = portainerRequestService
-                    .createVolumes(appStoreTemplate);
+            final var volumeMap = portainerRequestService.createVolumes(appStoreTemplate);
 
             //4. Create Container with given information from AppStore template
             // and new volume
@@ -197,10 +194,13 @@ public final class AppControllers {
 
             //5. Create Network for the container
             //TODO: Get network of currently running DSC and put App in same network
-            final var networkID = portainerRequestService
-                    .createNetwork("bridge", true, false);
+            final var networkID = portainerRequestService.createNetwork("bridge", true, false);
+
             //6. Join container into the new created network
             portainerRequestService.joinNetwork(createdContainerId, networkID);
+
+            //7. Delete registry (credentials are one-time-usage)
+            portainerRequestService.deleteRegistry(registryId);
 
             return createdContainerId;
         }

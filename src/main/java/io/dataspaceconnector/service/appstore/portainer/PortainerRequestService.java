@@ -195,14 +195,14 @@ public class PortainerRequestService {
 
     /**
      * @param appStoreTemplate The template provided by the AppStore decribing 1 App.
-     * @return Response of portainer.
+     * @return The Id of the created registry.
      * @throws IOException If an error occurs while connection to portainer.
      */
-    public boolean createRegistry(final String appStoreTemplate) throws IOException {
+    public Integer createRegistry(final String appStoreTemplate) throws IOException {
         final var templateObject = toJsonObject(appStoreTemplate);
         final var registryURL = templateObject.getString("registry");
 
-        //Check if registry already existing
+        //Check if registry existing (should not be the case but safety check)
         final var registryId = registryExists(registryURL);
 
         if (registryId != null) {
@@ -243,10 +243,17 @@ public class PortainerRequestService {
 
         final var request = builder.build();
         final var response = httpService.send(request);
-        return response.isSuccessful();
+        final var createdRegistryId = new JSONObject(response.body().string()).get("Id").toString();
+
+        return Integer.parseInt(createdRegistryId);
     }
 
-    private void deleteRegistry(final Integer registryId) throws IOException {
+    /**
+     * Deletes a registry by a given registry-id.
+     * @param registryId The ID of the registry to be deleted.
+     * @throws IOException Exception while connection to portainer.
+     */
+    public void deleteRegistry(final Integer registryId) throws IOException {
         final var jwt = getJwtToken();
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
