@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -420,8 +421,6 @@ public class PortainerRequestService {
      * @throws IOException If an error occurs while connection to portainer.
      */
     public Response pullImage(final String appStoreTemplate) throws IOException {
-        //TODO: Header X-Registry-Auth needs to be set to pull Image from private registry
-
         final var templateObject = toJsonObject(appStoreTemplate);
         final var registryUrl = templateObject.getString("registry");
 
@@ -449,7 +448,13 @@ public class PortainerRequestService {
                 .addEncodedQueryParameter("fromImage", registryUrl + "%2F" + image);
 
         final var url = urlBuilder.build();
+
+        //Initial x-Auth header, Portainer will extend credentials based on registry information
+        final var auth = "{\"Username\": \"\", \"Password\": \"\", \"Serveraddress\": \"" + registryUrl + "\"}";
+        final var xAuthHeader = Base64.getEncoder().encodeToString(auth.getBytes());
+
         builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.addHeader("X-Registry-Auth", xAuthHeader);
         builder.url(url);
         builder.post(
                 RequestBody.create(
