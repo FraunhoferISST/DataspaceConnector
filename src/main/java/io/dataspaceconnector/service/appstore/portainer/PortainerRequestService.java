@@ -265,7 +265,7 @@ public class PortainerRequestService {
 
     /**
      * @param registryURL The new registry url.
-     * @return ID of registry if existing, -1 else.
+     * @return ID of registry if existing.
      * @throws IOException If an error occurs while connection to portainer.
      */
     public Integer registryExists(final String registryURL) throws IOException {
