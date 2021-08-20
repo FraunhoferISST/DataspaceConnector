@@ -5,6 +5,8 @@ metadata:
   namespace: {{ .Release.Namespace }}
   name: testsecret-tls
   namespace: default
+    labels:
+    {{- include "dataspace-connector.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": "pre-install"
     "helm.sh/hook-delete-policy": "before-hook-creation"
