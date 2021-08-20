@@ -420,6 +420,8 @@ public class PortainerRequestService {
      * @throws IOException If an error occurs while connection to portainer.
      */
     public Response pullImage(final String appStoreTemplate) throws IOException {
+        //TODO: Header X-Registry-Auth needs to be set to pull Image from private registry
+
         final var templateObject = toJsonObject(appStoreTemplate);
         final var registryUrl = templateObject.getString("registry");
 
