@@ -16,26 +16,26 @@
 package io.dataspaceconnector.repository;
 
 import io.dataspaceconnector.model.appstore.AppStore;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 /**
- * The repository containing all objects of
- * type {@link io.dataspaceconnector.model.appstore.AppStore}.
+ * The repository containing all objects of type {@link AppStore}.
  */
 @Repository
 public interface AppStoreRepository extends BaseEntityRepository<AppStore> {
 
     /**
-     * Get all related appstores for an appid.
+     * Get all related appStores for an app id.
      *
-     * @param id app id for which relative appstores should be found.
-     * @param pageable pageable for portioning response.
-     * @return pageable of related appstores.
+     * @param id App id for which relative app stores should be found.
+     * @return The found app store.
      */
-    Page<AppStore> findAppStoresWithPaginationByApps(UUID id, Pageable pageable);
-
+    @Query("SELECT r "
+            + "FROM AppStore r "
+            + "WHERE r.apps = :id " // TODO check
+            + "AND r.deleted = false")
+    AppStore findAppStoreWithAppId(UUID id);
 }

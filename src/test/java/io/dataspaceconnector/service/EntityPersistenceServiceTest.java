@@ -15,15 +15,9 @@
  */
 package io.dataspaceconnector.service;
 
-import java.io.ByteArrayInputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
+import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.artifact.LocalData;
@@ -31,12 +25,11 @@ import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.resource.RequestedResourceFactory;
 import io.dataspaceconnector.model.template.ResourceTemplate;
-import io.dataspaceconnector.service.configuration.AppService;
-import io.dataspaceconnector.common.ids.DeserializationService;
+import io.dataspaceconnector.service.resource.TemplateBuilder;
 import io.dataspaceconnector.service.resource.relation.AgreementArtifactLinker;
 import io.dataspaceconnector.service.resource.type.AgreementService;
+import io.dataspaceconnector.service.resource.type.AppService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
-import io.dataspaceconnector.service.resource.TemplateBuilder;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -44,6 +37,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;

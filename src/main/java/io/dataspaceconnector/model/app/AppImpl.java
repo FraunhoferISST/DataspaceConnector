@@ -58,5 +58,5 @@ public class AppImpl extends App {
     /**
      * The deployed container id.
      */
-    private String containerID;
+    private String containerId;
 }

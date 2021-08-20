@@ -221,7 +221,7 @@ public class FromIdsObjectMapperTest {
         final var remoteAddress = URI.create("https://someURL");
 
         /* ACT */
-        final var result = MappingUtils.fromIdsApp(app, remoteAddress);
+        final var result = FromIdsObjectMapper.fromIdsApp(app, remoteAddress);
         //TODO check more filled fields
         assertEquals(remoteAddress, result.getDesc().getRemoteAddress());
     }
@@ -229,7 +229,7 @@ public class FromIdsObjectMapperTest {
     @Test
     public void fromIdsAppEndpoint_inputNull_throwIllegalArgumentException() {
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> MappingUtils.fromIdsApp(null, null));
+        assertThrows(IllegalArgumentException.class, () -> FromIdsObjectMapper.fromIdsApp(null, null));
     }
 
     @Test

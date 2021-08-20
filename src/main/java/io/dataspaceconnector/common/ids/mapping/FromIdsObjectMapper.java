@@ -22,17 +22,17 @@ import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.iais.eis.ConnectorDeployMode;
-import de.fraunhofer.iais.eis.ConnectorEndpoint;
-import de.fraunhofer.iais.eis.ConnectorEndpointImpl;
 import de.fraunhofer.iais.eis.Contract;
+import de.fraunhofer.iais.eis.DataApp;
 import de.fraunhofer.iais.eis.PaymentModality;
 import de.fraunhofer.iais.eis.Proxy;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
-import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.UsagePolicyClass;
 import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.ids.policy.PolicyPattern;
+import io.dataspaceconnector.common.time.TimeUtils;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
@@ -62,18 +62,15 @@ import io.dataspaceconnector.model.template.RepresentationTemplate;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
-import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
 
 import java.net.URI;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
+import static io.dataspaceconnector.common.ids.mapping.AdditionalUtils.buildAdditionalForResource;
 
 /**
  * Maps ids objects to internal entities.
@@ -89,6 +86,7 @@ public final class FromIdsObjectMapper {
 
     /**
      * Map ids catalog to connector catalog.
+     *
      * @param catalog The ids catalog.
      * @return The connector catalog.
      * @throws IllegalArgumentException if the passed resource is null.
@@ -112,100 +110,74 @@ public final class FromIdsObjectMapper {
 
     /**
      * Map ids app resource to resource.
+     *
      * @param resource  The app resource.
      * @param remoteUrl The recipient id.
      * @return app template.
      */
-    public static AppTemplate fromIdsApp(final AppResource resource,
-                                         final URI remoteUrl) {
+    public static AppTemplate fromIdsApp(final AppResource resource, final URI remoteUrl) {
         Utils.requireNonNull(resource, ErrorMessage.ENTITY_NULL);
-        final var appDesc = new AppDesc();
-        final var endpoints = new ArrayList<AppEndpointTemplate>();
 
-        //Set app description fields
-        appDesc.setRemoteAddress(remoteUrl);
-        if (resource.getKeyword() != null) {
-            appDesc.setKeywords(resource.getKeyword()
-                    .stream()
-                    .map(TypedLiteral::toString).collect(Collectors.toList()));
-        }
-        appDesc.setLicense(resource.getStandardLicense());
-        appDesc.setPublisher(resource.getPublisher());
-        appDesc.setRemoteId(resource.getId());
-        appDesc.setSovereign(resource.getSovereign());
-        appDesc.setBootstrapId(resource.getId());
+        final var desc = new AppDesc();
+        desc.setRemoteAddress(remoteUrl);
+        desc.setRemoteId(resource.getId());
 
-        //set representation fields
+        // Set app resource attributes.
+        desc.setLicense(resource.getStandardLicense());
+        desc.setPublisher(resource.getPublisher());
+        desc.setRemoteId(resource.getId());
+        desc.setSovereign(resource.getSovereign());
+        desc.setKeywords(MappingUtils.getKeywordsAsString(resource.getKeyword()));
+
+        var endpoints = new ArrayList<AppEndpointTemplate>();
+
+        // Extract objects.
         if (resource.getRepresentation() != null) {
-            var appRepresentations = resource.getRepresentation().stream()
+            final var representations = resource.getRepresentation().stream()
                     .filter(x -> x instanceof AppRepresentation)
                     .map(x -> (AppRepresentation) x)
                     .collect(Collectors.toList());
-            if (!appRepresentations.isEmpty()) {
-                final var representation = appRepresentations.get(0);
-                appDesc.setAdditional(buildAdditionalForRepresentation(representation));
-                appDesc.setLanguage(String.valueOf(representation.getLanguage()));
-                appDesc.setDataAppDistributionService(
-                        representation.getDataAppDistributionService()
-                );
-                appDesc.setDataAppRuntimeEnvironment(representation.getDataAppRuntimeEnvironment());
+            if (!representations.isEmpty()) {
+                // Note: Assume that an app resource has only one representation.
+                final var representation = representations.get(0);
+
+                // Set app representation attributes.
+                fillAppWithRepresentationValues(representation, desc);
 
                 if (representation.getDataAppInformation() != null) {
-                    //set dataApp fields
                     final var dataApp = representation.getDataAppInformation();
-                    appDesc.setAppDocumentation(dataApp.getAppDocumentation());
-                    appDesc.setAppEnvironmentVariables(dataApp.getAppEnvironmentVariables());
-                    appDesc.setAppStorageConfiguration(dataApp.getAppStorageConfiguration());
-                    if (dataApp.getSupportedUsagePolicies() != null) {
-                        appDesc.setSupportedUsagePolicies(
-                                dataApp.getSupportedUsagePolicies().stream()
-                                        .map(MappingUtils::fromIdsUsagePolicyClass)
-                                        .collect(Collectors.toList())
-                        );
-                    }
-                    for (final var endpoint : dataApp.getAppEndpoint()) {
-                        endpoints.add(fromIdsAppEndpoint(endpoint));
-                    }
 
+                    // Set data app attributes.
+                    endpoints = fillAppWithDataAppValues(dataApp, desc);
                 }
             }
         }
-        return new AppTemplate(appDesc, endpoints);
+
+        return new AppTemplate(desc, endpoints);
     }
 
-    private static Map<String, String> buildAdditionalForRepresentation(
-            final AppRepresentation representation) {
-        final var additional = propertiesToAdditional(representation.getProperties());
-
-        final var dataAppInformation = representation.getDataAppInformation();
-        final var instance = representation.getInstance();
-        final var language = representation.getLanguage();
-        final var mediaType = representation.getMediaType();
-        final var representationStandard = representation.getRepresentationStandard();
-        final var shapesGraph = representation.getShapesGraph();
-
-        //if (dataAppInformation != null) {
-        //    additional.put("ids:dataAppInformation", dataAppInformation.toRdf());
-        //}
-        if (instance != null) {
-            addListToAdditional(instance, additional, "ids:instance");
-        }
-        if (language != null) {
-            additional.put("ids:language", language.toString());
-        }
-        if (mediaType != null) {
-            additional.put("ids:mediaType", mediaType.getFilenameExtension());
-        }
-        if (representationStandard != null) {
-            additional.put("ids:representationStandard", representationStandard.toString());
-        }
-        if (shapesGraph != null) {
-            additional.put("ids:shapesGraph", shapesGraph.toString());
-        }
-
-        return additional;
+    private static void fillAppWithRepresentationValues(final AppRepresentation representation,
+                                                        final AppDesc desc) {
+        desc.setAdditional(AdditionalUtils.buildAdditionalForRepresentation(representation));
+        desc.setLanguage(String.valueOf(representation.getLanguage()));
+        desc.setDistributionService(representation.getDataAppDistributionService());
+        desc.setRuntimeEnvironment(representation.getDataAppRuntimeEnvironment());
     }
 
+    private static ArrayList<AppEndpointTemplate> fillAppWithDataAppValues(final DataApp app,
+                                                                           final AppDesc desc) {
+        desc.setDocs(app.getAppDocumentation());
+        desc.setEnvVariables(app.getAppEnvironmentVariables());
+        desc.setStorageConfig(app.getAppStorageConfiguration());
+        desc.setSupportedPolicies(fromIdsUsagePolicyClass(app.getSupportedUsagePolicies()));
+
+        final var endpoints = new ArrayList<AppEndpointTemplate>();
+        for (final var endpoint : app.getAppEndpoint()) {
+            endpoints.add(fromIdsAppEndpoint(endpoint));
+        }
+
+        return endpoints;
+    }
 
     private static void setResourceEndpoint(final AppResource resource, final AppDesc appDesc) {
         if (resource.getResourceEndpoint() == null || resource.getResourceEndpoint().isEmpty()) {
@@ -221,187 +193,48 @@ public final class FromIdsObjectMapper {
         }
     }
 
-    private static PolicyPattern fromIdsUsagePolicyClass(final UsagePolicyClass policyClass) {
-        switch (policyClass) {
-            case CONNECTOR_RESTRICTED_DATA_USAGE:
-                return PolicyPattern.CONNECTOR_RESTRICTED_USAGE;
-            case DURATION_RESTRICTED_DATA_USAGE:
-                return PolicyPattern.DURATION_USAGE;
-            case INTERVAL_RESTRICTED_DATA_USAGE:
-                return PolicyPattern.USAGE_DURING_INTERVAL;
-            case LOCAL_LOGGING:
-                return PolicyPattern.USAGE_LOGGING;
-            case ALLOW_DATA_USAGE:
-                return PolicyPattern.PROVIDE_ACCESS;
-            case REMOTE_NOTIFICATION:
-                return PolicyPattern.USAGE_NOTIFICATION;
-            case RESTRICTED_NUMBER_OF_USAGES:
-                return PolicyPattern.N_TIMES_USAGE;
-            case USE_DATA_AND_DELETE_AFTER:
-                return PolicyPattern.USAGE_UNTIL_DELETION;
-            default:
-                return PolicyPattern.PROHIBIT_ACCESS;
-        }
-    }
-
     private static AppEndpointTemplate fromIdsAppEndpoint(final AppEndpoint appEndpoint) {
-        final var appEndpointDesc = new AppEndpointDesc();
+        final var desc = new AppEndpointDesc();
 
-        appEndpointDesc.setAdditional(buildAdditionalForAppEndpoint(appEndpoint));
+        final var additional = AdditionalUtils.buildAdditionalForAppEndpoint(appEndpoint);
+        desc.setAdditional(additional);
+
         if (appEndpoint.getAppEndpointPort() != null) {
-            appEndpointDesc.setEndpointPort(appEndpoint.getAppEndpointPort().intValue());
+            desc.setEndpointPort(appEndpoint.getAppEndpointPort().intValue());
         }
+
         if (appEndpoint.getAppEndpointType() != null) {
-            appEndpointDesc.setEndpointType(appEndpoint.getAppEndpointType().name());
+            desc.setEndpointType(appEndpoint.getAppEndpointType().name());
         }
+
         if (appEndpoint.getLanguage() != null) {
-            appEndpointDesc.setLanguage(appEndpoint.getLanguage().toString());
+            desc.setLanguage(appEndpoint.getLanguage().toString());
         }
+
         if (appEndpoint.getAppEndpointMediaType() != null) {
-            appEndpointDesc.setMediaType(
-                    appEndpoint.getAppEndpointMediaType().getFilenameExtension()
-            );
+            desc.setMediaType(appEndpoint.getAppEndpointMediaType().getFilenameExtension());
         }
-        appEndpointDesc.setProtocol(appEndpoint.getAppEndpointProtocol());
-        appEndpointDesc.setBootstrapId(appEndpoint.getId());
-        appEndpointDesc.setDocs(
-                appEndpoint.getEndpointDocumentation() != null
-                        && !appEndpoint.getEndpointDocumentation().isEmpty()
-                        ? appEndpoint.getEndpointDocumentation().get(0)
-                        : null
+
+        desc.setProtocol(appEndpoint.getAppEndpointProtocol());
+        desc.setBootstrapId(appEndpoint.getId());
+        desc.setDocs(appEndpoint.getEndpointDocumentation() != null
+                && !appEndpoint.getEndpointDocumentation().isEmpty()
+                ? appEndpoint.getEndpointDocumentation().get(0)
+                : null
         );
+
         if (appEndpoint.getEndpointInformation() != null) {
-            appEndpointDesc.setInfo(appEndpoint.getEndpointInformation().toString());
-        }
-        appEndpointDesc.setLocation(appEndpoint.getAccessURL());
-
-        return new AppEndpointTemplate(appEndpointDesc);
-    }
-
-    private static Map<String, String> buildAdditionalForAppEndpoint(
-             final AppEndpoint appEndpoint) {
-        Utils.requireNonNull(appEndpoint, ErrorMessage.ENTITY_NULL);
-        final var additional = propertiesToAdditional(appEndpoint.getProperties());
-
-        final var inboundPath = appEndpoint.getInboundPath();
-        final var outboundPath = appEndpoint.getOutboundPath();
-        final var language = appEndpoint.getLanguage();
-        final var path = appEndpoint.getPath();
-
-        if (inboundPath != null) {
-            additional.put("ids:inboundPath", inboundPath);
-        }
-        if (outboundPath != null) {
-            additional.put("ids:outboundPath", outboundPath);
-        }
-        if (language != null) {
-            additional.put("ids:language", language.toString());
-        }
-        if (path != null) {
-            additional.put("ids:path", path);
+            desc.setInfo(appEndpoint.getEndpointInformation().toString());
         }
 
-        return additional;
-    }
+        desc.setLocation(appEndpoint.getAccessURL());
 
-
-        private static Map<String, String> buildAdditionalForResource(final Resource resource) {
-        Utils.requireNonNull(resource, ErrorMessage.ENTITY_NULL);
-
-        final var additional = propertiesToAdditional(resource.getProperties());
-
-        final var periodicity = resource.getAccrualPeriodicity();
-        final var contentPart = resource.getContentPart();
-        final var contentStandard = resource.getContentStandard();
-        final var contentType = resource.getContentType();
-        final var created = resource.getCreated();
-        final var customLicense = resource.getCustomLicense();
-        final var representation = resource.getDefaultRepresentation();
-        final var modified = resource.getModified();
-        final var resourceEndpoint = resource.getResourceEndpoint();
-        final var resourcePart = resource.getResourcePart();
-        final var shapesGraph = resource.getShapesGraph();
-        final var spatialCoverage = resource.getSpatialCoverage();
-        final var temporalCoverage = resource.getTemporalCoverage();
-        final var temporalRes = resource.getTemporalResolution();
-        final var theme = resource.getTheme();
-        final var variant = resource.getVariant();
-        final var version = resource.getVersion();
-
-        if (periodicity != null) {
-            additional.put("ids:accrualPeriodicity", periodicity.toRdf());
-        }
-
-        if (contentPart != null && !contentPart.isEmpty()) {
-            addListToAdditional(contentPart, additional, "ids:contentPart");
-        }
-
-        if (contentStandard != null) {
-            additional.put("ids:contentStandard", contentStandard.toString());
-        }
-
-        if (contentType != null) {
-            additional.put("ids:contentType", contentType.toRdf());
-        }
-
-        if (created != null) {
-            additional.put("ids:created", created.toXMLFormat());
-        }
-
-        if (customLicense != null) {
-            additional.put("ids:customLicense", customLicense.toString());
-        }
-
-        if (representation != null && !representation.isEmpty()) {
-            addListToAdditional(representation, additional, "ids:defaultRepresentation");
-        }
-
-        if (modified != null) {
-            additional.put("ids:modified", modified.toXMLFormat());
-        }
-
-        if (resourceEndpoint != null && !resourceEndpoint.isEmpty()) {
-            addListToAdditional(resourceEndpoint, additional, "ids:resourceEndpoint");
-        }
-
-        if (resourcePart != null && !resourcePart.isEmpty()) {
-            addListToAdditional(resourcePart, additional, "ids:resourcePart");
-        }
-
-        if (shapesGraph != null) {
-            additional.put("ids:shapesGraph", shapesGraph.toString());
-        }
-
-        if (spatialCoverage != null && !spatialCoverage.isEmpty()) {
-            addListToAdditional(spatialCoverage, additional, "ids:spatialCoverage");
-        }
-
-        if (temporalCoverage != null && !temporalCoverage.isEmpty()) {
-            addListToAdditional(temporalCoverage, additional, "ids:temporalCoverage");
-        }
-
-        if (temporalRes != null) {
-            additional.put("ids:temporalResolution", temporalRes.toString());
-        }
-
-        if (theme != null && !theme.isEmpty()) {
-            addListToAdditional(theme, additional, "ids:theme");
-        }
-
-        if (variant != null) {
-            additional.put("ids:variant", variant.toString());
-        }
-
-        if (version != null) {
-            additional.put("ids:version", version);
-        }
-
-        return additional;
+        return new AppEndpointTemplate(desc);
     }
 
     private static void fillResourceDesc(final ResourceDesc desc, final Resource resource) {
         final var description = resource.getDescription();
-        final var keywords = getKeywordsAsString(resource.getKeyword());
+        final var keywords = MappingUtils.getKeywordsAsString(resource.getKeyword());
         final var language = resource.getLanguage();
         final var publisher = resource.getPublisher();
         final var sovereign = resource.getSovereign();
@@ -432,7 +265,7 @@ public final class FromIdsObjectMapper {
         }
 
         if (resourceEndpoint != null && !resourceEndpoint.isEmpty()) {
-            getFirstEndpointDocumentation(resourceEndpoint)
+            MappingUtils.getFirstEndpointDocumentation(resourceEndpoint)
                     .ifPresent(desc::setEndpointDocumentation);
         }
 
@@ -451,6 +284,7 @@ public final class FromIdsObjectMapper {
 
     /**
      * Map ids resource to connector resource.
+     *
      * @param resource The ids resource.
      * @return The connector resource.
      * @throws IllegalArgumentException if the passed resource is null.
@@ -467,6 +301,7 @@ public final class FromIdsObjectMapper {
 
     /**
      * Map ids resource to connector resource.
+     *
      * @param resource The ids resource.
      * @return The connector resource.
      * @throws IllegalArgumentException if the passed resource is null.
@@ -482,24 +317,8 @@ public final class FromIdsObjectMapper {
     }
 
     /**
-     * Adds the string value of a given list as an additional property. If the list only contains
-     * one element, the string value will not contain brackets.
-     * @param list       the list.
-     * @param additional the map of additional properties.
-     * @param key        the map key to use.
-     */
-    private static void addListToAdditional(final List<?> list,
-                                            final Map<String, String> additional,
-                                            final String key) {
-        if (list.size() >= 1 && list.get(0) instanceof ConnectorEndpointImpl) {
-            additional.put(key, ((ConnectorEndpointImpl) list.get(0)).getAccessURL().toString());
-        } else {
-            additional.put(key, list.size() == 1 ? list.get(0).toString() : list.toString());
-        }
-    }
-
-    /**
      * Map ids representation to connector representation.
+     *
      * @param representation The ids representation.
      * @return The connector representation.
      * @throws IllegalArgumentException if the passed representation is null.
@@ -517,7 +336,8 @@ public final class FromIdsObjectMapper {
         final var shape = representation.getShapesGraph();
 
         // Add additional properties to map.
-        final var additional = propertiesToAdditional(representation.getProperties());
+        final var additional
+                = AdditionalUtils.propertiesToAdditional(representation.getProperties());
 
         if (created != null) {
             additional.put("ids:created", created.toXMLFormat());
@@ -551,6 +371,7 @@ public final class FromIdsObjectMapper {
 
     /**
      * Build template from ids artifact.
+     *
      * @param artifact  The ids artifact.
      * @param download  Whether the artifact will be downloaded automatically.
      * @param remoteUrl The provider's url for receiving artifact request messages.
@@ -569,7 +390,7 @@ public final class FromIdsObjectMapper {
         final var filename = artifact.getFileName();
 
         // Add additional properties to map.
-        final var additional = propertiesToAdditional(artifact.getProperties());
+        final var additional = AdditionalUtils.propertiesToAdditional(artifact.getProperties());
 
         if (byteSize != null) {
             additional.put("ids:byteSize", byteSize.toString());
@@ -602,6 +423,7 @@ public final class FromIdsObjectMapper {
 
     /**
      * Build template from ids contract.
+     *
      * @param contract The ids contract offer.
      * @return The contract template.
      * @throws IllegalArgumentException if the passed contract is null.
@@ -617,7 +439,7 @@ public final class FromIdsObjectMapper {
         final var start = contract.getContractStart();
 
         // Add additional properties to map.
-        final var additional = propertiesToAdditional(contract.getProperties());
+        final var additional = AdditionalUtils.propertiesToAdditional(contract.getProperties());
 
         if (date != null) {
             additional.put("ids:contractDate", date.toXMLFormat());
@@ -631,7 +453,7 @@ public final class FromIdsObjectMapper {
 
         if (end != null) {
             try {
-                desc.setEnd(getDateOf(end.toXMLFormat()));
+                desc.setEnd(TimeUtils.getDateOf(end.toXMLFormat()));
             } catch (DateTimeParseException ignored) {
                 // Default values don't need to be set here.
             }
@@ -639,7 +461,7 @@ public final class FromIdsObjectMapper {
 
         if (start != null) {
             try {
-                desc.setStart(getDateOf(start.toXMLFormat()));
+                desc.setStart(TimeUtils.getDateOf(start.toXMLFormat()));
             } catch (DateTimeParseException ignored) {
                 // Default values don't need to be set here.
             }
@@ -650,6 +472,7 @@ public final class FromIdsObjectMapper {
 
     /**
      * Build template from ids rule.
+     *
      * @param rule The ids rule.
      * @return The rule template.
      * @throws IllegalArgumentException                                   if the rule is null.
@@ -672,110 +495,8 @@ public final class FromIdsObjectMapper {
     }
 
     /**
-     * Get list of ids keywords as list of strings.
-     * If the passed list is null, an empty list is returned.
-     *
-     * @param keywords List of typed literals.
-     * @return List of strings.
-     */
-    public static List<String> getKeywordsAsString(final List<? extends TypedLiteral> keywords) {
-        final var list = new ArrayList<String>();
-        if (keywords != null && !keywords.isEmpty()) {
-            for (final var keyword : keywords) {
-                list.add(keyword.getValue());
-            }
-        }
-
-        return list;
-    }
-
-    /**
-     * Map ids property map to additional map for the internal data model.
-     * If the argument is null an empty map will be returned.
-     * @param properties A string object map.
-     * @return A map containing all properties that could be extracted.
-     */
-    private static Map<String, String> propertiesToAdditional(
-            final Map<String, Object> properties) {
-        final Map<String, String> additional = new ConcurrentHashMap<>();
-        if (properties != null && !properties.isEmpty()) {
-            for (final Map.Entry<String, Object> entry : properties.entrySet()) {
-                if (entry.getValue() != null) {
-                    additional.put(entry.getKey(), entry.getValue().toString());
-                }
-            }
-        }
-
-        return additional;
-    }
-
-    /**
-     * Convert a string to a {@link ZonedDateTime}.
-     * @param calendar The time as string.
-     * @return The new ZonedDateTime object.
-     * @throws DateTimeParseException if its not a time.
-     */
-    public static ZonedDateTime getDateOf(final String calendar) throws DateTimeParseException {
-        return ZonedDateTime.parse(calendar);
-    }
-
-    /**
-     * Returns the first endpoint documentations of the first endpoint.
-     * @param endpoints The list of endpoints.
-     * @return The endpoint documentation.
-     */
-    private static Optional<URI> getFirstEndpointDocumentation(
-            final List<? extends ConnectorEndpoint> endpoints) {
-        Optional<URI> output = Optional.empty();
-
-        if (endpoints != null && !endpoints.isEmpty()) {
-            final var first = endpoints.get(0);
-
-            if (first.getEndpointDocumentation() != null
-                    && !first.getEndpointDocumentation().isEmpty()) {
-                output = Optional.of(first.getEndpointDocumentation().get(0));
-            }
-        }
-
-        return output;
-    }
-
-    /**
-     * Get dsc log level from ids log level.
-     * @param logLevel The ids log level.
-     * @return The internal log level.
-     */
-    public static LogLevel fromIdsLogLevel(final de.fraunhofer.iais.eis.LogLevel logLevel) {
-        switch (logLevel) {
-            // TODO infomodel has less log levels than DSC, info will get lost
-            case MINIMAL_LOGGING:
-                return LogLevel.WARN;
-            case DEBUG_LEVEL_LOGGING:
-                return LogLevel.DEBUG;
-            default:
-                return LogLevel.OFF;
-        }
-    }
-
-    /**
-     * Get dsc security profile from ids security profile.
-     * @param securityProfile The ids security profile.
-     * @return The internal security profile.
-     */
-    public static SecurityProfile fromIdsSecurityProfile(
-            final de.fraunhofer.iais.eis.SecurityProfile securityProfile) {
-        switch (securityProfile) {
-            case TRUST_SECURITY_PROFILE:
-                return SecurityProfile.TRUST_SECURITY;
-            case TRUST_PLUS_SECURITY_PROFILE:
-                return SecurityProfile.TRUST_PLUS_SECURITY;
-            default:
-                return SecurityProfile.BASE_SECURITY;
-        }
-    }
-
-    /**
      * Build internal configuration desc from ids configModel.
+     *
      * @param configModel The ids configuration model.
      * @return The internal configuration desc.
      */
@@ -827,7 +548,7 @@ public final class FromIdsObjectMapper {
         }
 
         switch (logLevel) {
-            // TODO infomodel has less log levels than DSC, info will get lost
+            // Note: As the IDS Infomodel has less log levels than DSC, information will get lost.
             case MINIMAL_LOGGING:
                 return LogLevel.WARN;
             case DEBUG_LEVEL_LOGGING:
@@ -882,8 +603,8 @@ public final class FromIdsObjectMapper {
     }
 
     private static DeployMode fromIdsDeployMode(final ConnectorDeployMode deployMode) {
-        return deployMode == ConnectorDeployMode.TEST_DEPLOYMENT ? DeployMode.TEST
-                : DeployMode.PRODUCTIVE;
+        return deployMode == ConnectorDeployMode.TEST_DEPLOYMENT
+                ? DeployMode.TEST : DeployMode.PRODUCTIVE;
     }
 
     private static ProxyDesc fromIdsProxy(final List<Proxy> proxyList) {
@@ -914,5 +635,42 @@ public final class FromIdsObjectMapper {
             default:
                 return PaymentMethod.FREE;
         }
+    }
+
+    private static List<PolicyPattern> fromIdsUsagePolicyClass(final List<UsagePolicyClass> list) {
+        var patterns = new ArrayList<PolicyPattern>();
+        for (final var policyClass : list) {
+            switch (policyClass) {
+                case CONNECTOR_RESTRICTED_DATA_USAGE:
+                    patterns.add(PolicyPattern.CONNECTOR_RESTRICTED_USAGE);
+                    break;
+                case DURATION_RESTRICTED_DATA_USAGE:
+                    patterns.add(PolicyPattern.DURATION_USAGE);
+                    break;
+                case INTERVAL_RESTRICTED_DATA_USAGE:
+                    patterns.add(PolicyPattern.USAGE_DURING_INTERVAL);
+                    break;
+                case LOCAL_LOGGING:
+                    patterns.add(PolicyPattern.USAGE_LOGGING);
+                    break;
+                case ALLOW_DATA_USAGE:
+                    patterns.add(PolicyPattern.PROVIDE_ACCESS);
+                    break;
+                case REMOTE_NOTIFICATION:
+                    patterns.add(PolicyPattern.USAGE_NOTIFICATION);
+                    break;
+                case RESTRICTED_NUMBER_OF_USAGES:
+                    patterns.add(PolicyPattern.N_TIMES_USAGE);
+                    break;
+                case USE_DATA_AND_DELETE_AFTER:
+                    patterns.add(PolicyPattern.USAGE_UNTIL_DELETION);
+                    break;
+                default:
+                    patterns.add(PolicyPattern.PROHIBIT_ACCESS);
+                    break;
+            }
+        }
+
+        return patterns;
     }
 }

@@ -17,8 +17,8 @@ package io.dataspaceconnector.controller.resource.type;
 
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.config.BasePath;
-import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
 import io.dataspaceconnector.controller.resource.base.CRUDController;
+import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.endpoint.EndpointViewAssemblerProxy;

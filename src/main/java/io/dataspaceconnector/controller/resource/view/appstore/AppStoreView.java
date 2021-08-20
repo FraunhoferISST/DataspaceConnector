@@ -13,61 +13,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.view.endpoint;
+package io.dataspaceconnector.controller.resource.view.appstore;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.dataspaceconnector.config.BaseType;
+import io.dataspaceconnector.controller.resource.view.util.ViewConstants;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
+import java.net.URI;
 import java.time.ZonedDateTime;
 
 /**
- * A DTO for controlled exposing of app endpoint information in API responses.
+ * A DTO for controlled exposing of app store information in API responses.
  */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "endpoints", itemRelation = "endpoint")
-public class AppEndpointView extends RepresentationModel<AppEndpointView> {
+@Relation(collectionRelation = BaseType.APPS, itemRelation = "appStore")
+public class AppStoreView extends RepresentationModel<AppStoreView> {
 
     /**
      * The creation date.
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ViewConstants.DATE_TIME_FORMAT)
     private ZonedDateTime creationDate;
 
     /**
      * The last modification date.
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ViewConstants.DATE_TIME_FORMAT)
     private ZonedDateTime modificationDate;
 
     /**
-     * Holds the information about the endpoint type.
+     * App store location.
      */
-    private String endpointType;
+    private URI location;
 
     /**
-     * Port of the Endpoint.
+     * The title of the app store.
      */
-    private int endpointPort;
+    private String title;
 
     /**
-     * Endpoint accepted mediatype.
+     * The description of the app store.
      */
-    private String mediaType;
-
-    /**
-     * Protocol used by endpoint.
-     */
-    private String protocol;
-
-    /**
-     * Language of the endpoint.
-     */
-    private String language;
-
+    private String description;
 }

@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import java.net.URI;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +25,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.net.URI;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class AppRequestMessageControllerTest {
+class AppRequestControllerTest {
 
     private MockMvc mockMvc;
 
@@ -54,12 +53,9 @@ class AppRequestMessageControllerTest {
         final var app = URI.create("https://someApp");
 
         /* ACT && ASSERT */
-        final var result = mockMvc.perform(post("/api/ids/app")
+        mockMvc.perform(post("/api/ids/app")
                 .param("recipient", recipient.toString())
                 .param("app", app.toString()))
-                .andReturn();
-
-        //The specified AppStore recipient will not be found.
-        assertEquals(500, result.getResponse().getStatus());
+                .andExpect(status().isOk());
     }
 }

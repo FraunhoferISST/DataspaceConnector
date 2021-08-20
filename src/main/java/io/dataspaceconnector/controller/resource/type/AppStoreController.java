@@ -13,31 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.configuration;
+package io.dataspaceconnector.controller.resource.type;
 
-import io.dataspaceconnector.controller.resource.BaseResourceController;
-import io.dataspaceconnector.controller.resource.tag.ResourceDescription;
-import io.dataspaceconnector.controller.resource.tag.ResourceName;
+import io.dataspaceconnector.config.BasePath;
+import io.dataspaceconnector.controller.resource.base.BaseResourceController;
+import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
+import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
+import io.dataspaceconnector.controller.resource.view.appstore.AppStoreView;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.appstore.AppStoreDesc;
-import io.dataspaceconnector.service.configuration.AppStoreService;
-import io.dataspaceconnector.view.appstore.AppStoreView;
+import io.dataspaceconnector.service.resource.type.AppStoreService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Controller class for the app store.
+ * Offers the endpoints for managing app stores.
  */
-public final class AppStoreControllers {
-
-    /**
-     * Offers the endpoints for managing app stores.
-     */
-    @RestController
-    @RequestMapping("/api/appstores")
-    @Tag(name = ResourceName.APPSTORES, description = ResourceDescription.APPSTORE)
-    public static class AppStoreController extends BaseResourceController<AppStore, AppStoreDesc,
-            AppStoreView, AppStoreService> {
-    }
+@RestController
+@RequestMapping(BasePath.APPSTORES)
+@Tag(name = ResourceName.APPSTORES, description = ResourceDescription.APPSTORES)
+public class AppStoreController extends BaseResourceController<AppStore, AppStoreDesc,
+        AppStoreView, AppStoreService> {
 }

@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.view.appstore;
+package io.dataspaceconnector.controller.resource.view.appstore;
 
-import io.dataspaceconnector.controller.configuration.AppStoreControllers;
-import io.dataspaceconnector.controller.resource.RelationControllers;
-import io.dataspaceconnector.controller.resource.view.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
+import io.dataspaceconnector.config.BaseType;
+import io.dataspaceconnector.controller.resource.relation.AppStoresToAppsController;
+import io.dataspaceconnector.controller.resource.type.AppStoreController;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
+import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.appstore.AppStore;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
@@ -38,25 +39,21 @@ public class AppStoreViewAssembler implements RepresentationModelAssembler<AppSt
         AppStoreView>, SelfLinking {
 
     @Override
-    public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(
-                entityId,
-                AppStoreControllers.AppStoreController.class
-        );
-    }
-
-    @Override
     public final AppStoreView toModel(final AppStore appStore) {
         final var modelMapper = new ModelMapper();
         final var view = modelMapper.map(appStore, AppStoreView.class);
         view.add(getSelfLink(appStore.getId()));
 
-        final var appLink = WebMvcLinkBuilder
-                .linkTo(methodOn(RelationControllers.AppstoreToApps.class)
-                        .getResource(appStore.getId(), null, null))
-                .withRel("apps");
+        final var appLink = linkTo(methodOn(AppStoresToAppsController.class)
+                .getResource(appStore.getId(), null, null))
+                .withRel(BaseType.APPS);
         view.add(appLink);
         return view;
+    }
+
+    @Override
+    public final Link getSelfLink(final UUID entityId) {
+        return ViewAssemblerHelper.getSelfLink(entityId, AppStoreController.class);
     }
 
 }

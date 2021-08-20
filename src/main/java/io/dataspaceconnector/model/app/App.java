@@ -15,10 +15,11 @@
  */
 package io.dataspaceconnector.model.app;
 
+import io.dataspaceconnector.common.ids.policy.PolicyPattern;
+import io.dataspaceconnector.model.base.RemoteObject;
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.util.UriConverter;
-import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -28,11 +29,11 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.Version;
 
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Column;
 import java.net.URI;
 import java.util.List;
 
@@ -49,43 +50,65 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class App extends NamedEntity {
+public class App extends NamedEntity implements RemoteObject {
 
     /**
      * Serial version uid.
      **/
     private static final long serialVersionUID = 1L;
 
-    //App attributes
+    /***********************************************************************************************
+     * Artifact attributes                                                                         *
+     ***********************************************************************************************
+
+    /**
+     * The app id on appStore side.
+     */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private URI remoteId;
+
+    /**
+     * The appStore's address for artifact request messages.
+     */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private URI remoteAddress;
+
+    /***********************************************************************************************
+     * App attributes                                                                              *
+     ***********************************************************************************************
 
     /**
      * Text documentation of the data app.
      */
-    private String appDocumentation;
+    private String docs;
 
     /**
      * Endpoints provided by the data app.
      */
     @OneToMany
-    private List<AppEndpoint> appEndpoints;
+    private List<AppEndpoint> endpoints;
 
     /**
      * Environment variables of the data app.
      */
-    private String appEnvironmentVariables;
+    private String envVariables;
 
     /**
      * Storage configuration of the data app (e.g. path in the file system or volume name).
      */
-    private String appStorageConfiguration;
+    private String storageConfig;
 
     /**
      * Usage policy patterns supported by the data app.
      */
     @ElementCollection
-    private List<PolicyPattern> supportedUsagePolicies;
+    private List<PolicyPattern> supportedPolicies;
 
-    //Resource attributes
+    /***********************************************************************************************
+     * Resource attributes                                                                         *
+     ***********************************************************************************************
 
     /**
      * The keywords of the resource.
@@ -132,33 +155,19 @@ public class App extends NamedEntity {
     @Version
     private long version;
 
-    //Representation attributes
+    /***********************************************************************************************
+     * Representation attributes                                                                   *
+     ***********************************************************************************************
 
     /**
      * Distribution service, where the represented app can be downloaded.
      */
     @Convert(converter = UriConverter.class)
     @Column(length = URI_COLUMN_LENGTH)
-    private URI dataAppDistributionService;
+    private URI distributionService;
 
     /**
      * "Runtime environment of a data app, e.g., software (or hardware) required to run the app.
      */
-    private String dataAppRuntimeEnvironment;
-
-    //Artifact attributes
-
-    /**
-     * The artifact id on provider side.
-     */
-    @Convert(converter = UriConverter.class)
-    @Column(length = URI_COLUMN_LENGTH)
-    private URI remoteId;
-
-    /**
-     * The provider's address for artifact request messages.
-     */
-    @Convert(converter = UriConverter.class)
-    @Column(length = URI_COLUMN_LENGTH)
-    private URI remoteAddress;
+    private String runtimeEnvironment;
 }

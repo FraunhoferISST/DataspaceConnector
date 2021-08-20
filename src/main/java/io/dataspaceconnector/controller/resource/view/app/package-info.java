@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Contains elements for exposing app stores.
+ * Contains elements for exposing apps.
  */
-package io.dataspaceconnector.view.appstore;
+package io.dataspaceconnector.controller.resource.view.app;

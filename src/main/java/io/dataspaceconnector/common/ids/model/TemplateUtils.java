@@ -205,12 +205,11 @@ public final class TemplateUtils {
     /**
      * Build an app template from an AppResource.
      *
-     * @param appResource the app resource.
-     * @param remoteUrl remoteURL of the app.
-     * @return AppTemplate from AppResource.
+     * @param resource  The app resource.
+     * @param remoteUrl The remoteURL of the app.
+     * @return The app template from the AppResource.
      */
-    public static AppTemplate getAppResourceTemplate(final AppResource appResource,
-                                                     final URI remoteUrl) {
-        return MappingUtils.fromIdsApp(appResource, remoteUrl);
+    public static AppTemplate getAppTemplate(final AppResource resource, final URI remoteUrl) {
+        return FromIdsObjectMapper.fromIdsApp(resource, remoteUrl);
     }
 }

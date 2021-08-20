@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.view.app;
+package io.dataspaceconnector.controller.resource.view.app;
 
-import io.dataspaceconnector.controller.configuration.AppControllers;
-import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
+import io.dataspaceconnector.controller.resource.type.AppController;
+import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.app.AppFactory;
@@ -24,7 +24,8 @@ import org.junit.jupiter.api.Test;
 
 import java.net.URI;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AppViewAssemblerTest {
 
@@ -32,9 +33,8 @@ class AppViewAssemblerTest {
     public void create_ValidApp_returnAppView() {
         /* ARRANGE */
         final var shouldLookLike = getApp();
-        final var link = ViewAssemblerHelper.
-                getSelfLink(shouldLookLike.getId(),
-                        AppControllers.AppController.class);
+        final var link = ViewAssemblerHelper.getSelfLink(shouldLookLike.getId(),
+                AppController.class);
 
         /* ACT */
         final var after = getAppView();

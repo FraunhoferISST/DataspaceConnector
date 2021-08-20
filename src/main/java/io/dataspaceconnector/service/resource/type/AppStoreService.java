@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.configuration;
+package io.dataspaceconnector.service.resource.type;
 
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.appstore.AppStoreDesc;
 import io.dataspaceconnector.repository.AppStoreRepository;
-import io.dataspaceconnector.service.resource.BaseEntityService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import io.dataspaceconnector.service.resource.base.BaseEntityService;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -34,12 +32,10 @@ public class AppStoreService extends BaseEntityService<AppStore, AppStoreDesc> {
     /**
      * Get AppStores which are offering the given App.
      *
-     * @param appId id of the app to find related appstore for.
-     * @param pageable pageable for response as view.
-     * @return Page containing AppStores which are offering an app with AppID.
+     * @param appId The id of the app to find related appstore for.
+     * @return A list of app stores which are offering an app with AppID.
      */
-    public Page<AppStore> getStoresByContainsApp(final UUID appId, final Pageable pageable) {
-        return ((AppStoreRepository) getRepository())
-         .findAppStoresWithPaginationByApps(appId, pageable);
+    public AppStore getAppStoreByAppId(final UUID appId) {
+        return ((AppStoreRepository) getRepository()).findAppStoreWithAppId(appId);
     }
 }

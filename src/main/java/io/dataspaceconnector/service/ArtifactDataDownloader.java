@@ -57,6 +57,7 @@ public class ArtifactDataDownloader {
 
     /**
      * Download artifact data.
+     *
      * @param recipient   The provider connector.
      * @param artifacts   The artifact whose data should be downloaded.
      * @param agreementId The agreement allowing the transfer.
@@ -89,14 +90,16 @@ public class ArtifactDataDownloader {
 
     /**
      * Request the App Artifact and update the app.
-     * @param recipient The app store where the artifact shall be downloaded.
+     *
+     * @param recipient  The app store where the artifact shall be downloaded.
      * @param instanceId The app artifact id.
      * @param resourceId Id of the app resource.
      * @throws UnexpectedResponseException When response is not an ArtifactResponseMessage.
      */
-    public void downloadAppArtifact(final URI recipient, final URI instanceId, final URI resourceId)
+    public void downloadTemplate(final URI recipient, final URI instanceId, final URI resourceId)
             throws UnexpectedResponseException {
-        var response = artifactReqSvc.sendMessage(recipient, instanceId, null);
+        // NOTE: Assume that the AppStore does not expect a transfer contract.
+        final var response = artifactReqSvc.sendMessage(recipient, instanceId, null);
 
         // Read and process the response message.
         try {
@@ -105,8 +108,8 @@ public class ArtifactDataDownloader {
                 | MessageResponseException e) {
             // Ignore that the data saving failed. Another try can take place later.
             if (log.isWarnEnabled()) {
-                log.warn("Could not save data for app artifact. [app artifact=({}), "
-                        + "exception=({})]", resourceId, e.getMessage());
+                log.warn("Could not save data for app. [app=({}), exception=({})]",
+                        resourceId, e.getMessage());
             }
             throw new PersistenceException(e);
         }

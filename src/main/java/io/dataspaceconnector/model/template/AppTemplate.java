@@ -17,16 +17,20 @@ package io.dataspaceconnector.model.template;
 
 import io.dataspaceconnector.model.app.AppDesc;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 /**
  * Describes an app and all its dependencies.
  */
-@Getter
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class AppTemplate {
 
     /**

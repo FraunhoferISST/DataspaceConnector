@@ -15,20 +15,15 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import java.util.UUID;
-
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.AppEndpointDesc;
-import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpointDesc;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.repository.EndpointRepository;
 import io.dataspaceconnector.service.resource.base.EntityService;
-import io.dataspaceconnector.service.resource.type.AppEndpointService;
-import io.dataspaceconnector.service.resource.type.ConnectorEndpointService;
-import io.dataspaceconnector.service.resource.type.GenericEndpointService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -96,7 +91,6 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
 
     @Override
     public final Endpoint get(final UUID entityId) {
-
         try {
             return connector.get(entityId);
         } catch (ResourceNotFoundException ignored) { }

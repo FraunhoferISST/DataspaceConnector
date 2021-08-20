@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.service;
 
+import de.fraunhofer.iais.eis.AppResource;
 import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
@@ -47,6 +48,7 @@ public class MetadataDownloader {
 
     /**
      * Download metadata from another connector.
+     *
      * @param recipient The recipient connector.
      * @param resources The resources.
      * @param artifacts The artifacts.
@@ -68,18 +70,20 @@ public class MetadataDownloader {
     }
 
     /**
-     * Get app resource  from app store.
-     * @param recipient   The recipient connector.
-     * @param appResource The app resource.
-     * @return response of description request.
+     * Get app resource from app store.
+     *
+     * @param recipient The recipient connector.
+     * @param appId     The app id.
+     * @return The downloaded app resource.
      * @throws UnexpectedResponseException if the response type is not as expected.
+     * @throws MessageResponseException    if the response is invalid.
+     * @throws PersistenceException        if the data could not be persisted.
+     * @throws MessageException            if message handling failed.
      */
-    public Map<String, String> downloadAppResource(final URI recipient,
-                                                   final URI appResource)
-            throws UnexpectedResponseException {
-        Map<String, String> response;
-        response = descReqSvc.sendMessage(recipient, appResource);
-        persistenceSvc.saveAppMetadata(response, appResource);
-        return response;
+    public AppResource downloadAppResource(final URI recipient, final URI appId)
+            throws UnexpectedResponseException, PersistenceException, MessageResponseException,
+            MessageException {
+        final var response = descReqSvc.sendMessage(recipient, appId);
+        return persistenceSvc.saveAppMetadata(response, appId);
     }
 }

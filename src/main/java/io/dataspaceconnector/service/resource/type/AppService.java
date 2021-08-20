@@ -13,35 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.configuration;
+package io.dataspaceconnector.service.resource.type;
 
-import io.dataspaceconnector.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.app.AppFactory;
 import io.dataspaceconnector.model.app.AppImpl;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.artifact.LocalData;
+import io.dataspaceconnector.repository.AppRepository;
 import io.dataspaceconnector.repository.DataRepository;
-import io.dataspaceconnector.repository.RemoteEntityRepository;
 import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
-import io.dataspaceconnector.service.resource.BaseEntityService;
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.Utils;
-import io.dataspaceconnector.util.exception.NotImplemented;
+import io.dataspaceconnector.service.resource.base.BaseEntityService;
+import io.dataspaceconnector.service.resource.base.RemoteResolver;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,91 +47,61 @@ import java.util.UUID;
  */
 @Log4j2
 @Service
-public class AppService extends BaseEntityService<App, AppDesc> {
+@Getter(AccessLevel.PACKAGE)
+@Setter(AccessLevel.NONE)
+@Transactional
+public class AppService extends BaseEntityService<App, AppDesc> implements RemoteResolver {
 
     /**
      * The AppStoreService, to get related appstores.
      */
-    private final @NonNull AppStoreService appStoreSvc;
+    @Autowired
+    private AppStoreService appStoreSvc;
 
     /**
      * Repository for storing data.
      */
-    private final @NonNull DataRepository dataRepository;
+    @Autowired
+    private DataRepository dataRepository;
 
     /**
      * The PortainerRequestService to send request to the local Portainer instance.
      */
-    private final @NonNull PortainerRequestService portainerRequestSvc;
-
-    /**
-     * Constructor for the app service.
-     * @param appStoreService The app store service.
-     * @param dataRepo        The data repository.
-     * @param portainerRequestService The service for sending requests to portainer.
-     */
     @Autowired
-    public AppService(final @NonNull AppStoreService appStoreService,
-                      final @NonNull DataRepository dataRepo,
-                      final @NonNull PortainerRequestService portainerRequestService) {
-        super();
-        this.appStoreSvc = appStoreService;
-        this.dataRepository = dataRepo;
-        this.portainerRequestSvc = portainerRequestService;
-    }
+    private PortainerRequestService portainerRequestSvc;
+
 
     /**
-     * @return get list of all Apps.
+     * {@inheritDoc}
      */
-    public List<App> getApps() {
-        return getRepository().findAll();
-    }
-
-    /**
-     * Find app by bootstrapId.
-     *
-     * @param remoteID remoteID of the app to find.
-     * @return optional of found app.
-     */
-    public UUID getByRemoteID(final URI remoteID) {
-        Utils.requireNonNull(remoteID, ErrorMessage.ENTITYID_NULL);
-
-        final Optional<UUID> entity =
-                ((RemoteEntityRepository) getRepository()).identifyByRemoteId(remoteID);
-
-        if (entity.isEmpty()) {
-            // Handle with global exception handler
-            throw new ResourceNotFoundException(
-                    this.getClass().getSimpleName() + ": " + remoteID
-            );
-        }
-
-        return entity.get();
+    @Override
+    public Optional<UUID> identifyByRemoteId(final URI remoteId) {
+        return ((AppRepository) getRepository()).identifyByRemoteId(remoteId);
     }
 
     /**
      * Get AppStores which are offering the given App.
-     * @param appId    id of the app to find related appstore for.
-     * @param pageable pageable for response as view.
+     *
+     * @param appId id of the app to find related appstore for.
      * @return Page containing AppStores which are offering an app with AppID.
      */
-    public Page<AppStore> getStoresByContainsApp(final UUID appId, final Pageable pageable) {
-        return appStoreSvc.getStoresByContainsApp(appId, pageable);
+    public AppStore getAppStoreByAppId(final UUID appId) {
+        return appStoreSvc.getAppStoreByAppId(appId);
     }
 
     /**
      * Update an artifacts underlying data.
-     * @param appArtifactId The artifact which should be updated.
-     * @param data          The new data.
+     *
+     * @param appId The app that should be updated.
+     * @param data  The new data.
      * @throws IOException if the data could not be stored.
      */
     @NonNull
-    public void setData(final UUID appArtifactId, final InputStream data)
-            throws IOException {
-        final var appArtifact = get(appArtifactId);
-        final var currentData = ((AppImpl) appArtifact).getData();
+    public void setData(final UUID appId, final InputStream data) throws IOException {
+        final var app = get(appId);
+        final var currentData = ((AppImpl) app).getData();
         if (currentData instanceof LocalData) {
-            setAppTemplate(appArtifactId, data, (LocalData) currentData);
+            setAppTemplate(appId, data, (LocalData) currentData);
         } else {
             throw new NotImplemented();
         }
@@ -142,48 +109,12 @@ public class AppService extends BaseEntityService<App, AppDesc> {
 
     @NonNull
     private void setAppTemplate(final UUID appArtifactId, final InputStream data,
-                                final LocalData localData)
-            throws IOException {
+                                final LocalData localData) throws IOException {
         try {
             // Update the internal database and return the new data.
-            final var templateInput = data.readAllBytes();
+            final var bytes = data.readAllBytes();
             data.close();
-            dataRepository.setLocalData(localData.getId(), templateInput);
-
-            //TODO: Deploy app via Portainer APIs using infos of template
-            //Assuming localhost:9000 is Portainer URL
-            final var appStoreTemplate = IOUtils.toString(templateInput,
-                    StandardCharsets.UTF_8.name());
-
-            //1. Create registry where APP is hosted in Portainer if not existing:
-            // POST http://localhost:9000/api/registries
-            //-> Body: Authentication true/false, Name, Password, Type, URL, Username
-            //(infos from AppStore Template)
-            portainerRequestSvc.createRegistry(appStoreTemplate);
-
-            //2. Pull Image from AppStore registry
-            // POST http://localhost:9000/api/endpoints/1/docker/images/create
-            // ?fromImage=<REGISTRY-URL>%2F<IMAGE>
-            // Portainer knows registry URL and credentials if auth required (see step 1)
-            // (infos from AppStore Template)
-            portainerRequestSvc.pullImage(appStoreTemplate);
-
-            //3. Create volumes if needed (infos from AppStore Template)
-            // POST http://localhost:9000/api/endpoints/1/docker/volumes/create
-            // return volume ID
-            var volumeMap = portainerRequestSvc.createVolumes(appStoreTemplate);
-
-            //4.Create Container
-            // POST http://localhost:9000/api/endpoints/1/docker/containers/create?name=
-            // AppStore-Template as POST request body, volume info in AppStore template
-            //       needs to be adjusted to naming/generated volume-id of Step 3
-            // returns container ID
-            var containerId = portainerRequestSvc.createContainer(appStoreTemplate, volumeMap);
-
-            //5. Start Container
-            // POST http://localhost:9000/api/endpoints/1/docker/containers/<CONTAINER-ID>/start
-            portainerRequestSvc.startContainer(containerId);
-
+            dataRepository.setLocalData(localData.getId(), bytes);
         } catch (IOException e) {
             if (log.isErrorEnabled()) {
                 log.error("Failed to store data. [artifactId=({}), exception=({})]",
@@ -195,7 +126,7 @@ public class AppService extends BaseEntityService<App, AppDesc> {
     }
 
     /**
-     * @param appId The id of the app.
+     * @param appId       The id of the app.
      * @param containerID The id of the container.
      */
     public void setContainerIdForApp(final UUID appId, final String containerID) {

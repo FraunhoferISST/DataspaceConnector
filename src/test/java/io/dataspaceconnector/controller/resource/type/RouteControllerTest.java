@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 
 @SpringBootTest
-class RouteControllersTest {
+class RouteControllerTest {
 
     @MockBean
     private RouteService routeService;

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.view.appstore;
+package io.dataspaceconnector.controller.resource.view.appstore;
 
-import io.dataspaceconnector.controller.configuration.AppStoreControllers;
-import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
+import io.dataspaceconnector.controller.resource.type.AppStoreController;
+import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.appstore.AppStoreDesc;
 import io.dataspaceconnector.model.appstore.AppStoreFactory;
@@ -35,9 +35,8 @@ public class AppStoreViewAssemblerTest {
     public void create_ValidAppStore_returnAppStoreView() {
         /* ARRANGE */
         final var shouldLookLike = getAppStore();
-        final var link = ViewAssemblerHelper.
-                getSelfLink(shouldLookLike.getId(),
-                        AppStoreControllers.AppStoreController.class);
+        final var link
+                = ViewAssemblerHelper.getSelfLink(shouldLookLike.getId(), AppStoreController.class);
 
         /* ACT */
         final var after = getAppStoreView();

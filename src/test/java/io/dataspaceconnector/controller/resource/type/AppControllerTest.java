@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.configuration;
+package io.dataspaceconnector.controller.resource.type;
 
-import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
+import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
 import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +25,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-class AppControllersTest {
+class AppControllerTest {
 
     @MockBean
     private PortainerRequestService appStoreRegistryService;
 
     @Autowired
-    private AppControllers.AppController appController;
+    private AppController appController;
 
     @Test
     public void createApp_returnMethodNotAllowed() {

@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.model.app;
 
+import io.dataspaceconnector.common.ids.policy.PolicyPattern;
 import io.dataspaceconnector.model.named.NamedDescription;
-import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,10 +25,8 @@ import lombok.NoArgsConstructor;
 import java.net.URI;
 import java.util.List;
 
-
 /**
- * Describes a data app. Use this structure to create
- * or update a data app.
+ * Describes a data app. Use this structure to create or update a data app.
  */
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,29 +34,52 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class AppDesc extends NamedDescription {
 
-    //App attributes
+    /***********************************************************************************************
+     * Artifact attributes                                                                         *
+     ***********************************************************************************************
+
+    /**
+     * The artifact id on provider side.
+     */
+    private URI remoteId;
+
+    /**
+     * The provider's address for artifact request messages.
+     */
+    private URI remoteAddress;
+
+    /**
+     * Some value for storing data locally.
+     */
+    private String value;
+
+    /***********************************************************************************************
+     * App attributes                                                                              *
+     ***********************************************************************************************
 
     /**
      * Text documentation of the data app.
      */
-    private String appDocumentation;
+    private String docs;
 
     /**
      * Environment variables of the data app.
      */
-    private String appEnvironmentVariables;
+    private String envVariables;
 
     /**
      * Storage configuration of the data app (e.g. path in the file system or volume name).
      */
-    private String appStorageConfiguration;
+    private String storageConfig;
 
     /**
      * Usage policy patterns supported by the data app.
      */
-    private List<PolicyPattern> supportedUsagePolicies;
+    private List<PolicyPattern> supportedPolicies;
 
-    //AppResource attributes
+    /***********************************************************************************************
+     * Resource attributes                                                                         *
+     ***********************************************************************************************
 
     /**
      * The keywords of the resource.
@@ -90,32 +111,17 @@ public class AppDesc extends NamedDescription {
      */
     private URI endpointDocumentation;
 
-    //AppRepresentation attributes
+    /***********************************************************************************************
+     * Representation attributes                                                                   *
+     ***********************************************************************************************
 
     /**
      * Distribution service, where the represented app can be downloaded.
      */
-    private URI dataAppDistributionService;
+    private URI distributionService;
 
     /**
      * "Runtime environment of a data app, e.g., software (or hardware) required to run the app.
      */
-    private String dataAppRuntimeEnvironment;
-
-    //AppArtifact attributes
-
-    /**
-     * The artifact id on provider side.
-     */
-    private URI remoteId;
-
-    /**
-     * The provider's address for artifact request messages.
-     */
-    private URI remoteAddress;
-
-    /**
-     * Some value for storing data locally.
-     */
-    private String value;
+    private String runtimeEnvironment;
 }

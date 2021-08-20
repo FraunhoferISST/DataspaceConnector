@@ -13,25 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.view.app;
+package io.dataspaceconnector.controller.resource.view.app;
 
-import io.dataspaceconnector.controller.configuration.AppControllers;
-import io.dataspaceconnector.controller.resource.RelationControllers;
-import io.dataspaceconnector.controller.resource.view.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
+import io.dataspaceconnector.controller.resource.relation.AppsToEndpointsController;
+import io.dataspaceconnector.controller.resource.type.AppController;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
+import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.app.App;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * Assembles the REST resource for an app.
  */
+@Component
 public class AppViewAssembler implements RepresentationModelAssembler<App, AppView>, SelfLinking {
 
     @Override
@@ -40,9 +42,8 @@ public class AppViewAssembler implements RepresentationModelAssembler<App, AppVi
         final var view = modelMapper.map(app, AppView.class);
         view.add(getSelfLink(app.getId()));
 
-        final var endpointLink = WebMvcLinkBuilder
-                .linkTo(methodOn(RelationControllers.AppToEndpoints.class)
-                        .getResource(app.getId(), null, null))
+        final var endpointLink = linkTo(methodOn(AppsToEndpointsController.class)
+                .getResource(app.getId(), null, null))
                 .withRel("endpoints");
         view.add(endpointLink);
         return view;
@@ -50,7 +51,7 @@ public class AppViewAssembler implements RepresentationModelAssembler<App, AppVi
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, AppControllers.AppController.class);
+        return ViewAssemblerHelper.getSelfLink(entityId, AppController.class);
     }
 
 }

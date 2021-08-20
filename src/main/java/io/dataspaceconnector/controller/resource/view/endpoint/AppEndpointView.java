@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.view.appstore;
+package io.dataspaceconnector.controller.resource.view.endpoint;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.dataspaceconnector.view.util.ViewConstants;
+import io.dataspaceconnector.config.BaseType;
+import io.dataspaceconnector.controller.resource.view.util.ViewConstants;
+import io.dataspaceconnector.model.endpoint.EndpointType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,13 +29,18 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 
 /**
- * A DTO for controlled exposing of app store information in API responses.
+ * A DTO for controlled exposing of app endpoint information in API responses.
  */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "appStores", itemRelation = "appStore")
-public class AppStoreView extends RepresentationModel<AppStoreView> {
+@Relation(collectionRelation = BaseType.ENDPOINTS, itemRelation = "endpoint")
+public class AppEndpointView extends RepresentationModel<AppEndpointView> {
+
+    /**
+     * The endpoint type.
+     */
+    private final EndpointType type = EndpointType.APP;
 
     /**
      * The creation date.
@@ -48,17 +55,38 @@ public class AppStoreView extends RepresentationModel<AppStoreView> {
     private ZonedDateTime modificationDate;
 
     /**
-     * App store location.
+     * The location information.
      */
     private URI location;
 
     /**
-     * The title of the app store.
+     * The documentation of the endpoint.
      */
-    private String title;
+    private URI docs;
 
     /**
-     * The description of the app store.
+     * The information of the endpoint.
      */
-    private String description;
+    private String info;
+
+    /**
+     * Port of the Endpoint.
+     */
+    private int endpointPort;
+
+    /**
+     * Endpoint accepted media type.
+     */
+    private String mediaType;
+
+    /**
+     * Protocol used by endpoint.
+     */
+    private String protocol;
+
+    /**
+     * Language of the endpoint.
+     */
+    private String language;
+
 }

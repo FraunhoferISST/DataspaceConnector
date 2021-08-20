@@ -16,7 +16,7 @@
 package io.dataspaceconnector.model.appstore;
 
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import io.dataspaceconnector.util.MetadataUtils;
+import io.dataspaceconnector.model.util.FactoryUtils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -47,7 +47,7 @@ public class AppStoreFactory extends AbstractNamedFactory<AppStore, AppStoreDesc
 
     /**
      * @param appStore The entity to be updated.
-     * @param desc   The description of the new entity.
+     * @param desc     The description of the new entity.
      * @return True, if app store is updated.
      */
     @Override
@@ -61,9 +61,10 @@ public class AppStoreFactory extends AbstractNamedFactory<AppStore, AppStoreDesc
      * @return True, if app store is updated.
      */
     private boolean updateLocation(final AppStore appStore, final URI location) {
-        final var newLocation = MetadataUtils.updateUri(appStore.getLocation(), location,
+        final var newLocation = FactoryUtils.updateUri(appStore.getLocation(), location,
                 DEFAULT_URI);
         newLocation.ifPresent(appStore::setLocation);
+
         return newLocation.isPresent();
     }
 }

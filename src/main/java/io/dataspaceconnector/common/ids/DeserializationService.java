@@ -104,9 +104,9 @@ public class DeserializationService {
     }
 
     /**
-     * Deserialize string to ids resource.
+     * Deserialize string to ids app resource.
      *
-     * @param appResource The data app string.
+     * @param appResource The app resource string.
      * @return The ids object.
      * @throws IllegalArgumentException If deserialization fails.
      */

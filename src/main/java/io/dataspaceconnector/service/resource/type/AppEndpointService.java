@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service.configuration;
+package io.dataspaceconnector.service.resource.type;
 
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.AppEndpointDesc;
+import io.dataspaceconnector.repository.RouteRepository;
+import io.dataspaceconnector.service.routing.RouteHelper;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,4 +26,14 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class AppEndpointService extends EndpointService<AppEndpoint, AppEndpointDesc> {
+    /**
+     * Constructor for injection.
+     *
+     * @param routeRepository  the service for managing routes.
+     * @param camelRouteHelper The helper class for Camel routes.
+     */
+    public AppEndpointService(final RouteRepository routeRepository,
+                              final RouteHelper camelRouteHelper) {
+        super(routeRepository, camelRouteHelper);
+    }
 }
