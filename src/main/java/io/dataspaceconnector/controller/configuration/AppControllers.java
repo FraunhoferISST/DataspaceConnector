@@ -54,6 +54,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -123,91 +124,119 @@ public final class AppControllers {
         public final ResponseEntity<String> containerManagement(
                 final @PathVariable("id") UUID appId,
                 final @RequestParam("actionType") String actionType) {
-
-            final var app = appService.get(appId);
             final var action = actionType.toUpperCase();
-            final var containerID = ((AppImpl) app).getContainerID();
-            ResponseEntity<String> response = null;
+
+            //Get Container-ID for App (mapping App-ID to Container-ID)
+            var containerID = ((AppImpl) appService.get(appId)).getContainerID();
 
             try {
                 if (ActionType.START.name().equals(action)) {
-                    if (containerID != null) {
-                        final var startResponse = portainerRequestService
-                                .startContainer(containerID);
-                        if (startResponse.isSuccessful()) {
-                            response = ResponseEntity.ok("Successfully started the app.");
-                        } else {
-                            response = ResponseEntity.internalServerError()
-                                    .body(startResponse.body().string());
-                        }
-                    } else {
-                        var appData = ((AppImpl) app).getData();
-                        final var templateInput = ((LocalData) appData).getValue();
-                        final var appStoreTemplate = IOUtils.toString(templateInput,
-                                "UTF-8");
-
-                        //1. Create Registry with given information from AppStore template
-                        portainerRequestService.createRegistry(appStoreTemplate);
-
-                        //2. Pull Image with given information from AppStore template
-                        portainerRequestService.pullImage(appStoreTemplate);
-
-
-                        //3. Create volumes with given information from AppStore template
-                        final var volumeMap = portainerRequestService
-                                .createVolumes(appStoreTemplate);
-
-                        //4. Create Container with given information from AppStore template
-                        // and new volume
-                        final var createdContainerId = portainerRequestService
-                                .createContainer(appStoreTemplate, volumeMap);
-
-                        // Persist containerID
-                        appService.setContainerIdForApp(appId, createdContainerId);
-
-                        //5. Create Network for the container
-                        //TODO: Get network of currently running DSC and put App in same network
-                        final var networkID = portainerRequestService
-                                .createNetwork("bridge", true, false);
-                        //6. Join container into the new created network
-                        portainerRequestService.joinNetwork(createdContainerId, networkID);
-
-                        //5. Start the App (container)
-                        portainerRequestService.startContainer(createdContainerId);
-                    }
-                }
-                if (ActionType.STOP.name().equals(action)) {
-                    if (containerID != null) {
-                        final var stopResponse = portainerRequestService
-                                .stopContainer(containerID);
-                        if (stopResponse.isSuccessful()) {
-                            response = ResponseEntity.ok("Successfully stopped the app.");
-                        } else {
-                            response = ResponseEntity.internalServerError()
-                                    .body(stopResponse.body().string());
-                        }
-                    } else {
-                        response = ResponseEntity.badRequest().body("No container id provided");
-                    }
-                }
-                if (ActionType.DELETE.name().equals(action)) {
-                    if (containerID != null) {
-                        final var deleteResponse = portainerRequestService
-                                .deleteContainer(containerID);
-                        if (deleteResponse.isSuccessful()) {
-                            response = ResponseEntity.ok("Successfully deleted the app.");
-                        } else {
-                            response = ResponseEntity.internalServerError()
-                                    .body(deleteResponse.body().string());
-                        }
-                    } else {
-                        response = ResponseEntity.badRequest().body("No container id provided");
-                    }
+                    return startApp(appId, containerID);
+                } else if (ActionType.STOP.name().equals(action)) {
+                    return stopApp(containerID);
+                } else if (ActionType.DELETE.name().equals(action)) {
+                    return deleteApp(containerID);
                 }
             } catch (IOException e) {
-                response = ResponseEntity.badRequest().body(e.getMessage());
+                return ResponseEntity.badRequest().body(e.getMessage());
             }
-            return response;
+            return ResponseEntity.badRequest().body("The request could not be processed!");
+        }
+
+        private ResponseEntity<String> deleteApp(final String containerID) throws IOException {
+            if (containerID != null) {
+                //Container for App exists, delete it
+                return deleteAppContainer(containerID);
+            } else {
+                //No container exists for App to delete
+                return ResponseEntity.badRequest()
+                        .body("No deployed App for provided App-ID exists!");
+            }
+        }
+
+        private ResponseEntity<String> stopApp(final String containerID) throws IOException {
+            if (containerID != null) {
+                //App-Container exists, stop Container
+                return stopAppContainer(containerID);
+            } else {
+                //No container exists for App to stop
+                return ResponseEntity.badRequest()
+                        .body("No deployed App for provided App-ID exists!");
+            }
+        }
+
+        private ResponseEntity<String> startApp(final UUID appId,
+                                                final String containerID) throws IOException {
+            //Start the deployed app
+            return startAppContainer(containerID == null ? deployApp(appId) : containerID);
+        }
+
+        private String deployApp(final UUID appId) throws IOException {
+            var appData = ((AppImpl) appService.get(appId)).getData();
+            final var templateInput = ((LocalData) appData).getValue();
+            final var appStoreTemplate = IOUtils.toString(templateInput,
+                    "UTF-8");
+
+            //1. Create Registry with given information from AppStore template
+            portainerRequestService.createRegistry(appStoreTemplate);
+
+            //2. Pull Image with given information from AppStore template
+            portainerRequestService.pullImage(appStoreTemplate);
+
+
+            //3. Create volumes with given information from AppStore template
+            final var volumeMap = portainerRequestService
+                    .createVolumes(appStoreTemplate);
+
+            //4. Create Container with given information from AppStore template
+            // and new volume
+            final var createdContainerId = portainerRequestService
+                    .createContainer(appStoreTemplate, volumeMap);
+
+            // Persist containerID
+            appService.setContainerIdForApp(appId, createdContainerId);
+
+            //5. Create Network for the container
+            //TODO: Get network of currently running DSC and put App in same network
+            final var networkID = portainerRequestService
+                    .createNetwork("bridge", true, false);
+            //6. Join container into the new created network
+            portainerRequestService.joinNetwork(createdContainerId, networkID);
+
+            return createdContainerId;
+        }
+
+        private ResponseEntity<String> startAppContainer(final String containerID)
+                throws IOException {
+            final var startResponse = portainerRequestService.startContainer(containerID);
+            if (startResponse.isSuccessful()) {
+                return ResponseEntity.ok("Successfully started the app.");
+            } else {
+                return ResponseEntity.internalServerError().body(
+                        Objects.requireNonNull(startResponse.body()).string());
+            }
+        }
+
+        private ResponseEntity<String> stopAppContainer(final String containerID)
+                throws IOException {
+            final var stopResponse = portainerRequestService.stopContainer(containerID);
+            if (stopResponse.isSuccessful()) {
+                return ResponseEntity.ok("Successfully stopped the app.");
+            } else {
+                return ResponseEntity.internalServerError().body(
+                        Objects.requireNonNull(stopResponse.body()).string());
+            }
+        }
+
+        private ResponseEntity<String> deleteAppContainer(final String containerID)
+                throws IOException {
+            final var deleteResponse = portainerRequestService.deleteContainer(containerID);
+            if (deleteResponse.isSuccessful()) {
+                return ResponseEntity.ok("Successfully deleted the App-Container.");
+            } else {
+                return ResponseEntity.internalServerError().body(
+                        Objects.requireNonNull(deleteResponse.body()).string());
+            }
         }
 
         /**
