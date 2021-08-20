@@ -421,16 +421,20 @@ public class PortainerRequestService {
      */
     public Response pullImage(final String appStoreTemplate) throws IOException {
         final var templateObject = toJsonObject(appStoreTemplate);
-        final var registryUrl = URLEncoder.encode(
-                templateObject.getString("registry"), StandardCharsets.UTF_8
-        );
-        final var image = URLEncoder.encode(
-                templateObject.getString("image"), StandardCharsets.UTF_8
-        ).replace("%3A", ":");
-        final var encodedSlash = URLEncoder.encode("/", StandardCharsets.UTF_8);
+        final var registryUrl = templateObject.getString("registry");
 
-        //Needed info from AppStore template for URL params:
-        //Registry-URL and Image-Details
+        var image = templateObject.getString("image");
+        var imageTag = "";
+        if (image.contains(":")) {
+            imageTag = ":" + image.split(":")[1];
+            image = image.split(":")[0];
+        } else {
+            imageTag = ":latest";
+        }
+
+        final var imagePostBody = image;
+        image = URLEncoder.encode(image, StandardCharsets.UTF_8);
+        image += imageTag;
 
         final var jwt = getJwtToken();
         final var builder = getRequestBuilder();
@@ -440,16 +444,15 @@ public class PortainerRequestService {
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
                 .addPathSegments("api/endpoints/1/docker/images/create")
-                .addEncodedQueryParameter("fromImage", registryUrl
-                        + encodedSlash + image);
+                .addEncodedQueryParameter("fromImage", registryUrl + "%2F" + image);
+
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + jwt);
         builder.url(url);
         builder.post(
                 RequestBody.create(
                         new JSONObject()
-                                .put("fromImage", templateObject.getString("registry")
-                                        + "/" + templateObject.getString("image"))
+                                .put("fromImage", registryUrl + "/" + imagePostBody + imageTag)
                                 .toString(), MediaType.parse("application/json")));
 
         final var request = builder.build();
