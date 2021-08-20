@@ -195,6 +195,41 @@ public class PortainerRequestService {
     }
 
     /**
+     * Gets the Portainer network ID of by its name.
+     * @param networkName The name of the portainer network.
+     * @return ID of the network in Portainer.
+     * @throws IOException Exception while connecting to Portainer.
+     */
+    public String getNetworkId(final String networkName) throws IOException {
+        String jwt = getJwtToken();
+        final var builder = getRequestBuilder();
+
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments("api/endpoints/1/docker/networks");
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.url(url);
+        builder.get();
+
+        final var request = builder.build();
+        final var response = httpService.send(request);
+        final var networks = new JSONArray(
+                Objects.requireNonNull(response.body()).string());
+
+        for (final var network : networks) {
+            if (((JSONObject) network).get("Name").equals(networkName)) {
+                return ((JSONObject) network).get("Id").toString();
+            }
+        }
+
+        //If network does not exist, create it.
+        return createNetwork(networkName, true, false);
+    }
+
+    /**
      * @param appStoreTemplate The template provided by the AppStore decribing 1 App.
      * @return The Id of the created registry.
      * @throws IOException If an error occurs while connection to portainer.

@@ -192,10 +192,8 @@ public final class AppControllers {
             // Persist containerID
             appService.setContainerIdForApp(appId, createdContainerId);
 
-            //5. Create Network for the container
-            //(TODO: Get network of currently running DSC and put App in same network)
-            //TODO: Fix required: "host", "none" and "bridge" are default networks for Portainer, cant be created
-            final var networkID = portainerRequestService.createNetwork("bridge", true, false);
+            //5. Get "bride" network-id in Portainer
+            final var networkID = portainerRequestService.getNetworkId("bridge");
 
             //6. Join container into the new created network
             portainerRequestService.joinNetwork(createdContainerId, networkID);
