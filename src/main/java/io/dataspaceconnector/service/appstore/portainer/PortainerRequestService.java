@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Service class for app store registries. It allows communicating with Portainer's API to manage
@@ -194,18 +195,19 @@ public class PortainerRequestService {
 
     /**
      * @param appStoreTemplate The template provided by the AppStore decribing 1 App.
-     * @return Response of portainer.
+     * @return The Id of the created registry.
      * @throws IOException If an error occurs while connection to portainer.
      */
-    public boolean createRegistry(final String appStoreTemplate) throws IOException {
+    public Integer createRegistry(final String appStoreTemplate) throws IOException {
         final var templateObject = toJsonObject(appStoreTemplate);
         final var registryURL = templateObject.getString("registry");
 
-        if (registryExists(registryURL)) {
-            //TODO: Registry needs to either be deleted after usage or updated with new
-            //credentials, because they change every call to the AppStore -> old credentials
-            //cant be re-used
-            return true;
+        //Check if registry existing (should not be the case but safety check)
+        final var registryId = registryExists(registryURL);
+
+        if (registryId != null) {
+            //Registry-Credentials from AppStore Template are one time usage only, cant be reused
+            deleteRegistry(registryId);
         }
 
         //Needed registry info from AppStore template for request body:
@@ -241,17 +243,49 @@ public class PortainerRequestService {
 
         final var request = builder.build();
         final var response = httpService.send(request);
-        return response.isSuccessful();
+        final var createdRegistryId = new JSONObject(response.body().string()).get("Id").toString();
+
+        return Integer.parseInt(createdRegistryId);
+    }
+
+    /**
+     * Deletes a registry by a given registry-id.
+     * @param registryId The ID of the registry to be deleted.
+     * @throws IOException Exception while connection to portainer.
+     */
+    public void deleteRegistry(final Integer registryId) throws IOException {
+        final var jwt = getJwtToken();
+        final var builder = getRequestBuilder();
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments("api/registries/" + registryId);
+
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.url(url);
+        builder.delete(RequestBody.create(new byte[0], null));
+        final var request = builder.build();
+        httpService.send(request);
     }
 
     /**
      * @param registryURL The new registry url.
-     * @return true, if the new registry url already exists.
+     * @return ID of registry if existing.
      * @throws IOException If an error occurs while connection to portainer.
      */
-    public boolean registryExists(final String registryURL) throws IOException {
-        var response = getRegistries();
-        return response.body().string().contains(registryURL);
+    public Integer registryExists(final String registryURL) throws IOException {
+        final var response = getRegistries();
+        final var registries = new JSONArray(Objects.requireNonNull(response.body()).string());
+
+        for (final var registry : registries) {
+            if (((JSONObject) registry).get("URL").equals(registryURL)) {
+                return Integer.parseInt(((JSONObject) registry).get("Id").toString());
+            }
+        }
+
+        return null;
     }
 
     /**

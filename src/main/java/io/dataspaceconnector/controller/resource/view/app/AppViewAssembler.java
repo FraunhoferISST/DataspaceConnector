@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view.app;
 
+import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.relation.AppsToEndpointsController;
 import io.dataspaceconnector.controller.resource.type.AppController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
@@ -44,7 +45,7 @@ public class AppViewAssembler implements RepresentationModelAssembler<App, AppVi
 
         final var endpointLink = linkTo(methodOn(AppsToEndpointsController.class)
                 .getResource(app.getId(), null, null))
-                .withRel("endpoints");
+                .withRel(BaseType.ENDPOINTS);
         view.add(endpointLink);
         return view;
     }
