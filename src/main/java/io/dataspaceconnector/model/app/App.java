@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.model.app;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import io.dataspaceconnector.model.artifact.Data;
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.util.UriConverter;
@@ -24,13 +26,16 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.Version;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Column;
 import java.net.URI;
@@ -161,4 +166,17 @@ public class App extends NamedEntity {
     @Convert(converter = UriConverter.class)
     @Column(length = URI_COLUMN_LENGTH)
     private URI remoteAddress;
+
+    /**
+     * The data stored in the app.
+     **/
+    @OneToOne(cascade = { CascadeType.ALL })
+    @JsonInclude
+    @ToString.Exclude
+    private Data data;
+
+    /**
+     * The deployed container id.
+     */
+    private String containerID;
 }

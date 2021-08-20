@@ -24,7 +24,6 @@ import io.dataspaceconnector.controller.resource.tag.ResourceName;
 import io.dataspaceconnector.controller.util.ActionType;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
-import io.dataspaceconnector.model.app.AppImpl;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
@@ -127,7 +126,7 @@ public final class AppControllers {
             final var action = actionType.toUpperCase();
 
             //Get Container-ID for App (mapping App-ID to Container-ID)
-            var containerID = ((AppImpl) appService.get(appId)).getContainerID();
+            var containerID = appService.get(appId).getContainerID();
 
             try {
                 if (ActionType.START.name().equals(action)) {
@@ -172,7 +171,7 @@ public final class AppControllers {
         }
 
         private String deployApp(final UUID appId) throws IOException {
-            var appData = ((AppImpl) appService.get(appId)).getData();
+            var appData = appService.get(appId).getData();
             final var templateInput = ((LocalData) appData).getValue();
             final var appStoreTemplate = IOUtils.toString(templateInput,
                     "UTF-8");

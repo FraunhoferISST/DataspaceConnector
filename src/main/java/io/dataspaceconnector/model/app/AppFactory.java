@@ -46,7 +46,7 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
      */
     @Override
     protected App initializeEntity(final AppDesc desc) {
-        final var app = new AppImpl();
+        final var app = new App();
         app.setAppEndpoints(new ArrayList<>());
         app.setKeywords(new ArrayList<>());
         app.setSupportedUsagePolicies(new ArrayList<>());
@@ -76,14 +76,9 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
                 updateDataAppDistributionService(app, desc.getDataAppDistributionService());
         final var hasUpdatedDataAppRuntimeEnvironment =
                 updateDataAppRuntimeEnvironment(app, desc.getDataAppRuntimeEnvironment());
-        final var hasUpdatedRemoteId =
-                updateRemoteId(app, desc.getRemoteId());
-        final var hasUpdatedRemoteAddress =
-                updateRemoteAddress(app, desc.getRemoteAddress());
-        boolean hasUpdatedData = false;
-        if (app instanceof AppImpl) {
-            hasUpdatedData = updateData((AppImpl) app, desc.getValue());
-        }
+        final var hasUpdatedRemoteId = updateRemoteId(app, desc.getRemoteId());
+        final var hasUpdatedRemoteAddress = updateRemoteAddress(app, desc.getRemoteAddress());
+        boolean hasUpdatedData = updateData(app, desc.getValue());
 
 
         final var hasUpdated =
@@ -103,7 +98,7 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
         return hasUpdated;
     }
 
-    private boolean updateData(final AppImpl app, final String value) {
+    private boolean updateData(final App app, final String value) {
         final var newData = new LocalData();
         final var data = value == null ? null : value.getBytes(StandardCharsets.UTF_16);
         newData.setValue(data);
@@ -230,7 +225,7 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
      * @param app The app entity.
      * @param containerId The id of the container which is set.
      */
-    public void setContainerId(final AppImpl app, final String containerId) {
+    public void setContainerId(final App app, final String containerId) {
         app.setContainerID(containerId);
     }
 }

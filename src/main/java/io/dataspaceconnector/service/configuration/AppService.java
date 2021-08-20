@@ -19,7 +19,6 @@ import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.app.AppFactory;
-import io.dataspaceconnector.model.app.AppImpl;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.repository.DataRepository;
@@ -130,7 +129,7 @@ public class AppService extends BaseEntityService<App, AppDesc> {
     public void setData(final UUID appArtifactId, final InputStream data)
             throws IOException {
         final var appArtifact = get(appArtifactId);
-        final var currentData = ((AppImpl) appArtifact).getData();
+        final var currentData = appArtifact.getData();
         if (currentData instanceof LocalData) {
             setAppTemplate(appArtifactId, data, (LocalData) currentData);
         } else {
@@ -162,7 +161,7 @@ public class AppService extends BaseEntityService<App, AppDesc> {
      * @param containerID The id of the container.
      */
     public void setContainerIdForApp(final UUID appId, final String containerID) {
-        final var app = ((AppImpl) get(appId));
+        final var app = get(appId);
         ((AppFactory) getFactory()).setContainerId(app, containerID);
         getRepository().save(app);
     }
