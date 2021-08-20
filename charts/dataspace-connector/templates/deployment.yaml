@@ -57,7 +57,11 @@ spec:
             httpGet:
               path: /actuator/health/liveness
               port: http
+              {{- if .Values.env.config.SERVER_SSL_ENABLED }}
+              scheme: HTTPS
+              {{- else }}
               scheme: HTTP
+              {{- end }}
               httpHeaders:
               - name: Authorization
                 value: Basic YWRtaW46cGFzc3dvcmQ=
@@ -67,7 +71,11 @@ spec:
             httpGet:
               path: /actuator/health/readiness
               port: http
+              {{- if .Values.env.config.SERVER_SSL_ENABLED }}
+              scheme: HTTPS
+              {{- else }}
               scheme: HTTP
+              {{- end }}
               httpHeaders:
               - name: Authorization
                 value: Basic YWRtaW46cGFzc3dvcmQ=
@@ -76,7 +84,11 @@ spec:
             httpGet:
               path: /
               port: http
+              {{- if .Values.env.config.SERVER_SSL_ENABLED }}
+              scheme: HTTPS
+              {{- else }}
               scheme: HTTP
+              {{- end }}
             failureThreshold: 30
             periodSeconds: 3
           volumeMounts:

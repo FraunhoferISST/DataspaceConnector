@@ -23,7 +23,7 @@ image:
 env:
   config:
     CONFIGURATION_PATH: "/etc/dataspace-connector/config.json"
-    SERVER_SSL_ENABLED: "false"
+    SERVER_SSL_ENABLED: "true"
     SERVER_SSL_KEY-STORE: "/var/run/certs/keystore.p12"
     LOGGING_CONFIG: "file:///etc/dataspace-connector/log4j2.xml"
     MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "metrics,health"
@@ -65,25 +65,27 @@ securityContext:
 
 service:
   type: ClusterIP
-  port: 80
+  port: 443
 
 ingress:
-  enabled: false
+  enabled: true
   className: ""
   annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+
     # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+    kubernetes.io/tls-acme: "true"
   hosts:
     - host: "localhost"
       paths:
-        # - path: /
-        #   pathType: Exact
         - path: /
           pathType: Prefix
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  tls:
+    - secretName: testsecret-tls
+      hosts:
+        - localhost
 
 resources:
   limits:
