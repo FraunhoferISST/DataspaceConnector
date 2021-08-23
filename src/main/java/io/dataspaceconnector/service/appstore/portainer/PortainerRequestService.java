@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -526,7 +527,7 @@ public class PortainerRequestService {
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
                 .addPathSegments("api/endpoints/1/docker/images/json")
-                .addQueryParameter("all","1");
+                .addQueryParameter("all", "1");
 
         final var url = urlBuilder.build();
 
@@ -555,12 +556,25 @@ public class PortainerRequestService {
 
         for (int i = 0; i < volumes.length(); i++) {
             final var currentVolume = volumes.getJSONObject(i);
+
+            // Get Key Names
+            Set<String> names = currentVolume.keySet();
+            final var namesList = new ArrayList<>(names);
+
             final var req = new JSONObject();
+            for (var key : namesList) {
+                if (!key.equals("container")) {
+                    final var value = currentVolume.getString(key);
+                    req.put(key, value);
+                    volumeNames.put(value, key);
+                }
+            }
             final var templateName = currentVolume.getString("container");
             final var validTemplateName = templateName
                     .substring(templateName.indexOf("/") + 1)
                     .replace("/", "_");
             req.put("Name", validTemplateName);
+
             final var builder = getRequestBuilder();
             final var urlBuilder = new HttpUrl.Builder()
                     .scheme("http")
