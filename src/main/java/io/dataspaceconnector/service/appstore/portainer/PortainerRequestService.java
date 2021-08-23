@@ -523,7 +523,7 @@ public class PortainerRequestService {
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
                 .addPathSegments("api/endpoints/1/docker/images/json")
-                .addQueryParameter("all","1");
+                .addQueryParameter("all", "1");
 
         final var url = urlBuilder.build();
 
