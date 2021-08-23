@@ -485,7 +485,8 @@ public class PortainerRequestService {
         final var url = urlBuilder.build();
 
         //Initial x-Auth header, Portainer will extend credentials based on registry information
-        final var auth = "{\"Username\": \"\", \"Password\": \"\", \"Serveraddress\": \"" + registryUrl + "\"}";
+        final var auth = "{\"Username\": \"\", \"Password\": \"\", \"Serveraddress\": \""
+                + registryUrl + "\"}";
         final var xAuthHeader = Base64.getEncoder().encodeToString(auth.getBytes());
 
         builder.addHeader("Authorization", "Bearer " + jwt);
