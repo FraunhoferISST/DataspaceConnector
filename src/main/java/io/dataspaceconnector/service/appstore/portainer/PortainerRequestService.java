@@ -499,7 +499,9 @@ public class PortainerRequestService {
                                 .toString(), MediaType.parse("application/json")));
 
         final var request = builder.build();
-        return httpService.send(request);
+        final var response = httpService.send(request);
+        //TODO: Needs to wait until pull image is complete (above will return status updates and not single response)
+        return response;
     }
 
     /**
