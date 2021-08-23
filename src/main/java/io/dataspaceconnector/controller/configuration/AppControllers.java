@@ -137,7 +137,7 @@ public final class AppControllers {
                 } else if (ActionType.STOP.name().equals(action)) {
                     return stopApp(containerID);
                 } else if (ActionType.DELETE.name().equals(action)) {
-                    return deleteApp(containerID);
+                    return deleteApp(containerID, appId);
                 }
             } catch (IOException | PortainerNotConfigured e) {
                 return ResponseEntity.badRequest().body(e.getMessage());
@@ -145,10 +145,13 @@ public final class AppControllers {
             return ResponseEntity.badRequest().body("The request could not be processed!");
         }
 
-        private ResponseEntity<String> deleteApp(final String containerID) throws IOException {
+        private ResponseEntity<String> deleteApp(final String containerID,
+                                                 final UUID appId) throws IOException {
             if (containerID != null) {
                 //Container for App exists, delete it
-                return deleteAppContainer(containerID);
+                final var response = deleteAppContainer(containerID);
+                appService.deleteContainerIDFromApp(appId);
+                return response;
             } else {
                 //No container exists for App to delete
                 return ResponseEntity.badRequest()

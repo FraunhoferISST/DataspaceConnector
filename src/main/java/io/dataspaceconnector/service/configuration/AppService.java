@@ -156,4 +156,13 @@ public class AppService extends BaseEntityService<App, AppDesc> {
         ((AppFactory) getFactory()).setContainerId(app, containerID);
         getRepository().save(app);
     }
+
+    /**
+     * @param appId The id of the container.
+     */
+    public void deleteContainerIDFromApp(final UUID appId) {
+        final var app = get(appId);
+        ((AppFactory) getFactory()).deleteContainerId(app);
+        getRepository().save(app);
+    }
 }

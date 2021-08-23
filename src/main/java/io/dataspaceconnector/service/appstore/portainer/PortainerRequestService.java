@@ -224,12 +224,12 @@ public class PortainerRequestService {
             final var response = httpService.send(request);
             final var jsonArray = new JSONArray(response.body().string());
 
-            for(var tmpObj : jsonArray) {
-                if(((JSONObject)tmpObj).getNumber("Type").equals(1)){
-                    endpointID = ((JSONObject)tmpObj).get("Id").toString();
+            for (var tmpObj : jsonArray) {
+                if (((JSONObject) tmpObj).getNumber("Type").equals(1)) {
+                    endpointID = ((JSONObject) tmpObj).get("Id").toString();
                 }
             }
-            if(endpointID == null) {
+            if (endpointID == null) {
                 throw new PortainerNotConfigured();
             }
     }
