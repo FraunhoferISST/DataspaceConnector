@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Service class for app store registries. It allows communicating with Portainer's API to manage
@@ -486,8 +487,53 @@ public class PortainerRequestService {
 
         final var request = builder.build();
         final var response = httpService.send(request);
-        //TODO: Needs to wait until pull image is complete (above will return status updates and not single response)
+
+        //Check if image is successfully pulled in Portainer,
+        //otherwise wait until process is finished.
+        final var tag = imagePostBody + imageTag;
+        final var maxWaitTimeSec = 60;
+        var waitedTimeSec = 0;
+        while (true) {
+            if (log.isDebugEnabled()) {
+                log.debug("Validating image fully pulled (check {}/max {})",
+                        waitedTimeSec + 1,
+                        maxWaitTimeSec);
+            }
+            if (checkIfImageExists(tag) || waitedTimeSec == maxWaitTimeSec) {
+                break;
+            } else {
+                try {
+                    waitedTimeSec++;
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (Exception e) {
+                    break;
+                }
+            }
+        }
+
         return response;
+    }
+
+    private boolean checkIfImageExists(final String tag) throws IOException {
+        final var builder = getRequestBuilder();
+
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments("api/endpoints/1/docker/images/json")
+                .addQueryParameter("all","1");
+
+        final var url = urlBuilder.build();
+
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
+        builder.url(url);
+        builder.get();
+
+        final var request = builder.build();
+        final var response = httpService.send(request);
+
+        return Objects.requireNonNull(response.body()).string().contains(tag);
     }
 
     /**
@@ -549,13 +595,17 @@ public class PortainerRequestService {
         for (int i = 0; i < templateObject.getJSONArray("ports").length(); i++) {
             var portObj = templateObject.getJSONArray("ports").getJSONObject(i);
 
-            var inputPorts = portObj.getString("INPUT_ENDPOINT");
-            inputPorts = inputPorts.substring(inputPorts.indexOf(":") + 1);
-            ports.add(inputPorts);
+            if (!portObj.isNull("INPUT_ENDPOINT")) {
+                var inputPorts = portObj.getString("INPUT_ENDPOINT");
+                inputPorts = inputPorts.substring(inputPorts.indexOf(":") + 1);
+                ports.add(inputPorts);
+            }
 
-            var outputPorts = portObj.getString("OUTPUT_ENDPOINT");
-            outputPorts = outputPorts.substring(outputPorts.indexOf(":") + 1);
-            ports.add(outputPorts);
+            if (!portObj.isNull("OUTPUT_ENDPOINT")) {
+                var outputPorts = portObj.getString("OUTPUT_ENDPOINT");
+                outputPorts = outputPorts.substring(outputPorts.indexOf(":") + 1);
+                ports.add(outputPorts);
+            }
         }
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
