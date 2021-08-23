@@ -23,7 +23,6 @@ import io.dataspaceconnector.exception.MessageException;
 import io.dataspaceconnector.exception.MessageResponseException;
 import io.dataspaceconnector.exception.UnexpectedResponseException;
 import io.dataspaceconnector.service.ArtifactDataDownloader;
-import io.dataspaceconnector.service.EntityPersistenceService;
 import io.dataspaceconnector.service.MetadataDownloader;
 import io.dataspaceconnector.util.MessageUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -71,11 +70,6 @@ public class AppRequestMessageController {
      * The artifact request service.
      */
     private final @NonNull ArtifactDataDownloader artifactDataDownloader;
-
-    /**
-     * Service for persisting entities.
-     */
-    private final @NonNull EntityPersistenceService persistenceSvc;
 
     /**
      * Add an apps metadata to an app object.
@@ -172,24 +166,4 @@ public class AppRequestMessageController {
         }
         return null;
     }
-
-
-//    private String convertToAnswer(final URI elementId, final String payload) {
-//        return Utils.isEmptyOrNull(elementId) ? unwrapResponse(payload) : payload;
-//    }
-//
-//    private String unwrapResponse(final String payload) {
-//        try {
-//            // Get payload as component.
-//            return deserializationSvc.getInfrastructureComponent(payload).toRdf();
-//        } catch (IllegalArgumentException ignored) {
-//            // If the response is not of type base connector.
-//            return payload;
-//        }
-//    }
-//
-//    @SuppressWarnings("unchecked")
-//    private static ResponseEntity<Object> toObjectResponse(final ResponseEntity<?> response) {
-//        return (ResponseEntity<Object>) response;
-//    }
 }

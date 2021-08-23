@@ -23,7 +23,6 @@ import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.repository.RemoteEntityRepository;
-import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
 import io.dataspaceconnector.service.resource.BaseEntityService;
 import io.dataspaceconnector.util.ErrorMessage;
 import io.dataspaceconnector.util.Utils;
@@ -60,24 +59,16 @@ public class AppService extends BaseEntityService<App, AppDesc> {
     private final @NonNull DataRepository dataRepository;
 
     /**
-     * The PortainerRequestService to send request to the local Portainer instance.
-     */
-    private final @NonNull PortainerRequestService portainerRequestSvc;
-
-    /**
      * Constructor for the app service.
      * @param appStoreService The app store service.
      * @param dataRepo        The data repository.
-     * @param portainerRequestService The service for sending requests to portainer.
      */
     @Autowired
     public AppService(final @NonNull AppStoreService appStoreService,
-                      final @NonNull DataRepository dataRepo,
-                      final @NonNull PortainerRequestService portainerRequestService) {
+                      final @NonNull DataRepository dataRepo) {
         super();
         this.appStoreSvc = appStoreService;
         this.dataRepository = dataRepo;
-        this.portainerRequestSvc = portainerRequestService;
     }
 
     /**
@@ -88,7 +79,7 @@ public class AppService extends BaseEntityService<App, AppDesc> {
     }
 
     /**
-     * Find app by bootstrapId.
+     * Find app by remoteID.
      *
      * @param remoteID remoteID of the app to find.
      * @return optional of found app.
