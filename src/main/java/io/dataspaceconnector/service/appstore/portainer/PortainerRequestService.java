@@ -488,9 +488,15 @@ public class PortainerRequestService {
         final var request = builder.build();
         final var response = httpService.send(request);
 
+        final var tag = imagePostBody + imageTag;
+        waitForImagePull(tag);
+
+        return response;
+    }
+
+    private void waitForImagePull(final String tag) throws IOException {
         //Check if image is successfully pulled in Portainer,
         //otherwise wait until process is finished.
-        final var tag = imagePostBody + imageTag;
         final var maxWaitTimeSec = 60;
         var waitedTimeSec = 0;
         while (true) {
@@ -510,8 +516,6 @@ public class PortainerRequestService {
                 }
             }
         }
-
-        return response;
     }
 
     private boolean checkIfImageExists(final String tag) throws IOException {
