@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [X.X.X] - XXXX-XX-XX
+
+### Changed
+- Increase spring-boot-starter-parent version from 2.5.3 to 2.5.4
+
 ## [6.1.2] - 2021-08-19
 
 ### Fixed
