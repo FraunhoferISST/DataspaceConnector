@@ -29,6 +29,7 @@ import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
 import io.dataspaceconnector.service.configuration.AppService;
 import io.dataspaceconnector.util.Utils;
+import io.dataspaceconnector.util.exception.PortainerNotConfigured;
 import io.dataspaceconnector.view.app.AppView;
 import io.dataspaceconnector.view.appstore.AppStoreView;
 import io.dataspaceconnector.view.appstore.AppStoreViewAssembler;
@@ -129,6 +130,8 @@ public final class AppControllers {
             var containerID = appService.get(appId).getContainerID();
 
             try {
+                portainerRequestService.getEndpointID();
+
                 if (ActionType.START.name().equals(action)) {
                     return startApp(appId, containerID);
                 } else if (ActionType.STOP.name().equals(action)) {
@@ -136,7 +139,7 @@ public final class AppControllers {
                 } else if (ActionType.DELETE.name().equals(action)) {
                     return deleteApp(containerID);
                 }
-            } catch (IOException e) {
+            } catch (IOException | PortainerNotConfigured e) {
                 return ResponseEntity.badRequest().body(e.getMessage());
             }
             return ResponseEntity.badRequest().body("The request could not be processed!");
@@ -165,7 +168,8 @@ public final class AppControllers {
         }
 
         private ResponseEntity<String> startApp(final UUID appId,
-                                                final String containerID) throws IOException {
+                                                final String containerID) throws IOException,
+                PortainerNotConfigured {
             //Start the deployed app
             return startAppContainer(containerID == null ? deployApp(appId) : containerID);
         }
@@ -205,7 +209,7 @@ public final class AppControllers {
         }
 
         private ResponseEntity<String> startAppContainer(final String containerID)
-                throws IOException {
+                throws IOException, PortainerNotConfigured {
             final var startResponse = portainerRequestService.startContainer(containerID);
             if (startResponse.isSuccessful()) {
                 return ResponseEntity.ok("Successfully started the app.");
