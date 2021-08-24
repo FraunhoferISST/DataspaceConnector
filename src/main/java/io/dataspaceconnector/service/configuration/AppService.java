@@ -15,17 +15,15 @@
  */
 package io.dataspaceconnector.service.configuration;
 
-import io.dataspaceconnector.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.app.AppFactory;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.artifact.LocalData;
+import io.dataspaceconnector.repository.AppRepository;
 import io.dataspaceconnector.repository.DataRepository;
-import io.dataspaceconnector.repository.RemoteEntityRepository;
 import io.dataspaceconnector.service.resource.BaseEntityService;
-import io.dataspaceconnector.util.ErrorMessage;
-import io.dataspaceconnector.util.Utils;
+import io.dataspaceconnector.service.resource.RemoteResolver;
 import io.dataspaceconnector.util.exception.NotImplemented;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
@@ -46,7 +44,7 @@ import java.util.UUID;
  */
 @Log4j2
 @Service
-public class AppService extends BaseEntityService<App, AppDesc> {
+public class AppService extends BaseEntityService<App, AppDesc> implements RemoteResolver {
 
     /**
      * The AppStoreService, to get related appstores.
@@ -78,26 +76,10 @@ public class AppService extends BaseEntityService<App, AppDesc> {
         return getRepository().findAll();
     }
 
-    /**
-     * Find app by remoteID.
-     *
-     * @param remoteID remoteID of the app to find.
-     * @return optional of found app.
-     */
-    public UUID getByRemoteID(final URI remoteID) {
-        Utils.requireNonNull(remoteID, ErrorMessage.ENTITYID_NULL);
-
-        final Optional<UUID> entity =
-                ((RemoteEntityRepository) getRepository()).identifyByRemoteId(remoteID);
-
-        if (entity.isEmpty()) {
-            // Handle with global exception handler
-            throw new ResourceNotFoundException(
-                    this.getClass().getSimpleName() + ": " + remoteID
-            );
-        }
-
-        return entity.get();
+    @Override
+    public final Optional<UUID> identifyByRemoteId(final URI remoteId) {
+        final var repo = (AppRepository) getRepository();
+        return repo.identifyByRemoteId(remoteId);
     }
 
     /**

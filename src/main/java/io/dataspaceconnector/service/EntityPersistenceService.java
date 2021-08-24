@@ -306,13 +306,15 @@ public class EntityPersistenceService {
             throws ResourceNotFoundException, IllegalArgumentException, IOException {
         final var base64Data = MessageUtils.extractPayloadFromMultipartMessage(response);
 
-        final var id = appService.getByRemoteID(appId);
+        final var id = appService.identifyByRemoteId(appId);
+        if (id.isPresent()) {
+            appService.setData(id.get(),
+                    new ByteArrayInputStream(base64Data.getBytes(StandardCharsets.UTF_8))
+            );
+        }
 
-        appService.setData(id,
-                new ByteArrayInputStream(base64Data.getBytes(StandardCharsets.UTF_8))
-        );
         if (log.isDebugEnabled()) {
-            log.debug("Updated data from artifact. [target=({})]", appId);
+            log.debug("Updated data from app. [target=({})]", appId);
         }
     }
 }
