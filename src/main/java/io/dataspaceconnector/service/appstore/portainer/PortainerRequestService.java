@@ -697,8 +697,39 @@ public class PortainerRequestService {
 
         final var request = builder.build();
 
+        final var createContainerResponse = httpService.send(request);
+
+        final var body = createContainerResponse.body().string();
+        final var portainerObj = new JSONObject(body).getJSONObject("Portainer");
+        final var resourceControl = portainerObj.getJSONObject("ResourceControl");
+        final var resourceId = resourceControl.getInt("Id");
+
+        updateOwnerShip(resourceId);
+
         //return container id
-        return new JSONObject(httpService.send(request).body().string()).getString("Id");
+        return new JSONObject(body).getString("Id");
+    }
+
+    private void updateOwnerShip(final int resourceId) throws IOException {
+        final var builder = getRequestBuilder();
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments("api/resource_controls/" + resourceId);
+
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
+        builder.url(url);
+
+        var jsonPayload = new JSONObject();
+        jsonPayload.put("AdministratorsOnly", true);
+        jsonPayload.put("Public", false);
+        builder.put(RequestBody.create(jsonPayload.toString(),
+                MediaType.parse("application/json")));
+
+        final var request = builder.build();
+        httpService.send(request);
     }
 
     /**
