@@ -711,8 +711,10 @@
 								<exclude>**/*.env</exclude>
 								<exclude>**/lombok.config</exclude>
 								<exclude>**/.dockerignore</exclude>
-								<exclude>charts/dataspace-connector/Chart.lock</exclude>
-								<exlcude>charts/dataspace-connector/.helmignore</exlcude>
+								<exclude>charts/**/Chart.lock</exclude>
+								<exclude>charts/**/.helmignore</exclude>
+								<exclude>charts/**/**/*.yaml</exclude>
+								<exclude>charts/**/**/NOTES.txt</exclude>
 								<exclude>**/*.tgz</exclude>
 								<exclude>charts/**/*.tpl</exclude>
 								<exclude>docs/**</exclude>
