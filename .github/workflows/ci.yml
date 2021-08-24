@@ -235,6 +235,7 @@ jobs:
           cat /etc/rancher/k3s/k3s.yaml
           mkdir -p ~/.kube
           cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+          chmod 600 ~/.kube/config
       - name: Test environment
         run: |
           kubectl cluster-info
