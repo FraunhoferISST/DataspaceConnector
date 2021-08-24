@@ -655,20 +655,26 @@ public class PortainerRequestService {
 
         //get all ports from the appTemplate
         for (int i = 0; i < templateObject.getJSONArray("ports").length(); i++) {
-            var portObj = templateObject.getJSONArray("ports").getJSONObject(i);
-
-            if (!portObj.isNull("INPUT_ENDPOINT")) {
-                var inputPorts = portObj.getString("INPUT_ENDPOINT");
-                inputPorts = inputPorts.substring(inputPorts.indexOf(":") + 1);
-                ports.add(inputPorts);
-            }
-
-            if (!portObj.isNull("OUTPUT_ENDPOINT")) {
-                var outputPorts = portObj.getString("OUTPUT_ENDPOINT");
-                outputPorts = outputPorts.substring(outputPorts.indexOf(":") + 1);
-                ports.add(outputPorts);
+            var portArr = templateObject.getJSONArray("ports");
+            if (!(JSONObject.class.equals(portArr.get(i).getClass()))) {
+                if (portArr.get(i).toString().contains(":")) {
+                    var defaultPortSpec = portArr.get(i).toString()
+                            .substring(portArr.get(i).toString().indexOf(":") + 1);
+                    ports.add(defaultPortSpec);
+                } else {
+                    ports.add(portArr.get(i).toString());
+                }
+            } else {
+                final var keyElements = portArr.getJSONObject(i);
+                Set<String> set = keyElements.keySet();
+                for (var tmpKey : set) {
+                    var port = portArr.getJSONObject(i).getString(tmpKey);
+                    port = port.substring(port.indexOf(":") + 1);
+                    ports.add(port);
+                }
             }
         }
+
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
