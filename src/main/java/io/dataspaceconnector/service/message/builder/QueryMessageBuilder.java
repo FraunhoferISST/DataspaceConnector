@@ -88,8 +88,8 @@ public class QueryMessageBuilder extends IdsMessageBuilder<QueryMessageImpl, Str
             final var offset = exchange
                     .getProperty(ParameterUtils.QUERY_OFFSET_PARAM, Integer.class);
 
-            payload = String.format(FullTextQueryTemplate.FULL_TEXT_QUERY, searchTerm,
-                                    limit, offset);
+            payload = String.format(FullTextQueryTemplate.FULL_TEXT_QUERY.replace("\n", "%n"),
+                                    searchTerm, limit, offset);
         }
 
         return new Request<>((QueryMessageImpl) message, payload, Optional.empty());
