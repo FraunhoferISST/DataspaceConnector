@@ -15,31 +15,30 @@
  */
 package io.dataspaceconnector.controller.resource.view.configuration;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.controller.resource.type.ConfigurationController;
 import io.dataspaceconnector.controller.resource.view.keystore.KeystoreViewAssembler;
 import io.dataspaceconnector.controller.resource.view.proxy.ProxyViewAssembler;
 import io.dataspaceconnector.controller.resource.view.truststore.TruststoreViewAssembler;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.configuration.Configuration;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 /**
  * Assembles the REST resource for a configuration.
  */
 @Component
-public class ConfigurationViewAssembler implements
+public class ConfigurationViewAssembler extends SelfLinkHelper implements
         RepresentationModelAssembler<Configuration, ConfigurationView>, SelfLinking {
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId,
-                ConfigurationController.class);
+        return getSelfLink(entityId, ConfigurationController.class);
     }
 
     @Override

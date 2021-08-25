@@ -23,7 +23,7 @@ import io.dataspaceconnector.controller.resource.relation.OfferedResourcesToRepr
 import io.dataspaceconnector.controller.resource.relation.OfferedResourcesToSubscriptionsController;
 import io.dataspaceconnector.controller.resource.type.OfferedResourceController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -41,7 +41,7 @@ import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.met
  */
 @Component
 @NoArgsConstructor
-public class OfferedResourceViewAssembler
+public class OfferedResourceViewAssembler extends SelfLinkHelper
         implements RepresentationModelAssembler<OfferedResource, OfferedResourceView>, SelfLinking {
     /**
      * Construct the OfferedResourceView from an OfferedResource.
@@ -86,6 +86,6 @@ public class OfferedResourceViewAssembler
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, OfferedResourceController.class);
+        return getSelfLink(entityId, OfferedResourceController.class);
     }
 }
