@@ -16,6 +16,7 @@
 package io.dataspaceconnector.service;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.ids.mapping.RdfConverter;
 import io.dataspaceconnector.common.net.QueryInput;
@@ -156,6 +157,7 @@ public class EntityResolver {
      * @return The respective object.
      * @throws IllegalArgumentException If the resource is null or the elementId.
      */
+    @SuppressFBWarnings("REC_CATCH_EXCEPTION")
     public Optional<Entity> getEntityById(final URI elementId) {
         Utils.requireNonNull(elementId, ErrorMessage.URI_NULL);
 
@@ -193,6 +195,7 @@ public class EntityResolver {
      * @param entity The connector's entity.
      * @return A rdf string of an ids object.
      */
+    @SuppressFBWarnings("REC_CATCH_EXCEPTION")
     public <T extends Entity> String getEntityAsRdfString(final T entity)
             throws InvalidResourceException {
         // NOTE Maybe the builder class could be found without the ugly if array?

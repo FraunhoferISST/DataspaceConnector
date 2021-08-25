@@ -32,6 +32,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.Language;
 import de.fraunhofer.iais.eis.SecurityProfile;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.configuration.DeployMode;
@@ -62,6 +63,7 @@ public final class GuiUtils {
      * @param enumName name of the enum
      * @return enums as string
      */
+    @SuppressFBWarnings("IMPROPER_UNICODE")
     public static String getSpecificEnum(final String enumName) {
         final var name = enumName.toLowerCase(Locale.ENGLISH);
         JSONArray sortedJsonArray = null;

@@ -43,6 +43,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Handles the basic logic for subscriptions.
  */
@@ -157,6 +159,7 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
      * @throws SubscriptionProcessingException if the subscription could not be removed.
      * @throws ResourceNotFoundException       if not matching subscription could be found.
      */
+    @SuppressFBWarnings("REC_CATCH_EXCEPTION")
     public void removeSubscription(final URI target, final URI issuer)
             throws SubscriptionProcessingException, ResourceNotFoundException {
         final var subscriptions = getBySubscriberAndTarget(issuer, target);
