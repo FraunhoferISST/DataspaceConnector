@@ -274,7 +274,7 @@ public final class AppControllers {
         }
 
         /**
-         * @param containerId The id of the container.
+         * @param appId The id of the app.
          * @return Response which describes the current app.
          */
         @GetMapping("/{id}/describe")
@@ -285,16 +285,23 @@ public final class AppControllers {
         @ApiResponse(responseCode = "500", description = "Internal server error")
         @ResponseBody
         public final ResponseEntity<String> containerDescription(
-                final @PathVariable("id") String containerId) {
+                final @PathVariable("id") UUID appId) {
             ResponseEntity<String> response;
             try {
-                final var descriptionResponse = portainerRequestService
-                        .getContainerDescription(containerId);
-                if (descriptionResponse.isSuccessful()) {
-                    response = ResponseEntity.ok(descriptionResponse.body().string());
+                final var containerId = appService.get(appId).getContainerID();
+
+                if (containerId != null) {
+                    final var descriptionResponse = portainerRequestService
+                            .getContainerDescription(containerId);
+                    if (descriptionResponse.isSuccessful()) {
+                        response = ResponseEntity.ok(descriptionResponse.body().string());
+                    } else {
+                        response = ResponseEntity.internalServerError()
+                                .body(descriptionResponse.body().string());
+                    }
                 } else {
-                    response = ResponseEntity.internalServerError()
-                            .body(descriptionResponse.body().string());
+                    response = ResponseEntity.badRequest().body("App not deployed as container,"
+                            + " no information available.");
                 }
             } catch (IOException e) {
                 response = ResponseEntity.badRequest().body(e.getMessage());
