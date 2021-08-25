@@ -25,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -121,7 +122,8 @@ public class ConfigurationControllerIT {
 
     @Test
     @WithMockUser("ADMIN")
-     public void setConfiguration_validInput_swapConfig() throws Exception {
+    @Transactional
+    public void setConfiguration_validInput_swapConfig() throws Exception {
         final var newObject =
                 mockMvc.perform(post("/api/configurations")
                                         .contentType(MediaType.APPLICATION_JSON)
