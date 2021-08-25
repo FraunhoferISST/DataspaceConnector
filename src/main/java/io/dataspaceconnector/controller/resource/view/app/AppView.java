@@ -28,6 +28,7 @@ import org.springframework.hateoas.server.core.Relation;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A DTO for controlled exposing of app information in API responses.
@@ -135,4 +136,9 @@ public class AppView extends RepresentationModel<AppView> {
      * "Runtime environment of a data app, e.g., software (or hardware) required to run the app.
      */
     private String runtimeEnvironment;
+
+    /**
+     * Additional properties.
+     */
+    private Map<String, String> additional;
 }
