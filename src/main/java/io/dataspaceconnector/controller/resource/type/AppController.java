@@ -28,7 +28,6 @@ import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.app.AppImpl;
-import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
 import io.dataspaceconnector.service.resource.type.AppService;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -52,6 +51,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
@@ -109,39 +109,43 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     @ResponseBody
     public final ResponseEntity<Object> containerManagement(
             @PathVariable("id") final UUID appId,
-            @RequestParam("actionType") final ActionType type) {
+            @RequestParam("actionType") final String type) {
+        final var action = type.toUpperCase();
         final var app = getService().get(appId);
         var containerId = ((AppImpl) app).getContainerId();
 
         Response response;
         try {
-            switch (type) {
-                case START:
-                    response = portainerSvc.startContainer(
-                            containerId == null || containerId.equals("")
-                            ? deployApp(app) : containerId);
-                    return readResponse(response, "Successfully started the app.");
-                case STOP:
-                    if (containerId == null || containerId.equals("")) {
-                        return new ResponseEntity<>("No container id provided.",
-                                HttpStatus.NOT_FOUND);
-                    }
+            portainerSvc.createEndpointId();
 
-                    response = portainerSvc.stopContainer(containerId);
-                    return readResponse(response, "Successfully stopped the app.");
-                case DELETE:
-                    if (containerId == null || containerId.equals("")) {
-                        return new ResponseEntity<>("No container id provided.",
-                                HttpStatus.NOT_FOUND);
-                    }
+            if (ActionType.START.name().equals(action)) {
+                response = portainerSvc.startContainer(
+                        containerId == null || containerId.equals("")
+                                ? deployApp(app) : containerId);
+                return readResponse(response, "Successfully started the app.");
+            } else if (ActionType.STOP.name().equals(action)) {
+                if (containerId == null || containerId.equals("")) {
+                    return new ResponseEntity<>("No container id provided.",
+                            HttpStatus.NOT_FOUND);
+                }
 
-                    response = portainerSvc.deleteContainer(containerId);
-                    getService().deleteContainerIdFromApp(appId);
-                    return readResponse(response, "Successfully deleted the app.");
-                default:
-                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                response = portainerSvc.stopContainer(containerId);
+                return readResponse(response, "Successfully stopped the app.");
+            } else if (ActionType.DELETE.name().equals(action)) {
+                if (containerId == null || containerId.equals("")) {
+                    return new ResponseEntity<>("No container id provided.",
+                            HttpStatus.NOT_FOUND);
+                }
+
+                response = portainerSvc.deleteContainer(containerId);
+                // getService().deleteContainerIdFromApp(appId); // TODO ???
+                portainerSvc.deleteUnusedVolumes();
+                return readResponse(response, "Successfully deleted the app.");
+            } else {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-        } catch (IOException | PortainerNotConfigured e) {
+        } catch (RuntimeException | IOException | PortainerNotConfigured e) {
+            // TODO Improve exception handling
             if (log.isWarnEnabled()) {
                 log.warn("Could not process action. [exception=({})]", e.getMessage());
             }
@@ -150,9 +154,8 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     }
 
     private String deployApp(final App app) throws IOException, PortainerNotConfigured {
-        final var appData = ((AppImpl) app).getData();
-        final var value = ((LocalData) appData).getValue();
-        final var template = IOUtils.toString(value, "UTF-8");
+        final var data = getService().getDataFromInternalDB((AppImpl) app);
+        final var template = IOUtils.toString(data, StandardCharsets.UTF_8);
 
         // 1. Create Registry with given information from AppStore template.
         final var registryId = portainerSvc.createRegistry(template);
@@ -169,8 +172,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         // Persist containerID.
         getService().setContainerIdForApp(app.getId(), containerId);
 
-        // 5. Create Network for the container.
-        //TODO: Get network of currently running DSC and put App in same network
+        // 5. Get "bride" network-id in Portainer
         final var networkId = portainerSvc.getNetworkId("bridge");
 
         // 6. Join container into the new created network.
@@ -237,10 +239,27 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     }
 
     private ResponseEntity<Object> readResponse(final Response response, final Object body) {
-        if (response.isSuccessful()) {
-            return ResponseEntity.ok(body);
-        } else {
-            return ResponseEntity.internalServerError().body(response.body());
+        // TODO improve response checking vor portainer service
+        if (response != null) {
+            final var responseCode = String.valueOf(response.code());
+
+            switch (responseCode) {
+                case ResponseCode.NOT_MODIFIED:
+                    return new ResponseEntity<>("App is already running.", HttpStatus.BAD_REQUEST);
+                case ResponseCode.CONFLICT:
+                    return new ResponseEntity<>("Cannot delete a running app.",
+                            HttpStatus.BAD_REQUEST);
+                case ResponseCode.UNAUTHORIZED:
+                    return new ResponseEntity<>("Portainer authorization failed.",
+                            HttpStatus.INTERNAL_SERVER_ERROR);
+                default:
+                    break;
+            }
+
+            if (response.isSuccessful()) {
+                return ResponseEntity.ok(body);
+            }
         }
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

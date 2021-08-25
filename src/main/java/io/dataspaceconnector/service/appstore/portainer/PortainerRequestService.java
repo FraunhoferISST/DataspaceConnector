@@ -469,6 +469,8 @@ public class PortainerRequestService {
     }
 
     /**
+     * Delete image.
+     *
      * @param imageId id of the image to delete.
      * @return response from portainer.
      * @throws IOException when requesting portainer fails.
@@ -491,6 +493,8 @@ public class PortainerRequestService {
     }
 
     /**
+     * Delete network by id.
+     *
      * @param networkId id of the network to delete.
      * @return response from portainer.
      * @throws IOException when requesting portainer fails.
@@ -513,6 +517,8 @@ public class PortainerRequestService {
     }
 
     /**
+     * Delete volumes by id.
+     *
      * @param volumeId id of the volume to delete.
      * @return response from portainer.
      * @throws IOException when requesting portainer fails.
