@@ -217,4 +217,11 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
         // TODO Keep in AppImpl?
         app.setContainerId(containerId);
     }
+
+    /**
+     * @param app The app entity.
+     */
+    public void deleteContainerId(final App app) {
+        app.setContainerID(null);
+    }
 }

@@ -29,6 +29,7 @@ import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
 import io.dataspaceconnector.service.configuration.AppService;
 import io.dataspaceconnector.util.Utils;
+import io.dataspaceconnector.util.exception.PortainerNotConfigured;
 import io.dataspaceconnector.view.app.AppView;
 import io.dataspaceconnector.view.appstore.AppStoreView;
 import io.dataspaceconnector.view.appstore.AppStoreViewAssembler;
@@ -129,23 +130,28 @@ public final class AppControllers {
             var containerID = appService.get(appId).getContainerID();
 
             try {
+                portainerRequestService.getEndpointID();
+
                 if (ActionType.START.name().equals(action)) {
                     return startApp(appId, containerID);
                 } else if (ActionType.STOP.name().equals(action)) {
                     return stopApp(containerID);
                 } else if (ActionType.DELETE.name().equals(action)) {
-                    return deleteApp(containerID);
+                    return deleteApp(containerID, appId);
                 }
-            } catch (IOException e) {
+            } catch (IOException | PortainerNotConfigured e) {
                 return ResponseEntity.badRequest().body(e.getMessage());
             }
             return ResponseEntity.badRequest().body("The request could not be processed!");
         }
 
-        private ResponseEntity<String> deleteApp(final String containerID) throws IOException {
+        private ResponseEntity<String> deleteApp(final String containerID,
+                                                 final UUID appId) throws IOException {
             if (containerID != null) {
                 //Container for App exists, delete it
-                return deleteAppContainer(containerID);
+                final var response = deleteAppContainer(containerID);
+                appService.deleteContainerIDFromApp(appId);
+                return response;
             } else {
                 //No container exists for App to delete
                 return ResponseEntity.badRequest()
@@ -165,7 +171,8 @@ public final class AppControllers {
         }
 
         private ResponseEntity<String> startApp(final UUID appId,
-                                                final String containerID) throws IOException {
+                                                final String containerID) throws IOException,
+                PortainerNotConfigured {
             //Start the deployed app
             return startAppContainer(containerID == null ? deployApp(appId) : containerID);
         }
@@ -192,9 +199,8 @@ public final class AppControllers {
             // Persist containerID
             appService.setContainerIdForApp(appId, createdContainerId);
 
-            //5. Create Network for the container
-            //TODO: Get network of currently running DSC and put App in same network
-            final var networkID = portainerRequestService.createNetwork("bridge", true, false);
+            //5. Get "bride" network-id in Portainer
+            final var networkID = portainerRequestService.getNetworkId("bridge");
 
             //6. Join container into the new created network
             portainerRequestService.joinNetwork(createdContainerId, networkID);
@@ -206,7 +212,7 @@ public final class AppControllers {
         }
 
         private ResponseEntity<String> startAppContainer(final String containerID)
-                throws IOException {
+                throws IOException, PortainerNotConfigured {
             final var startResponse = portainerRequestService.startContainer(containerID);
             if (startResponse.isSuccessful()) {
                 return ResponseEntity.ok("Successfully started the app.");

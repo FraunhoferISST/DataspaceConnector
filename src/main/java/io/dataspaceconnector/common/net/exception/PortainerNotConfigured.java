@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector;
+package io.dataspaceconnector.util.exception;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
+/**
+ * Exception class for portainer configuration.
+ */
+public class PortainerNotConfigured extends Exception {
 
-@SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class ConnectorApplicationIT {
-    @Test
-    void contextLoads() {
-    }
+    /**
+     * Serial version uid.
+     **/
+    private static final long serialVersionUID = 1L;
 }

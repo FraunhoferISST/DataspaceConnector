@@ -16,6 +16,7 @@
 package io.dataspaceconnector.service.appstore.portainer;
 
 import de.fraunhofer.ids.messaging.protocol.http.HttpService;
+import io.dataspaceconnector.util.exception.PortainerNotConfigured;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -32,10 +33,13 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Service class for app store registries. It allows communicating with Portainer's API to manage
@@ -70,6 +74,11 @@ public class PortainerRequestService {
      * Registry Type for requests.
      */
     private static final int REGISTRY_TYPE = 3;
+
+    /**
+     * The endpoint id in portainer.
+     */
+    private String endpointID;
 
     /**
      * @return If successful, a jwt token is returned for authentication.
@@ -107,16 +116,16 @@ public class PortainerRequestService {
      * @throws IOException if an error occurs while starting the container.
      */
     public Response startContainer(final String containerId) throws IOException {
-        String jwt = getJwtToken();
         final var builder = getRequestBuilder();
 
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/1/docker/containers/" + containerId + "/start");
+                .addPathSegments("api/endpoints/" + endpointID + "/docker/containers/"
+                        + containerId + "/start");
         final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
         builder.url(url);
         builder.post(RequestBody.create(new byte[0], null));
 
@@ -130,16 +139,16 @@ public class PortainerRequestService {
      * @throws IOException if an error occurs while stopping the container.
      */
     public Response stopContainer(final String containerId) throws IOException {
-        String jwt = getJwtToken();
         final var builder = getRequestBuilder();
 
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/1/docker/containers/" + containerId + "/stop");
+                .addPathSegments("api/endpoints/" + endpointID + "/docker/containers/"
+                        + containerId + "/stop");
         final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
         builder.url(url);
         builder.post(RequestBody.create(new byte[0], null));
 
@@ -153,16 +162,16 @@ public class PortainerRequestService {
      * @throws IOException if an error occurs while deleting the container.
      */
     public Response deleteContainer(final String containerId) throws IOException {
-        String jwt = getJwtToken();
         final var builder = getRequestBuilder();
 
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/1/docker/containers/" + containerId);
+                .addPathSegments("api/endpoints/" + endpointID
+                        + "/docker/containers/" + containerId);
         final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
         builder.url(url);
         builder.delete();
 
@@ -176,21 +185,87 @@ public class PortainerRequestService {
      * @throws IOException if an error occurs while deleting the container.
      */
     public Response getDescriptionByContainerId(final String containerId) throws IOException {
-        String jwt = getJwtToken();
         final var builder = getRequestBuilder();
 
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/1/docker/containers/" + containerId + "/json");
+                .addPathSegments("api/endpoints/" + endpointID + "/docker/containers/"
+                        + containerId + "/json");
         final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
         builder.url(url);
         builder.get();
 
         final var request = builder.build();
         return httpService.send(request);
+    }
+
+    /**
+     * @throws IOException if an error occurs while requesting the id of the endpoint.
+     * @throws PortainerNotConfigured if portainer is not configured.
+     */
+    public void getEndpointID() throws PortainerNotConfigured, IOException {
+            final var builder = getRequestBuilder();
+            final var urlBuilder = new HttpUrl.Builder()
+                    .scheme("http")
+                    .host(portainerConfig.getPortainerHost())
+                    .port(portainerConfig.getPortainerPort())
+                    .addPathSegments("api/endpoints")
+                    .addQueryParameter("limit", "0")
+                    .addQueryParameter("start", "1");
+            final var url = urlBuilder.build();
+            builder.addHeader("Authorization", "Bearer " + getJwtToken());
+            builder.url(url);
+            builder.get();
+
+            final var request = builder.build();
+            final var response = httpService.send(request);
+            final var jsonArray = new JSONArray(response.body().string());
+
+            for (var tmpObj : jsonArray) {
+                if (((JSONObject) tmpObj).getNumber("Type").equals(1)) {
+                    endpointID = ((JSONObject) tmpObj).get("Id").toString();
+                }
+            }
+            if (endpointID == null) {
+                throw new PortainerNotConfigured();
+            }
+    }
+
+    /**
+     * Gets the Portainer network ID of by its name.
+     * @param networkName The name of the portainer network.
+     * @return ID of the network in Portainer.
+     * @throws IOException Exception while connecting to Portainer.
+     */
+    public String getNetworkId(final String networkName) throws IOException {
+        final var builder = getRequestBuilder();
+
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments("api/endpoints/" + endpointID + "/docker/networks");
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
+        builder.url(url);
+        builder.get();
+
+        final var request = builder.build();
+        final var response = httpService.send(request);
+        final var networks = new JSONArray(
+                Objects.requireNonNull(response.body()).string());
+
+        for (final var network : networks) {
+            if (((JSONObject) network).get("Name").equals(networkName)) {
+                return ((JSONObject) network).get("Id").toString();
+            }
+        }
+
+        //If network does not exist, create it.
+        return createNetwork(networkName, true, false);
     }
 
     /**
@@ -226,8 +301,6 @@ public class PortainerRequestService {
             requestBody.put("Password", authObject.getString("password"));
         }
 
-
-        final var jwt = getJwtToken();
         final var builder = getRequestBuilder();
 
         final var urlBuilder = new HttpUrl.Builder()
@@ -236,7 +309,7 @@ public class PortainerRequestService {
                 .port(portainerConfig.getPortainerPort())
                 .addPathSegments("api/registries");
         final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
         builder.url(url);
         builder.post(RequestBody.create(requestBody.toString(),
                 MediaType.parse("application/json")));
@@ -254,7 +327,6 @@ public class PortainerRequestService {
      * @throws IOException Exception while connection to portainer.
      */
     public void deleteRegistry(final Integer registryId) throws IOException {
-        final var jwt = getJwtToken();
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
@@ -263,7 +335,7 @@ public class PortainerRequestService {
                 .addPathSegments("api/registries/" + registryId);
 
         final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
         builder.url(url);
         builder.delete(RequestBody.create(new byte[0], null));
         final var request = builder.build();
@@ -299,16 +371,16 @@ public class PortainerRequestService {
             final String containerID,
             final String networkName,
             final boolean force) throws IOException {
-        final var jwt = getJwtToken();
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/1/docker/networks/" + networkName + "/disconnect");
+                .addPathSegments("api/endpoints/" + endpointID + "/docker/networks/"
+                        + networkName + "/disconnect");
 
         final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
         builder.url(url);
         var jsonPayload = new JSONObject();
         jsonPayload.put("Container", containerID);
@@ -328,7 +400,6 @@ public class PortainerRequestService {
      * @throws IOException if request to portainer fails.
      */
     public Response getRegistries() throws IOException {
-        final var jwt = getJwtToken();
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
@@ -337,7 +408,7 @@ public class PortainerRequestService {
                 .addPathSegments("api/registries");
 
         final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
         builder.url(url);
         builder.get();
 
@@ -351,16 +422,15 @@ public class PortainerRequestService {
      * @throws IOException when requesting portainer fails.
      */
     public Response deleteImage(final String imageId) throws IOException {
-        final var jwt = getJwtToken();
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/1/docker/images/" + imageId);
+                .addPathSegments("api/endpoints/" + endpointID + "/docker/images/" + imageId);
 
         final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
         builder.url(url);
         builder.delete();
 
@@ -374,16 +444,15 @@ public class PortainerRequestService {
      * @throws IOException when requesting portainer fails.
      */
     public Response deleteNetwork(final String networkId) throws IOException {
-        final var jwt = getJwtToken();
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/1/docker/networks/" + networkId);
+                .addPathSegments("api/endpoints/" + endpointID + "/docker/networks/" + networkId);
 
         final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
         builder.url(url);
         builder.delete();
 
@@ -397,16 +466,15 @@ public class PortainerRequestService {
      * @throws IOException when requesting portainer fails.
      */
     public Response deleteVolume(final String volumeId) throws IOException {
-        final var jwt = getJwtToken();
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/1/docker/volumes/" + volumeId);
+                .addPathSegments("api/endpoints/" + endpointID + "/docker/volumes/" + volumeId);
 
         final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
         builder.url(url);
         builder.delete();
 
@@ -421,39 +489,100 @@ public class PortainerRequestService {
      */
     public Response pullImage(final String appStoreTemplate) throws IOException {
         final var templateObject = toJsonObject(appStoreTemplate);
-        final var registryUrl = URLEncoder.encode(
-                templateObject.getString("registry"), StandardCharsets.UTF_8
-        );
-        final var image = URLEncoder.encode(
-                templateObject.getString("image"), StandardCharsets.UTF_8
-        ).replace("%3A", ":");
-        final var encodedSlash = URLEncoder.encode("/", StandardCharsets.UTF_8);
+        final var registryUrl = templateObject.getString("registry");
 
-        //Needed info from AppStore template for URL params:
-        //Registry-URL and Image-Details
+        var image = templateObject.getString("image");
+        var imageTag = "";
+        if (image.contains(":")) {
+            imageTag = ":" + image.split(":")[1];
+            image = image.split(":")[0];
+        } else {
+            imageTag = ":latest";
+        }
 
-        final var jwt = getJwtToken();
+        final var imagePostBody = image;
+        image = URLEncoder.encode(image, StandardCharsets.UTF_8);
+        image += imageTag;
+
         final var builder = getRequestBuilder();
 
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/1/docker/images/create")
-                .addEncodedQueryParameter("fromImage", registryUrl
-                        + encodedSlash + image);
+                .addPathSegments("api/endpoints/" + endpointID + "/docker/images/create")
+                .addEncodedQueryParameter("fromImage",
+                        registryUrl + "%2F" + image);
+
         final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
+
+        //Initial x-Auth header, Portainer will extend credentials based on registry information
+        final var auth = "{\"Username\": \"\", \"Password\": \"\", \"Serveraddress\": \""
+                + registryUrl + "\"}";
+        final var xAuthHeader = Base64.getEncoder().encodeToString(auth.getBytes());
+
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
+        builder.addHeader("X-Registry-Auth", xAuthHeader);
         builder.url(url);
         builder.post(
                 RequestBody.create(
                         new JSONObject()
-                                .put("fromImage", templateObject.getString("registry")
-                                        + "/" + templateObject.getString("image"))
+                                .put("fromImage", registryUrl + "/" + imagePostBody + imageTag)
                                 .toString(), MediaType.parse("application/json")));
 
         final var request = builder.build();
-        return httpService.send(request);
+        final var response = httpService.send(request);
+
+        final var tag = imagePostBody + imageTag;
+        waitForImagePull(tag);
+
+        return response;
+    }
+
+    private void waitForImagePull(final String tag) throws IOException {
+        //Check if image is successfully pulled in Portainer,
+        //otherwise wait until process is finished.
+        final var maxWaitTimeSec = 60;
+        var waitedTimeSec = 0;
+        while (true) {
+            if (log.isDebugEnabled()) {
+                log.debug("Validating image fully pulled (check {}/max {})",
+                        waitedTimeSec + 1,
+                        maxWaitTimeSec);
+            }
+            if (checkIfImageExists(tag) || waitedTimeSec == maxWaitTimeSec) {
+                break;
+            } else {
+                try {
+                    waitedTimeSec++;
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (Exception e) {
+                    break;
+                }
+            }
+        }
+    }
+
+    private boolean checkIfImageExists(final String tag) throws IOException {
+        final var builder = getRequestBuilder();
+
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments("api/endpoints/" + endpointID + "/docker/images/json")
+                .addQueryParameter("all", "1");
+
+        final var url = urlBuilder.build();
+
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
+        builder.url(url);
+        builder.get();
+
+        final var request = builder.build();
+        final var response = httpService.send(request);
+
+        return Objects.requireNonNull(response.body()).string().contains(tag);
     }
 
     /**
@@ -469,24 +598,35 @@ public class PortainerRequestService {
             volumes = templateObject.getJSONArray("volumes");
         }
 
-        final var jwt = getJwtToken();
-
         for (int i = 0; i < volumes.length(); i++) {
             final var currentVolume = volumes.getJSONObject(i);
+
+            // Get Key Names
+            Set<String> names = currentVolume.keySet();
+            final var namesList = new ArrayList<>(names);
+
             final var req = new JSONObject();
+            for (var key : namesList) {
+                if (!key.equals("container")) {
+                    final var value = currentVolume.getString(key);
+                    req.put(key, value);
+                    volumeNames.put(value, key);
+                }
+            }
             final var templateName = currentVolume.getString("container");
             final var validTemplateName = templateName
                     .substring(templateName.indexOf("/") + 1)
                     .replace("/", "_");
             req.put("Name", validTemplateName);
+
             final var builder = getRequestBuilder();
             final var urlBuilder = new HttpUrl.Builder()
                     .scheme("http")
                     .host(portainerConfig.getPortainerHost())
                     .port(portainerConfig.getPortainerPort())
-                    .addPathSegments("api/endpoints/1/docker/volumes/create");
+                    .addPathSegments("api/endpoints/" + endpointID + "/docker/volumes/create");
             final var url = urlBuilder.build();
-            builder.addHeader("Authorization", "Bearer " + jwt);
+            builder.addHeader("Authorization", "Bearer " + getJwtToken());
             builder.url(url);
             builder.post(
                     RequestBody.create(req.toString(), MediaType.parse("application/json"))
@@ -515,22 +655,35 @@ public class PortainerRequestService {
 
         //get all ports from the appTemplate
         for (int i = 0; i < templateObject.getJSONArray("ports").length(); i++) {
-            var portObj = templateObject.getJSONArray("ports").getJSONObject(i);
-            //TODO different field names here?
-            var portString = portObj.getString("INPUT_ENDPOINT");
-            portString = portString.substring(portString.indexOf(":") + 1);
-            ports.add(portString);
+            var portArr = templateObject.getJSONArray("ports");
+            if (!(JSONObject.class.equals(portArr.get(i).getClass()))) {
+                if (portArr.get(i).toString().contains(":")) {
+                    var defaultPortSpec = portArr.get(i).toString()
+                            .substring(portArr.get(i).toString().indexOf(":") + 1);
+                    ports.add(defaultPortSpec);
+                } else {
+                    ports.add(portArr.get(i).toString());
+                }
+            } else {
+                final var keyElements = portArr.getJSONObject(i);
+                Set<String> set = keyElements.keySet();
+                for (var tmpKey : set) {
+                    var port = portArr.getJSONObject(i).getString(tmpKey);
+                    port = port.substring(port.indexOf(":") + 1);
+                    ports.add(port);
+                }
+            }
         }
-        final var jwt = getJwtToken();
+
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/1/docker/containers/create");
+                .addPathSegments("api/endpoints/" + endpointID + "/docker/containers/create");
 
         final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
         builder.url(url);
 
         //build json payload
@@ -544,8 +697,39 @@ public class PortainerRequestService {
 
         final var request = builder.build();
 
+        final var createContainerResponse = httpService.send(request);
+
+        final var body = createContainerResponse.body().string();
+        final var portainerObj = new JSONObject(body).getJSONObject("Portainer");
+        final var resourceControl = portainerObj.getJSONObject("ResourceControl");
+        final var resourceId = resourceControl.getInt("Id");
+
+        updateOwnerShip(resourceId);
+
         //return container id
-        return new JSONObject(httpService.send(request).body().string()).getString("Id");
+        return new JSONObject(body).getString("Id");
+    }
+
+    private void updateOwnerShip(final int resourceId) throws IOException {
+        final var builder = getRequestBuilder();
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments("api/resource_controls/" + resourceId);
+
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
+        builder.url(url);
+
+        var jsonPayload = new JSONObject();
+        jsonPayload.put("AdministratorsOnly", true);
+        jsonPayload.put("Public", false);
+        builder.put(RequestBody.create(jsonPayload.toString(),
+                MediaType.parse("application/json")));
+
+        final var request = builder.build();
+        httpService.send(request);
     }
 
     /**
@@ -557,17 +741,15 @@ public class PortainerRequestService {
      */
     public String createNetwork(final String networkName, final boolean pub,
                                   final boolean adminOnly) throws IOException {
-
-        final var jwt = getJwtToken();
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/1/docker/networks/create");
+                .addPathSegments("api/endpoints/" + endpointID + "/docker/networks/create");
 
         final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
         builder.url(url);
 
         var jsonPayload = PortainerUtil.createNetworkPayload(
@@ -593,18 +775,18 @@ public class PortainerRequestService {
      */
     public Response joinNetwork(final String containerID, final String networkID)
             throws IOException {
-        final var jwt = getJwtToken();
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
                 .addPathSegments(
-                        String.format("api/endpoints/1/docker/networks/%s/connect", networkID)
+                        String.format("api/endpoints/" + endpointID
+                                + "/docker/networks/%s/connect", networkID)
                 );
 
         final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
         builder.url(url);
 
         var jsonPayload = new JSONObject();
@@ -657,15 +839,14 @@ public class PortainerRequestService {
      * @throws IOException if sending request to portainer fails
      */
     public Response getItem(final String part) throws IOException {
-        final var jwt = getJwtToken();
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/1/docker/" + part);
+                .addPathSegments("api/endpoints/" + endpointID + "/docker/" + part);
         final var url = urlBuilder.build();
-        builder.addHeader("Authorization", "Bearer " + jwt);
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
         builder.url(url);
         builder.get();
         final var request = builder.build();

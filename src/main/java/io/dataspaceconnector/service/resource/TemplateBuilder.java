@@ -61,6 +61,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -225,8 +226,14 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
         final var appEndpointIds = Utils.toStream(template.getEndpoints())
                 .map(x -> build(x).getId()).collect(Collectors.toSet());
 
-        final var app = buildApp(template);
-
+        App app;
+        final var appId =
+                appService.identifyByRemoteId(template.getDesc().getRemoteId());
+        if (appId.isPresent()) {
+            app = updateApp(appId.get(), template);
+        } else {
+            app = buildApp(template);
+        }
         appEndpointLinker.add(app.getId(), appEndpointIds);
 
         return app;
@@ -252,6 +259,10 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
     private App buildApp(final AppTemplate template) {
         return appService.create(template.getDesc());
+    }
+
+    private App updateApp(final UUID appId, final AppTemplate template) {
+        return appService.update(appId, template.getDesc());
     }
 
     /**
