@@ -29,6 +29,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -116,8 +118,9 @@ public class XmlRouteLoader {
      * @param files the classpath resources.
      * @throws Exception if reading a file, parsing the XML or adding the route fails.
      */
+    @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
     private void loadRoutes(final Resource[] files) throws Exception {
-        for (var file: files) {
+        for (var file : files) {
             try (var inputStream = file.getInputStream()) {
                 loadRoutesFromInputStream(inputStream);
             }
