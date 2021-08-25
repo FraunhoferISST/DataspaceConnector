@@ -15,19 +15,28 @@
  */
 package io.dataspaceconnector.common.ids.message;
 
+import java.net.URI;
+import java.util.Arrays;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Message;
+import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.PolicyExecutionException;
 import io.dataspaceconnector.common.exception.UUIDFormatException;
 import io.dataspaceconnector.common.util.UUIDUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
+import io.dataspaceconnector.model.message.MessageDesc;
 import io.dataspaceconnector.service.message.builder.type.LogMessageService;
+import io.dataspaceconnector.service.message.builder.type.RequestService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import net.minidev.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
 
 /**
  * Service for communication with the clearing house.
@@ -36,6 +45,18 @@ import java.net.URI;
 @RequiredArgsConstructor
 @Log4j2
 public class ClearingHouseService {
+
+    /**
+     * The clearing house API path for creating processes.
+     */
+    @Value("${clearing.house.path.process:}")
+    private String processPath;
+
+    /**
+     * The clearing house API path for logging messages.
+     */
+    @Value("${clearing.house.path.log:}")
+    private String logPath;
 
     /**
      * Service for configuring policy settings.
@@ -47,6 +68,15 @@ public class ClearingHouseService {
      */
     private final @NonNull LogMessageService logMessageSvc;
 
+    /**
+     * Service for ids request messages.
+     */
+    private final @NonNull RequestService requestService;
+
+    /**
+     * Object mapper for mapping to JSON.
+     */
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * Send contract agreement to clearing house.
@@ -82,6 +112,42 @@ public class ClearingHouseService {
         }
     }
 
+    /**
+     * Creates a process at the Clearing House using a contract agreement's UUID, where both the
+     * provider and the consumer of the agreement are registered as process owners. This is
+     * necessary so that both parties are able to log messages under the same process.
+     *
+     * @param agreement the contract agreement.
+     * @throws JsonProcessingException if parsing the process owners to JSON format fails.
+     */
+    public void createProcessAtClearingHouse(final ContractAgreement agreement)
+            throws JsonProcessingException {
+        final var provider = agreement.getProvider();
+        final var consumer = agreement.getConsumer();
+        final var agreementId = UUIDUtils.uuidFromUri(agreement.getId()).toString();
+
+        // Add process ID to Clearing House URL.
+        final var clearingHouse = connectorConfig.getClearingHouse();
+        final var uriBuilder = UriComponentsBuilder
+                .fromHttpUrl(clearingHouse.toString());
+        uriBuilder.pathSegment(processPath, agreementId);
+        final var url = uriBuilder.build().toUri();
+
+        // Build message payload.
+        final var list = Arrays.asList(provider.toString(), consumer.toString());
+        final var payload = new JSONObject();
+        payload.put("owners", list);
+
+        // Send request message to Clearing House.
+        final var response = requestService.send(new MessageDesc(url),
+                objectMapper.writeValueAsString(payload));
+
+        if (!requestService.isValidResponseType(response)) {
+            throw new MessageResponseException("Received unexpected response message type from"
+                    + " the Clearing House.");
+        }
+    }
+
     private boolean isClearingHouseEnabled() {
         return !connectorConfig.getClearingHouse().toString().isBlank();
     }
@@ -89,7 +155,7 @@ public class ClearingHouseService {
     private URI buildDestination(final URI agreementId) {
         final var clearingHouse = connectorConfig.getClearingHouse();
         final var uriBuilder = UriComponentsBuilder.fromHttpUrl(clearingHouse.toString());
-        uriBuilder.pathSegment(UUIDUtils.uuidFromUri(agreementId).toString());
+        uriBuilder.pathSegment(logPath, UUIDUtils.uuidFromUri(agreementId).toString());
         return uriBuilder.build().toUri();
     }
 }
