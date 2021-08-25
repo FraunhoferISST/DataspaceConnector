@@ -190,6 +190,40 @@ public class PortainerRequestService {
     }
 
     /**
+     * Checks if the container with the given ID is running in Portainer.
+     * @param containerId The id of the container.
+     * @return Boolean, true if container running, else false.
+     * @throws IOException If an error occurs while connecting to Portainer.
+     */
+    public boolean validateContainerRunning(final String containerId) throws IOException {
+        final var builder = getRequestBuilder();
+
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments("api/endpoints/" + endpointID + "/docker/containers/json")
+                .addQueryParameter("all","1");
+
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
+        builder.url(url);
+        builder.get();
+
+        final var request = builder.build();
+        final var response = httpService.send(request);
+        final var containers = new JSONArray(Objects.requireNonNull(response.body()).string());
+
+        for (final var container : containers) {
+            if (((JSONObject) container).get("Id").equals(containerId)) {
+                return ((JSONObject) container).get("State").equals("running");
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Deletes not used images.
      *
      * @throws IOException if an error occurs while deleting not used images.
