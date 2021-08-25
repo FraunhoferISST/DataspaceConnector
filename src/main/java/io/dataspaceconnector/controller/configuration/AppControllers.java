@@ -173,9 +173,24 @@ public final class AppControllers {
         private ResponseEntity<String> startApp(final UUID appId,
                                                 final String containerID) throws IOException,
                 PortainerNotConfigured {
-            //Start the deployed app
-            // ToDO: Check if Container is always running  => Error Handling
-            return startAppContainer(containerID == null ? deployApp(appId) : containerID);
+
+            if (containerID == null) {
+                //If the app has never been started, no containerID can exist yet, deploy app
+                return startAppContainer(deployApp(appId));
+            } else {
+                //ContainerID already exists, the app has been started at some point.
+                if (appRunning(containerID)) {
+                    //If the app is already running and action START is called again via the API
+                    return ResponseEntity.badRequest().body("App is already running.");
+                } else {
+                    //App has already run once, but is not currently running, start app again
+                    return startAppContainer(containerID);
+                }
+            }
+        }
+
+        private boolean appRunning(final String containerID) throws IOException {
+            return portainerRequestService.validateContainerRunning(containerID);
         }
 
         private String deployApp(final UUID appId) throws IOException {
