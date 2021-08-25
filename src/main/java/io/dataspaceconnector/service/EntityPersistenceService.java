@@ -253,6 +253,7 @@ public class EntityPersistenceService {
      *
      * @param response  The response message map.
      * @param remoteUrl The provider's url for receiving app request messages.
+     * @return The descerialized app resource.
      */
     public AppResource saveAppMetadata(final Map<String, String> response, final URI remoteUrl)
             throws PersistenceException, IllegalArgumentException {

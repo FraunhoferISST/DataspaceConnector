@@ -141,8 +141,8 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
     }
 
     private boolean updatePolicies(final App app, final List<PolicyPattern> policies) {
-        final var newList =
-                FactoryUtils.updatePolicyList(app.getSupportedPolicies(), policies, new ArrayList<>());
+        final var newList = FactoryUtils.updatePolicyList(
+                app.getSupportedPolicies(), policies, new ArrayList<>());
         newList.ifPresent(app::setSupportedPolicies);
 
         return newList.isPresent();

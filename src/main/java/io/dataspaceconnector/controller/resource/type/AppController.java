@@ -119,9 +119,16 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
             portainerSvc.createEndpointId();
 
             if (ActionType.START.name().equals(action)) {
-                response = portainerSvc.startContainer(
-                        containerId == null || containerId.equals("")
-                                ? deployApp(app) : containerId);
+                if (containerId == null || containerId.equals("")) {
+                    containerId = deployApp(app);
+                } else {
+                    if (isAppRunning(containerId)) {
+                        return new ResponseEntity<>("App is already running.",
+                                HttpStatus.BAD_REQUEST);
+                    }
+                }
+
+                response = portainerSvc.startContainer(containerId);
                 return readResponse(response, "Successfully started the app.");
             } else if (ActionType.STOP.name().equals(action)) {
                 if (containerId == null || containerId.equals("")) {
@@ -133,12 +140,17 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
                 return readResponse(response, "Successfully stopped the app.");
             } else if (ActionType.DELETE.name().equals(action)) {
                 if (containerId == null || containerId.equals("")) {
-                    return new ResponseEntity<>("No container id provided.",
+                    return new ResponseEntity<>("No running container found.",
                             HttpStatus.NOT_FOUND);
                 }
 
+                if (isAppRunning(containerId)) {
+                    return new ResponseEntity<>("Cannot delete a running app.",
+                            HttpStatus.BAD_REQUEST);
+                }
+
                 response = portainerSvc.deleteContainer(containerId);
-                // getService().deleteContainerIdFromApp(appId); // TODO ???
+                getService().deleteContainerIdFromApp(appId);
                 portainerSvc.deleteUnusedVolumes();
                 return readResponse(response, "Successfully deleted the app.");
             } else {
@@ -151,6 +163,10 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
             }
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private boolean isAppRunning(final String containerID) throws IOException {
+        return portainerSvc.validateContainerRunning(containerID);
     }
 
     private String deployApp(final App app) throws IOException, PortainerNotConfigured {
@@ -245,7 +261,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
 
             switch (responseCode) {
                 case ResponseCode.NOT_MODIFIED:
-                    return new ResponseEntity<>("App is already running.", HttpStatus.BAD_REQUEST);
+
                 case ResponseCode.CONFLICT:
                     return new ResponseEntity<>("Cannot delete a running app.",
                             HttpStatus.BAD_REQUEST);

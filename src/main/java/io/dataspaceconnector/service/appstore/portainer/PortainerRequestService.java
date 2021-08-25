@@ -202,8 +202,8 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/" + endpointID + "/docker/containers/json")
-                .addQueryParameter("all","1");
+                .addPathSegments("api/endpoints/" + endpointId + "/docker/containers/json")
+                .addQueryParameter("all", "1");
 
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + getJwtToken());

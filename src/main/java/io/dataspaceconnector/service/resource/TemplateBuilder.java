@@ -383,6 +383,7 @@ class TemplateBuilderOfferedResource
      * @param contractService        The contract service.
      * @param contractRuleLinker     The contract-rule service.
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     @Autowired
     TemplateBuilderOfferedResource(
             final ResourceService<OfferedResource, OfferedResourceDesc> resourceService,
@@ -427,6 +428,7 @@ class TemplateBuilderRequestedResource
      * @param contractService        The contract service.
      * @param contractRuleLinker     The contract-rule service.
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     @Autowired
     TemplateBuilderRequestedResource(
             final ResourceService<RequestedResource, RequestedResourceDesc> resourceService,
