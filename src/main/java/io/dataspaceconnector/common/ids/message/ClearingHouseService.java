@@ -27,7 +27,7 @@ import io.dataspaceconnector.common.exception.PolicyExecutionException;
 import io.dataspaceconnector.common.exception.UUIDFormatException;
 import io.dataspaceconnector.common.util.UUIDUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
-import io.dataspaceconnector.model.message.MessageDesc;
+import io.dataspaceconnector.model.message.RequestMessageDesc;
 import io.dataspaceconnector.service.message.builder.type.LogMessageService;
 import io.dataspaceconnector.service.message.builder.type.RequestService;
 import lombok.NonNull;
@@ -122,29 +122,31 @@ public class ClearingHouseService {
      */
     public void createProcessAtClearingHouse(final ContractAgreement agreement)
             throws JsonProcessingException {
-        final var provider = agreement.getProvider();
-        final var consumer = agreement.getConsumer();
-        final var agreementId = UUIDUtils.uuidFromUri(agreement.getId()).toString();
+        if (isClearingHouseEnabled()) {
+            final var provider = agreement.getProvider();
+            final var consumer = agreement.getConsumer();
+            final var agreementId = UUIDUtils.uuidFromUri(agreement.getId()).toString();
 
-        // Add process ID to Clearing House URL.
-        final var clearingHouse = connectorConfig.getClearingHouse();
-        final var uriBuilder = UriComponentsBuilder
-                .fromHttpUrl(clearingHouse.toString());
-        uriBuilder.pathSegment(processPath, agreementId);
-        final var url = uriBuilder.build().toUri();
+            // Add process ID to Clearing House URL.
+            final var clearingHouse = connectorConfig.getClearingHouse();
+            final var uriBuilder = UriComponentsBuilder
+                    .fromHttpUrl(clearingHouse.toString());
+            uriBuilder.pathSegment(processPath, agreementId);
+            final var url = uriBuilder.build().toUri();
 
-        // Build message payload.
-        final var list = Arrays.asList(provider.toString(), consumer.toString());
-        final var payload = new JSONObject();
-        payload.put("owners", list);
+            // Build message payload.
+            final var list = Arrays.asList(provider.toString(), consumer.toString());
+            final var payload = new JSONObject();
+            payload.put("owners", list);
 
-        // Send request message to Clearing House.
-        final var response = requestService.send(new MessageDesc(url),
-                objectMapper.writeValueAsString(payload));
+            // Send request message to Clearing House.
+            final var response = requestService.send(new RequestMessageDesc(url),
+                    objectMapper.writeValueAsString(payload));
 
-        if (!requestService.isValidResponseType(response)) {
-            throw new MessageResponseException("Received unexpected response message type from"
-                    + " the Clearing House.");
+            if (!requestService.isValidResponseType(response)) {
+                throw new MessageResponseException("Received unexpected response message type from"
+                        + " the Clearing House.");
+            }
         }
     }
 
