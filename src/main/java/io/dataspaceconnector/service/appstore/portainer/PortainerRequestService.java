@@ -30,8 +30,6 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -254,7 +252,7 @@ public class PortainerRequestService {
      * @throws IOException            if an error occurs while requesting the id of the endpoint.
      * @throws PortainerNotConfigured if portainer is not configured.
      */
-    public void getEndpointId() throws PortainerNotConfigured, IOException {
+    public void createEndpointId() throws PortainerNotConfigured, IOException {
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
@@ -537,6 +535,8 @@ public class PortainerRequestService {
     }
 
     /**
+     * Pull image from registry.
+     *
      * @param appStoreTemplate The template provided by the AppStore decribing 1 App.
      * @return Response of portainer.
      * @throws IOException If an error occurs while connection to portainer.
@@ -555,8 +555,8 @@ public class PortainerRequestService {
         }
 
         final var imagePostBody = image;
-        image = URLEncoder.encode(image, StandardCharsets.UTF_8);
         image += imageTag;
+        //image = URLEncoder.encode(image, StandardCharsets.UTF_8);
 
         final var builder = getRequestBuilder();
 
@@ -565,8 +565,9 @@ public class PortainerRequestService {
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
                 .addPathSegments("api/endpoints/" + endpointId + "/docker/images/create")
-                .addEncodedQueryParameter("fromImage",
-                        registryUrl + "%2F" + image);
+                .addQueryParameter("fromImage", registryUrl + "/" + image);
+//                .addEncodedQueryParameter("fromImage",
+//                        registryUrl + "%2F" + image);
 
         final var url = urlBuilder.build();
 
