@@ -15,18 +15,20 @@
  */
 package io.dataspaceconnector.config;
 
-import io.dataspaceconnector.common.ids.policy.UsageControlFramework;
-import lombok.Data;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-
 import java.net.URI;
 import java.util.List;
+
+import io.dataspaceconnector.common.ids.policy.UsageControlFramework;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * This class handles policy settings: negotiation, pattern support, and usage control framework.
  */
-@Data
+@Getter
+@Setter
 @Configuration
 public class ConnectorConfig {
     /**
