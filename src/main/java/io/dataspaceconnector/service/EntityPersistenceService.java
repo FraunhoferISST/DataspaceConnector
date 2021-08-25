@@ -48,6 +48,7 @@ import javax.persistence.PersistenceException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -308,14 +309,15 @@ public class EntityPersistenceService {
      */
     public void saveAppData(final Map<String, String> response, final URI remoteId)
             throws ResourceNotFoundException, IllegalArgumentException, IOException {
-        final var base64Data = MessageUtils.extractPayloadFromMultipartMessage(response);
+        final var dataString = MessageUtils.extractPayloadFromMultipartMessage(response);
         final var appId = appService.identifyByRemoteId(remoteId);
 
         if (appId.isEmpty()) {
             throw new ResourceNotFoundException(remoteId.toString());
         }
 
-        appService.setData(appId.get(), new ByteArrayInputStream(Base64.decode(base64Data)));
+        appService.setData(appId.get(),
+                new ByteArrayInputStream(dataString.getBytes(StandardCharsets.UTF_8)));
         if (log.isDebugEnabled()) {
             log.debug("Updated data from app. [target=({})]", remoteId);
         }

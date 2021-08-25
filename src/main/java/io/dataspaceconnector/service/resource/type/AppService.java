@@ -16,6 +16,7 @@
 package io.dataspaceconnector.service.resource.type;
 
 import io.dataspaceconnector.common.exception.NotImplemented;
+import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.app.AppFactory;
@@ -36,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -123,6 +125,33 @@ public class AppService extends BaseEntityService<App, AppDesc> implements Remot
 
             throw new IOException("Failed to store data.", e);
         }
+    }
+
+    /**
+     * Load data from database.
+     *
+     * @param app The app.
+     * @return The data as input stream.
+     */
+    public InputStream getDataFromInternalDB(final AppImpl app) {
+        final var data = app.getData();
+
+        InputStream rawData;
+        if (data instanceof LocalData) {
+            rawData = getData((LocalData) data);
+        } else {
+            throw new UnreachableLineException("Could not load data.");
+        }
+
+        return rawData;
+    }
+
+    private InputStream getData(final LocalData data) {
+        return toInputStream(data.getValue());
+    }
+
+    private InputStream toInputStream(final byte[] data) {
+        return new ByteArrayInputStream(data);
     }
 
     /**
