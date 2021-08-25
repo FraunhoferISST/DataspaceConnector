@@ -260,8 +260,8 @@ public final class AppControllers {
 
         private ResponseEntity<String> deleteAppContainer(final String containerID)
                 throws IOException {
-            // ToDO: Check if Container is always running => Error Handling
             final var deleteResponse = portainerRequestService.deleteContainer(containerID);
+
             if (deleteResponse.isSuccessful()) {
                 // TODO: portainerRequestService.deleteUnusedImages();
                 portainerRequestService.deleteUnusedVolumes();
