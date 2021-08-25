@@ -26,20 +26,6 @@ public final class ParameterUtils {
     private ParameterUtils() { }
 
     /**
-     * Dynamic URI used for sending IDSCPv2 messages in routes.
-     */
-    public static final String IDSCP_CLIENT_URI = "idscp2client://${exchangeProperty.recipient}?"
-            + "awaitResponse=true&sslContextParameters=#serverSslContext"
-            + "&useIdsMessages=true&supportedRatSuites=CMC&expectedRatSuites=CMC";
-
-    /**
-     * URI used to receive IDSCPv2 messages in routes.
-     */
-    public static final String IDSCP_SERVER_URI = "idscp2server://0.0.0.0:29292?"
-            + "sslContextParameters=#serverSslContext&useIdsMessages=true"
-            + "&supportedRatSuites=CMC&expectedRatSuites=CMC";
-
-    /**
      * Name of the header containing the IDSCPv2 message.
      */
     public static final String IDSCP_HEADER = "idscp2-header";
