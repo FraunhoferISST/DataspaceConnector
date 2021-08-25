@@ -114,6 +114,10 @@ public class MainController {
         model.add(linkTo(methodOn(MainController.class).root()).withSelfRel());
         model.add(linkTo(methodOn(AgreementController.class)
                 .getAll(null, null)).withRel(BaseType.AGREEMENTS));
+        model.add(linkTo(methodOn(AppController.class)
+                .getAll(null, null)).withRel(BaseType.APPS));
+        model.add(linkTo(methodOn(AppStoreController.class)
+                .getAll(null, null)).withRel(BaseType.APPSTORES));
         model.add(linkTo(methodOn(ArtifactController.class)
                 .getAll(null, null)).withRel(BaseType.ARTIFACTS));
         model.add(linkTo(methodOn(BrokerController.class)
@@ -138,10 +142,6 @@ public class MainController {
                 .getAll(null, null)).withRel(BaseType.RULES));
         model.add(linkTo(methodOn(SubscriptionController.class)
                 .getAll(null, null)).withRel(BaseType.SUBSCRIPTIONS));
-        model.add(linkTo(methodOn(AppController.class)
-                .getAll(null, null)).withRel(BaseType.APPS));
-        model.add(linkTo(methodOn(AppStoreController.class)
-                .getAll(null, null)).withRel(BaseType.APPSTORES));
 
         return ResponseEntity.ok(model);
     }

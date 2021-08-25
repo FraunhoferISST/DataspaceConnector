@@ -126,12 +126,25 @@ public class AppService extends BaseEntityService<App, AppDesc> implements Remot
     }
 
     /**
+     * Update container id of app.
+     *
      * @param appId       The id of the app.
      * @param containerID The id of the container.
      */
     public void setContainerIdForApp(final UUID appId, final String containerID) {
         final var app = ((AppImpl) get(appId));
         ((AppFactory) getFactory()).setContainerId(app, containerID);
+        getRepository().save(app);
+    }
+
+    /**
+     * Remove container id from app.
+     *
+     * @param appId The id of the container.
+     */
+    public void deleteContainerIdFromApp(final UUID appId) {
+        final var app = ((AppImpl) get(appId));
+        ((AppFactory) getFactory()).deleteContainerId(app);
         getRepository().save(app);
     }
 }

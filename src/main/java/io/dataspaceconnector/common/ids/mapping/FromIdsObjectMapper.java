@@ -118,16 +118,44 @@ public final class FromIdsObjectMapper {
     public static AppTemplate fromIdsApp(final AppResource resource, final URI remoteUrl) {
         Utils.requireNonNull(resource, ErrorMessage.ENTITY_NULL);
 
+        final var description = resource.getDescription();
+        final var keywords = MappingUtils.getKeywordsAsString(resource.getKeyword());
+        final var language = resource.getLanguage();
+        final var publisher = resource.getPublisher();
+        final var sovereign = resource.getSovereign();
+        final var standardLicense = resource.getStandardLicense();
+        final var title = resource.getTitle();
+        final var resourceEndpoint = resource.getResourceEndpoint();
+
         final var desc = new AppDesc();
         desc.setRemoteAddress(remoteUrl);
         desc.setRemoteId(resource.getId());
 
         // Set app resource attributes.
-        desc.setLicense(resource.getStandardLicense());
-        desc.setPublisher(resource.getPublisher());
-        desc.setRemoteId(resource.getId());
-        desc.setSovereign(resource.getSovereign());
-        desc.setKeywords(MappingUtils.getKeywordsAsString(resource.getKeyword()));
+        desc.setAdditional(buildAdditionalForResource(resource));
+        desc.setKeywords(keywords);
+        desc.setPublisher(publisher);
+        desc.setLicense(standardLicense);
+        desc.setSovereign(sovereign);
+
+        if (description != null && !description.isEmpty()) {
+            desc.setDescription(description.size() == 1 ? description.get(0).getValue()
+                    : description.toString());
+        }
+
+        if (title != null && !title.isEmpty()) {
+            desc.setTitle(title.size() == 1 ? title.get(0).getValue() : title.toString());
+        }
+
+        if (language != null && !language.isEmpty()) {
+            desc.setLanguage(language.size() == 1
+                    ? language.get(0).toString() : language.toString());
+        }
+
+        if (resourceEndpoint != null && !resourceEndpoint.isEmpty()) {
+            MappingUtils.getFirstEndpointDocumentation(resourceEndpoint)
+                    .ifPresent(desc::setEndpointDocumentation);
+        }
 
         var endpoints = new ArrayList<AppEndpointTemplate>();
 
@@ -153,23 +181,50 @@ public final class FromIdsObjectMapper {
             }
         }
 
+        // Set empty data initially.
+        desc.setValue("");
+
         return new AppTemplate(desc, endpoints);
     }
 
     private static void fillAppWithRepresentationValues(final AppRepresentation representation,
                                                         final AppDesc desc) {
-        desc.setAdditional(AdditionalUtils.buildAdditionalForRepresentation(representation));
-        desc.setLanguage(String.valueOf(representation.getLanguage()));
-        desc.setDistributionService(representation.getDataAppDistributionService());
-        desc.setRuntimeEnvironment(representation.getDataAppRuntimeEnvironment());
+        final var distribution = representation.getDataAppDistributionService();
+        final var runtimeEnvironment = representation.getDataAppRuntimeEnvironment();
+
+        if (distribution != null) {
+            desc.setDistributionService(distribution);
+        }
+
+        if (runtimeEnvironment != null) {
+            desc.setRuntimeEnvironment(runtimeEnvironment);
+        }
+
+        desc.setAdditional(AdditionalUtils.buildAdditionalForAppRepresentation(representation));
     }
 
     private static ArrayList<AppEndpointTemplate> fillAppWithDataAppValues(final DataApp app,
                                                                            final AppDesc desc) {
-        desc.setDocs(app.getAppDocumentation());
-        desc.setEnvVariables(app.getAppEnvironmentVariables());
-        desc.setStorageConfig(app.getAppStorageConfiguration());
-        desc.setSupportedPolicies(fromIdsUsagePolicyClass(app.getSupportedUsagePolicies()));
+        final var documentation = app.getAppDocumentation();
+        final var envVariables = app.getAppEnvironmentVariables();
+        final var storageConfig = app.getAppStorageConfiguration();
+        final var supportedPolicies = app.getSupportedUsagePolicies();
+
+        if (documentation != null) {
+            desc.setDocs(documentation);
+        }
+
+        if (envVariables != null) {
+            desc.setEnvVariables(envVariables);
+        }
+
+        if (storageConfig != null) {
+            desc.setStorageConfig(storageConfig);
+        }
+
+        if (supportedPolicies != null && !supportedPolicies.isEmpty()) {
+            desc.setSupportedPolicies(fromIdsUsagePolicyClass(supportedPolicies));
+        }
 
         final var endpoints = new ArrayList<AppEndpointTemplate>();
         for (final var endpoint : app.getAppEndpoint()) {
@@ -179,55 +234,50 @@ public final class FromIdsObjectMapper {
         return endpoints;
     }
 
-    private static void setResourceEndpoint(final AppResource resource, final AppDesc appDesc) {
-        if (resource.getResourceEndpoint() == null || resource.getResourceEndpoint().isEmpty()) {
-            appDesc.setEndpointDocumentation(null);
-        } else {
-            if (resource.getResourceEndpoint().get(0).getEndpointDocumentation() == null
-                    || resource.getResourceEndpoint().get(0).getEndpointDocumentation().isEmpty()) {
-                appDesc.setEndpointDocumentation(null);
-            } else {
-                appDesc.setEndpointDocumentation(
-                        resource.getResourceEndpoint().get(0).getEndpointDocumentation().get(0));
-            }
-        }
-    }
+    private static AppEndpointTemplate fromIdsAppEndpoint(final AppEndpoint endpoint) {
+        final var port = endpoint.getAppEndpointPort().intValue();
+        final var mediaType = endpoint.getAppEndpointMediaType();
+        final var type = endpoint.getAppEndpointType();
+        final var protocol = endpoint.getAppEndpointProtocol();
+        final var language = endpoint.getLanguage();
+        final var endpointDocs = endpoint.getEndpointDocumentation();
+        final var endpointInfo = endpoint.getEndpointInformation();
+        final var path = endpoint.getPath();
 
-    private static AppEndpointTemplate fromIdsAppEndpoint(final AppEndpoint appEndpoint) {
         final var desc = new AppEndpointDesc();
+        desc.setEndpointPort(port);
 
-        final var additional = AdditionalUtils.buildAdditionalForAppEndpoint(appEndpoint);
+        if (mediaType != null) {
+            desc.setMediaType(mediaType.getFilenameExtension());
+        }
+
+        if (type != null) {
+            desc.setEndpointType(type.name());
+        }
+
+        if (language != null) {
+            desc.setLanguage(language.toString());
+        }
+
+        if (protocol != null) {
+            desc.setProtocol(protocol);
+        }
+
+        if (endpointDocs != null && !endpointDocs.isEmpty()) {
+            desc.setDocs(endpointDocs.get(0));
+        }
+
+        if (endpointInfo != null && !endpointInfo.isEmpty()) {
+            desc.setInfo(endpointInfo.size() == 1 ? endpointInfo.get(0).getValue()
+                    : endpointInfo.toString());
+        }
+
+        if (path != null && !path.equals("")) {
+            desc.setLocation(URI.create(path));
+        }
+
+        final var additional = AdditionalUtils.buildAdditionalForAppEndpoint(endpoint);
         desc.setAdditional(additional);
-
-        if (appEndpoint.getAppEndpointPort() != null) {
-            desc.setEndpointPort(appEndpoint.getAppEndpointPort().intValue());
-        }
-
-        if (appEndpoint.getAppEndpointType() != null) {
-            desc.setEndpointType(appEndpoint.getAppEndpointType().name());
-        }
-
-        if (appEndpoint.getLanguage() != null) {
-            desc.setLanguage(appEndpoint.getLanguage().toString());
-        }
-
-        if (appEndpoint.getAppEndpointMediaType() != null) {
-            desc.setMediaType(appEndpoint.getAppEndpointMediaType().getFilenameExtension());
-        }
-
-        desc.setProtocol(appEndpoint.getAppEndpointProtocol());
-        desc.setBootstrapId(appEndpoint.getId());
-        desc.setDocs(appEndpoint.getEndpointDocumentation() != null
-                && !appEndpoint.getEndpointDocumentation().isEmpty()
-                ? appEndpoint.getEndpointDocumentation().get(0)
-                : null
-        );
-
-        if (appEndpoint.getEndpointInformation() != null) {
-            desc.setInfo(appEndpoint.getEndpointInformation().toString());
-        }
-
-        desc.setLocation(appEndpoint.getAccessURL());
 
         return new AppEndpointTemplate(desc);
     }

@@ -50,12 +50,49 @@ public class AppView extends RepresentationModel<AppView> {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ViewConstants.DATE_TIME_FORMAT)
     private ZonedDateTime modificationDate;
 
-    /**
-     * Text documentation of the data app.
+    /***********************************************************************************************
+     * Artifact attributes                                                                         *
+     ***********************************************************************************************
+
+     /**
+     * The artifact id on provider side.
      */
-    private String appDocumentation;
+    private URI remoteId;
 
     /**
+     * The provider's address for artifact request messages.
+     */
+    private URI remoteAddress;
+
+    /***********************************************************************************************
+     * App attributes                                                                              *
+     ***********************************************************************************************
+
+     /**
+     * Text documentation of the data app.
+     */
+    private String docs;
+
+    /**
+     * Environment variables of the data app.
+     */
+    private String envVariables;
+
+    /**
+     * Storage configuration of the data app (e.g. path in the file system or volume name).
+     */
+    private String storageConfig;
+
+    /**
+     * Usage policy patterns supported by the data app.
+     */
+    private List<PolicyPattern> supportedPolicies;
+
+    /***********************************************************************************************
+     * Resource attributes                                                                         *
+     ***********************************************************************************************
+
+     /**
      * The keywords of the resource.
      */
     private List<String> keywords;
@@ -81,48 +118,21 @@ public class AppView extends RepresentationModel<AppView> {
     private URI license;
 
     /**
-     * Environment variables of the data app.
-     */
-    private String appEnvironmentVariables;
-
-    /**
-     * Storage configuration of the data app (e.g. path in the file system or volume name).
-     */
-    private String appStorageConfiguration;
-
-    /**
      * The endpoint of the resource.
      */
     private URI endpointDocumentation;
 
-    /**
+    /***********************************************************************************************
+     * Representation attributes                                                                   *
+     ***********************************************************************************************
+
+     /**
      * Distribution service, where the represented app can be downloaded.
      */
-    private URI dataAppDistributionService;
+    private URI distributionService;
 
     /**
      * "Runtime environment of a data app, e.g., software (or hardware) required to run the app.
      */
-    private String dataAppRuntimeEnvironment;
-
-    /**
-     * The artifact id on provider side.
-     */
-    private URI remoteId;
-
-    /**
-     * The provider's address for artifact request messages.
-     */
-    private URI remoteAddress;
-
-    /**
-     * The version of the resource.
-     */
-    private long version;
-
-    /**
-     * Usage policy patterns supported by the data app.
-     */
-    private List<PolicyPattern> supportedUsagePolicies;
-
+    private String runtimeEnvironment;
 }

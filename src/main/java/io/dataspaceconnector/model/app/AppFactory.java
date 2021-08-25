@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model.app;
 
+import io.dataspaceconnector.common.ids.policy.PolicyPattern;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Creates and updates a data app.
@@ -51,6 +53,11 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
     public static final URI DEFAULT_URI = URI.create("https://app.com");
 
     /**
+     * The default keywords assigned to all apps.
+     */
+    public static final List<String> DEFAULT_KEYWORDS = List.of("DSC");
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -58,8 +65,6 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
         final var app = new AppImpl();
 
         app.setEndpoints(new ArrayList<>());
-        app.setKeywords(new ArrayList<>());
-        app.setSupportedPolicies(new ArrayList<>());
 
         return app;
     }
@@ -70,6 +75,8 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
     @Override
     protected boolean updateInternal(final App app, final AppDesc desc) {
         final var hasUpdatedDocumentation = updateDocumentation(app, desc.getDocs());
+        final var hasUpdatedKeywords = updateKeywords(app, desc.getKeywords());
+        final var hadUpdatedPolicies = updatePolicies(app, desc.getSupportedPolicies());
         final var hasUpdatedEnvVariables = updateEnvVariables(app, desc.getEnvVariables());
         final var hasUpdatedStorageConfig = updateStorageConfig(app, desc.getStorageConfig());
         final var hasUpdatedPublisher = updatePublisher(app, desc.getPublisher());
@@ -123,6 +130,22 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
         newUri.ifPresent(app::setRemoteAddress);
 
         return newUri.isPresent();
+    }
+
+    private boolean updateKeywords(final App app, final List<String> keywords) {
+        final var newKeys =
+                FactoryUtils.updateStringList(app.getKeywords(), keywords, DEFAULT_KEYWORDS);
+        newKeys.ifPresent(app::setKeywords);
+
+        return newKeys.isPresent();
+    }
+
+    private boolean updatePolicies(final App app, final List<PolicyPattern> policies) {
+        final var newList =
+                FactoryUtils.updatePolicyList(app.getSupportedPolicies(), policies, new ArrayList<>());
+        newList.ifPresent(app::setSupportedPolicies);
+
+        return newList.isPresent();
     }
 
     private boolean updateRemoteId(final App app, final URI remoteId) {
@@ -221,7 +244,7 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
     /**
      * @param app The app entity.
      */
-    public void deleteContainerId(final App app) {
-        app.setContainerID(null);
+    public void deleteContainerId(final AppImpl app) {
+        app.setContainerId(null);
     }
 }

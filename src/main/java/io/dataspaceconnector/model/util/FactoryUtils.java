@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.model.util;
 
+import io.dataspaceconnector.common.ids.policy.PolicyPattern;
+
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -144,6 +146,25 @@ public final class FactoryUtils {
         }
 
         return Optional.empty();
+    }
+
+    /**
+     * Update list of policy patterns.
+     *
+     * @param oldList     Old list.
+     * @param newList     New list.
+     * @param defaultList Default values.
+     * @return Optional with the new value or without a value.
+     */
+    public static Optional<List<PolicyPattern>> updatePolicyList(
+            final List<PolicyPattern> oldList,
+            final List<PolicyPattern> newList,
+            final List<PolicyPattern> defaultList) {
+        if (oldList == null || !oldList.equals(newList)) {
+            return Optional.of(newList);
+        }
+
+        return Optional.of(defaultList);
     }
 
     /**

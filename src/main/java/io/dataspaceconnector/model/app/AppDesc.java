@@ -24,6 +24,7 @@ import lombok.NoArgsConstructor;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Describes a data app. Use this structure to create or update a data app.
@@ -124,4 +125,9 @@ public class AppDesc extends NamedDescription {
      * "Runtime environment of a data app, e.g., software (or hardware) required to run the app.
      */
     private String runtimeEnvironment;
+
+    /**
+     * Additional properties.
+     */
+    private Map<String, String> additional;
 }

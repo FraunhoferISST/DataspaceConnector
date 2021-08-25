@@ -116,13 +116,10 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         try {
             switch (type) {
                 case START:
-                    if (containerId == null || containerId.equals("")) {
-                        createContainer(app);
-                        return new ResponseEntity<>("Successfully started the app.", HttpStatus.OK);
-                    } else {
-                        response = portainerSvc.startContainer(containerId);
-                        return readResponse(response, "Successfully started the app.");
-                    }
+                    response = portainerSvc.startContainer(
+                            containerId == null || containerId.equals("")
+                            ? deployApp(app) : containerId);
+                    return readResponse(response, "Successfully started the app.");
                 case STOP:
                     if (containerId == null || containerId.equals("")) {
                         return new ResponseEntity<>("No container id provided.",
@@ -138,6 +135,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
                     }
 
                     response = portainerSvc.deleteContainer(containerId);
+                    getService().deleteContainerIdFromApp(appId);
                     return readResponse(response, "Successfully deleted the app.");
                 default:
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -150,13 +148,13 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         }
     }
 
-    private void createContainer(final App app) throws IOException {
+    private String deployApp(final App app) throws IOException {
         final var appData = ((AppImpl) app).getData();
         final var value = ((LocalData) appData).getValue();
         final var template = IOUtils.toString(value, "UTF-8");
 
         // 1. Create Registry with given information from AppStore template.
-        portainerSvc.createRegistry(template);
+        final var registryId = portainerSvc.createRegistry(template);
 
         // 2. Pull Image with given information from AppStore template.
         portainerSvc.pullImage(template);
@@ -172,13 +170,15 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
 
         // 5. Create Network for the container.
         //TODO: Get network of currently running DSC and put App in same network
-        final var networkID = portainerSvc.createNetwork("bridge", true, false);
+        final var networkId = portainerSvc.createNetwork("bridge", true, false);
 
         // 6. Join container into the new created network.
-        portainerSvc.joinNetwork(containerId, networkID);
+        portainerSvc.joinNetwork(containerId, networkId);
 
-        // 5. Start the App (container)
-        portainerSvc.startContainer(containerId);
+        //7. Delete registry (credentials are one-time-usage)
+        portainerSvc.deleteRegistry(registryId);
+
+        return containerId;
     }
 
     /**
