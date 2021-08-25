@@ -25,7 +25,7 @@ info:
   license:
     name: "Apache License, Version 2.0"
     url: https://www.apache.org/licenses/LICENSE-2.0.txt
-  version: 6.1.1
+  version: 6.1.2
 servers:
   - url: https://localhost:8080
     description: Generated server url
@@ -5633,6 +5633,10 @@ components:
         modificationDate:
           type: string
           format: date-time
+        title:
+          type: string
+        description:
+          type: string
         target:
           type: string
           format: uri
@@ -5786,12 +5790,6 @@ components:
         endpointDocumentation:
           type: string
           format: uri
-        paymentMethod:
-          type: string
-          enum:
-            - fixedPrice
-            - free
-            - negotiationBasis
         samples:
           type: array
           items:
@@ -5801,6 +5799,13 @@ components:
           type: string
           format: uri
           readOnly: true
+        paymentMethod:
+          type: string
+          enum:
+            - undefined
+            - fixedPrice
+            - free
+            - negotiationBasis
     RequestedResourceView:
       type: object
       properties:
@@ -5841,6 +5846,7 @@ components:
         paymentModality:
           type: string
           enum:
+            - undefined
             - fixedPrice
             - free
             - negotiationBasis
@@ -5923,17 +5929,18 @@ components:
         endpointDocumentation:
           type: string
           format: uri
-        paymentMethod:
-          type: string
-          enum:
-            - fixedPrice
-            - free
-            - negotiationBasis
         samples:
           type: array
           items:
             type: string
             format: uri
+        paymentMethod:
+          type: string
+          enum:
+            - undefined
+            - fixedPrice
+            - free
+            - negotiationBasis
     OfferedResourceView:
       type: object
       properties:
@@ -5971,6 +5978,7 @@ components:
         paymentModality:
           type: string
           enum:
+            - undefined
             - fixedPrice
             - free
             - negotiationBasis
@@ -6565,32 +6573,10 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
-            ids:leftOperand:
-              type: string
-              enum:
-                - https://w3id.org/idsa/code/ABSOLUTE_SPATIAL_POSITION
-                - https://w3id.org/idsa/code/COUNT
-                - https://w3id.org/idsa/code/DELAY
-                - https://w3id.org/idsa/code/ELAPSED_TIME
-                - https://w3id.org/idsa/code/ENDPOINT
-                - https://w3id.org/idsa/code/EVENT
-                - https://w3id.org/idsa/code/PATH
-                - https://w3id.org/idsa/code/PAYMENT
-                - https://w3id.org/idsa/code/PAY_AMOUNT
-                - https://w3id.org/idsa/code/POLICY_EVALUATION_TIME
-                - https://w3id.org/idsa/code/PURPOSE
-                - https://w3id.org/idsa/code/QUANTITY
-                - https://w3id.org/idsa/code/RECURRENCE_RATE
-                - https://w3id.org/idsa/code/SECURITY_LEVEL
-                - https://w3id.org/idsa/code/STATE
-                - https://w3id.org/idsa/code/SYSTEM
-                - https://w3id.org/idsa/code/USER
-            ids:unit:
+            ids:rightOperandReference:
               type: string
               format: uri
-            ids:rightOperand:
-              $ref: '#/components/schemas/RdfResource'
-            ids:pipEndpoint:
+            ids:unit:
               type: string
               format: uri
             ids:operator:
@@ -6642,7 +6628,29 @@ components:
                 - https://w3id.org/idsa/code/STRING_IS_CONTAINED
                 - https://w3id.org/idsa/code/TEMPORAL_DISJOINT
                 - https://w3id.org/idsa/code/TEMPORAL_EQUALS
-            ids:rightOperandReference:
+            ids:leftOperand:
+              type: string
+              enum:
+                - https://w3id.org/idsa/code/ABSOLUTE_SPATIAL_POSITION
+                - https://w3id.org/idsa/code/COUNT
+                - https://w3id.org/idsa/code/DELAY
+                - https://w3id.org/idsa/code/ELAPSED_TIME
+                - https://w3id.org/idsa/code/ENDPOINT
+                - https://w3id.org/idsa/code/EVENT
+                - https://w3id.org/idsa/code/PATH
+                - https://w3id.org/idsa/code/PAYMENT
+                - https://w3id.org/idsa/code/PAY_AMOUNT
+                - https://w3id.org/idsa/code/POLICY_EVALUATION_TIME
+                - https://w3id.org/idsa/code/PURPOSE
+                - https://w3id.org/idsa/code/QUANTITY
+                - https://w3id.org/idsa/code/RECURRENCE_RATE
+                - https://w3id.org/idsa/code/SECURITY_LEVEL
+                - https://w3id.org/idsa/code/STATE
+                - https://w3id.org/idsa/code/SYSTEM
+                - https://w3id.org/idsa/code/USER
+            ids:rightOperand:
+              $ref: '#/components/schemas/RdfResource'
+            ids:pipEndpoint:
               type: string
               format: uri
             '@type':
@@ -6748,12 +6756,20 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
-        ids:assignee:
+        ids:target:
+          type: string
+          format: uri
+        ids:constraint:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/LogicalConstraint'
+        ids:assigner:
           type: array
           items:
             type: string
             format: uri
-        ids:assigner:
+        ids:assignee:
           type: array
           items:
             type: string
@@ -6779,18 +6795,10 @@ components:
               - https://w3id.org/idsa/code/TRACK_PROVENANCE
               - https://w3id.org/idsa/code/USE
               - https://w3id.org/idsa/code/WRITE
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/LogicalConstraint'
         ids:assetRefinement:
           oneOf:
             - $ref: '#/components/schemas/Constraint'
             - $ref: '#/components/schemas/LogicalConstraint'
-        ids:target:
-          type: string
-          format: uri
         ids:description:
           type: array
           items:
