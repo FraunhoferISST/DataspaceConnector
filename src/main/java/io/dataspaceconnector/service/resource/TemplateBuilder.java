@@ -88,7 +88,8 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
     /**
      * The linker for app-endpoint relations.
      */
-    private final @NonNull AppEndpointLinker appEndpointLinker;
+    @Autowired
+    private AppEndpointLinker appEndpointLinker;
 
     /**
      * The linker for resource-representation relations.
@@ -113,12 +114,14 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
     /**
      * The service for apps.
      */
-    private final @NonNull AppService appService;
+    @Autowired
+    private AppService appService;
 
     /**
      * The service for app endpoints.
      */
-    private final @NonNull AppEndpointService appEndpointService;
+    @Autowired
+    private AppEndpointService appEndpointService;
 
     /**
      * The service for contracts.
@@ -373,32 +376,24 @@ class TemplateBuilderOfferedResource
      * Default constructor.
      *
      * @param resourceService        The resource service.
-     * @param appEndpointLinker      The app-endpoint linker.
      * @param resRepLinker           The resource-representation service.
      * @param resourceContractLinker The resource-contract service.
      * @param representationService  The representation service.
      * @param repArtifactLinker      The representation-artifact service.
-     * @param appService             The app service.
-     * @param appEndpointService     The app endpoint service.
      * @param contractService        The contract service.
      * @param contractRuleLinker     The contract-rule service.
      */
-    @SuppressWarnings("checkstyle:ParameterNumber")
     @Autowired
     TemplateBuilderOfferedResource(
             final ResourceService<OfferedResource, OfferedResourceDesc> resourceService,
-            final AppEndpointLinker appEndpointLinker,
             final AbstractResourceRepresentationLinker<OfferedResource> resRepLinker,
             final AbstractResourceContractLinker<OfferedResource> resourceContractLinker,
             final RepresentationService representationService,
             final RepresentationArtifactLinker repArtifactLinker,
-            final AppService appService,
-            final AppEndpointService appEndpointService,
             final ContractService contractService,
             final ContractRuleLinker contractRuleLinker) {
-        super(resourceService, appEndpointLinker, resRepLinker, resourceContractLinker,
-                representationService, repArtifactLinker, appService, appEndpointService,
-                contractService, contractRuleLinker);
+        super(resourceService, resRepLinker, resourceContractLinker, representationService,
+                repArtifactLinker, contractService, contractRuleLinker);
     }
 
     @Override
@@ -418,13 +413,10 @@ class TemplateBuilderRequestedResource
      * Default constructor.
      *
      * @param resourceService        The resource service.
-     * @param appEndpointLinker      The app-endpoint service.
      * @param resRepLinker           The resource-representation service.
      * @param resourceContractLinker The resource-contract service.
      * @param representationService  The representation service.
      * @param repArtifactLinker      The representation-artifact service.
-     * @param appService             The app service.
-     * @param appEndpointService     The app endpoint service.
      * @param contractService        The contract service.
      * @param contractRuleLinker     The contract-rule service.
      */
@@ -432,18 +424,14 @@ class TemplateBuilderRequestedResource
     @Autowired
     TemplateBuilderRequestedResource(
             final ResourceService<RequestedResource, RequestedResourceDesc> resourceService,
-            final AppEndpointLinker appEndpointLinker,
             final AbstractResourceRepresentationLinker<RequestedResource> resRepLinker,
             final AbstractResourceContractLinker<RequestedResource> resourceContractLinker,
             final RepresentationService representationService,
             final RepresentationArtifactLinker repArtifactLinker,
-            final AppService appService,
-            final AppEndpointService appEndpointService,
             final ContractService contractService,
             final ContractRuleLinker contractRuleLinker) {
-        super(resourceService, appEndpointLinker, resRepLinker, resourceContractLinker,
-                representationService, repArtifactLinker, appService,
-                appEndpointService, contractService, contractRuleLinker);
+        super(resourceService, resRepLinker, resourceContractLinker, representationService,
+                repArtifactLinker, contractService, contractRuleLinker);
     }
 
     @Override
