@@ -174,6 +174,7 @@ public final class AppControllers {
                                                 final String containerID) throws IOException,
                 PortainerNotConfigured {
             //Start the deployed app
+            // ToDO: Check if Container is always running  => Error Handling
             return startAppContainer(containerID == null ? deployApp(appId) : containerID);
         }
 
@@ -235,9 +236,13 @@ public final class AppControllers {
 
         private ResponseEntity<String> deleteAppContainer(final String containerID)
                 throws IOException {
+            // ToDO: Check if Container is always running => Error Handling
             final var deleteResponse = portainerRequestService.deleteContainer(containerID);
             if (deleteResponse.isSuccessful()) {
-                return ResponseEntity.ok("Successfully deleted the App-Container.");
+                // TODO: portainerRequestService.deleteUnusedImages();
+                portainerRequestService.deleteUnusedVolumes();
+                return ResponseEntity.ok("Successfully deleted the App-Container"
+                       + " and dependencies.");
             } else {
                 return ResponseEntity.internalServerError().body(
                         Objects.requireNonNull(deleteResponse.body()).string());

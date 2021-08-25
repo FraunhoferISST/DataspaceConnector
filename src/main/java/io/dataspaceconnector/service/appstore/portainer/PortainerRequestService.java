@@ -180,6 +180,35 @@ public class PortainerRequestService {
     }
 
     /**
+     * Deletes not used images.
+     * @throws IOException if an error occurs while deleting not used images.
+     */
+    public void deleteUnusedImages() throws IOException {
+
+    }
+
+    /**
+     * Deletes not used volumes.
+     * @throws IOException if an error occurs while deleting not used volumes.
+     */
+    public void deleteUnusedVolumes() throws IOException {
+        final var builder = getRequestBuilder();
+
+        final var urlBuilder = new HttpUrl.Builder()
+                .scheme("http")
+                .host(portainerConfig.getPortainerHost())
+                .port(portainerConfig.getPortainerPort())
+                .addPathSegments("api/endpoints/" + endpointID + "/docker/volumes/prune");
+        final var url = urlBuilder.build();
+        builder.addHeader("Authorization", "Bearer " + getJwtToken());
+        builder.url(url);
+        builder.post(RequestBody.create(new byte[0], null));
+
+        final var request = builder.build();
+        httpService.send(request);
+    }
+
+    /**
      * @param containerId The id of the container.
      * @return Response is container description.
      * @throws IOException if an error occurs while deleting the container.
