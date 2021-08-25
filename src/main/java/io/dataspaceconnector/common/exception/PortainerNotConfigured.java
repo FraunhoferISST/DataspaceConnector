@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.util.exception;
+package io.dataspaceconnector.common.exception;
 
 /**
  * Exception class for portainer configuration.

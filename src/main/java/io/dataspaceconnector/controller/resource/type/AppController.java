@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.type;
 
+import io.dataspaceconnector.common.exception.PortainerNotConfigured;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.BaseResourceController;
 import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
@@ -140,7 +141,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
                 default:
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-        } catch (IOException e) {
+        } catch (IOException | PortainerNotConfigured e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not process action. [exception=({})]", e.getMessage());
             }
@@ -148,7 +149,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         }
     }
 
-    private String deployApp(final App app) throws IOException {
+    private String deployApp(final App app) throws IOException, PortainerNotConfigured {
         final var appData = ((AppImpl) app).getData();
         final var value = ((LocalData) appData).getValue();
         final var template = IOUtils.toString(value, "UTF-8");
@@ -170,7 +171,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
 
         // 5. Create Network for the container.
         //TODO: Get network of currently running DSC and put App in same network
-        final var networkId = portainerSvc.createNetwork("bridge", true, false);
+        final var networkId = portainerSvc.getNetworkId("bridge");
 
         // 6. Join container into the new created network.
         portainerSvc.joinNetwork(containerId, networkId);
