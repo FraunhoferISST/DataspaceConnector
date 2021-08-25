@@ -147,13 +147,22 @@ public final class AppControllers {
 
         private ResponseEntity<String> deleteApp(final String containerID,
                                                  final UUID appId) throws IOException {
+
+            //Does the app to be deleted exist as a Portainer container?
             if (containerID != null) {
-                //Container for App exists, delete it
-                final var response = deleteAppContainer(containerID);
-                appService.deleteContainerIDFromApp(appId);
-                return response;
+                //Check if the app to delete is running.
+                if (appRunning(containerID)) {
+                    //If the app is currently running, do not delete it, would have to be stopped first.
+                    return ResponseEntity.badRequest()
+                            .body("App is running, would have to be stopped first.");
+                } else {
+                    //App is currently not running, can be deleted.
+                    final var response = deleteAppContainer(containerID);
+                    appService.deleteContainerIDFromApp(appId);
+                    return response;
+                }
             } else {
-                //No container exists for App to delete
+                //No container exists for App to delete.
                 return ResponseEntity.badRequest()
                         .body("No deployed App for provided App-ID exists!");
             }
