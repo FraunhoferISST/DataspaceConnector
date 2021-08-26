@@ -16,22 +16,77 @@
 package io.dataspaceconnector.controller.resource.type;
 
 import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
+import io.dataspaceconnector.model.app.App;
+import io.dataspaceconnector.model.app.AppDesc;
+import io.dataspaceconnector.model.app.AppImpl;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
+import io.dataspaceconnector.service.resource.type.AppService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class AppControllerTest {
 
     @MockBean
-    private PortainerRequestService appStoreRegistryService;
+    private AppService appService;
+
+    @MockBean
+    private PortainerRequestService portainerRequestService;
 
     @Autowired
     private AppController appController;
+
+    @BeforeEach
+    public void prepare() throws IOException, NoSuchFieldException, IllegalAccessException {
+        //prepare mocked app
+        var returnedApp = new AppImpl();
+        var idField = Entity.class.getDeclaredField("id");
+        idField.setAccessible(true);
+        idField.set(returnedApp, UUID.randomUUID());
+        var containerField = AppImpl.class.getDeclaredField("containerId");
+        containerField.setAccessible(true);
+        containerField.set(returnedApp, "mocked");
+
+        //prepare mockito
+        Mockito.when(appService.get(Mockito.any(UUID.class))).thenReturn(returnedApp);
+        Mockito.when(appService.getDataFromInternalDB(Mockito.any())).thenReturn(InputStream.nullInputStream());
+        Mockito.when(portainerRequestService.createRegistry(Mockito.any())).thenReturn(1);
+        Mockito.when(portainerRequestService.startContainer(Mockito.any())).thenReturn(null);
+        Mockito.when(portainerRequestService.pullImage(Mockito.any())).thenReturn(null);
+        Mockito.when(portainerRequestService.createVolumes(Mockito.any(), Mockito.any())).thenReturn(Map.of());
+        Mockito.when(portainerRequestService.createContainer(Mockito.any(), Mockito.any())).thenReturn("Mocked.");
+        Mockito.when(portainerRequestService.getNetworkId(Mockito.any())).thenReturn("NetworkID");
+        Mockito.when(portainerRequestService.joinNetwork(Mockito.any(), Mockito.any())).thenReturn(null);
+        Mockito.when(portainerRequestService.stopContainer(Mockito.any())).thenReturn(null);
+        Mockito.when(portainerRequestService.deleteContainer(Mockito.any())).thenReturn(null);
+        Mockito.doNothing().when(portainerRequestService).deleteRegistry(Mockito.any());
+        Mockito.doNothing().when(appService).setContainerIdForApp(Mockito.any(), Mockito.any());
+        Mockito.doNothing().when(appService).deleteContainerIdFromApp(Mockito.any());
+        Mockito.when(portainerRequestService.validateContainerRunning(Mockito.any())).thenReturn(false);
+    }
+
+    @Test
+    public void createAppWithNull_returnMethodNotAllowed() {
+        /* ARRANGE */
+        // Nothing to arrange.
+
+        /* ACT && ASSERT */
+        assertThrows(MethodNotAllowed.class, () -> appController.create(null));
+    }
 
     @Test
     public void createApp_returnMethodNotAllowed() {
@@ -39,7 +94,7 @@ class AppControllerTest {
         // Nothing to arrange.
 
         /* ACT && ASSERT */
-        assertThrows(MethodNotAllowed.class, () -> appController.create(null));
+        assertThrows(MethodNotAllowed.class, () -> appController.create(new AppDesc()));
     }
 
     @Test
@@ -49,5 +104,14 @@ class AppControllerTest {
 
         /* ACT && ASSERT */
         assertThrows(MethodNotAllowed.class, () -> appController.update(null, null));
+    }
+
+    @Test
+    public void testContainerManagement() {
+        //should fail because final response from mocked portainer is null
+        //TODO mock a okhttp response object to return in final step
+        assertEquals(appController.containerManagement(UUID.randomUUID(), "START").getStatusCode(), HttpStatus.INTERNAL_SERVER_ERROR);
+        assertEquals(appController.containerManagement(UUID.randomUUID(), "STOP").getStatusCode(), HttpStatus.INTERNAL_SERVER_ERROR);
+        assertEquals(appController.containerManagement(UUID.randomUUID(), "DELETE").getStatusCode(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
