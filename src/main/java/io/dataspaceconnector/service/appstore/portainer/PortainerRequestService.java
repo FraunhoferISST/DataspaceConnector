@@ -992,6 +992,7 @@ public class PortainerRequestService {
         return new JSONObject(string);
     }
 
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     private String checkResponseNotNull(@NonNull final Response response) throws IOException {
         final var checkedResp = Objects.requireNonNull(response);
         final var body = Objects.requireNonNull(checkedResp.body());

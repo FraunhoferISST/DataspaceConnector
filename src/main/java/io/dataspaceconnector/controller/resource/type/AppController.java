@@ -53,6 +53,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -111,7 +112,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     public final ResponseEntity<Object> containerManagement(
             @PathVariable("id") final UUID appId,
             @RequestParam("actionType") final String type) {
-        final var action = type.toUpperCase();
+        final var action = type.toUpperCase(Locale.ROOT);
         final var app = getService().get(appId);
         var containerId = ((AppImpl) app).getContainerId();
 
