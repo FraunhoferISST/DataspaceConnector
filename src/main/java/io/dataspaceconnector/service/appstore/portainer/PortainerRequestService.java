@@ -102,7 +102,7 @@ public class PortainerRequestService {
         final var request = builder.build();
         try {
             final var response = httpService.send(request);
-            return response.body().string();
+            return Objects.requireNonNull(response.body()).string();
         } catch (IOException exception) {
             if (log.isWarnEnabled()) {
                 log.warn(exception.getMessage(), exception);
@@ -212,7 +212,9 @@ public class PortainerRequestService {
 
         final var request = builder.build();
         final var response = httpService.send(request);
-        final var containers = new JSONArray(Objects.requireNonNull(response.body()).string());
+        final var containers = new JSONArray(
+                Objects.requireNonNull(Objects.requireNonNull(response.body()).string())
+        );
 
         for (final var container : containers) {
             if (((JSONObject) container).get("Id").equals(containerId)) {
@@ -302,7 +304,7 @@ public class PortainerRequestService {
 
         final var request = builder.build();
         final var response = httpService.send(request);
-        final var jsonArray = new JSONArray(response.body().string());
+        final var jsonArray = new JSONArray(Objects.requireNonNull(response.body()).string());
 
         for (var tmpObj : jsonArray) {
             if (((JSONObject) tmpObj).getNumber("Type").equals(1)) {
@@ -399,7 +401,9 @@ public class PortainerRequestService {
 
         final var request = builder.build();
         final var response = httpService.send(request);
-        final var createdRegistryId = new JSONObject(response.body().string()).get("Id").toString();
+        final var createdRegistryId = new JSONObject(
+                Objects.requireNonNull(response.body()).string()
+        ).get("Id").toString();
 
         return Integer.parseInt(createdRegistryId);
     }
@@ -435,7 +439,8 @@ public class PortainerRequestService {
      */
     public Integer registryExists(final String registryURL) throws IOException {
         final var response = getRegistries();
-        final var registries = new JSONArray(Objects.requireNonNull(response.body()).string());
+        final var registries = new JSONArray(
+                Objects.requireNonNull(Objects.requireNonNull(response.body()).string()));
 
         for (final var registry : registries) {
             if (((JSONObject) registry).get("URL").equals(registryURL)) {
@@ -732,7 +737,7 @@ public class PortainerRequestService {
             final var request = builder.build();
             final var response = httpService.send(request);
             volumeNames.put(templateName, new JSONObject(
-                    response.body().string()).getString("Name")
+                    Objects.requireNonNull(response.body()).string()).getString("Name")
             );
         }
         return volumeNames;
@@ -796,7 +801,7 @@ public class PortainerRequestService {
 
         final var createContainerResponse = httpService.send(request);
 
-        final var body = createContainerResponse.body().string();
+        final var body = Objects.requireNonNull(createContainerResponse.body()).string();
         final var portainerObj = new JSONObject(body).getJSONObject("Portainer");
         final var resourceControl = portainerObj.getJSONObject("ResourceControl");
         final var resourceId = resourceControl.getInt("Id");
@@ -860,7 +865,7 @@ public class PortainerRequestService {
 
         final var request = builder.build();
         var response = httpService.send(request);
-        var jsonResp = new JSONObject(response.body().string());
+        var jsonResp = new JSONObject(Objects.requireNonNull(response.body()).string());
         return jsonResp.getString("Id");
     }
 

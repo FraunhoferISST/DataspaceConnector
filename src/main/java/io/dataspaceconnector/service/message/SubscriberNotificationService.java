@@ -16,6 +16,17 @@
 package io.dataspaceconnector.service.message;
 
 import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.ids.messaging.common.DeserializeException;
+import de.fraunhofer.ids.messaging.common.SerializeException;
+import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
+import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
+import de.fraunhofer.ids.messaging.protocol.http.SendMessageException;
+import de.fraunhofer.ids.messaging.protocol.http.ShaclValidatorException;
+import de.fraunhofer.ids.messaging.protocol.multipart.UnknownResponseException;
+import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
+import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
+import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
+import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.common.net.QueryInput;
@@ -231,7 +242,12 @@ public class SubscriberNotificationService {
                             }
                         }
                     }
-                } catch (Exception e) {
+                } catch (IOException | MultipartParseException | ClaimsException
+                        | DapsTokenManagerException | NoTemplateProvidedException
+                        | ShaclValidatorException | SendMessageException
+                        | UnexpectedPayloadException | SerializeException
+                        | DeserializeException | RejectionException
+                        | UnknownResponseException e) {
                     if (log.isDebugEnabled()) {
                         log.debug("{} [url=({}), exception=({})]",
                                 ErrorMessage.UPDATE_MESSAGE_FAILED, recipient, e.getMessage());
