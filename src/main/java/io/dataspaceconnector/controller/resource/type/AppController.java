@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.type;
 
+import io.dataspaceconnector.common.exception.AppNotDeployedException;
 import io.dataspaceconnector.common.exception.PortainerNotConfigured;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.BaseResourceController;
@@ -156,7 +157,8 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
             } else {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-        } catch (RuntimeException | IOException | PortainerNotConfigured e) {
+        } catch (RuntimeException | IOException
+                | PortainerNotConfigured | AppNotDeployedException e) {
             // TODO Improve exception handling
             if (log.isWarnEnabled()) {
                 log.warn("Could not process action. [exception=({})]", e.getMessage());
@@ -169,7 +171,12 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         return portainerSvc.validateContainerRunning(containerID);
     }
 
-    private String deployApp(final App app) throws IOException, PortainerNotConfigured {
+    private String deployApp(final App app) throws IOException, PortainerNotConfigured,
+            AppNotDeployedException {
+        if (!(app instanceof AppImpl)) {
+            //needs to be checked because of cast to AppImpl
+            throw new AppNotDeployedException();
+        }
         final var data = getService().getDataFromInternalDB((AppImpl) app);
         final var template = IOUtils.toString(data, StandardCharsets.UTF_8);
 

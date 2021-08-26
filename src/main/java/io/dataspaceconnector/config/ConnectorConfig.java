@@ -15,8 +15,10 @@
  */
 package io.dataspaceconnector.config;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.ids.policy.UsageControlFramework;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -68,10 +70,14 @@ public class ConnectorConfig {
     /**
      * The outbound model version.
      */
+    @SuppressFBWarnings("SS_SHOULD_BE_STATIC")
+    @EqualsAndHashCode.Exclude
     private final String outboundVersion = "4.1.2";
 
     /**
      * The inbound model versions.
      */
+    @SuppressFBWarnings("SS_SHOULD_BE_STATIC")
+    @EqualsAndHashCode.Exclude
     private final List<String> inboundVersions = List.of("4.0.0", "4.1.0", "4.1.2");
 }
