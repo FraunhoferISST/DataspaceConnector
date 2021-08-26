@@ -180,7 +180,9 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         portainerSvc.pullImage(template);
 
         // 3. Create volumes with given information from AppStore template.
-        final var volumeMap = portainerSvc.createVolumes(template);
+        final var volumeMap = portainerSvc.createVolumes(
+                template, app.getId().toString()
+        );
 
         // 4. Create Container with given information from AppStore template and new volume.
         final var containerId = portainerSvc.createContainer(template, volumeMap);

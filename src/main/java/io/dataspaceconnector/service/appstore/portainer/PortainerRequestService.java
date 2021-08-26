@@ -682,10 +682,12 @@ public class PortainerRequestService {
 
     /**
      * @param appStoreTemplate The template provided by the AppStore describing 1 App.
+     * @param appID UUID of the app volume is created for
      * @return Map of portainer responses for every volume to create.
      * @throws IOException If an error occurs while connection to portainer.
      */
-    public Map<String, String> createVolumes(final String appStoreTemplate) throws IOException {
+    public Map<String, String> createVolumes(final String appStoreTemplate, final String appID)
+            throws IOException {
         final Map<String, String> volumeNames = new HashMap<>();
         final var templateObject = toJsonObject(appStoreTemplate);
         var volumes = new JSONArray();
@@ -703,12 +705,12 @@ public class PortainerRequestService {
             final var req = new JSONObject();
             for (var key : namesList) {
                 if (!key.equals("container")) {
-                    final var value = currentVolume.getString(key);
+                    final var value = currentVolume.getString(key) + "_" + appID;
                     req.put(key, value);
                     volumeNames.put(value, key);
                 }
             }
-            final var templateName = currentVolume.getString("container");
+            final var templateName = currentVolume.getString("container") + "_" + appID;
             final var validTemplateName = templateName
                     .substring(templateName.indexOf("/") + 1)
                     .replace("/", "_");
