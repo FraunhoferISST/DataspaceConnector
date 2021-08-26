@@ -17,7 +17,7 @@ package io.dataspaceconnector.controller.resource.relation;
 
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.config.BaseType;
-import io.dataspaceconnector.controller.resource.base.BaseResourceChildController;
+import io.dataspaceconnector.controller.resource.base.BaseResourceChildRestrictedController;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.resource.RequestedResourceView;
@@ -33,6 +33,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(BasePath.CONTRACTS + "/{id}/" + BaseType.REQUESTS)
 @Tag(name = ResourceName.CONTRACTS, description = ResourceDescription.CONTRACTS)
-public class ContractsToRequestedResourcesController extends BaseResourceChildController<
+public class ContractsToRequestedResourcesController extends BaseResourceChildRestrictedController<
         ContractRequestedResourceLinker, RequestedResource, RequestedResourceView> {
 }
