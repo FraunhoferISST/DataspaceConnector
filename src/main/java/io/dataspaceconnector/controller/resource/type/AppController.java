@@ -246,7 +246,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
                             .body(Objects.requireNonNull(descriptionResponse.body()).string());
                 }
             }
-        }  catch(Exception e){
+        }  catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
