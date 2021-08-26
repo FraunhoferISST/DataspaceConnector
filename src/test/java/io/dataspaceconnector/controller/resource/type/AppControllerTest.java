@@ -88,6 +88,7 @@ class AppControllerTest {
         Mockito.doNothing().when(appService).setContainerIdForApp(Mockito.any(), Mockito.any());
         Mockito.doNothing().when(appService).deleteContainerIdFromApp(Mockito.any());
         Mockito.when(portainerRequestService.validateContainerRunning(Mockito.any())).thenReturn(false);
+        Mockito.when(portainerRequestService.getDescriptionByContainerId(Mockito.any())).thenReturn(returnedResponse);
     }
 
     @Test
@@ -122,5 +123,10 @@ class AppControllerTest {
         assertEquals(HttpStatus.OK, appController.containerManagement(UUID.randomUUID(), "START").getStatusCode());
         assertEquals(HttpStatus.OK, appController.containerManagement(UUID.randomUUID(), "STOP").getStatusCode());
         assertEquals(HttpStatus.OK, appController.containerManagement(UUID.randomUUID(), "DELETE").getStatusCode());
+    }
+
+    @Test
+    public void testContainerDescription() {
+        assertEquals(HttpStatus.OK, appController.containerDescription(UUID.randomUUID()).getStatusCode());
     }
 }
