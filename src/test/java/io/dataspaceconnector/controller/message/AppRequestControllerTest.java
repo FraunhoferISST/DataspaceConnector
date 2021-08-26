@@ -15,6 +15,14 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import de.fraunhofer.iais.eis.AppRepresentationBuilder;
+import de.fraunhofer.iais.eis.AppResourceBuilder;
+import de.fraunhofer.iais.eis.ArtifactBuilder;
+import io.dataspaceconnector.common.exception.UnexpectedResponseException;
+import io.dataspaceconnector.model.app.App;
+import io.dataspaceconnector.service.ArtifactDataDownloader;
+import io.dataspaceconnector.service.MetadataDownloader;
+import io.dataspaceconnector.service.resource.type.AppService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -23,13 +31,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,21 +53,35 @@ class AppRequestControllerTest {
     private WebApplicationContext webApplicationContext;
 
     @MockBean
-    private AppRequestController appRequestController;
+    private MetadataDownloader metadataDownloader;
+
+    @MockBean
+    private ArtifactDataDownloader artifactDataDownloader;
+
+    @MockBean
+    private AppService appService;
 
     @BeforeEach
-    public void setup()
-    {
+    public void setup() throws UnexpectedResponseException {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         //Controller needs to be mocked to avoid sending
         // messages to appstore and portainer in unit test.
-        Mockito.when(appRequestController.sendMessage(Mockito.any(URI.class), Mockito.any(URI.class)))
-                .thenReturn(ResponseEntity.ok().body("Mocked."));
+        Mockito.when(metadataDownloader.downloadAppResource(Mockito.any(URI.class), Mockito.any(URI.class)))
+                .thenReturn(new AppResourceBuilder()._representation_(
+                        new AppRepresentationBuilder()._instance_(
+                                new ArtifactBuilder().build()
+                        ).build()).build()
+                );
+        Mockito.when(appService.identifyByRemoteId(Mockito.any(URI.class))).thenReturn(
+                Optional.of(UUID.randomUUID()));
+        Mockito.when(appService.get(Mockito.any(UUID.class))).thenReturn(new App());
+        Mockito.doNothing().when(artifactDataDownloader)
+                .downloadTemplate(Mockito.any(), Mockito.any(), Mockito.any());
     }
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendMessage_validInput_willReturn200() throws Exception {
+    public void sendMessage_validInput_willReturn201() throws Exception {
         /* ARRANGE */
         final var recipient = URI.create("https://someRecipient");
         final var app = URI.create("https://someApp");
@@ -67,6 +90,6 @@ class AppRequestControllerTest {
         mockMvc.perform(post("/api/ids/app")
                 .param("recipient", recipient.toString())
                 .param("appId", app.toString()))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 }
