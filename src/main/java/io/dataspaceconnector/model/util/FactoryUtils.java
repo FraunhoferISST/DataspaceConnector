@@ -160,8 +160,12 @@ public final class FactoryUtils {
             final List<PolicyPattern> oldList,
             final List<PolicyPattern> newList,
             final List<PolicyPattern> defaultList) {
-        if (oldList == null || !oldList.equals(newList)) {
-            return Optional.of(newList);
+        final var newValues = cleanPolicyList(
+                newList == null ? defaultList : newList
+        );
+
+        if (oldList == null || !oldList.equals(newValues)) {
+            return Optional.of(newValues);
         }
 
         return Optional.of(defaultList);
@@ -226,6 +230,16 @@ public final class FactoryUtils {
      * @return Cleared list.
      */
     public static List<URI> cleanUriList(final List<URI> list) {
+        return removeNullFromList(list);
+    }
+
+    /**
+     * Clean list of policypatterns.
+     *
+     * @param list List of policypatterns.
+     * @return Cleared list.
+     */
+    public static List<PolicyPattern> cleanPolicyList(final List<PolicyPattern> list) {
         return removeNullFromList(list);
     }
 

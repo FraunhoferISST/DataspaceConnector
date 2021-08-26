@@ -147,6 +147,10 @@ public class MainControllerTest {
         assertEquals("{\"_links\":{\"self\":{\"href\":\"http://localhost/api\"}," +
                         "\"agreements\":{\"href\":\"http://localhost/api/agreements{?page,size}\"," +
                         "\"templated\":true}," +
+                        "\"apps\":{\"href\":\"http://localhost/api/apps{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"appstores\":{\"href\":\"http://localhost/api/appstores{?page,size}\"," +
+                        "\"templated\":true}," +
                         "\"artifacts\":{\"href\":\"http://localhost/api/artifacts{?page,size}\"," +
                         "\"templated\":true}," +
                         "\"brokers\":{\"href\":\"http://localhost/api/brokers{?page,size}\"," +
@@ -170,10 +174,6 @@ public class MainControllerTest {
                         "\"rules\":{\"href\":\"http://localhost/api/rules{?page,size}\"," +
                         "\"templated\":true}," +
                         "\"subscriptions\":{\"href\":\"http://localhost/api/subscriptions{?page,size}\"," +
-                        "\"templated\":true}," +
-                        "\"apps\":{\"href\":\"http://localhost/api/apps{?page,size}\"," +
-                        "\"templated\":true}," +
-                        "\"appstores\":{\"href\":\"http://localhost/api/appstores{?page,size}\"," +
                         "\"templated\":true}}}",
                 result.getResponse().getContentAsString());
         assertEquals("application/hal+json", result.getResponse().getContentType());
