@@ -54,6 +54,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -230,16 +231,23 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         final var app = getService().get(appId);
         final var containerId = ((AppImpl) app).getContainerId();
 
-        if (containerId == null || containerId.equals("")) {
-            return new ResponseEntity<>("No container id provided.", HttpStatus.NOT_FOUND);
-        }
-
         try {
-            final var response = portainerSvc.getDescriptionByContainerId(containerId);
-            return readResponse(response, response.body());
-        } catch (IOException e) {
-            // TODO Bad request should only be returned on malformed user input.
-            return ResponseEntity.badRequest().body(e.getMessage());
+            if (containerId == null || containerId.equals("")) {
+                return new ResponseEntity<>("No container id provided.", HttpStatus.NOT_FOUND);
+            } else {
+                final var descriptionResponse = portainerSvc
+                        .getDescriptionByContainerId(containerId);
+
+                if (descriptionResponse.isSuccessful()) {
+                    return ResponseEntity.ok(
+                            Objects.requireNonNull(descriptionResponse.body()).string());
+                } else {
+                    return ResponseEntity.internalServerError()
+                            .body(Objects.requireNonNull(descriptionResponse.body()).string());
+                }
+            }
+        }  catch(Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 
