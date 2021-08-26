@@ -17,9 +17,13 @@ package io.dataspaceconnector.controller.message;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -39,10 +43,17 @@ class AppRequestControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
+    @MockBean
+    private AppRequestController appRequestController;
+
     @BeforeEach
     public void setup()
     {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        //Controller needs to be mocked to avoid sending
+        // messages to appstore and portainer in unit test.
+        Mockito.when(appRequestController.sendMessage(Mockito.any(URI.class), Mockito.any(URI.class)))
+                .thenReturn(ResponseEntity.ok().body("Mocked."));
     }
 
     @Test
@@ -55,7 +66,7 @@ class AppRequestControllerTest {
         /* ACT && ASSERT */
         mockMvc.perform(post("/api/ids/app")
                 .param("recipient", recipient.toString())
-                .param("app", app.toString()))
+                .param("appId", app.toString()))
                 .andExpect(status().isOk());
     }
 }
