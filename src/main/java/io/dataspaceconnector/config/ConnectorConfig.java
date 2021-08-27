@@ -70,14 +70,10 @@ public class ConnectorConfig {
     /**
      * The outbound model version.
      */
-    @SuppressFBWarnings("SS_SHOULD_BE_STATIC")
-    @EqualsAndHashCode.Exclude
-    private final String outboundVersion = "4.1.2";
+    private final String outboundVersion = "4.2.0";
 
     /**
      * The inbound model versions.
      */
-    @SuppressFBWarnings("SS_SHOULD_BE_STATIC")
-    @EqualsAndHashCode.Exclude
-    private final List<String> inboundVersions = List.of("4.0.0", "4.1.0", "4.1.2");
+    private final List<String> inboundVersions = List.of("4.0.0", "4.1.0", "4.1.2", "4.2.0");
 }
