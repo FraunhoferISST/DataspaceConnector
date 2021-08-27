@@ -36,7 +36,7 @@ import javax.persistence.OneToOne;
 @SQLDelete(sql = "UPDATE artifact SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
 @Getter
-@Setter(AccessLevel.PUBLIC)
+@Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
 public class ArtifactImpl extends Artifact {
