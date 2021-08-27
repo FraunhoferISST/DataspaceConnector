@@ -54,6 +54,7 @@ import io.dataspaceconnector.model.template.RepresentationTemplate;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
+import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -69,6 +70,7 @@ import java.util.stream.Collectors;
 /**
  * Maps ids objects to internal entities.
  */
+@Log4j2
 public final class FromIdsObjectMapper {
 
     /**
@@ -234,7 +236,7 @@ public final class FromIdsObjectMapper {
         }
 
         if (paymentModality != null) {
-            desc.setPaymentMethod(fromIdsPaymentModality(paymentModality));
+            desc.setPaymentMethod(fromIdsPaymentModality(paymentModality, resource.getId()));
         }
 
         if (samples != null && !samples.isEmpty()) {
@@ -671,35 +673,26 @@ public final class FromIdsObjectMapper {
                 new AuthenticationDesc(auth.getAuthUsername(), auth.getAuthPassword()));
     }
 
-    private static PaymentMethod fromIdsPaymentModality(final Object modality) {
+    private static PaymentMethod fromIdsPaymentModality(final Object modality, final URI id) {
         if (modality == null) {
             return PaymentMethod.UNDEFINED;
         }
 
-        PaymentModality paymentModality;
-        // Check if of type list or object. Cast to the matching type to get the payment modality.
-        // Note: Implementation due to incompatibility between Infomodel lib v4.1.0 (list) and
-        // v4.2.0 (object). Both metadata should be mapped.
-        if (modality instanceof PaymentModality) {
-            paymentModality = (PaymentModality) modality;
-        } else {
-            try {
-                paymentModality = ((List<PaymentModality>) modality).get(0);
-            } catch (Exception exception) {
-                return PaymentMethod.UNDEFINED;
+        try {
+            switch ((PaymentModality) modality) {
+                case FIXED_PRICE:
+                    return PaymentMethod.FIXED_PRICE;
+                case NEGOTIATION_BASIS:
+                    return PaymentMethod.NEGOTIATION_BASIS;
+                default:
+                    return PaymentMethod.FREE;
             }
-        }
-
-        if (paymentModality == null) {
+        } catch (Exception exception) {
+            if (log.isDebugEnabled()) {
+                log.debug("Could not read payment modality from incoming resource. "
+                        + "[resourceId=({}), modality=({})]", id, modality.toString());
+            }
             return PaymentMethod.UNDEFINED;
-        }
-        switch (paymentModality) {
-            case FIXED_PRICE:
-                return PaymentMethod.FIXED_PRICE;
-            case NEGOTIATION_BASIS:
-                return PaymentMethod.NEGOTIATION_BASIS;
-            default:
-                return PaymentMethod.FREE;
         }
     }
 }
