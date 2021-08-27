@@ -16,14 +16,65 @@
 package io.dataspaceconnector.service.appstore.portainer;
 
 import io.dataspaceconnector.common.net.HttpService;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.json.JSONException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.io.IOException;
+import java.util.Map;
+
 @SpringBootTest
 class PortainerRequestServiceTest {
+
+    private static String RESPONSE_STRING = "{\\\"test\\\":\\\"testdata\\\", \\\"image\\\":\\\"ids-binac/03d93c90-d63f-4dc4-a6f3-b06874f5077e:latest\\\"}";
+
+    private static String TEMPLATE = "{\n" +
+            "    \"type\" : 1,\n" +
+            "    \"title\" : \"Docker Representation\",\n" +
+            "    \"description\" : \"This is the docker representation for the DataProcessingApp\",\n" +
+            "    \"image\" : \"ids-binac/03d93c90-d63f-4dc4-a6f3-b06874f5077e\",\n" +
+            "    \"restartPolicy\" : \"always\",\n" +
+            "    \"ports\" : [ {\n" +
+            "      \"INPUT_ENDPOINT\" : \"5000:5000/tcp\"\n" +
+            "    } ],\n" +
+            "    \"volumes\" : [ {\n" +
+            "      \"container\" : \"/data/temp\",\n" +
+            "      \"bind\" : \"/temp\"\n" +
+            "    } ],\n" +
+            "    \"label\" : [ {\n" +
+            "      \"label\" : \"License\",\n" +
+            "      \"value\" : \"https://www.apache.org/licenses/LICENSE-2.0\"\n" +
+            "    }, {\n" +
+            "      \"label\" : \"Author\",\n" +
+            "      \"value\" : \"https://fit.fraunhofer.de\"\n" +
+            "    } ],\n" +
+            "    \"name\" : \"03d93c90-d63f-4dc4-a6f3-b06874f5077e\",\n" +
+            "    \"logo\" : \"https://logo_placeholder.example\",\n" +
+            "    \"registry\" : \"binac.fit.fraunhofer.de\",\n" +
+            "    \"categories\" : [ \"data\", \"processing\", \"fit\" ],\n" +
+            "    \"platform\" : \"linux\",\n" +
+            "    \"env\" : [ {\n" +
+            "      \"name\" : \"Env1\",\n" +
+            "      \"label\" : \"Env1\",\n" +
+            "      \"default\" : \"environmentvariable\"\n" +
+            "    }, {\n" +
+            "      \"name\" : \"Env2\",\n" +
+            "      \"label\" : \"Env2\",\n" +
+            "      \"default\" : \"environmentvariable2\"\n" +
+            "    } ],\n" +
+            "    \"registryUser\" : {\n" +
+            "      \"comment\" : \"IDS APPSTORE USER: user\",\n" +
+            "      \"password\" : \"pass\",\n" +
+            "      \"username\" : \"user\"\n" +
+            "    }\n" +
+            "  }";
 
     @Autowired
     public PortainerRequestService portainerRequestService;
@@ -34,14 +85,52 @@ class PortainerRequestServiceTest {
     @MockBean
     public PortainerConfig portainerConfig;
 
-    @BeforeEach
-    public void setupPortainerMock() {
+    private MockWebServer mockWebServer;
 
+    @BeforeEach
+    public void setupPortainerMock() throws IOException {
+        var mockResponse = new MockResponse()
+                .setResponseCode(200)
+                .setBody(RESPONSE_STRING);
+        mockWebServer = new MockWebServer();
+        mockWebServer.start();
+        for(int i = 0; i < 50; i++) {
+            mockWebServer.enqueue(mockResponse);
+        }
+        Mockito.when(portainerConfig.getPortainerHost()).thenReturn(mockWebServer.getHostName());
+        Mockito.when(portainerConfig.getPortainerPort()).thenReturn(mockWebServer.getPort());
+        Mockito.when(portainerConfig.getPortainerUser()).thenReturn("user");
+        Mockito.when(portainerConfig.getPortainerPassword()).thenReturn("pass");
     }
 
     @Test
-    public void testPortainer() {
-        //TODO test portainer request service
+    public void testPortainer() throws Exception {
+        Assertions.assertEquals(RESPONSE_STRING, portainerRequestService.authenticate());
+        Assertions.assertEquals(200, portainerRequestService.startContainer("id").code());
+        Assertions.assertEquals(200, portainerRequestService.stopContainer("id").code());
+        Assertions.assertEquals(200, portainerRequestService.deleteContainer("id").code());
+        Assertions.assertEquals(200, portainerRequestService.getDescriptionByContainerId("id").code());
+        Assertions.assertEquals(200, portainerRequestService.getRegistries().code());
+        Assertions.assertEquals(200, portainerRequestService.getContainers().code());
+        Assertions.assertEquals(200, portainerRequestService.getImages().code());
+        Assertions.assertEquals(200, portainerRequestService.getNetworks().code());
+        Assertions.assertEquals(200, portainerRequestService.getVolumes().code());
+        Assertions.assertEquals(200, portainerRequestService.deleteImage("").code());
+        Assertions.assertEquals(200, portainerRequestService.deleteNetwork("").code());
+        Assertions.assertEquals(200, portainerRequestService.deleteVolume("").code());
+        Assertions.assertEquals(200, portainerRequestService.pullImage(TEMPLATE).code());
+        Assertions.assertEquals(200, portainerRequestService.disconnectContainerFromNetwork("id", "id", true).code());
+        Assertions.assertDoesNotThrow(() -> portainerRequestService.deleteRegistry(1));
+        Assertions.assertDoesNotThrow(() -> portainerRequestService.deleteUnusedVolumes());
+
+        //TODO move JSON Array parsing methods to different test (with json array as response, to check handling)
+        Assertions.assertThrows(JSONException.class, () -> portainerRequestService.validateContainerRunning("id"));
+        Assertions.assertThrows(JSONException.class, () -> portainerRequestService.registryExists("id"));
+        Assertions.assertThrows(JSONException.class, () -> portainerRequestService.createEndpointId());
+        Assertions.assertThrows(JSONException.class, () -> portainerRequestService.getNetworkId("name"));
+        Assertions.assertThrows(JSONException.class, () -> portainerRequestService.createRegistry(TEMPLATE));
+        Assertions.assertThrows(JSONException.class, () -> portainerRequestService.createVolumes(TEMPLATE, "id"));
+        Assertions.assertThrows(JSONException.class, () -> portainerRequestService.createContainer(TEMPLATE, Map.of()));
     }
 
 }
