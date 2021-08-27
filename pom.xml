@@ -99,7 +99,7 @@
 		<swagger-annotations.version>1.6.2</swagger-annotations.version>
 		<okhttp.version>4.9.1</okhttp.version>
 		<modelmapper.version>2.4.4</modelmapper.version>
-		<jackson.version>2.12.4</jackson.version>
+		<jackson.version>2.12.5</jackson.version>
 		<postgres.version>42.2.23</postgres.version>
 		<springdoc.version>1.5.10</springdoc.version>
 		<equalsverifier.version>3.7.1</equalsverifier.version>
