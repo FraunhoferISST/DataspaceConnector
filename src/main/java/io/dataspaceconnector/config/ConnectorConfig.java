@@ -15,10 +15,8 @@
  */
 package io.dataspaceconnector.config;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.ids.policy.UsageControlFramework;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
