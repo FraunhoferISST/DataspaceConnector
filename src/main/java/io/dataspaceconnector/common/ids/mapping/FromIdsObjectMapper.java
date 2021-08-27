@@ -233,7 +233,7 @@ public final class FromIdsObjectMapper {
                     .ifPresent(desc::setEndpointDocumentation);
         }
 
-        if (paymentModality != null && !paymentModality.isEmpty()) {
+        if (paymentModality != null) {
             desc.setPaymentMethod(fromIdsPaymentModality(paymentModality));
         }
 
@@ -671,13 +671,12 @@ public final class FromIdsObjectMapper {
                 new AuthenticationDesc(auth.getAuthUsername(), auth.getAuthPassword()));
     }
 
-    private static PaymentMethod fromIdsPaymentModality(final List<PaymentModality> modalities) {
-        final var paymentModality = modalities.get(0);
-        if (paymentModality == null) {
+    private static PaymentMethod fromIdsPaymentModality(final PaymentModality modality) {
+        if (modality == null) {
             return PaymentMethod.UNDEFINED;
         }
 
-        switch (paymentModality) {
+        switch (modality) {
             case FIXED_PRICE:
                 return PaymentMethod.FIXED_PRICE;
             case NEGOTIATION_BASIS:

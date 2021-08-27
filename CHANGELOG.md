@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Increase spring-boot-starter-parent version from 2.5.3 to 2.5.4
+- Increase jackson version from 2.12.4 to 2.12.5.
+- Increase IDS messaging services version from 3.1.0 to 4.2.2.
 
 ### Fixed
 - Set whitelabel error page default value to `enabled` to remove thrown ServletException.
