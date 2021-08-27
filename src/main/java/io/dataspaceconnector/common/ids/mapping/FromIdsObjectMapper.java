@@ -671,12 +671,29 @@ public final class FromIdsObjectMapper {
                 new AuthenticationDesc(auth.getAuthUsername(), auth.getAuthPassword()));
     }
 
-    private static PaymentMethod fromIdsPaymentModality(final PaymentModality modality) {
+    private static PaymentMethod fromIdsPaymentModality(final Object modality) {
         if (modality == null) {
             return PaymentMethod.UNDEFINED;
         }
 
-        switch (modality) {
+        PaymentModality paymentModality;
+        // Check if of type list or object. Cast to the matching type to get the payment modality.
+        // Note: Implementation due to incompatibility between Infomodel lib v4.1.0 (list) and
+        // v4.2.0 (object). Both metadata should be mapped.
+        if (modality instanceof PaymentModality) {
+            paymentModality = (PaymentModality) modality;
+        } else {
+            try {
+                paymentModality = ((List<PaymentModality>) modality).get(0);
+            } catch (Exception exception) {
+                return PaymentMethod.UNDEFINED;
+            }
+        }
+
+        if (paymentModality == null) {
+            return PaymentMethod.UNDEFINED;
+        }
+        switch (paymentModality) {
             case FIXED_PRICE:
                 return PaymentMethod.FIXED_PRICE;
             case NEGOTIATION_BASIS:
