@@ -22,6 +22,7 @@ import org.json.JSONException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,7 +34,9 @@ import java.util.Map;
 @SpringBootTest
 class PortainerRequestServiceTest {
 
-    private static String RESPONSE_STRING = "{\\\"test\\\":\\\"testdata\\\", \\\"image\\\":\\\"ids-binac/03d93c90-d63f-4dc4-a6f3-b06874f5077e:latest\\\"}";
+    private static String RESPONSE_STRING = "{\"Type\":\"1\", \"URL\":\"https://someurl\", \"State\":\"running\", \"Name\":\"testdata\", \"image\":\"ids-binac/03d93c90-d63f-4dc4-a6f3-b06874f5077e:latest\", \"Id\":\"1\", \"Portainer\":{\"ResourceControl\":{\"Id\":1}}}";
+
+    private static String ARRAY_RESPONSE = "[" + RESPONSE_STRING + "]";
 
     private static String TEMPLATE = "{\n" +
             "    \"type\" : 1,\n" +
@@ -89,14 +92,9 @@ class PortainerRequestServiceTest {
 
     @BeforeEach
     public void setupPortainerMock() throws IOException {
-        var mockResponse = new MockResponse()
-                .setResponseCode(200)
-                .setBody(RESPONSE_STRING);
+
         mockWebServer = new MockWebServer();
         mockWebServer.start();
-        for(int i = 0; i < 50; i++) {
-            mockWebServer.enqueue(mockResponse);
-        }
         Mockito.when(portainerConfig.getPortainerHost()).thenReturn(mockWebServer.getHostName());
         Mockito.when(portainerConfig.getPortainerPort()).thenReturn(mockWebServer.getPort());
         Mockito.when(portainerConfig.getPortainerUser()).thenReturn("user");
@@ -105,6 +103,19 @@ class PortainerRequestServiceTest {
 
     @Test
     public void testPortainer() throws Exception {
+        var mockResponse = new MockResponse()
+                .setResponseCode(200)
+                .setBody(RESPONSE_STRING);
+        var arrayResponse = new MockResponse()
+                .setResponseCode(200)
+                .setBody("[]");
+        for(int i = 0; i < 42; i++) {
+            mockWebServer.enqueue(mockResponse);
+        }
+        mockWebServer.enqueue(arrayResponse);
+        mockWebServer.enqueue(mockResponse);
+        mockWebServer.enqueue(mockResponse);
+
         Assertions.assertEquals(RESPONSE_STRING, portainerRequestService.authenticate());
         Assertions.assertEquals(200, portainerRequestService.startContainer("id").code());
         Assertions.assertEquals(200, portainerRequestService.stopContainer("id").code());
@@ -122,15 +133,28 @@ class PortainerRequestServiceTest {
         Assertions.assertEquals(200, portainerRequestService.disconnectContainerFromNetwork("id", "id", true).code());
         Assertions.assertDoesNotThrow(() -> portainerRequestService.deleteRegistry(1));
         Assertions.assertDoesNotThrow(() -> portainerRequestService.deleteUnusedVolumes());
+        Assertions.assertDoesNotThrow(() -> portainerRequestService.createVolumes(TEMPLATE, "id"));
+        Assertions.assertEquals("1", portainerRequestService.createContainer(TEMPLATE, Map.of()));
+        Assertions.assertEquals(1, portainerRequestService.createRegistry(TEMPLATE));
+    }
 
-        //TODO move JSON Array parsing methods to different test (with json array as response, to check handling)
-        Assertions.assertThrows(JSONException.class, () -> portainerRequestService.validateContainerRunning("id"));
-        Assertions.assertThrows(JSONException.class, () -> portainerRequestService.registryExists("id"));
-        Assertions.assertThrows(JSONException.class, () -> portainerRequestService.createEndpointId());
-        Assertions.assertThrows(JSONException.class, () -> portainerRequestService.getNetworkId("name"));
-        Assertions.assertThrows(JSONException.class, () -> portainerRequestService.createRegistry(TEMPLATE));
-        Assertions.assertThrows(JSONException.class, () -> portainerRequestService.createVolumes(TEMPLATE, "id"));
-        Assertions.assertThrows(JSONException.class, () -> portainerRequestService.createContainer(TEMPLATE, Map.of()));
+    @Test
+    public void testPortainer_ArrayResponse() throws Exception {
+        var mockResponse = new MockResponse()
+                .setResponseCode(200)
+                .setBody(ARRAY_RESPONSE);
+        var objResponse = new MockResponse()
+                .setResponseCode(200)
+                .setBody(RESPONSE_STRING);
+        for(int i = 0; i < 9; i++) {
+            mockWebServer.enqueue(mockResponse);
+        }
+        mockWebServer.enqueue(objResponse);
+
+        Assertions.assertTrue(portainerRequestService.validateContainerRunning("1"));
+        Assertions.assertEquals(1, portainerRequestService.registryExists("https://someurl"));
+        Assertions.assertDoesNotThrow(() -> portainerRequestService.createEndpointId());
+        Assertions.assertEquals("1", portainerRequestService.getNetworkId("testdata"));
     }
 
 }
