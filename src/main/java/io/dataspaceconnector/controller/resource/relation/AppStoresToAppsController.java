@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.controller.resource.relation;
 
+import io.dataspaceconnector.config.BasePath;
+import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.base.BaseResourceChildRestrictedController;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
@@ -29,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Offers the endpoints for managing the relations between apps and appstores.
  */
 @RestController
-@RequestMapping("/api/appstores/{id}/apps")
+@RequestMapping(BasePath.APPSTORES + "/{id}/" + BaseType.APPS)
 @Tag(name = ResourceName.APPSTORES, description = ResourceDescription.APPSTORES)
 public class AppStoresToAppsController extends BaseResourceChildRestrictedController<
         AppStoreAppLinker, App, AppView> {

@@ -18,6 +18,7 @@ package io.dataspaceconnector.service.message;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.UUIDFormatException;
 import io.dataspaceconnector.common.util.UUIDUtils;
+import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.service.resource.relation.AppStoreAppLinker;
 import io.dataspaceconnector.service.resource.type.AppStoreService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
 import java.net.URI;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -51,35 +53,40 @@ public class AppStoreCommunication {
      * Check if input is an appStore id or an url.
      *
      * @param input The input uri.
-     * @return The location of the appStore object or the original uri (url).
+     * @return The found appStore or empty.
      */
-    public URI checkInput(final URI input) {
+    public Optional<AppStore> checkInput(final URI input) {
         try {
             final var appStore = appStoreService.get(UUIDUtils.uuidFromUri(input));
-            return appStore.getLocation();
+            return Optional.of(appStore);
         } catch (UUIDFormatException exception) {
             // Input uri is not an appStore id. Proceed.
         } catch (ResourceNotFoundException exception) {
             // No appStore found for this id. Proceed.
         }
-        return input;
+        return Optional.empty();
     }
 
     /**
      * Link app to app store entity.
      *
-     * @param input The uri of the recipient/ id of the app store.
-     * @param appId The id of the stored app entity.
+     * @param appStore The app store from which the app is downloaded.
+     * @param appId    The id of the stored app entity.
      */
-    public void addAppToAppStore(final URI input, final UUID appId) {
+    public void addAppToAppStore(final Optional<AppStore> appStore, final UUID appId) {
         try {
-            final var appStore = appStoreService.get(UUIDUtils.uuidFromUri(input));
-            linker.add(appStore.getId(), Set.of(appId));
+            if (appStore.isPresent()) {
+                linker.add(appStore.get().getId(), Set.of(appId));
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Input was not an app store. Could not link app to app store. "
+                            + "[appId=({})]", appId);
+                }
+            }
         } catch (UUIDFormatException | ResourceNotFoundException exception) {
             // No appStore found for this id. App could not be linked. Proceed.
-            if (log.isDebugEnabled()) {
-                log.debug("Failed to link app to app store. [recipient=({}), appId=({})]", input,
-                        appId);
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to link app to app store. [appId=({})]", appId);
             }
         }
     }

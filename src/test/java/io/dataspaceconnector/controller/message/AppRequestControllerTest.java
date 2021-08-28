@@ -66,7 +66,7 @@ class AppRequestControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         //Controller needs to be mocked to avoid sending
         // messages to appstore and portainer in unit test.
-        Mockito.when(metadataDownloader.downloadAppResource(Mockito.any(URI.class), Mockito.any(URI.class)))
+        Mockito.when(metadataDownloader.downloadAppResource(Mockito.any(URI.class), Mockito.any(URI.class), Mockito.any(Optional.class)))
                 .thenReturn(URI.create("https://artifactId"));
         Mockito.when(appService.identifyByRemoteId(Mockito.any(URI.class))).thenReturn(
                 Optional.of(UUID.randomUUID()));

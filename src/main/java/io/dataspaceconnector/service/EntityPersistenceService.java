@@ -29,6 +29,7 @@ import io.dataspaceconnector.common.net.EndpointUtils;
 import io.dataspaceconnector.controller.resource.type.AgreementController;
 import io.dataspaceconnector.model.agreement.AgreementDesc;
 import io.dataspaceconnector.model.app.App;
+import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.service.message.AppStoreCommunication;
@@ -261,13 +262,13 @@ public class EntityPersistenceService {
     /**
      * Validate response and save app to database.
      *
-     * @param response  The response message map.
-     * @param remoteUrl The provider's url for receiving app request messages.
-     * @param recipient The message's recipient.
+     * @param response   The response message map.
+     * @param remoteUrl  The provider's url for receiving app request messages.
+     * @param appStore  The app store from which the app is downloaded.
      * @return The AppResource's artifact id.
      */
     public URI saveAppMetadata(final Map<String, String> response, final URI remoteUrl,
-                               final URI recipient)
+                               final Optional<AppStore> appStore)
             throws PersistenceException, IllegalArgumentException {
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
         final var resource = deserializationService.getAppResource(payload);
@@ -295,7 +296,7 @@ public class EntityPersistenceService {
         }
 
         // Link app to app store. NOTE: An exception should not abort the download process.
-        appStoreCommunication.addAppToAppStore(recipient, app.getId());
+        appStoreCommunication.addAppToAppStore(appStore, app.getId());
 
         return instanceId.get();
     }

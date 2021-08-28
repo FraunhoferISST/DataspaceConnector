@@ -112,11 +112,16 @@ public class AppRequestController {
             @Parameter(description = "The app id.", required = true)
             @RequestParam(value = "appId") final URI appId) {
         // Check if input was an appStore id or an url.
-        final var address = appStoreCommunication.checkInput(recipient);
+        final var appStore = appStoreCommunication.checkInput(recipient);
+        var address = recipient;
+        if (appStore.isPresent()) {
+            // If an app store could be found, use its location as address.
+            address = appStore.get().getLocation();
+        }
 
         // Send description request message and save the AppResource's metadata.
         try {
-            final var artifactId = metadataDownloader.downloadAppResource(address, appId);
+            final var artifactId = metadataDownloader.downloadAppResource(address, appId, appStore);
 
             // Send artifact request message to download the AppResource's data.
             try {

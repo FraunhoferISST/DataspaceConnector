@@ -18,6 +18,7 @@ package io.dataspaceconnector.service;
 import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
+import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.service.message.builder.type.DescriptionRequestService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import javax.persistence.PersistenceException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Downloads metadata via IDS.
@@ -73,16 +75,18 @@ public class MetadataDownloader {
      *
      * @param recipient The recipient connector.
      * @param appId     The app id.
+     * @param appStore  The app store from which the app is downloaded.
      * @return The AppResource's artifact id.
      * @throws UnexpectedResponseException if the response type is not as expected.
      * @throws MessageResponseException    if the response is invalid.
      * @throws PersistenceException        if the data could not be persisted.
      * @throws MessageException            if message handling failed.
      */
-    public URI downloadAppResource(final URI recipient, final URI appId)
+    public URI downloadAppResource(final URI recipient, final URI appId,
+                                   final Optional<AppStore> appStore)
             throws UnexpectedResponseException, PersistenceException, MessageResponseException,
             MessageException {
         final var response = descReqSvc.sendMessage(recipient, appId);
-        return persistenceSvc.saveAppMetadata(response, appId, recipient);
+        return persistenceSvc.saveAppMetadata(response, appId, appStore);
     }
 }

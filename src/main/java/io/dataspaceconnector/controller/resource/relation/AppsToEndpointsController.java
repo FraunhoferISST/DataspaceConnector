@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.controller.resource.relation;
 
+import io.dataspaceconnector.config.BasePath;
+import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.base.BaseResourceChildRestrictedController;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
@@ -29,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Offers the endpoints for managing the relations between apps and app endpoints.
  */
 @RestController
-@RequestMapping("/api/apps/{id}/endpoints")
+@RequestMapping(BasePath.APPS + "/{id}/" + BaseType.ENDPOINTS)
 @Tag(name = ResourceName.APPS, description = ResourceDescription.APPS)
 public class AppsToEndpointsController extends BaseResourceChildRestrictedController<
         AppEndpointLinker, AppEndpoint, AppEndpointView> {
