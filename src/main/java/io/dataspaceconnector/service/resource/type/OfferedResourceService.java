@@ -42,8 +42,9 @@ public class OfferedResourceService extends ResourceService<OfferedResource, Off
      * @param repository The offered resource repository.
      * @param factory    The offered resource factory.
      */
-    public OfferedResourceService(final BaseEntityRepository<OfferedResource> repository,
-                                  final AbstractFactory<OfferedResource, OfferedResourceDesc> factory) {
+    public OfferedResourceService(
+            final BaseEntityRepository<OfferedResource> repository,
+            final AbstractFactory<OfferedResource, OfferedResourceDesc> factory) {
         super(repository, factory);
     }
 }
