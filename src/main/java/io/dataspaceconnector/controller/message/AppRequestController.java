@@ -90,7 +90,7 @@ public class AppRequestController {
      * Add an apps metadata to an app object.
      *
      * @param recipient The recipient url
-     * @param appId       The app Id.
+     * @param appId     The app Id.
      * @return Success, when app can be found and created from recipient response.
      */
     @PostMapping("/app")

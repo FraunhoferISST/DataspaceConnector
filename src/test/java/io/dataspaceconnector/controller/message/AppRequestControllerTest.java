@@ -15,8 +15,13 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import de.fraunhofer.iais.eis.DynamicAttributeToken;
+import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
+import de.fraunhofer.iais.eis.TokenFormat;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
+import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.model.app.App;
+import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.service.ArtifactDataDownloader;
 import io.dataspaceconnector.service.MetadataDownloader;
 import io.dataspaceconnector.service.message.AppStoreCommunication;
@@ -61,13 +66,22 @@ class AppRequestControllerTest {
     @MockBean
     private AppStoreCommunication appStoreCommunication;
 
+    @MockBean
+    private ConnectorService connectorService;
+
+    private final String recipient = "https://someURL";
+    private final DynamicAttributeToken token = new DynamicAttributeTokenBuilder()
+            ._tokenValue_("token")
+            ._tokenFormat_(TokenFormat.JWT)
+            .build();
+
     @BeforeEach
     public void setup() throws UnexpectedResponseException {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         //Controller needs to be mocked to avoid sending
         // messages to appstore and portainer in unit test.
-        Mockito.when(metadataDownloader.downloadAppResource(Mockito.any(URI.class), Mockito.any(URI.class), Mockito.any(Optional.class)))
-                .thenReturn(URI.create("https://artifactId"));
+        Mockito.doReturn(URI.create("https://artifactId")).when(metadataDownloader)
+                .downloadAppResource(Mockito.any(URI.class), Mockito.any(URI.class), Mockito.any());
         Mockito.when(appService.identifyByRemoteId(Mockito.any(URI.class))).thenReturn(
                 Optional.of(UUID.randomUUID()));
         Mockito.when(appService.get(Mockito.any(UUID.class))).thenReturn(new App());
@@ -82,7 +96,8 @@ class AppRequestControllerTest {
         final var recipient = URI.create("https://someRecipient");
         final var app = URI.create("https://someApp");
 
-        Mockito.doReturn(app).when(appStoreCommunication).checkInput(recipient);
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+        Mockito.doReturn(Optional.of(new AppStore())).when(appStoreCommunication).checkInput(recipient);
 
         /* ACT && ASSERT */
         mockMvc.perform(post("/api/ids/app")
