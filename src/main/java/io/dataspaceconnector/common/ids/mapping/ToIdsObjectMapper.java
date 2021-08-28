@@ -222,7 +222,7 @@ public final class ToIdsObjectMapper {
      * @return The filled ids connector.
      */
     public static Connector getConnectorFromConfiguration(final Configuration config) {
-        return new BaseConnectorBuilder()
+        return new BaseConnectorBuilder(config.getConnectorId())
                 ._title_(Util.asList(new TypedLiteral(config.getTitle())))
                 ._description_(Util.asList(new TypedLiteral(config.getDescription())))
                 ._curator_(config.getCurator())

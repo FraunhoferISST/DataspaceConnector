@@ -38,6 +38,12 @@ usage policy patterns.
 
 ## Quick Start
 
+**We provide Docker images. These can be found
+[here](https://github.com/International-Data-Spaces-Association/DataspaceConnector/pkgs/container/dataspace-connector).
+For a Docker or Kubernetes deployment, as well as a full setup with the Connector
+and its GUI, see [here](https://github.com/International-Data-Spaces-Association/IDS-Deployment-Examples/tree/main/dataspace-connector).**
+
+
 If you want to build and run locally, ensure that at least Java 11 is installed. Then, follow these steps:
 
 1.  Clone this repository.
@@ -47,7 +53,6 @@ If you want to build and run locally, ensure that at least Java 11 is installed.
     be accessed at https://localhost:8080/api. The Swagger UI can be found at https://localhost:8080/api/docs.
 
 For more details, see [here](https://international-data-spaces-association.github.io/DataspaceConnector/).
-For a Docker or Kubernetes deployment, as well as a full setup with the IDS Configuration Manager and its GUI, see [here](https://github.com/International-Data-Spaces-Association/IDS-Deployment-Examples/tree/main/dataspace-connector).
 
 ## Contributing
 
