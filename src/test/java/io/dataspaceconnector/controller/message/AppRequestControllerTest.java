@@ -15,17 +15,14 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import de.fraunhofer.iais.eis.AppRepresentationBuilder;
-import de.fraunhofer.iais.eis.AppResourceBuilder;
-import de.fraunhofer.iais.eis.ArtifactBuilder;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.service.ArtifactDataDownloader;
 import io.dataspaceconnector.service.MetadataDownloader;
+import io.dataspaceconnector.service.message.AppStoreCommunication;
 import io.dataspaceconnector.service.resource.type.AppService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -61,17 +58,16 @@ class AppRequestControllerTest {
     @MockBean
     private AppService appService;
 
+    @MockBean
+    private AppStoreCommunication appStoreCommunication;
+
     @BeforeEach
     public void setup() throws UnexpectedResponseException {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         //Controller needs to be mocked to avoid sending
         // messages to appstore and portainer in unit test.
         Mockito.when(metadataDownloader.downloadAppResource(Mockito.any(URI.class), Mockito.any(URI.class)))
-                .thenReturn(new AppResourceBuilder()._representation_(
-                        new AppRepresentationBuilder()._instance_(
-                                new ArtifactBuilder().build()
-                        ).build()).build()
-                );
+                .thenReturn(URI.create("https://artifactId"));
         Mockito.when(appService.identifyByRemoteId(Mockito.any(URI.class))).thenReturn(
                 Optional.of(UUID.randomUUID()));
         Mockito.when(appService.get(Mockito.any(UUID.class))).thenReturn(new App());
@@ -85,6 +81,8 @@ class AppRequestControllerTest {
         /* ARRANGE */
         final var recipient = URI.create("https://someRecipient");
         final var app = URI.create("https://someApp");
+
+        Mockito.doReturn(app).when(appStoreCommunication).checkInput(recipient);
 
         /* ACT && ASSERT */
         mockMvc.perform(post("/api/ids/app")

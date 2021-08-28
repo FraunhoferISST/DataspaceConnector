@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.service;
 
-import de.fraunhofer.iais.eis.AppResource;
 import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
@@ -74,16 +73,16 @@ public class MetadataDownloader {
      *
      * @param recipient The recipient connector.
      * @param appId     The app id.
-     * @return The downloaded app resource.
+     * @return The AppResource's artifact id.
      * @throws UnexpectedResponseException if the response type is not as expected.
      * @throws MessageResponseException    if the response is invalid.
      * @throws PersistenceException        if the data could not be persisted.
      * @throws MessageException            if message handling failed.
      */
-    public AppResource downloadAppResource(final URI recipient, final URI appId)
+    public URI downloadAppResource(final URI recipient, final URI appId)
             throws UnexpectedResponseException, PersistenceException, MessageResponseException,
             MessageException {
         final var response = descReqSvc.sendMessage(recipient, appId);
-        return persistenceSvc.saveAppMetadata(response, appId);
+        return persistenceSvc.saveAppMetadata(response, appId, recipient);
     }
 }

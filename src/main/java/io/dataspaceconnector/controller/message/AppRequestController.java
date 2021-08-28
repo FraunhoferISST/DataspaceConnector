@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.controller.message;
 
-import de.fraunhofer.iais.eis.AppRepresentation;
-import de.fraunhofer.iais.eis.AppResource;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.common.exception.ContractException;
 import io.dataspaceconnector.common.exception.InvalidInputException;
@@ -28,6 +26,7 @@ import io.dataspaceconnector.controller.resource.view.app.AppViewAssembler;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.service.ArtifactDataDownloader;
 import io.dataspaceconnector.service.MetadataDownloader;
+import io.dataspaceconnector.service.message.AppStoreCommunication;
 import io.dataspaceconnector.service.resource.type.AppService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,6 +35,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,13 +49,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.PersistenceException;
 import java.net.URI;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This controller provides the endpoint for sending an app request message and starting the
  * metadata and data exchange.
  */
+@Log4j2
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
@@ -83,6 +82,11 @@ public class AppRequestController {
     private final @NonNull AppViewAssembler appViewAssembler;
 
     /**
+     * Service for handling app store logic.
+     */
+    private final @NonNull AppStoreCommunication appStoreCommunication;
+
+    /**
      * Add an apps metadata to an app object.
      *
      * @param recipient The recipient url
@@ -107,19 +111,27 @@ public class AppRequestController {
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The app id.", required = true)
             @RequestParam(value = "appId") final URI appId) {
+        // Check if input was an appStore id or an url.
+        final var address = appStoreCommunication.checkInput(recipient);
 
-        // Send description request message and save the app
+        // Send description request message and save the AppResource's metadata.
         try {
-            final var app = metadataDownloader.downloadAppResource(recipient, appId);
-            final var instanceId = getInstanceId(app);
+            final var artifactId = metadataDownloader.downloadAppResource(address, appId);
 
-            // Send artifact request message
-            if (instanceId.isPresent()) {
-                artifactDataDownloader.downloadTemplate(recipient, instanceId.get(), appId);
-                return respondWithCreatedApp(appId);
-            } else {
-                return ResponseEntity.internalServerError().body("Could not download app data.");
+            // Send artifact request message to download the AppResource's data.
+            try {
+                artifactDataDownloader.downloadTemplate(address, artifactId, appId);
+            } catch (UnexpectedResponseException | MessageException | PersistenceException e) {
+                // Remove app if no corresponding data could be downloaded.
+                final var app = appSvc.identifyByRemoteId(appId);
+                app.ifPresent(appSvc::delete);
+                if (log.isDebugEnabled()) {
+                    log.debug("Failed to download app data. Removed app. [remoteId=({})]", appId);
+                }
+                return ResponseEntity.internalServerError().body("Could not download app.");
             }
+
+            return respondWithCreatedApp(appId);
         } catch (InvalidInputException exception) {
             // If the input rules are malformed.
             return ResponseUtils.respondInvalidInput(exception);
@@ -141,28 +153,6 @@ public class AppRequestController {
             // If the response is not as expected.
             return ResponseUtils.respondWithContent(e.getContent());
         }
-    }
-
-    /**
-     * Get instance Id (used for receiving app artifact from AppStore).
-     *
-     * @param appResource The app resource.
-     * @return The instance Id or null.
-     */
-    private Optional<URI> getInstanceId(final AppResource appResource) {
-        if (appResource != null && appResource.getRepresentation() != null) {
-            final var representations = appResource.getRepresentation().stream()
-                    .filter(x -> x instanceof AppRepresentation)
-                    .map(x -> (AppRepresentation) x)
-                    .collect(Collectors.toList());
-            if (!representations.isEmpty()) {
-                final var instance = representations.get(0).getInstance();
-                if (instance != null && !instance.isEmpty()) {
-                    return Optional.of(instance.get(0).getId());
-                }
-            }
-        }
-        return Optional.empty();
     }
 
     private ResponseEntity<Object> respondWithCreatedApp(final URI remoteId) {

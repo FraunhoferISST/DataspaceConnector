@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.service;
 
+import de.fraunhofer.iais.eis.AppRepresentation;
 import de.fraunhofer.iais.eis.AppResource;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -27,8 +28,10 @@ import io.dataspaceconnector.common.ids.model.TemplateUtils;
 import io.dataspaceconnector.common.net.EndpointUtils;
 import io.dataspaceconnector.controller.resource.type.AgreementController;
 import io.dataspaceconnector.model.agreement.AgreementDesc;
+import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
+import io.dataspaceconnector.service.message.AppStoreCommunication;
 import io.dataspaceconnector.service.resource.TemplateBuilder;
 import io.dataspaceconnector.service.resource.relation.AgreementArtifactLinker;
 import io.dataspaceconnector.service.resource.type.AgreementService;
@@ -53,7 +56,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * This service offers methods for saving contract agreements as well as metadata and data requested
@@ -104,6 +109,11 @@ public class EntityPersistenceService {
      * Template builder.
      */
     private final @NonNull TemplateBuilder<RequestedResource, RequestedResourceDesc> tempBuilder;
+
+    /**
+     * Service for app store communication logic.
+     */
+    private final @NonNull AppStoreCommunication appStoreCommunication;
 
     /**
      * Save contract agreement to database (consumer side).
@@ -253,25 +263,63 @@ public class EntityPersistenceService {
      *
      * @param response  The response message map.
      * @param remoteUrl The provider's url for receiving app request messages.
-     * @return The descerialized app resource.
+     * @param recipient The message's recipient.
+     * @return The AppResource's artifact id.
      */
-    public AppResource saveAppMetadata(final Map<String, String> response, final URI remoteUrl)
+    public URI saveAppMetadata(final Map<String, String> response, final URI remoteUrl,
+                               final URI recipient)
             throws PersistenceException, IllegalArgumentException {
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
         final var resource = deserializationService.getAppResource(payload);
 
+        // NOTE: Don't save app if no instance is present, as then no data can be downloaded.
+        final var instanceId = getInstanceId(resource);
+        if (instanceId.isEmpty()) {
+            if (log.isDebugEnabled()) {
+                log.warn("The requested app has no artifact id. [remoteId=({})]", remoteUrl);
+            }
+            throw new PersistenceException("Received app with missing information.");
+        }
+
+        App app;
         try {
             final var resourceTemplate = TemplateUtils.getAppTemplate(resource, remoteUrl);
 
             // Save all entities.
-            tempBuilder.build(resourceTemplate);
+            app = tempBuilder.build(resourceTemplate);
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not store app. [exception=({})]", e.getMessage(), e);
             }
             throw new PersistenceException("Could not store app.", e);
         }
-        return resource;
+
+        // Link app to app store. NOTE: An exception should not abort the download process.
+        appStoreCommunication.addAppToAppStore(recipient, app.getId());
+
+        return instanceId.get();
+    }
+
+    /**
+     * Get instance id (used for receiving app artifact from AppStore).
+     *
+     * @param appResource The app resource.
+     * @return The instance Id or null.
+     */
+    private Optional<URI> getInstanceId(final AppResource appResource) {
+        if (appResource != null && appResource.getRepresentation() != null) {
+            final var representations = appResource.getRepresentation().stream()
+                    .filter(x -> x instanceof AppRepresentation)
+                    .map(x -> (AppRepresentation) x)
+                    .collect(Collectors.toList());
+            if (!representations.isEmpty()) {
+                final var instance = representations.get(0).getInstance();
+                if (instance != null && !instance.isEmpty()) {
+                    return Optional.of(instance.get(0).getId());
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     /**
