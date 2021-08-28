@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.base;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.util.Utils;
@@ -31,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.UUID;
 
 /**
  * The base service implements base logic for persistent entities.
@@ -105,7 +105,7 @@ public class BaseEntityService<T extends Entity, D extends Description>
         final var entity = repository.findById(entityId);
 
         if (entity.isEmpty()) {
-            // Handle with global exception handler
+            // Handle with global exception handler.
             throw new ResourceNotFoundException(this.getClass().getSimpleName() + ": " + entityId);
         }
 

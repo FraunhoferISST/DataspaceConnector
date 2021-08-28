@@ -49,7 +49,7 @@ public class IdsRuleBuilder<T extends Rule> extends AbstractIdsBuilder<ContractR
         final var selfLink = getAbsoluteSelfLink(rule);
         var newRule = rule.getValue();
 
-        // Note: Infomodel deserializer sets autogen ID, when ID is missing in original rule value.
+        // Note: IDS deserializer sets autogen ID, when ID is missing in original rule value.
         // If autogen ID not present in original rule value, it's equal to rule not having ID
         if (idsRule.getId() == null || !rule.getValue().contains(idsRule.getId().toString())) {
             // No id has been set for this rule. Thus, no references can be found.

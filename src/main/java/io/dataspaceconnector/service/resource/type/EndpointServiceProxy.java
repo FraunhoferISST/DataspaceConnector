@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpointDesc;
@@ -29,6 +27,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 /**
  * Service class for endpoint proxy.
@@ -71,19 +71,25 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
         return (EntityService<X, Y>) generic;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Endpoint create(final EndpointDesc desc) {
         return getService(desc.getClass()).create(desc);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Endpoint update(final UUID entityId, final EndpointDesc desc) {
         return getService(desc.getClass()).update(entityId, desc);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Endpoint get(final UUID entityId) {
 
@@ -95,20 +101,26 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
         return generic.get(entityId);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Page<Endpoint> getAll(final Pageable pageable) {
         return repository.findAll(pageable);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean doesExist(final UUID entityId) {
         return connector.doesExist(entityId)
                 || generic.doesExist(entityId);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void delete(final UUID entityId) {
         var endpoint = get(entityId);

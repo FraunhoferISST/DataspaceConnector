@@ -30,9 +30,8 @@ import java.util.List;
  */
 @Service
 @NoArgsConstructor
-public class RequestedResourceCatalogLinker
-        extends NonOwningRelationService<RequestedResource, Catalog, RequestedResourceService,
-        CatalogService> {
+public class RequestedResourceCatalogLinker extends NonOwningRelationService<RequestedResource,
+        Catalog, RequestedResourceService, CatalogService> {
 
     @Override
     protected final List<Catalog> getInternal(final RequestedResource owner) {

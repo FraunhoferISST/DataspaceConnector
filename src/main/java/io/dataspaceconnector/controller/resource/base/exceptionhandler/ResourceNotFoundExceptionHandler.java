@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Order(1)
 public final class ResourceNotFoundExceptionHandler {
     /**
-     * Handle {@link ResourceNotFoundException}.
+     * Handles thrown {@link ResourceNotFoundException}.
      *
      * @param exception The thrown exception.
      * @return Response entity with code 404.

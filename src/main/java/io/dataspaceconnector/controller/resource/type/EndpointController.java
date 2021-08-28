@@ -83,8 +83,10 @@ public class EndpointController implements CRUDController<Endpoint, EndpointDesc
     private final @NonNull EndpointViewAssemblerProxy assemblerProxy;
 
     /**
+     * Respond with created endpoint.
+     *
      * @param obj The endpoint object.
-     * @return response entity
+     * @return response entity.
      */
     private ResponseEntity<Object> respondCreated(final Endpoint obj) {
         final RepresentationModel<?> entity = assemblerProxy.toModel(obj);
@@ -153,9 +155,11 @@ public class EndpointController implements CRUDController<Endpoint, EndpointDesc
     }
 
     /**
+     * Endpoints for creating a start endpoint for a route.
+     *
      * @param genericEndpointId The id of the generic endpoint.
      * @param dataSourceId      The id of the data source.
-     * @return response status OK, if data source is created at generic endpoint.
+     * @return response status OK if data source is created at generic endpoint.
      */
     @PutMapping("{id}/datasource/{dataSourceId}")
     @Operation(summary = "Creates start endpoint for the route")

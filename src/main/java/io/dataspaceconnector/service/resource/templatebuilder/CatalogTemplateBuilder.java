@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.templatebuilder;
 
-import java.util.stream.Collectors;
-
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.catalog.Catalog;
@@ -26,6 +24,8 @@ import io.dataspaceconnector.service.resource.relation.CatalogRequestedResourceL
 import io.dataspaceconnector.service.resource.type.CatalogService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+
+import java.util.stream.Collectors;
 
 /**
  * Builds catalogs from templates.
@@ -51,7 +51,7 @@ public class CatalogTemplateBuilder {
     /**
      * Builder for offered resources.
      */
-    private final @NonNull OfferedResourceTemplateBuilder   offeredBuilder;
+    private final @NonNull OfferedResourceTemplateBuilder offeredBuilder;
 
     /**
      * Builder for requested resources.
@@ -60,6 +60,7 @@ public class CatalogTemplateBuilder {
 
     /**
      * Build a catalog and dependencies from a template.
+     *
      * @param template The catalog template.
      * @return The new resource.
      * @throws IllegalArgumentException if the passed template is null.
@@ -69,13 +70,13 @@ public class CatalogTemplateBuilder {
 
         final var offeredIds =
                 Utils.toStream(template.getOfferedResources()).map(x -> offeredBuilder.build(x)
-                                                                                     .getId())
-                     .collect(Collectors.toSet());
+                        .getId())
+                        .collect(Collectors.toSet());
 
         final var requestedIds =
                 Utils.toStream(template.getRequestedResources()).map(x -> requestedBuilder.build(x)
-                                                                                          .getId())
-                     .collect(Collectors.toSet());
+                        .getId())
+                        .collect(Collectors.toSet());
 
         final var catalog = catalogService.create(template.getDesc());
         offeredLinker.replace(catalog.getId(), offeredIds);

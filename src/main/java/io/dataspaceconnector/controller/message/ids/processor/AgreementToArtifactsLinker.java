@@ -42,6 +42,7 @@ public class AgreementToArtifactsLinker extends IdsResponseProcessor {
 
     /**
      * Links the contract agreement to the artifacts.
+     *
      * @param exchange the exchange.
      * @throws Exception if linking the agreement to the artifacts fails.
      */

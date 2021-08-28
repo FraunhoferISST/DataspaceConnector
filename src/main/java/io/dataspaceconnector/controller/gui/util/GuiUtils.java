@@ -60,8 +60,8 @@ public final class GuiUtils {
     /**
      * The method returns for a given enum name all enum values.
      *
-     * @param enumName name of the enum
-     * @return enums as string
+     * @param enumName name of the enum.
+     * @return enums as string.
      */
     @SuppressFBWarnings("IMPROPER_UNICODE")
     public static String getSpecificEnum(final String enumName) {
@@ -117,7 +117,6 @@ public final class GuiUtils {
                 }
             }
         }
-
 
         return sortJsonArray(jsonArray);
     }
@@ -239,8 +238,10 @@ public final class GuiUtils {
     }
 
     /**
-     * @param jsonArray json array to be sorted
-     * @return sorted json array
+     * Sort json array.
+     *
+     * @param jsonArray json array to be sorted.
+     * @return sorted json array.
      */
     private static JSONArray sortJsonArray(final JSONArray jsonArray) {
         final var jsonObjects = new ArrayList<JSONObject>();

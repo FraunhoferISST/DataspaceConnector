@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.templatebuilder;
 
-import java.util.stream.Collectors;
-
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.contract.Contract;
@@ -25,6 +23,8 @@ import io.dataspaceconnector.service.resource.relation.ContractRuleLinker;
 import io.dataspaceconnector.service.resource.type.ContractService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+
+import java.util.stream.Collectors;
 
 /**
  * Builds contracts from templates.
@@ -49,6 +49,7 @@ public class ContractTemplateBuilder {
 
     /**
      * Build a contract and dependencies from a template.
+     *
      * @param template The contract template.
      * @return The new contract.
      * @throws IllegalArgumentException if the passed template is null.
@@ -57,8 +58,8 @@ public class ContractTemplateBuilder {
         Utils.requireNonNull(template, ErrorMessage.ENTITY_NULL);
 
         final var ruleIds = Utils.toStream(template.getRules())
-                                 .map(x -> contractRuleBuilder.build(x).getId())
-                                 .collect(Collectors.toSet());
+                .map(x -> contractRuleBuilder.build(x).getId())
+                .collect(Collectors.toSet());
         final var contract = contractService.create(template.getDesc());
         contractRuleLinker.add(contract.getId(), ruleIds);
 

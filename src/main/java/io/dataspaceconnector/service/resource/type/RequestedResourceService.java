@@ -15,16 +15,16 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import java.net.URI;
-import java.util.Optional;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.RequestedResourcesRepository;
 import io.dataspaceconnector.service.resource.base.RemoteResolver;
+
+import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Handles the basic logic for requested resources.
@@ -34,11 +34,13 @@ public class RequestedResourceService extends ResourceService<RequestedResource,
 
     /**
      * Constructor.
+     *
      * @param repository The requested resource repository.
-     * @param factory The requested resource factory.
+     * @param factory    The requested resource factory.
      */
     public RequestedResourceService(final BaseEntityRepository<RequestedResource> repository,
-            final AbstractFactory<RequestedResource, RequestedResourceDesc> factory) {
+                                    final AbstractFactory<RequestedResource,
+                                            RequestedResourceDesc> factory) {
         super(repository, factory);
     }
 

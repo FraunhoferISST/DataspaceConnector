@@ -30,11 +30,12 @@ public class RequestedResourceTemplateBuilder
         extends AbstractResourceTemplateBuilder<RequestedResource, RequestedResourceDesc> {
     /**
      * Default constructor.
-     * @param resourceService              The resource service.
-     * @param resourceRepresentationLinker The resource-representation service.
-     * @param resourceContractLinker The resource-contract linker.
+     *
+     * @param resourceService               The resource service.
+     * @param resourceRepresentationLinker  The resource-representation service.
+     * @param resourceContractLinker        The resource-contract linker.
      * @param representationTemplateBuilder The representation template builder.
-     * @param contractTemplateBuilder The contract template builder.
+     * @param contractTemplateBuilder       The contract template builder.
      */
     public RequestedResourceTemplateBuilder(
             final ResourceService<RequestedResource, RequestedResourceDesc> resourceService,
@@ -44,10 +45,12 @@ public class RequestedResourceTemplateBuilder
             final RepresentationTemplateBuilder representationTemplateBuilder,
             final ContractTemplateBuilder contractTemplateBuilder) {
         super(resourceService, resourceRepresentationLinker, resourceContractLinker,
-              representationTemplateBuilder, contractTemplateBuilder);
+                representationTemplateBuilder, contractTemplateBuilder);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected RequestedResource buildResource(
             final ResourceTemplate<RequestedResourceDesc> template) {

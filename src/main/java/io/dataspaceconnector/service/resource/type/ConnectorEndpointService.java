@@ -30,10 +30,11 @@ public class ConnectorEndpointService
 
     /**
      * Constructor for injection.
-     * @param repository
-     * @param factory
-     * @param routeRepository  the service for managing routes.
-     * @param camelRouteHelper The helper class for Camel routes.
+     *
+     * @param repository       The connector endpoint repository.
+     * @param factory          The connector endpoint logic.
+     * @param routeRepository  the service for managing connector endpoints.
+     * @param camelRouteHelper The helper class for connector endpoints.
      */
     public ConnectorEndpointService(
             final BaseEntityRepository<ConnectorEndpoint> repository,

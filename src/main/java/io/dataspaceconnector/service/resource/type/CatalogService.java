@@ -28,8 +28,9 @@ public class CatalogService extends BaseEntityService<Catalog, CatalogDesc> {
 
     /**
      * Constructor.
+     *
      * @param repository The catalog repository.
-     * @param factory The catalog logic.
+     * @param factory    The catalog logic.
      */
     public CatalogService(final BaseEntityRepository<Catalog> repository,
                           final AbstractFactory<Catalog, CatalogDesc> factory) {

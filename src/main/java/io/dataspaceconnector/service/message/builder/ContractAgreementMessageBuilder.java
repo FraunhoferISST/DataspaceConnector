@@ -48,6 +48,7 @@ public class ContractAgreementMessageBuilder extends
     /**
      * Builds a ContractAgreementMessage and creates a Request with the message as header and the
      * contract agreement from the exchange properties as payload.
+     *
      * @param exchange the exchange.
      * @return the {@link Request}.
      */

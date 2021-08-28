@@ -45,9 +45,10 @@ public class EndpointService<T extends Endpoint, D extends EndpointDesc>
 
     /**
      * Constructor.
-     * @param repository The endpoint repository.
-     * @param factory The endpoint logic.
-     * @param routeRepository the service for managing routes.
+     *
+     * @param repository       The endpoint repository.
+     * @param factory          The endpoint logic.
+     * @param routeRepository  the service for managing routes.
      * @param camelRouteHelper The helper class for Camel routes.
      */
     public EndpointService(

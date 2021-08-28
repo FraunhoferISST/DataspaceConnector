@@ -36,6 +36,7 @@ public class ContractRuleTemplateBuilder {
 
     /**
      * Build a rule and dependencies from a template.
+     *
      * @param template The rule template.
      * @return The new rule.
      * @throws IllegalArgumentException if the passed template is null.

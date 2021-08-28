@@ -27,8 +27,9 @@ import io.dataspaceconnector.service.resource.base.BaseEntityService;
 public class DataSourceService extends BaseEntityService<DataSource, DataSourceDesc> {
     /**
      * Constructor.
-     * @param repository The datasource repository.
-     * @param factory THe datasource factory.
+     *
+     * @param repository The dataSource repository.
+     * @param factory    THe dataSource factory.
      */
     public DataSourceService(final BaseEntityRepository<DataSource> repository,
                              final AbstractFactory<DataSource, DataSourceDesc> factory) {

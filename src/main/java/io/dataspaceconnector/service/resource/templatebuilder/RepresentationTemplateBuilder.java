@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.templatebuilder;
 
-import java.util.stream.Collectors;
-
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.representation.Representation;
@@ -25,6 +23,8 @@ import io.dataspaceconnector.service.resource.relation.RepresentationArtifactLin
 import io.dataspaceconnector.service.resource.type.RepresentationService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+
+import java.util.stream.Collectors;
 
 /**
  * Builds representations from templates.
@@ -49,6 +49,7 @@ public class RepresentationTemplateBuilder {
 
     /**
      * Build a representation and dependencies from template.
+     *
      * @param template The representation template.
      * @return The new representation.
      * @throws IllegalArgumentException if the passed template is null.
@@ -58,10 +59,10 @@ public class RepresentationTemplateBuilder {
 
         final var artifactIds =
                 Utils.toStream(template.getArtifacts()).map(x -> artifactBuilder.build(x).getId())
-                     .collect(Collectors.toSet());
+                        .collect(Collectors.toSet());
         Representation representation;
         final var repId = representationService.identifyByRemoteId(template.getDesc()
-                                                                           .getRemoteId());
+                .getRemoteId());
         if (repId.isPresent()) {
             representation = representationService.update(repId.get(), template.getDesc());
         } else {

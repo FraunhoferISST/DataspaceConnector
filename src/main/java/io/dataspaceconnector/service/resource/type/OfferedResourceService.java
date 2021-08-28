@@ -28,6 +28,7 @@ public class OfferedResourceService extends ResourceService<OfferedResource, Off
 
     /**
      * Constructor.
+     *
      * @param repository The offered resource repository.
      */
     public OfferedResourceService(final BaseEntityRepository<OfferedResource> repository) {
@@ -37,11 +38,12 @@ public class OfferedResourceService extends ResourceService<OfferedResource, Off
 
     /**
      * Constructor.
+     *
      * @param repository The offered resource repository.
-     * @param factory The offered resource factory.
+     * @param factory    The offered resource factory.
      */
     public OfferedResourceService(final BaseEntityRepository<OfferedResource> repository,
-            final AbstractFactory<OfferedResource, OfferedResourceDesc> factory) {
+                                  final AbstractFactory<OfferedResource, OfferedResourceDesc> factory) {
         super(repository, factory);
     }
 }

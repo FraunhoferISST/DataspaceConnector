@@ -15,10 +15,7 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Set;
-
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.SubscriptionProcessingException;
@@ -43,7 +40,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.net.URI;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Handles the basic logic for subscriptions.
@@ -84,8 +83,9 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
 
     /**
      * Constructor.
+     *
      * @param repository The subscription repository.
-     * @param factory The subscription factory.
+     * @param factory    The subscription factory.
      */
     @Autowired
     public SubscriptionService(

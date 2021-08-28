@@ -36,6 +36,7 @@ public class ArtifactTemplateBuilder {
 
     /**
      * Build an artifact and dependencies from a template.
+     *
      * @param template The artifact template.
      * @return The new artifact.
      * @throws IllegalArgumentException if the passed template is null.

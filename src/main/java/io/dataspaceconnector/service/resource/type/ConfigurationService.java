@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.common.runtime.ServiceResolver;
@@ -33,6 +30,9 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service class for the configuration.
@@ -54,9 +54,10 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
 
     /**
      * Constructor.
-     * @param repository The configuration repository.
-     * @param factory The configuration logic.
-     * @param resolver The application context.
+     *
+     * @param repository       The configuration repository.
+     * @param factory          The configuration logic.
+     * @param resolver         The application context.
      * @param idsConfigBuilder The ids Config model builder.
      */
     public ConfigurationService(final BaseEntityRepository<Configuration> repository,
@@ -79,6 +80,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
 
     /**
      * Get the active configuration.
+     *
      * @return The active configuration.
      */
     public Configuration getActiveConfig() {
@@ -112,7 +114,9 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
         reload(newConfig);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Configuration update(final UUID entityId, final ConfigurationDesc desc) {
         final var config = super.update(entityId, desc);
@@ -121,7 +125,8 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
             if (activeConfig.isPresent() && activeConfig.get().getId().equals(config.getId())) {
                 reload(config.getId());
             }
-        } catch (ConfigUpdateException ignored) { }
+        } catch (ConfigUpdateException ignored) {
+        }
 
         return config;
     }
@@ -139,7 +144,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
             final var configuration = configBuilder.create(activeConfig);
             configContainer.get().updateConfiguration(configuration);
             if (log.isInfoEnabled()) {
-               log.info("Changing configuration profile [id=({})]", newConfig);
+                log.info("Changing configuration profile [id=({})]", newConfig);
             }
 
             // TODO Change loglevel during runtime.

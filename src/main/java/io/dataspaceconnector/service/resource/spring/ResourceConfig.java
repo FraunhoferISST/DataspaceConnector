@@ -76,6 +76,7 @@ public class ResourceConfig {
 
     /**
      * Create an agreement service bean.
+     *
      * @param repo The agreement repo.
      * @return The agreement service.
      */
@@ -87,10 +88,11 @@ public class ResourceConfig {
 
     /**
      * Create an artifact service bean.
-     * @param repository The artifact repository.
+     *
+     * @param repository     The artifact repository.
      * @param dataRepository The data repository.
-     * @param httpService The http service.
-     * @param authRepo The auth repo.
+     * @param httpService    The http service.
+     * @param authRepo       The auth repo.
      * @return The artifact service bean.
      */
     @Bean("artifactService")
@@ -100,11 +102,12 @@ public class ResourceConfig {
             final HttpService httpService,
             final AuthenticationRepository authRepo) {
         return new ArtifactService(repository, new ArtifactFactory(),
-                                   dataRepository, httpService, authRepo);
+                dataRepository, httpService, authRepo);
     }
 
     /**
      * Create a broker service bean.
+     *
      * @param repo The broker repository.
      * @return The broker service bean.
      */
@@ -115,6 +118,7 @@ public class ResourceConfig {
 
     /**
      * Create a catalog service bean.
+     *
      * @param repo The catalog repository.
      * @return The catalog bean.
      */
@@ -125,31 +129,34 @@ public class ResourceConfig {
 
     /**
      * Create a configuration service bean.
-     * @param repo The configuration repository.
-     * @param lookUp The application context.
-     * @param idsConfigBld The IDS configuration builder.
+     *
+     * @param repo            The configuration repository.
+     * @param lookUp          The application context.
+     * @param idsConfigBld    The IDS configuration builder.
      * @param connectorConfig The connector configuration.
      * @return The configuration service bean.
      */
     @Bean("configurationService")
-    public ConfigurationService createConfigurationService(final ConfigurationRepository repo,
-                                                           final ServiceLookUp lookUp,
-                                                           final IdsConfigModelBuilder idsConfigBld,
-                                                           final ConnectorConfig connectorConfig) {
+    public ConfigurationService createConfigurationService(
+            final ConfigurationRepository repo,
+            final ServiceLookUp lookUp,
+            final IdsConfigModelBuilder idsConfigBld,
+            final ConnectorConfig connectorConfig) {
         return new ConfigurationService(repo, new ConfigurationFactory(new ProxyFactory(),
-                                                                       new TruststoreFactory(),
-                                                                       new KeystoreFactory(),
-                                                                       connectorConfig),
-                                        lookUp, idsConfigBld);
+                new TruststoreFactory(),
+                new KeystoreFactory(),
+                connectorConfig),
+                lookUp, idsConfigBld);
     }
 
     /**
-     * Create a connectorendpoint service bean.
-     * @param repo The connectorendpoint repository.
-     * @param factory The connectorendpoint factory.
-     * @param routeRepository The route repository.
+     * Create a connectorEndpoint service bean.
+     *
+     * @param repo             The connectorEndpoint repository.
+     * @param factory          The connectorEndpoint factory.
+     * @param routeRepository  The route repository.
      * @param camelRouteHelper The camel route helper.
-     * @return The connectorendpoint service bean.
+     * @return The connectorEndpoint service bean.
      */
     @Bean("connectorEndpointService")
     public ConnectorEndpointService createConnectorEndpointService(
@@ -158,11 +165,12 @@ public class ResourceConfig {
             final RouteRepository routeRepository,
             final RouteHelper camelRouteHelper) {
         return new ConnectorEndpointService(repo, factory,
-                                            routeRepository, camelRouteHelper);
+                routeRepository, camelRouteHelper);
     }
 
     /**
      * Creat a contract service bean.
+     *
      * @param repo The contract repository.
      * @return The contract service bean.
      */
@@ -173,6 +181,7 @@ public class ResourceConfig {
 
     /**
      * Create a datasource service bean.
+     *
      * @param repo The datasource repository.
      * @return The datasource service bean.
      */
@@ -183,6 +192,7 @@ public class ResourceConfig {
 
     /**
      * Create an offeredresource service bean.
+     *
      * @param repo The offeredresource repository.
      * @return The offeredresource service bean.
      */
@@ -195,6 +205,7 @@ public class ResourceConfig {
 
     /**
      * Create a representation service bean.
+     *
      * @param repo The representation repository.
      * @return The representation service bean.
      */
@@ -205,6 +216,7 @@ public class ResourceConfig {
 
     /**
      * Create a requestedresource service bean.
+     *
      * @param repo The requestedresource repository.
      * @return The requestedresource service bean.
      */
@@ -216,23 +228,26 @@ public class ResourceConfig {
 
     /**
      * Create a route service bean.
-     * @param repo The route repository.
-     * @param endpointRepository The endpoint repository.
+     *
+     * @param repo                 The route repository.
+     * @param endpointRepository   The endpoint repository.
      * @param endpointServiceProxy The endpoint service proxy.
-     * @param routeHelper The route helper.
+     * @param routeHelper          The route helper.
      * @return The route service bean.
      */
     @Bean("routeService")
-    public RouteService createResourceService(final RouteRepository repo,
-                                           final EndpointRepository endpointRepository,
-                                           final EndpointServiceProxy endpointServiceProxy,
-                                           final RouteHelper routeHelper) {
+    public RouteService createResourceService(
+            final RouteRepository repo,
+            final EndpointRepository endpointRepository,
+            final EndpointServiceProxy endpointServiceProxy,
+            final RouteHelper routeHelper) {
         return new RouteService(repo, new RouteFactory(), endpointRepository,
-                                endpointServiceProxy, routeHelper);
+                endpointServiceProxy, routeHelper);
     }
 
     /**
      * Create a rule service bean.
+     *
      * @param repo The rule repository.
      * @return The rule service bean.
      */
@@ -242,8 +257,9 @@ public class ResourceConfig {
     }
 
     /**
-     * Create a connectorendpoint factory.
-     * @return The connectorendpoint factory.
+     * Create a connectorEndpoint factory.
+     *
+     * @return The connectorEndpoint factory.
      */
     @Bean("connectorEndpointFactory")
     public ConnectorEndpointFactory createConnectorEndpointFactory() {

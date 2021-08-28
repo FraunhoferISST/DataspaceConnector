@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpointDesc;
@@ -30,6 +28,8 @@ import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 /**
  * Service class for generic endpoints.
@@ -48,10 +48,11 @@ public class GenericEndpointService
 
     /**
      * Constructor.
-     * @param repository Generic endpoint repository.
-     * @param factory The generic endpoint factory.
-     * @param routeRepository  the service for managing routes.
-     * @param camelRouteHelper The helper class for Camel routes.
+     *
+     * @param repository        Generic endpoint repository.
+     * @param factory           The generic endpoint factory.
+     * @param routeRepository   the service for managing routes.
+     * @param camelRouteHelper  The helper class for Camel routes.
      * @param dataSourceService The datasource service.
      */
     public GenericEndpointService(

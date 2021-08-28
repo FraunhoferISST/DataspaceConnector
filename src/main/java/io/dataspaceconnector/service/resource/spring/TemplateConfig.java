@@ -41,19 +41,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Publishes templatebuilders to spring.
+ * Publishes templateBuilders to spring.
  */
 @Configuration
 public class TemplateConfig {
 
     /**
      * Creates a catalog template builder bean.
-     * @param catalogService The catalog service.
-     * @param offeredLinker The offered resource linker.
-     * @param requestedLinker The requested resource linker.
-     * @param offeredBuilder The offered resource builder.
+     *
+     * @param catalogService   The catalog service.
+     * @param offeredLinker    The offered resource linker.
+     * @param requestedLinker  The requested resource linker.
+     * @param offeredBuilder   The offered resource builder.
      * @param requestedBuilder The requested resource builder.
-     * @return The catalog tempalte builder bean.
+     * @return The catalog template builder bean.
      */
     @Bean("catalogTemplateBuilder")
     public CatalogTemplateBuilder createCatalogTemplateBuilder(
@@ -63,17 +64,18 @@ public class TemplateConfig {
             final OfferedResourceTemplateBuilder offeredBuilder,
             final RequestedResourceTemplateBuilder requestedBuilder) {
         return new CatalogTemplateBuilder(catalogService, offeredLinker, requestedLinker,
-                                          offeredBuilder, requestedBuilder);
+                offeredBuilder, requestedBuilder);
     }
 
     /**
-     * .
-     * @param offeredResourceService
-     * @param resourceRepresentationLinker
-     * @param resourceContractLinker
-     * @param representationTemplateBuilder
-     * @param contractTemplateBuilder
-     * @return .
+     * Creates an offered resource template builder bean.
+     *
+     * @param offeredResourceService        The offered resource service.
+     * @param resourceRepresentationLinker  The resource representation linker.
+     * @param resourceContractLinker        The resource contract linker.
+     * @param representationTemplateBuilder The representation template builder.
+     * @param contractTemplateBuilder       The contract template builder.
+     * @return The offered resource template builder bean.
      */
     @Bean("offeredResourceTemplateBuilder")
     public OfferedResourceTemplateBuilder createOfferedResourceTemplateBuilder(
@@ -83,20 +85,21 @@ public class TemplateConfig {
             final RepresentationTemplateBuilder representationTemplateBuilder,
             final ContractTemplateBuilder contractTemplateBuilder) {
         return new OfferedResourceTemplateBuilder(offeredResourceService,
-                                                  resourceRepresentationLinker,
-                                                  resourceContractLinker,
-                                                  representationTemplateBuilder,
-                                                  contractTemplateBuilder);
+                resourceRepresentationLinker,
+                resourceContractLinker,
+                representationTemplateBuilder,
+                contractTemplateBuilder);
     }
 
     /**
-     * .
-     * @param requestedResourceService
-     * @param resourceRepresentationLinker
-     * @param resourceContractLinker
-     * @param representationTemplateBuilder
-     * @param contractTemplateBuilder
-     * @return .
+     * Creates a requested resource template builder bean.
+     *
+     * @param requestedResourceService      The requested resource service.
+     * @param resourceRepresentationLinker  The resource representation linker.
+     * @param resourceContractLinker        The resource contract linker.
+     * @param representationTemplateBuilder The representation template builder.
+     * @param contractTemplateBuilder       The contract template builder.
+     * @return The requested resource template builder bean.
      */
     @Bean("requestedResourceTemplateBuilder")
     public RequestedResourceTemplateBuilder createRequestedResourceTemplateBuilder(
@@ -106,18 +109,19 @@ public class TemplateConfig {
             final RepresentationTemplateBuilder representationTemplateBuilder,
             final ContractTemplateBuilder contractTemplateBuilder) {
         return new RequestedResourceTemplateBuilder(requestedResourceService,
-                                                  resourceRepresentationLinker,
-                                                  resourceContractLinker,
-                                                  representationTemplateBuilder,
-                                                  contractTemplateBuilder);
+                resourceRepresentationLinker,
+                resourceContractLinker,
+                representationTemplateBuilder,
+                contractTemplateBuilder);
     }
 
     /**
-     * .
-     * @param representationService
-     * @param representationArtifactLinker
-     * @param artifactService
-     * @return .
+     * Creates a representation template builder bean.
+     *
+     * @param representationService        The representation service.
+     * @param representationArtifactLinker The representation artifact linker.
+     * @param artifactService              The artifact service.
+     * @return The representation template builder bean.
      */
     @Bean("representationTemplateBuilder")
     public RepresentationTemplateBuilder createRepresentationTemplateBuilder(
@@ -125,16 +129,17 @@ public class TemplateConfig {
             final RepresentationArtifactLinker representationArtifactLinker,
             final ArtifactService artifactService) {
         return new RepresentationTemplateBuilder(representationService,
-                                                 representationArtifactLinker,
-                                                 new ArtifactTemplateBuilder(artifactService));
+                representationArtifactLinker,
+                new ArtifactTemplateBuilder(artifactService));
     }
 
     /**
-     * .
-     * @param contractService
-     * @param contractRuleLinker
-     * @param ruleService
-     * @return .
+     * Creates a contract template builder bean.
+     *
+     * @param contractService    The contract service.
+     * @param contractRuleLinker The contract rule linker.
+     * @param ruleService        The rule service.
+     * @return The contract template builder bean.
      */
     @Bean("contractTemplateBuilder")
     public ContractTemplateBuilder createContractTemplateBuilder(
@@ -142,6 +147,6 @@ public class TemplateConfig {
             final ContractRuleLinker contractRuleLinker,
             final RuleService ruleService) {
         return new ContractTemplateBuilder(contractService, contractRuleLinker,
-                                           new ContractRuleTemplateBuilder(ruleService));
+                new ContractRuleTemplateBuilder(ruleService));
     }
 }

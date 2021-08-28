@@ -49,6 +49,7 @@ public class ConnectorUpdateMessageBuilder
     /**
      * Builds a ConnectorUpdateMessage according to the exchange properties as well as the connector
      * object and creates a Request with the message as header and the connector as payload.
+     *
      * @param exchange the exchange.
      * @return the {@link Request}.
      */

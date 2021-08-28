@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import java.net.URI;
-import java.util.Optional;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.broker.Broker;
@@ -27,6 +23,10 @@ import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.BrokerRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
 
+import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
+
 /**
  * Service class for brokers.
  */
@@ -34,8 +34,9 @@ public class BrokerService extends BaseEntityService<Broker, BrokerDesc> {
 
     /**
      * Constructor.
+     *
      * @param repository The broker repository.
-     * @param factory The broker object logic.
+     * @param factory    The broker object logic.
      */
     public BrokerService(final BaseEntityRepository<Broker> repository,
                          final AbstractFactory<Broker, BrokerDesc> factory) {
@@ -56,7 +57,7 @@ public class BrokerService extends BaseEntityService<Broker, BrokerDesc> {
      * This method updates the registration status of the broker.
      *
      * @param location The uri of the broker.
-     * @param status   The registration status
+     * @param status   The registration status.
      */
     public void setRegistrationStatus(final URI location, final RegistrationStatus status) {
         ((BrokerRepository) getRepository()).setRegistrationStatus(location, status);

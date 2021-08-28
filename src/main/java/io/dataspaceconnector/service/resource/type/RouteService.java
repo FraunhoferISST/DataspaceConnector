@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.RouteCreationException;
 import io.dataspaceconnector.common.exception.RouteDeletionException;
@@ -35,6 +33,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+
+import java.util.UUID;
 
 /**
  * Service class for routes.
@@ -60,8 +60,9 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
 
     /**
      * Constructor for route service.
-     * @param repository The route repository.
-     * @param factory The route factory.
+     *
+     * @param repository           The route repository.
+     * @param factory              The route factory.
      * @param endpointRepository   The endpoint repository.
      * @param endpointServiceProxy The endpoint service.
      * @param camelRouteHelper     The helper class for Camel routes.
@@ -143,7 +144,7 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      * @throws IllegalArgumentException if the passed id is null.
      */
     @Override
-    public void delete(final UUID routeId) throws RouteDeletionException  {
+    public void delete(final UUID routeId) throws RouteDeletionException {
         Utils.requireNonNull(routeId, ErrorMessage.ENTITYID_NULL);
 
         final var route = get(routeId);

@@ -19,13 +19,15 @@ import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.base.Entity;
 
 /**
- * Updates an DSC object by providing an IDS object.
- * @param <I> The IDS object type.
- * @param <O> The DSC object type.
+ * Updates an dsc object by providing an ids object.
+ *
+ * @param <I> The ids object type.
+ * @param <O> The dsc object type.
  */
 public interface InfomodelUpdater<I, O extends Entity> {
     /**
      * Update an entity that is known to the consumer.
+     *
      * @param entity The ids object.
      * @return The updated dsc object.
      */

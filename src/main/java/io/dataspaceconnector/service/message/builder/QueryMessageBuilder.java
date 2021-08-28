@@ -52,6 +52,7 @@ public class QueryMessageBuilder extends IdsMessageBuilder<QueryMessageImpl, Str
     /**
      * Builds a QueryMessage according to the exchange properties and creates a Request with the
      * message as header and a query from the exchange properties as payload.
+     *
      * @param exchange the exchange.
      * @return the {@link Request}.
      */
@@ -89,7 +90,7 @@ public class QueryMessageBuilder extends IdsMessageBuilder<QueryMessageImpl, Str
                     .getProperty(ParameterUtils.QUERY_OFFSET_PARAM, Integer.class);
 
             payload = String.format(FullTextQueryTemplate.FULL_TEXT_QUERY.replace("\n", "%n"),
-                                    searchTerm, limit, offset);
+                    searchTerm, limit, offset);
         }
 
         return new Request<>((QueryMessageImpl) message, payload, Optional.empty());

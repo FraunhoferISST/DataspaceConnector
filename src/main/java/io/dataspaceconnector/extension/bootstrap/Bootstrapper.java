@@ -15,24 +15,6 @@
  */
 package io.dataspaceconnector.extension.bootstrap;
 
-import javax.validation.constraints.NotNull;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.ids.messaging.common.DeserializeException;
@@ -72,11 +54,29 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 import static io.dataspaceconnector.extension.bootstrap.util.BootstrapUtils.findFilesByExtension;
 import static io.dataspaceconnector.extension.bootstrap.util.BootstrapUtils.retrieveBootstrapConfig;
 
 /**
- * This class allows to load JSON-LD files that contain IDS Infomodel representations of entities
+ * This class allows to load JSON-LD files that contain IDS representations of entities
  * which will be registered at the connector during start-up. Furthermore, an additional
  * configuration file can be loaded, that provides information on e.g. broker usage and the used
  * clearing house.

@@ -98,7 +98,7 @@ public final class FromIdsObjectMapper {
         final var catalogDesc = new CatalogDesc();
         catalogDesc.setAdditional(additional);
         catalogDesc.setTitle("IDS Catalog");
-        catalogDesc.setDescription("This catalog is created from an IDS infomodel catalog.");
+        catalogDesc.setDescription("This catalog is created from an IDS catalog.");
         catalogDesc.setBootstrapId(catalog.getId());
 
         return new CatalogTemplate(catalogDesc, null, null);

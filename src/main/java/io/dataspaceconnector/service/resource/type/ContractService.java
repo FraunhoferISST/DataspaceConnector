@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import java.util.List;
-import java.util.UUID;
-
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.base.AbstractFactory;
@@ -27,6 +24,9 @@ import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.ContractRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
 
+import java.util.List;
+import java.util.UUID;
+
 /**
  * Handles the basic logic for contracts.
  */
@@ -34,8 +34,9 @@ public class ContractService extends BaseEntityService<Contract, ContractDesc> {
 
     /**
      * Constructor.
+     *
      * @param repository The contract repository.
-     * @param factory The contract logic.
+     * @param factory    The contract logic.
      */
     public ContractService(final BaseEntityRepository<Contract> repository,
                            final AbstractFactory<Contract, ContractDesc> factory) {
@@ -45,8 +46,8 @@ public class ContractService extends BaseEntityService<Contract, ContractDesc> {
     /**
      * Finds all contracts applicable for a specific artifact.
      *
-     * @param artifactId ID of the artifact
-     * @return list of contracts applicable for the artifact
+     * @param artifactId id of the artifact.
+     * @return list of contracts applicable for the artifact.
      */
     public List<Contract> getAllByArtifactId(final UUID artifactId) {
         Utils.requireNonNull(artifactId, ErrorMessage.ENTITYID_NULL);

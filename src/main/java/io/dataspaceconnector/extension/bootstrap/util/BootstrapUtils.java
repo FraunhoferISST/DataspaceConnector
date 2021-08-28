@@ -48,8 +48,8 @@ public final class BootstrapUtils {
     /**
      * Set of entries in bootstrap property files that are allowed to have multiple values.
      */
-    private static final Set<String> MULTI_VALUE_PROPS = new HashSet<>(Arrays.asList(
-            "resource.download.auto"));
+    private static final Set<String> MULTI_VALUE_PROPS
+            = new HashSet<>(Arrays.asList("resource.download.auto"));
 
     private BootstrapUtils() {
         // Nothing to do here.

@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import java.net.URI;
-import java.util.Optional;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.representation.RepresentationDesc;
@@ -26,6 +22,10 @@ import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.RepresentationRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
 import io.dataspaceconnector.service.resource.base.RemoteResolver;
+
+import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service for managing representations.
@@ -35,11 +35,12 @@ public class RepresentationService extends BaseEntityService<Representation,
 
     /**
      * Constructor.
+     *
      * @param repository The representation repository.
-     * @param factory The representation factory.
+     * @param factory    The representation factory.
      */
     public RepresentationService(final BaseEntityRepository<Representation> repository,
-            final AbstractFactory<Representation, RepresentationDesc> factory) {
+                                 final AbstractFactory<Representation, RepresentationDesc> factory) {
         super(repository, factory);
     }
 

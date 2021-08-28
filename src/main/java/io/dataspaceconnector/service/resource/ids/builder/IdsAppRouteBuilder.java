@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
- * Converts DSC routes to IDS app routes.
+ * Converts dsc routes to ids app routes.
  */
 @Component
 @RequiredArgsConstructor

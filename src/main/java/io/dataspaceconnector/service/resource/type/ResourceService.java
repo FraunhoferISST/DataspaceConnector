@@ -32,8 +32,9 @@ public class ResourceService<T extends Resource, D extends ResourceDesc>
 
     /**
      * Constructor.
+     *
      * @param repository The resource repository.
-     * @param factory The resource factory.
+     * @param factory    The resource factory.
      */
     public ResourceService(final BaseEntityRepository<T> repository,
                            final AbstractFactory<T, D> factory) {

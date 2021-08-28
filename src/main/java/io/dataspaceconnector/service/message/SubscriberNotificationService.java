@@ -150,7 +150,6 @@ public class SubscriberNotificationService {
         notifyIdsSubscribers(subscriptions, entity);
     }
 
-
     private void notifySubscribers(final List<Subscription> subscriptions, final URI target,
                                    final Entity entity) {
         // Get list of non-ids subscribers.

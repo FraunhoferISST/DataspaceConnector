@@ -29,11 +29,12 @@ public class OfferedResourceTemplateBuilder
         extends AbstractResourceTemplateBuilder<OfferedResource, OfferedResourceDesc> {
     /**
      * Default constructor.
-     * @param resourceService              The resource service.
-     * @param resourceRepresentationLinker The resource-representation service.
-     * @param resourceContractLinker The resource-contract linker.
+     *
+     * @param resourceService               The resource service.
+     * @param resourceRepresentationLinker  The resource-representation service.
+     * @param resourceContractLinker        The resource-contract linker.
      * @param representationTemplateBuilder The representation template builder.
-     * @param contractTemplateBuilder The contract template builder.
+     * @param contractTemplateBuilder       The contract template builder.
      */
     public OfferedResourceTemplateBuilder(
             final ResourceService<OfferedResource, OfferedResourceDesc> resourceService,
@@ -43,7 +44,7 @@ public class OfferedResourceTemplateBuilder
             final RepresentationTemplateBuilder representationTemplateBuilder,
             final ContractTemplateBuilder contractTemplateBuilder) {
         super(resourceService, resourceRepresentationLinker, resourceContractLinker,
-              representationTemplateBuilder, contractTemplateBuilder);
+                representationTemplateBuilder, contractTemplateBuilder);
     }
 
     /**
