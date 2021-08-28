@@ -17,6 +17,8 @@ package io.dataspaceconnector.service.resource.ids.builder;
 
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
+import de.fraunhofer.iais.eis.ConnectorStatus;
+import de.fraunhofer.iais.eis.LogLevel;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
 import io.dataspaceconnector.model.configuration.Configuration;
@@ -42,10 +44,12 @@ public final class IdsConfigModelBuilder extends AbstractIdsBuilder<Configuratio
         // Prepare configuration attributes.
         final var deployMode = ToIdsObjectMapper.getConnectorDeployMode(config.getDeployMode());
         final var logLevel = config.getLogLevel() == null
-                ? null : ToIdsObjectMapper.getLogLevel(config.getLogLevel());
+                ? LogLevel.MINIMAL_LOGGING
+                : ToIdsObjectMapper.getLogLevel(config.getLogLevel());
         final var connector = ToIdsObjectMapper.getConnectorFromConfiguration(config);
         final var status = config.getStatus() == null
-                ? null : ToIdsObjectMapper.getConnectorStatus(config.getStatus());
+                ? ConnectorStatus.CONNECTOR_OFFLINE
+                : ToIdsObjectMapper.getConnectorStatus(config.getStatus());
 
         final var configBuilder = new ConfigurationModelBuilder()
                 ._connectorDeployMode_(deployMode)
