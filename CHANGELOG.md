@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [X.X.X] - XXXX-XX-XX
+
+### Changed
+- Add `ServiceResolver` to remove some Spring annotations from service classes.
+- Refactor and speed up tests.
+
+### Security
+- Resolve spotbugs warnings.
+
 ## [6.1.3] - 2021-08-27
 
 ### Changed
