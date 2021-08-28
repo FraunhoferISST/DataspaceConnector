@@ -47,6 +47,7 @@ public class AppViewAssembler implements RepresentationModelAssembler<App, AppVi
                 .getResource(app.getId(), null, null))
                 .withRel(BaseType.ENDPOINTS);
         view.add(endpointLink);
+
         return view;
     }
 

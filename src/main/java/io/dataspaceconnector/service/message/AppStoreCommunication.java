@@ -77,8 +77,8 @@ public class AppStoreCommunication {
             linker.add(appStore.getId(), Set.of(appId));
         } catch (UUIDFormatException | ResourceNotFoundException exception) {
             // No appStore found for this id. App could not be linked. Proceed.
-            if (log.isWarnEnabled()) {
-                log.warn("Failed to link app to app store. [recipient=({}), appId=({})]", input,
+            if (log.isDebugEnabled()) {
+                log.debug("Failed to link app to app store. [recipient=({}), appId=({})]", input,
                         appId);
             }
         }
