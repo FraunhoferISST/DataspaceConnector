@@ -25,6 +25,7 @@ import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.resource.RequestedResourceFactory;
 import io.dataspaceconnector.model.template.ResourceTemplate;
+import io.dataspaceconnector.service.message.AppStoreCommunication;
 import io.dataspaceconnector.service.resource.TemplateBuilder;
 import io.dataspaceconnector.service.resource.relation.AgreementArtifactLinker;
 import io.dataspaceconnector.service.resource.type.AgreementService;
@@ -74,6 +75,9 @@ public class EntityPersistenceServiceTest {
 
     @MockBean
     private AppService appService;
+
+    @MockBean
+    private AppStoreCommunication appStoreCommunication;
 
     @Autowired
     private EntityPersistenceService entityPersistenceService;
