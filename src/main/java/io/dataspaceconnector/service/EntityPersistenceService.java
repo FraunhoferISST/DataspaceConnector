@@ -276,7 +276,7 @@ public class EntityPersistenceService {
         // NOTE: Don't save app if no instance is present, as then no data can be downloaded.
         final var instanceId = getInstanceId(resource);
         if (instanceId.isEmpty()) {
-            if (log.isDebugEnabled()) {
+            if (log.isWarnEnabled()) {
                 log.warn("The requested app has no artifact id. [remoteId=({})]", remoteUrl);
             }
             throw new PersistenceException("Received app with missing information.");
