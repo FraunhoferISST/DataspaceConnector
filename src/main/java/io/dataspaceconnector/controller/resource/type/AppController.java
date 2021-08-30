@@ -26,6 +26,7 @@ import io.dataspaceconnector.controller.resource.view.app.AppView;
 import io.dataspaceconnector.controller.util.ActionType;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
+import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.app.AppImpl;
@@ -159,13 +160,12 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
             } else {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-        } catch (RuntimeException | IOException
-                | PortainerNotConfigured | AppNotDeployedException e) {
-            // TODO Improve exception handling
-            if (log.isWarnEnabled()) {
-                log.warn("Could not process action. [exception=({})]", e.getMessage());
-            }
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (PortainerNotConfigured e) {
+            return ResponseUtils.respondPortainerNotConfigured(e);
+        } catch (AppNotDeployedException e) {
+            return ResponseUtils.respondAppNotDeployed(e);
+        } catch (RuntimeException | IOException e) {
+            return ResponseUtils.respondPortainerError(e);
         }
     }
 
