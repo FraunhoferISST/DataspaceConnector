@@ -304,11 +304,13 @@ public final class ResponseUtils {
     }
 
     /**
-     * Creates ResponseEntity with status code 500 indicating that portainer is not properly configured
+     * Creates ResponseEntity with status code 500 indicating that portainer
+     * is not properly configured.
      *
+     * @param e the thrown exception
      * @return a response entity representing the result.
      */
-    public static ResponseEntity<Object> respondPortainerNotConfigured(Exception e) {
+    public static ResponseEntity<Object> respondPortainerNotConfigured(final Exception e) {
         if (log.isWarnEnabled()) {
             log.warn("Could not process action. [exception=({})]", e.getMessage());
         }
@@ -317,11 +319,12 @@ public final class ResponseUtils {
     }
 
     /**
-     * Creates ResponseEntity with status code 500 indicating that the app is not deployed
+     * Creates ResponseEntity with status code 500 indicating that the app is not deployed.
      *
+     * @param e the thrown exception
      * @return a response entity representing the result.
      */
-    public static ResponseEntity<Object> respondAppNotDeployed(Exception e) {
+    public static ResponseEntity<Object> respondAppNotDeployed(final Exception e) {
         if (log.isWarnEnabled()) {
             log.warn("Could not process action. [exception=({})]", e.getMessage());
         }
@@ -330,11 +333,13 @@ public final class ResponseUtils {
     }
 
     /**
-     * Creates ResponseEntity with status code 500 indicating that the a portainer error has occurred
+     * Creates ResponseEntity with status code 500 indicating that
+     * a portainer error has occurred.
      *
+     * @param e the thrown exception
      * @return a response entity representing the result.
      */
-    public static ResponseEntity<Object> respondPortainerError(Exception e) {
+    public static ResponseEntity<Object> respondPortainerError(final Exception e) {
         if (log.isWarnEnabled()) {
             log.warn("Could not process action. [exception=({})]", e.getMessage());
         }
