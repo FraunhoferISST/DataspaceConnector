@@ -97,7 +97,8 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
                 || hasUpdatedStorageConfig || hasUpdatedPublisher || hasUpdatedLanguage
                 || hasUpdatedSovereign || hasUpdatedLicense || hasUpdatedEndpointDocs
                 || hasUpdatedDistributionService || hasUpdatedRuntimeEnvironment
-                || hasUpdatedRemoteId || hasUpdatedRemoteAddress || hasUpdatedData;
+                || hasUpdatedRemoteId || hasUpdatedRemoteAddress || hasUpdatedData
+                || hasUpdatedKeywords || hadUpdatedPolicies;
 
         if (hasUpdated) {
             app.setVersion(app.getVersion() + 1);
