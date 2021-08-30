@@ -303,6 +303,45 @@ public final class ResponseUtils {
         }
     }
 
+    /**
+     * Creates ResponseEntity with status code 500 indicating that portainer is not properly configured
+     *
+     * @return a response entity representing the result.
+     */
+    public static ResponseEntity<Object> respondPortainerNotConfigured(Exception e) {
+        if (log.isWarnEnabled()) {
+            log.warn("Could not process action. [exception=({})]", e.getMessage());
+        }
+        final var msg = "Portainer not configured.";
+        return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Creates ResponseEntity with status code 500 indicating that the app is not deployed
+     *
+     * @return a response entity representing the result.
+     */
+    public static ResponseEntity<Object> respondAppNotDeployed(Exception e) {
+        if (log.isWarnEnabled()) {
+            log.warn("Could not process action. [exception=({})]", e.getMessage());
+        }
+        final var msg = "App not deployed.";
+        return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Creates ResponseEntity with status code 500 indicating that the a portainer error has occurred
+     *
+     * @return a response entity representing the result.
+     */
+    public static ResponseEntity<Object> respondPortainerError(Exception e) {
+        if (log.isWarnEnabled()) {
+            log.warn("Could not process action. [exception=({})]", e.getMessage());
+        }
+        final var msg = "A portainer error has occurred.";
+        return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @SuppressWarnings("unchecked")
     private static ResponseEntity<Object> toObjectResponse(final ResponseEntity<?> response) {
         return (ResponseEntity<Object>) response;
