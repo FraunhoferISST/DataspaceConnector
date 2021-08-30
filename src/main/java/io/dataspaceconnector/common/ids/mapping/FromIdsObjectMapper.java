@@ -237,7 +237,7 @@ public final class FromIdsObjectMapper {
     }
 
     private static AppEndpointTemplate fromIdsAppEndpoint(final AppEndpoint endpoint) {
-        final var port = endpoint.getAppEndpointPort().intValue();
+        final var port = endpoint.getAppEndpointPort();
         final var mediaType = endpoint.getAppEndpointMediaType();
         final var type = endpoint.getAppEndpointType();
         final var protocol = endpoint.getAppEndpointProtocol();
@@ -247,7 +247,10 @@ public final class FromIdsObjectMapper {
         final var path = endpoint.getPath();
 
         final var desc = new AppEndpointDesc();
-        desc.setEndpointPort(port);
+
+        if (port != null) {
+            desc.setEndpointPort(port.intValue());
+        }
 
         if (mediaType != null) {
             desc.setMediaType(mediaType.getFilenameExtension());
