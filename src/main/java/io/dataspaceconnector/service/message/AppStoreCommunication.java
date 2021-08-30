@@ -63,7 +63,7 @@ public class AppStoreCommunication {
     public Optional<AppStore> checkInput(final URI input) {
         try {
             final var appStore = appStoreService.getAppStoreByLocation(input);
-            return Optional.of(appStore);
+            return appStore == null ? Optional.empty() : Optional.of(appStore);
         } catch (UUIDFormatException exception) {
             // Input uri is not an appStore id. Proceed.
         } catch (ResourceNotFoundException exception) {
