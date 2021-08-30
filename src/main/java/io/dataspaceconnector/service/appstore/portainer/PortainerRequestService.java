@@ -76,6 +76,16 @@ public class PortainerRequestService {
     private static final int REGISTRY_TYPE = 3;
 
     /**
+     * The default media type for Portainer API calls.
+     */
+    private static final String API_MEDIA_TYPE = "application/json";
+
+    /**
+     * The default Portainer API endpoint.
+     */
+    private static final String API_ENDPOINT = "api/endpoints/";
+
+    /**
      * The endpoint id in portainer.
      */
     private String endpointId;
@@ -99,7 +109,7 @@ public class PortainerRequestService {
                 portainerConfig.getPortainerUser(),
                 portainerConfig.getPortainerPassword());
         builder.post(RequestBody.create(requestBody,
-                MediaType.parse("application/json")));
+                MediaType.parse(API_MEDIA_TYPE)));
 
         final var request = builder.build();
         try {
@@ -130,7 +140,7 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/" + endpointId + "/docker/containers/"
+                .addPathSegments(API_ENDPOINT + endpointId + "/docker/containers/"
                         + containerId + "/start");
 
         final var url = urlBuilder.build();
@@ -156,7 +166,7 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/" + endpointId + "/docker/containers/"
+                .addPathSegments(API_ENDPOINT + endpointId + "/docker/containers/"
                         + containerId + "/stop");
 
         final var url = urlBuilder.build();
@@ -182,7 +192,7 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/" + endpointId
+                .addPathSegments(API_ENDPOINT + endpointId
                         + "/docker/containers/" + containerId);
 
         final var url = urlBuilder.build();
@@ -207,7 +217,7 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/" + endpointId + "/docker/containers/json")
+                .addPathSegments(API_ENDPOINT + endpointId + "/docker/containers/json")
                 .addQueryParameter("all", "1");
 
         final var url = urlBuilder.build();
@@ -249,7 +259,7 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/" + endpointId + "/docker/volumes/prune");
+                .addPathSegments(API_ENDPOINT + endpointId + "/docker/volumes/prune");
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + getJwtToken());
         builder.url(url);
@@ -273,7 +283,7 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/" + endpointId + "/docker/containers/"
+                .addPathSegments(API_ENDPOINT + endpointId + "/docker/containers/"
                         + containerId + "/json");
 
         final var url = urlBuilder.build();
@@ -333,7 +343,7 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/" + endpointId + "/docker/networks");
+                .addPathSegments(API_ENDPOINT + endpointId + "/docker/networks");
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + getJwtToken());
         builder.url(url);
@@ -399,7 +409,7 @@ public class PortainerRequestService {
         builder.addHeader("Authorization", "Bearer " + getJwtToken());
         builder.url(url);
         builder.post(RequestBody.create(requestBody.toString(),
-                MediaType.parse("application/json")));
+                MediaType.parse(API_MEDIA_TYPE)));
 
         final var request = builder.build();
         final var response = httpService.send(request);
@@ -468,7 +478,7 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/" + endpointId + "/docker/networks/"
+                .addPathSegments(API_ENDPOINT + endpointId + "/docker/networks/"
                         + networkName + "/disconnect");
 
         final var url = urlBuilder.build();
@@ -479,7 +489,7 @@ public class PortainerRequestService {
         jsonPayload.put("Force", force);
         builder.post(RequestBody.create(
                 jsonPayload.toString(),
-                MediaType.parse("application/json"))
+                MediaType.parse(API_MEDIA_TYPE))
         );
         final var request = builder.build();
         return httpService.send(request);
@@ -521,7 +531,7 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/" + endpointId + "/docker/images/" + imageId);
+                .addPathSegments(API_ENDPOINT + endpointId + "/docker/images/" + imageId);
 
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + getJwtToken());
@@ -545,7 +555,7 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/" + endpointId + "/docker/networks/" + networkId);
+                .addPathSegments(API_ENDPOINT + endpointId + "/docker/networks/" + networkId);
 
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + getJwtToken());
@@ -569,7 +579,7 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/" + endpointId + "/docker/volumes/" + volumeId);
+                .addPathSegments(API_ENDPOINT + endpointId + "/docker/volumes/" + volumeId);
 
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + getJwtToken());
@@ -602,7 +612,6 @@ public class PortainerRequestService {
 
         final var imagePostBody = image;
         image += imageTag;
-        //image = URLEncoder.encode(image, StandardCharsets.UTF_8);
 
         final var builder = getRequestBuilder();
 
@@ -610,10 +619,8 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/" + endpointId + "/docker/images/create")
+                .addPathSegments(API_ENDPOINT + endpointId + "/docker/images/create")
                 .addQueryParameter("fromImage", registryUrl + "/" + image);
-//                .addEncodedQueryParameter("fromImage",
-//                        registryUrl + "%2F" + image);
 
         final var url = urlBuilder.build();
 
@@ -631,7 +638,7 @@ public class PortainerRequestService {
                 RequestBody.create(
                         new JSONObject()
                                 .put("fromImage", registryUrl + "/" + imagePostBody + imageTag)
-                                .toString(), MediaType.parse("application/json")));
+                                .toString(), MediaType.parse(API_MEDIA_TYPE)));
 
         final var request = builder.build();
         final var response = httpService.send(request);
@@ -673,7 +680,7 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/" + endpointId + "/docker/images/json")
+                .addPathSegments(API_ENDPOINT + endpointId + "/docker/images/json")
                 .addQueryParameter("all", "1");
 
         final var url = urlBuilder.build();
@@ -729,13 +736,13 @@ public class PortainerRequestService {
                     .scheme("http")
                     .host(portainerConfig.getPortainerHost())
                     .port(portainerConfig.getPortainerPort())
-                    .addPathSegments("api/endpoints/" + endpointId + "/docker/volumes/create");
+                    .addPathSegments(API_ENDPOINT + endpointId + "/docker/volumes/create");
             final var url = urlBuilder.build();
             builder.addHeader("Authorization", "Bearer " + getJwtToken());
             builder.url(url);
             builder.post(
-                    RequestBody.create(req.toString(), MediaType.parse("application/json"))
-            );
+                    RequestBody.create(req.toString(), MediaType.parse(API_MEDIA_TYPE)
+            ));
 
             final var request = builder.build();
             final var response = httpService.send(request);
@@ -785,7 +792,7 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/" + endpointId + "/docker/containers/create");
+                .addPathSegments(API_ENDPOINT + endpointId + "/docker/containers/create");
 
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + getJwtToken());
@@ -797,7 +804,7 @@ public class PortainerRequestService {
 
         //add json payload to request
         builder.post(
-                RequestBody.create(jsonPayload.toString(), MediaType.parse("application/json"))
+                RequestBody.create(jsonPayload.toString(), MediaType.parse(API_MEDIA_TYPE))
         );
 
         final var request = builder.build();
@@ -831,7 +838,7 @@ public class PortainerRequestService {
         jsonPayload.put("AdministratorsOnly", true);
         jsonPayload.put("Public", false);
         builder.put(RequestBody.create(jsonPayload.toString(),
-                MediaType.parse("application/json")));
+                MediaType.parse(API_MEDIA_TYPE)));
 
         final var request = builder.build();
         httpService.send(request);
@@ -851,7 +858,7 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/" + endpointId + "/docker/networks/create");
+                .addPathSegments(API_ENDPOINT + endpointId + "/docker/networks/create");
 
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + getJwtToken());
@@ -863,7 +870,7 @@ public class PortainerRequestService {
 
         //add json payload to request
         builder.post(
-                RequestBody.create(jsonPayload.toString(), MediaType.parse("application/json"))
+                RequestBody.create(jsonPayload.toString(), MediaType.parse(API_MEDIA_TYPE))
         );
 
         final var request = builder.build();
@@ -887,7 +894,7 @@ public class PortainerRequestService {
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
                 .addPathSegments(
-                        String.format("api/endpoints/" + endpointId
+                        String.format(API_ENDPOINT + endpointId
                                 + "/docker/networks/%s/connect", networkID)
                 );
 
@@ -900,7 +907,7 @@ public class PortainerRequestService {
 
         //add json payload to request
         builder.post(
-                RequestBody.create(jsonPayload.toString(), MediaType.parse("application/json"))
+                RequestBody.create(jsonPayload.toString(), MediaType.parse(API_MEDIA_TYPE))
         );
 
         final var request = builder.build();
@@ -950,7 +957,7 @@ public class PortainerRequestService {
                 .scheme("http")
                 .host(portainerConfig.getPortainerHost())
                 .port(portainerConfig.getPortainerPort())
-                .addPathSegments("api/endpoints/" + endpointId + "/docker/" + part);
+                .addPathSegments(API_ENDPOINT + endpointId + "/docker/" + part);
         final var url = urlBuilder.build();
         builder.addHeader("Authorization", "Bearer " + getJwtToken());
         builder.url(url);
