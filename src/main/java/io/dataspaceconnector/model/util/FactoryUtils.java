@@ -168,7 +168,7 @@ public final class FactoryUtils {
             return Optional.of(newValues);
         }
 
-        return Optional.of(defaultList);
+        return Optional.empty();
     }
 
     /**
