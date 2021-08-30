@@ -16,6 +16,7 @@
 package io.dataspaceconnector.model.app;
 
 import io.dataspaceconnector.common.ids.policy.PolicyPattern;
+import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.base.RemoteObject;
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.named.NamedEntity;
@@ -32,6 +33,7 @@ import org.springframework.data.annotation.Version;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.net.URI;
@@ -170,4 +172,10 @@ public class App extends NamedEntity implements RemoteObject {
      * "Runtime environment of a data app, e.g., software (or hardware) required to run the app.
      */
     private String runtimeEnvironment;
+
+    /**
+     * Relation to app store.
+     */
+    @ManyToOne
+    private AppStore appStore;
 }

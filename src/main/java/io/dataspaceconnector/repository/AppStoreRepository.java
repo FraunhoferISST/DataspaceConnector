@@ -19,6 +19,7 @@ import io.dataspaceconnector.model.appstore.AppStore;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.net.URI;
 import java.util.UUID;
 
 /**
@@ -35,7 +36,20 @@ public interface AppStoreRepository extends BaseEntityRepository<AppStore> {
      */
     @Query("SELECT r "
             + "FROM AppStore r "
-            + "WHERE r.apps = :id " // TODO check
+            + "left join fetch r.apps a "
+            + "WHERE a.id = :id "
             + "AND r.deleted = false")
     AppStore findAppStoreWithAppId(UUID id);
+
+
+    /**
+     * Get app store by location address.
+     * @param location The location uri.
+     * @return The found app store.
+     */
+    @Query("SELECT r "
+            + "FROM AppStore r "
+            + "WHERE r.location = :location "
+            + "AND r.deleted = false ")
+    AppStore findAppStoreWithLocation(URI location);
 }

@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -53,6 +54,7 @@ public class AppStore extends NamedEntity {
     /**
      * App store location.
      */
+    @Column(unique = true)
     private URI location;
 
     /**

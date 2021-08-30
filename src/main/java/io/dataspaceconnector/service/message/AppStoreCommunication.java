@@ -17,8 +17,8 @@ package io.dataspaceconnector.service.message;
 
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.UUIDFormatException;
-import io.dataspaceconnector.common.util.UUIDUtils;
 import io.dataspaceconnector.model.appstore.AppStore;
+import io.dataspaceconnector.service.resource.relation.AppAppStoreLinker;
 import io.dataspaceconnector.service.resource.relation.AppStoreAppLinker;
 import io.dataspaceconnector.service.resource.type.AppStoreService;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +50,11 @@ public class AppStoreCommunication {
     private final @NotNull AppStoreService appStoreService;
 
     /**
+     * Service for linking apps and app stores.
+     */
+    private final @NotNull AppAppStoreLinker appAppStoreLinker;
+
+    /**
      * Check if input is an appStore id or an url.
      *
      * @param input The input uri.
@@ -57,7 +62,7 @@ public class AppStoreCommunication {
      */
     public Optional<AppStore> checkInput(final URI input) {
         try {
-            final var appStore = appStoreService.get(UUIDUtils.uuidFromUri(input));
+            final var appStore = appStoreService.getAppStoreByLocation(input);
             return Optional.of(appStore);
         } catch (UUIDFormatException exception) {
             // Input uri is not an appStore id. Proceed.
@@ -89,5 +94,14 @@ public class AppStoreCommunication {
                 log.warn("Failed to link app to app store. [appId=({})]", appId);
             }
         }
+    }
+
+    /**
+     * Link app store to app.
+     * @param appId The id of the app.
+     * @param appStoreId The id of the app store.
+     */
+    public void addAppStoreToApp(final UUID appId, final UUID appStoreId) {
+        appAppStoreLinker.add(appId, Set.of(appStoreId));
     }
 }

@@ -21,6 +21,7 @@ import io.dataspaceconnector.repository.AppStoreRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
 import java.util.UUID;
 
 /**
@@ -37,5 +38,14 @@ public class AppStoreService extends BaseEntityService<AppStore, AppStoreDesc> {
      */
     public AppStore getAppStoreByAppId(final UUID appId) {
         return ((AppStoreRepository) getRepository()).findAppStoreWithAppId(appId);
+    }
+
+    /**
+     * Get app store by location adress.
+     * @param location The location uri.
+     * @return The app store.
+     */
+    public AppStore getAppStoreByLocation(final URI location) {
+        return ((AppStoreRepository) getRepository()).findAppStoreWithLocation(location);
     }
 }

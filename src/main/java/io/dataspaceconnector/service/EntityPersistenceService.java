@@ -296,6 +296,8 @@ public class EntityPersistenceService {
         }
 
         // Link app to app store. NOTE: An exception should not abort the download process.
+        appStore.ifPresent(store -> appStoreCommunication.addAppStoreToApp(app.getId(),
+                store.getId()));
         appStoreCommunication.addAppToAppStore(appStore, app.getId());
 
         return instanceId.get();
