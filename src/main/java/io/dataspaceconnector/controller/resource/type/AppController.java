@@ -273,13 +273,19 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     }
 
     private ResponseEntity<Object> readResponse(final Response response, final Object body) {
-        // TODO improve response checking vor portainer service
         if (response != null) {
             final var responseCode = String.valueOf(response.code());
 
             switch (responseCode) {
                 case ResponseCode.NOT_MODIFIED:
-
+                    return new ResponseEntity<>("App is already running.",
+                            HttpStatus.BAD_REQUEST);
+                case ResponseCode.NOT_FOUND:
+                    return new ResponseEntity<>("App not found.",
+                            HttpStatus.BAD_REQUEST);
+                case ResponseCode.BAD_REQUEST:
+                    return new ResponseEntity<>("Error when deleting app.",
+                            HttpStatus.INTERNAL_SERVER_ERROR);
                 case ResponseCode.CONFLICT:
                     return new ResponseEntity<>("Cannot delete a running app.",
                             HttpStatus.BAD_REQUEST);

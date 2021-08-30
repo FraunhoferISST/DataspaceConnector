@@ -56,6 +56,11 @@ public class ResponseCode {
     public static final String UNAUTHORIZED = "401";
 
     /**
+     * Response code is NOT_FOUND.
+     */
+    public static final String NOT_FOUND = "404";
+
+    /**
      * Response code is METHOD_NOT_ALLOWED.
      */
     public static final String METHOD_NOT_ALLOWED = "405";
