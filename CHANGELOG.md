@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [6.X.X] - XXXX-XX-XX
+
+### Fixed
+- Fix self-reference of QueryInput in OpenApi
+
 ## [6.1.3] - 2021-08-27
 
 ### Changed

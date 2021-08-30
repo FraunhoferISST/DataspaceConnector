@@ -3392,9 +3392,7 @@ paths:
             format: uuid
       requestBody:
         content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/QueryInput'
+          application/json: {}
       responses:
         "401":
           description: Unauthorized
@@ -6369,6 +6367,10 @@ components:
         - '@type'
       type: object
       properties:
+        properties:
+          type: object
+          additionalProperties:
+            type: object
         comment:
           type: array
           items:
@@ -6377,10 +6379,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
-        properties:
-          type: object
-          additionalProperties:
-            type: object
         '@id':
           type: string
           format: uri
@@ -6401,7 +6399,35 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
+            ids:leftOperand:
+              type: string
+              enum:
+                - https://w3id.org/idsa/code/ABSOLUTE_SPATIAL_POSITION
+                - https://w3id.org/idsa/code/COUNT
+                - https://w3id.org/idsa/code/DELAY
+                - https://w3id.org/idsa/code/ELAPSED_TIME
+                - https://w3id.org/idsa/code/ENDPOINT
+                - https://w3id.org/idsa/code/EVENT
+                - https://w3id.org/idsa/code/PATH
+                - https://w3id.org/idsa/code/PAYMENT
+                - https://w3id.org/idsa/code/PAY_AMOUNT
+                - https://w3id.org/idsa/code/POLICY_EVALUATION_TIME
+                - https://w3id.org/idsa/code/PURPOSE
+                - https://w3id.org/idsa/code/QUANTITY
+                - https://w3id.org/idsa/code/RECURRENCE_RATE
+                - https://w3id.org/idsa/code/SECURITY_LEVEL
+                - https://w3id.org/idsa/code/STATE
+                - https://w3id.org/idsa/code/SYSTEM
+                - https://w3id.org/idsa/code/USER
+            ids:rightOperand:
+              $ref: '#/components/schemas/RdfResource'
+            ids:rightOperandReference:
+              type: string
+              format: uri
             ids:unit:
+              type: string
+              format: uri
+            ids:pipEndpoint:
               type: string
               format: uri
             ids:operator:
@@ -6453,34 +6479,6 @@ components:
                 - https://w3id.org/idsa/code/STRING_IS_CONTAINED
                 - https://w3id.org/idsa/code/TEMPORAL_DISJOINT
                 - https://w3id.org/idsa/code/TEMPORAL_EQUALS
-            ids:rightOperand:
-              $ref: '#/components/schemas/RdfResource'
-            ids:leftOperand:
-              type: string
-              enum:
-                - https://w3id.org/idsa/code/ABSOLUTE_SPATIAL_POSITION
-                - https://w3id.org/idsa/code/COUNT
-                - https://w3id.org/idsa/code/DELAY
-                - https://w3id.org/idsa/code/ELAPSED_TIME
-                - https://w3id.org/idsa/code/ENDPOINT
-                - https://w3id.org/idsa/code/EVENT
-                - https://w3id.org/idsa/code/PATH
-                - https://w3id.org/idsa/code/PAYMENT
-                - https://w3id.org/idsa/code/PAY_AMOUNT
-                - https://w3id.org/idsa/code/POLICY_EVALUATION_TIME
-                - https://w3id.org/idsa/code/PURPOSE
-                - https://w3id.org/idsa/code/QUANTITY
-                - https://w3id.org/idsa/code/RECURRENCE_RATE
-                - https://w3id.org/idsa/code/SECURITY_LEVEL
-                - https://w3id.org/idsa/code/STATE
-                - https://w3id.org/idsa/code/SYSTEM
-                - https://w3id.org/idsa/code/USER
-            ids:rightOperandReference:
-              type: string
-              format: uri
-            ids:pipEndpoint:
-              type: string
-              format: uri
             '@type':
               type: string
     Duty:
@@ -6508,15 +6506,15 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
-            ids:xone:
-              type: array
-              items:
-                $ref: '#/components/schemas/Constraint'
             ids:and:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
             ids:or:
+              type: array
+              items:
+                $ref: '#/components/schemas/Constraint'
+            ids:xone:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
@@ -6572,6 +6570,10 @@ components:
         - ids:action
       type: object
       properties:
+        properties:
+          type: object
+          additionalProperties:
+            type: object
         comment:
           type: array
           items:
@@ -6580,10 +6582,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
-        properties:
-          type: object
-          additionalProperties:
-            type: object
+        ids:target:
+          type: string
+          format: uri
         ids:assignee:
           type: array
           items:
@@ -6615,18 +6616,15 @@ components:
               - https://w3id.org/idsa/code/TRACK_PROVENANCE
               - https://w3id.org/idsa/code/USE
               - https://w3id.org/idsa/code/WRITE
-        ids:assetRefinement:
-          oneOf:
-            - $ref: '#/components/schemas/LogicalConstraint'
         ids:constraint:
           type: array
           items:
             oneOf:
-              - $ref: '#/components/schemas/Constraint'
               - $ref: '#/components/schemas/LogicalConstraint'
-        ids:target:
-          type: string
-          format: uri
+        ids:assetRefinement:
+          oneOf:
+            - $ref: '#/components/schemas/Constraint'
+            - $ref: '#/components/schemas/LogicalConstraint'
         ids:description:
           type: array
           items:
@@ -6784,33 +6782,6 @@ components:
           $ref: '#/components/schemas/Links'
         page:
           $ref: '#/components/schemas/PageMetadata'
-    QueryInput:
-      type: object
-      properties:
-        headers:
-          type: object
-          additionalProperties:
-            type: string
-        params:
-          type: object
-          additionalProperties:
-            type: string
-        pathVariables:
-          type: object
-          additionalProperties:
-            type: string
-        optional:
-          type: string
-      description: "Query parameters, headers and path variables as maps"
-      example:
-        headers:
-          key: value
-        params:
-          key: value
-        pathVariables:
-          key: value
-      oneOf:
-        - $ref: '#/components/schemas/QueryInput'
     StreamingResponseBody:
       type: object
     PagedModelSubscriptionView:
