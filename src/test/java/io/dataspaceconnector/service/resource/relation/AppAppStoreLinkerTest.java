@@ -44,7 +44,7 @@ class AppAppStoreLinkerTest {
     AppService appService;
 
     @MockBean
-    OwningRelationService owningRelationService;
+    OwningRelationService<?, ?, ?, ?> owningService;
 
     @Autowired
     @InjectMocks
