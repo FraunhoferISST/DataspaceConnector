@@ -160,6 +160,12 @@ public class AppRequestController {
         }
     }
 
+    /**
+     * Return created app as ResponseEntity with Status 201.
+     *
+     * @param remoteId appstore id of created app.
+     * @return ResponseEntity containing created app.
+     */
     private ResponseEntity<Object> respondWithCreatedApp(final URI remoteId) {
         final var app = appSvc.identifyByRemoteId(remoteId);
         if (app.isEmpty()) {

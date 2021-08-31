@@ -98,6 +98,7 @@ public class AppStoreCommunication {
 
     /**
      * Link app store to app.
+     *
      * @param appId The id of the app.
      * @param appStoreId The id of the app store.
      */
