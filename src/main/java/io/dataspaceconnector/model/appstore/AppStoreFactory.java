@@ -34,6 +34,8 @@ public class AppStoreFactory extends AbstractNamedFactory<AppStore, AppStoreDesc
     public static final URI DEFAULT_URI = URI.create("https://appstore.com");
 
     /**
+     * Create a new AppStore from Desc.
+     *
      * @param desc The description of the entity.
      * @return The new app store entity.
      */
@@ -46,6 +48,8 @@ public class AppStoreFactory extends AbstractNamedFactory<AppStore, AppStoreDesc
     }
 
     /**
+     * Update the AppStore based on given AppDesc.
+     *
      * @param appStore The entity to be updated.
      * @param desc     The description of the new entity.
      * @return True, if app store is updated.
@@ -56,6 +60,8 @@ public class AppStoreFactory extends AbstractNamedFactory<AppStore, AppStoreDesc
     }
 
     /**
+     * Update Location URL of the AppStore.
+     *
      * @param appStore The entity to be updated.
      * @param location The new location url of the entity.
      * @return True, if app store is updated.

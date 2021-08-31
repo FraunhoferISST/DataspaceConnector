@@ -206,6 +206,7 @@ public class PortainerRequestService {
 
     /**
      * Checks if the container with the given ID is running in Portainer.
+     *
      * @param containerId The id of the container.
      * @return Boolean, true if container running, else false.
      * @throws IOException If an error occurs while connecting to Portainer.
@@ -236,15 +237,6 @@ public class PortainerRequestService {
         }
 
         return false;
-    }
-
-    /**
-     * Deletes not used images.
-     *
-     * @throws IOException if an error occurs while deleting not used images.
-     */
-    public void deleteUnusedImages() throws IOException {
-
     }
 
     /**
@@ -463,6 +455,8 @@ public class PortainerRequestService {
     }
 
     /**
+     * Disconnect the container with given ID from network with given ID.
+     *
      * @param containerID id of the container to disconnect.
      * @param networkName name of the network the container should be disconnected from.
      * @param force       true if disconnect should be forced.
@@ -649,6 +643,12 @@ public class PortainerRequestService {
         return response;
     }
 
+    /**
+     * Wait until the image with given tag was downloaded.
+     *
+     * @param tag portainer image tag.
+     * @throws IOException If an error occurs while connecting to portainer.
+     */
     private void waitForImagePull(final String tag) throws IOException {
         //Check if image is successfully pulled in Portainer,
         //otherwise wait until process is finished.
@@ -673,6 +673,13 @@ public class PortainerRequestService {
         }
     }
 
+    /**
+     * Check if image with tag already exists in portainer.
+     *
+     * @param tag portainer image tag.
+     * @return true if image exists in portainer.
+     * @throws IOException If an error occurs while connecting to portainer.
+     */
     private boolean checkIfImageExists(final String tag) throws IOException {
         final var builder = getRequestBuilder();
 
@@ -696,10 +703,12 @@ public class PortainerRequestService {
     }
 
     /**
+     * Create container volumes from AppStore template.
+     *
      * @param appStoreTemplate The template provided by the AppStore describing 1 App.
      * @param appID UUID of the app volume is created for
      * @return Map of portainer responses for every volume to create.
-     * @throws IOException If an error occurs while connection to portainer.
+     * @throws IOException If an error occurs while connecting to portainer.
      */
     public Map<String, String> createVolumes(final String appStoreTemplate, final String appID)
             throws IOException {
@@ -754,10 +763,12 @@ public class PortainerRequestService {
     }
 
     /**
+     * Create a Container from AppStore template.
+     *
      * @param appStoreTemplate The template provided by the AppStore describing 1 App.
      * @param volumes          the map for volume names used in the template.
      * @return portainer response.
-     * @throws IOException If an error occurs while connection to portainer.
+     * @throws IOException If an error occurs while connecting to portainer.
      */
     public String createContainer(final String appStoreTemplate, final Map<String, String> volumes)
             throws IOException {
@@ -822,6 +833,12 @@ public class PortainerRequestService {
         return new JSONObject(body).getString("Id");
     }
 
+    /**
+     * Change resource ownership in portainer to AdminOnly.
+     *
+     * @param resourceId id of resource, for which ownership should be changed.
+     * @throws IOException If an error occurs while connecting to portainer.
+     */
     private void updateOwnerShip(final int resourceId) throws IOException {
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
@@ -845,6 +862,8 @@ public class PortainerRequestService {
     }
 
     /**
+     * Create a network from given settings.
+     *
      * @param networkName name of the network to create
      * @param pub         true if network is public
      * @param adminOnly   true if only visible for admins
@@ -880,6 +899,8 @@ public class PortainerRequestService {
     }
 
     /**
+     * Add container with given ID to network with given ID.
+     *
      * @param containerID Id of the container to add to the network
      * @param networkID   networkID to add to
      * @return response from portainer
@@ -915,6 +936,8 @@ public class PortainerRequestService {
     }
 
     /**
+     * Get list of all containers.
+     *
      * @return response from portainer
      * @throws IOException if sending request to portainer fails
      */
@@ -923,6 +946,8 @@ public class PortainerRequestService {
     }
 
     /**
+     * Get list of all images.
+     *
      * @return response from portainer
      * @throws IOException if sending request to portainer fails
      */
@@ -931,6 +956,8 @@ public class PortainerRequestService {
     }
 
     /**
+     * Get list of all networks.
+     *
      * @return response from portainer
      * @throws IOException if sending request to portainer fails
      */
@@ -939,6 +966,8 @@ public class PortainerRequestService {
     }
 
     /**
+     * Get list of all volumes.
+     *
      * @return response from portainer
      * @throws IOException if sending request to portainer fails
      */
@@ -947,11 +976,14 @@ public class PortainerRequestService {
     }
 
     /**
+     * Get list of all items with string part in path.
+     * Used internally by getImages/Volumes/Networks.
+     *
      * @param part api route part depending on requested resource (containers, images...)
      * @return response from portainer
      * @throws IOException if sending request to portainer fails
      */
-    public Response getItem(final String part) throws IOException {
+    private Response getItem(final String part) throws IOException {
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("http")
@@ -967,6 +999,8 @@ public class PortainerRequestService {
     }
 
     /**
+     * Get a new RequestBuilder.
+     *
      * @return new request builder.
      */
     private Request.Builder getRequestBuilder() {
@@ -974,6 +1008,8 @@ public class PortainerRequestService {
     }
 
     /**
+     * Get the JWT auth token for portainer requests.
+     *
      * @return auth jwt token for portainer.
      */
     private String getJwtToken() {
@@ -982,6 +1018,8 @@ public class PortainerRequestService {
     }
 
     /**
+     * Create JSON for auth request.
+     *
      * @param username The username for the authentication.
      * @param password The password for the authentication.
      * @return request body as string.
@@ -995,10 +1033,23 @@ public class PortainerRequestService {
         return jsonObject.toString();
     }
 
+    /**
+     * Convert string to JSONObject.
+     *
+     * @param string some given string.
+     * @return string parsed to JSONObject.
+     */
     private JSONObject toJsonObject(final String string) {
         return new JSONObject(string);
     }
 
+    /**
+     * Get ResponseBody as string, if it is not null.
+     *
+     * @param response response from okhttp.
+     * @return response body as string, if not null.
+     * @throws IOException when body cannot be parsed to string.
+     */
     @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     private String checkResponseNotNull(@NonNull final Response response) throws IOException {
         final var checkedResp = Objects.requireNonNull(response);
