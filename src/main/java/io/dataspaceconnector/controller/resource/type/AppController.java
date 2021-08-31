@@ -225,30 +225,6 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         return containerId;
     }
 
-    public final ResponseEntity<Object> containerDescription(@PathVariable("id") final UUID appId) {
-        final var app = getService().get(appId);
-        final var containerId = ((AppImpl) app).getContainerId();
-
-        try {
-            if (containerId == null || containerId.equals("")) {
-                return new ResponseEntity<>("No container id provided.", HttpStatus.NOT_FOUND);
-            } else {
-                final var descriptionResponse = portainerSvc
-                        .getDescriptionByContainerId(containerId);
-
-                if (descriptionResponse.isSuccessful()) {
-                    return ResponseEntity.ok(
-                            Objects.requireNonNull(descriptionResponse.body()).string());
-                } else {
-                    return ResponseEntity.internalServerError()
-                            .body(Objects.requireNonNull(descriptionResponse.body()).string());
-                }
-            }
-        }  catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
-        }
-    }
-
     /**
      * Get the AppStores related to the given app.
      *

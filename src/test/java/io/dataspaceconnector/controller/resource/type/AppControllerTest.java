@@ -123,10 +123,6 @@ class AppControllerTest {
         assertEquals(HttpStatus.OK, appController.containerManagement(UUID.randomUUID(), "START").getStatusCode());
         assertEquals(HttpStatus.OK, appController.containerManagement(UUID.randomUUID(), "STOP").getStatusCode());
         assertEquals(HttpStatus.OK, appController.containerManagement(UUID.randomUUID(), "DELETE").getStatusCode());
-    }
-
-    @Test
-    public void testContainerDescription() {
-        assertEquals(HttpStatus.OK, appController.containerDescription(UUID.randomUUID()).getStatusCode());
+        assertEquals(HttpStatus.OK, appController.containerManagement(UUID.randomUUID(), "DESCRIBE").getStatusCode());
     }
 }
