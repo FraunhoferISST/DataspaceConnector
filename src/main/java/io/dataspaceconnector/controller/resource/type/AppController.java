@@ -173,8 +173,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         return portainerSvc.validateContainerRunning(containerID);
     }
 
-    private String deployApp(final App app) throws IOException, PortainerNotConfigured,
-            AppNotDeployedException {
+    private String deployApp(final App app) throws IOException, AppNotDeployedException {
         if (!(app instanceof AppImpl)) {
             //needs to be checked because of cast to AppImpl
             throw new AppNotDeployedException();
