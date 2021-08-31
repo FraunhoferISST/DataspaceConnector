@@ -31,7 +31,7 @@ import java.util.UUID;
 public class AppStoreService extends BaseEntityService<AppStore, AppStoreDesc> {
 
     /**
-     * Get app stores which are offering the given app.
+     * Get app store which is offering the given app.
      *
      * @param appId The uuid of the app to find the offering app store.
      * @return The app store offering the app.
