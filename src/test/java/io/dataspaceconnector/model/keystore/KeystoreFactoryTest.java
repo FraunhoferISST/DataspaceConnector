@@ -94,4 +94,19 @@ class KeystoreFactoryTest {
         assertFalse(result);
         assertEquals(KeystoreFactory.DEFAULT_PASSWORD, keystore.getPassword());
     }
+
+    @Test
+    void update_differentAlias_willUpdate() {
+        /* ARRANGE */
+        final var keystore = factory.create(new KeystoreDesc());
+        final var desc = new KeystoreDesc();
+        desc.setAlias("alias");
+
+        /* ACT */
+        final var result = factory.update(keystore, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(desc.getAlias(), keystore.getAlias());
+    }
 }

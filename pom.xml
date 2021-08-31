@@ -755,7 +755,18 @@
 <!--						<param>**</param>-->
 <!--					</excludedTestClasses>-->
 					<mutators>
-						<mutator>ALL</mutator>
+						<mutator>STRONGER</mutator>
+						<!-- <mutator>INLINE_CONSTS</mutator>
+						<mutator>CONSTRUCTOR_CALLS</mutator>
+						<mutator>NON_VOID_METHOD_CALLS</mutator>
+						<mutator>REMOVE_INCREMENTS</mutator>
+						<mutator>ABS</mutator>
+						<mutator>AOR</mutator>
+						<mutator>AOD</mutator>
+						<mutator>CRCR</mutator>
+						<mutator>OBBN</mutator>
+						<mutator>ROR</mutator>
+						<mutator>UOI</mutator> -->
 					</mutators>
 					<historyInputFile>${project.build.directory}/pit-reports/history</historyInputFile>
 					<historyOutputFile>${project.build.directory}/pit-reports/history</historyOutputFile>
@@ -763,7 +774,7 @@
 					<threads>2</threads>
 					<timestampedReports>false</timestampedReports>
 					<coverageThreshold>98</coverageThreshold>
-					<mutationThreshold>74</mutationThreshold>
+					<mutationThreshold>90</mutationThreshold>
 				</configuration>
 			</plugin>
 			<plugin>

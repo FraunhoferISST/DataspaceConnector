@@ -21,7 +21,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import okhttp3.Credentials;
@@ -37,7 +36,6 @@ import javax.persistence.Entity;
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @AllArgsConstructor
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @SQLDelete(sql = "UPDATE authentication SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")

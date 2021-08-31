@@ -102,15 +102,10 @@ public final class ArtifactFactory extends AbstractNamedFactory<Artifact, Artifa
     }
 
     private boolean updateData(final Artifact artifact, final ArtifactDesc desc) {
-        boolean hasChanged;
-        if (isRemoteData(desc)) {
-            hasChanged = updateRemoteData((ArtifactImpl) artifact, desc.getAccessUrl(),
-                                          desc.getBasicAuth(), desc.getApiKey());
-        } else {
-            hasChanged = updateLocalData((ArtifactImpl) artifact, desc.getValue());
-        }
-
-        return hasChanged;
+        return isRemoteData(desc) ?
+            updateRemoteData((ArtifactImpl) artifact, desc.getAccessUrl(),
+                                          desc.getBasicAuth(), desc.getApiKey()) :
+            updateLocalData((ArtifactImpl) artifact, desc.getValue());
     }
 
     private static boolean isRemoteData(final ArtifactDesc desc) {
@@ -118,24 +113,26 @@ public final class ArtifactFactory extends AbstractNamedFactory<Artifact, Artifa
     }
 
     private boolean updateLocalData(final ArtifactImpl artifact, final String value) {
-        final var newData = new LocalData();
-        final var data = value == null ? null : value.getBytes(StandardCharsets.UTF_16);
-        newData.setValue(data);
+        final var data = new LocalData();
+        data.setValue(value == null ? null : value.getBytes(StandardCharsets.UTF_16));
 
-        final var oldData = artifact.getData();
-        if (oldData instanceof LocalData) {
-            if (!oldData.equals(newData)) {
-                artifact.setData(newData);
-                updateByteSize(artifact, data);
+        final var currentData = artifact.getData();
+        if (currentData instanceof LocalData) {
+            if (!currentData.equals(data)) {
+                setLocalArtifactData(artifact, data);
                 return true;
             }
         } else {
-            artifact.setData(newData);
-            updateByteSize(artifact, data);
+            setLocalArtifactData(artifact, data);
             return true;
         }
 
         return false;
+    }
+
+    private void setLocalArtifactData(final ArtifactImpl artifact, final LocalData data) {
+        artifact.setData(data);
+        updateByteSize(artifact, data.getValue());
     }
 
     private boolean updateRemoteData(final ArtifactImpl artifact, final URL accessUrl,
@@ -175,14 +172,24 @@ public final class ArtifactFactory extends AbstractNamedFactory<Artifact, Artifa
      * @return true if the artifact has been modified.
      */
     public boolean updateByteSize(final Artifact artifact, final byte[] bytes) {
-        var hasChanged = false;
-        final var checkSum = calculateChecksum(bytes);
+        if(bytes == null) {
+            if(artifact.getByteSize() != 0 || artifact.getCheckSum() != 0) {
+                artifact.setByteSize(0);
+                artifact.setCheckSum(calculateChecksum(bytes));
+                return true;
+            }
 
-        if (bytes != null && artifact.getByteSize() != bytes.length) {
+            return false;
+        }
+
+        var hasChanged = false;
+
+        if (artifact.getByteSize() != bytes.length) {
             artifact.setByteSize(bytes.length);
             hasChanged = true;
         }
 
+        final var checkSum = calculateChecksum(bytes);
         if (artifact.getCheckSum() != checkSum) {
             artifact.setCheckSum(checkSum);
             hasChanged = true;

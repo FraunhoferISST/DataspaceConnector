@@ -200,7 +200,7 @@ public class IdsAppRouteBuilderTest {
     }
 
     private GenericEndpoint getGenericEndpoint() {
-        final var auth = new BasicAuth();
+        final var auth = new BasicAuth("", "");
         ReflectionTestUtils.setField(auth, "username", "username");
         ReflectionTestUtils.setField(auth, "password", "password");
 

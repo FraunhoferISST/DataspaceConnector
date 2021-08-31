@@ -80,12 +80,12 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
             return false;
         }
 
-        if (dataSource.getAuthentication() != null
-                && !dataSource.getAuthentication().equals(new BasicAuth(authentication))) {
+        final var auth = new BasicAuth(authentication);
+        if(auth.equals(dataSource.getAuthentication())) {
             return false;
         }
 
-        dataSource.setAuthentication(new BasicAuth(authentication));
+        dataSource.setAuthentication(auth);
         return true;
     }
 }
