@@ -157,6 +157,21 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
                 getService().deleteContainerIdFromApp(appId);
                 portainerSvc.deleteUnusedVolumes();
                 return readResponse(response, "Successfully deleted the app.");
+            } else if (ActionType.DESCRIBE.name().equals(action)) {
+                if (containerId == null || containerId.equals("")) {
+                    return new ResponseEntity<>("No container id provided.", HttpStatus.NOT_FOUND);
+                } else {
+                    final var descriptionResponse = portainerSvc
+                            .getDescriptionByContainerId(containerId);
+
+                    if (descriptionResponse.isSuccessful()) {
+                        return ResponseEntity.ok(
+                                Objects.requireNonNull(descriptionResponse.body()).string());
+                    } else {
+                        return ResponseEntity.internalServerError()
+                                .body(Objects.requireNonNull(descriptionResponse.body()).string());
+                    }
+                }
             } else {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
@@ -210,22 +225,6 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         return containerId;
     }
 
-    /**
-     * @param appId The id of the app.
-     * @return Response which describes the current app.
-     */
-    @GetMapping("/{id}/describe")
-    @Operation(summary = "Description of the app container", description = "Can be used for "
-            + "describing the current app container.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
-                    description = ResponseDescription.BAD_REQUEST),
-            @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
-                    description = ResponseDescription.INTERNAL_SERVER_ERROR),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
-    @ResponseBody
     public final ResponseEntity<Object> containerDescription(@PathVariable("id") final UUID appId) {
         final var app = getService().get(appId);
         final var containerId = ((AppImpl) app).getContainerId();
