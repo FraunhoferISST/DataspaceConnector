@@ -33,7 +33,12 @@ public enum ActionType {
     /**
      * Delete an app.
      */
-    DELETE("Delete");
+    DELETE("Delete"),
+
+    /**
+     * Describes an app.
+     */
+    DESCRIBE("Describe");
 
     /**
      * Holds the enums string.
