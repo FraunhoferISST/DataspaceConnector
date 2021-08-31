@@ -31,19 +31,20 @@ import java.util.UUID;
 public class AppStoreService extends BaseEntityService<AppStore, AppStoreDesc> {
 
     /**
-     * Get AppStores which are offering the given App.
+     * Get app stores which are offering the given app.
      *
-     * @param appId The id of the app to find related appstore for.
-     * @return A list of app stores which are offering an app with AppID.
+     * @param appId The uuid of the app to find the offering app store.
+     * @return The app store offering the app.
      */
     public AppStore getAppStoreByAppId(final UUID appId) {
         return ((AppStoreRepository) getRepository()).findAppStoreWithAppId(appId);
     }
 
     /**
-     * Get app store by location adress.
-     * @param location The location uri.
-     * @return The app store.
+     * Get app store by its location address.
+     *
+     * @param location The location uri of the app store.
+     * @return The app store identified by its location uri.
      */
     public AppStore getAppStoreByLocation(final URI location) {
         return ((AppStoreRepository) getRepository()).findAppStoreWithLocation(location);
