@@ -102,10 +102,10 @@ public final class ArtifactFactory extends AbstractNamedFactory<Artifact, Artifa
     }
 
     private boolean updateData(final Artifact artifact, final ArtifactDesc desc) {
-        return isRemoteData(desc) ?
-            updateRemoteData((ArtifactImpl) artifact, desc.getAccessUrl(),
-                                          desc.getBasicAuth(), desc.getApiKey()) :
-            updateLocalData((ArtifactImpl) artifact, desc.getValue());
+        return isRemoteData(desc)
+            ? updateRemoteData((ArtifactImpl) artifact, desc.getAccessUrl(),
+                                          desc.getBasicAuth(), desc.getApiKey())
+            : updateLocalData((ArtifactImpl) artifact, desc.getValue());
     }
 
     private static boolean isRemoteData(final ArtifactDesc desc) {
@@ -172,8 +172,8 @@ public final class ArtifactFactory extends AbstractNamedFactory<Artifact, Artifa
      * @return true if the artifact has been modified.
      */
     public boolean updateByteSize(final Artifact artifact, final byte[] bytes) {
-        if(bytes == null) {
-            if(artifact.getByteSize() != 0 || artifact.getCheckSum() != 0) {
+        if (bytes == null) {
+            if (artifact.getByteSize() != 0 || artifact.getCheckSum() != 0) {
                 artifact.setByteSize(0);
                 artifact.setCheckSum(calculateChecksum(bytes));
                 return true;

@@ -81,7 +81,7 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
         }
 
         final var auth = new BasicAuth(authentication);
-        if(auth.equals(dataSource.getAuthentication())) {
+        if (auth.equals(dataSource.getAuthentication())) {
             return false;
         }
 
