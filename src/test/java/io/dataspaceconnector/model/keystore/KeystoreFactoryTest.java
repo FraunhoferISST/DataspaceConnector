@@ -84,15 +84,33 @@ class KeystoreFactoryTest {
     @Test
     void update_samePassword_willNotUpdate() {
         /* ARRANGE */
+        final var password = "password";
         final var desc = new KeystoreDesc();
-        final var keystore = factory.create(new KeystoreDesc());
+        desc.setPassword(password);
+        final var keystore = factory.create(desc);
 
         /* ACT */
         final var result = factory.update(keystore, desc);
 
         /* ASSERT */
         assertFalse(result);
-        assertEquals(KeystoreFactory.DEFAULT_PASSWORD, keystore.getPassword());
+        assertEquals(password, keystore.getPassword());
+    }
+
+    @Test
+    void update_keyStorePasswordNotNullAndPasswordNull_willNotUpdate() {
+        /* ARRANGE */
+        final var password = "password";
+        final var desc = new KeystoreDesc();
+        desc.setPassword(password);
+        final var keystore = factory.create(desc);
+
+        /* ACT */
+        final var result = factory.update(keystore, new KeystoreDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+        assertEquals(password, keystore.getPassword());
     }
 
     @Test
@@ -108,5 +126,37 @@ class KeystoreFactoryTest {
         /* ASSERT */
         assertTrue(result);
         assertEquals(desc.getAlias(), keystore.getAlias());
+    }
+
+    @Test
+    void update_sameAlias_willNotUpdate() {
+        /* ARRANGE */
+        final var alias = "alias";
+        final var desc = new KeystoreDesc();
+        desc.setAlias(alias);
+        final var keystore = factory.create(desc);
+
+        /* ACT */
+        final var result = factory.update(keystore, desc);
+
+        /* ASSERT */
+        assertFalse(result);
+        assertEquals(alias, keystore.getAlias());
+    }
+
+    @Test
+    void update_keyStoreAliasNotNullAndAliasNull_willNotUpdate() {
+        /* ARRANGE */
+        final var alias = "alias";
+        final var desc = new KeystoreDesc();
+        desc.setAlias(alias);
+        final var keystore = factory.create(desc);
+
+        /* ACT */
+        final var result = factory.update(keystore, new KeystoreDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+        assertEquals(alias, keystore.getAlias());
     }
 }
