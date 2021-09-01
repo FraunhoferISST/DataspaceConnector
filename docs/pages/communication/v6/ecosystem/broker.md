@@ -60,7 +60,7 @@ The recipient can be either a URL where the addressed Broker expects IDS message
 brokers can be managed and persisted in the connector. So the broker can be referenced by its id
 when sending messages. Therefore, follow these steps:
 
-### Step 1: Create broker entity (optional)
+## Step 1: Create broker entity (optional)
 
 First, create a broker via `POST /api/brokers`:
 
@@ -106,7 +106,7 @@ recipient address.
 
 ![Broker Communication Example](../../../../assets/images/v6/swagger_broker_message.png)
 
-### Step 2: Register connector at broker
+## Step 2: Register connector at broker
 
 Use the `POST /api/ids/connector/update` endpoint to register your Connector at the Broker to then
 register resources. For the running Broker in the IDS lab, make sure that you provide some
@@ -142,7 +142,7 @@ information about the registration status of the Connector at a contacted Broker
 }
 ```
 
-### Step 3: Register resource at broker
+## Step 3: Register resource at broker
 
 Use the `POST /api/ids/resource/update` endpoint to register resources at the Broker. Make sure you
 first followed [Step 2](#step-2-register-connector-at-broker) and correctly provided a complete
@@ -153,7 +153,7 @@ information about what resource was registered at what broker.
 * To get all offers registered at a broker, use `GET /api/brokers/{id}/offers`.
 * To get all brokers an offer has been registered to, use `/api/offers/{id}/brokers`.
 
-### Full-text search
+## Full-text search
 
 With the endpoint `POST /api/ids/query`, you have the possibility to query the IDS Broker. As you
 may not be familiar with the SPARQL query language, the Dataspace Connector provides a full-text
