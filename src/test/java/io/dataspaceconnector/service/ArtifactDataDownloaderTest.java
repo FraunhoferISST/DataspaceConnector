@@ -26,14 +26,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.persistence.PersistenceException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.eq;
 
 @SpringBootTest(classes = { ArtifactDataDownloader.class })
@@ -91,6 +90,6 @@ class ArtifactDataDownloaderTest {
         Mockito.doThrow(IOException.class).when(persistenceSvc).saveData(eq(response), eq(artifacts.get(0)));
 
         /* ACT && ASSERT */
-        assertThrows(PersistenceException.class, ()-> downloader.download(recipient, artifacts, agreementId));
+        assertDoesNotThrow(() -> downloader.download(recipient, artifacts, agreementId));
     }
 }

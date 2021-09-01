@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.common.ids;
 
+import de.fraunhofer.iais.eis.AppResource;
 import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -97,6 +98,25 @@ public class DeserializationService {
         } catch (IOException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Could not deserialize resource. [exception=({})]", e.getMessage(), e);
+            }
+            throw new IllegalArgumentException("Could not deserialize input.", e);
+        }
+    }
+
+    /**
+     * Deserialize string to ids app resource.
+     *
+     * @param appResource The app resource string.
+     * @return The ids object.
+     * @throws IllegalArgumentException If deserialization fails.
+     */
+    public AppResource getAppResource(final String appResource) throws IllegalArgumentException {
+        try {
+            return serProvider.getSerializer().deserialize(appResource, AppResource.class);
+        } catch (IOException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Could not deserialize app resource. [exception=({})]",
+                        e.getMessage(), e);
             }
             throw new IllegalArgumentException("Could not deserialize input.", e);
         }

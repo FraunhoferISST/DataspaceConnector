@@ -15,30 +15,7 @@
  */
 package io.dataspaceconnector.common.ids.mapping;
 
-import de.fraunhofer.iais.eis.Action;
-import de.fraunhofer.iais.eis.Artifact;
-import de.fraunhofer.iais.eis.ArtifactBuilder;
-import de.fraunhofer.iais.eis.Catalog;
-import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
-import de.fraunhofer.iais.eis.ContentType;
-import de.fraunhofer.iais.eis.Contract;
-import de.fraunhofer.iais.eis.ContractAgreementBuilder;
-import de.fraunhofer.iais.eis.ContractOffer;
-import de.fraunhofer.iais.eis.ContractOfferBuilder;
-import de.fraunhofer.iais.eis.DutyBuilder;
-import de.fraunhofer.iais.eis.Frequency;
-import de.fraunhofer.iais.eis.GeoPointBuilder;
-import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
-import de.fraunhofer.iais.eis.Language;
-import de.fraunhofer.iais.eis.Permission;
-import de.fraunhofer.iais.eis.PermissionBuilder;
-import de.fraunhofer.iais.eis.Representation;
-import de.fraunhofer.iais.eis.RepresentationBuilder;
-import de.fraunhofer.iais.eis.Resource;
-import de.fraunhofer.iais.eis.ResourceBuilder;
-import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
-import de.fraunhofer.iais.eis.Rule;
-import de.fraunhofer.iais.eis.TemporalEntityBuilder;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import lombok.SneakyThrows;
@@ -56,6 +33,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -235,6 +213,44 @@ public class FromIdsObjectMapperTest {
         assertEquals(artifact.getCreationDate().toXMLFormat(), additional.get("ids:creationDate"));
         assertEquals(artifact.getDuration().toString(), additional.get("ids:duration"));
         assertEquals("test", additional.get("test"));
+    }
+
+    @Test
+    public void fromIdsAppEndpoint_validInput_returnAppEndpointTemplate() {
+        /* ARRANGE */
+        final var app = getAppResource();
+        final var remoteAddress = URI.create("https://someURL");
+
+        /* ACT */
+        final var result = FromIdsObjectMapper.fromIdsApp(app, remoteAddress);
+
+        assertEquals(app.getId(), result.getDesc().getRemoteId());
+        assertEquals(remoteAddress, result.getDesc().getRemoteAddress());
+        assertEquals(app.getTitle().get(0).getValue(), result.getDesc().getTitle());
+        assertEquals(app.getDescription().get(0).getValue(), result.getDesc().getDescription());
+        assertEquals(app.getPublisher().toString(), result.getDesc().getPublisher().toString());
+        assertEquals(app.getSovereign().toString(), result.getDesc().getSovereign().toString());
+        assertEquals(app.getStandardLicense().toString(), result.getDesc().getLicense().toString());
+        assertEquals(app.getKeyword().get(0).getValue(), result.getDesc().getKeywords().get(0));
+        assertEquals(app.getLanguage().get(0).toString(), result.getDesc().getLanguage());
+        assertEquals(app.getResourceEndpoint().get(0).getEndpointDocumentation().get(0).toString(),
+                result.getDesc().getEndpointDocumentation().toString());
+
+        final var appRepresentation = ((AppRepresentation) app.getRepresentation().get(0));
+        assertNotNull(appRepresentation);
+        assertEquals(appRepresentation.getDataAppDistributionService().toString(),
+                result.getDesc().getDistributionService().toString());
+        assertEquals(appRepresentation.getDataAppInformation().getAppDocumentation(),
+                result.getDesc().getDocs());
+        assertEquals(appRepresentation.getDataAppInformation()
+                .getAppEndpoint().get(0).getAppEndpointType().name(),
+                result.getEndpoints().get(0).getDesc().getEndpointType());
+    }
+
+    @Test
+    public void fromIdsAppEndpoint_inputNull_throwIllegalArgumentException() {
+        /* ACT && ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> FromIdsObjectMapper.fromIdsApp(null, null));
     }
 
     @Test
@@ -431,4 +447,27 @@ public class FromIdsObjectMapperTest {
         return DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
     }
 
+    @SneakyThrows
+    private AppResource getAppResource() {
+        return new AppResourceBuilder()
+                ._description_(Util.asList(new TypedLiteral("Description")))
+                ._keyword_(Util.asList(new TypedLiteral("Keyword")))
+                ._language_(Language.DE)
+                ._publisher_(URI.create("https://publisher"))
+                ._sovereign_(URI.create("https://sovereign"))
+                ._standardLicense_(URI.create("https://license"))
+                ._title_(Util.asList(new TypedLiteral("App Resource")))
+                ._resourceEndpoint_(Util.asList(new ConnectorEndpointBuilder()
+                                ._endpointDocumentation_(Util.asList(URI.create("https://doc")))
+                        ._accessURL_(URI.create("https:/endpoint")).build()))
+                ._representation_(new AppRepresentationBuilder()
+                        ._dataAppDistributionService_(URI.create("https://service"))
+                        ._dataAppInformation_(new SmartDataAppBuilder()
+                                ._appDocumentation_("New Documentation")
+                                ._appEndpoint_(Util.asList(new AppEndpointBuilder()
+                                        ._appEndpointType_(AppEndpointType.INPUT_ENDPOINT).build()))
+                                .build())
+                        .build())
+                .build();
+    }
 }
