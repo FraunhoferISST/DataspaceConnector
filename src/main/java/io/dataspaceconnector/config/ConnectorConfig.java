@@ -73,5 +73,6 @@ public class ConnectorConfig {
     /**
      * The inbound model versions.
      */
-    private final List<String> inboundVersions = List.of("4.0.0", "4.1.0", "4.1.2", "4.2.0", "4.2.1");
+    private final List<String> inboundVersions = List.of(
+            "4.0.0", "4.1.0", "4.1.2", "4.2.0", "4.2.1");
 }
