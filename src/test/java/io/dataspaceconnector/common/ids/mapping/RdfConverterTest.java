@@ -246,7 +246,7 @@ public class RdfConverterTest {
         // Nothing to arrange here.
 
         /* ACT */
-        final var result = FromIdsObjectMapper.getKeywordsAsString(null);
+        final var result = MappingUtils.getKeywordsAsString(null);
 
         /* ASSERT */
         assertEquals(0, result.size());
@@ -255,7 +255,7 @@ public class RdfConverterTest {
     @Test
     public void getKeywordsAsString_keywordsEmpty_returnsEmptyList() {
         /* ACT */
-        final var result = FromIdsObjectMapper.getKeywordsAsString(new ArrayList<>());
+        final var result = MappingUtils.getKeywordsAsString(new ArrayList<>());
 
         /* ASSERT */
         assertTrue(result.isEmpty());
@@ -269,7 +269,7 @@ public class RdfConverterTest {
         final var keywords = new ArrayList<>(Collections.singletonList(keyword));
 
         /* ACT */
-        final var result = FromIdsObjectMapper.getKeywordsAsString(keywords);
+        final var result = MappingUtils.getKeywordsAsString(keywords);
 
         /* ASSERT */
         assertEquals(1, result.size());
@@ -286,7 +286,7 @@ public class RdfConverterTest {
         final var keywords = new ArrayList<>(Arrays.asList(keyword1, keyword2));
 
         /* ACT */
-        final var result = FromIdsObjectMapper.getKeywordsAsString(keywords);
+        final var result = MappingUtils.getKeywordsAsString(keywords);
 
         /* ASSERT */
         assertEquals(2, result.size());
@@ -300,7 +300,7 @@ public class RdfConverterTest {
         final var keywords = new ArrayList<>(Collections.singletonList(keyword));
 
         /* ACT */
-        final var result = FromIdsObjectMapper.getKeywordsAsString(keywords);
+        final var result = MappingUtils.getKeywordsAsString(keywords);
 
         /* ASSERT */
         assertEquals(1, result.size());

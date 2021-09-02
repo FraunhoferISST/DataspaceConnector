@@ -25,7 +25,7 @@ info:
   license:
     name: "Apache License, Version 2.0"
     url: https://www.apache.org/licenses/LICENSE-2.0.txt
-  version: 6.1.3
+  version: 6.2.0
 servers:
   - url: https://localhost:8080
     description: Generated server url
@@ -34,6 +34,8 @@ tags:
     description: Endpoints for operations on data sources/sinks
   - name: Representations
     description: Endpoints for operations on representations
+  - name: Apps
+    description: Endpoints for app handling
   - name: Artifacts
     description: Endpoints for operations on artifacts
   - name: Rules
@@ -44,6 +46,8 @@ tags:
     description: Endpoints for operations on endpoints
   - name: Usage Control
     description: Endpoints for contract/policy handling
+  - name: App Stores
+    description: Endpoints for app store handling
   - name: Requested Resources
     description: Endpoints for operations on requested resources
   - name: Offered Resources
@@ -2132,6 +2136,7 @@ paths:
             schema:
               oneOf:
                 - $ref: '#/components/schemas/EndpointDesc'
+                - $ref: '#/components/schemas/AppEndpointDesc'
                 - $ref: '#/components/schemas/ConnectorEndpointDesc'
                 - $ref: '#/components/schemas/GenericEndpointDesc'
         required: true
@@ -3408,6 +3413,130 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/StreamingResponseBody'
+  /api/appstores/{id}:
+    get:
+      tags:
+        - App Stores
+      summary: Get a base resource by id
+      operationId: get_13
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppStoreView'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppStoreView'
+    put:
+      tags:
+        - App Stores
+      summary: Update a base resource by id
+      operationId: update_13
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppStoreDesc'
+        required: true
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppStoreView'
+        "201":
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppStoreView'
+        "204":
+          description: No content
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppStoreView'
+    delete:
+      tags:
+        - App Stores
+      summary: Delete a base resource by id
+      operationId: delete_13
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "401":
+          description: Unauthorized
+        "204":
+          description: No content
+  /api/apps/{id}/actions:
+    put:
+      tags:
+        - Apps
+      summary: Actions on apps
+      description: Can be used for managing apps.
+      operationId: containerManagement
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: actionType
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: object
+        "400":
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                type: object
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                type: object
   /api/subscriptions:
     get:
       tags:
@@ -4312,6 +4441,70 @@ paths:
             '*/*':
               schema:
                 type: object
+  /api/ids/app:
+    post:
+      tags:
+        - Messages
+      summary: Download IDS app from AppStore
+      operationId: sendMessage_7
+      parameters:
+        - name: recipient
+          in: query
+          description: The recipient url.
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: appId
+          in: query
+          description: The app id.
+          required: true
+          schema:
+            type: string
+            format: uri
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: object
+        "502":
+          description: Bad gateway
+          content:
+            '*/*':
+              schema:
+                type: object
+        "417":
+          description: Expectation failed
+          content:
+            '*/*':
+              schema:
+                type: object
+        "400":
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                type: object
+        "201":
+          description: Created
+          content:
+            '*/*':
+              schema:
+                type: object
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                type: object
   /api/examples/validation:
     post:
       tags:
@@ -4433,6 +4626,7 @@ paths:
             schema:
               oneOf:
                 - $ref: '#/components/schemas/EndpointDesc'
+                - $ref: '#/components/schemas/AppEndpointDesc'
                 - $ref: '#/components/schemas/ConnectorEndpointDesc'
                 - $ref: '#/components/schemas/GenericEndpointDesc'
         required: true
@@ -4797,6 +4991,64 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ArtifactView'
+  /api/appstores:
+    get:
+      tags:
+        - App Stores
+      summary: Get a list of base resources with pagination
+      operationId: getAll_13
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 30
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelAppStoreView'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelAppStoreView'
+    post:
+      tags:
+        - App Stores
+      summary: Create a base resource
+      operationId: create_12
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppStoreDesc'
+        required: true
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppStoreView'
+        "201":
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppStoreView'
   /api/subscriptions/owning:
     get:
       tags:
@@ -5305,12 +5557,208 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/PagedModelAgreementView'
+  /api/appstores/{id}/apps:
+    get:
+      tags:
+        - App Stores
+      summary: Get all children of a base resource with pagination
+      operationId: getResource_24
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 30
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelAppView'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelAppView'
+  /api/apps:
+    get:
+      tags:
+        - Apps
+      summary: Get a list of base resources with pagination
+      operationId: getAll_14
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 30
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelAppView'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelAppView'
+  /api/apps/{id}:
+    get:
+      tags:
+        - Apps
+      summary: Get a base resource by id
+      operationId: get_14
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppView'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppView'
+    delete:
+      tags:
+        - Apps
+      summary: Delete a base resource by id
+      operationId: delete_14
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "401":
+          description: Unauthorized
+        "204":
+          description: No content
+  /api/apps/{id}/endpoints:
+    get:
+      tags:
+        - Apps
+      summary: Get all children of a base resource with pagination
+      operationId: getResource_25
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 30
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelAppEndpointView'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelAppEndpointView'
+  /api/apps/{id}/appstore:
+    get:
+      tags:
+        - Apps
+      summary: Get appstore by app id
+      description: Get appstore holding this app.
+      operationId: relatedAppStore
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: object
+        "400":
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                type: object
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                type: object
   /api/agreements:
     get:
       tags:
         - Agreements
       summary: Get a list of base resources with pagination
-      operationId: getAll_13
+      operationId: getAll_15
       parameters:
         - name: page
           in: query
@@ -5344,7 +5792,7 @@ paths:
       tags:
         - Agreements
       summary: Get a base resource by id
-      operationId: get_13
+      operationId: get_15
       parameters:
         - name: id
           in: path
@@ -5370,7 +5818,7 @@ paths:
       tags:
         - Agreements
       summary: Get all children of a base resource with pagination
-      operationId: getResource_24
+      operationId: getResource_26
       parameters:
         - name: id
           in: path
@@ -5821,6 +6269,23 @@ components:
             type: string
         _links:
           $ref: '#/components/schemas/Links'
+    AppEndpointDesc:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/EndpointDesc'
+        - type: object
+          properties:
+            endpointType:
+              type: string
+            endpointPort:
+              type: integer
+              format: int32
+            mediaType:
+              type: string
+            protocol:
+              type: string
+            language:
+              type: string
     ConnectorEndpointDesc:
       type: object
       allOf:
@@ -6250,6 +6715,34 @@ components:
             type: string
         _links:
           $ref: '#/components/schemas/Links'
+    AppStoreDesc:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        location:
+          type: string
+          format: uri
+    AppStoreView:
+      type: object
+      properties:
+        creationDate:
+          type: string
+          format: date-time
+        modificationDate:
+          type: string
+          format: date-time
+        location:
+          type: string
+          format: uri
+        title:
+          type: string
+        description:
+          type: string
+        _links:
+          $ref: '#/components/schemas/Links'
     PageMetadata:
       type: object
       properties:
@@ -6369,6 +6862,10 @@ components:
         - '@type'
       type: object
       properties:
+        properties:
+          type: object
+          additionalProperties:
+            type: object
         comment:
           type: array
           items:
@@ -6377,10 +6874,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
-        properties:
-          type: object
-          additionalProperties:
-            type: object
         '@id':
           type: string
           format: uri
@@ -6401,6 +6894,9 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
+            ids:rightOperandReference:
+              type: string
+              format: uri
             ids:unit:
               type: string
               format: uri
@@ -6475,9 +6971,6 @@ components:
                 - https://w3id.org/idsa/code/STATE
                 - https://w3id.org/idsa/code/SYSTEM
                 - https://w3id.org/idsa/code/USER
-            ids:rightOperandReference:
-              type: string
-              format: uri
             ids:pipEndpoint:
               type: string
               format: uri
@@ -6572,6 +7065,10 @@ components:
         - ids:action
       type: object
       properties:
+        properties:
+          type: object
+          additionalProperties:
+            type: object
         comment:
           type: array
           items:
@@ -6580,16 +7077,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
-        properties:
-          type: object
-          additionalProperties:
-            type: object
-        ids:assignee:
+        ids:target:
+          type: string
+          format: uri
+        ids:assigner:
           type: array
           items:
             type: string
             format: uri
-        ids:assigner:
+        ids:assignee:
           type: array
           items:
             type: string
@@ -6615,18 +7111,15 @@ components:
               - https://w3id.org/idsa/code/TRACK_PROVENANCE
               - https://w3id.org/idsa/code/USE
               - https://w3id.org/idsa/code/WRITE
-        ids:assetRefinement:
-          oneOf:
-            - $ref: '#/components/schemas/LogicalConstraint'
         ids:constraint:
           type: array
           items:
             oneOf:
-              - $ref: '#/components/schemas/Constraint'
               - $ref: '#/components/schemas/LogicalConstraint'
-        ids:target:
-          type: string
-          format: uri
+        ids:assetRefinement:
+          oneOf:
+            - $ref: '#/components/schemas/Constraint'
+            - $ref: '#/components/schemas/LogicalConstraint'
         ids:description:
           type: array
           items:
@@ -6911,6 +7404,147 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/AgreementView'
+        _links:
+          $ref: '#/components/schemas/Links'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+    PagedModelAppStoreView:
+      type: object
+      properties:
+        _embedded:
+          type: object
+          properties:
+            apps:
+              type: array
+              items:
+                $ref: '#/components/schemas/AppStoreView'
+        _links:
+          $ref: '#/components/schemas/Links'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+    AppView:
+      type: object
+      properties:
+        creationDate:
+          type: string
+          format: date-time
+        modificationDate:
+          type: string
+          format: date-time
+        remoteId:
+          type: string
+          format: uri
+        remoteAddress:
+          type: string
+          format: uri
+        docs:
+          type: string
+        envVariables:
+          type: string
+        storageConfig:
+          type: string
+        supportedPolicies:
+          type: array
+          items:
+            type: string
+            enum:
+              - PROVIDE_ACCESS
+              - PROHIBIT_ACCESS
+              - N_TIMES_USAGE
+              - DURATION_USAGE
+              - USAGE_DURING_INTERVAL
+              - USAGE_UNTIL_DELETION
+              - USAGE_LOGGING
+              - USAGE_NOTIFICATION
+              - CONNECTOR_RESTRICTED_USAGE
+              - SECURITY_PROFILE_RESTRICTED_USAGE
+        keywords:
+          type: array
+          items:
+            type: string
+        publisher:
+          type: string
+          format: uri
+        sovereign:
+          type: string
+          format: uri
+        language:
+          type: string
+        license:
+          type: string
+          format: uri
+        endpointDocumentation:
+          type: string
+          format: uri
+        distributionService:
+          type: string
+          format: uri
+        runtimeEnvironment:
+          type: string
+        additional:
+          type: object
+          additionalProperties:
+            type: string
+        _links:
+          $ref: '#/components/schemas/Links'
+    PagedModelAppView:
+      type: object
+      properties:
+        _embedded:
+          type: object
+          properties:
+            apps:
+              type: array
+              items:
+                $ref: '#/components/schemas/AppView'
+        _links:
+          $ref: '#/components/schemas/Links'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+    AppEndpointView:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - APP
+            - CONNECTOR
+            - GENERIC
+        creationDate:
+          type: string
+          format: date-time
+        modificationDate:
+          type: string
+          format: date-time
+        location:
+          type: string
+          format: uri
+        docs:
+          type: string
+          format: uri
+        info:
+          type: string
+        endpointPort:
+          type: integer
+          format: int32
+        mediaType:
+          type: string
+        protocol:
+          type: string
+        language:
+          type: string
+        _links:
+          $ref: '#/components/schemas/Links'
+    PagedModelAppEndpointView:
+      type: object
+      properties:
+        _embedded:
+          type: object
+          properties:
+            endpoints:
+              type: array
+              items:
+                $ref: '#/components/schemas/AppEndpointView'
         _links:
           $ref: '#/components/schemas/Links'
         page:

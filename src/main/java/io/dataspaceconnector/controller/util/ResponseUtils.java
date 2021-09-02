@@ -165,6 +165,22 @@ public final class ResponseUtils {
     }
 
     /**
+     * Creates a ResponseEntity with status code 500 and a message indicating that parsing an URI
+     * has failed.
+     *
+     * @param e The exception that was thrown.
+     * @return ResponseEntity with status code 500.
+     */
+    public static ResponseEntity<Object> respondFailedToParseURI(final Exception e) {
+        final var msg = "Failed to parse URI.";
+        if (log.isWarnEnabled()) {
+            log.warn("{} [exception=({})]", msg, e.getMessage(), e);
+        }
+        return new ResponseEntity<>(String.format("%s %s", msg, e.getMessage()),
+                HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
      * Creates a ResponseEntity with status code 504 and a message indicating that the connection
      * timed out.
      *
@@ -285,6 +301,50 @@ public final class ResponseUtils {
                     () -> new ResponseEntity<>("An internal server error occurred.",
                             HttpStatus.INTERNAL_SERVER_ERROR));
         }
+    }
+
+    /**
+     * Creates ResponseEntity with status code 500 indicating that portainer
+     * is not properly configured.
+     *
+     * @param e the thrown exception
+     * @return a response entity representing the result.
+     */
+    public static ResponseEntity<Object> respondPortainerNotConfigured(final Exception e) {
+        if (log.isWarnEnabled()) {
+            log.warn("Could not process action. [exception=({})]", e.getMessage());
+        }
+        final var msg = "Portainer not configured.";
+        return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Creates ResponseEntity with status code 500 indicating that the app is not deployed.
+     *
+     * @param e the thrown exception
+     * @return a response entity representing the result.
+     */
+    public static ResponseEntity<Object> respondAppNotDeployed(final Exception e) {
+        if (log.isWarnEnabled()) {
+            log.warn("Could not process action. [exception=({})]", e.getMessage());
+        }
+        final var msg = "App not deployed.";
+        return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Creates ResponseEntity with status code 500 indicating that
+     * a portainer error has occurred.
+     *
+     * @param e the thrown exception
+     * @return a response entity representing the result.
+     */
+    public static ResponseEntity<Object> respondPortainerError(final Exception e) {
+        if (log.isWarnEnabled()) {
+            log.warn("Could not process action. [exception=({})]", e.getMessage());
+        }
+        final var msg = "A portainer error has occurred.";
+        return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @SuppressWarnings("unchecked")

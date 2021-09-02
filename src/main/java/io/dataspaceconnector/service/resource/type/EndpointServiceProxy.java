@@ -16,6 +16,8 @@
 package io.dataspaceconnector.service.resource.type;
 
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
+import io.dataspaceconnector.model.endpoint.AppEndpointDesc;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpointDesc;
 import io.dataspaceconnector.model.endpoint.Endpoint;
@@ -48,6 +50,12 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
     private ConnectorEndpointService connector;
 
     /**
+     * The app endpoint service.
+     */
+    @Autowired
+    private AppEndpointService app;
+
+    /**
      * The endpoint repository.
      */
     @Autowired
@@ -64,6 +72,8 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
     getService(final Class<?> clazz) {
         if (ConnectorEndpointDesc.class.equals(clazz) || ConnectorEndpoint.class.equals(clazz)) {
             return (EntityService<X, Y>) connector;
+        } else if (AppEndpointDesc.class.equals(clazz) || AppEndpoint.class.equals(clazz)) {
+            return (EntityService<X, Y>) app;
         }
 
         return (EntityService<X, Y>) generic;
@@ -81,13 +91,13 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
 
     @Override
     public final Endpoint get(final UUID entityId) {
-
         try {
             return connector.get(entityId);
-        } catch (ResourceNotFoundException ignored) {
-        }
-
-        return generic.get(entityId);
+        } catch (ResourceNotFoundException ignored) { }
+        try {
+            return generic.get(entityId);
+        } catch (ResourceNotFoundException ignored) { }
+        return app.get(entityId);
     }
 
     @Override
@@ -97,8 +107,9 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
 
     @Override
     public final boolean doesExist(final UUID entityId) {
-        return connector.doesExist(entityId)
-                || generic.doesExist(entityId);
+        return   connector.doesExist(entityId)
+                || generic.doesExist(entityId)
+                || app.doesExist(entityId);
     }
 
     @Override

@@ -34,18 +34,16 @@ public class ConnectorEndpointViewAssembler implements
         RepresentationModelAssembler<ConnectorEndpoint, ConnectorEndpointView>, SelfLinking {
 
     @Override
-    public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId,
-                EndpointController.class);
+    public final ConnectorEndpointView toModel(final ConnectorEndpoint endpoint) {
+        final var modelMapper = new ModelMapper();
+        final var view = modelMapper.map(endpoint, ConnectorEndpointView.class);
+        view.add(getSelfLink(endpoint.getId()));
+
+        return view;
     }
 
     @Override
-    public final ConnectorEndpointView toModel(final ConnectorEndpoint connectorEndpoint) {
-        final var modelMapper = new ModelMapper();
-        final var view = modelMapper.map(connectorEndpoint,
-                ConnectorEndpointView.class);
-        view.add(getSelfLink(connectorEndpoint.getId()));
-
-        return view;
+    public final Link getSelfLink(final UUID entityId) {
+        return ViewAssemblerHelper.getSelfLink(entityId, EndpointController.class);
     }
 }
