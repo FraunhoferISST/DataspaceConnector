@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Increase checkstyle version from 8.45.1 to 9.0.0.
+- Increase IDS messaging services version from 4.2.2 to 4.3.0.
 
 ## [6.2.0] - 2021-09-01
 
