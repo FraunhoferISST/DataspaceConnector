@@ -41,34 +41,34 @@ spec:
             httpGet:
               path: /actuator/health/liveness
               port: http
-              {{- if .Values.env.config.SERVER_SSL_ENABLED }}
+              {{- if eq (.Values.env.config.SERVER_SSL_ENABLED) "true" }}
               scheme: HTTPS
               {{- else }}
               scheme: HTTP
               {{- end }}
               httpHeaders:
               - name: Authorization
-                value: Basic YWRtaW46cGFzc3dvcmQ=
+                value: 'Basic {{(printf "%s:%s" .Values.env.secrets.SPRING_SECURITY_USER_NAME .Values.env.secrets.SPRING_SECURITY_USER_PASSWORD) | b64enc }}'
             failureThreshold: 1
             periodSeconds: 3
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
               port: http
-              {{- if .Values.env.config.SERVER_SSL_ENABLED }}
+              {{- if eq (.Values.env.config.SERVER_SSL_ENABLED) "true" }}
               scheme: HTTPS
               {{- else }}
               scheme: HTTP
               {{- end }}
               httpHeaders:
               - name: Authorization
-                value: Basic YWRtaW46cGFzc3dvcmQ=
+                value: 'Basic {{(printf "%s:%s" .Values.env.secrets.SPRING_SECURITY_USER_NAME .Values.env.secrets.SPRING_SECURITY_USER_PASSWORD) | b64enc }}'
             periodSeconds: 3
           startupProbe:
             httpGet:
               path: /
               port: http
-              {{- if .Values.env.config.SERVER_SSL_ENABLED }}
+              {{- if eq (.Values.env.config.SERVER_SSL_ENABLED) "true" }}
               scheme: HTTPS
               {{- else }}
               scheme: HTTP
