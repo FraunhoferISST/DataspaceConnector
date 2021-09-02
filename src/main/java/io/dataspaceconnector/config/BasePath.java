@@ -93,4 +93,14 @@ public final class BasePath {
      * The endpoints' base path.
      */
     public static final String ENDPOINTS = "/api/" + BaseType.ENDPOINTS;
+
+    /**
+     * The apps' base path.
+     */
+    public static final String APPS = "/api/" + BaseType.APPS;
+
+    /**
+     * The app stores' base path.
+     */
+    public static final String APPSTORES = "/api/" + BaseType.APPSTORES;
 }

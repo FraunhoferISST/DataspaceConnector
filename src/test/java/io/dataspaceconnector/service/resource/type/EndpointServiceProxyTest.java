@@ -53,6 +53,9 @@ class EndpointServiceProxyTest {
     @MockBean
     private EndpointRepository repository;
 
+    @MockBean
+    private AppEndpointService appEndpointService;
+
     @Test
     public void create_connectorEndpoint_returnConnectorEndpoint() {
         /* ARRANGE */

@@ -17,9 +17,11 @@ package io.dataspaceconnector.service.resource;
 
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.util.Utils;
+import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
@@ -28,22 +30,27 @@ import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.resource.Resource;
 import io.dataspaceconnector.model.resource.ResourceDesc;
 import io.dataspaceconnector.model.rule.ContractRule;
+import io.dataspaceconnector.model.template.AppEndpointTemplate;
+import io.dataspaceconnector.model.template.AppTemplate;
 import io.dataspaceconnector.model.template.ArtifactTemplate;
 import io.dataspaceconnector.model.template.CatalogTemplate;
 import io.dataspaceconnector.model.template.ContractTemplate;
 import io.dataspaceconnector.model.template.RepresentationTemplate;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
+import io.dataspaceconnector.service.resource.base.RemoteResolver;
 import io.dataspaceconnector.service.resource.relation.AbstractResourceContractLinker;
 import io.dataspaceconnector.service.resource.relation.AbstractResourceRepresentationLinker;
-import io.dataspaceconnector.service.resource.relation.ContractRuleLinker;
-import io.dataspaceconnector.service.resource.relation.RepresentationArtifactLinker;
-import io.dataspaceconnector.service.resource.type.ArtifactService;
+import io.dataspaceconnector.service.resource.relation.AppEndpointLinker;
 import io.dataspaceconnector.service.resource.relation.CatalogOfferedResourceLinker;
 import io.dataspaceconnector.service.resource.relation.CatalogRequestedResourceLinker;
+import io.dataspaceconnector.service.resource.relation.ContractRuleLinker;
+import io.dataspaceconnector.service.resource.relation.RepresentationArtifactLinker;
+import io.dataspaceconnector.service.resource.type.AppEndpointService;
+import io.dataspaceconnector.service.resource.type.AppService;
+import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.resource.type.CatalogService;
 import io.dataspaceconnector.service.resource.type.ContractService;
-import io.dataspaceconnector.service.resource.base.RemoteResolver;
 import io.dataspaceconnector.service.resource.type.RepresentationService;
 import io.dataspaceconnector.service.resource.type.ResourceService;
 import io.dataspaceconnector.service.resource.type.RuleService;
@@ -54,6 +61,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -78,6 +86,12 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
     private final @NonNull ResourceService<T, D> resourceService;
 
     /**
+     * The linker for app-endpoint relations.
+     */
+    @Autowired
+    private AppEndpointLinker appEndpointLinker;
+
+    /**
      * The linker for resource-representation relations.
      */
     private final @NonNull AbstractResourceRepresentationLinker<T> resourceRepresentationLinker;
@@ -96,6 +110,18 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
      * The linker for representation-artifact relations.
      */
     private final @NonNull RepresentationArtifactLinker representationArtifactLinker;
+
+    /**
+     * The service for apps.
+     */
+    @Autowired
+    private AppService appService;
+
+    /**
+     * The service for app endpoints.
+     */
+    @Autowired
+    private AppEndpointService appEndpointService;
 
     /**
      * The service for contracts.
@@ -151,7 +177,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
                 applicationContext.getBean("templateBuilderOfferedResource");
 
         final var templateBuilderRequestedResource = (TemplateBuilderRequestedResource)
-                        applicationContext.getBean("templateBuilderRequestedResource");
+                applicationContext.getBean("templateBuilderRequestedResource");
 
         final var offeredIds =
                 Utils.toStream(template.getOfferedResources()).map(x ->
@@ -191,6 +217,55 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
         resourceContractLinker.add(resource.getId(), contractIds);
 
         return resource;
+    }
+
+    /**
+     * @param template The app template.
+     * @return The new app.
+     */
+    public App build(final AppTemplate template) {
+        Utils.requireNonNull(template, ErrorMessage.ENTITY_NULL);
+
+        final var appEndpointIds = Utils.toStream(template.getEndpoints())
+                .map(x -> build(x).getId()).collect(Collectors.toSet());
+
+        App app;
+        final var appId =
+                appService.identifyByRemoteId(template.getDesc().getRemoteId());
+        if (appId.isPresent()) {
+            app = updateApp(appId.get(), template);
+        } else {
+            app = buildApp(template);
+        }
+        appEndpointLinker.add(app.getId(), appEndpointIds);
+
+        return app;
+    }
+
+    /**
+     * Build app endpoint from template.
+     *
+     * @param appEndpointTemplate The app endpoint template.
+     * @return The new app endpoint.
+     */
+    public AppEndpoint build(final AppEndpointTemplate appEndpointTemplate) {
+        Utils.requireNonNull(appEndpointTemplate, ErrorMessage.ENTITY_NULL);
+
+        return buildAppEndpoint(appEndpointTemplate);
+    }
+
+    private AppEndpoint buildAppEndpoint(final AppEndpointTemplate appEndpointTemplate) {
+        Utils.requireNonNull(appEndpointTemplate, ErrorMessage.ENTITY_NULL);
+
+        return appEndpointService.create(appEndpointTemplate.getDesc());
+    }
+
+    private App buildApp(final AppTemplate template) {
+        return appService.create(template.getDesc());
+    }
+
+    private App updateApp(final UUID appId, final AppTemplate template) {
+        return appService.update(appId, template.getDesc());
     }
 
     /**
@@ -287,6 +362,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
     protected ResourceService<T, D> getResourceService() {
         return resourceService;
     }
+
 }
 
 
@@ -299,27 +375,25 @@ class TemplateBuilderOfferedResource
     /**
      * Default constructor.
      *
-     * @param resourceService                The resource service.
-     * @param resourceRepresentationLinker   The resource-representation service.
-     * @param resourceContractLinker         The resource-contract service.
-     * @param representationService          The representation service.
-     * @param representationArtifactLinker   The representation-artifact service.
-     * @param contractService                The contract service.
-     * @param contractRuleLinker             The contract-rule service.
+     * @param resourceService        The resource service.
+     * @param resRepLinker           The resource-representation service.
+     * @param resourceContractLinker The resource-contract service.
+     * @param representationService  The representation service.
+     * @param repArtifactLinker      The representation-artifact service.
+     * @param contractService        The contract service.
+     * @param contractRuleLinker     The contract-rule service.
      */
     @Autowired
     TemplateBuilderOfferedResource(
             final ResourceService<OfferedResource, OfferedResourceDesc> resourceService,
-            final AbstractResourceRepresentationLinker<OfferedResource>
-                    resourceRepresentationLinker,
+            final AbstractResourceRepresentationLinker<OfferedResource> resRepLinker,
             final AbstractResourceContractLinker<OfferedResource> resourceContractLinker,
             final RepresentationService representationService,
-            final RepresentationArtifactLinker representationArtifactLinker,
+            final RepresentationArtifactLinker repArtifactLinker,
             final ContractService contractService,
             final ContractRuleLinker contractRuleLinker) {
-        super(resourceService, resourceRepresentationLinker,
-                resourceContractLinker, representationService, representationArtifactLinker,
-                contractService, contractRuleLinker);
+        super(resourceService, resRepLinker, resourceContractLinker, representationService,
+                repArtifactLinker, contractService, contractRuleLinker);
     }
 
     @Override
@@ -338,27 +412,26 @@ class TemplateBuilderRequestedResource
     /**
      * Default constructor.
      *
-     * @param resourceService                The resource service.
-     * @param resourceRepresentationLinker   The resource-representation service.
-     * @param resourceContractLinker         The resource-contract service.
-     * @param representationService          The representation service.
-     * @param representationArtifactLinker   The representation-artifact service.
-     * @param contractService                The contract service.
-     * @param contractRuleLinker             The contract-rule service.
+     * @param resourceService        The resource service.
+     * @param resRepLinker           The resource-representation service.
+     * @param resourceContractLinker The resource-contract service.
+     * @param representationService  The representation service.
+     * @param repArtifactLinker      The representation-artifact service.
+     * @param contractService        The contract service.
+     * @param contractRuleLinker     The contract-rule service.
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     @Autowired
     TemplateBuilderRequestedResource(
             final ResourceService<RequestedResource, RequestedResourceDesc> resourceService,
-            final AbstractResourceRepresentationLinker<RequestedResource>
-                    resourceRepresentationLinker,
+            final AbstractResourceRepresentationLinker<RequestedResource> resRepLinker,
             final AbstractResourceContractLinker<RequestedResource> resourceContractLinker,
             final RepresentationService representationService,
-            final RepresentationArtifactLinker representationArtifactLinker,
+            final RepresentationArtifactLinker repArtifactLinker,
             final ContractService contractService,
             final ContractRuleLinker contractRuleLinker) {
-        super(resourceService, resourceRepresentationLinker,
-                resourceContractLinker, representationService, representationArtifactLinker,
-                contractService, contractRuleLinker);
+        super(resourceService, resRepLinker, resourceContractLinker, representationService,
+                repArtifactLinker, contractService, contractRuleLinker);
     }
 
     @Override
