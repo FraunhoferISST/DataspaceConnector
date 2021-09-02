@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [6.X.X] - XXXX-XX-XX
+
+### Changed
+- Increase checkstyle version from 8.45.1 to 9.0.0.
+
+## [6.2.0] - 2021-09-01
+
+### Added
+- Add app, app store, and app endpoint entities to the data model.
+  - Provide REST endpoints for managing entities and its relations.
+  - Add REST endpoint for managing image/container deployment with Portainer.
+- Add `POST api/ids/app` endpoint for downloading an IDS app's metadata and data from the IDS
+  AppStore.
+
 ## [6.1.3] - 2021-08-27
 
 ### Changed

@@ -93,4 +93,14 @@ public final class BaseType {
      * The endpoints' base path.
      */
     public static final String ENDPOINTS = "endpoints";
+
+    /**
+     * The apps' base path.
+     */
+    public static final String APPS = "apps";
+
+    /**
+     * The app stores' base path.
+     */
+    public static final String APPSTORES = "appstores";
 }
