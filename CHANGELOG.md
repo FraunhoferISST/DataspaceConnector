@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [6.X.X] - XXXX-XX-XX
+
+### Changed
+- Increase checkstyle version from 8.45.1 to 9.0.0.
+
 ## [6.2.0] - 2021-09-01
 
 ### Added
