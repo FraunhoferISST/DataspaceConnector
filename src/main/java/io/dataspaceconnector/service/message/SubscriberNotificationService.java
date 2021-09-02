@@ -16,6 +16,7 @@
 package io.dataspaceconnector.service.message;
 
 import de.fraunhofer.iais.eis.Resource;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.common.net.QueryInput;
@@ -184,6 +185,10 @@ public class SubscriberNotificationService {
         }
     }
 
+    @SuppressFBWarnings(
+            value = "REC_CATCH_EXCEPTION",
+            justification = "caught exceptions are unchecked"
+    )
     private void notifyIdsSubscribers(final List<Subscription> subscriptions, final Entity entity) {
         final var idsRecipients = subscriptions.stream()
                 .filter(Subscription::isIdsProtocol)
@@ -232,7 +237,7 @@ public class SubscriberNotificationService {
                         }
                     }
                 } catch (Exception e) {
-                    if (log.isWarnEnabled()) {
+                    if (log.isDebugEnabled()) {
                         log.debug("{} [url=({}), exception=({})]",
                                 ErrorMessage.UPDATE_MESSAGE_FAILED, recipient, e.getMessage());
                     }
@@ -285,7 +290,9 @@ public class SubscriberNotificationService {
             try {
                 return artifactSvc.getData(accessVerifier, dataReceiver, id, new QueryInput());
             } catch (IOException exception) {
-                log.debug("Failed to retrieve data. [exception=({})]", exception.getMessage());
+                if (log.isDebugEnabled()) {
+                    log.debug("Failed to retrieve data. [exception=({})]", exception.getMessage());
+                }
             }
         }
         return InputStream.nullInputStream();

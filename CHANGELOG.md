@@ -1,6 +1,47 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [6.X.X] - XXXX-XX-XX
+
+### Changed
+- Increase checkstyle version from 8.45.1 to 9.0.0.
+- Increase pmd version from 6.37.0 to 6.38.0.
+
+## [6.2.0] - 2021-09-01
+
+### Added
+- Add app, app store, and app endpoint entities to the data model.
+  - Provide REST endpoints for managing entities and its relations.
+  - Add REST endpoint for managing image/container deployment with Portainer.
+- Add `POST api/ids/app` endpoint for downloading an IDS app's metadata and data from the IDS
+  AppStore.
+
+## [6.1.3] - 2021-08-27
+
+### Changed
+- Increase spring-boot-starter-parent version from 2.5.3 to 2.5.4
+- Increase jackson version from 2.12.4 to 2.12.5.
+- Increase IDS messaging services version from 3.1.0 to 4.2.2.
+
+### Fixed
+- Set whitelabel error page default value to `enabled` to remove thrown ServletException.
+- Fix connector id mapping from IDS object and to IDS object.
+- Set meaningful default values for mandatory attributes of `ids:ConfigurationModel`.
+- Restrict access to non-functional POST/PUT/DELETE endpoints from contract-request-controllers.
+
+## [6.1.2] - 2021-08-19
+
+### Fixed
+- Add null checking to object mappers.
+
+## [6.1.1] - 2021-08-19
+
+### Added
+- Add `paymentModality` enums to GUI controller.
+
+### Fixed
+- Remove ids endpoint definition from Bootstrapping files.
+
 ## [6.1.0] - 2021-08-16
 
 ### Added

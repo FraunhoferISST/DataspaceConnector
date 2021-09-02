@@ -17,6 +17,8 @@ package io.dataspaceconnector.service.resource.ids.builder;
 
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
+import de.fraunhofer.iais.eis.ConnectorStatus;
+import de.fraunhofer.iais.eis.LogLevel;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
 import io.dataspaceconnector.model.configuration.Configuration;
@@ -41,9 +43,13 @@ public final class IdsConfigModelBuilder extends AbstractIdsBuilder<Configuratio
             throws ConstraintViolationException {
         // Prepare configuration attributes.
         final var deployMode = ToIdsObjectMapper.getConnectorDeployMode(config.getDeployMode());
-        final var logLevel = ToIdsObjectMapper.getLogLevel(config.getLogLevel());
+        final var logLevel = config.getLogLevel() == null
+                ? LogLevel.MINIMAL_LOGGING
+                : ToIdsObjectMapper.getLogLevel(config.getLogLevel());
         final var connector = ToIdsObjectMapper.getConnectorFromConfiguration(config);
-        final var status = ToIdsObjectMapper.getConnectorStatus(config.getStatus());
+        final var status = config.getStatus() == null
+                ? ConnectorStatus.CONNECTOR_OFFLINE
+                : ToIdsObjectMapper.getConnectorStatus(config.getStatus());
 
         final var configBuilder = new ConfigurationModelBuilder()
                 ._connectorDeployMode_(deployMode)
@@ -58,7 +64,8 @@ public final class IdsConfigModelBuilder extends AbstractIdsBuilder<Configuratio
                 ._connectorDescription_(connector);
 
         if (config.getProxy() != null) {
-            configBuilder._connectorProxy_(List.of(ToIdsObjectMapper.getProxy(config.getProxy())));
+            configBuilder._connectorProxy_(config.getProxy() == null
+                    ? null : List.of(ToIdsObjectMapper.getProxy(config.getProxy())));
         }
 
         return configBuilder.build();
