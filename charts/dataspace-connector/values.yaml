@@ -18,7 +18,7 @@ env:
     SPRING_SECURITY_USER_PASSWORD: "password"
 
 postgresql:
-  enabled: false
+  enabled: true
   postgresqlUsername: "password"
   postgresqlPassword: "username"
   postgresqlDatabase: "test"
