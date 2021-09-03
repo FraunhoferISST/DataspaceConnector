@@ -134,7 +134,7 @@ class PortainerRequestServiceTest {
         Assertions.assertDoesNotThrow(() -> portainerRequestService.deleteRegistry(1));
         Assertions.assertDoesNotThrow(() -> portainerRequestService.deleteUnusedVolumes());
         Assertions.assertDoesNotThrow(() -> portainerRequestService.createVolumes(TEMPLATE, "id"));
-        Assertions.assertEquals("1", portainerRequestService.createContainer(TEMPLATE, Map.of()));
+        Assertions.assertEquals("1", portainerRequestService.createContainer(TEMPLATE, Map.of()).getString("Id"));
         Assertions.assertEquals(1, portainerRequestService.createRegistry(TEMPLATE));
     }
 

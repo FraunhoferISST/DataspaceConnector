@@ -23,6 +23,7 @@ import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
 import io.dataspaceconnector.service.resource.type.AppService;
 import okhttp3.*;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -79,7 +80,7 @@ class AppControllerTest {
         Mockito.when(portainerRequestService.startContainer(Mockito.any())).thenReturn(returnedResponse);
         Mockito.when(portainerRequestService.pullImage(Mockito.any())).thenReturn(returnedResponse);
         Mockito.when(portainerRequestService.createVolumes(Mockito.any(), Mockito.any())).thenReturn(Map.of());
-        Mockito.when(portainerRequestService.createContainer(Mockito.any(), Mockito.any())).thenReturn("Mocked.");
+        Mockito.when(portainerRequestService.createContainer(Mockito.any(), Mockito.any())).thenReturn(new JSONObject().put("Id", "123"));
         Mockito.when(portainerRequestService.getNetworkId(Mockito.any())).thenReturn("NetworkID");
         Mockito.when(portainerRequestService.joinNetwork(Mockito.any(), Mockito.any())).thenReturn(returnedResponse);
         Mockito.when(portainerRequestService.stopContainer(Mockito.any())).thenReturn(returnedResponse);

@@ -770,8 +770,10 @@ public class PortainerRequestService {
      * @return portainer response.
      * @throws IOException If an error occurs while connecting to portainer.
      */
-    public String createContainer(final String appStoreTemplate, final Map<String, String> volumes)
-            throws IOException {
+    public JSONObject createContainer(
+            final String appStoreTemplate,
+            final Map<String, String> volumes
+    ) throws IOException {
         final var templateObject = toJsonObject(appStoreTemplate);
         final var image = templateObject.getString("image");
         final List<String> ports = new ArrayList<>();
@@ -818,6 +820,15 @@ public class PortainerRequestService {
                 RequestBody.create(jsonPayload.toString(), MediaType.parse(API_MEDIA_TYPE))
         );
 
+        //extract port mappings to put into returned json
+        final var portBindings = jsonPayload.getJSONObject("HostConfig")
+                .getJSONObject("PortBindings");
+        final var portMap = new HashMap<String, String>();
+        for (var port : portBindings.keySet()) {
+            portMap.put(port, portBindings.getJSONArray(port).getJSONObject(0)
+                    .getString("HostPort"));
+        }
+
         final var request = builder.build();
 
         final var createContainerResponse = httpService.send(request);
@@ -829,8 +840,11 @@ public class PortainerRequestService {
 
         updateOwnerShip(resourceId);
 
-        //return container id
-        return new JSONObject(body).getString("Id");
+        //return container id and port mappings
+        var responseJson = new JSONObject();
+        responseJson.put("Id", new JSONObject(body).getString("Id"));
+        responseJson.put("Ports", new JSONObject(portMap));
+        return responseJson;
     }
 
     /**

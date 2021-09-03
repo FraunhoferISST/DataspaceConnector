@@ -25,6 +25,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Creates and updates a data app.
@@ -327,4 +328,24 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
     public void deleteContainerId(final AppImpl app) {
         app.setContainerId(null);
     }
+
+    /**
+     * Set port mapping to AppImpl.
+     *
+     * @param app The app entity.
+     * @param portMapping The port mapping of the app (internal -> external)
+     */
+    public void setPortMapping(final AppImpl app, final Map<String, String> portMapping) {
+        app.setPortMapping(portMapping);
+    }
+
+    /**
+     * Delete port mapping from AppImpl.
+     *
+     * @param app The app entity.
+     */
+    public void deletePortMapping(final AppImpl app) {
+        app.setPortMapping(null);
+    }
+
 }
