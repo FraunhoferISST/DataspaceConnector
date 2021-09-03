@@ -16,7 +16,10 @@
 package io.dataspaceconnector.controller;
 
 import io.dataspaceconnector.common.ids.ConnectorService;
+import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.type.AgreementController;
+import io.dataspaceconnector.controller.resource.type.AppController;
+import io.dataspaceconnector.controller.resource.type.AppStoreController;
 import io.dataspaceconnector.controller.resource.type.ArtifactController;
 import io.dataspaceconnector.controller.resource.type.BrokerController;
 import io.dataspaceconnector.controller.resource.type.CatalogController;
@@ -110,31 +113,35 @@ public class MainController {
 
         model.add(linkTo(methodOn(MainController.class).root()).withSelfRel());
         model.add(linkTo(methodOn(AgreementController.class)
-                .getAll(null, null)).withRel("agreements"));
+                .getAll(null, null)).withRel(BaseType.AGREEMENTS));
+        model.add(linkTo(methodOn(AppController.class)
+                .getAll(null, null)).withRel(BaseType.APPS));
+        model.add(linkTo(methodOn(AppStoreController.class)
+                .getAll(null, null)).withRel(BaseType.APPSTORES));
         model.add(linkTo(methodOn(ArtifactController.class)
-                .getAll(null, null)).withRel("artifacts"));
+                .getAll(null, null)).withRel(BaseType.ARTIFACTS));
         model.add(linkTo(methodOn(BrokerController.class)
-                .getAll(null, null)).withRel("brokers"));
+                .getAll(null, null)).withRel(BaseType.BROKERS));
         model.add(linkTo(methodOn(CatalogController.class)
-                .getAll(null, null)).withRel("catalogs"));
+                .getAll(null, null)).withRel(BaseType.CATALOGS));
         model.add(linkTo(methodOn(ContractController.class)
-                .getAll(null, null)).withRel("contracts"));
+                .getAll(null, null)).withRel(BaseType.CONTRACTS));
         model.add(linkTo(methodOn(DataSourceController.class)
-                .getAll(null, null)).withRel("datasources"));
+                .getAll(null, null)).withRel(BaseType.DATA_SOURCES));
         model.add(linkTo(methodOn(EndpointController.class)
-                .getAll(null, null)).withRel("endpoints"));
+                .getAll(null, null)).withRel(BaseType.ENDPOINTS));
         model.add(linkTo(methodOn(OfferedResourceController.class)
-                .getAll(null, null)).withRel("offers"));
+                .getAll(null, null)).withRel(BaseType.OFFERS));
         model.add(linkTo(methodOn(RepresentationController.class)
-                .getAll(null, null)).withRel("representations"));
+                .getAll(null, null)).withRel(BaseType.REPRESENTATIONS));
         model.add(linkTo(methodOn(RouteController.class)
-                .getAll(null, null)).withRel("routes"));
+                .getAll(null, null)).withRel(BaseType.ROUTES));
         model.add(linkTo(methodOn(RequestedResourceController.class)
-                .getAll(null, null)).withRel("requests"));
+                .getAll(null, null)).withRel(BaseType.REQUESTS));
         model.add(linkTo(methodOn(RuleController.class)
-                .getAll(null, null)).withRel("rules"));
+                .getAll(null, null)).withRel(BaseType.RULES));
         model.add(linkTo(methodOn(SubscriptionController.class)
-                .getAll(null, null)).withRel("subscriptions"));
+                .getAll(null, null)).withRel(BaseType.SUBSCRIPTIONS));
 
         return ResponseEntity.ok(model);
     }

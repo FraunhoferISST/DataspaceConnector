@@ -18,12 +18,15 @@ package io.dataspaceconnector.controller.resource.type;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.CRUDController;
+import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.endpoint.EndpointViewAssemblerProxy;
 import io.dataspaceconnector.controller.resource.view.endpoint.EndpointViewProxy;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
+import io.dataspaceconnector.model.endpoint.AppEndpointDesc;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.service.resource.type.EndpointServiceProxy;
@@ -101,6 +104,9 @@ public class EndpointController implements CRUDController<Endpoint, EndpointDesc
      */
     @Override
     public ResponseEntity<Object> create(final EndpointDesc desc) {
+        if (isAppEndpoint(desc)) {
+            throw new MethodNotAllowed();
+        }
         return respondCreated(service.create(desc));
     }
 
@@ -135,6 +141,9 @@ public class EndpointController implements CRUDController<Endpoint, EndpointDesc
      */
     @Override
     public ResponseEntity<Object> update(final UUID resourceId, final EndpointDesc desc) {
+        if (isAppEndpoint(desc)) {
+            throw new MethodNotAllowed();
+        }
         final var resource = service.update(resourceId, desc);
 
         if (resource.getId().equals(resourceId)) {
@@ -150,6 +159,9 @@ public class EndpointController implements CRUDController<Endpoint, EndpointDesc
      */
     @Override
     public ResponseEntity<Void> delete(final UUID resourceId) {
+        if (service.get(resourceId) instanceof AppEndpoint) {
+            throw new MethodNotAllowed();
+        }
         service.delete(resourceId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -173,5 +185,9 @@ public class EndpointController implements CRUDController<Endpoint, EndpointDesc
             @Valid @PathVariable(name = "dataSourceId") final UUID dataSourceId) {
         genericEndpointService.setGenericEndpointDataSource(genericEndpointId, dataSourceId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    private boolean isAppEndpoint(final EndpointDesc desc) {
+        return desc instanceof AppEndpointDesc;
     }
 }

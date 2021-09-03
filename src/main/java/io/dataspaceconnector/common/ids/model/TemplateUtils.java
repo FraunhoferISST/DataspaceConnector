@@ -15,6 +15,11 @@
  */
 package io.dataspaceconnector.common.ids.model;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
+import de.fraunhofer.iais.eis.AppResource;
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.Contract;
@@ -26,6 +31,7 @@ import io.dataspaceconnector.common.ids.policy.ContractUtils;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
+import io.dataspaceconnector.model.template.AppTemplate;
 import io.dataspaceconnector.model.template.ArtifactTemplate;
 import io.dataspaceconnector.model.template.CatalogTemplate;
 import io.dataspaceconnector.model.template.ContractTemplate;
@@ -33,10 +39,6 @@ import io.dataspaceconnector.model.template.RepresentationTemplate;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
 import lombok.extern.log4j.Log4j2;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Provides methods for building entity templates.
@@ -198,5 +200,16 @@ public final class TemplateUtils {
         }
 
         return list;
+    }
+
+    /**
+     * Build an app template from an AppResource.
+     *
+     * @param resource  The app resource.
+     * @param remoteUrl The remoteURL of the app.
+     * @return The app template from the AppResource.
+     */
+    public static AppTemplate getAppTemplate(final AppResource resource, final URI remoteUrl) {
+        return FromIdsObjectMapper.fromIdsApp(resource, remoteUrl);
     }
 }

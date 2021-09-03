@@ -49,6 +49,15 @@ class EndpointControllerIT {
 
     @Test
     @WithMockUser("ADMIN")
+    void create_appEndpoint_notAllowed() throws Exception {
+        mockMvc.perform(post("/api/endpoints")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"type\": \"APP\"}"))
+                .andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
     void getAll_validInput_returnObj() throws Exception {
         for(int i = 0; i < 5; i++) {
             mockMvc.perform(post("/api/endpoints")

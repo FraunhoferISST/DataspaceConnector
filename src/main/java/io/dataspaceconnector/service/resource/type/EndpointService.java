@@ -61,7 +61,6 @@ public class EndpointService<T extends Endpoint, D extends EndpointDesc>
         this.routeHelper = camelRouteHelper;
     }
 
-
     /**
      * Persists a connector endpoint. If an already existing endpoint is updated, the Camel routes
      * for all routes referencing the endpoint are recreated.

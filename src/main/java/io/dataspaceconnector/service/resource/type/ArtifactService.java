@@ -15,6 +15,14 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
@@ -46,14 +54,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 /**
  * Handles the basic logic for artifacts.
  */
@@ -62,6 +62,7 @@ import java.util.UUID;
 @Setter(AccessLevel.NONE)
 public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         implements RemoteResolver {
+
     /**
      * Repository for storing data.
      **/
@@ -142,12 +143,11 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param queryInput     The query for the backend.
      * @return The artifacts data.
      * @throws PolicyRestrictionException                                       if the data
-     *                                                                          access has been
-     *                                                                          denied.
+     * access has been denied.
      * @throws io.dataspaceconnector.common.exception.ResourceNotFoundException if the artifact does
      *                                                                          not exist.
      * @throws IllegalArgumentException                                         if any of the
-     *                                                                          parameters is null.
+     * parameters is null.
      * @throws IOException                                                      if IO errors occur.
      */
     public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
@@ -214,12 +214,11 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param information    Information for pulling the data from a remote source.
      * @return The artifact's data.
      * @throws PolicyRestrictionException                                       if the data
-     *                                                                          access has been
-     *                                                                          denied.
+     * access has been denied.
      * @throws io.dataspaceconnector.common.exception.ResourceNotFoundException if the artifact does
      *                                                                          not exist.
      * @throws IllegalArgumentException                                         if any of the
-     *                                                                          parameters is null.
+     * parameters is null.
      * @throws IOException                                                      if IO errors occurr.
      */
     public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,

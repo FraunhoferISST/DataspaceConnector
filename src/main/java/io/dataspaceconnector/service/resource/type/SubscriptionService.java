@@ -159,7 +159,10 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
      * @throws SubscriptionProcessingException if the subscription could not be removed.
      * @throws ResourceNotFoundException       if not matching subscription could be found.
      */
-    @SuppressFBWarnings("REC_CATCH_EXCEPTION")
+    @SuppressFBWarnings(
+            value = "REC_CATCH_EXCEPTION",
+            justification = "caught exceptions are unchecked"
+    )
     public void removeSubscription(final URI target, final URI issuer)
             throws SubscriptionProcessingException, ResourceNotFoundException {
         final var subscriptions = getBySubscriberAndTarget(issuer, target);

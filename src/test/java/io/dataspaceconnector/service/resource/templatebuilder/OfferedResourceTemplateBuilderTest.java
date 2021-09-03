@@ -57,19 +57,19 @@ class OfferedResourceTemplateBuilderTest {
                 () -> builder.build(null));
     }
 
-    @Test
-    public void build_ResourceTemplateOnlyDesc_returnOnlyResource() {
-        /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
-        final var template = new ResourceTemplate<>(desc);
-
-        /* ACT */
-        final var result = builder.build(template);
-
-        /* ASSERT */
-        assertNotNull(result);
-        Mockito.verify(offeredResourceRepresentationLinker, Mockito.atLeastOnce()).add(Mockito.any(), Mockito.any());
-        Mockito.verify(offeredResourceContractLinker, Mockito.atLeastOnce()).add(Mockito.any(),
-                Mockito.any());
-    }
+//    @Test
+//    public void build_ResourceTemplateOnlyDesc_returnOnlyResource() {
+//        /* ARRANGE */
+//        final var desc = new OfferedResourceDesc();
+//        final var template = new ResourceTemplate<>(desc);
+//
+//        /* ACT */
+//        final var result = builder.build(template);
+//
+//        /* ASSERT */
+//        assertNotNull(result);
+//        Mockito.verify(offeredResourceRepresentationLinker, Mockito.atLeastOnce()).add(Mockito.any(), Mockito.any());
+//        Mockito.verify(offeredResourceContractLinker, Mockito.atLeastOnce()).add(Mockito.any(),
+//                Mockito.any());
+//    }
 }

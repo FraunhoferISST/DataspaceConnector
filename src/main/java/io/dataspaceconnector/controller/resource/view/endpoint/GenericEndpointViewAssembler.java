@@ -47,13 +47,13 @@ public class GenericEndpointViewAssembler extends SelfLinkHelper
     }
 
     @Override
-    public final GenericEndpointView toModel(final GenericEndpoint genericEndpoint) {
+    public final GenericEndpointView toModel(final GenericEndpoint endpoint) {
         final var modelMapper = new ModelMapper();
-        final var view = modelMapper.map(genericEndpoint, GenericEndpointView.class);
-        view.add(getSelfLink(genericEndpoint.getId()));
+        final var view = modelMapper.map(endpoint, GenericEndpointView.class);
+        view.add(getSelfLink(endpoint.getId()));
 
-        if (genericEndpoint.getDataSource() != null) {
-            view.add(dataSourceViewAssembler.getSelfLink(genericEndpoint.getDataSource().getId())
+        if (endpoint.getDataSource() != null) {
+            view.add(dataSourceViewAssembler.getSelfLink(endpoint.getDataSource().getId())
                     .withRel("dataSource")); // TODO rename
         }
 

@@ -18,12 +18,15 @@ package io.dataspaceconnector.service.resource.spring;
 import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.agreement.AgreementFactory;
+import io.dataspaceconnector.model.app.AppFactory;
+import io.dataspaceconnector.model.appstore.AppStoreFactory;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.model.broker.BrokerFactory;
 import io.dataspaceconnector.model.catalog.CatalogFactory;
 import io.dataspaceconnector.model.configuration.ConfigurationFactory;
 import io.dataspaceconnector.model.contract.ContractFactory;
 import io.dataspaceconnector.model.datasource.DataSourceFactory;
+import io.dataspaceconnector.model.endpoint.AppEndpointFactory;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpointFactory;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
 import io.dataspaceconnector.model.proxy.ProxyFactory;
@@ -33,6 +36,9 @@ import io.dataspaceconnector.model.route.RouteFactory;
 import io.dataspaceconnector.model.rule.ContractRuleFactory;
 import io.dataspaceconnector.model.truststore.TruststoreFactory;
 import io.dataspaceconnector.repository.AgreementRepository;
+import io.dataspaceconnector.repository.AppEndpointRepository;
+import io.dataspaceconnector.repository.AppRepository;
+import io.dataspaceconnector.repository.AppStoreRepository;
 import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.BrokerRepository;
@@ -48,8 +54,12 @@ import io.dataspaceconnector.repository.RepresentationRepository;
 import io.dataspaceconnector.repository.RequestedResourcesRepository;
 import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.repository.RuleRepository;
+import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
 import io.dataspaceconnector.service.resource.ids.builder.IdsConfigModelBuilder;
 import io.dataspaceconnector.service.resource.type.AgreementService;
+import io.dataspaceconnector.service.resource.type.AppEndpointService;
+import io.dataspaceconnector.service.resource.type.AppService;
+import io.dataspaceconnector.service.resource.type.AppStoreService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.resource.type.BrokerService;
 import io.dataspaceconnector.service.resource.type.CatalogService;
@@ -103,6 +113,51 @@ public class ResourceConfig {
             final AuthenticationRepository authRepo) {
         return new ArtifactService(repository, new ArtifactFactory(),
                 dataRepository, httpService, authRepo);
+    }
+
+    /**
+     * Create an app service bean.
+     *
+     * @param repository The app repository.
+     * @param appStoreSvc The appstore service.
+     * @param dataRepo The data repository.
+     * @param portainerSvc The portainer service.
+     * @return The app service bean.
+     */
+    @Bean("appService")
+    public AppService createAppService(
+            final AppRepository repository,
+            final AppStoreService appStoreSvc,
+            final DataRepository dataRepo,
+            final PortainerRequestService portainerSvc) {
+        return new AppService(repository, new AppFactory(), appStoreSvc, dataRepo, portainerSvc);
+    }
+
+    /**
+     * Create an appendpoint service bean.
+     *
+     * @param repository The appendpoint repository.
+     * @param routeRepo The route repository.
+     * @param routeHelper The route helper.
+     * @return The appendpoint service bean.
+     */
+    @Bean("appEndpointService")
+    public AppEndpointService createAppEndpointService(
+            final AppEndpointRepository repository,
+            final RouteRepository routeRepo,
+            final RouteHelper routeHelper) {
+        return new AppEndpointService(repository, new AppEndpointFactory(), routeRepo, routeHelper);
+    }
+
+    /**
+     * Create an appstore service bean.
+     *
+     * @param repository The appstore repository.
+     * @return The appstore service beam.
+     */
+    @Bean("appStoreService")
+    public AppStoreService createAppStoreService(final AppStoreRepository repository) {
+        return new AppStoreService(repository, new AppStoreFactory());
     }
 
     /**

@@ -44,14 +44,9 @@ public class ArtifactTemplateBuilder {
     public Artifact build(final ArtifactTemplate template) {
         Utils.requireNonNull(template, ErrorMessage.ENTITY_NULL);
 
-        Artifact artifact;
         final var contractId = artifactService.identifyByRemoteId(template.getDesc().getRemoteId());
-        if (contractId.isPresent()) {
-            artifact = artifactService.update(contractId.get(), template.getDesc());
-        } else {
-            artifact = artifactService.create(template.getDesc());
-        }
-
-        return artifact;
+        return contractId.isPresent()
+                ? artifactService.update(contractId.get(), template.getDesc())
+                : artifactService.create(template.getDesc());
     }
 }

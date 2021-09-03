@@ -163,11 +163,9 @@ public final class ArtifactFactory extends AbstractNamedFactory<Artifact, Artifa
     }
 
     /**
-     * Update the byte and checksum of an artifact. This will not update
-     * the actual data.
+     * Update the byte and checksum of an artifact. This will not update the actual data.
      *
-     * @param artifact The artifact which byte and checksum needs to be
-     *                 recalculated.
+     * @param artifact The artifact which byte and checksum needs to be recalculated.
      * @param bytes    The data.
      * @return true if the artifact has been modified.
      */

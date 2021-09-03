@@ -39,11 +39,10 @@ public class ConnectorEndpointViewAssembler extends SelfLinkHelper implements
     }
 
     @Override
-    public final ConnectorEndpointView toModel(final ConnectorEndpoint connectorEndpoint) {
+    public final ConnectorEndpointView toModel(final ConnectorEndpoint endpoint) {
         final var modelMapper = new ModelMapper();
-        final var view = modelMapper.map(connectorEndpoint,
-                ConnectorEndpointView.class);
-        view.add(getSelfLink(connectorEndpoint.getId()));
+        final var view = modelMapper.map(endpoint, ConnectorEndpointView.class);
+        view.add(getSelfLink(endpoint.getId()));
 
         return view;
     }

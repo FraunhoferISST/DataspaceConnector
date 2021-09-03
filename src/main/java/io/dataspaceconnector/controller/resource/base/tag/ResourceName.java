@@ -61,6 +61,21 @@ public final class ResourceName {
     public static final String ARTIFACTS = "Artifacts";
 
     /**
+     * Tag name for apps.
+     */
+    public static final String APPS = "Apps";
+
+    /**
+     * Tag name for app stores.
+     */
+    public static final String APPSTORES = "App Stores";
+
+    /**
+     * Tag name for app store registries.
+     */
+    public static final String APPSTORE_REGISTRY = "App Store Registries";
+
+    /**
      * Tag name for brokers.
      */
     public static final String BROKERS = "Brokers";

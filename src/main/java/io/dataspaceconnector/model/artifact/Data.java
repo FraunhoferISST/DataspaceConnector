@@ -68,5 +68,4 @@ public class Data implements Serializable {
      */
     @Column(name = "deleted")
     private boolean deleted;
-
 }

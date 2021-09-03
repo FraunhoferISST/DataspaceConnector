@@ -56,7 +56,7 @@ public class QueryMessageBuilder extends IdsMessageBuilder<QueryMessageImpl, Str
      * @param exchange the exchange.
      * @return the {@link Request}.
      */
-    @SuppressFBWarnings(value = "FORMAT_STRING_MANIPULATION")
+    @SuppressFBWarnings(value = {"FORMAT_STRING_MANIPULATION", "VA_FORMAT_STRING_USES_NEWLINE"})
     @Override
     protected Request<QueryMessageImpl, String, Optional<Jws<Claims>>> processInternal(
             final Exchange exchange) {

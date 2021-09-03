@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view.endpoint;
 
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
@@ -43,6 +44,12 @@ public class EndpointViewAssemblerProxy
     private ConnectorEndpointViewAssembler connectorAssembler;
 
     /**
+     * Assembler for app endpoints.
+     */
+    @Autowired
+    private AppEndpointViewAssembler appEndpointViewAssembler;
+
+    /**
      * Converts an endpoint object into an app-/connector- or generic-endpoint.
      *
      * @param endpoint The endpoint.
@@ -52,6 +59,9 @@ public class EndpointViewAssemblerProxy
     public RepresentationModel<?> toModel(final Endpoint endpoint) {
         if (endpoint instanceof ConnectorEndpoint) {
             return connectorAssembler.toModel((ConnectorEndpoint) endpoint);
+        }
+        if (endpoint instanceof AppEndpoint) {
+            return appEndpointViewAssembler.toModel((AppEndpoint) endpoint);
         }
 
         assert endpoint instanceof GenericEndpoint;

@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.service.resource.spring;
 
+import io.dataspaceconnector.service.resource.relation.AppEndpointLinker;
 import io.dataspaceconnector.service.resource.relation.CatalogOfferedResourceLinker;
 import io.dataspaceconnector.service.resource.relation.CatalogRequestedResourceLinker;
 import io.dataspaceconnector.service.resource.relation.ContractRuleLinker;
@@ -23,6 +24,8 @@ import io.dataspaceconnector.service.resource.relation.OfferedResourceRepresenta
 import io.dataspaceconnector.service.resource.relation.RepresentationArtifactLinker;
 import io.dataspaceconnector.service.resource.relation.RequestedResourceContractLinker;
 import io.dataspaceconnector.service.resource.relation.RequestedResourceRepresentationLinker;
+import io.dataspaceconnector.service.resource.templatebuilder.AppEndpointTemplateBuilder;
+import io.dataspaceconnector.service.resource.templatebuilder.AppTemplateBuilder;
 import io.dataspaceconnector.service.resource.templatebuilder.ArtifactTemplateBuilder;
 import io.dataspaceconnector.service.resource.templatebuilder.CatalogTemplateBuilder;
 import io.dataspaceconnector.service.resource.templatebuilder.ContractRuleTemplateBuilder;
@@ -30,6 +33,8 @@ import io.dataspaceconnector.service.resource.templatebuilder.ContractTemplateBu
 import io.dataspaceconnector.service.resource.templatebuilder.OfferedResourceTemplateBuilder;
 import io.dataspaceconnector.service.resource.templatebuilder.RepresentationTemplateBuilder;
 import io.dataspaceconnector.service.resource.templatebuilder.RequestedResourceTemplateBuilder;
+import io.dataspaceconnector.service.resource.type.AppEndpointService;
+import io.dataspaceconnector.service.resource.type.AppService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.resource.type.CatalogService;
 import io.dataspaceconnector.service.resource.type.ContractService;
@@ -131,6 +136,23 @@ public class TemplateConfig {
         return new RepresentationTemplateBuilder(representationService,
                 representationArtifactLinker,
                 new ArtifactTemplateBuilder(artifactService));
+    }
+
+    /**
+     * Creates an app template builder bean.
+     *
+     * @param appService The app template service.
+     * @param appEndpointLinker The app endpoint linker.
+     * @param appEndpointService The app endpoint service.
+     * @return The app template builder bean.
+     */
+    @Bean("appTemplateBuilder")
+    public AppTemplateBuilder createAppTemplateBuilder(
+            final AppService appService,
+            final AppEndpointLinker appEndpointLinker,
+            final AppEndpointService appEndpointService) {
+        return new AppTemplateBuilder(appService, appEndpointLinker,
+                                      new AppEndpointTemplateBuilder(appEndpointService));
     }
 
     /**

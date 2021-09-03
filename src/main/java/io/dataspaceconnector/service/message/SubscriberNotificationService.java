@@ -183,7 +183,10 @@ public class SubscriberNotificationService {
         }
     }
 
-    @SuppressFBWarnings("REC_CATCH_EXCEPTION")
+    @SuppressFBWarnings(
+            value = "REC_CATCH_EXCEPTION",
+            justification = "caught exceptions are unchecked"
+    )
     private void notifyIdsSubscribers(final List<Subscription> subscriptions, final Entity entity) {
         final var idsRecipients = subscriptions.stream()
                 .filter(Subscription::isIdsProtocol)
