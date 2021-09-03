@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.type;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.AppNotDeployedException;
 import io.dataspaceconnector.common.exception.PortainerNotConfigured;
 import io.dataspaceconnector.config.BasePath;
@@ -98,6 +99,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
      * @param type  The action type.
      * @return Response depending on the action on an app.
      */
+    @SuppressFBWarnings("IMPROPER_UNICODE")
     @PutMapping("/{id}/actions")
     @Operation(summary = "Actions on apps", description = "Can be used for managing apps.")
     @ApiResponses(value = {
