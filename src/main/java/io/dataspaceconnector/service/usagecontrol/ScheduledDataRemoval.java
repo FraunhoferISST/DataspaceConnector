@@ -111,8 +111,8 @@ public class ScheduledDataRemoval {
                             setArtifactDeleted(artifactId.get());
 
                             if (log.isDebugEnabled()) {
-                                log.debug("Removed data from artifact and set artifact" +
-                                        " as deleted. [artifact=({})]", artifactId);
+                                log.debug("Removed data from artifact and set artifact"
+                                        + " as deleted. [artifact=({})]", artifactId);
                             }
                         } catch (IOException | ResourceNotFoundException e) {
                             if (log.isWarnEnabled()) {

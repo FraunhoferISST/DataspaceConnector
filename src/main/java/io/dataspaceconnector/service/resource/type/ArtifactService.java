@@ -433,6 +433,12 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         return new ByteArrayInputStream(data);
     }
 
+    /**
+     * Sets the deleted status of an artifact.
+     *
+     * @param artifactId The artifact uuid.
+     * @param deleted The deleted status to be set.
+     */
     public void setArtifactDeletionStatus(final UUID artifactId, final boolean deleted) {
         ((ArtifactRepository) getRepository()).setArtifactDeleted(artifactId, deleted);
     }
