@@ -26,6 +26,9 @@ import io.dataspaceconnector.service.resource.type.AppService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Builds apps from templates.
+ */
 @RequiredArgsConstructor
 public class AppTemplateBuilder {
 

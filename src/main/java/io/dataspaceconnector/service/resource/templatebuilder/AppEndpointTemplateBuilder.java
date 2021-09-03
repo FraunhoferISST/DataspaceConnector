@@ -23,6 +23,9 @@ import io.dataspaceconnector.service.resource.type.AppEndpointService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Builds app endpoints from templates.
+ */
 @RequiredArgsConstructor
 public class AppEndpointTemplateBuilder {
 
