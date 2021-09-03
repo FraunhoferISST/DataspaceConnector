@@ -76,15 +76,42 @@ public class ArtifactDataDownloader {
             // Read and process the response message.
             try {
                 persistenceSvc.saveData(response, artifact);
-            } catch (IOException | ResourceNotFoundException
-                    | MessageResponseException e) {
-                // Ignore that the data saving failed. Another try can take place later.
+            } catch (IOException | ResourceNotFoundException | MessageResponseException
+                    | IllegalArgumentException e) {
+                // Note: Ignore that the data saving failed. Another try can take place later.
                 if (log.isWarnEnabled()) {
                     log.warn("Could not save data for artifact. [artifact=({}), "
                             + "exception=({})]", artifact, e.getMessage());
                 }
-                throw new PersistenceException(e);
             }
+        }
+    }
+
+    /**
+     * Request the App Artifact and update the app.
+     *
+     * @param recipient  The app store where the artifact shall be downloaded.
+     * @param instanceId The app artifact id.
+     * @param resourceId Id of the app resource.
+     * @throws UnexpectedResponseException if response is not an ArtifactResponseMessage.
+     * @throws MessageException            if message could not be sent or processed.
+     * @throws PersistenceException        if data could not be stored.
+     */
+    public void downloadTemplate(final URI recipient, final URI instanceId, final URI resourceId)
+            throws UnexpectedResponseException, MessageException, PersistenceException {
+        // NOTE: Assume that the AppStore does not expect a transfer contract.
+        final var response = artifactReqSvc.sendMessage(recipient, instanceId, null);
+
+        // Read and process the response message.
+        try {
+            persistenceSvc.saveAppData(response, resourceId);
+        } catch (IOException | ResourceNotFoundException | MessageResponseException
+                | IllegalArgumentException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Could not save data for app. [app=({}), exception=({})]",
+                        resourceId, e.getMessage());
+            }
+            throw new PersistenceException(e);
         }
     }
 }

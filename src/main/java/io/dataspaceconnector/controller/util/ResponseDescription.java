@@ -63,4 +63,14 @@ public class ResponseDescription {
      * Response code is UNSUPPORTED_MEDIA_TYPE.
      */
     public static final String UNSUPPORTED_MEDIA_TYPE = "Unsupported media type";
+
+    /**
+     * Response code is NOT_MODIFIED.
+     */
+    public static final String NOT_MODIFIED = "Not modified";
+
+    /**
+     * Response code is CONFLICT.
+     */
+    public static final String CONFLICT = "Conflict";
 }

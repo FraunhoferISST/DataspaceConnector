@@ -65,6 +65,7 @@ import java.util.UUID;
 @Transactional
 public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         implements RemoteResolver {
+
     /**
      * Repository for storing data.
      **/
@@ -141,11 +142,13 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param artifactId     The id of the artifact.
      * @param queryInput     The query for the backend.
      * @return The artifacts data.
-     * @throws PolicyRestrictionException if the data access has been denied.
+     * @throws PolicyRestrictionException                                       if the data
+     * access has been denied.
      * @throws io.dataspaceconnector.common.exception.ResourceNotFoundException if the artifact does
-     * not exist.
-     * @throws IllegalArgumentException if any of the parameters is null.
-     * @throws IOException if IO errors occur.
+     *                                                                          not exist.
+     * @throws IllegalArgumentException                                         if any of the
+     * parameters is null.
+     * @throws IOException                                                      if IO errors occur.
      */
     public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
@@ -210,11 +213,13 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param artifactId     The id of the artifact.
      * @param information    Information for pulling the data from a remote source.
      * @return The artifact's data.
-     * @throws PolicyRestrictionException if the data access has been denied.
+     * @throws PolicyRestrictionException                                       if the data
+     * access has been denied.
      * @throws io.dataspaceconnector.common.exception.ResourceNotFoundException if the artifact does
-     * not exist.
-     * @throws IllegalArgumentException if any of the parameters is null.
-     * @throws IOException if IO errors occurr.
+     *                                                                          not exist.
+     * @throws IllegalArgumentException                                         if any of the
+     * parameters is null.
+     * @throws IOException                                                      if IO errors occurr.
      */
     @Transactional
     public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
@@ -250,9 +255,9 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     }
 
     private InputStream downloadAndUpdateData(final ArtifactRetriever retriever,
-                                       final UUID artifactId,
-                                       final RetrievalInformation information,
-                                       final Artifact artifact)
+                                              final UUID artifactId,
+                                              final RetrievalInformation information,
+                                              final Artifact artifact)
             throws IOException {
         final var dataStream = retriever.retrieve(artifactId,
                 artifact.getRemoteAddress(),
@@ -304,7 +309,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private boolean isDataPresent(final Artifact artifact) {
         if (artifact.getAdditional().containsKey("ids:byteSize")) {
             final var providerDataSize =
-                        Integer.parseInt(artifact.getAdditional().get("ids:byteSize"));
+                    Integer.parseInt(artifact.getAdditional().get("ids:byteSize"));
             final var thisDataSize = artifact.getByteSize();
             return thisDataSize >= providerDataSize;
         }

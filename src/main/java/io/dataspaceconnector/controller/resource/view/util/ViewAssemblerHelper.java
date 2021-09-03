@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.view.util;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
@@ -40,6 +41,10 @@ public final class ViewAssemblerHelper {
      * @param applicationBaseUrl the base URL.
      */
     @Value("${application.http.base-url}")
+    @SuppressFBWarnings(
+            value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD",
+            justification = "baseUrl needs to be populated using value annotation"
+    )
     public void setBaseUrl(final String applicationBaseUrl) {
         ViewAssemblerHelper.baseUrl = applicationBaseUrl;
     }
