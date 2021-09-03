@@ -35,7 +35,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -776,27 +775,20 @@ public class PortainerRequestService {
     ) throws IOException {
         final var templateObject = toJsonObject(appStoreTemplate);
         final var image = templateObject.getString("image");
-        final List<String> ports = new ArrayList<>();
 
-        //get all ports from the appTemplate
-        for (int i = 0; i < templateObject.getJSONArray("ports").length(); i++) {
-            var portArr = templateObject.getJSONArray("ports");
-            if (!(JSONObject.class.equals(portArr.get(i).getClass()))) {
-                if (portArr.get(i).toString().contains(":")) {
-                    var defaultPortSpec = portArr.get(i).toString()
-                            .substring(portArr.get(i).toString().indexOf(":") + 1);
-                    ports.add(defaultPortSpec);
-                } else {
-                    ports.add(portArr.get(i).toString());
+        //get all ports from the appTemplate (with label)
+        var portLabelMap = new HashMap<String, String>();
+        var portArray = templateObject.getJSONArray("ports");
+        for (int i = 0; i < portArray.length(); i++) {
+            var portobj = portArray.getJSONObject(i);
+            var labels = portobj.keySet();
+            for (var label : labels) {
+                var port = portobj.getString(label);
+                if (port.contains(":")) {
+                    port = port
+                            .substring(port.indexOf(":") + 1);
                 }
-            } else {
-                final var keyElements = portArr.getJSONObject(i);
-                Set<String> set = keyElements.keySet();
-                for (var tmpKey : set) {
-                    var port = portArr.getJSONObject(i).getString(tmpKey);
-                    port = port.substring(port.indexOf(":") + 1);
-                    ports.add(port);
-                }
+                portLabelMap.put(port, label);
             }
         }
 
@@ -813,7 +805,12 @@ public class PortainerRequestService {
 
         //build json payload
         final var jsonPayload = PortainerUtil
-                .createContainerJSONPayload(templateObject, ports, volumes, image);
+                .createContainerJSONPayload(
+                        templateObject,
+                        new ArrayList<>(portLabelMap.keySet()),
+                        volumes,
+                        image
+                );
 
         //add json payload to request
         builder.post(
@@ -825,8 +822,11 @@ public class PortainerRequestService {
                 .getJSONObject("PortBindings");
         final var portMap = new HashMap<String, String>();
         for (var port : portBindings.keySet()) {
-            portMap.put(port, portBindings.getJSONArray(port).getJSONObject(0)
-                    .getString("HostPort"));
+            portMap.put(
+                    String.format("%s:%s", port, portLabelMap.get(port)),
+                    portBindings.getJSONArray(port).getJSONObject(0)
+                            .getString("HostPort")
+            );
         }
 
         final var request = builder.build();
