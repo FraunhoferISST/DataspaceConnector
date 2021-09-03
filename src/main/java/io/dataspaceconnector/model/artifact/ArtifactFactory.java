@@ -16,6 +16,7 @@
 package io.dataspaceconnector.model.artifact;
 
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.model.auth.ApiKey;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.auth.BasicAuth;
@@ -169,6 +170,7 @@ public final class ArtifactFactory extends AbstractNamedFactory<Artifact, Artifa
      * @param bytes    The data.
      * @return true if the artifact has been modified.
      */
+    @SuppressFBWarnings("NP_LOAD_OF_KNOWN_NULL_VALUE")
     public boolean updateByteSize(final Artifact artifact, final byte[] bytes) {
         if (bytes == null) {
             if (artifact.getByteSize() != 0 || artifact.getCheckSum() != 0) {
