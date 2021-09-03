@@ -1,3 +1,4 @@
+---
 replicaCount: 1
 
 image:
@@ -46,12 +47,12 @@ securityContext:
   # readOnlyRootFilesystem: true Will make tomcat crash
   runAsUser: 65532
   capabilities:
-        drop:
-         - ALL
+    drop:
+      - ALL
 
 service:
   type: ClusterIP
-  port: 443
+  port: 80
 
 ingress:
   enabled: false

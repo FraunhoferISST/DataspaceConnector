@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -49,6 +50,7 @@ spec:
               httpHeaders:
               - name: Authorization
                 value: 'Basic {{(printf "%s:%s" .Values.env.secrets.SPRING_SECURITY_USER_NAME .Values.env.secrets.SPRING_SECURITY_USER_PASSWORD) | b64enc }}'
+            initialDelaySeconds: 15
             failureThreshold: 1
             periodSeconds: 3
           readinessProbe:
@@ -63,6 +65,7 @@ spec:
               httpHeaders:
               - name: Authorization
                 value: 'Basic {{(printf "%s:%s" .Values.env.secrets.SPRING_SECURITY_USER_NAME .Values.env.secrets.SPRING_SECURITY_USER_PASSWORD) | b64enc }}'
+            initialDelaySeconds: 10
             periodSeconds: 3
           startupProbe:
             httpGet:
