@@ -53,8 +53,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.text.Normalizer;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -112,7 +112,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     public final ResponseEntity<Object> containerManagement(
             @PathVariable("id") final UUID appId,
             @RequestParam("actionType") final String type) {
-        final var action = type.toUpperCase(Locale.ROOT);
+        final var action = Normalizer.normalize(type.toUpperCase(Locale.ROOT), Normalizer.Form.NFC);
         final var app = getService().get(appId);
         var containerId = ((AppImpl) app).getContainerId();
 
@@ -161,13 +161,15 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
                 } else {
                     final var descriptionResponse = portainerSvc
                             .getDescriptionByContainerId(containerId);
+                    final var responseBody = descriptionResponse.body();
 
-                    if (descriptionResponse.isSuccessful()) {
-                        return ResponseEntity.ok(
-                                Objects.requireNonNull(descriptionResponse.body()).string());
+                    if (descriptionResponse.isSuccessful() && responseBody != null) {
+                        return ResponseEntity.ok(responseBody.string());
+                    } else if (responseBody != null) {
+                        return ResponseEntity.internalServerError().body(responseBody.string());
                     } else {
-                        return ResponseEntity.internalServerError()
-                                .body(Objects.requireNonNull(descriptionResponse.body()).string());
+                        return ResponseEntity.internalServerError().body("Response not successful"
+                                + " and empty response body!");
                     }
                 }
             } else {
