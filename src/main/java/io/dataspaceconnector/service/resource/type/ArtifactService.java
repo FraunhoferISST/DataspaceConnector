@@ -432,4 +432,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private InputStream toInputStream(final byte[] data) {
         return new ByteArrayInputStream(data);
     }
+
+    public void setArtifactDeletionStatus(final UUID artifactId, final boolean deleted) {
+        ((ArtifactRepository) getRepository()).setArtifactDeleted(artifactId, deleted);
+    }
 }

@@ -101,4 +101,16 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
             + "WHERE a.bootstrapId = :bootstrapId "
             + "AND a.deleted = false")
     List<Artifact> findAllByBootstrapId(URI bootstrapId);
+
+    /**
+     * Set deletion status of artifact.
+     *
+     * @param artifactId The artifact.
+     * @param deleted Deletion status of the artifact to be set.
+     */
+    @Modifying
+    @Query("UPDATE Artifact a "
+            + "SET a.deleted=:deleted "
+            + "WHERE a.id = :artifactId")
+    void setArtifactDeleted(UUID artifactId, boolean deleted);
 }
