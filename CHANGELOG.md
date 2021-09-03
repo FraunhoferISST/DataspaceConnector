@@ -3,10 +3,14 @@ All notable changes to this project will be documented in this file.
 
 ## [6.X.X] - XXXX-XX-XX
 
+### Fixed
+- Fix self-reference of QueryInput in OpenApi schema.
+
 ### Changed
 - Increase checkstyle version from 8.45.1 to 9.0.0.
 - Increase pmd version from 6.37.0 to 6.38.0.
 - Increase IDS messaging services version from 4.2.2 to 4.3.0.
+- Increase pitest version from 1.69.0 to 1.70.0.
 
 ## [6.2.0] - 2021-09-01
 
