@@ -19,6 +19,7 @@ import io.dataspaceconnector.model.configuration.Configuration;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -43,6 +44,7 @@ public interface ConfigurationRepository extends BaseEntityRepository<Configurat
     /**
      * Deselect current configuration.
      */
+    @Transactional
     @Modifying
     @Query("UPDATE Configuration a "
             + "SET a.active = NULL "
@@ -55,6 +57,7 @@ public interface ConfigurationRepository extends BaseEntityRepository<Configurat
      *
      * @param id Id to select
      */
+    @Transactional
     @Modifying
     @Query("UPDATE Configuration a "
             + "SET a.active = true "

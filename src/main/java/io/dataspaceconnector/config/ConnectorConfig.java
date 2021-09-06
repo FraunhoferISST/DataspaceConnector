@@ -16,7 +16,8 @@
 package io.dataspaceconnector.config;
 
 import io.dataspaceconnector.common.ids.policy.UsageControlFramework;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,7 +27,8 @@ import java.util.List;
 /**
  * This class handles policy settings: negotiation, pattern support, and usage control framework.
  */
-@Data
+@Getter
+@Setter
 @Configuration
 public class ConnectorConfig {
     /**
@@ -68,11 +70,30 @@ public class ConnectorConfig {
     /**
      * The outbound model version.
      */
-    private final String outboundVersion = "4.2.1";
+    private static final String OUTBOUND_VERSION = "4.2.1";
 
     /**
      * The inbound model versions.
      */
-    private final List<String> inboundVersions = List.of(
-            "4.0.0", "4.1.0", "4.1.2", "4.2.0", "4.2.1");
+    private static final List<String> INBOUND_VERSIONS = List.of("4.0.0", "4.0.2", "4.0.3", "4.0.4",
+            "4.0.5", "4.0.6", "4.0.7", "4.0.8", "4.0.9", "4.0.10", "4.0.11", "4.1.0", "4.1.1",
+            "4.1.2", "4.1.3", "4.2.0", "4.2.1");
+
+    /**
+     * Get the outbound model version.
+     *
+     * @return The model version.
+     */
+    public String getOutboundVersion() {
+        return OUTBOUND_VERSION;
+    }
+
+    /**
+     * Get the inbound model versions.
+     *
+     * @return The model versions.
+     */
+    public List<String> getInboundVersions() {
+        return INBOUND_VERSIONS;
+    }
 }

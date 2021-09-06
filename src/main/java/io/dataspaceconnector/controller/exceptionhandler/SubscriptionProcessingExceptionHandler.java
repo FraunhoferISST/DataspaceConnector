@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Order(1)
 public final class SubscriptionProcessingExceptionHandler {
     /**
-     * Handle {@link SubscriptionProcessingException}.
+     * Handles thrown {@link SubscriptionProcessingException}.
      *
      * @param exception The thrown exception.
      * @return Response entity with code 400.

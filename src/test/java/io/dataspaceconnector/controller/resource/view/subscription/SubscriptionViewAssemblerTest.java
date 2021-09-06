@@ -15,9 +15,14 @@
  */
 package io.dataspaceconnector.controller.resource.view.subscription;
 
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.UUID;
+
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.controller.resource.type.SubscriptionController;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.model.subscription.SubscriptionFactory;
@@ -26,24 +31,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = {
-        SubscriptionViewAssembler.class,
-        ViewAssemblerHelper.class,
-        SubscriptionFactory.class
+        SubscriptionViewAssembler.class
 })
 public class SubscriptionViewAssemblerTest {
 
@@ -53,7 +51,7 @@ public class SubscriptionViewAssemblerTest {
     @Autowired
     private SubscriptionViewAssembler subscriptionViewAssembler;
 
-    @Autowired
+    @SpyBean
     private SubscriptionFactory subscriptionFactory;
 
     @Test

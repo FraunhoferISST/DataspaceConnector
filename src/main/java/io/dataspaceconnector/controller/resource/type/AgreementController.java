@@ -45,6 +45,7 @@ import java.util.UUID;
 @Tag(name = ResourceName.AGREEMENTS, description = ResourceDescription.AGREEMENTS)
 public class AgreementController extends BaseResourceController<Agreement, AgreementDesc,
         AgreementView, AgreementService> {
+
     @Override
     @Hidden
     @ApiResponses(value = {

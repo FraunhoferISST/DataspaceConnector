@@ -51,7 +51,7 @@ public abstract class IdsMessageBuilder<H extends Message, B> implements Process
      * To be implemented by sub classes.
      *
      * @param exchange the exchange.
-     * @return the {@link Request}
+     * @return the {@link Request}.
      */
     protected abstract Request<H, B, Optional<Jws<Claims>>> processInternal(Exchange exchange);
 

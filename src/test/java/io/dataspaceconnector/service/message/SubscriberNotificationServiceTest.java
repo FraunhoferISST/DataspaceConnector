@@ -19,7 +19,7 @@ import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
-import io.dataspaceconnector.service.resource.TemplateBuilder;
+import io.dataspaceconnector.service.resource.templatebuilder.AbstractResourceTemplateBuilder;
 import io.dataspaceconnector.service.resource.relation.AbstractResourceContractLinker;
 import io.dataspaceconnector.service.resource.relation.AbstractResourceRepresentationLinker;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ public class SubscriberNotificationServiceTest {
     private SubscriberNotificationService subscriberNotificationSvc;
 
     @SpyBean
-    private TemplateBuilder<OfferedResource, OfferedResourceDesc> tmpBuilder;
+    private AbstractResourceTemplateBuilder<OfferedResource, OfferedResourceDesc> tmpBuilder;
 
     @SpyBean
     private AbstractResourceRepresentationLinker<OfferedResource> resourceRepresentationLinker;

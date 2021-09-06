@@ -15,10 +15,10 @@
  */
 package io.dataspaceconnector.model.resource;
 
+import java.util.ArrayList;
+
 import io.dataspaceconnector.common.exception.NotImplemented;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,7 +49,7 @@ public class ResourceTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertTrue(ResourceFactory.DEFAULT_SAMPLES.isEmpty());
+        assertTrue(ResourceFactory.DEFAULT_SAMPLES.length == 0);
     }
 
     @Test

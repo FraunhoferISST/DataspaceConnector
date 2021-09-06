@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(BasePath.OFFERS)
 @Tag(name = ResourceName.OFFERS, description = ResourceDescription.OFFERS)
-public class OfferedResourceController
-        extends BaseResourceNotificationController<OfferedResource, OfferedResourceDesc,
-        OfferedResourceView, ResourceService<OfferedResource, OfferedResourceDesc>> {
+public class OfferedResourceController extends BaseResourceNotificationController<OfferedResource,
+        OfferedResourceDesc, OfferedResourceView, ResourceService<OfferedResource,
+        OfferedResourceDesc>> {
 }

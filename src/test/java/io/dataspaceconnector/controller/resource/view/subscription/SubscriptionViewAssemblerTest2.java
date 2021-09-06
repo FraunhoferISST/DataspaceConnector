@@ -16,7 +16,6 @@
 package io.dataspaceconnector.controller.resource.view.subscription;
 
 import io.dataspaceconnector.controller.resource.type.SubscriptionController;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.subscription.Subscription;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {SubscriptionViewAssembler.class, ViewAssemblerHelper.class})
+@SpringBootTest(classes = {SubscriptionViewAssembler.class})
 public class SubscriptionViewAssemblerTest2 {
 
     @Autowired

@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 public final class IdsRouteStepBuilder extends AbstractIdsBuilder<Route, RouteStep> {
 
     /**
-     * The builder for IDS endpoints.
+     * The builder for ids endpoints.
      */
     private final @NonNull IdsEndpointBuilder endpointBuilder;
 

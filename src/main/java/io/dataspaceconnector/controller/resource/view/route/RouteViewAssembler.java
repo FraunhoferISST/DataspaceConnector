@@ -15,12 +15,14 @@
  */
 package io.dataspaceconnector.controller.resource.view.route;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.relation.RoutesToArtifactsController;
 import io.dataspaceconnector.controller.resource.relation.RoutesToStepsController;
 import io.dataspaceconnector.controller.resource.type.RouteController;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.route.Route;
@@ -29,8 +31,6 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -38,13 +38,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * Assembles the REST resource for a route.
  */
 @Component
-public class RouteViewAssembler
+public class RouteViewAssembler extends SelfLinkHelper
         implements RepresentationModelAssembler<Route, RouteView>, SelfLinking {
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId,
-                RouteController.class);
+        return getSelfLink(entityId, RouteController.class);
     }
 
     @Override

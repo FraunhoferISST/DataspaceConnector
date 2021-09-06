@@ -33,6 +33,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(BasePath.CONTRACTS)
 @Tag(name = ResourceName.CONTRACTS, description = ResourceDescription.CONTRACTS)
-public class ContractController
-        extends BaseResourceController<Contract, ContractDesc, ContractView, ContractService> {
+public class ContractController extends BaseResourceController<Contract, ContractDesc, ContractView,
+        ContractService> {
 }

@@ -15,16 +15,25 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
+import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
-import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Service;
 
 /**
  * Handles the basic logic for catalogs.
  */
-@Service
-@NoArgsConstructor
 public class CatalogService extends BaseEntityService<Catalog, CatalogDesc> {
+
+    /**
+     * Constructor.
+     *
+     * @param repository The catalog repository.
+     * @param factory    The catalog logic.
+     */
+    public CatalogService(final BaseEntityRepository<Catalog> repository,
+                          final AbstractFactory<Catalog, CatalogDesc> factory) {
+        super(repository, factory);
+    }
 }

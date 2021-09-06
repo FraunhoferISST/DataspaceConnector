@@ -17,14 +17,11 @@ package io.dataspaceconnector.model.keystore;
 
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
 
 /**
  * Factory class for the key store.
  */
-@Component
 public class KeystoreFactory extends AbstractFactory<Keystore, KeystoreDesc> {
 
     /**

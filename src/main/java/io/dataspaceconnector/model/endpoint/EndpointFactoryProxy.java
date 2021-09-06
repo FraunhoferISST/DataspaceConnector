@@ -17,13 +17,10 @@ package io.dataspaceconnector.model.endpoint;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-
 
 /**
  * The endpoint factory proxy class.
  */
-@Component
 @RequiredArgsConstructor
 public class EndpointFactoryProxy extends EndpointFactory<Endpoint, EndpointDesc> {
 

@@ -37,7 +37,7 @@ public class DeadLetterChannelProcessor implements Processor {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
-     * Reads the route's ID, the endpoint where the exchange failed and the exception that caused
+     * Reads the route's ID, the endpoint where the exchange failed, and the exception that caused
      * the failure from an Exchange object and creates an {@link RouteError}. The ErrorDto is set as
      * the body of the exchange's message.
      *

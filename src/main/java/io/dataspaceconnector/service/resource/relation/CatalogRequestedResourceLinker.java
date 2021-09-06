@@ -29,6 +29,7 @@ import java.util.List;
 @NoArgsConstructor
 public final class CatalogRequestedResourceLinker
         extends AbstractCatalogResourceLinker<RequestedResource> {
+
     @Override
     protected List<RequestedResource> getInternal(final Catalog owner) {
         return owner.getRequestedResources();

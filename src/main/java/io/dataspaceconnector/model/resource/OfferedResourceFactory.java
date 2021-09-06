@@ -18,29 +18,26 @@ package io.dataspaceconnector.model.resource;
 import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.common.net.EndpointUtils;
 import io.dataspaceconnector.common.util.ValidationUtils;
-import io.dataspaceconnector.service.resource.type.OfferedResourceService;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
 /**
  * Creates and updates a resource.
  */
-@Component
 @Log4j2
-@RequiredArgsConstructor
+@Setter
 public final class OfferedResourceFactory extends ResourceFactory<OfferedResource,
         OfferedResourceDesc> {
 
     /**
      * The service for resource handling.
      */
-    private final @NonNull OfferedResourceService resourceService;
+    private Function<UUID, Boolean> doesExist;
 
     @Override
     protected OfferedResource createInternal(final OfferedResourceDesc desc) {
@@ -71,7 +68,7 @@ public final class OfferedResourceFactory extends ResourceFactory<OfferedResourc
                 throw new InvalidEntityException("Resource cannot reference itself.");
             }
 
-            if (!resourceService.doesExist(resourceId)) {
+            if (!doesExist.apply(resourceId)) {
                 if (log.isWarnEnabled()) {
                     log.warn("Could not find matching resource. [id=({})]", sample);
                 }
