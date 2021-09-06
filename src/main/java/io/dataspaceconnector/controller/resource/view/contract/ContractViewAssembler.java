@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.controller.resource.view.contract;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.config.BaseType;
@@ -22,8 +24,8 @@ import io.dataspaceconnector.controller.resource.relation.ContractsToOfferedReso
 import io.dataspaceconnector.controller.resource.relation.ContractsToRequestedResourcesController;
 import io.dataspaceconnector.controller.resource.relation.ContractsToRulesController;
 import io.dataspaceconnector.controller.resource.type.ContractController;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.RequestedResource;
@@ -33,8 +35,6 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
 
@@ -43,7 +43,7 @@ import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.met
  */
 @Component
 @NoArgsConstructor
-public class ContractViewAssembler
+public class ContractViewAssembler extends SelfLinkHelper
         implements RepresentationModelAssembler<Contract, ContractView>, SelfLinking {
     /**
      * Construct the ContractView from a Contract.
@@ -91,6 +91,6 @@ public class ContractViewAssembler
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, ContractController.class);
+        return getSelfLink(entityId, ContractController.class);
     }
 }

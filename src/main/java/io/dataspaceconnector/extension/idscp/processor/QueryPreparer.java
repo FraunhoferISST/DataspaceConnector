@@ -31,6 +31,7 @@ public class QueryPreparer extends Idscp2MappingProcessor {
 
     /**
      * Prepares a {@link Request} with a query string as body for communication over IDSCPv2.
+     *
      * @param in the in-message of the exchange.
      */
     @Override

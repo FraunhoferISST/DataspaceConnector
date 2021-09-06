@@ -43,6 +43,7 @@ public class DataPersistenceProcessor extends IdsResponseProcessor {
 
     /**
      * Persists the data.
+     *
      * @param exchange the exchange.
      * @throws IOException if persisting the data fails.
      */

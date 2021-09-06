@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Order(1)
 public final class DataRetrievalExceptionHandler {
     /**
-     * Handle {@link DataRetrievalException}.
+     * Handles thrown {@link DataRetrievalException}.
      *
      * @param exception The thrown exception.
      * @return Response entity with code 417.

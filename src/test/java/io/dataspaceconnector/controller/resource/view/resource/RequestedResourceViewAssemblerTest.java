@@ -19,13 +19,13 @@ import io.dataspaceconnector.controller.resource.relation.RequestedResourcesToCa
 import io.dataspaceconnector.controller.resource.relation.RequestedResourcesToContractsController;
 import io.dataspaceconnector.controller.resource.relation.RequestedResourcesToRepresentationsController;
 import io.dataspaceconnector.controller.resource.type.RequestedResourceController;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.resource.RequestedResourceFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,16 +46,14 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
 
 @SpringBootTest(classes = {
-        RequestedResourceViewAssembler.class,
-        ViewAssemblerHelper.class,
-        RequestedResourceFactory.class
+        RequestedResourceViewAssembler.class
 })
 public class RequestedResourceViewAssemblerTest {
 
     @Autowired
     private RequestedResourceViewAssembler requestedResourceViewAssembler;
 
-    @Autowired
+    @SpyBean
     private RequestedResourceFactory requestedResourceFactory;
 
     @Test

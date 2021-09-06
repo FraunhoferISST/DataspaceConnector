@@ -15,21 +15,21 @@
  */
 package io.dataspaceconnector.controller.resource.view.resource;
 
-import io.dataspaceconnector.controller.resource.type.RequestedResourceController;
+import java.util.UUID;
+
 import io.dataspaceconnector.controller.resource.relation.RequestedResourcesToCatalogsController;
 import io.dataspaceconnector.controller.resource.relation.RequestedResourcesToContractsController;
 import io.dataspaceconnector.controller.resource.relation.RequestedResourcesToRepresentationsController;
 import io.dataspaceconnector.controller.resource.relation.RequestedResourcesToSubscriptionsController;
+import io.dataspaceconnector.controller.resource.type.RequestedResourceController;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
@@ -39,8 +39,9 @@ import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.met
  */
 @Component
 @NoArgsConstructor
-public class RequestedResourceViewAssembler implements RepresentationModelAssembler<
-        RequestedResource, RequestedResourceView>, SelfLinking {
+public class RequestedResourceViewAssembler extends SelfLinkHelper
+        implements RepresentationModelAssembler<RequestedResource, RequestedResourceView>,
+        SelfLinking {
     /**
      * Construct the RequestedResourceView from a RequestedResource.
      *
@@ -80,6 +81,6 @@ public class RequestedResourceViewAssembler implements RepresentationModelAssemb
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, RequestedResourceController.class);
+        return getSelfLink(entityId, RequestedResourceController.class);
     }
 }

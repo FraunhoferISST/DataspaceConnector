@@ -17,15 +17,9 @@ package io.dataspaceconnector.model.resource;
 
 import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.model.contract.Contract;
-import io.dataspaceconnector.service.resource.type.OfferedResourceService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.net.URI;
@@ -42,19 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
 public class OfferedResourceFactoryTest {
 
-    @Autowired
-    private OfferedResourceFactory factory;
-
-    @MockBean
-    private OfferedResourceService service;
-
-    @BeforeEach
-    public void init() {
-        this.factory = new OfferedResourceFactory(service);
-    }
+    private OfferedResourceFactory factory = new OfferedResourceFactory();
 
     @Test
     public void default_title_is_empty() {
@@ -839,6 +823,7 @@ public class OfferedResourceFactoryTest {
         /* ARRANGE */
         final var desc = new OfferedResourceDesc();
         desc.setSamples(List.of(URI.create("https://api/resources/d8a6f765-9b94-4a27-a18d-fbe81636a784")));
+        factory.setDoesExist(x -> { throw new InvalidEntityException(""); });
 
         final var resource = getResource();
 
@@ -852,8 +837,9 @@ public class OfferedResourceFactoryTest {
         final var desc = new OfferedResourceDesc();
         desc.setSamples(List.of(URI.create("https://api/resources/d8a6f765-9b94-4a27-a18d-fbe81636a784")));
 
-        final var resource = getResource();
-        Mockito.doReturn(true).when(service).doesExist(Mockito.any());
+        final var resource = factory.create(new OfferedResourceDesc());
+        ReflectionTestUtils.setField(resource, "id", UUID.randomUUID());
+        factory.setDoesExist(x -> true);
 
         /* ACT */
         factory.update(resource, desc);
@@ -868,8 +854,9 @@ public class OfferedResourceFactoryTest {
         final var desc = new OfferedResourceDesc();
         desc.setSamples(List.of(URI.create("https://api/resources/d8a6f765-9b94-4a27-a18d-fbe81636a784")));
 
-        final var resource = getResource();
-        Mockito.doReturn(true).when(service).doesExist(Mockito.any());
+        final var resource = factory.create(new OfferedResourceDesc());
+        ReflectionTestUtils.setField(resource, "id", UUID.randomUUID());
+        factory.setDoesExist(x -> true);
 
         /* ACT */
         final var result = factory.update(resource, desc);
@@ -882,7 +869,7 @@ public class OfferedResourceFactoryTest {
     public void update_differentSamples_returnFalse() {
         /* ARRANGE */
         final var resource = factory.create(new OfferedResourceDesc());
-        Mockito.doReturn(true).when(service).doesExist(Mockito.any());
+        factory.setDoesExist(x -> true);
 
         /* ACT */
         final var result = factory.update(resource, new OfferedResourceDesc());

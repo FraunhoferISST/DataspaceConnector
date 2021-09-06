@@ -30,8 +30,8 @@ import java.util.List;
  */
 @Service
 @NoArgsConstructor
-public class AgreementArtifactLinker
-        extends OwningRelationService<Agreement, Artifact, AgreementService, ArtifactService> {
+public class AgreementArtifactLinker extends OwningRelationService<Agreement, Artifact,
+        AgreementService, ArtifactService> {
 
     @Override
     protected final List<Artifact> getInternal(final Agreement owner) {

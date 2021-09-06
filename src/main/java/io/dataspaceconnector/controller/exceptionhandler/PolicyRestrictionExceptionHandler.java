@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Order(1)
 public final class PolicyRestrictionExceptionHandler {
     /**
-     * Handle {@link PolicyRestrictionException}.
+     * Handles thrown {@link PolicyRestrictionException}.
      *
      * @param exception The thrown exception.
      * @return Response entity with code 403.

@@ -17,15 +17,12 @@ package io.dataspaceconnector.model.rule;
 
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
 import java.util.ArrayList;
 
 /**
  * Creates and updates a ContractRule.
  */
-@Component
 public class ContractRuleFactory extends AbstractNamedFactory<ContractRule, ContractRuleDesc> {
 
     /**

@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.type;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.AppNotDeployedException;
 import io.dataspaceconnector.common.exception.PortainerNotConfigured;
 import io.dataspaceconnector.config.BasePath;
@@ -39,7 +40,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import okhttp3.Response;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
@@ -54,14 +54,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.text.Normalizer;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.UUID;
 
 /**
  * Offers the endpoints for managing apps.
  */
-@Log4j2
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(BasePath.APPS)
@@ -100,6 +99,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
      * @param type  The action type.
      * @return Response depending on the action on an app.
      */
+    @SuppressFBWarnings("IMPROPER_UNICODE")
     @PutMapping("/{id}/actions")
     @Operation(summary = "Actions on apps", description = "Can be used for managing apps.")
     @ApiResponses(value = {
@@ -114,7 +114,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     public final ResponseEntity<Object> containerManagement(
             @PathVariable("id") final UUID appId,
             @RequestParam("actionType") final String type) {
-        final var action = type.toUpperCase(Locale.ROOT);
+        final var action = Normalizer.normalize(type.toUpperCase(Locale.ROOT), Normalizer.Form.NFC);
         final var app = getService().get(appId);
         var containerId = ((AppImpl) app).getContainerId();
 
@@ -163,13 +163,15 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
                 } else {
                     final var descriptionResponse = portainerSvc
                             .getDescriptionByContainerId(containerId);
+                    final var responseBody = descriptionResponse.body();
 
-                    if (descriptionResponse.isSuccessful()) {
-                        return ResponseEntity.ok(
-                                Objects.requireNonNull(descriptionResponse.body()).string());
+                    if (descriptionResponse.isSuccessful() && responseBody != null) {
+                        return ResponseEntity.ok(responseBody.string());
+                    } else if (responseBody != null) {
+                        return ResponseEntity.internalServerError().body(responseBody.string());
                     } else {
-                        return ResponseEntity.internalServerError()
-                                .body(Objects.requireNonNull(descriptionResponse.body()).string());
+                        return ResponseEntity.internalServerError().body("Response not successful"
+                                + " and empty response body!");
                     }
                 }
             } else {

@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -109,6 +110,127 @@ public class ProxyFactoryTest {
     }
 
     @Test
+    void update_authAndProxyAuthNull_willNotUpdate() {
+        /* ARRANGE */
+        final var proxy = factory.create(new ProxyDesc());
+
+        /* ACT */
+        final var result = factory.update(proxy, new ProxyDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+        assertNull(proxy.getAuthentication());
+    }
+
+    @Test
+    void update_proxyAuthNotNullAndAuthNull_willUpdate() {
+        /* ARRANGE */
+        final var desc = new ProxyDesc();
+        desc.setAuthentication(new AuthenticationDesc("", ""));
+        final var proxy = factory.create(desc);
+
+        /* ACT */
+        final var result = factory.update(proxy, new ProxyDesc());
+
+        /* ASSERT */
+        assertTrue(result);
+        assertNull(proxy.getAuthentication());
+    }
+
+    @Test
+    void update_authKeyAndValueNull_willNotUpdate() {
+        /* ARRANGE */
+        final var proxy = factory.create(new ProxyDesc());
+        final var auth = new AuthenticationDesc(null, null);
+        final var desc = new ProxyDesc(null, null, auth);
+
+        /* ACT */
+        final var result = factory.update(proxy, desc);
+
+        /* ASSERT */
+        assertFalse(result);
+        assertNull(proxy.getAuthentication());
+    }
+
+    @Test
+    void update_proxyAuthNullAndAuthNotNull_willUpdate() {
+        /* ARRANGE */
+        final var proxy = factory.create(new ProxyDesc());
+        final var auth = new AuthenticationDesc("key", "value");
+        final var desc = new ProxyDesc(null, null, auth);
+
+        /* ACT */
+        final var result = factory.update(proxy, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertNotNull(proxy.getAuthentication());
+    }
+
+    @Test
+    void update_proxyAuthNotNullAndAuthKeyNullAndValueNotNull_willUpdate() {
+        /* ARRANGE */
+        final var originalDesc =
+                new ProxyDesc(null, null, new AuthenticationDesc("someKey", "someValue"));
+        final var proxy = factory.create(originalDesc);
+        final var auth = new AuthenticationDesc(null, "value");
+        final var desc = new ProxyDesc(null, null, auth);
+
+        /* ACT */
+        final var result = factory.update(proxy, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+
+        final var updatedAuth = proxy.getAuthentication();
+        assertNotNull(updatedAuth);
+        assertEquals("someKey", updatedAuth.getUsername());
+        assertEquals("value", updatedAuth.getPassword());
+    }
+
+    @Test
+    void update_proxyAuthNotNullAndAuthKeyNotNullAndValueNull_willUpdate() {
+        /* ARRANGE */
+        final var originalDesc =
+                new ProxyDesc(null, null, new AuthenticationDesc("someKey", "someValue"));
+        final var proxy = factory.create(originalDesc);
+        final var auth = new AuthenticationDesc("key", null);
+        final var desc = new ProxyDesc(null, null, auth);
+
+        /* ACT */
+        final var result = factory.update(proxy, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+
+        final var updatedAuth = proxy.getAuthentication();
+        assertNotNull(updatedAuth);
+        assertEquals("key", updatedAuth.getUsername());
+        assertEquals("someValue", updatedAuth.getPassword());
+    }
+
+    @Test
+    void update_proxyAuthNotNullAndAuthKeyNotNullAndValueNotNull_willUpdate() {
+        /* ARRANGE */
+        final var originalDesc =
+                new ProxyDesc(null, null, new AuthenticationDesc("someKey", "someValue"));
+        final var proxy = factory.create(originalDesc);
+        final var auth = new AuthenticationDesc("key", "value");
+        final var desc = new ProxyDesc(null, null, auth);
+
+        /* ACT */
+        final var result = factory.update(proxy, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+
+        final var updatedAuth = proxy.getAuthentication();
+        assertNotNull(updatedAuth);
+        assertEquals("key", updatedAuth.getUsername());
+        assertEquals("value", updatedAuth.getPassword());
+    }
+
+    @Test
     void update_newAuth_willUpdate() {
         /* ARRANGE */
         final var desc = new ProxyDesc();
@@ -126,13 +248,15 @@ public class ProxyFactoryTest {
     @Test
     void update_sameAuth_willNotUpdate() {
         /* ARRANGE */
-        final var proxy = factory.create(new ProxyDesc());
+        final var desc = new ProxyDesc();
+        desc.setAuthentication(new AuthenticationDesc("username", "password"));
+        final var proxy = factory.create(desc);
 
         /* ACT */
-        final var result = factory.update(proxy, new ProxyDesc());
+        final var result = factory.update(proxy, desc);
 
         /* ASSERT */
         assertFalse(result);
-        assertNull(proxy.getAuthentication());
+        assertNotNull(proxy.getAuthentication());
     }
 }

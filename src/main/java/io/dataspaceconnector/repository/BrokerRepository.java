@@ -20,6 +20,7 @@ import io.dataspaceconnector.model.broker.Broker;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.util.Optional;
@@ -50,6 +51,7 @@ public interface BrokerRepository extends BaseEntityRepository<Broker> {
      * @param location The uri of the broker.
      * @param status   The uuid of the broker.
      */
+    @Transactional
     @Modifying
     @Query("UPDATE Broker a "
             + "SET a.status = :status "

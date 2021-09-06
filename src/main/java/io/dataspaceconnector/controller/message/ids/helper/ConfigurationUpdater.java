@@ -39,6 +39,7 @@ class ConfigurationUpdater extends IdsHelperProcessor {
 
     /**
      * Updates the connector configuration.
+     *
      * @param exchange the exchange.
      * @throws ConfigUpdateException if updating the configuration fails.
      */

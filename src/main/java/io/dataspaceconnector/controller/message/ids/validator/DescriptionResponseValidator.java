@@ -39,6 +39,7 @@ public class DescriptionResponseValidator extends IdsResponseMessageValidator {
 
     /**
      * Validates the response to a DescriptionRequestMessage.
+     *
      * @param response the response DTO.
      * @throws MessageResponseException if the received response is not valid.
      */

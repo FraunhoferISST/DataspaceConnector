@@ -30,9 +30,8 @@ import java.util.List;
  */
 @Service
 @NoArgsConstructor
-public class ContractRequestedResourceLinker
-        extends NonOwningRelationService<Contract, RequestedResource, ContractService,
-        RequestedResourceService> {
+public class ContractRequestedResourceLinker extends NonOwningRelationService<Contract,
+        RequestedResource, ContractService, RequestedResourceService> {
 
     @Override
     @SuppressWarnings("unchecked")

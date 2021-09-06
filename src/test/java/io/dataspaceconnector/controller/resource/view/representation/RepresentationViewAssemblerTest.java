@@ -15,6 +15,13 @@
  */
 package io.dataspaceconnector.controller.resource.view.representation;
 
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.UUID;
+
 import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.controller.resource.relation.RepresentationsToArtifactsController;
 import io.dataspaceconnector.controller.resource.relation.RepresentationsToOfferedResourcesController;
@@ -32,17 +39,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -51,19 +52,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
 
-@SpringBootTest
+@SpringBootTest(classes = {
+        RepresentationViewAssembler.class
+})
 public class RepresentationViewAssemblerTest {
 
     @Autowired
     private RepresentationViewAssembler representationViewAssembler;
 
-    @Autowired
+    @SpyBean
     private RepresentationFactory representationFactory;
 
-    @Autowired
+    @SpyBean
     private OfferedResourceFactory offeredResourceFactory;
 
-    @Autowired
+    @SpyBean
     private RequestedResourceFactory requestedResourceFactory;
 
     final ZonedDateTime date = ZonedDateTime.now(ZoneOffset.UTC);

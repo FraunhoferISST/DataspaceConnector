@@ -122,7 +122,7 @@ public class XmlRouteLoader {
             justification = "The redundant nullcheck happens inside called method from spring"
     )
     private void loadRoutes(final Resource[] files) throws Exception {
-        for (var file: files) {
+        for (var file : files) {
             try (var inputStream = file.getInputStream()) {
                 loadRoutesFromInputStream(inputStream);
             }

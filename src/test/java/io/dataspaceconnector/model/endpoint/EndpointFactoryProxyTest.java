@@ -17,25 +17,15 @@ package io.dataspaceconnector.model.endpoint;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 
-@SpringBootTest(classes = {EndpointFactoryProxy.class, ConnectorEndpointFactory.class, GenericEndpointFactory.class})
 class EndpointFactoryProxyTest {
-
-    @SpyBean
-    private ConnectorEndpointFactory connectorFactory;
-
-    @SpyBean
-    private GenericEndpointFactory genericFactory;
-
-    @Autowired
-    private EndpointFactoryProxy proxy;
+    private ConnectorEndpointFactory connectorFactory = Mockito.spy(ConnectorEndpointFactory.class);
+    private GenericEndpointFactory genericFactory = Mockito.spy(GenericEndpointFactory.class);
+    private EndpointFactoryProxy proxy = new EndpointFactoryProxy(connectorFactory, genericFactory);
 
     @Test
     public void create_newConnectorEndpoint() {
