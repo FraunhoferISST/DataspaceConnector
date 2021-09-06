@@ -105,14 +105,11 @@ public class ScheduledDataRemoval {
                 if (RuleUtils.checkRuleForPostDuties(rule)) {
                     final var artifactId = artifactService.identifyByRemoteId(rule.getTarget());
 
-                    if (artifactId.isPresent() && !isArtifactDeleted(artifactId.get())) {
+                    if (artifactId.isPresent() && !isDataDeleted(artifactId.get())) {
                         try {
-                            removeDataFromArtifact(artifactId.get()); //Exception if not deleted
-                            setArtifactDeleted(artifactId.get());
-
+                            removeDataFromArtifact(artifactId.get());
                             if (log.isDebugEnabled()) {
-                                log.debug("Removed data from artifact and set artifact"
-                                        + " as deleted. [artifact=({})]", artifactId);
+                                log.debug("Removed data from artifact [artifact=({})]", artifactId);
                             }
                         } catch (IOException | ResourceNotFoundException e) {
                             if (log.isWarnEnabled()) {
@@ -131,19 +128,10 @@ public class ScheduledDataRemoval {
      * Check if an artifact already has the status deleted.
      *
      * @param artifactId The artifact uuid.
-     * @return True if the artifact has the status deleted, false otherwise.
+     * @return True if the artifact data is deleted, false otherwise.
      */
-    private boolean isArtifactDeleted(final UUID artifactId) {
-        return artifactService.get(artifactId).isDeleted();
-    }
-
-    /**
-     * Sets the status of an artifact to deleted.
-     *
-     * @param artifactId The artifact uuid.
-     */
-    private void setArtifactDeleted(final UUID artifactId) {
-        artifactService.setArtifactDeletionStatus(artifactId, true);
+    private boolean isDataDeleted(final UUID artifactId) {
+        return artifactService.isDataDeleted(artifactId);
     }
 
     /**

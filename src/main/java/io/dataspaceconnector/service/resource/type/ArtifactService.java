@@ -433,12 +433,14 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     }
 
     /**
-     * Sets the deleted status of an artifact.
+     * Gets the deleted status of the artifacts data.
      *
      * @param artifactId The artifact uuid.
-     * @param deleted The deleted status to be set.
+     * @return True if artifact data null, else false.
      */
-    public void setArtifactDeletionStatus(final UUID artifactId, final boolean deleted) {
-        ((ArtifactRepository) getRepository()).setArtifactDeleted(artifactId, deleted);
+    public boolean isDataDeleted(final UUID artifactId) {
+        final var artifact = get(artifactId);
+        final var currentData = ((ArtifactImpl) artifact).getData();
+        return currentData == null;
     }
 }
