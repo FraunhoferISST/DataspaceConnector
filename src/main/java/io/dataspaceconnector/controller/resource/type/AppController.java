@@ -218,7 +218,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
             portMappings.put(port, idAndMapping.getJSONObject("Ports").getString(port));
         }
 
-        // Persist containerID.
+        // Persist container id and port mapping of the app.
         getService().setContainerIdForApp(app.getId(), containerId);
         getService().setPortMappingForApp(app.getId(), portMappings);
 
