@@ -441,6 +441,11 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     public boolean isDataDeleted(final UUID artifactId) {
         final var artifact = get(artifactId);
         final var currentData = ((ArtifactImpl) artifact).getData();
-        return currentData == null;
+        if (currentData instanceof LocalData) {
+            return ((LocalData) currentData).getValue() == null;
+        } else {
+            //Only local data deletion supported
+            return false;
+        }
     }
 }
