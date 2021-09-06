@@ -54,7 +54,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
@@ -209,18 +208,11 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         );
 
         // 4. Create Container with given information from AppStore template and new volume.
-        final var idAndMapping = portainerSvc.createContainer(template, volumeMap);
-
-        final var containerId = idAndMapping.getString("Id");
-
-        final var portMappings = new HashMap<String, String>();
-        for (var port : idAndMapping.getJSONObject("Ports").keySet()) {
-            portMappings.put(port, idAndMapping.getJSONObject("Ports").getString(port));
-        }
+        final var containerId = portainerSvc.createContainer(template,
+                volumeMap, app.getEndpoints());
 
         // Persist container id and port mapping of the app.
         getService().setContainerIdForApp(app.getId(), containerId);
-        getService().setPortMappingForApp(app.getId(), portMappings);
 
         // 5. Get "bride" network-id in Portainer
         final var networkId = portainerSvc.getNetworkId("bridge");

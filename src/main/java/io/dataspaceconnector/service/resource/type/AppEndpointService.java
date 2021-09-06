@@ -15,8 +15,10 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import io.dataspaceconnector.model.app.AppEndpointImpl;
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.AppEndpointDesc;
+import io.dataspaceconnector.model.endpoint.AppEndpointFactory;
 import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.routing.RouteHelper;
 import org.springframework.stereotype.Service;
@@ -35,5 +37,16 @@ public class AppEndpointService extends EndpointService<AppEndpoint, AppEndpoint
     public AppEndpointService(final RouteRepository routeRepository,
                               final RouteHelper camelRouteHelper) {
         super(routeRepository, camelRouteHelper);
+    }
+
+    /**
+     * @param appEndpoint The app endpoint.
+     * @param externalPort The external port.
+     */
+    public void setExternalEndpoint(final AppEndpointImpl appEndpoint,
+                                    final int externalPort) {
+
+        ((AppEndpointFactory) getFactory()).setExternalPort(appEndpoint, externalPort);
+        getRepository().save(appEndpoint);
     }
 }

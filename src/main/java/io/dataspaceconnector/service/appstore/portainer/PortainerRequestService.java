@@ -18,6 +18,9 @@ package io.dataspaceconnector.service.appstore.portainer;
 import de.fraunhofer.ids.messaging.protocol.http.HttpService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.PortainerNotConfigured;
+import io.dataspaceconnector.model.app.AppEndpointImpl;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
+import io.dataspaceconnector.service.resource.type.AppEndpointService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -35,6 +38,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -58,6 +62,11 @@ public class PortainerRequestService {
      * Service for http connections.
      */
     private final @NonNull PortainerConfig portainerConfig;
+
+    /**
+     * Service for app.
+     */
+    private final @NonNull AppEndpointService appEndpointService;
 
     /**
      * Start index for sub string method.
@@ -705,7 +714,7 @@ public class PortainerRequestService {
      * Create container volumes from AppStore template.
      *
      * @param appStoreTemplate The template provided by the AppStore describing 1 App.
-     * @param appID UUID of the app volume is created for
+     * @param appID            UUID of the app volume is created for
      * @return Map of portainer responses for every volume to create.
      * @throws IOException If an error occurs while connecting to portainer.
      */
@@ -750,7 +759,7 @@ public class PortainerRequestService {
             builder.url(url);
             builder.post(
                     RequestBody.create(req.toString(), MediaType.parse(API_MEDIA_TYPE)
-            ));
+                    ));
 
             final var request = builder.build();
             final var response = httpService.send(request);
@@ -766,12 +775,14 @@ public class PortainerRequestService {
      *
      * @param appStoreTemplate The template provided by the AppStore describing 1 App.
      * @param volumes          the map for volume names used in the template.
+     * @param appEndpoints     The list of app endpoints.
      * @return portainer response.
      * @throws IOException If an error occurs while connecting to portainer.
      */
-    public JSONObject createContainer(
+    public String createContainer(
             final String appStoreTemplate,
-            final Map<String, String> volumes
+            final Map<String, String> volumes,
+            final List<AppEndpoint> appEndpoints
     ) throws IOException {
         final var templateObject = toJsonObject(appStoreTemplate);
         final var image = templateObject.getString("image");
@@ -820,13 +831,12 @@ public class PortainerRequestService {
         //extract port mappings to put into returned json
         final var portBindings = jsonPayload.getJSONObject("HostConfig")
                 .getJSONObject("PortBindings");
-        final var portMap = new HashMap<String, String>();
-        for (var port : portBindings.keySet()) {
-            portMap.put(
-                    String.format("%s:%s", port, portLabelMap.get(port)),
-                    portBindings.getJSONArray(port).getJSONObject(0)
-                            .getString("HostPort")
-            );
+        for (var appEndpoint : appEndpoints) {
+            final var externalPort = portBindings
+                    .getJSONArray(String.valueOf(appEndpoint.getEndpointPort()))
+                    .getJSONObject(0).getString("HostPort");
+            appEndpointService.setExternalEndpoint((AppEndpointImpl) appEndpoint,
+                    Integer.parseInt(externalPort));
         }
 
         final var request = builder.build();
@@ -840,11 +850,8 @@ public class PortainerRequestService {
 
         updateOwnerShip(resourceId);
 
-        //return container id and port mappings
-        var responseJson = new JSONObject();
-        responseJson.put("Id", new JSONObject(body).getString("Id"));
-        responseJson.put("Ports", new JSONObject(portMap));
-        return responseJson;
+        //return container id
+        return new JSONObject(body).getString("Id");
     }
 
     /**
