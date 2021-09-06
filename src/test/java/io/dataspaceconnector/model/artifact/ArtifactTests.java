@@ -22,13 +22,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ArtifactTests {
 
     @Test
-    public void randomTests() {
+    public void incrementAccessCounter_willAddOnlyOne() {
         ArtifactDesc desc = new ArtifactDesc();
         ArtifactFactory factory = new ArtifactFactory();
         var artifact = factory.create(desc);
 
+        final var before = artifact.getNumAccessed();
+
         artifact.incrementAccessCounter();
 
         assertEquals(1, artifact.getNumAccessed());
+        assertEquals(0, before);
     }
 }

@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -39,6 +40,7 @@ class ConfigurationServiceTest {
     private ConfigurationService service;
 
     @Test
+    @Transactional
     public void swapActiveConfig_hasActiveConfig_willSetPassedConfigAsActiveAndTheOldOneAsInActive()
             throws ConfigUpdateException {
         /* ARRANGE */

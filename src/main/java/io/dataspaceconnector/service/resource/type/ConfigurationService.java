@@ -17,21 +17,19 @@ package io.dataspaceconnector.service.resource.type;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import io.dataspaceconnector.common.runtime.ServiceResolver;
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
+import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.ConfigurationRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
 import io.dataspaceconnector.service.resource.ids.builder.IdsConfigModelBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -39,18 +37,15 @@ import java.util.UUID;
 /**
  * Service class for the configuration.
  */
-@Service
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.NONE)
-@RequiredArgsConstructor
-@Transactional
 @Log4j2
 public class ConfigurationService extends BaseEntityService<Configuration, ConfigurationDesc> {
 
     /**
      * The current context.
      */
-    private final @NonNull ApplicationContext context;
+    private final @NonNull ServiceResolver svcResolver;
 
     /**
      * Builds the ids config.
@@ -58,7 +53,24 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
     private final @NonNull IdsConfigModelBuilder configBuilder;
 
     /**
-     * Try too find the active configuration.
+     * Constructor.
+     *
+     * @param repository       The configuration repository.
+     * @param factory          The configuration logic.
+     * @param resolver         The application context.
+     * @param idsConfigBuilder The ids Config model builder.
+     */
+    public ConfigurationService(final BaseEntityRepository<Configuration> repository,
+                                final AbstractFactory<Configuration, ConfigurationDesc> factory,
+                                final @NonNull ServiceResolver resolver,
+                                final @NonNull IdsConfigModelBuilder idsConfigBuilder) {
+        super(repository, factory);
+        this.svcResolver = resolver;
+        this.configBuilder = idsConfigBuilder;
+    }
+
+    /**
+     * Try to find the active configuration.
      *
      * @return The active configuration if it exists.
      */
@@ -68,6 +80,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
 
     /**
      * Get the active configuration.
+     *
      * @return The active configuration.
      */
     public Configuration getActiveConfig() {
@@ -101,7 +114,9 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
         reload(newConfig);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Configuration update(final UUID entityId, final ConfigurationDesc desc) {
         final var config = super.update(entityId, desc);
@@ -110,7 +125,8 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
             if (activeConfig.isPresent() && activeConfig.get().getId().equals(config.getId())) {
                 reload(config.getId());
             }
-        } catch (ConfigUpdateException ignored) { }
+        } catch (ConfigUpdateException ignored) {
+        }
 
         return config;
     }
@@ -122,24 +138,17 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
     }
 
     private void reload(final UUID newConfig) throws ConfigUpdateException {
-        final var configContainer = findConfigContainer();
+        final var configContainer = svcResolver.getService(ConfigContainer.class);
         if (configContainer.isPresent()) {
             final var activeConfig = getActiveConfig();
             final var configuration = configBuilder.create(activeConfig);
             configContainer.get().updateConfiguration(configuration);
             if (log.isInfoEnabled()) {
-               log.info("Changing configuration profile [id=({})]", newConfig);
+                log.info("Changing configuration profile [id=({})]", newConfig);
             }
 
             // TODO Change loglevel during runtime.
         }
     }
 
-    private Optional<ConfigContainer> findConfigContainer() {
-        try {
-            return Optional.of(context.getBean(ConfigContainer.class));
-        } catch (NoSuchBeanDefinitionException ignored) { }
-
-        return Optional.empty();
-    }
 }

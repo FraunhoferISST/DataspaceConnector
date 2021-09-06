@@ -15,19 +15,22 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
-import org.junit.jupiter.api.Test;
-
 import java.net.URI;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AppEndpointFactoryTest {
 
     final AppEndpointFactory factory = new AppEndpointFactory();
 
     @Test
-    void create_validDesc_returnNew() {
+    void create_emptyDesc_returnNew() {
         /* ARRANGE */
         final var desc = new AppEndpointDesc();
 
@@ -36,6 +39,34 @@ public class AppEndpointFactoryTest {
 
         /* ASSERT */
         assertNotNull(result);
+    }
+
+    @Test
+    void create_validDesc_returnNew() {
+        /* ARRANGE */
+        final var desc = new AppEndpointDesc();
+        desc.setLanguage("language");
+        desc.setEndpointPort(6666);
+        desc.setEndpointType("generic");
+        desc.setProtocol("http");
+        desc.setMediaType("json");
+        desc.setDocs(URI.create("https://docs"));
+        desc.setInfo("info");
+        desc.setLocation(URI.create("https://location"));
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertNotNull(result);
+        assertEquals(desc.getLanguage(), result.getLanguage());
+        assertEquals(desc.getEndpointPort(), result.getEndpointPort());
+        assertEquals(desc.getEndpointType(), result.getEndpointType());
+        assertEquals(desc.getProtocol(), result.getProtocol());
+        assertEquals(desc.getMediaType(), result.getMediaType());
+        assertEquals(desc.getDocs(), result.getDocs());
+        assertEquals(desc.getInfo(), result.getInfo());
+        assertEquals(desc.getLocation(), result.getLocation());
     }
 
     @Test

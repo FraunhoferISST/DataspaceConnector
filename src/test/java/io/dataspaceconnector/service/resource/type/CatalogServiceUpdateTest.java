@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
 import io.dataspaceconnector.model.catalog.CatalogFactory;
@@ -22,39 +25,26 @@ import io.dataspaceconnector.repository.CatalogRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(classes = {CatalogService.class})
 public class CatalogServiceUpdateTest {
-
-    @SpyBean
-    private CatalogFactory factory;
-
-    @MockBean
-    private CatalogRepository repository;
+    private CatalogFactory factory = Mockito.spy(CatalogFactory.class);
+    private CatalogRepository repository = Mockito.mock(CatalogRepository.class);
 
     Catalog newCatalog;
     Catalog updatedCatalog;
 
     UUID validId = UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e");
 
-    @Autowired
-    @InjectMocks
     private CatalogService service;
 
     @BeforeEach
     public void init() {
+        service = new CatalogService(repository, factory);
+
         newCatalog = getCatalogFromValidDesc(validId, getNewCatalog(getValidDesc()));
         updatedCatalog = getCatalogFromValidDesc(validId, getNewCatalog(getUpdatedValidDesc()));
 

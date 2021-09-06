@@ -39,6 +39,7 @@ public class ContractAgreementPersistenceProcessor extends IdsResponseProcessor 
 
     /**
      * Persists the contract agreement.
+     *
      * @param exchange the exchange.
      */
     @Override

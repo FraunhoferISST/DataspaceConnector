@@ -30,9 +30,8 @@ import java.util.List;
  */
 @Service
 @NoArgsConstructor
-public class RequestedResourceSubscriptionLinker
-        extends OwningRelationService<RequestedResource, Subscription,
-        RequestedResourceService, SubscriptionService> {
+public class RequestedResourceSubscriptionLinker extends OwningRelationService<RequestedResource,
+        Subscription, RequestedResourceService, SubscriptionService> {
 
     /**
      * Returns the list of subscriptions owned by a given requested resource.

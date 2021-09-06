@@ -15,9 +15,11 @@
  */
 package io.dataspaceconnector.controller.resource.view.subscription;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.controller.resource.type.SubscriptionController;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.subscription.Subscription;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -25,14 +27,12 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 /**
  * Assembles the REST resource for a subscription.
  */
 @Component
 @NoArgsConstructor
-public class SubscriptionViewAssembler
+public class SubscriptionViewAssembler extends SelfLinkHelper
         implements RepresentationModelAssembler<Subscription, SubscriptionView>, SelfLinking {
 
     /**
@@ -58,8 +58,7 @@ public class SubscriptionViewAssembler
      */
     @Override
     public Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId,
-                SubscriptionController.class);
+        return getSelfLink(entityId, SubscriptionController.class);
     }
 
 }

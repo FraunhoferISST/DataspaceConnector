@@ -19,6 +19,7 @@ import io.dataspaceconnector.model.artifact.Artifact;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.util.List;
@@ -83,6 +84,7 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
      * @param checkSum   The new CRC32C checksum.
      * @param size       The new size in bytes.
      */
+    @Transactional
     @Modifying
     @Query("UPDATE Artifact a "
             + "SET a.checkSum=:checkSum, a.byteSize=:size "

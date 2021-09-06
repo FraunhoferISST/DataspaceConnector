@@ -104,7 +104,7 @@ public final class FromIdsObjectMapper {
         final var catalogDesc = new CatalogDesc();
         catalogDesc.setAdditional(additional);
         catalogDesc.setTitle("IDS Catalog");
-        catalogDesc.setDescription("This catalog is created from an IDS infomodel catalog.");
+        catalogDesc.setDescription("This catalog is created from an IDS catalog.");
         catalogDesc.setBootstrapId(catalog.getId());
 
         return new CatalogTemplate(catalogDesc, null, null);
@@ -680,14 +680,16 @@ public final class FromIdsObjectMapper {
 
         try {
             switch ((PaymentModality) modality) {
+                case FREE:
+                    return PaymentMethod.FREE;
                 case FIXED_PRICE:
                     return PaymentMethod.FIXED_PRICE;
                 case NEGOTIATION_BASIS:
                     return PaymentMethod.NEGOTIATION_BASIS;
                 default:
-                    return PaymentMethod.FREE;
+                    return PaymentMethod.UNDEFINED;
             }
-        } catch (Exception exception) {
+        } catch (ClassCastException exception) {
             if (log.isDebugEnabled()) {
                 log.debug("Could not read payment modality from incoming resource. "
                         + "[resourceId=({}), modality=({})]", id, modality.toString());

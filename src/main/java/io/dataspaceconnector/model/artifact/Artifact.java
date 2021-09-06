@@ -109,6 +109,7 @@ public abstract class Artifact extends NamedEntity implements RemoteObject {
      * Increment the data access counter.
      */
     public void incrementAccessCounter() {
+        assert numAccessed >= 0;
         numAccessed += 1;
     }
 

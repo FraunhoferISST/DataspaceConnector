@@ -15,18 +15,18 @@
  */
 package io.dataspaceconnector.controller.resource.view.app;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.relation.AppsToEndpointsController;
 import io.dataspaceconnector.controller.resource.type.AppController;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.app.App;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -35,7 +35,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * Assembles the REST resource for an app.
  */
 @Component
-public class AppViewAssembler implements RepresentationModelAssembler<App, AppView>, SelfLinking {
+public class AppViewAssembler extends SelfLinkHelper
+        implements RepresentationModelAssembler<App, AppView>, SelfLinking {
 
     @Override
     public final AppView toModel(final App app) {
@@ -53,7 +54,7 @@ public class AppViewAssembler implements RepresentationModelAssembler<App, AppVi
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, AppController.class);
+        return getSelfLink(entityId, AppController.class);
     }
 
 }
