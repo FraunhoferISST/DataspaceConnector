@@ -245,10 +245,11 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Setup environment
         run: |
-          curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE=777 sh -
+          curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE=666 sh -
           cat /etc/rancher/k3s/k3s.yaml
           mkdir -p ~/.kube
           cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+          chmod 600 ~/.kube/config
       - name: Test environment
         run: |
           kubectl cluster-info
