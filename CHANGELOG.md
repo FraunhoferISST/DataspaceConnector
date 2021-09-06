@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Refactor and speed up tests.
 - Increase checkstyle version from 8.45.1 to 9.0.0.
 - Increase pmd version from 6.37.0 to 6.38.0.
+- Increase IDS messaging services version from 4.2.2 to 4.3.0.
 - Increase pitest version from 1.69.0 to 1.70.0.
 - Resolve spotbugs warnings.
 
