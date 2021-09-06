@@ -37,4 +37,19 @@ class ApiKeyTest {
         assertTrue(args.getHeaders().containsKey(key));
         assertEquals(value, args.getHeaders().get(key));
     }
+    @Test
+    void getAuthPair_validContent_setterWillOverwrite_setHeader() {
+        /* ARRANGE */
+        var key = "key";
+        var value = "value";
+        var apiKey = new ApiKey("1", "2");
+
+        /* ACT */
+        apiKey.setKey(key);
+        apiKey.setValue(value);
+
+        /* ASSERT */
+        assertEquals(key, apiKey.getKey());
+        assertEquals(value, apiKey.getValue());
+    }
 }

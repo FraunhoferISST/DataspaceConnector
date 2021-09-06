@@ -35,6 +35,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(BasePath.DATA_SOURCES)
 @RequiredArgsConstructor
 @Tag(name = ResourceName.DATA_SOURCES, description = ResourceDescription.DATA_SOURCES)
-public class DataSourceController extends BaseResourceController<DataSource,
-        DataSourceDesc, DataSourceView, DataSourceService> {
+public class DataSourceController extends BaseResourceController<DataSource, DataSourceDesc,
+        DataSourceView, DataSourceService> {
 }

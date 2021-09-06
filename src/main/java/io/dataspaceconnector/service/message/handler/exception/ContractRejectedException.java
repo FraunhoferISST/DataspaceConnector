@@ -46,7 +46,7 @@ public class ContractRejectedException extends RuntimeException {
      * message and detail message.
      *
      * @param issuer the issuer connector.
-     * @param message the request message ID.
+     * @param message the request message id.
      * @param msg the detail message.
      */
     public ContractRejectedException(final URI issuer, final URI message, final String msg) {

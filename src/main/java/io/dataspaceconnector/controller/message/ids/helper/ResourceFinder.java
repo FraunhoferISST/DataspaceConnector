@@ -43,6 +43,7 @@ class ResourceFinder extends IdsHelperProcessor {
     /**
      * Finds the resource with the ID from the exchange properties and sets it as the exchange's
      * body.
+     *
      * @param exchange the exchange.
      * @throws ResourceNotFoundException if no resource with the given ID exists.
      */

@@ -18,8 +18,8 @@ package io.dataspaceconnector.controller.resource.view.appstore;
 import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.relation.AppStoresToAppsController;
 import io.dataspaceconnector.controller.resource.type.AppStoreController;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.appstore.AppStore;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
@@ -35,8 +35,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * Assembles the REST resource for an app store.
  */
 @Component
-public class AppStoreViewAssembler implements RepresentationModelAssembler<AppStore,
-        AppStoreView>, SelfLinking {
+public class AppStoreViewAssembler extends SelfLinkHelper
+        implements RepresentationModelAssembler<AppStore, AppStoreView>, SelfLinking {
 
     @Override
     public final AppStoreView toModel(final AppStore appStore) {
@@ -53,7 +53,7 @@ public class AppStoreViewAssembler implements RepresentationModelAssembler<AppSt
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, AppStoreController.class);
+        return getSelfLink(entityId, AppStoreController.class);
     }
 
 }

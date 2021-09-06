@@ -15,6 +15,13 @@
  */
 package io.dataspaceconnector.controller.resource.view.resource;
 
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.UUID;
+
 import io.dataspaceconnector.controller.resource.relation.OfferedResourcesToCatalogsController;
 import io.dataspaceconnector.controller.resource.relation.OfferedResourcesToContractsController;
 import io.dataspaceconnector.controller.resource.relation.OfferedResourcesToRepresentationsController;
@@ -26,17 +33,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -45,13 +46,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
 
-@SpringBootTest
+@SpringBootTest(classes = {
+        OfferedResourceViewAssembler.class
+})
 public class OfferedResourceViewAssemblerTest {
 
     @Autowired
     private OfferedResourceViewAssembler offeredResourceViewAssembler;
 
-    @Autowired
+    @SpyBean
     private OfferedResourceFactory offeredResourceFactory;
 
     @Test

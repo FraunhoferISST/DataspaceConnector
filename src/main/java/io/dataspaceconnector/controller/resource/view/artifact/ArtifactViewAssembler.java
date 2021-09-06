@@ -22,7 +22,7 @@ import io.dataspaceconnector.controller.resource.relation.ArtifactsToRepresentat
 import io.dataspaceconnector.controller.resource.relation.ArtifactsToSubscriptionsController;
 import io.dataspaceconnector.controller.resource.type.ArtifactController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.model.artifact.Artifact;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
@@ -41,7 +41,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  */
 @Component
 @NoArgsConstructor
-public class ArtifactViewAssembler
+public class ArtifactViewAssembler extends SelfLinkHelper
         implements RepresentationModelAssembler<Artifact, ArtifactView>, SelfLinking {
     /**
      * Construct the ArtifactView from an Artifact.
@@ -81,6 +81,6 @@ public class ArtifactViewAssembler
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, ArtifactController.class);
+        return getSelfLink(entityId, ArtifactController.class);
     }
 }

@@ -16,14 +16,11 @@
 package io.dataspaceconnector.model.catalog;
 
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 
 /**
  * Creates and updates a catalog.
  */
-@Component
 public class CatalogFactory extends AbstractNamedFactory<Catalog, CatalogDesc> {
 
     /**

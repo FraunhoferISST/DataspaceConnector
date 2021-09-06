@@ -42,6 +42,7 @@ public class MetadataPersistenceProcessor extends IdsResponseProcessor {
 
     /**
      * Persists the metadata.
+     *
      * @param exchange the exchange.
      */
     @Override

@@ -41,6 +41,7 @@ public class DapsTokenMethodSecurityConfig extends GlobalMethodSecurityConfigura
 
     /**
      * Set the token provider.
+     *
      * @param validator The token validator.
      */
     @Autowired

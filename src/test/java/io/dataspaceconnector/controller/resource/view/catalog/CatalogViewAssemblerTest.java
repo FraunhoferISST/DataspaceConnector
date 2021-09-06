@@ -17,7 +17,6 @@ package io.dataspaceconnector.controller.resource.view.catalog;
 
 import io.dataspaceconnector.controller.resource.relation.CatalogsToOfferedResourcesController;
 import io.dataspaceconnector.controller.resource.type.CatalogController;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
 import io.dataspaceconnector.model.catalog.CatalogFactory;
@@ -25,6 +24,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,16 +42,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @SpringBootTest(classes = {
-        CatalogViewAssembler.class,
-        ViewAssemblerHelper.class,
-        CatalogFactory.class
+        CatalogViewAssembler.class
 })
 public class CatalogViewAssemblerTest {
 
     @Autowired
     private CatalogViewAssembler catalogViewAssembler;
 
-    @Autowired
+    @SpyBean
     private CatalogFactory catalogFactory;
 
     @Test

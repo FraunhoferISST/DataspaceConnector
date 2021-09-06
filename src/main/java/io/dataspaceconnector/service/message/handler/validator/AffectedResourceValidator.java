@@ -36,10 +36,10 @@ class AffectedResourceValidator extends IdsValidator<Request<ResourceUpdateMessa
         MessagePayload, Optional<Jws<Claims>>>> {
 
     /**
-     * Checks whether the resource ID given in a ResourceUpdateMessage is null or empty.
+     * Checks whether the resource id given in a ResourceUpdateMessage is null or empty.
      *
      * @param message the incoming message.
-     * @throws Exception if the ID is null or empty.
+     * @throws Exception if the id is null or empty.
      */
     @Override
     protected void processInternal(final Request<ResourceUpdateMessageImpl,

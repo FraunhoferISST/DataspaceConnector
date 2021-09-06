@@ -17,7 +17,7 @@ package io.dataspaceconnector.controller.resource.view.configuration;
 
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.controller.resource.type.ConfigurationController;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
 import io.dataspaceconnector.model.configuration.ConfigurationFactory;
@@ -46,7 +46,7 @@ public class ConfigurationViewAssemblerTest {
     public void create_ValidBroker_returnBrokerView() {
         /* ARRANGE */
         final var shouldLookLike = getConfiguration();
-        final var link = ViewAssemblerHelper.
+        final var link = new SelfLinkHelper().
                 getSelfLink(shouldLookLike.getId(), ConfigurationController.class);
 
         /* ACT */

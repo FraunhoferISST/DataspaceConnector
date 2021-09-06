@@ -16,9 +16,9 @@
 package io.dataspaceconnector.model.auth;
 
 import io.dataspaceconnector.common.net.HttpService.HttpArgs;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -33,9 +33,8 @@ import java.util.HashMap;
  */
 @Entity
 @Getter
-@Setter
+@Setter(AccessLevel.PACKAGE)
 @RequiredArgsConstructor
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @SQLDelete(sql = "UPDATE authentication SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")

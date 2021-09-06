@@ -15,19 +15,24 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.datasource.DataSource;
 import io.dataspaceconnector.model.datasource.DataSourceDesc;
+import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 /**
  * Service class for data sources.
  */
-@Service
-@Getter(AccessLevel.PACKAGE)
-@RequiredArgsConstructor
 public class DataSourceService extends BaseEntityService<DataSource, DataSourceDesc> {
+    /**
+     * Constructor.
+     *
+     * @param repository The dataSource repository.
+     * @param factory    THe dataSource factory.
+     */
+    public DataSourceService(final BaseEntityRepository<DataSource> repository,
+                             final AbstractFactory<DataSource, DataSourceDesc> factory) {
+        super(repository, factory);
+    }
 }

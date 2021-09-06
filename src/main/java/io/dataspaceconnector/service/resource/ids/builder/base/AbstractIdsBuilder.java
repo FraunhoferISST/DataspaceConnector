@@ -15,6 +15,13 @@
  */
 package io.dataspaceconnector.service.resource.ids.builder.base;
 
+import de.fraunhofer.iais.eis.ModelClass;
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
+import io.dataspaceconnector.common.util.Utils;
+import io.dataspaceconnector.model.base.Entity;
+import lombok.NoArgsConstructor;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -22,12 +29,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import de.fraunhofer.iais.eis.ModelClass;
-import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import io.dataspaceconnector.common.net.SelfLinkHelper;
-import io.dataspaceconnector.common.util.Utils;
-import io.dataspaceconnector.model.base.Entity;
-import lombok.NoArgsConstructor;
 /**
  * The base class for constructing an ids object from DSC objects.
  *
@@ -43,7 +44,7 @@ public abstract class AbstractIdsBuilder<T extends Entity, X extends ModelClass>
     public static final int DEFAULT_DEPTH = -1;
 
     /**
-     * Convert an DSC object to an ids object. The default depth will be used to determine the
+     * Convert a DSC object to an ids object. The default depth will be used to determine the
      * when to stop following dependencies.
      *
      * @param entity The entity to be converted.
@@ -54,7 +55,7 @@ public abstract class AbstractIdsBuilder<T extends Entity, X extends ModelClass>
     }
 
     /**
-     * Convert an DSC object to an ids object.
+     * Convert a DSC object to an ids object.
      *
      * @param entity   The entity to be converted.
      * @param maxDepth The depth determines when to stop following dependencies. Set this value to a
@@ -76,8 +77,8 @@ public abstract class AbstractIdsBuilder<T extends Entity, X extends ModelClass>
     }
 
     /**
-     * This is the type specific call for converting an DSC object to an Infomodel object. The
-     * additional field will be set automatically.
+     * This is the type specific call for converting a DSC object to an ids object. The additional
+     * field will be set automatically.
      *
      * @param entity       The entity to be converted.
      * @param currentDepth The current distance to the original call.
@@ -90,8 +91,8 @@ public abstract class AbstractIdsBuilder<T extends Entity, X extends ModelClass>
     /**
      * Use this function to construct the absolute path to this entity.
      *
-     * @param entity  The entity.
-     * @param <K>     The entity type.
+     * @param entity The entity.
+     * @param <K>    The entity type.
      * @return The absolute path to this entity.
      */
     protected <K extends Entity> URI getAbsoluteSelfLink(final K entity) {
