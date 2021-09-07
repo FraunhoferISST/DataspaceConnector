@@ -13,7 +13,7 @@ All notable changes to this project will be documented in this file.
 - Increase pmd version from 6.37.0 to 6.38.0.
 - Increase IDS messaging services version from 4.2.2 to 4.3.0.
 - Increase pitest version from 1.69.0 to 1.70.0.
-- Increase dependency-check-maven from 6.2.2 to 6.3.1.
+- Increase dependency-check-maven version from 6.2.2 to 6.3.1.
 - Resolve spotbugs warnings.
 
 ## [6.2.0] - 2021-09-01
