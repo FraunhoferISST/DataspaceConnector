@@ -32,6 +32,7 @@ import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.app.AppImpl;
 import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
+import io.dataspaceconnector.service.resource.type.AppEndpointService;
 import io.dataspaceconnector.service.resource.type.AppService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,9 +55,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -72,6 +75,11 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
      * Portainer request service.
      */
     private final @NonNull PortainerRequestService portainerSvc;
+
+    /**
+     * Service for app.
+     */
+    private final @NonNull AppEndpointService appEndpointSvc;
 
     @Hidden
     @ApiResponses(value = {
@@ -214,14 +222,9 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         final var containerId = portainerSvc.createContainer(template,
                 volumeMap, app.getEndpoints());
 
-        // 5. Get container name from the description of the container.
+        // 5. Get container description from portainer (e.g. randomly created container-name).
         final var containerDesc = portainerSvc.getDescriptionByContainerId(containerId);
-        final var jsonName = new JSONObject(containerDesc.body().string()).getString("Name");
-        final var containerName = jsonName.substring(jsonName.indexOf("/") + 1);
-
-        // Persist container id and name.
-        getService().setContainerIdForApp(app.getId(), containerId);
-        getService().setContainerName(app.getId(), containerName);
+        persistContainerData(app, containerId, containerDesc);
 
         // 6. Get "bride" network-id in Portainer
         final var networkId = portainerSvc.getNetworkId("bridge");
@@ -233,6 +236,38 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         portainerSvc.deleteRegistry(registryId);
 
         return containerId;
+    }
+
+    /**
+     * Persists the portainer container data, e.g. Container-ID, Container-Name and
+     * Endpoint-AccessURLs.
+     *
+     * @param app The app currently being deployed.
+     * @param containerId The portainer container id.
+     * @param containerDesc The portainer container description.
+     * @throws IOException If connection to Portainer threw exception.
+     */
+    private void persistContainerData(final App app,
+                                      final String containerId,
+                                      final Response containerDesc) throws IOException {
+        final var portainerContainerName = new JSONObject(
+                Objects.requireNonNull(containerDesc.body()).string()).getString("Name");
+
+        // Note: Portainer places a leading "/" in front of container-name, needs to be removed
+        final var containerName = portainerContainerName
+                .substring(portainerContainerName.indexOf("/") + 1);
+
+        //Persist container id and name.
+        getService().setContainerIdForApp(app.getId(), containerId);
+        getService().setContainerName(app.getId(), containerName);
+
+        //Generate endpoint accessURLs depending on deployment information.
+        for (final var endpoint : app.getEndpoints()) {
+            //TODO: http or https?
+            //TODO: location from template could be added after exposed port
+            final var location = "http://" + containerName + ":" + endpoint.getExposedPort();
+            appEndpointSvc.setLocation(endpoint, URI.create(location));
+        }
     }
 
     /**

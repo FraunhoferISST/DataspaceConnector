@@ -23,6 +23,8 @@ import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.routing.RouteHelper;
 
+import java.net.URI;
+
 /**
  * Service class for app endpoints.
  */
@@ -51,6 +53,16 @@ public class AppEndpointService extends EndpointService<AppEndpointImpl, AppEndp
                                     final int externalPort) {
         final var updatedAppEndpoint = ((AppEndpointFactory) getFactory())
                 .setExternalPort(appEndpoint, externalPort);
+        getRepository().save(updatedAppEndpoint);
+    }
+
+    /**
+     * @param appEndpoint The app endpoint.
+     * @param location The location URI (access URL) of the AppEndpoint.
+     */
+    public void setLocation(final AppEndpointImpl appEndpoint, final URI location) {
+        final var updatedAppEndpoint = ((AppEndpointFactory) getFactory())
+                .setLocation(appEndpoint, location);
         getRepository().save(updatedAppEndpoint);
     }
 }
