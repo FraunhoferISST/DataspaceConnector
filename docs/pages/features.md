@@ -84,6 +84,6 @@ Connector's REST API.
 
 | Component | License | Owner | Contact |
 |:--------|:--------|:------|:--------|
-| [IDS Broker](https://broker.ids.isst.fraunhofer.de/) | [open core](https://github.com/International-Data-Spaces-Association/metadata-broker-open-core) | Fraunhofer IAIS | [E-Mail](mailto:contact@ids.fraunhofer.de) |
+| [IDS Broker](https://broker.ids.isst.fraunhofer.de/) | [Apache 2.0](https://github.com/International-Data-Spaces-Association/metadata-broker-open-core) | Fraunhofer IAIS | [E-Mail](mailto:contact@ids.fraunhofer.de) |
 | [DAPS](https://daps.aisec.fraunhofer.de/) | [Apache 2.0](https://github.com/Fraunhofer-AISEC/omejdn-server) | Fraunhofer AISEC | [Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de) |
-| [ParIS](https://paris.ids.isst.fraunhofer.de/) | [open core](https://github.com/International-Data-Spaces-Association/ParIS-open-core) | Fraunhofer IAIS | [E-Mail](mailto:contact@ids.fraunhofer.de)
+| [ParIS](https://paris.ids.isst.fraunhofer.de/) | [Apache 2.0](https://github.com/International-Data-Spaces-Association/ParIS-open-core) | Fraunhofer IAIS | [E-Mail](mailto:contact@ids.fraunhofer.de)
