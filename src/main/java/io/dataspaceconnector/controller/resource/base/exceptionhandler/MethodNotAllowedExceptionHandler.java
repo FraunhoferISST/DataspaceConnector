@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Order(1)
 public class MethodNotAllowedExceptionHandler {
     /**
-     * Handle {@link MethodNotAllowed}.
+     * Handles thrown {@link MethodNotAllowed}.
      *
      * @return Response entity with code 405.
      */

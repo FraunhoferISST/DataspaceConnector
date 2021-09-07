@@ -35,7 +35,7 @@ class CorrectAffectedResourceValidator extends IdsValidator<Request<ResourceUpda
         Resource, Optional<Jws<Claims>>>> {
 
     /**
-     * Checks whether the resource ID given in a ResourceUpdateMessage matches the resource ID in
+     * Checks whether the resource id given in a ResourceUpdateMessage matches the resource ID in
      * the message's payload.
      *
      * @param msg the incoming message.

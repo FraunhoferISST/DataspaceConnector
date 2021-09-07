@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.common.ids;
 
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
@@ -43,16 +47,10 @@ import io.dataspaceconnector.service.resource.type.CatalogService;
 import io.dataspaceconnector.service.resource.type.OfferedResourceService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.Mockito;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -66,32 +64,23 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {ConnectorService.class})
 public class ConnectorServiceTest {
 
-    @MockBean
-    private DeserializationService deserializationService;
+    private ConfigContainer configContainer = Mockito.mock(ConfigContainer.class);
+    private CatalogService catalogService = Mockito.mock(CatalogService.class);
+    private IdsCatalogBuilder catalogBuilder = Mockito.mock(IdsCatalogBuilder.class);
+    @SuppressWarnings("unchecked")
+    private IdsResourceBuilder<OfferedResource> resourceBuilder = Mockito.mock(IdsResourceBuilder.class);
+    private OfferedResourceService offeredResourceService = Mockito.mock(OfferedResourceService.class);
 
-    @MockBean
-    private ConfigContainer configContainer;
-
-    @MockBean
-    private DapsTokenProvider tokenProvider;
-
-    @MockBean
-    private CatalogService catalogService;
-
-    @MockBean
-    private IdsCatalogBuilder catalogBuilder;
-
-    @MockBean
-    private IdsResourceBuilder<OfferedResource> resourceBuilder;
-
-    @MockBean
-    private OfferedResourceService offeredResourceService;
-
-    @Autowired
-    private ConnectorService connectorService;
+    private ConnectorService connectorService = new ConnectorService(
+            configContainer,
+            Mockito.mock(DapsTokenProvider.class),
+            catalogService,
+            catalogBuilder,
+            resourceBuilder,
+            offeredResourceService
+    );
 
     @Test
     public void getConnectorWithOfferedResources_returnConnectorWithCatalog() {

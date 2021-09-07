@@ -15,28 +15,6 @@
  */
 package io.dataspaceconnector.extension.bootstrap;
 
-import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
-import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
-import de.fraunhofer.iais.eis.TokenFormat;
-import de.fraunhofer.ids.messaging.requests.MessageContainer;
-import io.dataspaceconnector.common.util.Utils;
-import io.dataspaceconnector.model.catalog.Catalog;
-import io.dataspaceconnector.model.resource.OfferedResource;
-import io.dataspaceconnector.model.resource.OfferedResourceDesc;
-import io.dataspaceconnector.model.template.CatalogTemplate;
-import io.dataspaceconnector.service.message.GlobalMessageService;
-import io.dataspaceconnector.service.resource.type.CatalogService;
-import io.dataspaceconnector.service.resource.TemplateBuilder;
-import lombok.SneakyThrows;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Pageable;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.util.ReflectionTestUtils;
-
 import javax.xml.datatype.DatatypeFactory;
 import java.net.URI;
 import java.util.ArrayList;
@@ -47,10 +25,29 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
+import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
+import de.fraunhofer.iais.eis.TokenFormat;
+import de.fraunhofer.ids.messaging.requests.MessageContainer;
+import io.dataspaceconnector.common.util.Utils;
+import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.template.CatalogTemplate;
+import io.dataspaceconnector.service.message.GlobalMessageService;
+import io.dataspaceconnector.service.resource.templatebuilder.CatalogTemplateBuilder;
+import io.dataspaceconnector.service.resource.type.CatalogService;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class BootstrapperTest {
 
     @MockBean
@@ -60,7 +57,7 @@ public class BootstrapperTest {
     CatalogService catalogService;
 
     @MockBean
-    TemplateBuilder<OfferedResource, OfferedResourceDesc> templateBuilder;
+    CatalogTemplateBuilder templateBuilder;
 
     @Autowired
     Bootstrapper bootstrapper;

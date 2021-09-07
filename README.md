@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <a href="https://dataspace-connector.de/dsc_logo.svg"><img src="https://dataspace-connector.de/dsc_logo.svg" alt="Dataspace Connector Logo" width="200"></a>
+    <img alt="Logo" width="200" src="docs/assets/images/dsc_logo.png"/>
   <br>
       Dataspace Connector
   <br>
@@ -62,8 +62,8 @@ improvement, or have an idea for a useful feature. Please find a set of guidelin
 
 ## Developers
 
-This is an ongoing project of the [Data Economy](https://www.isst.fraunhofer.de/en/business-units/data-economy.html)
-business unit of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html).
+This is an ongoing project of the [Data Business](https://www.isst.fraunhofer.de/en/business-units/data-economy.html)
+department of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html).
 
 The core development is driven by
 * [Heinrich Pettenpohl](https://github.com/HeinrichPet), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html), Project Manager

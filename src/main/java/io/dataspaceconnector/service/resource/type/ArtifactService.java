@@ -15,38 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import io.dataspaceconnector.common.exception.ErrorMessage;
-import io.dataspaceconnector.common.net.QueryInput;
-import io.dataspaceconnector.common.util.Utils;
-import io.dataspaceconnector.common.exception.NotImplemented;
-import io.dataspaceconnector.common.exception.PolicyRestrictionException;
-import io.dataspaceconnector.common.exception.UnreachableLineException;
-import io.dataspaceconnector.model.artifact.Artifact;
-import io.dataspaceconnector.model.artifact.ArtifactDesc;
-import io.dataspaceconnector.model.artifact.ArtifactFactory;
-import io.dataspaceconnector.model.artifact.ArtifactImpl;
-import io.dataspaceconnector.model.artifact.LocalData;
-import io.dataspaceconnector.model.artifact.RemoteData;
-import io.dataspaceconnector.repository.ArtifactRepository;
-import io.dataspaceconnector.repository.AuthenticationRepository;
-import io.dataspaceconnector.repository.DataRepository;
-import io.dataspaceconnector.service.ArtifactRetriever;
-import io.dataspaceconnector.common.net.HttpService;
-import io.dataspaceconnector.service.resource.base.BaseEntityService;
-import io.dataspaceconnector.service.resource.base.RemoteResolver;
-import io.dataspaceconnector.common.net.RetrievalInformation;
-import io.dataspaceconnector.common.usagecontrol.AccessVerificationInput;
-import io.dataspaceconnector.common.usagecontrol.PolicyVerifier;
-import io.dataspaceconnector.common.usagecontrol.VerificationResult;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,14 +23,43 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.exception.NotImplemented;
+import io.dataspaceconnector.common.exception.PolicyRestrictionException;
+import io.dataspaceconnector.common.exception.UnreachableLineException;
+import io.dataspaceconnector.common.net.HttpService;
+import io.dataspaceconnector.common.net.QueryInput;
+import io.dataspaceconnector.common.net.RetrievalInformation;
+import io.dataspaceconnector.common.usagecontrol.AccessVerificationInput;
+import io.dataspaceconnector.common.usagecontrol.PolicyVerifier;
+import io.dataspaceconnector.common.usagecontrol.VerificationResult;
+import io.dataspaceconnector.common.util.Utils;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.artifact.ArtifactDesc;
+import io.dataspaceconnector.model.artifact.ArtifactFactory;
+import io.dataspaceconnector.model.artifact.ArtifactImpl;
+import io.dataspaceconnector.model.artifact.LocalData;
+import io.dataspaceconnector.model.artifact.RemoteData;
+import io.dataspaceconnector.model.base.AbstractFactory;
+import io.dataspaceconnector.repository.ArtifactRepository;
+import io.dataspaceconnector.repository.AuthenticationRepository;
+import io.dataspaceconnector.repository.BaseEntityRepository;
+import io.dataspaceconnector.repository.DataRepository;
+import io.dataspaceconnector.service.ArtifactRetriever;
+import io.dataspaceconnector.service.resource.base.BaseEntityService;
+import io.dataspaceconnector.service.resource.base.RemoteResolver;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
+
 /**
  * Handles the basic logic for artifacts.
  */
 @Log4j2
-@Service
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.NONE)
-@Transactional
 public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         implements RemoteResolver {
 
@@ -84,15 +81,18 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     /**
      * Constructor for ArtifactService.
      *
+     * @param repository               The artifact repository.
+     * @param factory                  The artifact logic repository.
      * @param dataRepository           The data repository.
      * @param httpService              The HTTP service for fetching remote data.
      * @param authenticationRepository The AuthType repository.
      */
-    @Autowired
-    public ArtifactService(final @NonNull DataRepository dataRepository,
+    public ArtifactService(final BaseEntityRepository<Artifact> repository,
+                           final AbstractFactory<Artifact, ArtifactDesc> factory,
+                           final @NonNull DataRepository dataRepository,
                            final @NonNull HttpService httpService,
                            final @NonNull AuthenticationRepository authenticationRepository) {
-        super();
+        super(repository, factory);
         this.dataRepo = dataRepository;
         this.httpSvc = httpService;
         this.authRepo = authenticationRepository;
@@ -221,7 +221,6 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * parameters is null.
      * @throws IOException                                                      if IO errors occurr.
      */
-    @Transactional
     public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final RetrievalInformation information)

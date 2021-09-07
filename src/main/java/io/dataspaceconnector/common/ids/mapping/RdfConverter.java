@@ -42,7 +42,7 @@ public final class RdfConverter {
     }
 
     /**
-     * Serializer for Infomodel objects.
+     * Serializer for ids objects.
      */
     private static final Serializer SERIALIZER = new Serializer();
 

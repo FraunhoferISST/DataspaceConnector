@@ -19,13 +19,11 @@ import io.dataspaceconnector.model.keystore.Keystore;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
 public class KeyStoreViewAssemblerTest {
 
     @Test

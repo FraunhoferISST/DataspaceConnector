@@ -32,6 +32,7 @@ public class OutgoingMessageParser extends Idscp2MappingProcessor {
 
     /**
      * Creates an IDSCPv2 message with header and payload from a {@link Response}.
+     *
      * @param in the in-message of the exchange.
      */
     @Override

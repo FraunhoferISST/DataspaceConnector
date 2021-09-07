@@ -15,25 +15,32 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpointDesc;
+import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.routing.RouteHelper;
-import org.springframework.stereotype.Service;
 
 /**
  * Service class for connector endpoints.
  */
-@Service
 public class ConnectorEndpointService
         extends EndpointService<ConnectorEndpoint, ConnectorEndpointDesc> {
+
     /**
      * Constructor for injection.
-     * @param routeRepository  the service for managing routes.
-     * @param camelRouteHelper The helper class for Camel routes.
+     *
+     * @param repository       The connector endpoint repository.
+     * @param factory          The connector endpoint logic.
+     * @param routeRepository  the service for managing connector endpoints.
+     * @param camelRouteHelper The helper class for connector endpoints.
      */
-    public ConnectorEndpointService(final RouteRepository routeRepository,
-                                    final RouteHelper camelRouteHelper) {
-        super(routeRepository, camelRouteHelper);
+    public ConnectorEndpointService(
+            final BaseEntityRepository<ConnectorEndpoint> repository,
+            final AbstractFactory<ConnectorEndpoint, ConnectorEndpointDesc> factory,
+            final RouteRepository routeRepository,
+            final RouteHelper camelRouteHelper) {
+        super(repository, factory, routeRepository, camelRouteHelper);
     }
 }

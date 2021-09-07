@@ -15,12 +15,13 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.representation.RepresentationDesc;
+import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.RepresentationRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
 import io.dataspaceconnector.service.resource.base.RemoteResolver;
-import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.util.Optional;
@@ -29,10 +30,24 @@ import java.util.UUID;
 /**
  * Service for managing representations.
  */
-@Service
-public final class RepresentationService extends BaseEntityService<Representation,
+public class RepresentationService extends BaseEntityService<Representation,
         RepresentationDesc> implements RemoteResolver {
 
+    /**
+     * Constructor.
+     *
+     * @param repository The representation repository.
+     * @param factory    The representation factory.
+     */
+    public RepresentationService(
+            final BaseEntityRepository<Representation> repository,
+            final AbstractFactory<Representation, RepresentationDesc> factory) {
+        super(repository, factory);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<UUID> identifyByRemoteId(final URI remoteId) {
         final var repo = (RepresentationRepository) getRepository();

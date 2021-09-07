@@ -38,8 +38,8 @@ public class ClearingHouseLoggingProcessor implements Processor {
     private final @NonNull ClearingHouseService clearingHouseSvc;
 
     /**
-     * Processes the input. Extract the request/response IDS message,
-     * create a LogMessage with the IDS message as payload, then send to the Clearing House.
+     * Processes the input. Extract the request/response ids message, create a LogMessage with the
+     * ids message as payload, then send to the Clearing House.
      *
      * @param exchange the input.
      * @throws Exception if an error occurs.

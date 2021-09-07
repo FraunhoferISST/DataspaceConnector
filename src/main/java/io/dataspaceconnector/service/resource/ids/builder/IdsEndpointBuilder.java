@@ -29,7 +29,7 @@ import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilde
 import org.springframework.stereotype.Component;
 
 /**
- * Converts DSC endpoints to IDS endpoints.
+ * Converts dsc endpoints to ids endpoints.
  */
 @Component
 public final class IdsEndpointBuilder

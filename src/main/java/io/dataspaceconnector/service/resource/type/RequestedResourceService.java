@@ -15,11 +15,12 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
+import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.RequestedResourcesRepository;
 import io.dataspaceconnector.service.resource.base.RemoteResolver;
-import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.util.Optional;
@@ -28,9 +29,20 @@ import java.util.UUID;
 /**
  * Handles the basic logic for requested resources.
  */
-@Service
-public final class RequestedResourceService extends ResourceService<RequestedResource,
+public class RequestedResourceService extends ResourceService<RequestedResource,
         RequestedResourceDesc> implements RemoteResolver {
+
+    /**
+     * Constructor.
+     *
+     * @param repository The requested resource repository.
+     * @param factory    The requested resource factory.
+     */
+    public RequestedResourceService(final BaseEntityRepository<RequestedResource> repository,
+                                    final AbstractFactory<RequestedResource,
+                                            RequestedResourceDesc> factory) {
+        super(repository, factory);
+    }
 
     /**
      * {@inheritDoc}

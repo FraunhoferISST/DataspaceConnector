@@ -19,7 +19,7 @@ import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.relation.AgreementsToArtifactsController;
 import io.dataspaceconnector.controller.resource.type.AgreementController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.model.agreement.Agreement;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
@@ -35,7 +35,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * Assembles the REST resource for an agreement.
  */
 @Component
-public class AgreementViewAssembler
+public class AgreementViewAssembler extends SelfLinkHelper
         implements RepresentationModelAssembler<Agreement, AgreementView>, SelfLinking {
     @Override
     public final AgreementView toModel(final Agreement agreement) {
@@ -54,6 +54,6 @@ public class AgreementViewAssembler
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, AgreementController.class);
+        return getSelfLink(entityId, AgreementController.class);
     }
 }

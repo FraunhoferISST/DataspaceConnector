@@ -43,7 +43,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
-public final class RequestedResource extends Resource implements RemoteObject {
+public class RequestedResource extends Resource implements RemoteObject {
 
     /**
      * Serial version uid.
@@ -85,5 +85,4 @@ public final class RequestedResource extends Resource implements RemoteObject {
     public List<Catalog> getCatalogs() {
         return catalogs;
     }
-
 }

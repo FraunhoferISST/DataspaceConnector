@@ -15,22 +15,20 @@
  */
 package io.dataspaceconnector.model.app;
 
-import io.dataspaceconnector.common.ids.policy.PolicyPattern;
-import io.dataspaceconnector.model.artifact.LocalData;
-import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import io.dataspaceconnector.model.util.FactoryUtils;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import io.dataspaceconnector.common.ids.policy.PolicyPattern;
+import io.dataspaceconnector.model.artifact.LocalData;
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
+import io.dataspaceconnector.model.util.FactoryUtils;
+
 /**
  * Creates and updates a data app.
  */
-@Component
 public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
 
     /**

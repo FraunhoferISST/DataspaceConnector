@@ -16,8 +16,8 @@
 package io.dataspaceconnector.controller.resource.view.endpoint;
 
 import io.dataspaceconnector.controller.resource.type.EndpointController;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
@@ -30,8 +30,8 @@ import java.util.UUID;
  * Assembles the REST resource for an app endpoint.
  */
 @Component
-public class AppEndpointViewAssembler implements RepresentationModelAssembler<AppEndpoint,
-        AppEndpointView>, SelfLinking {
+public class AppEndpointViewAssembler extends SelfLinkHelper
+        implements RepresentationModelAssembler<AppEndpoint, AppEndpointView>, SelfLinking {
 
     @Override
     public final AppEndpointView toModel(final AppEndpoint appEndpoint) {
@@ -43,7 +43,7 @@ public class AppEndpointViewAssembler implements RepresentationModelAssembler<Ap
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, EndpointController.class);
+        return getSelfLink(entityId, EndpointController.class);
     }
 
 }

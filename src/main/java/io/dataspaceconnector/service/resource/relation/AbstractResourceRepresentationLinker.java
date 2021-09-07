@@ -26,14 +26,16 @@ import java.util.List;
 
 /**
  * Handles the relation between a resources and its representations.
+ *
  * @param <T> The resource type.
  */
 @NoArgsConstructor
 public abstract class AbstractResourceRepresentationLinker<T extends Resource>
         extends OwningRelationService<T, Representation, ResourceService<T, ?>,
-                RepresentationService> {
+        RepresentationService> {
     /**
      * Get the list of representations owned by the resource.
+     *
      * @param owner The owner of the representations.
      * @return The list of owned representations.
      */

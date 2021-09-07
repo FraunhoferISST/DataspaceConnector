@@ -15,6 +15,13 @@
  */
 package io.dataspaceconnector.service.resource.ids.builder;
 
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.UUID;
+
 import de.fraunhofer.iais.eis.Language;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
@@ -37,13 +44,7 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -54,19 +55,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 public class IdsResourceBuilderTest {
 
-    @Autowired
+    @SpyBean
     private OfferedResourceFactory resourceFactory;
 
-    @Autowired
+    @SpyBean
     private RepresentationFactory representationFactory;
 
-    @Autowired
+    @SpyBean
     private ArtifactFactory artifactFactory;
 
-    @Autowired
+    @SpyBean
     private ContractFactory contractFactory;
 
-    @Autowired
+    @SpyBean
     private ContractRuleFactory ruleFactory;
 
     @Autowired

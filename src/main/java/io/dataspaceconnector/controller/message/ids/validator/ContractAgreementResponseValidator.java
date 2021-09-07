@@ -39,6 +39,7 @@ public class ContractAgreementResponseValidator extends IdsResponseMessageValida
 
     /**
      * Validates the response to a ContractAgreementMessage.
+     *
      * @param response the response DTO.
      * @throws MessageResponseException if the received response is not valid.
      */
