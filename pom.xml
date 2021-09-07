@@ -130,7 +130,7 @@
 		<dms.version>2.2.0</dms.version>
 		<taglist.version>2.4</taglist.version>
 		<jxr.version>3.1.1</jxr.version>
-		<dependency-check.version>6.2.2</dependency-check.version>
+		<dependency-check.version>6.3.1</dependency-check.version>
 
 		<!-- License -->
 		<license_name>Apache License, Version 2.0</license_name>
