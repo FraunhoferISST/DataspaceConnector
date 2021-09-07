@@ -80,7 +80,8 @@ class AppControllerTest {
         Mockito.when(portainerRequestService.startContainer(Mockito.any())).thenReturn(returnedResponse);
         Mockito.when(portainerRequestService.pullImage(Mockito.any())).thenReturn(returnedResponse);
         Mockito.when(portainerRequestService.createVolumes(Mockito.any(), Mockito.any())).thenReturn(Map.of());
-        Mockito.when(portainerRequestService.createContainer(Mockito.any(), Mockito.any())).thenReturn(new JSONObject().put("Id", "123"));
+        Mockito.when(portainerRequestService.createContainer(Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn("Mocked");
         Mockito.when(portainerRequestService.getNetworkId(Mockito.any())).thenReturn("NetworkID");
         Mockito.when(portainerRequestService.joinNetwork(Mockito.any(), Mockito.any())).thenReturn(returnedResponse);
         Mockito.when(portainerRequestService.stopContainer(Mockito.any())).thenReturn(returnedResponse);
