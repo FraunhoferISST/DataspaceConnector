@@ -46,6 +46,8 @@ public class AppEndpointService extends EndpointService<AppEndpointImpl, AppEndp
     }
 
     /**
+     * Sets the external exposed ports of an AppEndpoint.
+     *
      * @param appEndpoint The app endpoint.
      * @param externalPort The external port.
      */
@@ -57,6 +59,8 @@ public class AppEndpointService extends EndpointService<AppEndpointImpl, AppEndp
     }
 
     /**
+     * Sets the location of an AppEndpoint.
+     *
      * @param appEndpoint The app endpoint.
      * @param location The location URI (access URL) of the AppEndpoint.
      */

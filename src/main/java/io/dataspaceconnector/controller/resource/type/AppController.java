@@ -77,7 +77,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     private final @NonNull PortainerRequestService portainerSvc;
 
     /**
-     * Service for app.
+     * Service for managing AppEndpoints.
      */
     private final @NonNull AppEndpointService appEndpointSvc;
 

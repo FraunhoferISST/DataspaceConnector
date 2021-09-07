@@ -43,6 +43,8 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpointImpl, AppEndp
     }
 
     /**
+     * Sets the external exposed ports of an AppEndpoint.
+     *
      * @param appEndpoint The app endpoint.
      * @param exposedPort The exposed port information
      * @return The app endpoint with external port information.
@@ -54,6 +56,8 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpointImpl, AppEndp
     }
 
     /**
+     * Sets the location of an AppEndpoint.
+     *
      * @param appEndpoint The app endpoint.
      * @param location The location URI (access URL) of the AppEndpoint.
      * @return The app endpoint with updated location URI.
