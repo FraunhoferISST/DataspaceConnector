@@ -15,21 +15,17 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import io.dataspaceconnector.model.endpoint.AppEndpointImpl;
 import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.model.endpoint.AppEndpointImpl;
-import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.AppEndpointDesc;
-import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.model.endpoint.AppEndpointFactory;
+import io.dataspaceconnector.model.endpoint.AppEndpointImpl;
+import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.routing.RouteHelper;
-import org.springframework.stereotype.Service;
 
 /**
  * Service class for app endpoints.
  */
-@Service
 public class AppEndpointService extends EndpointService<AppEndpointImpl, AppEndpointDesc> {
     /**
      * Constructor for injection.
@@ -40,8 +36,8 @@ public class AppEndpointService extends EndpointService<AppEndpointImpl, AppEndp
      * @param camelRouteHelper The helper class for Camel routes.
      */
     public AppEndpointService(
-            final BaseEntityRepository<AppEndpoint> repository,
-            final AbstractFactory<AppEndpoint, AppEndpointDesc> factory,
+            final BaseEntityRepository<AppEndpointImpl> repository,
+            final AbstractFactory<AppEndpointImpl, AppEndpointDesc> factory,
             final RouteRepository routeRepository,
             final RouteHelper camelRouteHelper) {
         super(repository, factory, routeRepository, camelRouteHelper);
