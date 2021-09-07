@@ -24,10 +24,7 @@ import de.fraunhofer.iais.eis.GenericEndpoint;
 import de.fraunhofer.iais.eis.RouteStep;
 import io.dataspaceconnector.common.exception.RouteCreationException;
 import io.dataspaceconnector.common.exception.RouteDeletionException;
-import io.dataspaceconnector.common.util.UUIDUtils;
-import io.dataspaceconnector.model.app.AppImpl;
 import io.dataspaceconnector.model.route.Route;
-import io.dataspaceconnector.service.resource.type.AppService;
 import io.dataspaceconnector.service.routing.config.RouteConfigurer;
 import io.dataspaceconnector.service.routing.dto.RouteStepEndpoint;
 import io.dataspaceconnector.service.routing.exception.NoSuitableTemplateException;
@@ -84,11 +81,6 @@ public class RouteManager {
     private final @NonNull CamelContext camelContext;
 
     /**
-     * The app service.
-     */
-    private final @NonNull AppService appService;
-
-    /**
      * Creates a Camel XML route from a given app route. The generated XML route is then added to
      * the application's Camel context for execution.
      *
@@ -139,30 +131,7 @@ public class RouteManager {
             addBasicAuthHeaderForGenericEndpoint(velocityContext, genericEndpoint);
         } else if (routeStart.get(0) instanceof AppEndpoint) {
             final var appEndpoint = (AppEndpoint) routeStart.get(0);
-
-            // Get container name (app impl) + exposed port (app endpoint impl)
-            // + location (app endpoint) to create the start url for the route.
-
-            final var appUUID = UUIDUtils.uuidFromUri(appEndpoint.getId());
-            final var app = appService.get(appUUID);
-
-            if (app != null) {
-                final var containerName = ((AppImpl) app).getContainerName();
-                for (var appEndpointTmp : app.getEndpoints()) {
-                    if (appEndpoint.getId().toString()
-                            .contains(appEndpointTmp.getId().toString())) {
-                        final var exposedPort = appEndpointTmp.getExposedPort();
-                        final var accessUrl = appEndpointTmp.getLocation() == null ? ""
-                                : appEndpointTmp.getLocation().toString();
-
-                        //ToDO: Decision if url starts with https or http
-                        velocityContext.put("startUrl", "https://" + containerName + ":"
-                                + exposedPort + accessUrl);
-                    }
-                }
-            } else {
-                throw new RouteCreationException("The route start can not be identified");
-            }
+            velocityContext.put("startUrl", appEndpoint.getAccessURL().toString());
         } else {
             throw new RouteCreationException("The route start can not be identified");
         }
@@ -186,30 +155,7 @@ public class RouteManager {
             addBasicAuthHeaderForGenericEndpoint(velocityContext, genericEndpoint);
         } else if (routeEnd.get(0) instanceof AppEndpoint) {
             final var appEndpoint = (AppEndpoint) routeEnd.get(0);
-
-            // Get container name (app impl) + exposed port (app endpoint impl)
-            // + location (app endpoint) to create the start url for the route.
-
-            final var appUUID = UUIDUtils.uuidFromUri(appEndpoint.getId());
-            final var app = appService.get(appUUID);
-
-            if (app != null) {
-                final var containerName = ((AppImpl) app).getContainerName();
-                for (var appEndpointTmp : app.getEndpoints()) {
-                    if (appEndpoint.getId().toString()
-                            .contains(appEndpointTmp.getId().toString())) {
-                        final var exposedPort = appEndpointTmp.getExposedPort();
-                        final var accessUrl = appEndpointTmp.getLocation() == null ? ""
-                                : appEndpointTmp.getLocation().toString();
-
-                        //ToDO: Decision if url starts with https or http
-                        velocityContext.put("endUrl", "https://" + containerName + ":"
-                                + exposedPort + accessUrl);
-                    }
-                }
-            } else {
-                throw new RouteCreationException("The route end can not be identified");
-            }
+            velocityContext.put("endUrl", appEndpoint.getAccessURL().toString());
         } else {
             throw new RouteCreationException("The route end can not be identified");
         }
