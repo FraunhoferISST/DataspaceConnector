@@ -18,7 +18,7 @@ package io.dataspaceconnector.model.app;
 import io.dataspaceconnector.common.ids.policy.PolicyPattern;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.base.RemoteObject;
-import io.dataspaceconnector.model.endpoint.AppEndpoint;
+import io.dataspaceconnector.model.endpoint.AppEndpointImpl;
 import io.dataspaceconnector.model.named.NamedEntity;
 import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
@@ -90,7 +90,7 @@ public class App extends NamedEntity implements RemoteObject {
      * Endpoints provided by the data app.
      */
     @OneToMany
-    private List<AppEndpoint> endpoints;
+    private List<AppEndpointImpl> endpoints;
 
     /**
      * Environment variables of the data app.

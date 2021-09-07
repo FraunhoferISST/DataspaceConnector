@@ -42,6 +42,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.Response;
 import org.apache.commons.io.IOUtils;
+import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -211,16 +212,22 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         final var containerId = portainerSvc.createContainer(template,
                 volumeMap, app.getEndpoints());
 
-        // Persist container id and port mapping of the app.
-        getService().setContainerIdForApp(app.getId(), containerId);
+        // 5. Get container name from the description of the container.
+        final var containerDesc = portainerSvc.getDescriptionByContainerId(containerId);
+        final var jsonName = new JSONObject(containerDesc.body().string()).getString("Name");
+        final var containerName = jsonName.substring(jsonName.indexOf("/") + 1);
 
-        // 5. Get "bride" network-id in Portainer
+        // Persist container id and name.
+        getService().setContainerIdForApp(app.getId(), containerId);
+        getService().setContainerName(app.getId(), containerName);
+
+        // 6. Get "bride" network-id in Portainer
         final var networkId = portainerSvc.getNetworkId("bridge");
 
-        // 6. Join container into the new created network.
+        // 7. Join container into the new created network.
         portainerSvc.joinNetwork(containerId, networkId);
 
-        //7. Delete registry (credentials are one-time-usage)
+        // 8. Delete registry (credentials are one-time-usage)
         portainerSvc.deleteRegistry(registryId);
 
         return containerId;

@@ -15,8 +15,7 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import io.dataspaceconnector.model.app.AppEndpointImpl;
-import io.dataspaceconnector.model.endpoint.AppEndpoint;
+import io.dataspaceconnector.model.endpoint.AppEndpointImpl;
 import io.dataspaceconnector.model.endpoint.AppEndpointDesc;
 import io.dataspaceconnector.model.endpoint.AppEndpointFactory;
 import io.dataspaceconnector.repository.RouteRepository;
@@ -27,7 +26,7 @@ import org.springframework.stereotype.Service;
  * Service class for app endpoints.
  */
 @Service
-public class AppEndpointService extends EndpointService<AppEndpoint, AppEndpointDesc> {
+public class AppEndpointService extends EndpointService<AppEndpointImpl, AppEndpointDesc> {
     /**
      * Constructor for injection.
      *
@@ -45,8 +44,8 @@ public class AppEndpointService extends EndpointService<AppEndpoint, AppEndpoint
      */
     public void setExternalEndpoint(final AppEndpointImpl appEndpoint,
                                     final int externalPort) {
-
-        ((AppEndpointFactory) getFactory()).setExternalPort(appEndpoint, externalPort);
-        getRepository().save(appEndpoint);
+        final var updatedAppEndpoint = ((AppEndpointFactory) getFactory())
+                .setExternalPort(appEndpoint, externalPort);
+        getRepository().save(updatedAppEndpoint);
     }
 }

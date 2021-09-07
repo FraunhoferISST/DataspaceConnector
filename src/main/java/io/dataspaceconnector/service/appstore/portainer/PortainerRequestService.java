@@ -18,8 +18,7 @@ package io.dataspaceconnector.service.appstore.portainer;
 import de.fraunhofer.ids.messaging.protocol.http.HttpService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.PortainerNotConfigured;
-import io.dataspaceconnector.model.app.AppEndpointImpl;
-import io.dataspaceconnector.model.endpoint.AppEndpoint;
+import io.dataspaceconnector.model.endpoint.AppEndpointImpl;
 import io.dataspaceconnector.service.resource.type.AppEndpointService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -782,7 +781,7 @@ public class PortainerRequestService {
     public String createContainer(
             final String appStoreTemplate,
             final Map<String, String> volumes,
-            final List<AppEndpoint> appEndpoints
+            final List<AppEndpointImpl> appEndpoints
     ) throws IOException {
         final var templateObject = toJsonObject(appStoreTemplate);
         final var image = templateObject.getString("image");
@@ -790,6 +789,7 @@ public class PortainerRequestService {
         //get all ports from the appTemplate (with label)
         var portLabelMap = new HashMap<String, String>();
         var portArray = templateObject.getJSONArray("ports");
+        var protocol = "";
         for (int i = 0; i < portArray.length(); i++) {
             var portobj = portArray.getJSONObject(i);
             var labels = portobj.keySet();
@@ -799,6 +799,7 @@ public class PortainerRequestService {
                     port = port
                             .substring(port.indexOf(":") + 1);
                 }
+                protocol = port.substring(port.indexOf("/") + 1);
                 portLabelMap.put(port, label);
             }
         }
@@ -833,10 +834,9 @@ public class PortainerRequestService {
                 .getJSONObject("PortBindings");
         for (var appEndpoint : appEndpoints) {
             final var externalPort = portBindings
-                    .getJSONArray(String.valueOf(appEndpoint.getEndpointPort()))
+                    .getJSONArray(appEndpoint.getEndpointPort() + "/" + protocol)
                     .getJSONObject(0).getString("HostPort");
-            appEndpointService.setExternalEndpoint((AppEndpointImpl) appEndpoint,
-                    Integer.parseInt(externalPort));
+            appEndpointService.setExternalEndpoint(appEndpoint, Integer.parseInt(externalPort));
         }
 
         final var request = builder.build();

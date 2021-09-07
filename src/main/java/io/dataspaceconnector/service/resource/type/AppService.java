@@ -41,7 +41,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -168,18 +167,6 @@ public class AppService extends BaseEntityService<App, AppDesc> implements Remot
     }
 
     /**
-     * Update port mapping for app.
-     *
-     * @param appId The id of the app.
-     * @param portMapping The port mapping of the app (internal -> external)
-     */
-    public void setPortMappingForApp(final UUID appId, final Map<String, String> portMapping) {
-        final var app = ((AppImpl) get(appId));
-        ((AppFactory) getFactory()).setPortMapping(app, portMapping);
-        getRepository().save(app);
-    }
-
-    /**
      * Remove container id from app.
      *
      * @param appId The id of the container.
@@ -191,13 +178,12 @@ public class AppService extends BaseEntityService<App, AppDesc> implements Remot
     }
 
     /**
-     * Remove port mapping from app.
-     *
      * @param appId The id of the app.
+     * @param containerName The name of the container.
      */
-    public void deletePortMappingFromApp(final UUID appId) {
+    public void setContainerName(final UUID appId, final String containerName) {
         final var app = ((AppImpl) get(appId));
-        ((AppFactory) getFactory()).deletePortMapping(app);
+        ((AppFactory) getFactory()).setContainerName(app, containerName);
         getRepository().save(app);
     }
 }

@@ -27,10 +27,8 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.CascadeType;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import java.util.Map;
 
 /**
  * Contains the data kept in an artifact.
@@ -63,8 +61,7 @@ public class AppImpl extends App {
     private String containerId;
 
     /**
-     * The port mapping of the container (internal -> host).
+     * The container name.
      */
-    @ElementCollection
-    private Map<String, String> portMapping;
+    private String containerName;
 }

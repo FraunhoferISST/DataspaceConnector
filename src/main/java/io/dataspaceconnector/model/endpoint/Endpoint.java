@@ -18,7 +18,6 @@ package io.dataspaceconnector.model.endpoint;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.base.RemoteService;
 import io.dataspaceconnector.model.util.UriConverter;
-import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +39,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @javax.persistence.Entity
 @Inheritance
 @Getter
-@Setter(AccessLevel.PACKAGE)
+@Setter
 @EqualsAndHashCode(callSuper = true)
 @SQLDelete(sql = "UPDATE endpoint SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")

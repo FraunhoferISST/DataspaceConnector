@@ -1,6 +1,5 @@
-package io.dataspaceconnector.model.app;
+package io.dataspaceconnector.model.endpoint;
 
-import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

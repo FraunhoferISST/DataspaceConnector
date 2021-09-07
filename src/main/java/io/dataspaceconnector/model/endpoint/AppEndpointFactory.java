@@ -15,21 +15,20 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
-import io.dataspaceconnector.model.app.AppEndpointImpl;
 import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates an app endpoint.
  */
 @Component
-public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpointDesc> {
+public class AppEndpointFactory extends EndpointFactory<AppEndpointImpl, AppEndpointDesc> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected AppEndpoint initializeEntity(final AppEndpointDesc desc) {
-        final var appEndpoint = new AppEndpoint();
+    protected AppEndpointImpl initializeEntity(final AppEndpointDesc desc) {
+        final var appEndpoint = new AppEndpointImpl();
         appEndpoint.setEndpointPort(desc.getEndpointPort());
         appEndpoint.setEndpointType(desc.getEndpointType());
         appEndpoint.setLanguage(desc.getLanguage());
@@ -46,8 +45,8 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
      * @param exposedPort The exposed port information
      * @return The app endpoint with external port information.
      */
-    public AppEndpoint setExternalPort(final AppEndpointImpl appEndpoint,
-                                       final int exposedPort) {
+    public AppEndpointImpl setExternalPort(final AppEndpointImpl appEndpoint,
+                                           final int exposedPort) {
         appEndpoint.setExposedPort(exposedPort);
         return appEndpoint;
     }
