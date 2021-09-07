@@ -41,7 +41,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.xml.datatype.DatatypeFactory;
@@ -62,7 +61,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(properties = {"clearing.house.url=https://ch-ids.aisec.fraunhofer.de/logs/messages/"})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class ContractAgreementHandlerTest {
 
     @Autowired

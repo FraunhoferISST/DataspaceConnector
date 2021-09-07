@@ -39,6 +39,7 @@ public class ContractAgreementValidator extends IdsValidator {
 
     /**
      * Compares the contract agreement to the contract request.
+     *
      * @param exchange the exchange.
      */
     @Override

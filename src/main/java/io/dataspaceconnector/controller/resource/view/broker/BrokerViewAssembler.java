@@ -15,18 +15,18 @@
  */
 package io.dataspaceconnector.controller.resource.view.broker;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.relation.BrokersToOfferedResourcesController;
 import io.dataspaceconnector.controller.resource.type.BrokerController;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.broker.Broker;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -35,13 +35,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * Assembles the REST resource for a broker.
  */
 @Component
-public class BrokerViewAssembler
+public class BrokerViewAssembler extends SelfLinkHelper
         implements RepresentationModelAssembler<Broker, BrokerView>, SelfLinking {
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId,
-                BrokerController.class);
+        return getSelfLink(entityId, BrokerController.class);
     }
 
     @Override

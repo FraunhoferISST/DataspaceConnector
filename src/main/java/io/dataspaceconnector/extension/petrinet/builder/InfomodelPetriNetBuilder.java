@@ -116,9 +116,9 @@ public class InfomodelPetriNetBuilder {
      * THIS METHOD ONLY TRANSLATES APPROUTES OF DEPTH 1: SubRoutes of SubRoutes
      * are currently not considered.
      *
-     * @param includeAppRoute AppRoute to be included
-     * @param appRoute an Infomodel {@link AppRoute}
-     * @return a Petri Net created from the AppRoute
+     * @param includeAppRoute AppRoute to be included.
+     * @param appRoute an ids {@link AppRoute}.
+     * @return a Petri Net created from the AppRoute.
      */
     public static PetriNet petriNetFromAppRoute(final AppRoute appRoute,
                                                 final boolean includeAppRoute) {
@@ -474,8 +474,8 @@ public class InfomodelPetriNetBuilder {
     }
 
     /**
-     * @param appRoute an infomodel approute
-     * @return stream of all resources in the approute
+     * @param appRoute an ids appRoute
+     * @return stream of all resources in the appRoute.
      */
     private static Stream<Resource> resourceStream(final AppRoute appRoute) {
         return Stream.concat(

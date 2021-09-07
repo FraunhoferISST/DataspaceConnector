@@ -100,8 +100,7 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
     }
 
     /**
-     * Get all resources of the same type linked to the passed resource.
-     * Endpoint for GET requests.
+     * Get all resources of the same type linked to the passed resource. Endpoint for GET requests.
      *
      * @param ownerId The id of the owning resource.
      * @param page    The page index.

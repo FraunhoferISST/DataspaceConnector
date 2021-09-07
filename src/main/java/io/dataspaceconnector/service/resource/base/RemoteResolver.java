@@ -25,6 +25,7 @@ import java.util.UUID;
 public interface RemoteResolver {
     /**
      * Search for an local entity by its remote id.
+     *
      * @param remoteId The remote id.
      * @return The local entity id.
      */

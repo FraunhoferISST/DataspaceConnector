@@ -35,12 +35,11 @@ import io.dataspaceconnector.common.ids.model.TemplateUtils;
 import io.dataspaceconnector.extension.bootstrap.util.BootstrapUtils;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
-import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.service.message.GlobalMessageService;
-import io.dataspaceconnector.service.resource.TemplateBuilder;
+import io.dataspaceconnector.service.resource.templatebuilder.CatalogTemplateBuilder;
 import io.dataspaceconnector.service.resource.type.CatalogService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -77,7 +76,7 @@ import static io.dataspaceconnector.extension.bootstrap.util.BootstrapUtils.find
 import static io.dataspaceconnector.extension.bootstrap.util.BootstrapUtils.retrieveBootstrapConfig;
 
 /**
- * This class allows to load JSON-LD files that contain IDS Infomodel representations of entities
+ * This class allows to load JSON-LD files that contain IDS representations of entities
  * which will be registered at the connector during start-up. Furthermore, an additional
  * configuration file can be loaded, that provides information on e.g. broker usage and the used
  * clearing house.
@@ -122,7 +121,7 @@ public class Bootstrapper {
     /**
      * The template builder.
      */
-    private final @NotNull TemplateBuilder<OfferedResource, OfferedResourceDesc> templateBuilder;
+    private final @NotNull CatalogTemplateBuilder templateBuilder;
 
     /**
      * The catalog service.

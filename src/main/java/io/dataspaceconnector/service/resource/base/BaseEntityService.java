@@ -16,16 +16,17 @@
 package io.dataspaceconnector.service.resource.base;
 
 import io.dataspaceconnector.common.exception.ErrorMessage;
-import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.base.Description;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -39,26 +40,18 @@ import java.util.UUID;
  */
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.NONE)
+@RequiredArgsConstructor
 public class BaseEntityService<T extends Entity, D extends Description>
     implements EntityService<T, D> {
     /**
      * Persists all entities of type T.
      **/
-    @Autowired
-    private BaseEntityRepository<T> repository;
+    private final @NonNull BaseEntityRepository<T> repository;
 
     /**
      * Contains creation and update logic for entities of type T.
      **/
-    @Autowired
-    private AbstractFactory<T, D> factory;
-
-    /**
-     * Default constructor.
-     */
-    protected BaseEntityService() {
-        // This constructor is intentionally empty. Nothing to do here.
-    }
+    private final @NonNull AbstractFactory<T, D> factory;
 
     /**
      * Creates a new persistent entity.
@@ -112,7 +105,7 @@ public class BaseEntityService<T extends Entity, D extends Description>
         final var entity = repository.findById(entityId);
 
         if (entity.isEmpty()) {
-            // Handle with global exception handler
+            // Handle with global exception handler.
             throw new ResourceNotFoundException(this.getClass().getSimpleName() + ": " + entityId);
         }
 

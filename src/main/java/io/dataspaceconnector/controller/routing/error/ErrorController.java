@@ -31,8 +31,7 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 /**
- * The api class implements the AppRouteApi and offers the possibilities to manage
- * the app routes in the configuration manager.
+ * The api class implements the AppRouteApi and offers the possibilities to manage the app routes.
  */
 @RestController("configManagerRoutesController")
 @NoArgsConstructor

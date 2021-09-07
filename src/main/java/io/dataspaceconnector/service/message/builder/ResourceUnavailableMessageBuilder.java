@@ -49,6 +49,7 @@ public class ResourceUnavailableMessageBuilder
     /**
      * Builds a ResourceUnavailableMessage according to the exchange properties and creates a
      * Request with the message as header and the resource from the exchange body.
+     *
      * @param exchange the exchange.
      * @return the {@link Request}.
      */

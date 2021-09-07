@@ -17,8 +17,6 @@ package io.dataspaceconnector.model.contract;
 
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -27,7 +25,6 @@ import java.util.ArrayList;
 /**
  * Creates and updates a contract.
  */
-@Component
 public class ContractFactory extends AbstractNamedFactory<Contract, ContractDesc> {
 
     /**

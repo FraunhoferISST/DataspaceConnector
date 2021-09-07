@@ -90,18 +90,18 @@ public class RouteManager {
     public void createAndDeployXMLRoute(final AppRoute appRoute) throws RouteCreationException {
         final var velocityContext = new VelocityContext();
 
-        //create ID for Camel route
+        // Create id for Camel route.
         final var camelRouteId = getCamelRouteId(appRoute);
         velocityContext.put("routeId", camelRouteId);
 
-        //get route start and end (will either be connector, app or generic endpoint)
+        // Get route start and end (will either be connector, app or generic endpoint).
         addRouteStartToContext(velocityContext,
                 (ArrayList<? extends Endpoint>) appRoute.getAppRouteStart());
 
         addRouteEndToContext(velocityContext,
                 (ArrayList<? extends Endpoint>) appRoute.getAppRouteEnd());
 
-        //get route steps (if any)
+        // Get route steps (if any).
         addRouteStepsToContext(velocityContext,
                 (ArrayList<? extends RouteStep>) appRoute.getHasSubRoute());
 
@@ -116,8 +116,8 @@ public class RouteManager {
     /**
      * Extracts the URL of the {@link AppRoute}'s start and adds it to the Velocity context.
      *
-     * @param velocityContext the Velocity context
-     * @param routeStart start of the AppRoute
+     * @param velocityContext the Velocity context.
+     * @param routeStart      start of the AppRoute.
      */
     private void addRouteStartToContext(final VelocityContext velocityContext,
                                         final ArrayList<? extends Endpoint> routeStart)
@@ -130,7 +130,7 @@ public class RouteManager {
             velocityContext.put("startUrl", genericEndpoint.getAccessURL().toString());
             addBasicAuthHeaderForGenericEndpoint(velocityContext, genericEndpoint);
         } else {
-            //TODO app is route start
+            // TODO app is route start
             throw new RouteCreationException("An app as the route start is not yet supported.");
         }
     }
@@ -138,8 +138,8 @@ public class RouteManager {
     /**
      * Extracts the URL of the {@link AppRoute}'s end and adds it to the Velocity context.
      *
-     * @param velocityContext the Velocity context
-     * @param routeEnd end of the AppRoute
+     * @param velocityContext the Velocity context.
+     * @param routeEnd        end of the AppRoute.
      */
     private void addRouteEndToContext(final VelocityContext velocityContext,
                                       final ArrayList<? extends Endpoint> routeEnd)
@@ -161,8 +161,8 @@ public class RouteManager {
      * Creates and adds the basic authentication header for calling a generic endpoint to a Velocity
      * context, if basic authentication is defined for the given endpoint.
      *
-     * @param velocityContext the Velocity context
-     * @param genericEndpoint the generic endpoint
+     * @param velocityContext the Velocity context.
+     * @param genericEndpoint the generic endpoint.
      */
     private void addBasicAuthHeaderForGenericEndpoint(final VelocityContext velocityContext,
                                                       final GenericEndpoint genericEndpoint) {
@@ -183,8 +183,8 @@ public class RouteManager {
      * Extracts the start and end URLs of the {@link AppRoute}'s steps and adds them to the
      * Velocity context.
      *
-     * @param velocityContext the Velocity context
-     * @param routeSteps steps of the AppRoute
+     * @param velocityContext the Velocity context.
+     * @param routeSteps      steps of the AppRoute.
      */
     private void addRouteStepsToContext(final VelocityContext velocityContext,
                                         final ArrayList<? extends RouteStep> routeSteps) {
@@ -198,7 +198,7 @@ public class RouteManager {
 
                 final var stepStart = routeStep.getAppRouteStart().get(0);
 
-                //if end of last step is same as start of current step only call endpoint once
+                // If end of last step is same as start of current step, only call endpoint once.
                 if (i > 0 && !stepStart.equals(lastStepEnd)) {
                     addRouteStepEndpoint(stepStart, routeStepEndpoints);
                 }
@@ -219,7 +219,7 @@ public class RouteManager {
      * Adds a {@link RouteStepEndpoint} representation of an {@link Endpoint} to the given list.
      *
      * @param endpoint the endpoint.
-     * @param list the list.
+     * @param list     the list.
      */
     private void addRouteStepEndpoint(final Endpoint endpoint, final List<RouteStepEndpoint> list) {
         if (AppEndpoint.class.isAssignableFrom(endpoint.getClass())) {
@@ -244,9 +244,9 @@ public class RouteManager {
      * is chosen from the Dataspace Connector templates. Last, the generated XML route is added to
      * the Camel context.
      *
-     * @param appRoute the AppRoute object
-     * @param velocityContext the Velocity context
-     * @throws Exception if the route file cannot be created or deployed
+     * @param appRoute        the AppRoute object.
+     * @param velocityContext the Velocity context.
+     * @throws Exception if the route file cannot be created or deployed.
      */
     private void createDataspaceConnectorRoute(final AppRoute appRoute,
                                                final VelocityContext velocityContext)
@@ -256,20 +256,20 @@ public class RouteManager {
             log.debug("Creating route for Dataspace Connector...");
         }
 
-        //add reference to Camel-Instance's error handler to Velocity context
+        // Add reference to Camel-Instance's error handler to Velocity context.
         velocityContext.put("errorHandlerRef", camelErrorHandlerRef);
 
-        //add basic auth header for connector endpoint
+        // Add basic auth header for connector endpoint.
         routeConfigurer.addBasicAuthToContext(velocityContext);
 
-        //choose correct XML template based on route
+        // Choose correct XML template based on route.
         final var template = routeConfigurer.getRouteTemplate(appRoute);
 
         if (template != null) {
             final var velocityEngine = new VelocityEngine();
             velocityEngine.init();
 
-            //populate route template with properties from velocity context to create route
+            // Populate route template with properties from velocity context to create route.
             final var writer = populateTemplate(template, velocityEngine, velocityContext);
 
             final var inputStream = new ByteArrayInputStream(writer.toString()
@@ -290,11 +290,11 @@ public class RouteManager {
     /**
      * Populates a given Velocity template using the values from a given Velocity context.
      *
-     * @param resource the template
-     * @param velocityEngine the Velocity engine required for populating the template
-     * @param velocityContext the context containing the values to insert into the template
-     * @return the populated template as a string
-     * @throws IOException if an error occurs while filling out the route template
+     * @param resource        the template.
+     * @param velocityEngine  the Velocity engine required for populating the template.
+     * @param velocityContext the context containing the values to insert into the template.
+     * @return the populated template as a string.
+     * @throws IOException if an error occurs while filling out the route template.
      */
     private StringWriter populateTemplate(final Resource resource,
                                           final VelocityEngine velocityEngine,
@@ -327,11 +327,11 @@ public class RouteManager {
      * Deletes all Camel routes associated with app routes in a given list.
      *
      * @param appRoutes the list of app routes to be deleted.
-     * @throws RouteDeletionException if any of the Camel routes cannot be deleted
+     * @throws RouteDeletionException if any of the Camel routes cannot be deleted.
      */
     public void deleteRouteFiles(final List<AppRoute> appRoutes)
             throws RouteDeletionException {
-        for (final var appRoute: appRoutes) {
+        for (final var appRoute : appRoutes) {
             deleteRoute(appRoute);
         }
     }
@@ -340,8 +340,8 @@ public class RouteManager {
      * Deletes the Camel route for a given {@link AppRoute}. The route is stopped at and removed
      * from the Camel context.
      *
-     * @param appRoute the AppRoute
-     * @throws RouteDeletionException if the Camel route cannot be deleted
+     * @param appRoute the AppRoute.
+     * @throws RouteDeletionException if the Camel route cannot be deleted.
      */
     public void deleteRoute(final AppRoute appRoute) throws RouteDeletionException {
         final var appRouteId = UUID.fromString(appRoute.getId().toString()
@@ -354,8 +354,8 @@ public class RouteManager {
      * Deletes the Camel route for a given {@link Route}. The route is stopped at and removed
      * from the Camel context.
      *
-     * @param route the route
-     * @throws RouteDeletionException if the Camel route cannot be deleted
+     * @param route the route.
+     * @throws RouteDeletionException if the Camel route cannot be deleted.
      */
     public void deleteRoute(final Route route) {
         final var camelRouteId = getCamelRouteId(route.getId());
@@ -363,10 +363,10 @@ public class RouteManager {
     }
 
     /**
-     * Deletes a Camel route by ID. The route is stopped at and removed from the Camel context.
+     * Deletes a Camel route by id. The route is stopped at and removed from the Camel context.
      *
-     * @param camelRouteId the ID of the Camel route.
-     * @throws RouteDeletionException if the Camel route cannot be deleted
+     * @param camelRouteId the id of the Camel route.
+     * @throws RouteDeletionException if the Camel route cannot be deleted.
      */
     private void deleteRouteById(final String camelRouteId) {
         if (camelContext.getRoute(camelRouteId) != null) {
@@ -384,11 +384,11 @@ public class RouteManager {
     }
 
     /**
-     * Generates the ID of the Camel route for a given {@link AppRoute}. The Camel route ID consists
-     * of the String 'app-route_' followed by the UUID from the AppRoute's ID.
+     * Generates the id of the Camel route for a given {@link AppRoute}. The Camel route id consists
+     * of the String 'app-route_' followed by the UUID from the AppRoute's id.
      *
      * @param appRoute the AppRoute.
-     * @return the Camel route ID
+     * @return the Camel route id.
      */
     private String getCamelRouteId(final AppRoute appRoute) {
         final var appRouteId = UUID.fromString(appRoute.getId().toString()
@@ -397,11 +397,11 @@ public class RouteManager {
     }
 
     /**
-     * Generates the ID of the Camel route for a given UUID. The Camel route ID consists
-     * of the String 'app-route_' followed by the route's UUID.
+     * Generates the id of the Camel route for a given UUID. The Camel route id consists of the
+     * String 'app-route_' followed by the route's UUID.
      *
      * @param uuid the uuid of the route.
-     * @return the Camel route ID
+     * @return the Camel route id.
      */
     private String getCamelRouteId(final UUID uuid) {
         return "app-route_" + uuid;

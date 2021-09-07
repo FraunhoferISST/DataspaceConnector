@@ -150,7 +150,6 @@ public class SubscriberNotificationService {
         notifyIdsSubscribers(subscriptions, entity);
     }
 
-
     private void notifySubscribers(final List<Subscription> subscriptions, final URI target,
                                    final Entity entity) {
         // Get list of non-ids subscribers.
@@ -167,10 +166,9 @@ public class SubscriberNotificationService {
 
         // Update non-ids subscribers.
         // final var notification = new Notification(new Date(), target, Event.UPDATED);
-        final var notification = new HashMap<String, String>() {{
-            put("ids-target", target.toString());
-            put("ids-event", Event.UPDATED.toString());
-        }};
+        final var notification = new HashMap<String, String>();
+        notification.put("ids-target", target.toString());
+        notification.put("ids-event", Event.UPDATED.toString());
         if (!recipients.isEmpty()) {
             sendNotification(recipients, notification, InputStream.nullInputStream());
         }

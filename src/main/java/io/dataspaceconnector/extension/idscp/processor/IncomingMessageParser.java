@@ -48,12 +48,13 @@ public class IncomingMessageParser extends Idscp2MappingProcessor {
     /**
      * Creates a {@link Request} with the header and payload from the IDSCPv2 message. Also gets the
      * claims from the DAT and adds them to the request.
+     *
      * @param in the in-message of the exchange.
      */
     @Override
     protected void processInternal(final Message in) {
-        final var header = in
-                .getHeader(ParameterUtils.IDSCP_HEADER, de.fraunhofer.iais.eis.Message.class);
+        final var header = in.getHeader(ParameterUtils.IDSCP_HEADER,
+                de.fraunhofer.iais.eis.Message.class);
         final var payloadStream = new ByteArrayInputStream(in.getBody(byte[].class));
         final var payload = new MessagePayloadInputstream(payloadStream, new ObjectMapper());
 

@@ -55,6 +55,7 @@ public final class HttpTraceFilter extends OncePerRequestFilter {
 
     /**
      * The constructor.
+     *
      * @param handler Responsible for HttpTrace events raised by this class.
      */
     public HttpTraceFilter(final HttpTraceEventHandler handler) {
@@ -138,8 +139,8 @@ public final class HttpTraceFilter extends OncePerRequestFilter {
         if (wrappedResponse.getContentSize() > 0) {
             try {
                 response = new String(wrappedResponse.getContentAsByteArray(), 0,
-                                      wrappedResponse.getContentSize(),
-                                      wrappedResponse.getCharacterEncoding());
+                        wrappedResponse.getContentSize(),
+                        wrappedResponse.getCharacterEncoding());
             } catch (UnsupportedEncodingException e) {
                 if (log.isErrorEnabled()) {
                     log.error("Failed to get the response. [exception=({})]", e.getMessage(), e);

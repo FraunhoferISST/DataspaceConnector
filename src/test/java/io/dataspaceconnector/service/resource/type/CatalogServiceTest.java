@@ -15,6 +15,11 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
@@ -24,23 +29,14 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalMatchers;
-import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -48,16 +44,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {CatalogService.class})
 class CatalogServiceTest {
-    @MockBean
-    private CatalogFactory factory;
+    private CatalogFactory factory = Mockito.mock(CatalogFactory.class);
+    private CatalogRepository repository = Mockito.mock(CatalogRepository.class);
 
-    @MockBean
-    private CatalogRepository repository;
-
-    @Autowired
-    @InjectMocks
     private CatalogService service;
 
     CatalogDesc catalogOneDesc = getCatalogOneDesc();
@@ -73,6 +63,8 @@ class CatalogServiceTest {
 
     @BeforeEach
     public void init() {
+        service = new CatalogService(repository, factory);
+
         Mockito.when(factory.create(catalogOneDesc)).thenReturn(catalogOne);
         Mockito.when(factory.create(catalogTwoDesc)).thenReturn(catalogTwo);
         Mockito.when(repository.findById(Mockito.eq(catalogOne.getId())))

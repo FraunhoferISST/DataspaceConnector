@@ -15,19 +15,17 @@
  */
 package io.dataspaceconnector.controller.resource.view.proxy;
 
+import java.net.URI;
+import java.util.List;
+
 import io.dataspaceconnector.model.proxy.Proxy;
 import io.dataspaceconnector.model.proxy.ProxyDesc;
 import io.dataspaceconnector.model.proxy.ProxyFactory;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import java.net.URI;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-@SpringBootTest
 public class ProxyViewAssemblerTest {
 
     @Test

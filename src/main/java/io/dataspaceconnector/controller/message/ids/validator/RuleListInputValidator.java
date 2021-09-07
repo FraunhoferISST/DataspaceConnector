@@ -32,6 +32,7 @@ public class RuleListInputValidator extends IdsValidator {
 
     /**
      * Check if every rule in the list of rules contains a target.
+     *
      * @param exchange the exchange.
      */
     @Override

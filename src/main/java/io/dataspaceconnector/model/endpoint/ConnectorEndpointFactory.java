@@ -15,12 +15,9 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
-import org.springframework.stereotype.Component;
-
 /**
  * Creates and updates connector endpoints.
  */
-@Component
 public class ConnectorEndpointFactory extends EndpointFactory<ConnectorEndpoint,
         ConnectorEndpointDesc> {
 

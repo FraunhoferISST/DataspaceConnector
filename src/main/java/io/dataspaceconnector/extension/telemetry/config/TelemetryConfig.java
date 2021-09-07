@@ -29,6 +29,7 @@ import org.springframework.context.annotation.Configuration;
 public class TelemetryConfig {
     /**
      * Create an empty tracer.
+     *
      * @return The new tracer.
      */
     @Bean

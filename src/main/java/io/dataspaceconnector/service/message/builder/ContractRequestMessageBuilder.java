@@ -56,6 +56,7 @@ public class ContractRequestMessageBuilder
     /**
      * Builds a ContractRequestMessage and a contract request according to the exchange properties
      * and creates a Request with the message as header and the contract request as payload.
+     *
      * @param exchange the exchange.
      * @return the {@link Request}.
      */
