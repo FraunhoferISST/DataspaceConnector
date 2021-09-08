@@ -759,7 +759,7 @@
 						<param>io.dataspaceconnector.model*</param>
 					</targetClasses>
 					<targetTests>
-						<param>io.dataspaceconnector.model*</param>
+						<param>io.dataspaceconnector.**Test</param>
 					</targetTests>
 <!--					<excludedTestClasses>-->
 <!--						<param>**</param>-->
@@ -783,8 +783,8 @@
 					<verbose>false</verbose>
 					<threads>2</threads>
 					<timestampedReports>false</timestampedReports>
-					<coverageThreshold>89</coverageThreshold>
-					<mutationThreshold>93</mutationThreshold>
+					<coverageThreshold>94</coverageThreshold>
+					<mutationThreshold>94</mutationThreshold>
 				</configuration>
 			</plugin>
 			<plugin>
