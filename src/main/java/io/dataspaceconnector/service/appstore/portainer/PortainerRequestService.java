@@ -52,7 +52,6 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 @Log4j2
 public class PortainerRequestService {
-
     /**
      * Service for http connections.
      */
@@ -92,6 +91,12 @@ public class PortainerRequestService {
      * The default Portainer API endpoint.
      */
     private static final String API_ENDPOINT = "api/endpoints/";
+
+    /**
+     * Number of hours after which a new Portainer access token should be requested.
+     * Maximum access token validity is 8 hours.
+     */
+    private static final int TOKEN_VALID_HOURS = 7;
 
     /**
      * The endpoint id in portainer.
@@ -1051,7 +1056,7 @@ public class PortainerRequestService {
 
             //Portainer token has an 8 hour validity, request new token after 7 hours
             accessTokenValid.setTime(Calendar.getInstance().getTime());
-            accessTokenValid.add(Calendar.HOUR_OF_DAY, 7);
+            accessTokenValid.add(Calendar.HOUR_OF_DAY, TOKEN_VALID_HOURS);
         }
 
         return accessToken;
