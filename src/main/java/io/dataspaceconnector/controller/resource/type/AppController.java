@@ -269,12 +269,17 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
 
             //Generate endpoint accessURLs depending on deployment information.
             for (final var endpoint : app.getEndpoints()) {
+                //Uses IDS endpoint description info and not template (/api/apps/{id}/endpoints)
                 final var protocol =
                         endpoint.getEndpointPort() == DEFAULT_HTTPS_PORT ? "https://"  : "http://";
 
-                //TODO: location path after exposed-port not yet supported by AppStore Template
-                //(IDS-Message AppDescription Endpoints-Infos ids:path)
-                final var location = protocol + containerName + ":" + endpoint.getExposedPort();
+                //Uses IDS endpoint description info and not template (/api/apps/{id}/endpoints)
+                final var suffix =
+                        endpoint.getPath() != null ? endpoint.getPath()  : "";
+
+                final var exposedPort = endpoint.getExposedPort();
+
+                final var location = protocol + containerName + ":" + exposedPort + suffix;
                 appEndpointSvc.setLocation(endpoint, URI.create(location));
             }
         }
