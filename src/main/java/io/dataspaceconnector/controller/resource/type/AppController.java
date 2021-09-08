@@ -80,6 +80,11 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
      */
     private final @NonNull AppEndpointService appEndpointSvc;
 
+    /**
+     * 443 is the default port for https.
+     */
+    private static final int DEFAULT_HTTPS_PORT = 443;
+
     @Hidden
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
@@ -265,7 +270,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
             //Generate endpoint accessURLs depending on deployment information.
             for (final var endpoint : app.getEndpoints()) {
                 var protocol = "";
-                if (endpoint.getEndpointPort() == 443) {
+                if (endpoint.getEndpointPort() == DEFAULT_HTTPS_PORT) {
                     protocol = "https://";
                 } else {
                     protocol = "http://";
