@@ -45,7 +45,7 @@ import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.EntityUpdateService;
 import io.dataspaceconnector.service.message.builder.type.LogMessageService;
-import io.dataspaceconnector.service.message.builder.type.RequestService;
+import io.dataspaceconnector.service.message.builder.type.ProcessCreationRequestService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +78,7 @@ class ContractAgreementHandlerTest {
     private LogMessageService logMessageService;
 
     @MockBean
-    private RequestService requestService;
+    private ProcessCreationRequestService requestService;
 
     @Value("${clearing.house.url}")
     private URI chUri;

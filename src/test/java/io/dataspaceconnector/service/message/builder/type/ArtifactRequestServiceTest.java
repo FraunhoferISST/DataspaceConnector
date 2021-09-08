@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = {ArtifactRequestService.class, ClearingHouseService.class,
-        ConnectorConfig.class, RequestService.class})
+        ConnectorConfig.class, ProcessCreationRequestService.class})
 class ArtifactRequestServiceTest {
 
     @MockBean

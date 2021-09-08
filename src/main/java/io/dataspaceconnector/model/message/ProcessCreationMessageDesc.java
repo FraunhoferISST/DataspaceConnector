@@ -27,14 +27,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class RequestMessageDesc extends MessageDesc {
+public class ProcessCreationMessageDesc extends MessageDesc {
 
     /**
      * All args constructor.
      *
      * @param recipient The message's recipient.
      */
-    public RequestMessageDesc(final URI recipient) {
+    public ProcessCreationMessageDesc(final URI recipient) {
         super(recipient);
     }
 

@@ -23,7 +23,7 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.util.Utils;
-import io.dataspaceconnector.model.message.RequestMessageDesc;
+import io.dataspaceconnector.model.message.ProcessCreationMessageDesc;
 import io.dataspaceconnector.service.message.builder.type.base.AbstractMessageService;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +31,7 @@ import org.springframework.stereotype.Service;
  * Message service for ids request messages.
  */
 @Service
-public final class RequestService extends AbstractMessageService<RequestMessageDesc> {
+public final class ProcessCreationRequestService extends AbstractMessageService<ProcessCreationMessageDesc> {
 
     /**
      * @throws IllegalArgumentException     if desc is null.
@@ -39,7 +39,7 @@ public final class RequestService extends AbstractMessageService<RequestMessageD
      *                                      when building the message.
      */
     @Override
-    public Message buildMessage(final RequestMessageDesc desc) throws ConstraintViolationException {
+    public Message buildMessage(final ProcessCreationMessageDesc desc) throws ConstraintViolationException {
         Utils.requireNonNull(desc, ErrorMessage.DESC_NULL);
 
         final var connectorId = getConnectorService().getConnectorId();

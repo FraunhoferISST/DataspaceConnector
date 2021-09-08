@@ -38,7 +38,7 @@ import io.dataspaceconnector.common.ids.message.ClearingHouseService;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.service.message.builder.type.LogMessageService;
 import io.dataspaceconnector.service.message.builder.type.NotificationService;
-import io.dataspaceconnector.service.message.builder.type.RequestService;
+import io.dataspaceconnector.service.message.builder.type.ProcessCreationRequestService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +70,7 @@ public class PolicyExecutionServiceTest {
     private LogMessageService logMessageService;
 
     @MockBean
-    private RequestService requestService;
+    private ProcessCreationRequestService requestService;
 
     @Autowired
     private PolicyExecutionService policyExecutionService;

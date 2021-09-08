@@ -27,9 +27,9 @@ import io.dataspaceconnector.common.exception.PolicyExecutionException;
 import io.dataspaceconnector.common.exception.UUIDFormatException;
 import io.dataspaceconnector.common.util.UUIDUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
-import io.dataspaceconnector.model.message.RequestMessageDesc;
+import io.dataspaceconnector.model.message.ProcessCreationMessageDesc;
 import io.dataspaceconnector.service.message.builder.type.LogMessageService;
-import io.dataspaceconnector.service.message.builder.type.RequestService;
+import io.dataspaceconnector.service.message.builder.type.ProcessCreationRequestService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -71,7 +71,7 @@ public class ClearingHouseService {
     /**
      * Service for ids request messages.
      */
-    private final @NonNull RequestService requestService;
+    private final @NonNull ProcessCreationRequestService requestService;
 
     /**
      * Object mapper for mapping to JSON.
@@ -140,7 +140,7 @@ public class ClearingHouseService {
             payload.put("owners", list);
 
             // Send request message to Clearing House.
-            final var response = requestService.send(new RequestMessageDesc(url),
+            final var response = requestService.send(new ProcessCreationMessageDesc(url),
                     objectMapper.writeValueAsString(payload));
 
             if (!requestService.isValidResponseType(response)) {
