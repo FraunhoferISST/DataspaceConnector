@@ -264,9 +264,14 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
 
             //Generate endpoint accessURLs depending on deployment information.
             for (final var endpoint : app.getEndpoints()) {
-                //TODO: http or https?
+                var protocol = "";
+                if (endpoint.getEndpointPort() == 443) {
+                    protocol = "https://";
+                } else {
+                    protocol = "http://";
+                }
                 //TODO: location from template could be added after exposed port
-                final var location = "http://" + containerName + ":" + endpoint.getExposedPort();
+                final var location = protocol + containerName + ":" + endpoint.getExposedPort();
                 appEndpointSvc.setLocation(endpoint, URI.create(location));
             }
         }
