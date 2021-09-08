@@ -278,7 +278,7 @@ public final class FromIdsObjectMapper {
         }
 
         if (path != null && !path.equals("")) {
-            desc.setLocation(URI.create(path));
+            desc.setPath(path);
         }
 
         final var additional = AdditionalUtils.buildAdditionalForAppEndpoint(endpoint);

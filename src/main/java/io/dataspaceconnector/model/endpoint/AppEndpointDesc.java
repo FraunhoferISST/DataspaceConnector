@@ -55,4 +55,8 @@ public class AppEndpointDesc extends EndpointDesc {
      */
     private String language;
 
+    /**
+     * Endpoint path suffix.
+     */
+    private String path;
 }

@@ -38,7 +38,8 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpointImpl, AppEndp
         appEndpoint.setMediaType(desc.getMediaType());
         appEndpoint.setDocs(desc.getDocs());
         appEndpoint.setInfo(desc.getInfo());
-        appEndpoint.setLocation(desc.getLocation());
+        appEndpoint.setPath(desc.getPath());
+
         return appEndpoint;
     }
 

@@ -64,4 +64,8 @@ public class AppEndpoint extends Endpoint {
      */
     private String language;
 
+    /**
+     * Endpoint path suffix.
+     */
+    private String path;
 }

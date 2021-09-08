@@ -89,4 +89,8 @@ public class AppEndpointView extends RepresentationModel<AppEndpointView> {
      */
     private String language;
 
+    /**
+     * Endpoint path suffix.
+     */
+    private String path;
 }
