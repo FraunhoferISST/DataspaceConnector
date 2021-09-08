@@ -59,7 +59,6 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -250,23 +249,29 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     private void persistContainerData(final App app,
                                       final String containerId,
                                       final Response containerDesc) throws IOException {
-        final var portainerContainerName = new JSONObject(
-                Objects.requireNonNull(containerDesc.body()).string()).getString("Name");
+        final var responseBody  = containerDesc.body();
+        var containerName = "";
+        if (responseBody != null) {
+            final var portainerContainerName = new JSONObject(responseBody.string())
+                    .getString("Name");
+            // Note: Portainer places a leading "/" in front of container-name, needs to be removed
+            containerName = portainerContainerName
+                    .substring(portainerContainerName.indexOf("/") + 1);
 
-        // Note: Portainer places a leading "/" in front of container-name, needs to be removed
-        final var containerName = portainerContainerName
-                .substring(portainerContainerName.indexOf("/") + 1);
-
+            //Persist container name.
+            getService().setContainerName(app.getId(), containerName);
+        }
         //Persist container id and name.
         getService().setContainerIdForApp(app.getId(), containerId);
-        getService().setContainerName(app.getId(), containerName);
 
         //Generate endpoint accessURLs depending on deployment information.
-        for (final var endpoint : app.getEndpoints()) {
-            //TODO: http or https?
-            //TODO: location from template could be added after exposed port
-            final var location = "http://" + containerName + ":" + endpoint.getExposedPort();
-            appEndpointSvc.setLocation(endpoint, URI.create(location));
+        if (!containerName.equals("")) {
+            for (final var endpoint : app.getEndpoints()) {
+                //TODO: http or https?
+                //TODO: location from template could be added after exposed port
+                final var location = "http://" + containerName + ":" + endpoint.getExposedPort();
+                appEndpointSvc.setLocation(endpoint, URI.create(location));
+            }
         }
     }
 
