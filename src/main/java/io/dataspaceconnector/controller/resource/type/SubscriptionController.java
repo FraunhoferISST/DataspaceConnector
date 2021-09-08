@@ -49,8 +49,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(BasePath.SUBSCRIPTIONS)
 @RequiredArgsConstructor
 @Tag(name = ResourceName.SUBSCRIPTIONS, description = ResourceDescription.SUBSCRIPTIONS)
-public class SubscriptionController extends BaseResourceController<Subscription,
-        SubscriptionDesc, SubscriptionView, SubscriptionService> {
+public class SubscriptionController extends BaseResourceController<Subscription, SubscriptionDesc,
+        SubscriptionView, SubscriptionService> {
 
     /**
      * The service for managing connector settings.

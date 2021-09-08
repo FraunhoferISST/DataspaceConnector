@@ -15,16 +15,19 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.ErrorMessage;
-import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.SubscriptionProcessingException;
+import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.model.subscription.SubscriptionDesc;
+import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.SubscriptionRepository;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
@@ -32,10 +35,10 @@ import io.dataspaceconnector.service.resource.relation.ArtifactSubscriptionLinke
 import io.dataspaceconnector.service.resource.relation.OfferedResourceSubscriptionLinker;
 import io.dataspaceconnector.service.resource.relation.RepresentationSubscriptionLinker;
 import io.dataspaceconnector.service.resource.relation.RequestedResourceSubscriptionLinker;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.util.List;
@@ -45,7 +48,7 @@ import java.util.Set;
  * Handles the basic logic for subscriptions.
  */
 @Service
-@NoArgsConstructor
+@Transactional
 public class SubscriptionService extends BaseEntityService<Subscription, SubscriptionDesc> {
 
     /**
@@ -77,6 +80,19 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
      */
     @Autowired
     private EntityResolver entityResolver;
+
+    /**
+     * Constructor.
+     *
+     * @param repository The subscription repository.
+     * @param factory    The subscription factory.
+     */
+    @Autowired
+    public SubscriptionService(
+            final BaseEntityRepository<Subscription> repository,
+            final AbstractFactory<Subscription, SubscriptionDesc> factory) {
+        super(repository, factory);
+    }
 
     /**
      * @param desc The description of the new entity.
@@ -143,6 +159,10 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
      * @throws SubscriptionProcessingException if the subscription could not be removed.
      * @throws ResourceNotFoundException       if not matching subscription could be found.
      */
+    @SuppressFBWarnings(
+            value = "REC_CATCH_EXCEPTION",
+            justification = "caught exceptions are unchecked"
+    )
     public void removeSubscription(final URI target, final URI issuer)
             throws SubscriptionProcessingException, ResourceNotFoundException {
         final var subscriptions = getBySubscriberAndTarget(issuer, target);

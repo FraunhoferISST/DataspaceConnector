@@ -42,7 +42,7 @@ public class RouteHelper {
     private final @NonNull IdsAppRouteBuilder appRouteBuilder;
 
     /**
-     * Tries to deploy a Camel route from a route object. Maps the route to an Infomodel
+     * Tries to deploy a Camel route from a route object. Maps the route to an ids
      * {@link de.fraunhofer.iais.eis.AppRoute} and calls the {@link RouteManager}. Creates Camel
      * routes only if the route deploy method is CAMEL and start and end of the route are defined.
      *

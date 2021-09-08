@@ -15,21 +15,26 @@
  */
 package io.dataspaceconnector.common.ids.mapping;
 
+import de.fraunhofer.iais.eis.AppEndpoint;
+import de.fraunhofer.iais.eis.AppRepresentation;
+import de.fraunhofer.iais.eis.AppResource;
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.iais.eis.ConnectorDeployMode;
-import de.fraunhofer.iais.eis.ConnectorEndpoint;
-import de.fraunhofer.iais.eis.ConnectorEndpointImpl;
 import de.fraunhofer.iais.eis.Contract;
+import de.fraunhofer.iais.eis.DataApp;
 import de.fraunhofer.iais.eis.PaymentModality;
 import de.fraunhofer.iais.eis.Proxy;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
-import de.fraunhofer.iais.eis.util.TypedLiteral;
+import de.fraunhofer.iais.eis.UsagePolicyClass;
 import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.ids.policy.PolicyPattern;
+import io.dataspaceconnector.common.time.TimeUtils;
 import io.dataspaceconnector.common.util.Utils;
+import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
@@ -39,6 +44,7 @@ import io.dataspaceconnector.model.configuration.DeployMode;
 import io.dataspaceconnector.model.configuration.LogLevel;
 import io.dataspaceconnector.model.configuration.SecurityProfile;
 import io.dataspaceconnector.model.contract.ContractDesc;
+import io.dataspaceconnector.model.endpoint.AppEndpointDesc;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.proxy.ProxyDesc;
 import io.dataspaceconnector.model.representation.RepresentationDesc;
@@ -47,6 +53,8 @@ import io.dataspaceconnector.model.resource.PaymentMethod;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.resource.ResourceDesc;
 import io.dataspaceconnector.model.rule.ContractRuleDesc;
+import io.dataspaceconnector.model.template.AppEndpointTemplate;
+import io.dataspaceconnector.model.template.AppTemplate;
 import io.dataspaceconnector.model.template.ArtifactTemplate;
 import io.dataspaceconnector.model.template.CatalogTemplate;
 import io.dataspaceconnector.model.template.ContractTemplate;
@@ -54,21 +62,21 @@ import io.dataspaceconnector.model.template.RepresentationTemplate;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.model.template.RuleTemplate;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
+import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
+import static io.dataspaceconnector.common.ids.mapping.AdditionalUtils.buildAdditionalForResource;
 
 /**
  * Maps ids objects to internal entities.
  */
+@Log4j2
 public final class FromIdsObjectMapper {
 
     /**
@@ -96,109 +104,192 @@ public final class FromIdsObjectMapper {
         final var catalogDesc = new CatalogDesc();
         catalogDesc.setAdditional(additional);
         catalogDesc.setTitle("IDS Catalog");
-        catalogDesc.setDescription("This catalog is created from an IDS infomodel catalog.");
+        catalogDesc.setDescription("This catalog is created from an IDS catalog.");
         catalogDesc.setBootstrapId(catalog.getId());
 
         return new CatalogTemplate(catalogDesc, null, null);
     }
 
-    private static Map<String, String> buildAdditionalForResource(final Resource resource) {
+    /**
+     * Map ids app resource to resource.
+     *
+     * @param resource  The app resource.
+     * @param remoteUrl The recipient id.
+     * @return app template.
+     */
+    public static AppTemplate fromIdsApp(final AppResource resource, final URI remoteUrl) {
         Utils.requireNonNull(resource, ErrorMessage.ENTITY_NULL);
 
-        final var additional = propertiesToAdditional(resource.getProperties());
-
-        final var periodicity = resource.getAccrualPeriodicity();
-        final var contentPart = resource.getContentPart();
-        final var contentStandard = resource.getContentStandard();
-        final var contentType = resource.getContentType();
-        final var created = resource.getCreated();
-        final var customLicense = resource.getCustomLicense();
-        final var representation = resource.getDefaultRepresentation();
-        final var modified = resource.getModified();
+        final var description = resource.getDescription();
+        final var keywords = MappingUtils.getKeywordsAsString(resource.getKeyword());
+        final var language = resource.getLanguage();
+        final var publisher = resource.getPublisher();
+        final var sovereign = resource.getSovereign();
+        final var standardLicense = resource.getStandardLicense();
+        final var title = resource.getTitle();
         final var resourceEndpoint = resource.getResourceEndpoint();
-        final var resourcePart = resource.getResourcePart();
-        final var shapesGraph = resource.getShapesGraph();
-        final var spatialCoverage = resource.getSpatialCoverage();
-        final var temporalCoverage = resource.getTemporalCoverage();
-        final var temporalRes = resource.getTemporalResolution();
-        final var theme = resource.getTheme();
-        final var variant = resource.getVariant();
-        final var version = resource.getVersion();
 
-        if (periodicity != null) {
-            additional.put("ids:accrualPeriodicity", periodicity.toRdf());
+        final var desc = new AppDesc();
+        desc.setRemoteAddress(remoteUrl);
+        desc.setRemoteId(resource.getId());
+
+        // Set app resource attributes.
+        desc.setAdditional(buildAdditionalForResource(resource));
+        desc.setKeywords(keywords);
+        desc.setPublisher(publisher);
+        desc.setLicense(standardLicense);
+        desc.setSovereign(sovereign);
+
+        if (description != null && !description.isEmpty()) {
+            desc.setDescription(description.size() == 1 ? description.get(0).getValue()
+                    : description.toString());
         }
 
-        if (contentPart != null && !contentPart.isEmpty()) {
-            addListToAdditional(contentPart, additional, "ids:contentPart");
+        if (title != null && !title.isEmpty()) {
+            desc.setTitle(title.size() == 1 ? title.get(0).getValue() : title.toString());
         }
 
-        if (contentStandard != null) {
-            additional.put("ids:contentStandard", contentStandard.toString());
-        }
-
-        if (contentType != null) {
-            additional.put("ids:contentType", contentType.toRdf());
-        }
-
-        if (created != null) {
-            additional.put("ids:created", created.toXMLFormat());
-        }
-
-        if (customLicense != null) {
-            additional.put("ids:customLicense", customLicense.toString());
-        }
-
-        if (representation != null && !representation.isEmpty()) {
-            addListToAdditional(representation, additional, "ids:defaultRepresentation");
-        }
-
-        if (modified != null) {
-            additional.put("ids:modified", modified.toXMLFormat());
+        if (language != null && !language.isEmpty()) {
+            desc.setLanguage(language.size() == 1
+                    ? language.get(0).toString() : language.toString());
         }
 
         if (resourceEndpoint != null && !resourceEndpoint.isEmpty()) {
-            addListToAdditional(resourceEndpoint, additional, "ids:resourceEndpoint");
+            MappingUtils.getFirstEndpointDocumentation(resourceEndpoint)
+                    .ifPresent(desc::setEndpointDocumentation);
         }
 
-        if (resourcePart != null && !resourcePart.isEmpty()) {
-            addListToAdditional(resourcePart, additional, "ids:resourcePart");
+        var endpoints = new ArrayList<AppEndpointTemplate>();
+
+        // Extract objects.
+        if (resource.getRepresentation() != null) {
+            final var representations = resource.getRepresentation().stream()
+                    .filter(x -> x instanceof AppRepresentation)
+                    .map(x -> (AppRepresentation) x)
+                    .collect(Collectors.toList());
+            if (!representations.isEmpty()) {
+                // Note: Assume that an app resource has only one representation.
+                final var representation = representations.get(0);
+
+                // Set app representation attributes.
+                fillAppWithRepresentationValues(representation, desc);
+
+                if (representation.getDataAppInformation() != null) {
+                    final var dataApp = representation.getDataAppInformation();
+
+                    // Set data app attributes.
+                    endpoints = fillAppWithDataAppValues(dataApp, desc);
+                }
+            }
         }
 
-        if (shapesGraph != null) {
-            additional.put("ids:shapesGraph", shapesGraph.toString());
+        // Set empty data initially.
+        desc.setValue("");
+
+        return new AppTemplate(desc, endpoints);
+    }
+
+    private static void fillAppWithRepresentationValues(final AppRepresentation representation,
+                                                        final AppDesc desc) {
+        final var distribution = representation.getDataAppDistributionService();
+        final var runtimeEnvironment = representation.getDataAppRuntimeEnvironment();
+
+        if (distribution != null) {
+            desc.setDistributionService(distribution);
         }
 
-        if (spatialCoverage != null && !spatialCoverage.isEmpty()) {
-            addListToAdditional(spatialCoverage, additional, "ids:spatialCoverage");
+        if (runtimeEnvironment != null) {
+            desc.setRuntimeEnvironment(runtimeEnvironment);
         }
 
-        if (temporalCoverage != null && !temporalCoverage.isEmpty()) {
-            addListToAdditional(temporalCoverage, additional, "ids:temporalCoverage");
+        desc.setAdditional(AdditionalUtils.buildAdditionalForAppRepresentation(representation));
+    }
+
+    private static ArrayList<AppEndpointTemplate> fillAppWithDataAppValues(final DataApp app,
+                                                                           final AppDesc desc) {
+        final var documentation = app.getAppDocumentation();
+        final var envVariables = app.getAppEnvironmentVariables();
+        final var storageConfig = app.getAppStorageConfiguration();
+        final var supportedPolicies = app.getSupportedUsagePolicies();
+
+        if (documentation != null) {
+            desc.setDocs(documentation);
         }
 
-        if (temporalRes != null) {
-            additional.put("ids:temporalResolution", temporalRes.toString());
+        if (envVariables != null) {
+            desc.setEnvVariables(envVariables);
         }
 
-        if (theme != null && !theme.isEmpty()) {
-            addListToAdditional(theme, additional, "ids:theme");
+        if (storageConfig != null) {
+            desc.setStorageConfig(storageConfig);
         }
 
-        if (variant != null) {
-            additional.put("ids:variant", variant.toString());
+        if (supportedPolicies != null && !supportedPolicies.isEmpty()) {
+            desc.setSupportedPolicies(fromIdsUsagePolicyClass(supportedPolicies));
         }
 
-        if (version != null) {
-            additional.put("ids:version", version);
+        final var endpoints = new ArrayList<AppEndpointTemplate>();
+        for (final var endpoint : app.getAppEndpoint()) {
+            endpoints.add(fromIdsAppEndpoint(endpoint));
         }
 
-        return additional;
+        return endpoints;
+    }
+
+    private static AppEndpointTemplate fromIdsAppEndpoint(final AppEndpoint endpoint) {
+        final var port = endpoint.getAppEndpointPort();
+        final var mediaType = endpoint.getAppEndpointMediaType();
+        final var type = endpoint.getAppEndpointType();
+        final var protocol = endpoint.getAppEndpointProtocol();
+        final var language = endpoint.getLanguage();
+        final var endpointDocs = endpoint.getEndpointDocumentation();
+        final var endpointInfo = endpoint.getEndpointInformation();
+        final var path = endpoint.getPath();
+
+        final var desc = new AppEndpointDesc();
+
+        if (port != null) {
+            desc.setEndpointPort(port.intValue());
+        }
+
+        if (mediaType != null) {
+            desc.setMediaType(mediaType.getFilenameExtension());
+        }
+
+        if (type != null) {
+            desc.setEndpointType(type.name());
+        }
+
+        if (language != null) {
+            desc.setLanguage(language.toString());
+        }
+
+        if (protocol != null) {
+            desc.setProtocol(protocol);
+        }
+
+        if (endpointDocs != null && !endpointDocs.isEmpty()) {
+            desc.setDocs(endpointDocs.get(0));
+        }
+
+        if (endpointInfo != null && !endpointInfo.isEmpty()) {
+            desc.setInfo(endpointInfo.size() == 1 ? endpointInfo.get(0).getValue()
+                    : endpointInfo.toString());
+        }
+
+        if (path != null && !path.equals("")) {
+            desc.setLocation(URI.create(path));
+        }
+
+        final var additional = AdditionalUtils.buildAdditionalForAppEndpoint(endpoint);
+        desc.setAdditional(additional);
+
+        return new AppEndpointTemplate(desc);
     }
 
     private static void fillResourceDesc(final ResourceDesc desc, final Resource resource) {
         final var description = resource.getDescription();
-        final var keywords = getKeywordsAsString(resource.getKeyword());
+        final var keywords = MappingUtils.getKeywordsAsString(resource.getKeyword());
         final var language = resource.getLanguage();
         final var publisher = resource.getPublisher();
         final var sovereign = resource.getSovereign();
@@ -229,12 +320,12 @@ public final class FromIdsObjectMapper {
         }
 
         if (resourceEndpoint != null && !resourceEndpoint.isEmpty()) {
-            getFirstEndpointDocumentation(resourceEndpoint)
+            MappingUtils.getFirstEndpointDocumentation(resourceEndpoint)
                     .ifPresent(desc::setEndpointDocumentation);
         }
 
-        if (paymentModality != null && !paymentModality.isEmpty()) {
-            desc.setPaymentMethod(fromIdsPaymentModality(paymentModality));
+        if (paymentModality != null) {
+            desc.setPaymentMethod(fromIdsPaymentModality(paymentModality, resource.getId()));
         }
 
         if (samples != null && !samples.isEmpty()) {
@@ -281,24 +372,6 @@ public final class FromIdsObjectMapper {
     }
 
     /**
-     * Adds the string value of a given list as an additional property. If the list only contains
-     * one element, the string value will not contain brackets.
-     *
-     * @param list       the list.
-     * @param additional the map of additional properties.
-     * @param key        the map key to use.
-     */
-    private static void addListToAdditional(final List<?> list,
-                                            final Map<String, String> additional,
-                                            final String key) {
-        if (list.size() >= 1 && list.get(0) instanceof ConnectorEndpointImpl) {
-            additional.put(key, ((ConnectorEndpointImpl) list.get(0)).getAccessURL().toString());
-        } else {
-            additional.put(key, list.size() == 1 ? list.get(0).toString() : list.toString());
-        }
-    }
-
-    /**
      * Map ids representation to connector representation.
      *
      * @param representation The ids representation.
@@ -318,7 +391,8 @@ public final class FromIdsObjectMapper {
         final var shape = representation.getShapesGraph();
 
         // Add additional properties to map.
-        final var additional = propertiesToAdditional(representation.getProperties());
+        final var additional
+                = AdditionalUtils.propertiesToAdditional(representation.getProperties());
 
         if (created != null) {
             additional.put("ids:created", created.toXMLFormat());
@@ -371,7 +445,7 @@ public final class FromIdsObjectMapper {
         final var filename = artifact.getFileName();
 
         // Add additional properties to map.
-        final var additional = propertiesToAdditional(artifact.getProperties());
+        final var additional = AdditionalUtils.propertiesToAdditional(artifact.getProperties());
 
         if (byteSize != null) {
             additional.put("ids:byteSize", byteSize.toString());
@@ -420,7 +494,7 @@ public final class FromIdsObjectMapper {
         final var start = contract.getContractStart();
 
         // Add additional properties to map.
-        final var additional = propertiesToAdditional(contract.getProperties());
+        final var additional = AdditionalUtils.propertiesToAdditional(contract.getProperties());
 
         if (date != null) {
             additional.put("ids:contractDate", date.toXMLFormat());
@@ -434,7 +508,7 @@ public final class FromIdsObjectMapper {
 
         if (end != null) {
             try {
-                desc.setEnd(getDateOf(end.toXMLFormat()));
+                desc.setEnd(TimeUtils.getDateOf(end.toXMLFormat()));
             } catch (DateTimeParseException ignored) {
                 // Default values don't need to be set here.
             }
@@ -442,7 +516,7 @@ public final class FromIdsObjectMapper {
 
         if (start != null) {
             try {
-                desc.setStart(getDateOf(start.toXMLFormat()));
+                desc.setStart(TimeUtils.getDateOf(start.toXMLFormat()));
             } catch (DateTimeParseException ignored) {
                 // Default values don't need to be set here.
             }
@@ -476,117 +550,42 @@ public final class FromIdsObjectMapper {
     }
 
     /**
-     * Get list of ids keywords as list of strings.
-     * If the passed list is null, an empty list is returned.
-     *
-     * @param keywords List of typed literals.
-     * @return List of strings.
-     */
-    public static List<String> getKeywordsAsString(final List<? extends TypedLiteral> keywords) {
-        final var list = new ArrayList<String>();
-        if (keywords != null && !keywords.isEmpty()) {
-            for (final var keyword : keywords) {
-                list.add(keyword.getValue());
-            }
-        }
-
-        return list;
-    }
-
-    /**
-     * Map ids property map to additional map for the internal data model.
-     * If the argument is null an empty map will be returned.
-     *
-     * @param properties A string object map.
-     * @return A map containing all properties that could be extracted.
-     */
-    private static Map<String, String> propertiesToAdditional(
-            final Map<String, Object> properties) {
-        final Map<String, String> additional = new ConcurrentHashMap<>();
-        if (properties != null && !properties.isEmpty()) {
-            for (final Map.Entry<String, Object> entry : properties.entrySet()) {
-                if (entry.getValue() != null) {
-                    additional.put(entry.getKey(), entry.getValue().toString());
-                }
-            }
-        }
-
-        return additional;
-    }
-
-    /**
-     * Convert a string to a {@link ZonedDateTime}.
-     *
-     * @param calendar The time as string.
-     * @return The new ZonedDateTime object.
-     * @throws DateTimeParseException if its not a time.
-     */
-    public static ZonedDateTime getDateOf(final String calendar) throws DateTimeParseException {
-        return ZonedDateTime.parse(calendar);
-    }
-
-    /**
-     * Returns the first endpoint documentations of the first endpoint.
-     *
-     * @param endpoints The list of endpoints.
-     * @return The endpoint documentation.
-     */
-    private static Optional<URI> getFirstEndpointDocumentation(
-            final List<? extends ConnectorEndpoint> endpoints) {
-        Optional<URI> output = Optional.empty();
-
-        if (endpoints != null && !endpoints.isEmpty()) {
-            final var first = endpoints.get(0);
-
-            if (first.getEndpointDocumentation() != null
-                    && !first.getEndpointDocumentation().isEmpty()) {
-                output = Optional.of(first.getEndpointDocumentation().get(0));
-            }
-        }
-
-        return output;
-    }
-
-    /**
      * Build internal configuration desc from ids configModel.
      *
      * @param configModel The ids configuration model.
      * @return The internal configuration desc.
      */
     public static ConfigurationDesc fromIdsConfig(final ConfigurationModel configModel) {
-        final var description = new ConfigurationDesc();
-        if (!configModel.getConnectorDescription().getTitle().isEmpty()) {
-            description.setTitle(
-                    configModel.getConnectorDescription().getTitle().get(0).getValue());
+        final var desc = new ConfigurationDesc();
+
+        final var connector = configModel.getConnectorDescription();
+        if (!connector.getTitle().isEmpty()) {
+            desc.setTitle(connector.getTitle().get(0).getValue());
         }
-        if (!configModel.getConnectorDescription().getDescription().isEmpty()) {
-            description.setDescription(
-                    configModel.getConnectorDescription().getDescription().get(0).getValue()
-            );
+        if (!connector.getDescription().isEmpty()) {
+            desc.setDescription(connector.getDescription().get(0).getValue());
         }
-        description.setDeployMode(fromIdsDeployMode(configModel.getConnectorDeployMode()));
-        description.setCurator(configModel.getConnectorDescription().getCurator());
-        description.setDefaultEndpoint(
-                configModel.getConnectorDescription().getHasDefaultEndpoint().getAccessURL());
-        description.setInboundModelVersion(
-                configModel.getConnectorDescription().getInboundModelVersion());
-        description.setOutboundModelVersion(
-                configModel.getConnectorDescription().getOutboundModelVersion());
-        description.setKeystoreSettings(new KeystoreDesc(
+        desc.setDeployMode(fromIdsDeployMode(configModel.getConnectorDeployMode()));
+        desc.setCurator(connector.getCurator());
+        desc.setDefaultEndpoint(connector.getHasDefaultEndpoint().getAccessURL());
+        desc.setInboundModelVersion(connector.getInboundModelVersion());
+        desc.setOutboundModelVersion(connector.getOutboundModelVersion());
+        desc.setKeystoreSettings(new KeystoreDesc(
                 configModel.getKeyStore(),
                 configModel.getKeyStorePassword(),
                 configModel.getKeyStoreAlias()));
-        description.setLogLevel(fromIdsLogLevel(configModel.getConfigurationModelLogLevel()));
-        description.setMaintainer(configModel.getConnectorDescription().getMaintainer());
-        description.setProxySettings(fromIdsProxy(configModel.getConnectorProxy()));
-        description.setSecurityProfile(
-                fromIdsSecurityProfile(configModel.getConnectorDescription().getSecurityProfile()));
-        description.setTruststoreSettings(new TruststoreDesc(
+        desc.setLogLevel(fromIdsLogLevel(configModel.getConfigurationModelLogLevel()));
+        desc.setMaintainer(connector.getMaintainer());
+        desc.setProxySettings(fromIdsProxy(configModel.getConnectorProxy()));
+        desc.setSecurityProfile(fromIdsSecurityProfile(connector.getSecurityProfile()));
+        desc.setTruststoreSettings(new TruststoreDesc(
                 configModel.getTrustStore(),
                 configModel.getTrustStorePassword(),
                 configModel.getTrustStoreAlias()));
-        description.setStatus(fromIdsConnectorStatus(configModel.getConnectorStatus()));
-        return description;
+        desc.setStatus(fromIdsConnectorStatus(configModel.getConnectorStatus()));
+        desc.setConnectorId(connector.getId());
+
+        return desc;
     }
 
     /**
@@ -601,7 +600,7 @@ public final class FromIdsObjectMapper {
         }
 
         switch (logLevel) {
-            // TODO infomodel has less log levels than DSC, info will get lost
+            // Note: As the IDS Infomodel has less log levels than DSC, information will get lost.
             case MINIMAL_LOGGING:
                 return LogLevel.WARN;
             case DEBUG_LEVEL_LOGGING:
@@ -656,8 +655,8 @@ public final class FromIdsObjectMapper {
     }
 
     private static DeployMode fromIdsDeployMode(final ConnectorDeployMode deployMode) {
-        return deployMode == ConnectorDeployMode.TEST_DEPLOYMENT ? DeployMode.TEST
-                : DeployMode.PRODUCTIVE;
+        return deployMode == ConnectorDeployMode.TEST_DEPLOYMENT
+                ? DeployMode.TEST : DeployMode.PRODUCTIVE;
     }
 
     private static ProxyDesc fromIdsProxy(final List<Proxy> proxyList) {
@@ -674,19 +673,65 @@ public final class FromIdsObjectMapper {
                 new AuthenticationDesc(auth.getAuthUsername(), auth.getAuthPassword()));
     }
 
-    private static PaymentMethod fromIdsPaymentModality(final List<PaymentModality> modalities) {
-        final var paymentModality = modalities.get(0);
-        if (paymentModality == null) {
+    private static PaymentMethod fromIdsPaymentModality(final Object modality, final URI id) {
+        if (modality == null) {
             return PaymentMethod.UNDEFINED;
         }
 
-        switch (paymentModality) {
-            case FIXED_PRICE:
-                return PaymentMethod.FIXED_PRICE;
-            case NEGOTIATION_BASIS:
-                return PaymentMethod.NEGOTIATION_BASIS;
-            default:
-                return PaymentMethod.FREE;
+        try {
+            switch ((PaymentModality) modality) {
+                case FREE:
+                    return PaymentMethod.FREE;
+                case FIXED_PRICE:
+                    return PaymentMethod.FIXED_PRICE;
+                case NEGOTIATION_BASIS:
+                    return PaymentMethod.NEGOTIATION_BASIS;
+                default:
+                    return PaymentMethod.UNDEFINED;
+            }
+        } catch (ClassCastException exception) {
+            if (log.isDebugEnabled()) {
+                log.debug("Could not read payment modality from incoming resource. "
+                        + "[resourceId=({}), modality=({})]", id, modality.toString());
+            }
+            return PaymentMethod.UNDEFINED;
         }
+    }
+
+    private static List<PolicyPattern> fromIdsUsagePolicyClass(final List<UsagePolicyClass> list) {
+        var patterns = new ArrayList<PolicyPattern>();
+        for (final var policyClass : list) {
+            switch (policyClass) {
+                case CONNECTOR_RESTRICTED_DATA_USAGE:
+                    patterns.add(PolicyPattern.CONNECTOR_RESTRICTED_USAGE);
+                    break;
+                case DURATION_RESTRICTED_DATA_USAGE:
+                    patterns.add(PolicyPattern.DURATION_USAGE);
+                    break;
+                case INTERVAL_RESTRICTED_DATA_USAGE:
+                    patterns.add(PolicyPattern.USAGE_DURING_INTERVAL);
+                    break;
+                case LOCAL_LOGGING:
+                    patterns.add(PolicyPattern.USAGE_LOGGING);
+                    break;
+                case ALLOW_DATA_USAGE:
+                    patterns.add(PolicyPattern.PROVIDE_ACCESS);
+                    break;
+                case REMOTE_NOTIFICATION:
+                    patterns.add(PolicyPattern.USAGE_NOTIFICATION);
+                    break;
+                case RESTRICTED_NUMBER_OF_USAGES:
+                    patterns.add(PolicyPattern.N_TIMES_USAGE);
+                    break;
+                case USE_DATA_AND_DELETE_AFTER:
+                    patterns.add(PolicyPattern.USAGE_UNTIL_DELETION);
+                    break;
+                default:
+                    patterns.add(PolicyPattern.PROHIBIT_ACCESS);
+                    break;
+            }
+        }
+
+        return patterns;
     }
 }

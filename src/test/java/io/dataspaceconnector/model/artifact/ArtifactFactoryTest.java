@@ -21,6 +21,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.CRC32C;
 
 import io.dataspaceconnector.model.auth.ApiKey;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
@@ -142,6 +143,18 @@ public class ArtifactFactoryTest {
         assertEquals(0, result.getRepresentations().size());
     }
 
+    @Test
+    public void create_validDesc_subscriptionsEmpty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT */
+        final var result = factory.create(new ArtifactDesc());
+
+        /* ASSERT */
+        assertEquals(0, result.getSubscriptions().size());
+    }
+
     /**
      * remoteId.
      */
@@ -199,6 +212,25 @@ public class ArtifactFactoryTest {
 
         /* ASSERT */
         Assertions.assertFalse(result);
+    }
+
+    /**
+     * remoteAddress
+     */
+
+    @Test
+    public void update_diffrentRemoteAddress_willUpdate() {
+        /* ARRANGE */
+        final var artifact = factory.create(new ArtifactDesc());
+        final var desc = new ArtifactDesc();
+        desc.setRemoteAddress(URI.create("https://someWhere"));
+
+        /* ACT */
+        final var result = factory.update(artifact, desc);
+
+        /* ASSERT */
+        Assertions.assertTrue(result);
+        Assertions.assertEquals(desc.getRemoteAddress(), artifact.getRemoteAddress());
     }
 
     /**
@@ -639,5 +671,52 @@ public class ArtifactFactoryTest {
         final var data = (RemoteData) ((ArtifactImpl) artifact).getData();
         assertEquals(new ApiKey(updateDesc.getApiKey().getKey(), updateDesc.getApiKey().getValue()),
                      data.getAuthentication().get(0));
+    }
+
+    @Test
+    public void updateByteSize_setByteTooNull_willUpdate() {
+        /* ARRANGE */
+        final var artifact = factory.create(new ArtifactDesc());
+        artifact.setByteSize(20);
+        artifact.setCheckSum(3);
+
+        /* ACT */
+        final var result = factory.updateByteSize(artifact, null);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(0, artifact.getByteSize());
+        assertEquals(0, artifact.getCheckSum());
+    }
+
+    @Test
+    public void updateByteSize_hasChanged_willUpdateByteSizeAndChecksum() {
+        /* ARRANGE */
+        final var artifact = factory.create(new ArtifactDesc());
+        final byte[] data = {0, 1};
+        final var checksum = new CRC32C();
+        checksum.update(data, 0, data.length);
+
+        /* ACT */
+        final var result = factory.updateByteSize(artifact, data);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(2, artifact.getByteSize());
+        assertEquals(checksum.getValue(), artifact.getCheckSum());
+    }
+
+    @Test
+    public void update_allChanged_willUpdate() {
+        /* ARRANGE */
+        final var artifact = factory.create(new ArtifactDesc());
+        final var desc = new ArtifactDesc();
+        desc.setValue("someValue");
+
+        /* ACT */
+        final var result = factory.update(artifact, desc);
+
+        /* ASSERT */
+        assertTrue(result);
     }
 }

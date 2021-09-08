@@ -19,7 +19,6 @@ import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.controller.resource.relation.ArtifactsToAgreementsController;
 import io.dataspaceconnector.controller.resource.relation.ArtifactsToRepresentationsController;
 import io.dataspaceconnector.controller.resource.type.ArtifactController;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
@@ -28,6 +27,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,16 +47,14 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @SpringBootTest(classes = {
-        ArtifactViewAssembler.class,
-        ViewAssemblerHelper.class,
-        ArtifactFactory.class
+        ArtifactViewAssembler.class
 })
 public class ArtifactViewAssemblerTest {
 
     @Autowired
     private ArtifactViewAssembler artifactViewAssembler;
 
-    @Autowired
+    @SpyBean
     private ArtifactFactory artifactFactory;
 
     @Test

@@ -13,25 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.dataspaceconnector.controller.gui.util;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.Language;
 import de.fraunhofer.iais.eis.SecurityProfile;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.configuration.DeployMode;
@@ -59,9 +47,10 @@ public final class GuiUtils {
     /**
      * The method returns for a given enum name all enum values.
      *
-     * @param enumName name of the enum
-     * @return enums as string
+     * @param enumName name of the enum.
+     * @return enums as string.
      */
+    @SuppressFBWarnings("IMPROPER_UNICODE")
     public static String getSpecificEnum(final String enumName) {
         final var name = enumName.toLowerCase(Locale.ENGLISH);
         JSONArray sortedJsonArray = null;
@@ -115,7 +104,6 @@ public final class GuiUtils {
                 }
             }
         }
-
 
         return sortJsonArray(jsonArray);
     }
@@ -237,8 +225,10 @@ public final class GuiUtils {
     }
 
     /**
-     * @param jsonArray json array to be sorted
-     * @return sorted json array
+     * Sort json array.
+     *
+     * @param jsonArray json array to be sorted.
+     * @return sorted json array.
      */
     private static JSONArray sortJsonArray(final JSONArray jsonArray) {
         final var jsonObjects = new ArrayList<JSONObject>();

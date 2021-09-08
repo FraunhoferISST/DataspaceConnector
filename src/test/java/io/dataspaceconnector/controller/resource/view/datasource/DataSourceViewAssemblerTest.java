@@ -20,11 +20,9 @@ import io.dataspaceconnector.model.datasource.DataSourceDesc;
 import io.dataspaceconnector.model.datasource.DataSourceFactory;
 import io.dataspaceconnector.model.datasource.DataSourceType;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
 public class DataSourceViewAssemblerTest {
 
     @Test

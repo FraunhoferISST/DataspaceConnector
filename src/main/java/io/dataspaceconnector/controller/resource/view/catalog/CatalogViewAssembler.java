@@ -15,11 +15,13 @@
  */
 package io.dataspaceconnector.controller.resource.view.catalog;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.relation.CatalogsToOfferedResourcesController;
 import io.dataspaceconnector.controller.resource.type.CatalogController;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.catalog.Catalog;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -28,8 +30,6 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
@@ -37,7 +37,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  */
 @Component
 @NoArgsConstructor
-public class CatalogViewAssembler
+public class CatalogViewAssembler extends SelfLinkHelper
         implements RepresentationModelAssembler<Catalog, CatalogView>, SelfLinking {
     /**
      * Construct the CatalogView from a Catalog.
@@ -62,6 +62,6 @@ public class CatalogViewAssembler
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, CatalogController.class);
+        return getSelfLink(entityId, CatalogController.class);
     }
 }

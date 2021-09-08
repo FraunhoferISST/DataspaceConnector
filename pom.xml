@@ -85,7 +85,7 @@
 
 	<properties>
 		<!-- General -->
-		<revision>6.1.2</revision>
+		<revision>6.2.0</revision>
 		<email>info@dataspace-connector.de</email>
 
 		<!-- Build info -->
@@ -94,12 +94,12 @@
 		<maven.minimum.version>3.3.9</maven.minimum.version>
 
 		<!-- Dependencies -->
-		<ids-messaging-services.version>3.1.0</ids-messaging-services.version>
+		<ids-messaging-services.version>4.3.0</ids-messaging-services.version>
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.6.2</swagger-annotations.version>
 		<okhttp.version>4.9.1</okhttp.version>
 		<modelmapper.version>2.4.4</modelmapper.version>
-		<jackson.version>2.12.4</jackson.version>
+		<jackson.version>2.12.5</jackson.version>
 		<postgres.version>42.2.23</postgres.version>
 		<springdoc.version>1.5.10</springdoc.version>
 		<equalsverifier.version>3.7.1</equalsverifier.version>
@@ -113,7 +113,7 @@
 		<maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
 		<maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-		<pitest.version>1.6.9</pitest.version>
+		<pitest.version>1.7.0</pitest.version>
 		<pitest-junit5-plugin.version>0.14</pitest-junit5-plugin.version>
 		<tidy.version>1.1.0</tidy.version>
 		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
@@ -121,15 +121,16 @@
 		<spotbugs.version>4.3.0</spotbugs.version>
 		<findsecbugs-plugin.version>1.11.0</findsecbugs-plugin.version>
 		<checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
-		<checkstyle.version>8.45.1</checkstyle.version>
+		<checkstyle.version>9.0</checkstyle.version>
 		<jacoco.version>0.8.7</jacoco.version>
 		<pmd-plugin.version>3.14.0</pmd-plugin.version>
-		<pmd.version>6.37.0</pmd.version>
+		<pmd.version>6.38.0</pmd.version>
 		<versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
 		<license-plugin.version>4.1</license-plugin.version>
 		<dms.version>2.2.0</dms.version>
 		<taglist.version>2.4</taglist.version>
 		<jxr.version>3.1.1</jxr.version>
+		<dependency-check.version>6.3.1</dependency-check.version>
 
 		<!-- License -->
 		<license_name>Apache License, Version 2.0</license_name>
@@ -310,6 +311,14 @@
 			<groupId>com.squareup.okhttp3</groupId>
 			<artifactId>okhttp</artifactId>
 			<version>${okhttp.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/mockwebserver -->
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>mockwebserver</artifactId>
+			<version>${okhttp.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -711,8 +720,10 @@
 								<exclude>**/*.env</exclude>
 								<exclude>**/lombok.config</exclude>
 								<exclude>**/.dockerignore</exclude>
-								<exclude>charts/dataspace-connector/Chart.lock</exclude>
-								<exlcude>charts/dataspace-connector/.helmignore</exlcude>
+								<exclude>charts/**/Chart.lock</exclude>
+								<exclude>charts/**/.helmignore</exclude>
+								<exclude>charts/**/**/*.yaml</exclude>
+								<exclude>charts/**/**/NOTES.txt</exclude>
 								<exclude>**/*.tgz</exclude>
 								<exclude>charts/**/*.tpl</exclude>
 								<exclude>docs/**</exclude>
@@ -754,15 +765,26 @@
 <!--						<param>**</param>-->
 <!--					</excludedTestClasses>-->
 					<mutators>
-						<mutator>ALL</mutator>
+						<mutator>STRONGER</mutator>
+						<!-- <mutator>INLINE_CONSTS</mutator>
+						<mutator>CONSTRUCTOR_CALLS</mutator>
+						<mutator>NON_VOID_METHOD_CALLS</mutator>
+						<mutator>REMOVE_INCREMENTS</mutator>
+						<mutator>ABS</mutator>
+						<mutator>AOR</mutator>
+						<mutator>AOD</mutator>
+						<mutator>CRCR</mutator>
+						<mutator>OBBN</mutator>
+						<mutator>ROR</mutator>
+						<mutator>UOI</mutator> -->
 					</mutators>
 					<historyInputFile>${project.build.directory}/pit-reports/history</historyInputFile>
 					<historyOutputFile>${project.build.directory}/pit-reports/history</historyOutputFile>
 					<verbose>false</verbose>
 					<threads>2</threads>
 					<timestampedReports>false</timestampedReports>
-					<coverageThreshold>98</coverageThreshold>
-					<mutationThreshold>74</mutationThreshold>
+					<coverageThreshold>89</coverageThreshold>
+					<mutationThreshold>93</mutationThreshold>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -904,6 +926,26 @@
 			<properties>
 				<maven.javadoc.skip>true</maven.javadoc.skip>
 			</properties>
+		</profile>
+
+		<profile>
+			<id>dependency-audit</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.owasp</groupId>
+						<artifactId>dependency-check-maven</artifactId>
+						<version>${dependency-check.version}</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 
 		<!--

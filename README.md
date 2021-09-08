@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <a href="https://dataspace-connector.de/dsc_logo.svg"><img src="https://dataspace-connector.de/dsc_logo.svg" alt="Dataspace Connector Logo" width="200"></a>
+    <img alt="Logo" width="200" src="docs/assets/images/dsc_logo.png"/>
   <br>
       Dataspace Connector
   <br>
@@ -38,6 +38,12 @@ usage policy patterns.
 
 ## Quick Start
 
+**We provide Docker images. These can be found
+[here](https://github.com/International-Data-Spaces-Association/DataspaceConnector/pkgs/container/dataspace-connector).
+For a Docker or Kubernetes deployment, as well as a full setup with the Connector
+and its GUI, see [here](https://github.com/International-Data-Spaces-Association/IDS-Deployment-Examples/tree/main/dataspace-connector).**
+
+
 If you want to build and run locally, ensure that at least Java 11 is installed. Then, follow these steps:
 
 1.  Clone this repository.
@@ -47,7 +53,6 @@ If you want to build and run locally, ensure that at least Java 11 is installed.
     be accessed at https://localhost:8080/api. The Swagger UI can be found at https://localhost:8080/api/docs.
 
 For more details, see [here](https://international-data-spaces-association.github.io/DataspaceConnector/).
-For a Docker or Kubernetes deployment, as well as a full setup with the IDS Configuration Manager and its GUI, see [here](https://github.com/International-Data-Spaces-Association/IDS-Deployment-Examples/tree/main/dataspace-connector).
 
 ## Contributing
 
@@ -57,8 +62,8 @@ improvement, or have an idea for a useful feature. Please find a set of guidelin
 
 ## Developers
 
-This is an ongoing project of the [Data Economy](https://www.isst.fraunhofer.de/en/business-units/data-economy.html)
-business unit of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html).
+This is an ongoing project of the [Data Business](https://www.isst.fraunhofer.de/en/business-units/data-economy.html)
+department of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html).
 
 The core development is driven by
 * [Heinrich Pettenpohl](https://github.com/HeinrichPet), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html), Project Manager

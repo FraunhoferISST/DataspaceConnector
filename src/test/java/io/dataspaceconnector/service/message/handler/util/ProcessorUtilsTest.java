@@ -15,20 +15,18 @@
  */
 package io.dataspaceconnector.service.message.handler.util;
 
+import java.net.URI;
+
 import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SpringBootTest
 public class ProcessorUtilsTest {
 
     @Test

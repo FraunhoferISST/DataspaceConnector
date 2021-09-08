@@ -15,9 +15,13 @@
  */
 package io.dataspaceconnector.controller.resource.view.rule;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.UUID;
+
 import io.dataspaceconnector.controller.resource.relation.RulesToContractsController;
 import io.dataspaceconnector.controller.resource.type.RuleController;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.rule.ContractRuleDesc;
 import io.dataspaceconnector.model.rule.ContractRuleFactory;
@@ -25,15 +29,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -42,16 +42,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @SpringBootTest(classes = {
-        ContractRuleViewAssembler.class,
-        ViewAssemblerHelper.class,
-        ContractRuleFactory.class
+        ContractRuleViewAssembler.class
 })
 public class ContractRuleViewAssemblerTest {
 
     @Autowired
     private ContractRuleViewAssembler contractRuleViewAssembler;
 
-    @Autowired
+    @SpyBean
     private ContractRuleFactory contractRuleFactory;
 
     @Test

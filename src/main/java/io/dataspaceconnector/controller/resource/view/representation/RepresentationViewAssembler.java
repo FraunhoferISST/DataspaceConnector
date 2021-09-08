@@ -15,16 +15,18 @@
  */
 package io.dataspaceconnector.controller.resource.view.representation;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.config.BaseType;
-import io.dataspaceconnector.controller.resource.type.RepresentationController;
 import io.dataspaceconnector.controller.resource.relation.RepresentationsToArtifactsController;
 import io.dataspaceconnector.controller.resource.relation.RepresentationsToOfferedResourcesController;
 import io.dataspaceconnector.controller.resource.relation.RepresentationsToRequestsController;
 import io.dataspaceconnector.controller.resource.relation.RepresentationsToSubscriptionsController;
+import io.dataspaceconnector.controller.resource.type.RepresentationController;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.RequestedResource;
@@ -34,8 +36,6 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
 
@@ -44,10 +44,10 @@ import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.met
  */
 @Component
 @NoArgsConstructor
-public class RepresentationViewAssembler
+public class RepresentationViewAssembler extends SelfLinkHelper
         implements RepresentationModelAssembler<Representation, RepresentationView>, SelfLinking {
     /**
-     * Construct the RepresentationView from an Representation.
+     * Construct the RepresentationView from a Representation.
      *
      * @param representation The representation.
      * @return The new view.
@@ -97,6 +97,6 @@ public class RepresentationViewAssembler
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, RepresentationController.class);
+        return getSelfLink(entityId, RepresentationController.class);
     }
 }

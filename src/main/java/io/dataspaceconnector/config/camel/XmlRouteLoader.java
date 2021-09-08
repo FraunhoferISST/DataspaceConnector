@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.config.camel;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.file.FileUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
 import lombok.NonNull;
@@ -116,8 +117,12 @@ public class XmlRouteLoader {
      * @param files the classpath resources.
      * @throws Exception if reading a file, parsing the XML or adding the route fails.
      */
+    @SuppressFBWarnings(
+            value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
+            justification = "The redundant nullcheck happens inside called method from spring"
+    )
     private void loadRoutes(final Resource[] files) throws Exception {
-        for (var file: files) {
+        for (var file : files) {
             try (var inputStream = file.getInputStream()) {
                 loadRoutesFromInputStream(inputStream);
             }

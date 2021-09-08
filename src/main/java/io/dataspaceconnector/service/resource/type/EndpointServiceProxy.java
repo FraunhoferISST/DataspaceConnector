@@ -16,6 +16,8 @@
 package io.dataspaceconnector.service.resource.type;
 
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
+import io.dataspaceconnector.model.endpoint.AppEndpointDesc;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpointDesc;
 import io.dataspaceconnector.model.endpoint.Endpoint;
@@ -26,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -33,6 +36,7 @@ import java.util.UUID;
  * Service class for endpoint proxy.
  */
 @Service
+@Transactional
 public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDesc> {
 
     /**
@@ -46,6 +50,12 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
      */
     @Autowired
     private ConnectorEndpointService connector;
+
+    /**
+     * The app endpoint service.
+     */
+    @Autowired
+    private AppEndpointService app;
 
     /**
      * The endpoint repository.
@@ -64,45 +74,67 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
     getService(final Class<?> clazz) {
         if (ConnectorEndpointDesc.class.equals(clazz) || ConnectorEndpoint.class.equals(clazz)) {
             return (EntityService<X, Y>) connector;
+        } else if (AppEndpointDesc.class.equals(clazz) || AppEndpoint.class.equals(clazz)) {
+            return (EntityService<X, Y>) app;
         }
 
         return (EntityService<X, Y>) generic;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public final Endpoint create(final EndpointDesc desc) {
+    public Endpoint create(final EndpointDesc desc) {
         return getService(desc.getClass()).create(desc);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public final Endpoint update(final UUID entityId, final EndpointDesc desc) {
+    public Endpoint update(final UUID entityId, final EndpointDesc desc) {
         return getService(desc.getClass()).update(entityId, desc);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public final Endpoint get(final UUID entityId) {
+    public Endpoint get(final UUID entityId) {
 
         try {
             return connector.get(entityId);
-        } catch (ResourceNotFoundException ignored) {
-        }
-
-        return generic.get(entityId);
+        } catch (ResourceNotFoundException ignored) { }
+        try {
+            return generic.get(entityId);
+        } catch (ResourceNotFoundException ignored) { }
+        return app.get(entityId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public final Page<Endpoint> getAll(final Pageable pageable) {
+    public Page<Endpoint> getAll(final Pageable pageable) {
         return repository.findAll(pageable);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final boolean doesExist(final UUID entityId) {
-        return connector.doesExist(entityId)
-                || generic.doesExist(entityId);
+        return   connector.doesExist(entityId)
+                || generic.doesExist(entityId)
+                || app.doesExist(entityId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public final void delete(final UUID entityId) {
+    public void delete(final UUID entityId) {
         var endpoint = get(entityId);
         var service = getService(endpoint.getClass());
         service.delete(entityId);

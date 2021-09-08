@@ -15,6 +15,12 @@
  */
 package io.dataspaceconnector.common.net;
 
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Map;
+
 import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.auth.BasicAuth;
@@ -26,28 +32,15 @@ import okhttp3.ResponseBody;
 import org.bouncycastle.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {HttpService.class})
 class HttpServiceTest {
 
-    @MockBean
-    de.fraunhofer.ids.messaging.protocol.http.HttpService httpSvc;
-
-    @Autowired
-    HttpService service;
+    private de.fraunhofer.ids.messaging.protocol.http.HttpService httpSvc = Mockito.mock(de.fraunhofer.ids.messaging.protocol.http.HttpService.class);
+    private HttpService service = new HttpService(httpSvc);
 
     @Test
     public void toArgs_null_emptyArgs() {

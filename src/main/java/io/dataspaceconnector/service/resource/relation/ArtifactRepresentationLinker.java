@@ -30,9 +30,8 @@ import java.util.List;
  */
 @Service
 @NoArgsConstructor
-public class ArtifactRepresentationLinker
-        extends NonOwningRelationService<Artifact, Representation, ArtifactService,
-        RepresentationService> {
+public class ArtifactRepresentationLinker extends NonOwningRelationService<Artifact, Representation,
+        ArtifactService, RepresentationService> {
 
     @Override
     protected final List<Representation> getInternal(final Artifact owner) {

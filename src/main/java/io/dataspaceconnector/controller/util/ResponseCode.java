@@ -41,6 +41,11 @@ public class ResponseCode {
     public static final String NO_CONTENT = "204";
 
     /**
+     * Response code is NOT_MODIFIED.
+     */
+    public static final String NOT_MODIFIED = "304";
+
+    /**
      * Response code is BAD_REQUEST.
      */
     public static final String BAD_REQUEST = "400";
@@ -51,9 +56,19 @@ public class ResponseCode {
     public static final String UNAUTHORIZED = "401";
 
     /**
+     * Response code is NOT_FOUND.
+     */
+    public static final String NOT_FOUND = "404";
+
+    /**
      * Response code is METHOD_NOT_ALLOWED.
      */
     public static final String METHOD_NOT_ALLOWED = "405";
+
+    /**
+     * Response code is CONFLICT.
+     */
+    public static final String CONFLICT = "409";
 
     /**
      * Response code is UNSUPPORTED_MEDIA_TYPE.

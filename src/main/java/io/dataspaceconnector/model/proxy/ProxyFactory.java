@@ -19,7 +19,6 @@ import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
-import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ import java.util.List;
 /**
  * Factory class for the proxy.
  */
-@Component
 public class ProxyFactory extends AbstractFactory<Proxy, ProxyDesc> {
 
     /**

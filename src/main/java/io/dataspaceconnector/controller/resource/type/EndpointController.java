@@ -18,12 +18,15 @@ package io.dataspaceconnector.controller.resource.type;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.CRUDController;
+import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.endpoint.EndpointViewAssemblerProxy;
 import io.dataspaceconnector.controller.resource.view.endpoint.EndpointViewProxy;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
+import io.dataspaceconnector.model.endpoint.AppEndpointDesc;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.service.resource.type.EndpointServiceProxy;
@@ -83,8 +86,10 @@ public class EndpointController implements CRUDController<Endpoint, EndpointDesc
     private final @NonNull EndpointViewAssemblerProxy assemblerProxy;
 
     /**
+     * Respond with created endpoint.
+     *
      * @param obj The endpoint object.
-     * @return response entity
+     * @return response entity.
      */
     private ResponseEntity<Object> respondCreated(final Endpoint obj) {
         final RepresentationModel<?> entity = assemblerProxy.toModel(obj);
@@ -99,6 +104,9 @@ public class EndpointController implements CRUDController<Endpoint, EndpointDesc
      */
     @Override
     public ResponseEntity<Object> create(final EndpointDesc desc) {
+        if (isAppEndpoint(desc)) {
+            throw new MethodNotAllowed();
+        }
         return respondCreated(service.create(desc));
     }
 
@@ -133,6 +141,9 @@ public class EndpointController implements CRUDController<Endpoint, EndpointDesc
      */
     @Override
     public ResponseEntity<Object> update(final UUID resourceId, final EndpointDesc desc) {
+        if (isAppEndpoint(desc)) {
+            throw new MethodNotAllowed();
+        }
         final var resource = service.update(resourceId, desc);
 
         if (resource.getId().equals(resourceId)) {
@@ -148,14 +159,19 @@ public class EndpointController implements CRUDController<Endpoint, EndpointDesc
      */
     @Override
     public ResponseEntity<Void> delete(final UUID resourceId) {
+        if (service.get(resourceId) instanceof AppEndpoint) {
+            throw new MethodNotAllowed();
+        }
         service.delete(resourceId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     /**
+     * Endpoints for creating a start endpoint for a route.
+     *
      * @param genericEndpointId The id of the generic endpoint.
      * @param dataSourceId      The id of the data source.
-     * @return response status OK, if data source is created at generic endpoint.
+     * @return response status OK if data source is created at generic endpoint.
      */
     @PutMapping("{id}/datasource/{dataSourceId}")
     @Operation(summary = "Creates start endpoint for the route")
@@ -169,5 +185,9 @@ public class EndpointController implements CRUDController<Endpoint, EndpointDesc
             @Valid @PathVariable(name = "dataSourceId") final UUID dataSourceId) {
         genericEndpointService.setGenericEndpointDataSource(genericEndpointId, dataSourceId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    private boolean isAppEndpoint(final EndpointDesc desc) {
+        return desc instanceof AppEndpointDesc;
     }
 }

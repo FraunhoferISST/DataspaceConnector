@@ -21,7 +21,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.net.URI;
@@ -33,7 +32,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @AutoConfigureMockMvc(addFilters = false)
 class EndpointControllerIT {
 
@@ -47,6 +45,15 @@ class EndpointControllerIT {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"type\": \"GENERIC\"}"))
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    void create_appEndpoint_notAllowed() throws Exception {
+        mockMvc.perform(post("/api/endpoints")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"type\": \"APP\"}"))
+                .andExpect(status().isMethodNotAllowed());
     }
 
     @Test

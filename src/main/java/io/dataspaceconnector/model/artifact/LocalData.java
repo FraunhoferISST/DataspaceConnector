@@ -33,7 +33,7 @@ import javax.persistence.Lob;
 @Where(clause = "deleted = false")
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-@Setter(AccessLevel.PACKAGE)
+@Setter(AccessLevel.PUBLIC)
 public class LocalData extends Data {
 
     /**

@@ -31,7 +31,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,7 +39,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc(addFilters = false)
 @SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class MainControllerTest {
 
     @MockBean
@@ -144,28 +142,38 @@ public class MainControllerTest {
         /* ACT && ASSERT */
         final var result = mockMvc.perform(get("/api")).andExpect(status().isOk()).andReturn();
 
-        assertEquals("{\"_links\":{\"self\":{\"href\":\"http://localhost/api\"},"
-                     + "\"agreements\":{\"href\":\"http://localhost/api/agreements{?page,size}\","
-                     + "\"templated\":true},\"artifacts\":{\"href\":\"http://localhost/api"
-                     + "/artifacts{?page,size}\",\"templated\":true},"
-                     + "\"brokers\":{\"href\":\"http://localhost/api/brokers{?page,size}\","
-                     + "\"templated\":true},\"catalogs\":{\"href\":\"http://localhost/api"
-                     + "/catalogs{?page,size}\",\"templated\":true},"
-                     + "\"contracts\":{\"href\":\"http://localhost/api/contracts{?page,size}\","
-                     + "\"templated\":true},\"datasources\":{\"href\":\"http://localhost/api"
-                     + "/datasources{?page,size}\",\"templated\":true},"
-                     + "\"endpoints\":{\"href\":\"http://localhost/api/endpoints{?page,size}\","
-                     + "\"templated\":true},\"offers\":{\"href\":\"http://localhost/api/offers"
-                     + "{?page,size}\",\"templated\":true},"
-                     + "\"representations\":{\"href\":\"http://localhost/api/representations"
-                     + "{?page,size}\",\"templated\":true},"
-                     + "\"routes\":{\"href\":\"http://localhost/api/routes{?page,size}\","
-                     + "\"templated\":true},\"requests\":{\"href\":\"http://localhost/api"
-                     + "/requests{?page,size}\",\"templated\":true},"
-                     + "\"rules\":{\"href\":\"http://localhost/api/rules{?page,size}\","
-                     + "\"templated\":true},"
-                     + "\"subscriptions\":{\"href\":\"http://localhost/api/subscriptions{?page,size}\","
-                     + "\"templated\":true}}}", result.getResponse().getContentAsString());
+        assertEquals("{\"_links\":{\"self\":{\"href\":\"http://localhost/api\"}," +
+                        "\"agreements\":{\"href\":\"http://localhost/api/agreements{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"apps\":{\"href\":\"http://localhost/api/apps{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"appstores\":{\"href\":\"http://localhost/api/appstores{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"artifacts\":{\"href\":\"http://localhost/api/artifacts{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"brokers\":{\"href\":\"http://localhost/api/brokers{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"catalogs\":{\"href\":\"http://localhost/api/catalogs{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"contracts\":{\"href\":\"http://localhost/api/contracts{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"datasources\":{\"href\":\"http://localhost/api/datasources{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"endpoints\":{\"href\":\"http://localhost/api/endpoints{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"offers\":{\"href\":\"http://localhost/api/offers{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"representations\":{\"href\":\"http://localhost/api/representations{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"routes\":{\"href\":\"http://localhost/api/routes{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"requests\":{\"href\":\"http://localhost/api/requests{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"rules\":{\"href\":\"http://localhost/api/rules{?page,size}\"," +
+                        "\"templated\":true}," +
+                        "\"subscriptions\":{\"href\":\"http://localhost/api/subscriptions{?page,size}\"," +
+                        "\"templated\":true}}}",
+                result.getResponse().getContentAsString());
         assertEquals("application/hal+json", result.getResponse().getContentType());
     }
 }

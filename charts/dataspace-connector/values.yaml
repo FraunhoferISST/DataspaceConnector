@@ -1,19 +1,4 @@
-#
-# Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-
+---
 replicaCount: 1
 
 image:
@@ -26,10 +11,15 @@ env:
     SERVER_SSL_ENABLED: "false"
     SERVER_SSL_KEY-STORE: "/var/run/certs/keystore.p12"
     LOGGING_CONFIG: "file:///etc/dataspace-connector/log4j2.xml"
-  # secrets:
-    # Some secrets
+    MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "metrics,health"
+    MANAGEMENT_ENDPOINT_METRICS_ENABLED: "true"
+    MANAGEMENT_ENDPOINT_HEALTH_ENABLED: "true"
+  secrets:
+    SPRING_SECURITY_USER_NAME: "admin"
+    SPRING_SECURITY_USER_PASSWORD: "password"
 
 postgresql:
+  enabled: true
   postgresqlUsername: "password"
   postgresqlPassword: "username"
   postgresqlDatabase: "test"
@@ -38,17 +28,66 @@ postgresql:
 
 imagePullSecrets: []
 
-podAnnotations: {}
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: null
+
+podAnnotations:
+  seccomp.security.alpha.kubernetes.io/pod: "runtime/default"
 
 podSecurityContext: {}
 
-securityContext: {}
+securityContext:
+  allowPrivilegeEscalation: false
+  # readOnlyRootFilesystem: true Will make tomcat crash
+  runAsUser: 65532
+  capabilities:
+    drop:
+      - ALL
 
 service:
   type: ClusterIP
   port: 80
 
-resources: {}
+ingress:
+  enabled: false
+  className: ""
+  annotations:
+    # nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    # nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    # nginx.ingress.kubernetes.io/ssl-redirect: "true"
+
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: "localhost"
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: testsecret-tls
+      hosts:
+        - localhost
+
+resources:
+  limits:
+    cpu: "8"
+    memory: "4Gi"
+  requests:
+    cpu: "250m"
+    memory: "1Gi"
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}
 

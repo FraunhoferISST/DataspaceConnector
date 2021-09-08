@@ -26,15 +26,12 @@ import io.dataspaceconnector.model.truststore.TruststoreFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
 import java.util.List;
 
 /**
  * Creates and updates a configuration.
  */
-@Component
 @RequiredArgsConstructor
 public class ConfigurationFactory extends AbstractNamedFactory<Configuration, ConfigurationDesc> {
 

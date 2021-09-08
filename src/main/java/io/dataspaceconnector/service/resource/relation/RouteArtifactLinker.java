@@ -30,8 +30,8 @@ import java.util.List;
  */
 @Service
 @NoArgsConstructor
-public class RouteArtifactLinker extends OwningRelationService<Route, Artifact,
-        RouteService, ArtifactService> {
+public class RouteArtifactLinker extends OwningRelationService<Route, Artifact, RouteService,
+        ArtifactService> {
 
     @Override
     protected final List<Artifact> getInternal(final Route owner) {

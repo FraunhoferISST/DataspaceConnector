@@ -16,6 +16,7 @@
 package io.dataspaceconnector.service.message;
 
 import de.fraunhofer.iais.eis.Resource;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.common.net.QueryInput;
@@ -149,7 +150,6 @@ public class SubscriberNotificationService {
         notifyIdsSubscribers(subscriptions, entity);
     }
 
-
     private void notifySubscribers(final List<Subscription> subscriptions, final URI target,
                                    final Entity entity) {
         // Get list of non-ids subscribers.
@@ -166,10 +166,9 @@ public class SubscriberNotificationService {
 
         // Update non-ids subscribers.
         // final var notification = new Notification(new Date(), target, Event.UPDATED);
-        final var notification = new HashMap<String, String>() {{
-            put("ids-target", target.toString());
-            put("ids-event", Event.UPDATED.toString());
-        }};
+        final var notification = new HashMap<String, String>();
+        notification.put("ids-target", target.toString());
+        notification.put("ids-event", Event.UPDATED.toString());
         if (!recipients.isEmpty()) {
             sendNotification(recipients, notification, InputStream.nullInputStream());
         }
@@ -184,6 +183,10 @@ public class SubscriberNotificationService {
         }
     }
 
+    @SuppressFBWarnings(
+            value = "REC_CATCH_EXCEPTION",
+            justification = "caught exceptions are unchecked"
+    )
     private void notifyIdsSubscribers(final List<Subscription> subscriptions, final Entity entity) {
         final var idsRecipients = subscriptions.stream()
                 .filter(Subscription::isIdsProtocol)

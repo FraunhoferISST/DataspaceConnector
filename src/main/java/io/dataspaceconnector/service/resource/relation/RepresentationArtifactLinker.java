@@ -32,6 +32,7 @@ import java.util.List;
 @NoArgsConstructor
 public class RepresentationArtifactLinker extends OwningRelationService<Representation,
         Artifact, RepresentationService, ArtifactService> {
+
     /**
      * Get the list of artifacts owned by the representation.
      *

@@ -17,7 +17,6 @@ package io.dataspaceconnector.model.representation;
 
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
-import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ import java.util.ArrayList;
 /**
  * Creates and updates a representation.
  */
-@Component
 public class RepresentationFactory
         extends AbstractNamedFactory<Representation, RepresentationDesc> {
 

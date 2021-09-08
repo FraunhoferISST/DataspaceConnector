@@ -1,22 +1,8 @@
-#
-# Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: {{ .Release.Namespace }}
   name: {{ include "dataspace-connector.fullname" . }}
   labels:
     {{- include "dataspace-connector.labels" . | nindent 4 }}
@@ -34,12 +20,18 @@ spec:
       labels:
         {{- include "dataspace-connector.selectorLabels" . | nindent 8 }}
     spec:
+      automountServiceAccountToken: false
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      serviceAccountName: {{ include "dataspace-connector.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           env:
             {{- include "dataspace-connector.env-variables" . | nindent 12 }}
@@ -48,24 +40,42 @@ spec:
               containerPort: 8080
           livenessProbe:
             httpGet:
-              path: /
+              path: /actuator/health/liveness
               port: http
+              {{- if eq (.Values.env.config.SERVER_SSL_ENABLED) "true" }}
+              scheme: HTTPS
+              {{- else }}
               scheme: HTTP
+              {{- end }}
+              httpHeaders:
+              - name: Authorization
+                value: 'Basic {{(printf "%s:%s" .Values.env.secrets.SPRING_SECURITY_USER_NAME .Values.env.secrets.SPRING_SECURITY_USER_PASSWORD) | b64enc }}'
             initialDelaySeconds: 15
             failureThreshold: 1
             periodSeconds: 3
           readinessProbe:
             httpGet:
-              path: /
+              path: /actuator/health/readiness
               port: http
+              {{- if eq (.Values.env.config.SERVER_SSL_ENABLED) "true" }}
+              scheme: HTTPS
+              {{- else }}
               scheme: HTTP
+              {{- end }}
+              httpHeaders:
+              - name: Authorization
+                value: 'Basic {{(printf "%s:%s" .Values.env.secrets.SPRING_SECURITY_USER_NAME .Values.env.secrets.SPRING_SECURITY_USER_PASSWORD) | b64enc }}'
             initialDelaySeconds: 10
             periodSeconds: 3
           startupProbe:
             httpGet:
               path: /
               port: http
+              {{- if eq (.Values.env.config.SERVER_SSL_ENABLED) "true" }}
+              scheme: HTTPS
+              {{- else }}
               scheme: HTTP
+              {{- end }}
             failureThreshold: 30
             periodSeconds: 3
           volumeMounts:

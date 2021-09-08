@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Order(1)
 public final class UnexpectedResponseExceptionHandler {
     /**
-     * Handle runtime exception with response code 417.
+     * Handles thrown runtime exception with response code 417.
      *
      * @param exception The thrown exception.
      * @return Response entity with code 417.

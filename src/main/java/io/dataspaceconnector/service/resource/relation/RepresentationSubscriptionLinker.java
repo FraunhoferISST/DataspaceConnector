@@ -30,9 +30,8 @@ import java.util.List;
  */
 @Service
 @NoArgsConstructor
-public class RepresentationSubscriptionLinker
-        extends OwningRelationService<Representation, Subscription,
-        RepresentationService, SubscriptionService> {
+public class RepresentationSubscriptionLinker extends OwningRelationService<Representation,
+        Subscription, RepresentationService, SubscriptionService> {
 
     @Override
     protected final List<Subscription> getInternal(final Representation owner) {
