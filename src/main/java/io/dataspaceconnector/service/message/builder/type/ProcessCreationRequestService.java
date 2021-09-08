@@ -31,7 +31,8 @@ import org.springframework.stereotype.Service;
  * Message service for ids request messages.
  */
 @Service
-public final class ProcessCreationRequestService extends AbstractMessageService<ProcessCreationMessageDesc> {
+public final class ProcessCreationRequestService
+        extends AbstractMessageService<ProcessCreationMessageDesc> {
 
     /**
      * @throws IllegalArgumentException     if desc is null.
@@ -39,7 +40,8 @@ public final class ProcessCreationRequestService extends AbstractMessageService<
      *                                      when building the message.
      */
     @Override
-    public Message buildMessage(final ProcessCreationMessageDesc desc) throws ConstraintViolationException {
+    public Message buildMessage(final ProcessCreationMessageDesc desc)
+            throws ConstraintViolationException {
         Utils.requireNonNull(desc, ErrorMessage.DESC_NULL);
 
         final var connectorId = getConnectorService().getConnectorId();
