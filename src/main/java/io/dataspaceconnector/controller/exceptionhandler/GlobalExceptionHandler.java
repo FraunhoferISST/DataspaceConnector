@@ -38,7 +38,7 @@ public final class GlobalExceptionHandler {
      * @param exception The thrown exception.
      * @return Response entity with code 500.
      */
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<JSONObject> handleAnyException(final RuntimeException exception) {
         if (log.isErrorEnabled()) {
             log.error("An unhandled exception has been caught. [exception=({})]",
