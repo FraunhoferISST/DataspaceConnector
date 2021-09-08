@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Fix self-reference of QueryInput in OpenApi schema.
+- Fix global exceptionhandler intercepting checked exceptions.
 
 ### Changed
 - Add `ServiceResolver` to remove some Spring annotations from service classes.
