@@ -250,22 +250,19 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
                                       final String containerId,
                                       final Response containerDesc) throws IOException {
         final var responseBody  = containerDesc.body();
-        var containerName = "";
         if (responseBody != null) {
             final var portainerContainerName = new JSONObject(responseBody.string())
                     .getString("Name");
+
             // Note: Portainer places a leading "/" in front of container-name, needs to be removed
-            containerName = portainerContainerName
+            final var containerName = portainerContainerName
                     .substring(portainerContainerName.indexOf("/") + 1);
 
-            //Persist container name.
+            //Persist container id and name.
             getService().setContainerName(app.getId(), containerName);
-        }
-        //Persist container id and name.
-        getService().setContainerIdForApp(app.getId(), containerId);
+            getService().setContainerIdForApp(app.getId(), containerId);
 
-        //Generate endpoint accessURLs depending on deployment information.
-        if (!containerName.equals("")) {
+            //Generate endpoint accessURLs depending on deployment information.
             for (final var endpoint : app.getEndpoints()) {
                 //TODO: http or https?
                 //TODO: location from template could be added after exposed port
