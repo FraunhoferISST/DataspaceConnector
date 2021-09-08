@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,6 +97,16 @@ public class PortainerRequestService {
      * The endpoint id in portainer.
      */
     private String endpointId;
+
+    /**
+     * The portainer access token for sending admin-requests (valid 8 hours).
+     */
+    private String accessToken;
+
+    /**
+     * Expiration date of the access token.
+     */
+    private Calendar accessTokenValid = Calendar.getInstance();
 
     /**
      * Authenticate at portainer.
@@ -1034,8 +1045,16 @@ public class PortainerRequestService {
      * @return auth jwt token for portainer.
      */
     private String getJwtToken() {
-        String jwtTokenResponse = authenticate();
-        return jwtTokenResponse.substring(START_INDEX, jwtTokenResponse.length() - LAST_INDEX);
+        if (accessToken == null || accessTokenValid.before(Calendar.getInstance().getTime())) {
+            final var response = authenticate();
+            accessToken = response.substring(START_INDEX, response.length() - LAST_INDEX);
+
+            //Portainer token has an 8 hour validity, request new token after 7 hours
+            accessTokenValid.setTime(Calendar.getInstance().getTime());
+            accessTokenValid.add(Calendar.HOUR_OF_DAY, 7);
+        }
+
+        return accessToken;
     }
 
     /**
