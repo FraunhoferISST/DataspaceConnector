@@ -15,6 +15,16 @@
  */
 package io.dataspaceconnector.service.message.handler.type;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Optional;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -35,6 +45,7 @@ import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.EntityUpdateService;
 import io.dataspaceconnector.service.message.builder.type.LogMessageService;
+import io.dataspaceconnector.service.message.builder.type.RequestService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,15 +53,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -60,7 +62,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(properties = {"clearing.house.url=https://ch-ids.aisec.fraunhofer.de/logs/messages/"})
+@SpringBootTest(properties = {"clearing.house.url=https://ch-ids.aisec.fraunhofer.de"})
 class ContractAgreementHandlerTest {
 
     @Autowired
@@ -75,8 +77,14 @@ class ContractAgreementHandlerTest {
     @MockBean
     private LogMessageService logMessageService;
 
+    @MockBean
+    private RequestService requestService;
+
     @Value("${clearing.house.url}")
     private URI chUri;
+
+    @Value("${clearing.house.path.log}")
+    private URI chLogPath;
 
     @SneakyThrows
     @Test
@@ -233,8 +241,10 @@ class ContractAgreementHandlerTest {
         when(entityResolver.getEntityById(any())).thenReturn(Optional.of(storedAgreement));
         when(updateService.confirmAgreement(any())).thenReturn(true);
         doNothing().when(logMessageService).sendMessage(any(), any());
+        when(requestService.send(any(), any())).thenReturn(new HashMap<>());
+        when(requestService.isValidResponseType(any())).thenReturn(true);
 
-        final var clearingHouseTarget = URI.create(chUri.toString()
+        final var clearingHouseTarget = URI.create(chUri.toString() + "/" + chLogPath + "/"
                                                    + UUIDUtils.uuidFromUri(agreement.getId()));
 
         /* ACT */
@@ -246,6 +256,7 @@ class ContractAgreementHandlerTest {
 
         /* ASSERT */
         assertNotNull(result.getHeader());
+        verify(requestService, times(1)).send(any(), any());
         verify(logMessageService, times(1)).sendMessage(clearingHouseTarget, agreement.toRdf());
     }
 
