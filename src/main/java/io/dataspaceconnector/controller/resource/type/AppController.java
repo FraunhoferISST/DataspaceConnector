@@ -273,6 +273,8 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
                         endpoint.getEndpointPort() == DEFAULT_HTTPS_PORT ? "https://"  : "http://";
 
                 //TODO: location from template could be added after exposed port
+                // (ids:path) in IDSMessage is not part of the template and this is the reason why
+                // we don't use it at the moment to specify the full access url
                 final var location = protocol + containerName + ":" + endpoint.getExposedPort();
                 appEndpointSvc.setLocation(endpoint, URI.create(location));
             }
