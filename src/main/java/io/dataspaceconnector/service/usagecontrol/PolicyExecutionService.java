@@ -65,12 +65,7 @@ public class PolicyExecutionService {
     public void sendAgreement(final ContractAgreement agreement) {
         try {
             // Create a process with the agreement's UUID at the Clearing House
-            try {
-                clearingHouseSvc.createProcessAtClearingHouse(agreement);
-            } catch (ClassCastException ignore) {
-                //TODO IdsHttpService tries to deserialize CH response (UUID) to connector,
-                // serializer fails with ClassCastException
-            }
+            clearingHouseSvc.createProcessAtClearingHouse(agreement);
 
             // Log the agreement under the previously created process.
             final var agreementId = agreement.getId();
