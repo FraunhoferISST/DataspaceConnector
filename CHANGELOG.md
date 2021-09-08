@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Fix self-reference of QueryInput in OpenApi schema.
+- Create Clearing House process before logging, so that consumer can log under same ID.
 
 ### Changed
 - Add `ServiceResolver` to remove some Spring annotations from service classes.
