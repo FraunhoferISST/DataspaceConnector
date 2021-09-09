@@ -1013,6 +1013,14 @@ public class PortainerRequestService {
     }
 
     /**
+     * Resets the Portainer access token.
+     */
+    public void resetToken() {
+        accessToken = null;
+        getJwtToken();
+    }
+
+    /**
      * Get list of all items with string part in path.
      * Used internally by getImages/Volumes/Networks.
      *

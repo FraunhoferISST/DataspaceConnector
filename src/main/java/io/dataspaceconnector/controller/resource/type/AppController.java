@@ -133,6 +133,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
 
         Response response;
         try {
+            portainerSvc.resetToken();
             portainerSvc.createEndpointId();
 
             if (ActionType.START.name().equals(action)) {
