@@ -40,6 +40,7 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
+import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.util.UUIDUtils;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.service.EntityResolver;
@@ -52,6 +53,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -79,6 +81,9 @@ class ContractAgreementHandlerTest {
 
     @MockBean
     private ProcessCreationRequestService requestService;
+
+    @SpyBean
+    private ConnectorService connectorService;
 
     @Value("${clearing.house.url}")
     private URI chUri;
@@ -243,6 +248,10 @@ class ContractAgreementHandlerTest {
         doNothing().when(logMessageService).sendMessage(any(), any());
         when(requestService.send(any(), any())).thenReturn(new HashMap<>());
         when(requestService.isValidResponseType(any())).thenReturn(true);
+        when(connectorService.getCurrentDat()).thenReturn(new DynamicAttributeTokenBuilder()
+                ._tokenFormat_(TokenFormat.JWT)
+                ._tokenValue_("value")
+                .build());
 
         final var clearingHouseTarget = URI.create(chUri.toString() + "/" + chLogPath + "/"
                                                    + UUIDUtils.uuidFromUri(agreement.getId()));

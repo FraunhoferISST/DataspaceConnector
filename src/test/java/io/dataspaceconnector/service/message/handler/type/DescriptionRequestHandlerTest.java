@@ -15,6 +15,13 @@
  */
 package io.dataspaceconnector.service.message.handler.type;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Optional;
+import javax.xml.datatype.DatatypeFactory;
+
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
@@ -30,13 +37,14 @@ import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import de.fraunhofer.ids.messaging.response.MessageResponse;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.model.message.DescriptionResponseMessageDesc;
 import io.dataspaceconnector.service.EntityResolver;
-import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.service.message.builder.type.DescriptionResponseService;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,16 +52,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
-import javax.xml.datatype.DatatypeFactory;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
- @SpringBootTest
+@SpringBootTest
  class DescriptionRequestHandlerTest {
 
     @Autowired
@@ -67,6 +69,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
     @Autowired
     DescriptionRequestHandler handler;
+
+    @BeforeEach
+    void init() {
+        when(connectorService.getCurrentDat()).thenReturn(new DynamicAttributeTokenBuilder()
+                ._tokenFormat_(TokenFormat.JWT)
+                ._tokenValue_("value")
+                .build());
+    }
 
     @SneakyThrows
     @Test
@@ -160,9 +170,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
                         ._issued_(xmlCalendar)
                         .build();
 
-        Mockito.when(resolver.getEntityById(Mockito.eq(message.getRequestedElement())))
+        when(resolver.getEntityById(Mockito.eq(message.getRequestedElement())))
                 .thenReturn(Optional.of(artifact));
-        Mockito.when(resolver.getEntityAsRdfString(artifact)).thenReturn(getArtifact().toRdf());
+        when(resolver.getEntityAsRdfString(artifact)).thenReturn(getArtifact().toRdf());
 
          /* ACT */
          final var result =
@@ -264,7 +274,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
                         ._issued_(xmlCalendar)
                         .build();
 
-        Mockito.when(resolver.getEntityById(Mockito.eq(message.getRequestedElement())))
+        when(resolver.getEntityById(Mockito.eq(message.getRequestedElement())))
                 .thenThrow(ResourceNotFoundException.class);
 
         /* ACT */
