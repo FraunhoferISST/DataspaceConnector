@@ -45,18 +45,14 @@ public final class ProcessCreationRequestService
         Utils.requireNonNull(desc, ErrorMessage.DESC_NULL);
 
         final var connectorId = getConnectorService().getConnectorId();
-        final var modelVersion = getConnectorService().getOutboundModelVersion();
-        final var token = getConnectorService().getCurrentDat();
-
-        final var recipient = desc.getRecipient();
 
         return new RequestMessageBuilder()
                 ._issued_(IdsMessageUtils.getGregorianNow())
-                ._modelVersion_(modelVersion)
+                ._modelVersion_(getConnectorService().getOutboundModelVersion())
                 ._issuerConnector_(connectorId)
                 ._senderAgent_(connectorId)
-                ._securityToken_(token)
-                ._recipientConnector_(Util.asList(recipient))
+                ._securityToken_(getConnectorService().getCurrentDat())
+                ._recipientConnector_(Util.asList(desc.getRecipient()))
                 .build();
     }
 

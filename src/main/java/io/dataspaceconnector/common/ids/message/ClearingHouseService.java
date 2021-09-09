@@ -17,6 +17,7 @@ package io.dataspaceconnector.common.ids.message;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.UUID;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -123,23 +124,11 @@ public class ClearingHouseService {
     public void createProcessAtClearingHouse(final ContractAgreement agreement)
             throws JsonProcessingException {
         if (isClearingHouseEnabled()) {
-            final var provider = agreement.getProvider();
-            final var consumer = agreement.getConsumer();
-            final var agreementId = UUIDUtils.uuidFromUri(agreement.getId()).toString();
+            final var agreementId = UUIDUtils.uuidFromUri(agreement.getId());
+            final var url = buildProcessCreationUrl(agreementId);
+            final var payload = buildProcessCreationPayload(agreement.getProvider(),
+                    agreement.getConsumer());
 
-            // Add process ID to Clearing House URL.
-            final var clearingHouse = connectorConfig.getClearingHouse();
-            final var uriBuilder = UriComponentsBuilder
-                    .fromHttpUrl(clearingHouse.toString());
-            uriBuilder.pathSegment(processPath, agreementId);
-            final var url = uriBuilder.build().toUri();
-
-            // Build message payload.
-            final var list = Arrays.asList(provider.toString(), consumer.toString());
-            final var payload = new JSONObject();
-            payload.put("owners", list);
-
-            // Send request message to Clearing House.
             final var response = requestService.send(new ProcessCreationMessageDesc(url),
                     objectMapper.writeValueAsString(payload));
 
@@ -148,6 +137,37 @@ public class ClearingHouseService {
                         + " the Clearing House.");
             }
         }
+    }
+
+    /**
+     * Builds the URL for creating a new process at the Clearing House. The given process ID is
+     * appended to the Clearing House URL and the path for process creation.
+     *
+     * @param id the process ID.
+     * @return the URL.
+     */
+    private URI buildProcessCreationUrl(final UUID id) {
+        final var clearingHouse = connectorConfig.getClearingHouse();
+        final var uriBuilder = UriComponentsBuilder
+                .fromHttpUrl(clearingHouse.toString());
+        uriBuilder.pathSegment(processPath, id.toString());
+        return uriBuilder.build().toUri();
+    }
+
+    /**
+     * Builds the payload for creating a new process at the Clearing House. Both the provider and
+     * the consumer of an agreement are added as the process owners, so that both may log using
+     * the same ID.
+     *
+     * @param provider the provider ID.
+     * @param consumer the consumer ID.
+     * @return the payload.
+     */
+    private JSONObject buildProcessCreationPayload(final URI provider, final URI consumer) {
+        final var list = Arrays.asList(provider.toString(), consumer.toString());
+        final var payload = new JSONObject();
+        payload.put("owners", list);
+        return payload;
     }
 
     private boolean isClearingHouseEnabled() {
