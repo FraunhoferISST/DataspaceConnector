@@ -132,11 +132,22 @@ class PortainerRequestServiceTest {
         Assertions.assertEquals(200, portainerRequestService.deleteVolume("").code());
         Assertions.assertEquals(200, portainerRequestService.pullImage(TEMPLATE).code());
         Assertions.assertEquals(200, portainerRequestService.disconnectContainerFromNetwork("id", "id", true).code());
+        Assertions.assertEquals("1", portainerRequestService.createContainer(TEMPLATE, Map.of(),
+                new ArrayList<>()));
         Assertions.assertDoesNotThrow(() -> portainerRequestService.deleteRegistry(1));
         Assertions.assertDoesNotThrow(() -> portainerRequestService.deleteUnusedVolumes());
         Assertions.assertDoesNotThrow(() -> portainerRequestService.createVolumes(TEMPLATE, "id"));
-        Assertions.assertEquals("1", portainerRequestService.createContainer(TEMPLATE, Map.of(),
-                new ArrayList<>()));
+    }
+
+    @Test
+    public void testPortainer_createRegistry() throws Exception {
+        var arrayResponse = new MockResponse().setResponseCode(200).setBody(ARRAY_RESPONSE);
+        var objResponse = new MockResponse().setResponseCode(200).setBody(RESPONSE_STRING);
+
+        mockWebServer.enqueue(objResponse);
+        mockWebServer.enqueue(arrayResponse);
+        mockWebServer.enqueue(objResponse);
+
         Assertions.assertEquals(1, portainerRequestService.createRegistry(TEMPLATE));
     }
 
@@ -158,5 +169,4 @@ class PortainerRequestServiceTest {
         Assertions.assertDoesNotThrow(() -> portainerRequestService.createEndpointId());
         Assertions.assertEquals("1", portainerRequestService.getNetworkId("testdata"));
     }
-
 }
