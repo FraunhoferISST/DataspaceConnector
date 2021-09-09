@@ -85,7 +85,7 @@
 
 	<properties>
 		<!-- General -->
-		<revision>6.2.0</revision>
+		<revision>6.2.1</revision>
 		<email>info@dataspace-connector.de</email>
 
 		<!-- Build info -->
@@ -759,7 +759,8 @@
 						<param>io.dataspaceconnector.model*</param>
 					</targetClasses>
 					<targetTests>
-						<param>io.dataspaceconnector.**Test</param>
+						<param>io.dataspaceconnector.model*</param>
+						<param>io.dataspaceconnector.service.resource.templatebuilder*</param>
 					</targetTests>
 <!--					<excludedTestClasses>-->
 <!--						<param>**</param>-->
@@ -783,8 +784,8 @@
 					<verbose>false</verbose>
 					<threads>2</threads>
 					<timestampedReports>false</timestampedReports>
-					<coverageThreshold>94</coverageThreshold>
-					<mutationThreshold>94</mutationThreshold>
+					<coverageThreshold>90</coverageThreshold>
+					<mutationThreshold>93</mutationThreshold>
 				</configuration>
 			</plugin>
 			<plugin>
