@@ -15,6 +15,14 @@
  */
 package io.dataspaceconnector.service.message.handler.type;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.UUID;
+import javax.xml.datatype.DatatypeFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
@@ -32,6 +40,7 @@ import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.message.builder.type.MessageProcessedNotificationService;
 import io.dataspaceconnector.service.resource.type.SubscriptionService;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,16 +49,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.xml.datatype.DatatypeFactory;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class SubscriptionRequestHandlerTest {
@@ -68,6 +70,14 @@ class SubscriptionRequestHandlerTest {
 
    @Autowired
    SubscriptionMessageHandler handler;
+
+    @BeforeEach
+    void init() {
+        when(connectorService.getCurrentDat()).thenReturn(new DynamicAttributeTokenBuilder()
+                ._tokenFormat_(TokenFormat.JWT)
+                ._tokenValue_("value")
+                .build());
+    }
 
     @SneakyThrows
     @Test
