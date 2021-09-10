@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.service.routing.config;
 
+import de.fraunhofer.iais.eis.AppEndpoint;
 import de.fraunhofer.iais.eis.AppRoute;
 import de.fraunhofer.iais.eis.ConnectorEndpoint;
 import de.fraunhofer.iais.eis.GenericEndpoint;
@@ -76,14 +77,38 @@ public class RouteConfigurer {
      */
     public Resource getRouteTemplate(final AppRoute appRoute) {
         final var routeStart = appRoute.getAppRouteStart();
+        final var routeEnd = appRoute.getAppRouteEnd();
+
+        //Possible combinations:
+        //Connector -> Generic
+        //Generic -> Connector
+        //Connector -> App
+        //App -> Connector
+        //Generic -> App
+        //App -> Generic
+        //App -> App
 
         Resource resource;
-        if (routeStart.get(0) instanceof GenericEndpoint) {
+        if ((routeStart.get(0) instanceof GenericEndpoint
+            && routeEnd.get(0) instanceof ConnectorEndpoint)
+          || (routeStart.get(0) instanceof AppEndpoint
+             && routeEnd.get(0) instanceof ConnectorEndpoint)) {
             resource = RESOURCE_LOADER
                     .getResource("classpath:camel-templates/http_to_connector_template.vm");
-        } else if (routeStart.get(0) instanceof ConnectorEndpoint) {
+        } else if ((routeStart.get(0) instanceof ConnectorEndpoint
+                  && (routeEnd.get(0) instanceof GenericEndpoint
+                   || routeEnd.get(0) instanceof AppEndpoint))) {
             resource = RESOURCE_LOADER
                     .getResource("classpath:camel-templates/connector_to_http_template.vm");
+        } else if ((routeStart.get(0) instanceof GenericEndpoint
+                   && routeEnd.get(0) instanceof AppEndpoint)
+                || (routeStart.get(0) instanceof AppEndpoint
+                   && routeEnd.get(0) instanceof GenericEndpoint)
+                || (routeStart.get(0) instanceof AppEndpoint
+                   && routeEnd.get(0) instanceof AppEndpoint)) {
+            //TODO: template http -> http
+            resource = RESOURCE_LOADER
+                    .getResource("classpath:camel-templates/http_to_http_template.vm");
         } else {
             resource = null;
         }

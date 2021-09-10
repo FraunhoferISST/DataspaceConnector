@@ -55,8 +55,7 @@ public class RouteManagerTest {
                         ._genericEndpointAuthentication_(authentication)
                         ._accessURL_(URI.create("http://test")).build()))
                 ._appRouteOutput_(Util.asList())
-                ._appRouteEnd_(Util.asList(new GenericEndpointBuilder()
-                        ._genericEndpointAuthentication_(authentication)
+                ._appRouteEnd_(Util.asList(new ConnectorEndpointBuilder()
                         ._accessURL_(URI.create("http://test")).build()))
                 .build();
         routeManager.createAndDeployXMLRoute(appRoute);
@@ -72,7 +71,8 @@ public class RouteManagerTest {
                 ._appRouteStart_(Util.asList(new ConnectorEndpointBuilder()
                         ._accessURL_(URI.create("http://test")).build()))
                 ._appRouteOutput_(Util.asList())
-                ._appRouteEnd_(Util.asList(new ConnectorEndpointBuilder()
+                ._appRouteEnd_(Util.asList(new AppEndpointBuilder()
+                        ._appEndpointType_(AppEndpointType.INPUT_ENDPOINT)
                         ._accessURL_(URI.create("http://test")).build()))
                 .build();
         routeManager.createAndDeployXMLRoute(appRoute);
