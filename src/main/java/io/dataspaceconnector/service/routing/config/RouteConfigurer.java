@@ -106,7 +106,6 @@ public class RouteConfigurer {
                    && routeEnd.get(0) instanceof GenericEndpoint)
                 || (routeStart.get(0) instanceof AppEndpoint
                    && routeEnd.get(0) instanceof AppEndpoint)) {
-            //TODO: template http -> http
             resource = RESOURCE_LOADER
                     .getResource("classpath:camel-templates/http_to_http_template.vm");
         } else {

@@ -79,21 +79,21 @@ public class RouteManagerTest {
         assertTrue(camelContext.getRouteDefinitions().get(1).toString().startsWith("Route(app-route_" + uuid + ")"));
     }
 
-//    @Test
-//    void testCreateAndDeployXMLRoute_AppEndpoint() throws RouteCreationException {
-//        final var uuid = UUID.randomUUID();
-//
-//        final var appRoute = new AppRouteBuilder(URI.create("http://approute/" + uuid))
-//                ._routeDeployMethod_("CAMEL")
-//                ._appRouteStart_(Util.asList(new AppEndpointBuilder()
-//                        ._appEndpointType_(AppEndpointType.OUTPUT_ENDPOINT)
-//                        ._accessURL_(URI.create("http://test")).build()))
-//                ._appRouteOutput_(Util.asList())
-//                ._appRouteEnd_(Util.asList(new AppEndpointBuilder()
-//                        ._appEndpointType_(AppEndpointType.INPUT_ENDPOINT)
-//                        ._accessURL_(URI.create("http://test")).build()))
-//                .build();
-//        routeManager.createAndDeployXMLRoute(appRoute);
-//        assertTrue(camelContext.getRouteDefinitions().get(3).toString().startsWith("Route(app-route_" + uuid + ")"));
-//    }
+    @Test
+    void testCreateAndDeployXMLRoute_AppEndpoint() throws RouteCreationException {
+        final var uuid = UUID.randomUUID();
+
+        final var appRoute = new AppRouteBuilder(URI.create("http://approute/" + uuid))
+                ._routeDeployMethod_("CAMEL")
+                ._appRouteStart_(Util.asList(new AppEndpointBuilder()
+                        ._appEndpointType_(AppEndpointType.OUTPUT_ENDPOINT)
+                        ._accessURL_(URI.create("http://test")).build()))
+                ._appRouteOutput_(Util.asList())
+                ._appRouteEnd_(Util.asList(new AppEndpointBuilder()
+                        ._appEndpointType_(AppEndpointType.INPUT_ENDPOINT)
+                        ._accessURL_(URI.create("http://test")).build()))
+                .build();
+        routeManager.createAndDeployXMLRoute(appRoute);
+        assertTrue(camelContext.getRouteDefinitions().get(2).toString().startsWith("Route(app-route_" + uuid + ")"));
+    }
 }
