@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
+import java.net.URI;
+import java.util.HashMap;
+import java.util.UUID;
+
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.ConstraintBuilder;
@@ -28,20 +32,19 @@ import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
-import io.dataspaceconnector.common.ids.mapping.RdfConverter;
-import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.common.ids.ConnectorService;
+import io.dataspaceconnector.common.ids.mapping.RdfConverter;
 import io.dataspaceconnector.common.ids.message.ClearingHouseService;
+import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.service.message.builder.type.LogMessageService;
 import io.dataspaceconnector.service.message.builder.type.NotificationService;
+import io.dataspaceconnector.service.message.builder.type.ProcessCreationRequestService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.net.URI;
-import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -66,10 +69,18 @@ public class PolicyExecutionServiceTest {
     @MockBean
     private LogMessageService logMessageService;
 
+    @MockBean
+    private ProcessCreationRequestService requestService;
+
     @Autowired
     private PolicyExecutionService policyExecutionService;
 
-    private final URI chUri = URI.create("https://clearing-house.com/");
+    @Value("${clearing.house.url}")
+    private URI chUri;
+
+    @Value("${clearing.house.path.log}")
+    private String chLogPath;
+
     private final UUID agreementID = UUID.fromString("260eb25e-9a83-457b-8607-8829d57fda10");
 
     @Test
@@ -92,13 +103,15 @@ public class PolicyExecutionServiceTest {
 
         when(connectorConfig.getClearingHouse()).thenReturn(chUri);
         doNothing().when(logMessageService).sendMessage(any(), any());
+        when(requestService.send(any(), any())).thenReturn(new HashMap<>());
+        when(requestService.isValidResponseType(any())).thenReturn(true);
 
         /* ACT */
         policyExecutionService.sendAgreement(agreement);
 
         /* ASSERT */
         verify(logMessageService, times(1))
-                .sendMessage(new URI(chUri + agreementID.toString()), RdfConverter.toRdf(agreement));
+                .sendMessage(new URI(chUri + "/" + chLogPath + "/" + agreementID), RdfConverter.toRdf(agreement));
     }
 
     @Test
@@ -116,7 +129,7 @@ public class PolicyExecutionServiceTest {
 
         /* ASSERT */
         verify(logMessageService, times(1))
-                .sendMessage(eq(URI.create(chUri + agreementID.toString())), any());
+                .sendMessage(eq(URI.create(chUri + "/" + chLogPath + "/" + agreementID)), any());
     }
 
     @Test
@@ -144,6 +157,8 @@ public class PolicyExecutionServiceTest {
         return new ContractAgreementBuilder(URI.create("https://agreement.com/api/agreements/" + agreementID))
                 ._contractStart_(IdsMessageUtils.getGregorianNow())
                 ._contractEnd_(IdsMessageUtils.getGregorianNow())
+                ._provider_(URI.create("https://some-url.com"))
+                ._consumer_(URI.create("https://some-url.com"))
                 .build();
     }
 

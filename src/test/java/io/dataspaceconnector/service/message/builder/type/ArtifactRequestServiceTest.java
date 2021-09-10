@@ -15,6 +15,12 @@
  */
 package io.dataspaceconnector.service.message.builder.type;
 
+import java.net.URI;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import javax.xml.datatype.DatatypeFactory;
+
 import de.fraunhofer.iais.eis.ArtifactRequestMessage;
 import de.fraunhofer.iais.eis.ArtifactResponseMessage;
 import de.fraunhofer.iais.eis.ArtifactResponseMessageBuilder;
@@ -23,12 +29,12 @@ import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.ids.messaging.protocol.http.IdsHttpService;
 import io.dataspaceconnector.common.exception.MessageResponseException;
-import io.dataspaceconnector.config.ConnectorConfig;
-import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.ids.DeserializationService;
-import io.dataspaceconnector.service.message.handler.ClearingHouseLoggingProcessor;
 import io.dataspaceconnector.common.ids.message.ClearingHouseService;
+import io.dataspaceconnector.config.ConnectorConfig;
+import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
+import io.dataspaceconnector.service.message.handler.ClearingHouseLoggingProcessor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -36,17 +42,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import javax.xml.datatype.DatatypeFactory;
-import java.net.URI;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = {ArtifactRequestService.class, ClearingHouseService.class,
-        ConnectorConfig.class })
+        ConnectorConfig.class, ProcessCreationRequestService.class})
 class ArtifactRequestServiceTest {
 
     @MockBean
