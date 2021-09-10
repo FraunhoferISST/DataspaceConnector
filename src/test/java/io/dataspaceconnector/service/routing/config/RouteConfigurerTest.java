@@ -59,11 +59,13 @@ class RouteConfigurerTest {
         final var appRouteGenericEnpoint = new AppRouteBuilder(URI.create("http://approute"))
                 ._routeDeployMethod_("CAMEL")
                 ._appRouteStart_(Util.asList(new GenericEndpointBuilder()._accessURL_(URI.create("http://test")).build()))
+                ._appRouteEnd_(Util.asList(new ConnectorEndpointBuilder()._accessURL_(URI.create("http://test")).build()))
                 .build();
         assertNotNull(routeConfigurer.getRouteTemplate(appRouteGenericEnpoint));
         final var appRouteConnectorEndpoint = new AppRouteBuilder(URI.create("http://approute"))
                 ._routeDeployMethod_("CAMEL")
                 ._appRouteStart_(Util.asList(new ConnectorEndpointBuilder()._accessURL_(URI.create("http://test")).build()))
+                ._appRouteEnd_(Util.asList(new GenericEndpointBuilder()._accessURL_(URI.create("http://test")).build()))
                 .build();
         assertNotNull(routeConfigurer.getRouteTemplate(appRouteConnectorEndpoint));
         final var appRouteEndpoint = new AppRouteBuilder(URI.create("http://approute"))
