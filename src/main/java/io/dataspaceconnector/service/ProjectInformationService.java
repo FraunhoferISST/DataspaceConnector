@@ -43,7 +43,7 @@ public class ProjectInformationService {
     /**
      * Service for http connections.
      */
-    private final @NonNull HttpService httpService;
+    private final @NonNull HttpService httpSvc;
 
     /**
      * The currently used project version.
@@ -52,31 +52,32 @@ public class ProjectInformationService {
     private String projectVersion;
 
     /**
-     * The repository owner.
+     * The project repository owner.
      */
     private static final String REPOSITORY_OWNER = "International-Data-Spaces-Association";
 
     /**
-     * The repository.
+     * The project repository.
      */
     private static final String REPOSITORY = "DataspaceConnector";
 
     /**
-     * The host address.
+     * GitHub API host address.
      */
     private static final String HOST = "api.github.com";
 
     /**
      * Limitation for the results.
+     * E.g. 1 Provides only the latest release.
      */
-    private static final String RESULT_PER_PAGE = "1";
+    private static final Integer RESULT_PER_PAGE = 1;
 
     /**
      * This method compares the release version with the currently used project version and decides
      * if an update is existing.
      *
-     * @return Message if an update exists or not.
-     * @throws IOException if an error occurs when retrieving the release version.
+     * @return Response-Message if an update exists or not.
+     * @throws IOException If an error occurs when retrieving the release version.
      */
     public ResponseEntity<Object> projectUpdateAvailable() throws IOException {
         ResponseEntity<Object> response;
@@ -85,14 +86,32 @@ public class ProjectInformationService {
         final var releaseInfo = releaseVersion.split("\\.");
         final var projectInfo = projectVersion.split("\\.");
 
-        if (Integer.parseInt(releaseInfo[0]) > Integer.parseInt(projectInfo[0])
-                || Integer.parseInt(releaseInfo[1]) > Integer.parseInt(projectInfo[1])
-                || Integer.parseInt(releaseInfo[2]) > Integer.parseInt(projectInfo[2])) {
+        if (isUpdatable(releaseInfo, projectInfo)) {
             response = new ResponseEntity<>(releaseVersion, HttpStatus.OK);
         } else {
             response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return response;
+    }
+
+    /**
+     * Checks the latest release version number against the used (SemVer).
+     *
+     * @param releaseInfo Version number of the latest release.
+     * @param projectInfo Current version number.
+     * @return True if a newer version is available, else false.
+     */
+    private boolean isUpdatable(final String[] releaseInfo, final String[] projectInfo) {
+        final var newMajor = Integer.parseInt(releaseInfo[0]) > Integer.parseInt(projectInfo[0]);
+
+        final var newMinor = (Integer.parseInt(releaseInfo[0]) == Integer.parseInt(projectInfo[0]))
+                 && (Integer.parseInt(releaseInfo[1]) > Integer.parseInt(projectInfo[1]));
+
+        final var newPatch = (Integer.parseInt(releaseInfo[0]) == Integer.parseInt(projectInfo[0]))
+                && (Integer.parseInt(releaseInfo[1]) == Integer.parseInt(projectInfo[1]))
+                && Integer.parseInt(releaseInfo[2]) > Integer.parseInt(projectInfo[2]);
+
+        return newMajor || newMinor || newPatch;
     }
 
     /**
@@ -107,13 +126,13 @@ public class ProjectInformationService {
                 .scheme("https")
                 .host(HOST)
                 .addPathSegments("repos/" + REPOSITORY_OWNER + "/" + REPOSITORY + "/releases")
-                .addQueryParameter("per_page", RESULT_PER_PAGE);
+                .addQueryParameter("per_page", RESULT_PER_PAGE.toString());
         final var url = urlBuilder.build();
         builder.url(url);
         builder.get();
         final var request = builder.build();
 
-        final var response = httpService.send(request);
+        final var response = httpSvc.send(request);
         final var responseBody = checkResponseNotNull(response);
 
         return identifyProjectVersion(responseBody);
