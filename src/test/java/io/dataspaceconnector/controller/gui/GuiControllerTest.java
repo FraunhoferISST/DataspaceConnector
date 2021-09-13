@@ -80,4 +80,12 @@ class GuiControllerTest {
                 get("/api/configmanager/enum/paymentmethod"))
                 .andExpect(status().isOk()).andReturn();
     }
+
+    @Test
+    @WithMockUser("ADMIN")
+    void getProjectUpdateInformation() throws Exception {
+        mockMvc.perform(
+                        get("/api/configmanager/project/update/information"))
+                .andExpect(status().isOk()).andReturn();
+    }
 }
