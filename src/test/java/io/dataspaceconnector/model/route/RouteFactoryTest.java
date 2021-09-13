@@ -19,6 +19,8 @@ import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -135,5 +137,18 @@ public class RouteFactoryTest {
         route.setEnd(new GenericEndpoint());
 
         assertNull(factory.deleteLastEndpoint(route).getEnd());
+    }
+
+    @Test
+    public void deleteSubroutes_returnEmpty() {
+        /* ARRANGE */
+        final var route = factory.create(new RouteDesc());
+        route.setSteps(new ArrayList<>());
+
+        /* ACT */
+        factory.deleteSubroutes(route);
+
+        /* ASSERT */
+        assertNull(route.getSteps());
     }
 }
