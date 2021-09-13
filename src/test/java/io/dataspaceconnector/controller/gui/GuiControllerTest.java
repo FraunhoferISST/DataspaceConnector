@@ -85,7 +85,7 @@ class GuiControllerTest {
     @WithMockUser("ADMIN")
     void getProjectUpdateInformation() throws Exception {
         mockMvc.perform(
-                        get("/api/configmanager/project/update/information"))
+                get("/api/configmanager/update"))
                 .andExpect(status().isOk()).andReturn();
     }
 }
