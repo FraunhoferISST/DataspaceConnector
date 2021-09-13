@@ -26,7 +26,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -73,13 +72,12 @@ public class GuiController {
     }
 
     /**
-     * API that provides the UI with the information whether a newer version of the application
-     * is available.
+     * API checks if a newer version of the connector is available than the one used.
      *
      * @return The response message or an error.
      */
     @Hidden
-    @GetMapping(value = "/project/update/information")
+    @GetMapping(value = "/update")
     @Operation(summary = "Get information about project update is available")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description
@@ -91,11 +89,11 @@ public class GuiController {
             return projectInformationService.projectUpdateAvailable();
         } catch (IOException exception) {
             if (log.isDebugEnabled()) {
-                log.debug("Failed to get information whether project update is available."
-                        + " [exception=({})]", exception.getMessage(), exception);
+                log.debug("Failed to determine if a project update is available."
+                        + " [exception=({})]", exception.getMessage());
             }
-            return ResponseEntity.badRequest().body("Failed to get information "
-                    + "whether project update is available.");
+            return ResponseEntity.badRequest().body("Failed to determine if a project" +
+                    " update is available.");
         }
     }
 }
