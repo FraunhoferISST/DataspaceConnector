@@ -18,16 +18,21 @@ package io.dataspaceconnector.controller.gui;
 import io.dataspaceconnector.controller.gui.util.GuiUtils;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
+import io.dataspaceconnector.service.ProjectInformationService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 
 /**
  * The api class offers the possibilities to provide other api's which could be needed.
@@ -37,7 +42,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/configmanager")
 @Tag(name = "ConfigManager: GUI Utilities")
+@Log4j2
 public class GuiController {
+
+    /**
+     * The project information service.
+     */
+    private final @NonNull ProjectInformationService projectInformationService;
 
     /**
      * Auxiliary API to provide data to a GUI, which either comes from the infomodel or is connector
@@ -58,5 +69,30 @@ public class GuiController {
         final var enums = GuiUtils.getSpecificEnum(enumName);
         return enums == null ? ResponseEntity.badRequest().body("Could not get the enums")
                 : ResponseEntity.ok(enums);
+    }
+
+    /**
+     * API that provides the UI with the information whether a newer version of the application
+     * is available.
+     *
+     * @return The response message or an error.
+     */
+    @Hidden
+    @GetMapping(value = "/project/update/information")
+    @Operation(summary = "Get information about project update is available")
+    @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
+    @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description
+            = ResponseDescription.BAD_REQUEST)
+    ResponseEntity<Object> getProjectUpdateInformation() {
+        try {
+            return projectInformationService.projectUpdateAvailable();
+        } catch (IOException exception) {
+            if (log.isDebugEnabled()) {
+                log.debug("Failed to get information whether project update is available."
+                        + " [exception=({})]", exception.getMessage(), exception);
+            }
+            return ResponseEntity.badRequest().body("Failed to get information "
+                    + "whether project update is available.");
+        }
     }
 }
