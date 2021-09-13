@@ -95,7 +95,13 @@ public class ProjectInformationService {
         return response;
     }
 
-    private String getLatestReleaseVersion() throws IOException {
+    /**
+     * Determines via the GitHub which is the latest release.
+     *
+     * @return The project version.
+     * @throws IOException if an error occurs when retrieving the release version.
+     */
+    public String getLatestReleaseVersion() throws IOException {
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme("https")
