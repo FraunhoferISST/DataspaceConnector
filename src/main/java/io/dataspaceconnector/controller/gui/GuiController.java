@@ -92,8 +92,8 @@ public class GuiController {
                 log.debug("Failed to determine if a project update is available."
                         + " [exception=({})]", exception.getMessage());
             }
-            return ResponseEntity.badRequest().body("Failed to determine if a project" +
-                    " update is available.");
+            return ResponseEntity.badRequest().body("Failed to determine if a project"
+                    + " update is available.");
         }
     }
 }
