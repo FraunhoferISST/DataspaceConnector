@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -81,6 +82,8 @@ public class GuiController {
     @GetMapping(value = "/project/update/information")
     @Operation(summary = "Get information about project update is available")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
+    @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description
+            = ResponseDescription.NO_CONTENT)
     @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description
             = ResponseDescription.BAD_REQUEST)
     ResponseEntity<Object> getProjectUpdateInformation() {
