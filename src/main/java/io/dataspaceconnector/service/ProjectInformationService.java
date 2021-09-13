@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * Service class to retrieve information about the project.
+ * Service class to retrieve information about the latest project release.
  */
 @Log4j2
 @Service
@@ -52,6 +52,11 @@ public class ProjectInformationService {
     private String projectVersion;
 
     /**
+     * GitHub API host address.
+     */
+    private static final String HOST = "api.github.com";
+
+    /**
      * The project repository owner.
      */
     private static final String REPOSITORY_OWNER = "International-Data-Spaces-Association";
@@ -60,11 +65,6 @@ public class ProjectInformationService {
      * The project repository.
      */
     private static final String REPOSITORY = "DataspaceConnector";
-
-    /**
-     * GitHub API host address.
-     */
-    private static final String HOST = "api.github.com";
 
     /**
      * Limitation for the results.
@@ -91,6 +91,7 @@ public class ProjectInformationService {
         } else {
             response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+
         return response;
     }
 
@@ -127,11 +128,12 @@ public class ProjectInformationService {
                 .host(HOST)
                 .addPathSegments("repos/" + REPOSITORY_OWNER + "/" + REPOSITORY + "/releases")
                 .addQueryParameter("per_page", RESULT_PER_PAGE.toString());
+
         final var url = urlBuilder.build();
         builder.url(url);
         builder.get();
-        final var request = builder.build();
 
+        final var request = builder.build();
         final var response = httpSvc.send(request);
         final var responseBody = checkResponseNotNull(response);
 
@@ -140,7 +142,14 @@ public class ProjectInformationService {
 
     private String identifyProjectVersion(final String response) {
         final var jsonArray = new JSONArray(response);
-        return jsonArray.getJSONObject(0).get("tag_name").toString().substring(1);
+
+        var latestTag = jsonArray.getJSONObject(0).get("tag_name").toString();
+
+        if (latestTag.contains("v")) {
+            latestTag = latestTag.replace("v", "");
+        }
+
+        return latestTag.trim();
     }
 
     private Request.Builder getRequestBuilder() {
@@ -151,6 +160,7 @@ public class ProjectInformationService {
     private String checkResponseNotNull(@NonNull final Response response) throws IOException {
         final var checkedResp = Objects.requireNonNull(response);
         final var body = Objects.requireNonNull(checkedResp.body());
+
         return Objects.requireNonNull(body.string());
     }
 }
