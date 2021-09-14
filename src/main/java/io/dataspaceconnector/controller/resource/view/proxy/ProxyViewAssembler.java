@@ -26,6 +26,21 @@ public class ProxyViewAssembler implements RepresentationModelAssembler<Proxy, P
 
     @Override
     public final ProxyView toModel(final Proxy proxy) {
-        return new ModelMapper().map(proxy, ProxyView.class);
+        final var proxyView = new ModelMapper().map(proxy, ProxyView.class);
+        proxyView.setAuthenticationSet(isProxyAuthSet(proxy));
+
+        return proxyView;
+    }
+
+    /**
+     * Indicates whether auth-credentials for the proxy are present.
+     *
+     * @param proxy The proxy which could contain credentials.
+     * @return True if auth-credentials present, else false.
+     */
+    private boolean isProxyAuthSet(final Proxy proxy) {
+        return proxy.getAuthentication() != null
+            && proxy.getAuthentication().getUsername() != null
+            && proxy.getAuthentication().getPassword() != null;
     }
 }
