@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - Increase dependency-check-maven version from 6.2.2 to 6.3.1.
 - Increase maven-javadoc-plugin version from 3.3.0 to 3.3.1.
 - Increase pmd-maven-plugin version from 3.14.0 to 3.15.0.
+- Increase pitest-junit-plugin version from 0.14 to 0.15.
 - Resolve spotbugs warnings.
 
 ## [6.2.0] - 2021-09-01
