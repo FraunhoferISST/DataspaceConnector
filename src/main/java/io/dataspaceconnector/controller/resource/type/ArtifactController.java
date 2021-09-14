@@ -19,7 +19,6 @@ import de.fraunhofer.ids.messaging.protocol.UnexpectedResponseException;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.net.RetrievalInformation;
-import io.dataspaceconnector.common.util.UUIDUtils;
 import io.dataspaceconnector.common.util.ValidationUtils;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.BaseResourceNotificationController;
@@ -32,13 +31,10 @@ import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
-import io.dataspaceconnector.model.artifact.ArtifactImpl;
-import io.dataspaceconnector.model.artifact.RemoteData;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
 import io.dataspaceconnector.service.message.SubscriberNotificationService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
-import io.dataspaceconnector.service.resource.type.RouteService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -62,7 +58,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -103,11 +98,6 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      * Service for notifying subscribers about an entity update.
      */
     private final @NonNull SubscriberNotificationService subscriberNotificationSvc;
-
-    /**
-     * The service for managing routes.
-     */
-    private final @NonNull RouteService routeSvc;
 
     /**
      * The assembler for creating a view from  a route.
@@ -278,30 +268,8 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
                     description = ResponseDescription.UNAUTHORIZED)})
     public ResponseEntity<RouteView> getRoute(
             @Valid @PathVariable(name = "id") final UUID artifactId) {
-        final var artifact = (ArtifactImpl) artifactSvc.get(artifactId);
-        final var data = artifact.getData();
-
-        Route route = null;
-        if (data instanceof RemoteData) {
-            final var accessUrl = ((RemoteData) data).getAccessUrl().toString();
-            if (accessUrl.startsWith(getRoutesApiUrl())) {
-                final var routeId = UUIDUtils.uuidFromUri(URI.create(accessUrl));
-                route = routeSvc.get(routeId);
-            }
-        }
-
+        final var route = artifactSvc.getAssociatedRoute(artifactId);
         return returnRoute(route);
-    }
-
-    /**
-     * Returns the URL to the routes API. Required for checking whether an access URL references
-     * a Camel route or a remote data source.
-     *
-     * @return the URL to the routes API.
-     */
-    private String getRoutesApiUrl() {
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        return baseUrl + BasePath.ROUTES;
     }
 
     /**

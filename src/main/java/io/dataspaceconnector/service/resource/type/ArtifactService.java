@@ -26,6 +26,7 @@ import java.util.UUID;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.common.net.QueryInput;
@@ -33,7 +34,9 @@ import io.dataspaceconnector.common.net.RetrievalInformation;
 import io.dataspaceconnector.common.usagecontrol.AccessVerificationInput;
 import io.dataspaceconnector.common.usagecontrol.PolicyVerifier;
 import io.dataspaceconnector.common.usagecontrol.VerificationResult;
+import io.dataspaceconnector.common.util.UUIDUtils;
 import io.dataspaceconnector.common.util.Utils;
+import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
@@ -41,10 +44,12 @@ import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.model.artifact.RemoteData;
 import io.dataspaceconnector.model.base.AbstractFactory;
+import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.DataRepository;
+import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.ArtifactRetriever;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
 import io.dataspaceconnector.service.resource.base.RemoteResolver;
@@ -53,6 +58,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * Handles the basic logic for artifacts.
@@ -79,6 +85,11 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private final @NonNull AuthenticationRepository authRepo;
 
     /**
+     * Repository for storing routes.
+     */
+    private final @NonNull RouteRepository routeRepo;
+
+    /**
      * Constructor for ArtifactService.
      *
      * @param repository               The artifact repository.
@@ -86,16 +97,19 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param dataRepository           The data repository.
      * @param httpService              The HTTP service for fetching remote data.
      * @param authenticationRepository The AuthType repository.
+     * @param routeRepository          The Route repository.
      */
     public ArtifactService(final BaseEntityRepository<Artifact> repository,
                            final AbstractFactory<Artifact, ArtifactDesc> factory,
                            final @NonNull DataRepository dataRepository,
                            final @NonNull HttpService httpService,
-                           final @NonNull AuthenticationRepository authenticationRepository) {
+                           final @NonNull AuthenticationRepository authenticationRepository,
+                           final @NonNull RouteRepository routeRepository) {
         super(repository, factory);
         this.dataRepo = dataRepository;
         this.httpSvc = httpService;
         this.authRepo = authenticationRepository;
+        this.routeRepo = routeRepository;
     }
 
     /**
@@ -430,5 +444,43 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
 
     private InputStream toInputStream(final byte[] data) {
         return new ByteArrayInputStream(data);
+    }
+
+    /**
+     * Returns the route associated with an artifact, if any.
+     *
+     * @param artifactId The artifact ID.
+     * @return the associated route, if any. Null otherwise.
+     * @throws ResourceNotFoundException if the referenced route is unknown.
+     */
+    public Route getAssociatedRoute(final UUID artifactId) {
+        final var artifact = (ArtifactImpl) get(artifactId);
+        final var data = artifact.getData();
+
+        Route route = null;
+        if (data instanceof RemoteData) {
+            final var accessUrl = ((RemoteData) data).getAccessUrl().toString();
+            if (accessUrl.startsWith(getRoutesApiUrl())) {
+                final var routeId = UUIDUtils.uuidFromUri(URI.create(accessUrl));
+                final var optional = routeRepo.findById(routeId);
+                if (optional.isEmpty()) {
+                    throw new ResourceNotFoundException("Failed to find route: " + accessUrl);
+                }
+                route = optional.get();
+            }
+        }
+
+        return route;
+    }
+
+    /**
+     * Returns the URL to the routes API. Required for checking whether an access URL references
+     * a Camel route or a remote data source.
+     *
+     * @return the URL to the routes API.
+     */
+    private String getRoutesApiUrl() {
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
+        return baseUrl + BasePath.ROUTES;
     }
 }
