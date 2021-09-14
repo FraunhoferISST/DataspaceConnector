@@ -106,7 +106,7 @@
 		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
 		<velocity.version>1.7</velocity.version>
-		<camel.version>3.11.1</camel.version>
+		<camel.version>3.11.2</camel.version>
 		<idscp2.version>0.5.0</idscp2.version>
 
 		<!-- Plugins -->
