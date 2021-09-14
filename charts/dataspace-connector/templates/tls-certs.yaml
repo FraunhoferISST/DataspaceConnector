@@ -4,7 +4,6 @@ type: kubernetes.io/tls
 metadata:
   namespace: {{ .Release.Namespace }}
   name: testsecret-tls
-  namespace: default
   labels:
     {{- include "dataspace-connector.labels" . | nindent 4 }}
   annotations:
