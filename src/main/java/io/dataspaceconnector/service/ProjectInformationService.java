@@ -52,9 +52,19 @@ public class ProjectInformationService {
     private String projectVersion;
 
     /**
+     * The scheme.
+     */
+    private String scheme = "https";
+
+    /**
      * GitHub API host address.
      */
-    private static final String HOST = "api.github.com";
+    private String host = "api.github.com";
+
+    /**
+     * The port.
+     */
+    private static final Integer PORT = 443;
 
     /**
      * The project repository owner.
@@ -124,8 +134,9 @@ public class ProjectInformationService {
     public String getLatestReleaseVersion() throws IOException {
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
-                .scheme("https")
-                .host(HOST)
+                .scheme(scheme)
+                .host(host)
+                .port(PORT)
                 .addPathSegments("repos/" + REPOSITORY_OWNER + "/" + REPOSITORY + "/releases")
                 .addQueryParameter("per_page", RESULT_PER_PAGE.toString());
 
