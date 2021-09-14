@@ -16,6 +16,7 @@
 package io.dataspaceconnector.service.resource.ids.builder;
 
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
+import de.fraunhofer.iais.eis.Language;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
@@ -74,10 +75,10 @@ public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBui
         final var created = ToIdsObjectMapper.getGregorianOf(resource.getCreationDate());
         final var modified = ToIdsObjectMapper.getGregorianOf(resource.getModificationDate());
         final var description = resource.getDescription();
-        final var language = resource.getLanguage();
         final var idsLanguage = ToIdsObjectMapper.getLanguage(resource.getLanguage());
+        final var languageCode = getLanguageCode(idsLanguage);
         final var keywords = ToIdsObjectMapper.getKeywordsAsTypedLiteral(resource.getKeywords(),
-                language);
+                languageCode);
         final var license = resource.getLicense();
         final var paymentModality = resource.getPaymentModality() == null
                 ? null : ToIdsObjectMapper.getPaymentModality(resource.getPaymentModality());
@@ -107,7 +108,7 @@ public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBui
 
         final var builder = new ResourceBuilder(selfLink)
                 ._created_(created)
-                ._description_(Util.asList(new TypedLiteral(description, language)))
+                ._description_(Util.asList(new TypedLiteral(description, languageCode)))
                 ._language_(Util.asList(idsLanguage))
                 ._keyword_(keywords)
                 ._modified_(modified)
@@ -116,7 +117,7 @@ public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBui
                 ._resourceEndpoint_(Util.asList(endpoint))
                 ._sovereign_(sovereign)
                 ._standardLicense_(license)
-                ._title_(Util.asList(new TypedLiteral(title, language)))
+                ._title_(Util.asList(new TypedLiteral(title, languageCode)))
                 ._version_(String.valueOf(version));
 
         if (!samples.isEmpty()) {
@@ -127,5 +128,17 @@ public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBui
         contracts.ifPresent(builder::_contractOffer_);
 
         return builder.build();
+    }
+
+    /**
+     * Returns the language code for a language, so e.g. "EN" for the language with ID
+     * "https://w3id.org/idsa/code/EN".
+     *
+     * @param language the language object.
+     * @return the corresponding language code.
+     */
+    private String getLanguageCode(final Language language) {
+        final var languageId = language.getId().toString();
+        return languageId.substring(languageId.length() - 2);
     }
 }
