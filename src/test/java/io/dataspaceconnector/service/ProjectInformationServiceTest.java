@@ -21,6 +21,7 @@ import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -36,6 +37,9 @@ public class ProjectInformationServiceTest {
     @MockBean
     public HttpService httpService;
 
+    @MockBean
+    public ProjectInformationService.RepoConfig repoConfig;
+
     private MockWebServer mockWebServer;
 
     @BeforeEach
@@ -44,20 +48,13 @@ public class ProjectInformationServiceTest {
         mockWebServer = new MockWebServer();
         mockWebServer.start();
 
-        final var host = mockWebServer.getHostName();
-        final var port = mockWebServer.getPort();
+        Mockito.when(repoConfig.getHost()).thenReturn(mockWebServer.getHostName());
+        Mockito.when(repoConfig.getPort()).thenReturn(mockWebServer.getPort());
+        Mockito.when(repoConfig.getScheme()).thenReturn("http");
 
-        var schemeField = projectInformationService.getClass().getDeclaredField("scheme");
-        var portField = projectInformationService.getClass().getDeclaredField("PORT");
-        var hostField = projectInformationService.getClass().getDeclaredField("host");
-
-        schemeField.setAccessible(true);
-        portField.setAccessible(true);
-        hostField.setAccessible(true);
-
-        schemeField.set(projectInformationService, "http");
-        hostField.set(projectInformationService, host);
-        portField.set(null, Integer.valueOf(port));
+        var configField = projectInformationService.getClass().getDeclaredField("repoConfig");
+        configField.setAccessible(true);
+        configField.set(projectInformationService, repoConfig);
     }
 
     @Test

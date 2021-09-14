@@ -17,6 +17,8 @@ package io.dataspaceconnector.service;
 
 import de.fraunhofer.ids.messaging.protocol.http.HttpService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -54,17 +56,17 @@ public class ProjectInformationService {
     /**
      * The scheme.
      */
-    private String scheme = "https";
+    private static final String SCHEME = "https";
 
     /**
      * GitHub API host address.
      */
-    private String host = "api.github.com";
+    private static final String HOST = "api.github.com";
 
     /**
      * The port.
      */
-    private static Integer PORT = 443;
+    private static final Integer PORT = 443;
 
     /**
      * The project repository owner.
@@ -81,6 +83,11 @@ public class ProjectInformationService {
      * E.g. 1 Provides only the latest release.
      */
     private static final Integer RESULT_PER_PAGE = 1;
+
+    /**
+     * config for repository.
+     */
+    private RepoConfig repoConfig = new RepoConfig(PORT, HOST, SCHEME);
 
     /**
      * This method compares the release version with the currently used project version and decides
@@ -134,9 +141,9 @@ public class ProjectInformationService {
     public String getLatestReleaseVersion() throws IOException {
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
-                .scheme(scheme)
-                .host(host)
-                .port(PORT)
+                .scheme(repoConfig.getScheme())
+                .host(repoConfig.getHost())
+                .port(repoConfig.getPort())
                 .addPathSegments("repos/" + REPOSITORY_OWNER + "/" + REPOSITORY + "/releases")
                 .addQueryParameter("per_page", RESULT_PER_PAGE.toString());
 
@@ -173,5 +180,28 @@ public class ProjectInformationService {
         final var body = Objects.requireNonNull(checkedResp.body());
 
         return Objects.requireNonNull(body.string());
+    }
+
+    /**
+     * Configuration for accessed repository.
+     */
+    @Getter
+    @AllArgsConstructor
+    public static class RepoConfig {
+
+        /**
+         * The port.
+         */
+        private int port;
+
+        /**
+         * The hostname.
+         */
+        private String host;
+
+        /**
+         * The scheme.
+         */
+        private String scheme;
     }
 }
