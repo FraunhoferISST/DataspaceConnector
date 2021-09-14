@@ -33,8 +33,15 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.UUID;
+import javax.annotation.PostConstruct;
 
 /**
  * Service class for routes.
@@ -59,6 +66,11 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
     private final @NonNull RouteHelper routeHelper;
 
     /**
+     * Transaction manager. Required for transactions in @PostConstruct methods.
+     */
+    private final @NonNull PlatformTransactionManager transactionManager;
+
+    /**
      * Constructor for route service.
      *
      * @param repository           The route repository.
@@ -66,17 +78,20 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      * @param endpointRepository   The endpoint repository.
      * @param endpointServiceProxy The endpoint service.
      * @param camelRouteHelper     The helper class for Camel routes.
+     * @param platformTransactionManager The transaction manager.
      */
     public RouteService(
             final BaseEntityRepository<Route> repository,
             final AbstractFactory<Route, RouteDesc> factory,
             final @NonNull EndpointRepository endpointRepository,
             final @NonNull EndpointServiceProxy endpointServiceProxy,
-            final @NonNull RouteHelper camelRouteHelper) {
+            final @NonNull RouteHelper camelRouteHelper,
+            final @NonNull PlatformTransactionManager platformTransactionManager) {
         super(repository, factory);
         this.endpointRepo = endpointRepository;
         this.endpointService = endpointServiceProxy;
         this.routeHelper = camelRouteHelper;
+        this.transactionManager = platformTransactionManager;
     }
 
     @Override
@@ -159,6 +174,23 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
         ((RouteFactory) getFactory()).deleteSubroutes(route);
 
         super.delete(routeId);
+    }
+
+    /**
+     * Loads and deploys all top-level routes from the database after application start. Thus,
+     * deployed Camel routes do not get lost through a restart.
+     */
+    @PostConstruct
+    @Transactional(readOnly = true)
+    public void redeploySavedRoutes() {
+        final var template = new TransactionTemplate(transactionManager);
+        template.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(@NotNull final TransactionStatus status) {
+                final var routes = ((RouteRepository) getRepository()).findAllTopLevelRoutes();
+                routes.forEach(routeHelper::deploy);
+            }
+        });
     }
 
 }
