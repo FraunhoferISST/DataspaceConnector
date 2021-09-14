@@ -25,9 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-
 @SpringBootTest
 public class ProjectInformationServiceTest {
 
@@ -57,10 +54,6 @@ public class ProjectInformationServiceTest {
         schemeField.setAccessible(true);
         portField.setAccessible(true);
         hostField.setAccessible(true);
-
-        Field modifierField = Field.class.getDeclaredField("modifiers");
-        modifierField.setAccessible(true);
-        modifierField.setInt(portField, portField.getModifiers() & ~Modifier.FINAL);
 
         schemeField.set(projectInformationService, "http");
         hostField.set(projectInformationService, host);

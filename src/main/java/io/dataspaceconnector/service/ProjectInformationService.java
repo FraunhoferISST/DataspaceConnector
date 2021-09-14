@@ -64,7 +64,7 @@ public class ProjectInformationService {
     /**
      * The port.
      */
-    private static final Integer PORT = 443;
+    private static Integer PORT = 443;
 
     /**
      * The project repository owner.
