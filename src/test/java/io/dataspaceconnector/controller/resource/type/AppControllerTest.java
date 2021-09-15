@@ -20,6 +20,7 @@ import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.app.AppImpl;
 import io.dataspaceconnector.model.base.Entity;
+import io.dataspaceconnector.service.AppRouteResolver;
 import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
 import io.dataspaceconnector.service.resource.type.AppService;
 import okhttp3.*;
@@ -47,6 +48,9 @@ class AppControllerTest {
 
     @MockBean
     private PortainerRequestService portainerRequestService;
+
+    @MockBean
+    private AppRouteResolver appRouteResolver;
 
     @Autowired
     private AppController appController;
