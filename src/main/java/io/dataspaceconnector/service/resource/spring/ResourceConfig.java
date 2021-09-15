@@ -104,6 +104,7 @@ public class ResourceConfig {
      * @param dataRepository The data repository.
      * @param httpService    The http service.
      * @param authRepo       The auth repo.
+     * @param routeRepo      The route repo.
      * @return The artifact service bean.
      */
     @Bean("artifactService")
@@ -111,9 +112,10 @@ public class ResourceConfig {
             @Qualifier("artifactRepository") final ArtifactRepository repository,
             final DataRepository dataRepository,
             final HttpService httpService,
-            final AuthenticationRepository authRepo) {
+            final AuthenticationRepository authRepo,
+            final RouteRepository routeRepo) {
         return new ArtifactService(repository, new ArtifactFactory(),
-                dataRepository, httpService, authRepo);
+                dataRepository, httpService, authRepo, routeRepo);
     }
 
     /**
