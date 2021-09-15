@@ -105,7 +105,11 @@ public class AppRouteResolver {
                         return allEndpointsActive(route);
                     } catch (IOException e) {
                         if (log.isDebugEnabled()) {
-                            log.debug(e.getMessage());
+                            log.debug(
+                                    "Failed to check if endpoints of "
+                                            + route.getId()
+                                            + " are active. [exception=({})]",
+                                    e.getMessage());
                         }
                         return false;
                     }
