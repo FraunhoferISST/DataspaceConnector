@@ -25,7 +25,6 @@ import lombok.extern.log4j.Log4j2;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -78,12 +77,6 @@ public class ProjectInformationService {
      * The project repository.
      */
     private static final String REPOSITORY = "DataspaceConnector";
-
-    /**
-     * Limitation for the results.
-     * E.g. 1 Provides only the latest release.
-     */
-    private static final Integer RESULT_PER_PAGE = 1;
 
     /**
      * config for repository.
@@ -145,8 +138,8 @@ public class ProjectInformationService {
                 .scheme(repoConfig.getScheme())
                 .host(repoConfig.getHost())
                 .port(repoConfig.getPort())
-                .addPathSegments("repos/" + REPOSITORY_OWNER + "/" + REPOSITORY + "/releases")
-                .addQueryParameter("per_page", RESULT_PER_PAGE.toString());
+                .addPathSegments("repos/" + REPOSITORY_OWNER + "/" + REPOSITORY
+                        + "/releases/latest");
 
         final var url = urlBuilder.build();
         builder.url(url);
@@ -161,10 +154,9 @@ public class ProjectInformationService {
 
     private JSONObject extractReleaseInformation(final String response) {
         final var releaseInformation = new JSONObject();
-        final var jsonArray = new JSONArray(response);
-        final var jsonObject = jsonArray.getJSONObject(0);
+        final var responseObj = new JSONObject(response);
 
-        var latestTag = jsonObject.get("tag_name").toString();
+        var latestTag = responseObj.get("tag_name").toString();
 
         if (latestTag.contains("v")) {
             latestTag = latestTag.replace("v", "");
@@ -172,9 +164,7 @@ public class ProjectInformationService {
 
         releaseInformation.put("currentVersion", projectVersion);
         releaseInformation.put("updateVersion", latestTag.trim());
-        releaseInformation.put("releaseUrl", jsonObject.get("html_url").toString());
-        releaseInformation.put("prerelease", jsonObject.get("prerelease"));
-        releaseInformation.put("draft", jsonObject.get("draft"));
+        releaseInformation.put("releaseUrl", responseObj.get("html_url").toString());
 
         return releaseInformation;
     }
