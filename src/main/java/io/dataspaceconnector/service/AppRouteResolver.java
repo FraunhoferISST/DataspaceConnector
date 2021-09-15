@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.service;
 
+import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppImpl;
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.Endpoint;
@@ -24,8 +25,10 @@ import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
 import io.dataspaceconnector.service.resource.relation.AppEndpointLinker;
 import io.dataspaceconnector.service.routing.RouteHelper;
+import io.dataspaceconnector.service.routing.RouteManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.camel.CamelContext;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -41,6 +44,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Log4j2
 public class AppRouteResolver {
+
+    /**
+     * The camel context.
+     */
+    private final CamelContext camelContext;
 
     /**
      * The app repository.
@@ -66,6 +74,11 @@ public class AppRouteResolver {
      * Deploy and Delete routes.
      */
     private final RouteHelper routeHelper;
+
+    /**
+     * The route manager.
+     */
+    private final RouteManager routeManager;
 
     /**
      * Stop all apps which use the stopped App.
@@ -98,6 +111,56 @@ public class AppRouteResolver {
                 })
                 .collect(Collectors.toList());
         startableRoutes.forEach(routeHelper::deploy);
+    }
+
+    /**
+     * Get all running app endpoints.
+     *
+     * @return List of all running App Endpoints.
+     * @throws IOException when portainer is not reachable.
+     */
+    public final List<AppEndpoint> getRunningAppEndpoints() throws IOException {
+        var apps = appRepository.findAll();
+        var runningEndpoints = new ArrayList<AppEndpoint>();
+        for (var app : apps) {
+            var appImpl = (AppImpl) app;
+            var containerId = appImpl.getContainerId();
+            if (portainerRequestService.validateContainerRunning(containerId)) {
+                runningEndpoints.addAll(app.getEndpoints());
+            }
+        }
+        return runningEndpoints;
+    }
+
+    /**
+     * Check if all given app endpoints are running.
+     *
+     * @param appEndpoints List of app endpoints to check.
+     * @return true, if all app endpoints are active.
+     * @throws IOException if portainer is not reachable.
+     */
+    public final boolean requiredEndpointsRunning(final List<AppEndpoint> appEndpoints)
+            throws IOException {
+        return getRunningAppEndpoints().containsAll(appEndpoints);
+    }
+
+    /**
+     * Check if app is used by any deployed camel route.
+     *
+     * @param app app for which usage is checked.
+     * @return true, if some app endpoint of app is used by an active camel route.
+     */
+    public final boolean isAppUsed(final App app) {
+        var endpoints = app.getEndpoints();
+        for (var endpoint : endpoints) {
+            var routes = routeRepository.findTopLevelRoutesByEndpoint(endpoint.getId());
+            for (var route : routes) {
+                if (camelContext.getRoute("app-route_" + route.getId()) != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private boolean allEndpointsActive(final Route route) throws IOException {
@@ -134,5 +197,4 @@ public class AppRouteResolver {
         }
         return false;
     }
-
 }

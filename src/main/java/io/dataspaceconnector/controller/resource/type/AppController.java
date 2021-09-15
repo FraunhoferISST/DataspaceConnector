@@ -31,6 +31,7 @@ import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.app.AppImpl;
+import io.dataspaceconnector.service.AppRouteResolver;
 import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
 import io.dataspaceconnector.service.resource.type.AppEndpointService;
 import io.dataspaceconnector.service.resource.type.AppService;
@@ -79,6 +80,11 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
      * Service for managing AppEndpoints.
      */
     private final @NonNull AppEndpointService appEndpointSvc;
+
+    /**
+     * Service for checking if apps are used by camel routes.
+     */
+    private final @NonNull AppRouteResolver appRouteResolver;
 
     /**
      * 443 is the default port for https.
@@ -153,7 +159,12 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
                     return new ResponseEntity<>("No container id provided.",
                             HttpStatus.NOT_FOUND);
                 }
-
+                if (appRouteResolver.isAppUsed(app)) {
+                    return new ResponseEntity<>(
+                            "Selected App is in use and cannot be stopped.",
+                            HttpStatus.IM_USED
+                    );
+                }
                 response = portainerSvc.stopContainer(containerId);
                 return readResponse(response, "Successfully stopped the app.");
             } else if (ActionType.DELETE.name().equals(action)) {
