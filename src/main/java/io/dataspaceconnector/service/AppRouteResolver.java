@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -148,19 +149,20 @@ public class AppRouteResolver {
      * Check if app is used by any deployed camel route.
      *
      * @param app app for which usage is checked.
-     * @return true, if some app endpoint of app is used by an active camel route.
+     * @return routeID, if some app endpoint of app is used by an active camel route.
+     *              Empty if it is not used.
      */
-    public final boolean isAppUsed(final App app) {
+    public final Optional<String> isAppUsed(final App app) {
         var endpoints = app.getEndpoints();
         for (var endpoint : endpoints) {
             var routes = routeRepository.findTopLevelRoutesByEndpoint(endpoint.getId());
             for (var route : routes) {
                 if (camelContext.getRoute("app-route_" + route.getId()) != null) {
-                    return true;
+                    return Optional.of("app-route_" + route.getId());
                 }
             }
         }
-        return false;
+        return Optional.empty();
     }
 
     private boolean allEndpointsActive(final Route route) throws IOException {

@@ -159,10 +159,16 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
                     return new ResponseEntity<>("No container id provided.",
                             HttpStatus.NOT_FOUND);
                 }
-                if (appRouteResolver.isAppUsed(app)) {
+                var usedBy = appRouteResolver.isAppUsed(app);
+                if (usedBy.isPresent()) {
                     return new ResponseEntity<>(
-                            "Selected App is in use and cannot be stopped.",
-                            HttpStatus.IM_USED
+                            String.format(
+                                    "Selected App is in use by camel route %s" +
+                                            " and cannot be stopped. Camel routes have" +
+                                            " to be stopped before stopping the app.",
+                                    usedBy.get()
+                            ),
+                            HttpStatus.CONFLICT
                     );
                 }
                 response = portainerSvc.stopContainer(containerId);
