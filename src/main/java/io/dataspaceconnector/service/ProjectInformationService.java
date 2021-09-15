@@ -26,6 +26,7 @@ import okhttp3.HttpUrl;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -98,13 +99,13 @@ public class ProjectInformationService {
      */
     public ResponseEntity<Object> projectUpdateAvailable() throws IOException {
         ResponseEntity<Object> response;
-        final var releaseVersion = getLatestReleaseVersion();
+        final var releaseInformation = getLatestReleaseInformation();
 
-        final var releaseInfo = releaseVersion.split("\\.");
+        final var releaseInfo = releaseInformation.get("updateVersion").toString().split("\\.");
         final var projectInfo = projectVersion.split("\\.");
 
         if (isUpdatable(releaseInfo, projectInfo)) {
-            response = new ResponseEntity<>(releaseVersion, HttpStatus.OK);
+            response = new ResponseEntity<>(releaseInformation.toString(), HttpStatus.OK);
         } else {
             response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -138,7 +139,7 @@ public class ProjectInformationService {
      * @return The project version.
      * @throws IOException if an error occurs when retrieving the release version.
      */
-    public String getLatestReleaseVersion() throws IOException {
+    public JSONObject getLatestReleaseInformation() throws IOException {
         final var builder = getRequestBuilder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme(repoConfig.getScheme())
@@ -155,19 +156,27 @@ public class ProjectInformationService {
         final var response = httpSvc.send(request);
         final var responseBody = checkResponseNotNull(response);
 
-        return identifyProjectVersion(responseBody);
+        return extractReleaseInformation(responseBody);
     }
 
-    private String identifyProjectVersion(final String response) {
+    private JSONObject extractReleaseInformation(final String response) {
+        final var releaseInformation = new JSONObject();
         final var jsonArray = new JSONArray(response);
+        final var jsonObject = jsonArray.getJSONObject(0);
 
-        var latestTag = jsonArray.getJSONObject(0).get("tag_name").toString();
+        var latestTag = jsonObject.get("tag_name").toString();
 
         if (latestTag.contains("v")) {
             latestTag = latestTag.replace("v", "");
         }
 
-        return latestTag.trim();
+        releaseInformation.put("currentVersion", projectVersion);
+        releaseInformation.put("updateVersion", latestTag.trim());
+        releaseInformation.put("releaseUrl", jsonObject.get("html_url").toString());
+        releaseInformation.put("prerelease", jsonObject.get("prerelease"));
+        releaseInformation.put("draft", jsonObject.get("draft"));
+
+        return releaseInformation;
     }
 
     private Request.Builder getRequestBuilder() {
