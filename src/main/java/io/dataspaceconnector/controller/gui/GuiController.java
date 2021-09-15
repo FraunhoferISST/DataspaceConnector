@@ -77,7 +77,7 @@ public class GuiController {
      * @return The response message or an error.
      */
     @Hidden
-    @GetMapping(value = "/update")
+    @GetMapping(value = "/update", produces = "application/json")
     @Operation(summary = "Get information about project update is available")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description
