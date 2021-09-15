@@ -19,26 +19,19 @@ import de.fraunhofer.ids.messaging.protocol.UnexpectedResponseException;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.net.RetrievalInformation;
-import io.dataspaceconnector.common.util.UUIDUtils;
 import io.dataspaceconnector.common.util.ValidationUtils;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.BaseResourceNotificationController;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
 import io.dataspaceconnector.controller.resource.view.artifact.ArtifactView;
-import io.dataspaceconnector.controller.resource.view.route.RouteView;
-import io.dataspaceconnector.controller.resource.view.route.RouteViewAssembler;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
-import io.dataspaceconnector.model.artifact.ArtifactImpl;
-import io.dataspaceconnector.model.artifact.RemoteData;
-import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.service.BlockingArtifactReceiver;
 import io.dataspaceconnector.service.message.SubscriberNotificationService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
-import io.dataspaceconnector.service.resource.type.RouteService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -48,7 +41,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +54,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -103,16 +94,6 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      * Service for notifying subscribers about an entity update.
      */
     private final @NonNull SubscriberNotificationService subscriberNotificationSvc;
-
-    /**
-     * The service for managing routes.
-     */
-    private final @NonNull RouteService routeSvc;
-
-    /**
-     * The assembler for creating a view from  a route.
-     */
-    private final @NonNull RouteViewAssembler routeAssembler;
 
     /**
      * Returns data from the local database or a remote data source. In case of a remote data
@@ -261,61 +242,5 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
         subscriberNotificationSvc.notifyOnUpdate(getService().get(artifactId));
 
         return ResponseEntity.noContent().build();
-    }
-
-    /**
-     * Returns the route associated with an artifact, if any. Returns an empty response body
-     * otherwise.
-     *
-     * @param artifactId The artifact id.
-     * @return Response with code 200 and the associated route, if any.
-     */
-    @GetMapping("{id}/route")
-    @Operation(summary = "Get route associated with artifact by id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
-    public ResponseEntity<RouteView> getRoute(
-            @Valid @PathVariable(name = "id") final UUID artifactId) {
-        final var artifact = (ArtifactImpl) artifactSvc.get(artifactId);
-        final var data = artifact.getData();
-
-        Route route = null;
-        if (data instanceof RemoteData) {
-            final var accessUrl = ((RemoteData) data).getAccessUrl().toString();
-            if (accessUrl.startsWith(getRoutesApiUrl())) {
-                final var routeId = UUIDUtils.uuidFromUri(URI.create(accessUrl));
-                route = routeSvc.get(routeId);
-            }
-        }
-
-        return returnRoute(route);
-    }
-
-    /**
-     * Returns the URL to the routes API. Required for checking whether an access URL references
-     * a Camel route or a remote data source.
-     *
-     * @return the URL to the routes API.
-     */
-    private String getRoutesApiUrl() {
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        return baseUrl + BasePath.ROUTES;
-    }
-
-    /**
-     * Returns a {@link RouteView} if the route is present and an empty response body otherwise.
-     *
-     * @param route the route.
-     * @return Response with code 200 and the RouteView, if route if not null.
-     */
-    private ResponseEntity<RouteView> returnRoute(final Route route) {
-        final var headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        return route == null
-                ? new ResponseEntity<>(null, headers, HttpStatus.OK)
-                : new ResponseEntity<>(routeAssembler.toModel(route), headers, HttpStatus.OK);
     }
 }
