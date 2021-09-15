@@ -15,12 +15,16 @@
  */
 package io.dataspaceconnector.service;
 
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
+import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.routing.RouteHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -49,7 +53,6 @@ public class AppRouteResolver {
     public final void stopRelatedRoutes(final UUID endpointId) {
         var affectedRoutes = routeRepository
                 .findTopLevelRoutesByEndpoint(endpointId);
-        //TODO check if routes should be deleted or only stopped.
         affectedRoutes.forEach(routeHelper::delete);
     }
 
@@ -63,12 +66,26 @@ public class AppRouteResolver {
         var startableRoutes = allRoutes.stream()
                 .filter(this::allEndpointsActive)
                 .collect(Collectors.toList());
-        //TODO start all startable routes if they are not started yet.
         startableRoutes.forEach(routeHelper::deploy);
     }
 
     private boolean allEndpointsActive(final Route route) {
-        //TODO check if all Apps used as endpoint for the given route are active
+        var appEndpoints = getAllEndpoints(route).stream()
+                .filter(endpoint -> endpoint instanceof AppEndpoint)
+                .collect(Collectors.toList());
+        for (var appEndpoint : appEndpoints) {
+            //TODO if the app, to which appEndpoint belongs, is not started, return false.
+            appEndpoint.getId();
+        }
         return true;
     }
+
+    private List<Endpoint> getAllEndpoints(final Route route) {
+        var endpoints = new ArrayList<Endpoint>();
+        endpoints.add(route.getStart());
+        endpoints.add(route.getEnd());
+        route.getSteps().forEach(step -> endpoints.addAll(getAllEndpoints(step)));
+        return endpoints;
+    }
+
 }
