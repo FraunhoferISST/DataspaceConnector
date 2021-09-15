@@ -112,12 +112,17 @@ public class SubscriberNotificationService {
     private final @NonNull CamelContext context;
 
     /**
+     * Helper for creating self links.
+     */
+    private final @NonNull SelfLinkHelper selfLinkHelper;
+
+    /**
      * Notify subscribers on database update event.
      *
      * @param entity The updated entity.
      */
     public void notifyOnUpdate(final Entity entity) {
-        final var uri = SelfLinkHelper.getSelfLink(entity);
+        final var uri = selfLinkHelper.getSelfLink(entity);
         final var subscriptions = subscriptionSvc.getByTarget(uri);
 
         // Notify subscribers of child elements.

@@ -23,12 +23,12 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
 import io.dataspaceconnector.common.net.EndpointUtils;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.resource.Resource;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
 import io.dataspaceconnector.service.resource.type.ResourceService;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -40,24 +40,42 @@ import java.util.stream.Collectors;
  * @param <T> The resource type.
  */
 @Component
-@RequiredArgsConstructor
 public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBuilder<T,
         de.fraunhofer.iais.eis.Resource> {
 
     /**
      * The builder for ids representation.
      */
-    private final @NonNull IdsRepresentationBuilder repBuilder;
+    private final IdsRepresentationBuilder repBuilder;
 
     /**
      * The builder for ids contract offer.
      */
-    private final @NonNull IdsContractBuilder contractBuilder;
+    private final IdsContractBuilder contractBuilder;
 
     /**
      * The service for resource handling.
      */
-    private final @NonNull ResourceService<T, OfferedResourceDesc> resourceSvc;
+    private final ResourceService<T, OfferedResourceDesc> resourceSvc;
+
+    /**
+     * Constructs an IdsResourceBuilder.
+     *
+     * @param selfLinkHelper the self link helper.
+     * @param idsRepresentationBuilder the representation builder.
+     * @param idsContractBuilder the contract builder.
+     * @param resourceService the resource service.
+     */
+    @Autowired
+    public IdsResourceBuilder(final SelfLinkHelper selfLinkHelper,
+                             final IdsRepresentationBuilder idsRepresentationBuilder,
+                             final IdsContractBuilder idsContractBuilder,
+                             final ResourceService<T, OfferedResourceDesc> resourceService) {
+        super(selfLinkHelper);
+        this.repBuilder = idsRepresentationBuilder;
+        this.contractBuilder = idsContractBuilder;
+        this.resourceSvc = resourceService;
+    }
 
     @Override
     protected de.fraunhofer.iais.eis.Resource createInternal(final Resource resource,

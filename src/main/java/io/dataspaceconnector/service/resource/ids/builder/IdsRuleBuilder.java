@@ -17,29 +17,44 @@ package io.dataspaceconnector.service.resource.ids.builder;
 
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * The base class for constructing an ids rule from a dsc rule.
  *
  * @param <T> The ids rule type.
  */
-@RequiredArgsConstructor
 public class IdsRuleBuilder<T extends Rule> extends AbstractIdsBuilder<ContractRule, T> {
 
     /**
      * The service for deserializing strings to ids rules.
      */
-    private final @NonNull DeserializationService deserializer;
+    private final DeserializationService deserializer;
 
     /**
      * The type of the rule to be build. Needed for the deserializer.
      */
-    private final @NonNull Class<T> ruleType;
+    private final Class<T> ruleType;
+
+    /**
+     * Constructs an IdsRuleBuilder.
+     *
+     * @param selfLinkHelper the self link helper.
+     * @param deserializationService the deserialization service.
+     * @param type the rule type.
+     */
+    @Autowired
+    public IdsRuleBuilder(final SelfLinkHelper selfLinkHelper,
+                          final DeserializationService deserializationService,
+                          final Class<T> type) {
+        super(selfLinkHelper);
+        this.deserializer = deserializationService;
+        this.ruleType = type;
+    }
 
     @Override
     protected final T createInternal(final ContractRule rule, final int currentDepth,

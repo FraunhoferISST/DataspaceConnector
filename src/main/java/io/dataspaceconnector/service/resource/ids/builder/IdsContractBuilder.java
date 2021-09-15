@@ -23,13 +23,13 @@ import de.fraunhofer.iais.eis.Prohibition;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -39,28 +39,49 @@ import java.util.stream.Collectors;
  * Converts dsc contracts to ids contract offers.
  */
 @Component
-@RequiredArgsConstructor
 public final class IdsContractBuilder extends AbstractIdsBuilder<Contract, ContractOffer> {
 
     /**
      * The builder for ids permission.
      */
-    private final @NonNull IdsPermissionBuilder permBuilder;
+    private final IdsPermissionBuilder permBuilder;
 
     /**
      * The builder for ids prohibition.
      */
-    private final @NonNull IdsProhibitionBuilder prohBuilder;
+    private final IdsProhibitionBuilder prohBuilder;
 
     /**
      * The builder for ids duty.
      */
-    private final @NonNull IdsDutyBuilder dutyBuilder;
+    private final IdsDutyBuilder dutyBuilder;
 
     /**
      * The service for deserializing strings to ids rules.
      */
-    private final @NonNull DeserializationService deserializer;
+    private final DeserializationService deserializer;
+
+    /**
+     * Constructs an IdsContractBuilder.
+     *
+     * @param selfLinkHelper the self link helper.
+     * @param idsPermissionBuilder the permission builder.
+     * @param idsProhibitionBuilder the prohibition builder.
+     * @param idsDutyBuilder the duty builder.
+     * @param deserializationService the deserialization service.
+     */
+    @Autowired
+    public IdsContractBuilder(final SelfLinkHelper selfLinkHelper,
+                              final IdsPermissionBuilder idsPermissionBuilder,
+                              final IdsProhibitionBuilder idsProhibitionBuilder,
+                              final IdsDutyBuilder idsDutyBuilder,
+                              final DeserializationService deserializationService) {
+        super(selfLinkHelper);
+        this.permBuilder = idsPermissionBuilder;
+        this.prohBuilder = idsProhibitionBuilder;
+        this.dutyBuilder = idsDutyBuilder;
+        this.deserializer = deserializationService;
+    }
 
     @Override
     protected ContractOffer createInternal(final Contract contract, final int currentDepth,
