@@ -151,6 +151,7 @@ public class ProjectInformationService {
 
     /**
      * Ensures that the API response is valid.
+     *
      * @param response The API response.
      * @return The response body of the API request.
      * @throws IOException If there is a non-valid API response.
@@ -164,7 +165,7 @@ public class ProjectInformationService {
     }
 
     /**
-     * Checks the latest release version number against the used (SemVer).
+     * Checks the latest release version number against the current (SemVer).
      *
      * @param releaseInfo Version number of the latest release.
      * @param projectInfo Current version number.
