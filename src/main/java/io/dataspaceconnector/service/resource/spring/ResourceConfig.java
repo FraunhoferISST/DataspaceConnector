@@ -77,7 +77,6 @@ import io.dataspaceconnector.service.routing.RouteHelper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * Publish resource service to spring.
@@ -289,7 +288,6 @@ public class ResourceConfig {
      * @param endpointRepository   The endpoint repository.
      * @param endpointServiceProxy The endpoint service proxy.
      * @param routeHelper          The route helper.
-     * @param platformTransactionManager The transaction manager.
      * @return The route service bean.
      */
     @Bean("routeService")
@@ -297,10 +295,9 @@ public class ResourceConfig {
             final RouteRepository repo,
             final EndpointRepository endpointRepository,
             final EndpointServiceProxy endpointServiceProxy,
-            final RouteHelper routeHelper,
-            final PlatformTransactionManager platformTransactionManager) {
+            final RouteHelper routeHelper) {
         return new RouteService(repo, new RouteFactory(), endpointRepository,
-                endpointServiceProxy, routeHelper, platformTransactionManager);
+                endpointServiceProxy, routeHelper);
     }
 
     /**

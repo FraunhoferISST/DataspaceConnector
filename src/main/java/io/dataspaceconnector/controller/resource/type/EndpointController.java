@@ -27,8 +27,6 @@ import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.AppEndpointDesc;
-import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
-import io.dataspaceconnector.model.endpoint.ConnectorEndpointDesc;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.service.resource.type.EndpointServiceProxy;
@@ -106,7 +104,7 @@ public class EndpointController implements CRUDController<Endpoint, EndpointDesc
      */
     @Override
     public ResponseEntity<Object> create(final EndpointDesc desc) {
-        if (isAppEndpoint(desc) || isConnectorEndpoint(desc)) {
+        if (isAppEndpoint(desc)) {
             throw new MethodNotAllowed();
         }
         return respondCreated(service.create(desc));
@@ -143,7 +141,7 @@ public class EndpointController implements CRUDController<Endpoint, EndpointDesc
      */
     @Override
     public ResponseEntity<Object> update(final UUID resourceId, final EndpointDesc desc) {
-        if (isAppEndpoint(desc) || isConnectorEndpoint(desc)) {
+        if (isAppEndpoint(desc)) {
             throw new MethodNotAllowed();
         }
         final var resource = service.update(resourceId, desc);
@@ -161,8 +159,7 @@ public class EndpointController implements CRUDController<Endpoint, EndpointDesc
      */
     @Override
     public ResponseEntity<Void> delete(final UUID resourceId) {
-        if (service.get(resourceId) instanceof AppEndpoint
-                || service.get(resourceId) instanceof ConnectorEndpoint) {
+        if (service.get(resourceId) instanceof AppEndpoint) {
             throw new MethodNotAllowed();
         }
         service.delete(resourceId);
@@ -192,9 +189,5 @@ public class EndpointController implements CRUDController<Endpoint, EndpointDesc
 
     private boolean isAppEndpoint(final EndpointDesc desc) {
         return desc instanceof AppEndpointDesc;
-    }
-
-    private boolean isConnectorEndpoint(final EndpointDesc desc) {
-        return desc instanceof ConnectorEndpointDesc;
     }
 }
