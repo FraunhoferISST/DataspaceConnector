@@ -157,6 +157,7 @@ public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBui
      */
     private String getLanguageCode(final Language language) {
         final var languageId = language.getId().toString();
-        return languageId.substring(languageId.length() - 2);
+        final var idParts = languageId.split("/");
+        return idParts[idParts.length - 1];
     }
 }
