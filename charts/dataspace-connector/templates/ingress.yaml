@@ -1,4 +1,3 @@
----
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "dataspace-connector.fullname" . -}}
 {{- $svcPort := .Values.service.port -}}
