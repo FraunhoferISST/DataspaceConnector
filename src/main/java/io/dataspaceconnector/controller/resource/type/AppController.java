@@ -163,9 +163,9 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
                 if (usedBy.isPresent()) {
                     return new ResponseEntity<>(
                             String.format(
-                                    "Selected App is in use by camel route %s" +
-                                            " and cannot be stopped. Camel routes have" +
-                                            " to be stopped before stopping the app.",
+                                    "Selected App is in use by camel route %s"
+                                            + " and cannot be stopped. Camel routes have"
+                                            + " to be stopped before stopping the app.",
                                     usedBy.get()
                             ),
                             HttpStatus.CONFLICT
