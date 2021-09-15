@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [X.X.X] - XXXX-XX-XX
 
+### Added
+- New GUI helper endpoint API to compare the current connector version with the latest release version.
+
 ### Fixed
 - Fix self-reference of QueryInput in OpenApi schema.
 - Fix global exceptionhandler intercepting checked exceptions.
