@@ -34,7 +34,7 @@ public class AppEndpointLinker extends OwningRelationService<App, AppEndpointImp
         AppEndpointService> {
 
     @Override
-    protected final List<AppEndpointImpl> getInternal(final App owner) {
+    public final List<AppEndpointImpl> getInternal(final App owner) {
         return owner.getEndpoints();
     }
 }

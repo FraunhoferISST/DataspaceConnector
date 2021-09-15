@@ -15,14 +15,20 @@
  */
 package io.dataspaceconnector.service;
 
+import io.dataspaceconnector.model.app.AppImpl;
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.route.Route;
+import io.dataspaceconnector.repository.AppRepository;
 import io.dataspaceconnector.repository.RouteRepository;
+import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
+import io.dataspaceconnector.service.resource.relation.AppEndpointLinker;
 import io.dataspaceconnector.service.routing.RouteHelper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -33,7 +39,23 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class AppRouteResolver {
+
+    /**
+     * The app repository.
+     */
+    private final AppRepository appRepository;
+
+    /**
+     * The app endpoint linker service.
+     */
+    private final AppEndpointLinker appEndpointLinker;
+
+    /**
+     * The portainer request service.
+     */
+    private final PortainerRequestService portainerRequestService;
 
     /**
      * Repo for finding top level routes.
@@ -64,18 +86,29 @@ public class AppRouteResolver {
     public final void startRelatedRoutes(final UUID endpointId) {
         var allRoutes = routeRepository.findAllTopLevelRoutes();
         var startableRoutes = allRoutes.stream()
-                .filter(this::allEndpointsActive)
+                .filter(route -> {
+                    try {
+                        return allEndpointsActive(route);
+                    } catch (IOException e) {
+                        if (log.isDebugEnabled()) {
+                            log.debug(e.getMessage());
+                        }
+                        return false;
+                    }
+                })
                 .collect(Collectors.toList());
         startableRoutes.forEach(routeHelper::deploy);
     }
 
-    private boolean allEndpointsActive(final Route route) {
+    private boolean allEndpointsActive(final Route route) throws IOException {
         var appEndpoints = getAllEndpoints(route).stream()
                 .filter(endpoint -> endpoint instanceof AppEndpoint)
                 .collect(Collectors.toList());
+
         for (var appEndpoint : appEndpoints) {
-            //TODO if the app, to which appEndpoint belongs, is not started, return false.
-            appEndpoint.getId();
+            if (!checkIfAppIsRunning(appEndpoint.getId())) {
+                return false;
+            }
         }
         return true;
     }
@@ -86,6 +119,20 @@ public class AppRouteResolver {
         endpoints.add(route.getEnd());
         route.getSteps().forEach(step -> endpoints.addAll(getAllEndpoints(step)));
         return endpoints;
+    }
+
+    private boolean checkIfAppIsRunning(final UUID appEndpointId) throws IOException {
+        final var listOfApps = appRepository.findAll();
+
+        for (var app : listOfApps) {
+            final var appImpl = (AppImpl) app;
+            final var endpointList = appEndpointLinker.getInternal(app);
+            if (endpointList.stream().map(AppEndpoint::getId)
+                    .anyMatch(uuid -> uuid.equals(appEndpointId))) {
+                return portainerRequestService.validateContainerRunning(appImpl.getContainerId());
+            }
+        }
+        return false;
     }
 
 }
