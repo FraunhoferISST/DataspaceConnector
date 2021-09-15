@@ -68,10 +68,10 @@ public class ProjectInformationServiceTest {
 
         /* ACT */
         mockWebServer.enqueue(mockResponse);
-        final var response = projectInformationService.getLatestReleaseInformation();
+        final var response = projectInformationService.getLatestData();
 
         /* ASSERT */
-        Assertions.assertEquals(version, response.get("updateVersion"));
-        Assertions.assertEquals(html_url, response.get("releaseUrl"));
+        Assertions.assertEquals(version, response.get("latest"));
+        Assertions.assertEquals(html_url, response.get("location"));
     }
 }

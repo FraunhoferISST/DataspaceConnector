@@ -84,21 +84,19 @@ public class ProjectInformationService {
     private RepoConfig repoConfig = new RepoConfig(PORT, HOST, SCHEME);
 
     /**
-     * This method compares the release version with the currently used project version and decides
-     * if an update is existing.
+     * Compares latest release with the current version.
      *
      * @return Response-Message if an update exists or not.
      * @throws IOException If an error occurs when retrieving the release version.
      */
     public ResponseEntity<Object> projectUpdateAvailable() throws IOException {
         ResponseEntity<Object> response;
-        final var releaseInformation = getLatestReleaseInformation();
+        final var latestData = getLatestData();
+        final var latestVersion = latestData.get("latest").toString().split("\\.");
+        final var currentVersion = projectVersion.split("\\.");
 
-        final var releaseInfo = releaseInformation.get("updateVersion").toString().split("\\.");
-        final var projectInfo = projectVersion.split("\\.");
-
-        if (isUpdatable(releaseInfo, projectInfo)) {
-            response = new ResponseEntity<>(releaseInformation.toString(), HttpStatus.OK);
+        if (isOutdated(latestVersion, currentVersion)) {
+            response = new ResponseEntity<>(latestData.toString(), HttpStatus.OK);
         } else {
             response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -107,33 +105,13 @@ public class ProjectInformationService {
     }
 
     /**
-     * Checks the latest release version number against the used (SemVer).
+     * Determines by a GitHub API call the latest release.
      *
-     * @param releaseInfo Version number of the latest release.
-     * @param projectInfo Current version number.
-     * @return True if a newer version is available, else false.
+     * @return Data of the API, which should be displayed in case of an available update.
+     * @throws IOException If an error occurs while retrieving the latest release information.
      */
-    private boolean isUpdatable(final String[] releaseInfo, final String[] projectInfo) {
-        final var newMajor = Integer.parseInt(releaseInfo[0]) > Integer.parseInt(projectInfo[0]);
-
-        final var newMinor = (Integer.parseInt(releaseInfo[0]) == Integer.parseInt(projectInfo[0]))
-                 && (Integer.parseInt(releaseInfo[1]) > Integer.parseInt(projectInfo[1]));
-
-        final var newPatch = (Integer.parseInt(releaseInfo[0]) == Integer.parseInt(projectInfo[0]))
-                && (Integer.parseInt(releaseInfo[1]) == Integer.parseInt(projectInfo[1]))
-                && Integer.parseInt(releaseInfo[2]) > Integer.parseInt(projectInfo[2]);
-
-        return newMajor || newMinor || newPatch;
-    }
-
-    /**
-     * Determines via the GitHub which is the latest release.
-     *
-     * @return The project version.
-     * @throws IOException if an error occurs when retrieving the release version.
-     */
-    public JSONObject getLatestReleaseInformation() throws IOException {
-        final var builder = getRequestBuilder();
+    public JSONObject getLatestData() throws IOException {
+        final var builder = new Request.Builder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme(repoConfig.getScheme())
                 .host(repoConfig.getHost())
@@ -149,36 +127,60 @@ public class ProjectInformationService {
         final var response = httpSvc.send(request);
         final var responseBody = checkResponseNotNull(response);
 
-        return extractReleaseInformation(responseBody);
+        return parseResponse(responseBody);
     }
 
-    private JSONObject extractReleaseInformation(final String response) {
-        final var releaseInformation = new JSONObject();
+    /**
+     * Takes the necessary information from the API response.
+     *
+     * @param response The answer of the GitHub API request.
+     * @return The necessary data to determine whether there is an update and
+     * additional display data.
+     */
+    private JSONObject parseResponse(final String response) {
         final var responseObj = new JSONObject(response);
+        final var latestTag = responseObj.get("tag_name").toString().replace("v", "");
 
-        var latestTag = responseObj.get("tag_name").toString();
+        final var release = new JSONObject();
+        release.put("location", responseObj.get("html_url").toString());
+        release.put("latest", latestTag.trim());
+        release.put("version", projectVersion);
 
-        if (latestTag.contains("v")) {
-            latestTag = latestTag.replace("v", "");
-        }
-
-        releaseInformation.put("currentVersion", projectVersion);
-        releaseInformation.put("updateVersion", latestTag.trim());
-        releaseInformation.put("releaseUrl", responseObj.get("html_url").toString());
-
-        return releaseInformation;
+        return release;
     }
 
-    private Request.Builder getRequestBuilder() {
-        return new Request.Builder();
-    }
-
+    /**
+     * Ensures that the API response is valid.
+     * @param response The API response.
+     * @return The response body of the API request.
+     * @throws IOException If there is a non-valid API response.
+     */
     @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     private String checkResponseNotNull(@NonNull final Response response) throws IOException {
         final var checkedResp = Objects.requireNonNull(response);
         final var body = Objects.requireNonNull(checkedResp.body());
 
         return Objects.requireNonNull(body.string());
+    }
+
+    /**
+     * Checks the latest release version number against the used (SemVer).
+     *
+     * @param releaseInfo Version number of the latest release.
+     * @param projectInfo Current version number.
+     * @return True if a newer version is available, else false.
+     */
+    private boolean isOutdated(final String[] releaseInfo, final String[] projectInfo) {
+        final var newMajor = Integer.parseInt(releaseInfo[0]) > Integer.parseInt(projectInfo[0]);
+
+        final var newMinor = Integer.parseInt(releaseInfo[0]) == Integer.parseInt(projectInfo[0])
+                && Integer.parseInt(releaseInfo[1]) > Integer.parseInt(projectInfo[1]);
+
+        final var newPatch = Integer.parseInt(releaseInfo[0]) == Integer.parseInt(projectInfo[0])
+                && Integer.parseInt(releaseInfo[1]) == Integer.parseInt(projectInfo[1])
+                && Integer.parseInt(releaseInfo[2]) > Integer.parseInt(projectInfo[2]);
+
+        return newMajor || newMinor || newPatch;
     }
 
     /**
