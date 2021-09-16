@@ -81,8 +81,6 @@ public class GuiController {
     @GetMapping(value = "/update", produces = "application/json")
     @Operation(summary = "Get information about project update is available")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
-    @ApiResponse(responseCode = ResponseCode.NO_CONTENT, description
-            = ResponseDescription.NO_CONTENT)
     @ApiResponse(responseCode = ResponseCode.BAD_GATEWAY, description
             = ResponseDescription.BAD_GATEWAY)
     ResponseEntity<Object> getProjectUpdateInformation() {

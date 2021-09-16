@@ -90,18 +90,13 @@ public class ProjectInformationService {
      * @throws IOException If an error occurs when retrieving the release version.
      */
     public ResponseEntity<Object> projectUpdateAvailable() throws IOException {
-        ResponseEntity<Object> response;
         final var latestData = getLatestData();
         final var latestVersion = latestData.get("latest").toString().split("\\.");
         final var currentVersion = projectVersion.split("\\.");
 
-        if (isOutdated(latestVersion, currentVersion)) {
-            response = new ResponseEntity<>(latestData.toString(), HttpStatus.OK);
-        } else {
-            response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+        latestData.put("update", isOutdated(latestVersion, currentVersion).toString());
 
-        return response;
+        return new ResponseEntity<>(latestData.toString(), HttpStatus.OK);
     }
 
     /**
@@ -169,19 +164,25 @@ public class ProjectInformationService {
      *
      * @param releaseInfo Version number of the latest release.
      * @param projectInfo Current version number.
-     * @return True if a newer version is available, else false.
+     * @return Result and type of the present update.
      */
-    private boolean isOutdated(final String[] releaseInfo, final String[] projectInfo) {
-        final var newMajor = Integer.parseInt(releaseInfo[0]) > Integer.parseInt(projectInfo[0]);
+    private Udpate isOutdated(final String[] releaseInfo, final String[] projectInfo) {
+        if (Integer.parseInt(releaseInfo[0]) > Integer.parseInt(projectInfo[0])) {
+            return Udpate.MAJOR;
+        }
 
-        final var newMinor = Integer.parseInt(releaseInfo[0]) == Integer.parseInt(projectInfo[0])
-                && Integer.parseInt(releaseInfo[1]) > Integer.parseInt(projectInfo[1]);
+        if (Integer.parseInt(releaseInfo[0]) == Integer.parseInt(projectInfo[0])
+                && Integer.parseInt(releaseInfo[1]) > Integer.parseInt(projectInfo[1])) {
+            return Udpate.MINOR;
+        }
 
-        final var newPatch = Integer.parseInt(releaseInfo[0]) == Integer.parseInt(projectInfo[0])
+        if (Integer.parseInt(releaseInfo[0]) == Integer.parseInt(projectInfo[0])
                 && Integer.parseInt(releaseInfo[1]) == Integer.parseInt(projectInfo[1])
-                && Integer.parseInt(releaseInfo[2]) > Integer.parseInt(projectInfo[2]);
+                && Integer.parseInt(releaseInfo[2]) > Integer.parseInt(projectInfo[2])) {
+            return Udpate.PATCH;
+        }
 
-        return newMajor || newMinor || newPatch;
+        return Udpate.NO_UPDATE;
     }
 
     /**
@@ -205,5 +206,31 @@ public class ProjectInformationService {
          * The scheme.
          */
         private String scheme;
+    }
+
+    /**
+     * Types which updates may be present.
+     */
+    private enum Udpate {
+
+        /**
+         * If no update is available.
+         */
+        NO_UPDATE,
+
+        /**
+         * A new major release is available.
+         */
+        MAJOR,
+
+        /**
+         * A new minor release is available.
+         */
+        MINOR,
+
+        /**
+         * A new patch release is available.
+         */
+        PATCH
     }
 }
