@@ -6579,6 +6579,8 @@ components:
           type: array
           items:
             type: string
+        authenticationSet:
+          type: boolean
         _links:
           $ref: '#/components/schemas/Links'
     TruststoreView:
