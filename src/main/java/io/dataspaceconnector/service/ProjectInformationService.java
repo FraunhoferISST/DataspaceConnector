@@ -25,7 +25,6 @@ import lombok.extern.log4j.Log4j2;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -234,21 +233,40 @@ public class ProjectInformationService {
         /**
          * If no update is available.
          */
-        NO_UPDATE,
+        NO_UPDATE("no update"),
 
         /**
          * A new major release is available.
          */
-        MAJOR,
+        MAJOR("major"),
 
         /**
          * A new minor release is available.
          */
-        MINOR,
+        MINOR("minor"),
 
         /**
          * A new patch release is available.
          */
-        PATCH
+        PATCH("patch");
+
+        /**
+         * Holds the enums string.
+         */
+        private final String value;
+
+        /**
+         * Constructor.
+         *
+         * @param name The name of the update-enum .
+         */
+        Udpate(final String name) {
+            this.value = name;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
     }
 }
