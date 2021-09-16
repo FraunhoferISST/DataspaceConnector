@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [X.X.X] - XXXX-XX-XX
 
+### Added
+- Added `authenticationSet` as boolean indicator in output of configuration APIs whether authentication credentials for a proxy are present.
+
 ### Fixed
 - Fix self-reference of QueryInput in OpenApi schema.
 - Fix global exceptionhandler intercepting checked exceptions.
