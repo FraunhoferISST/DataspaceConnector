@@ -25,6 +25,7 @@ import lombok.extern.log4j.Log4j2;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -89,14 +90,32 @@ public class ProjectInformationService {
      * @return Response-Map with current and update data.
      * @throws IOException If an error occurs when retrieving the release version.
      */
-    public Map<String, String> projectUpdateAvailable() throws IOException {
+    public Map<String, Map<String, String>> projectUpdateAvailable() throws IOException {
+        final var versionInfo = new HashMap<String, Map<String, String>>();
         final var latestData = getLatestData();
-        final var latestVersion = latestData.get("latest").split("\\.");
+        final var latestVersion = latestData.get("update.version").split("\\.");
         final var currentVersion = projectVersion.split("\\.");
+        final var updateType = isOutdated(latestVersion, currentVersion);
 
-        latestData.put("update", isOutdated(latestVersion, currentVersion).toString());
+        latestData.put("update.type", updateType.toString());
+        latestData.put("update.available", Udpate.NO_UPDATE.equals(updateType) ? "false" : "true");
 
-        return latestData;
+        final var connectorData = getConnectorData();
+
+        versionInfo.put("update", latestData);
+        versionInfo.put("connector", connectorData);
+
+        return versionInfo;
+    }
+
+    /**
+     * Gets current connector data.
+     * @return Map containing information about the current connector.
+     */
+    private HashMap<String, String> getConnectorData() {
+        final var connectorData = new HashMap<String, String>();
+        connectorData.put("connector.version", projectVersion);
+        return connectorData;
     }
 
     /**
@@ -137,9 +156,8 @@ public class ProjectInformationService {
         final var latestTag = responseObj.get("tag_name").toString().replace("v", "");
 
         final var release = new HashMap<String, String>();
-        release.put("location", responseObj.get("html_url").toString());
-        release.put("latest", latestTag.trim());
-        release.put("version", projectVersion);
+        release.put("update.location", responseObj.get("html_url").toString());
+        release.put("update.version", latestTag.trim());
 
         return release;
     }

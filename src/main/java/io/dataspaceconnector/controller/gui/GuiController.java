@@ -90,7 +90,8 @@ public class GuiController {
         public void contribute(final Info.Builder builder) {
             try {
                 final var updateInfo = projectInformationService.projectUpdateAvailable();
-                builder.withDetail("connector", updateInfo);
+                builder.withDetail("update", updateInfo.get("update"));
+                builder.withDetail("connector", updateInfo.get("connector"));
             } catch (IOException exception) {
                 if (log.isDebugEnabled()) {
                     log.debug("Failed to determine if a project update is available."
