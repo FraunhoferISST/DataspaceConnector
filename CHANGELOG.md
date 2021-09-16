@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - New GUI helper endpoint API to compare the current connector version with the latest release version.
+- Added `authenticationSet` as boolean indicator in output of configuration APIs whether authentication credentials for a proxy are present.
 
 ### Fixed
 - Fix self-reference of QueryInput in OpenApi schema.
