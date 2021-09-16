@@ -75,7 +75,7 @@ public class ResponseDescription {
     public static final String CONFLICT = "Conflict";
 
     /**
-     * Response code is CONFLICT.
+     * Response code is BAD_GATEWAY.
      */
     public static final String BAD_GATEWAY = "Bad Gateway";
 }
