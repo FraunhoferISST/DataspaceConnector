@@ -110,7 +110,7 @@ public final class ArtifactFactory extends AbstractNamedFactory<Artifact, Artifa
     }
 
     private static boolean isRemoteData(final ArtifactDesc desc) {
-        return desc.getAccessUrl() != null && !desc.getAccessUrl().toString().isBlank();
+        return desc.getAccessUrl() != null && !desc.getAccessUrl().getAuthority().isBlank();
     }
 
     private boolean updateLocalData(final ArtifactImpl artifact, final String value) {
