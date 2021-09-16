@@ -27,8 +27,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -89,14 +87,14 @@ public class ProjectInformationService {
      * @return Response-Message if an update exists or not.
      * @throws IOException If an error occurs when retrieving the release version.
      */
-    public ResponseEntity<Object> projectUpdateAvailable() throws IOException {
+    public JSONObject projectUpdateAvailable() throws IOException {
         final var latestData = getLatestData();
         final var latestVersion = latestData.get("latest").toString().split("\\.");
         final var currentVersion = projectVersion.split("\\.");
 
         latestData.put("update", isOutdated(latestVersion, currentVersion).toString());
 
-        return new ResponseEntity<>(latestData.toString(), HttpStatus.OK);
+        return latestData;
     }
 
     /**

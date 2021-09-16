@@ -85,7 +85,8 @@ public class GuiController {
             = ResponseDescription.BAD_GATEWAY)
     ResponseEntity<Object> getProjectUpdateInformation() {
         try {
-            return projectInformationService.projectUpdateAvailable();
+            final var updateInfo = projectInformationService.projectUpdateAvailable();
+            return new ResponseEntity<>(updateInfo.toString(), HttpStatus.OK);
         } catch (IOException exception) {
             if (log.isDebugEnabled()) {
                 log.debug("Failed to determine if a project update is available."
