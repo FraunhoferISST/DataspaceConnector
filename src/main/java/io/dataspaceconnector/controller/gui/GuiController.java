@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 /**
  * The api class offers the possibilities to provide other api's which could be needed.
@@ -84,6 +83,7 @@ public class GuiController {
 
         /**
          * Computes additional data to be added at runtime on actuator-info API request.
+         *
          * @param builder The builder that can add additional information to the endpoint.
          */
         @Override
