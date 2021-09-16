@@ -124,7 +124,7 @@ public class EntityResolverTest {
     private AllowAccessVerifier allowAccessVerifier;
 
     @MockBean
-    private BlockingArtifactReceiver artifactReceiver;
+    private MultipartArtifactRetriever artifactReceiver;
 
     @MockBean
     private DeserializationService deserializationService;

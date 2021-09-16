@@ -23,7 +23,7 @@ import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
-import io.dataspaceconnector.service.BlockingArtifactReceiver;
+import io.dataspaceconnector.service.MultipartArtifactRetriever;
 import io.dataspaceconnector.common.usagecontrol.AllowAccessVerifier;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -44,7 +44,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = {ArtifactService.class, ArtifactFactory.class, ArtifactRepository.class,
-        DataRepository.class, HttpService.class, BlockingArtifactReceiver.class})
+        DataRepository.class, HttpService.class, MultipartArtifactRetriever.class})
 public class RestrictedArtifactServiceTest {
 
     @MockBean
@@ -63,7 +63,7 @@ public class RestrictedArtifactServiceTest {
     private ArtifactFactory artifactFactory;
 
     @MockBean
-    private BlockingArtifactReceiver artifactReceiver;
+    private MultipartArtifactRetriever artifactReceiver;
 
     @SpyBean
     private ArtifactService service;

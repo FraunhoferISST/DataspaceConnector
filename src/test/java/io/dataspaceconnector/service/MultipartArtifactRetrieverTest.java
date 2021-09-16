@@ -40,8 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {BlockingArtifactReceiver.class})
-public class BlockingArtifactReceiverTest {
+@SpringBootTest(classes = {MultipartArtifactRetriever.class})
+public class MultipartArtifactRetrieverTest {
 
     @MockBean
     private ArtifactRequestService messageService;
@@ -56,7 +56,7 @@ public class BlockingArtifactReceiverTest {
     private CamelContext camelContext;
 
     @Autowired
-    private BlockingArtifactReceiver blockingArtifactReceiver;
+    private MultipartArtifactRetriever multipartArtifactRetriever;
 
     @MockBean
     private ConnectorConfig connectorConfig;
@@ -70,7 +70,7 @@ public class BlockingArtifactReceiverTest {
         when(artifactService.get(any())).thenCallRealMethod();
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> blockingArtifactReceiver.retrieve(
+        assertThrows(IllegalArgumentException.class, () -> multipartArtifactRetriever.retrieve(
                 null, recipient, transferContract, null));
     }
 
@@ -94,7 +94,7 @@ public class BlockingArtifactReceiverTest {
         when(messageService.validateResponse(response)).thenReturn(true);
 
         /* ACT */
-        final var result = blockingArtifactReceiver.retrieve(
+        final var result = multipartArtifactRetriever.retrieve(
                 artifactId, recipient, transferContract, null);
 
         /* ASSERT */
@@ -122,7 +122,7 @@ public class BlockingArtifactReceiverTest {
         when(messageService.getResponseContent(response)).thenReturn(new HashMap<>());
 
         /* ACT && ASSERT */
-        assertThrows(DataRetrievalException.class, () -> blockingArtifactReceiver
+        assertThrows(DataRetrievalException.class, () -> multipartArtifactRetriever
                 .retrieve(artifactId, recipient, transferContract, null));
     }
 

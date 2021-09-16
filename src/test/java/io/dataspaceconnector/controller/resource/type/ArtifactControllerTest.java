@@ -23,7 +23,7 @@ import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
-import io.dataspaceconnector.service.BlockingArtifactReceiver;
+import io.dataspaceconnector.service.MultipartArtifactRetriever;
 import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.service.message.SubscriberNotificationService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
@@ -64,7 +64,7 @@ class ArtifactControllerTest {
     private ArtifactFactory artifactFactory;
 
     @MockBean
-    private BlockingArtifactReceiver artifactReceiver;
+    private MultipartArtifactRetriever artifactReceiver;
 
     @MockBean
     private DataAccessVerifier dataAccessVerifier;

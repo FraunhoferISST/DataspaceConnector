@@ -15,12 +15,13 @@
  */
 package io.dataspaceconnector.common.net;
 
+import io.dataspaceconnector.common.dataretrieval.DataRetrievalService;
+import io.dataspaceconnector.common.dataretrieval.Response;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.common.util.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import okhttp3.HttpUrl;
@@ -42,7 +43,7 @@ import java.util.Map;
  */
 @Service
 @RequiredArgsConstructor
-public class HttpService {
+public class HttpService implements DataRetrievalService {
 
     /**
      * Service for building and sending http requests.
@@ -104,37 +105,6 @@ public class HttpService {
         private Pair auth;
     }
 
-
-    /**
-     * Authentication for a http request.
-     */
-    public interface Authentication {
-        /**
-         * Add the authentication to the http args.
-         *
-         * @param args The http args.
-         */
-        void setAuth(HttpArgs args);
-    }
-
-
-    /**
-     * The response to a http request.
-     */
-    @Data
-    @EqualsAndHashCode
-    public static class Response {
-        /**
-         * The response code.
-         */
-        private int code;
-
-        /**
-         * The response body.
-         */
-        private InputStream body;
-    }
-
     /**
      * Send post requests using the http service of the messaging services.
      *
@@ -165,9 +135,7 @@ public class HttpService {
 
         final var response = httpSvc.send(request);
 
-        final var output = new Response();
-        output.setCode(response.code());
-        output.setBody(getBody(response));
+        final var output = new HttpResponse(response.code(), getBody(response));
         response.close();
 
         return output;
@@ -212,9 +180,7 @@ public class HttpService {
             response = httpSvc.getWithHeaders(targetUri, headerCopy);
         }
 
-        final var output = new Response();
-        output.setCode(response.code());
-        output.setBody(getBody(response));
+        final var output = new HttpResponse(response.code(), getBody(response));
         response.close();
 
         return output;
@@ -239,6 +205,7 @@ public class HttpService {
      * @return The response.
      * @throws IOException if the request failed.
      */
+    @Override
     public Response get(final URL target, final QueryInput input) throws IOException {
         final var url = (input == null) ? buildTargetUrl(target, null)
                 : buildTargetUrl(target, input.getOptional());
@@ -254,8 +221,9 @@ public class HttpService {
      * @return The response.
      * @throws IOException if the request failed.
      */
+    @Override
     public Response get(final URL target, final QueryInput input,
-                        final List<? extends Authentication> auth) throws IOException {
+                        final List<? extends HttpAuthentication> auth) throws IOException {
         final var url = (input == null) ? buildTargetUrl(target, null)
                 : buildTargetUrl(target, input.getOptional());
         return this.get(url, toArgs(input, auth));
@@ -324,7 +292,7 @@ public class HttpService {
      * @param auth  The authentication information.
      * @return The http request arguments.
      */
-    public HttpArgs toArgs(final QueryInput input, final List<? extends Authentication> auth) {
+    public HttpArgs toArgs(final QueryInput input, final List<? extends HttpAuthentication> auth) {
         final var args = toArgs(input);
         if (auth != null) {
             for (final var x : auth) {

@@ -54,6 +54,7 @@ import io.dataspaceconnector.repository.RepresentationRepository;
 import io.dataspaceconnector.repository.RequestedResourcesRepository;
 import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.repository.RuleRepository;
+import io.dataspaceconnector.common.routing.RouteDataRetriever;
 import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
 import io.dataspaceconnector.service.resource.ids.builder.IdsConfigModelBuilder;
 import io.dataspaceconnector.service.resource.type.AgreementService;
@@ -105,6 +106,7 @@ public class ResourceConfig {
      * @param httpService    The http service.
      * @param authRepo       The auth repo.
      * @param routeRepo      The route repo.
+     * @param retriever      The route data retriever.
      * @return The artifact service bean.
      */
     @Bean("artifactService")
@@ -113,9 +115,10 @@ public class ResourceConfig {
             final DataRepository dataRepository,
             final HttpService httpService,
             final AuthenticationRepository authRepo,
-            final RouteRepository routeRepo) {
+            final RouteRepository routeRepo,
+            final RouteDataRetriever retriever) {
         return new ArtifactService(repository, new ArtifactFactory(),
-                dataRepository, httpService, authRepo, routeRepo);
+                dataRepository, httpService, authRepo, routeRepo, retriever);
     }
 
     /**

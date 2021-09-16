@@ -19,15 +19,19 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import io.dataspaceconnector.common.exception.DataRetrievalException;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
+import io.dataspaceconnector.common.dataretrieval.DataRetrievalService;
+import io.dataspaceconnector.common.net.HttpAuthentication;
 import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.net.RetrievalInformation;
@@ -51,11 +55,13 @@ import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.ArtifactRetriever;
+import io.dataspaceconnector.common.routing.RouteDataRetriever;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
 import io.dataspaceconnector.service.resource.base.RemoteResolver;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -90,6 +96,11 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private final @NonNull RouteRepository routeRepo;
 
     /**
+     * Retrieves data using Camel routes.
+     */
+    private final @NonNull RouteDataRetriever routeRetriever;
+
+    /**
      * Constructor for ArtifactService.
      *
      * @param repository               The artifact repository.
@@ -98,18 +109,21 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param httpService              The HTTP service for fetching remote data.
      * @param authenticationRepository The AuthType repository.
      * @param routeRepository          The Route repository.
+     * @param routeDataRetriever       The route data retriever.
      */
     public ArtifactService(final BaseEntityRepository<Artifact> repository,
                            final AbstractFactory<Artifact, ArtifactDesc> factory,
                            final @NonNull DataRepository dataRepository,
                            final @NonNull HttpService httpService,
                            final @NonNull AuthenticationRepository authenticationRepository,
-                           final @NonNull RouteRepository routeRepository) {
+                           final @NonNull RouteRepository routeRepository,
+                           final @NonNull RouteDataRetriever routeDataRetriever) {
         super(repository, factory);
         this.dataRepo = dataRepository;
         this.httpSvc = httpService;
         this.authRepo = authenticationRepository;
         this.routeRepo = routeRepository;
+        this.routeRetriever = routeDataRetriever;
     }
 
     /**
@@ -176,7 +190,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         }
 
         // The artifact is not assigned to any requested resources. It must be offered if it exists.
-        return getDataFromInternalDB((ArtifactImpl) get(artifactId), queryInput);
+        return new BackendDataService(routeRetriever, httpSvc, queryInput)
+                .getDataFromInternalDB((ArtifactImpl) get(artifactId));
     }
 
     private InputStream tryToAccessDataByUsingAnyAgreement(
@@ -252,7 +267,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         }
 
         // Artifact exists, access granted, data exists and data up to date.
-        return getDataFromInternalDB((ArtifactImpl) artifact, null);
+        return new BackendDataService(routeRetriever, httpSvc, information.getQueryInput())
+                .getDataFromInternalDB((ArtifactImpl) artifact);
     }
 
     private void verifyDataAccess(final PolicyVerifier<AccessVerificationInput> accessVerifier,
@@ -279,32 +295,6 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         return setData(artifactId, dataStream);
     }
 
-    /**
-     * Get the data from the internal database. No policy enforcement is performed here!
-     *
-     * @param artifact   The artifact which data should be returned.
-     * @param queryInput The query for the data backend. May be null.
-     * @return The artifact's data.
-     * @throws IOException if the data cannot be received.
-     */
-    private InputStream getDataFromInternalDB(final ArtifactImpl artifact,
-                                              final QueryInput queryInput) throws IOException {
-        final var data = artifact.getData();
-
-        InputStream rawData;
-        if (data instanceof LocalData) {
-            rawData = getData((LocalData) data);
-        } else if (data instanceof RemoteData) {
-            rawData = getData((RemoteData) data, queryInput);
-        } else {
-            throw new UnreachableLineException("Unknown data type.");
-        }
-
-        incrementAccessCounter(artifact);
-
-        return rawData;
-    }
-
     private void incrementAccessCounter(final Artifact artifact) {
         artifact.incrementAccessCounter();
         persist(artifact);
@@ -328,51 +318,6 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         }
 
         return false;
-    }
-
-    /**
-     * Get local data.
-     *
-     * @param data The data container.
-     * @return The stored data.
-     */
-    private InputStream getData(final LocalData data) {
-        return toInputStream(data.getValue());
-    }
-
-    /**
-     * Get remote data.
-     *
-     * @param data       The data container.
-     * @param queryInput The query for the backend.
-     * @return The stored data.
-     * @throws IOException if IO errors occur.
-     */
-    private InputStream getData(final RemoteData data, final QueryInput queryInput)
-            throws IOException {
-        try {
-            return downloadDataFromBackend(data, queryInput);
-        } catch (IOException exception) {
-            if (log.isWarnEnabled()) {
-                log.warn("Could not connect to data source. [exception=({})]",
-                        exception.getMessage(), exception);
-            }
-
-            throw new IOException("Could not connect to data source.", exception);
-        }
-    }
-
-    private InputStream downloadDataFromBackend(final RemoteData data,
-                                                final QueryInput queryInput) throws IOException {
-        InputStream backendData;
-        if (!data.getAuthentication().isEmpty()) {
-            backendData = httpSvc.get(data.getAccessUrl(), queryInput,
-                    data.getAuthentication())
-                    .getBody();
-        } else {
-            backendData = httpSvc.get(data.getAccessUrl(), queryInput).getBody();
-        }
-        return backendData;
     }
 
     /**
@@ -482,5 +427,105 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private String getRoutesApiUrl() {
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         return baseUrl + BasePath.ROUTES;
+    }
+
+    @RequiredArgsConstructor
+    private class BackendDataService {
+
+        /**
+         * Retrieves data using Camel routes.
+         */
+        private final @NonNull RouteDataRetriever retriever;
+
+        /**
+         * Retrieves data using HTTP.
+         */
+        private final @NonNull HttpService httpSvc;
+
+        /**
+         * QueryInput for the request.
+         */
+        private final QueryInput queryInput;
+
+        /**
+         * Get the data from the internal database. No policy enforcement is performed here!
+         *
+         * @param artifact   The artifact which data should be returned.
+         * @return The artifact's data.
+         * @throws IOException if the data cannot be received.
+         */
+        public InputStream getDataFromInternalDB(final ArtifactImpl artifact) throws IOException {
+            final var data = artifact.getData();
+
+            InputStream rawData;
+            if (data instanceof LocalData) {
+                rawData = getData((LocalData) data);
+            } else if (data instanceof RemoteData) {
+                rawData = getData((RemoteData) data);
+            } else {
+                throw new UnreachableLineException("Unknown data type.");
+            }
+
+            incrementAccessCounter(artifact);
+
+            return rawData;
+        }
+
+        /**
+         * Get local data.
+         *
+         * @param data The data container.
+         * @return The stored data.
+         */
+        private InputStream getData(final LocalData data) {
+            return toInputStream(data.getValue());
+        }
+
+        /**
+         * Get remote data.
+         *
+         * @param data       The data container.
+         * @return The stored data.
+         * @throws IOException if IO errors occur.
+         */
+        private InputStream getData(final RemoteData data)
+                throws IOException {
+            try {
+                return downloadDataFromBackend(data);
+            } catch (IOException | DataRetrievalException exception) {
+                if (log.isWarnEnabled()) {
+                    log.warn("Could not connect to data source. [exception=({})]",
+                            exception.getMessage(), exception);
+                }
+
+                throw new IOException("Could not connect to data source.", exception);
+            }
+        }
+
+        private InputStream downloadDataFromBackend(final RemoteData data) throws IOException {
+            InputStream backendData;
+            if (data.getAccessUrl().toString().startsWith(getRoutesApiUrl())) {
+                backendData = getData(retriever, data.getAccessUrl());
+            } else {
+                if (!data.getAuthentication().isEmpty()) {
+                    backendData = getData(httpSvc, data.getAccessUrl(), data.getAuthentication());
+                } else {
+                    backendData = getData(httpSvc, data.getAccessUrl());
+                }
+            }
+
+            return backendData;
+        }
+
+        private InputStream getData(final DataRetrievalService service, final URL target)
+                throws IOException, DataRetrievalException {
+            return service.get(target, queryInput).getData();
+        }
+
+        private InputStream getData(final DataRetrievalService service, final URL target,
+                                    final List<? extends HttpAuthentication> authentications)
+                throws IOException, DataRetrievalException {
+            return service.get(target, queryInput, authentications).getData();
+        }
     }
 }

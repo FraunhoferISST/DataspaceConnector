@@ -18,21 +18,16 @@ package io.dataspaceconnector.service;
 import de.fraunhofer.iais.eis.RejectionReason;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
-import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.exception.DataRetrievalException;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
-import io.dataspaceconnector.config.ConnectorConfig;
-import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.builder.type.ArtifactRequestService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.ExchangeBuilder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 
@@ -43,13 +38,15 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Performs an artifact request for an artifact. All functions will block till the request is
- * completed.
+ * Performs an artifact request for an artifact via Multipart. All functions will block till the
+ * request is completed.
  */
 @Component
 @Log4j2
 @RequiredArgsConstructor
-public class BlockingArtifactReceiver implements ArtifactRetriever {
+@ConditionalOnProperty(prefix = "idscp2", value = "enabled", havingValue = "false",
+        matchIfMissing = true)
+public class MultipartArtifactRetriever implements ArtifactRetriever {
 
     /**
      * Used for sending an artifact request message.
@@ -60,21 +57,6 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
      * Used for accessing artifacts and their data.
      */
     private final @NonNull ArtifactService artifactService;
-
-    /**
-     * Template for triggering Camel routes.
-     */
-    private final @NonNull ProducerTemplate template;
-
-    /**
-     * The CamelContext required for constructing the {@link ProducerTemplate}.
-     */
-    private final @NonNull CamelContext context;
-
-    /**
-     * Service for handle application.properties settings.
-     */
-    private final @NonNull ConnectorConfig connectorConfig;
 
     /**
      * {@inheritDoc}
@@ -95,41 +77,27 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
             throws PolicyRestrictionException {
         final var artifact = artifactService.get(artifactId);
 
-        String data;
-        if (connectorConfig.isIdscpEnabled()) {
-            final var result = template.send("direct:artifactRequestSender",
-                    ExchangeBuilder.anExchange(context)
-                            .withProperty(ParameterUtils.RECIPIENT_PARAM, recipient)
-                            .withProperty(ParameterUtils.ARTIFACT_ID_PARAM, artifact.getRemoteId())
-                            .withProperty(ParameterUtils.TRANSFER_CONTRACT_PARAM, transferContract)
-                            .withProperty(ParameterUtils.QUERY_INPUT_PARAM, queryInput)
-                            .build());
-
-            final var response = result.getIn().getBody(Response.class);
-            data = response.getBody();
-        } else {
-            Map<String, String> response;
-            try {
-                response = artifactReqSvc.sendMessage(recipient,
-                        artifact.getRemoteId(), transferContract, queryInput);
-            } catch (UnexpectedResponseException exception) {
-                final var content = exception.getContent();
-                if (log.isDebugEnabled()) {
-                    log.debug("Data could not be loaded. [content=({})]", content);
-                }
-
-            if (content.containsKey("reason")) {
-                final var reason = content.get("reason");
-                if (reason.equals(RejectionReason.NOT_AUTHORIZED)) {
-                    throw new PolicyRestrictionException(ErrorMessage.POLICY_RESTRICTION);
-                }
+        Map<String, String> response;
+        try {
+            response = artifactReqSvc.sendMessage(recipient,
+                    artifact.getRemoteId(), transferContract, queryInput);
+        } catch (UnexpectedResponseException exception) {
+            final var content = exception.getContent();
+            if (log.isDebugEnabled()) {
+                log.debug("Data could not be loaded. [content=({})]", content);
             }
 
-                throw new DataRetrievalException(content.toString());
+        if (content.containsKey("reason")) {
+            final var reason = content.get("reason");
+            if (reason.equals(RejectionReason.NOT_AUTHORIZED)) {
+                throw new PolicyRestrictionException(ErrorMessage.POLICY_RESTRICTION);
             }
-
-            data = MessageUtils.extractPayloadFromMultipartMessage(response);
         }
+
+            throw new DataRetrievalException(content.toString());
+        }
+
+        final var data = MessageUtils.extractPayloadFromMultipartMessage(response);
 
         return new ByteArrayInputStream(Base64Utils.decodeFromString(data));
     }

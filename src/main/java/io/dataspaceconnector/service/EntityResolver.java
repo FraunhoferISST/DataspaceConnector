@@ -143,7 +143,7 @@ public class EntityResolver {
     /**
      * Performs a artifact requests.
      */
-    private final @NonNull BlockingArtifactReceiver artifactReceiver;
+    private final @NonNull MultipartArtifactRetriever artifactReceiver;
 
     /**
      * Service for deserialization.

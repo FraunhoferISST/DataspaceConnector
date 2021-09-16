@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 package io.dataspaceconnector.service.resource.type;
-
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
+import io.dataspaceconnector.common.net.HttpResponse;
 import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.model.artifact.Artifact;
@@ -276,8 +276,7 @@ class ArtifactServiceTest {
         URL url = ((RemoteData) remoteArtifact.getData()).getAccessUrl();
         final var auth = ((RemoteData) remoteArtifact.getData()).getAuthentication();
 
-        final var response = new HttpService.Response();
-        response.setBody(new ByteArrayInputStream(remoteData));
+        final var response = new HttpResponse(200, new ByteArrayInputStream(remoteData));
 
         when(artifactRepository.findById(remoteArtifact.getId()))
                 .thenReturn(Optional.of(remoteArtifact));
@@ -290,7 +289,7 @@ class ArtifactServiceTest {
                                                     (QueryInput)  null);
 
         /* ASSERT */
-        assertEquals(response.getBody(), data);
+        assertEquals(response.getData(), data);
     }
 
     @SneakyThrows
@@ -301,8 +300,7 @@ class ArtifactServiceTest {
         ArtifactImpl remoteArtifact = getRemoteArtifact(getRemoteData());
         URL url = ((RemoteData) remoteArtifact.getData()).getAccessUrl();
 
-        final var response = new HttpService.Response();
-        response.setBody(new ByteArrayInputStream(remoteData));
+        final var response = new HttpResponse(200, new ByteArrayInputStream(remoteData));
 
         when(artifactRepository.findById(remoteArtifact.getId()))
                 .thenReturn(Optional.of(remoteArtifact));
@@ -313,7 +311,7 @@ class ArtifactServiceTest {
                 remoteArtifact.getId(),(QueryInput)  null);
 
         /* ASSERT */
-        assertEquals(response.getBody(), data);
+        assertEquals(response.getData(), data);
     }
 
     @SneakyThrows
@@ -325,8 +323,7 @@ class ArtifactServiceTest {
         URL url = ((RemoteData) remoteArtifact.getData()).getAccessUrl();
         QueryInput queryInput = getQueryInput();
 
-        final var response = new HttpService.Response();
-        response.setBody(new ByteArrayInputStream(remoteData));
+        final var response = new HttpResponse(200, new ByteArrayInputStream(remoteData));
 
         when(artifactRepository.findById(remoteArtifact.getId()))
                 .thenReturn(Optional.of(remoteArtifact));
@@ -337,7 +334,7 @@ class ArtifactServiceTest {
                                          remoteArtifact.getId(), queryInput);
 
         /* ASSERT */
-        assertEquals(response.getBody(), data);
+        assertEquals(response.getData(), data);
     }
 
     @SneakyThrows

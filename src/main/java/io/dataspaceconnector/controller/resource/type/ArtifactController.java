@@ -32,7 +32,7 @@ import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.route.Route;
-import io.dataspaceconnector.service.BlockingArtifactReceiver;
+import io.dataspaceconnector.service.ArtifactRetriever;
 import io.dataspaceconnector.service.message.SubscriberNotificationService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
@@ -87,7 +87,7 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
     /**
      * The receiver for getting data from a remote source.
      */
-    private final @NonNull BlockingArtifactReceiver dataReceiver;
+    private final @NonNull ArtifactRetriever dataReceiver;
 
     /**
      * The verifier for the data access.

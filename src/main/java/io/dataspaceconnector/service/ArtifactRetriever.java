@@ -45,4 +45,5 @@ public interface ArtifactRetriever {
      * @return The artifact's data.
      */
     InputStream retrieve(UUID artifactId, URI recipient, URI transferContract, QueryInput query);
+
 }

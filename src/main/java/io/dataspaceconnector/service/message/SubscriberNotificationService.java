@@ -29,7 +29,7 @@ import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.subscription.Subscription;
-import io.dataspaceconnector.service.BlockingArtifactReceiver;
+import io.dataspaceconnector.service.MultipartArtifactRetriever;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.util.Event;
 import io.dataspaceconnector.service.resource.ids.builder.IdsResourceBuilder;
@@ -74,7 +74,7 @@ public class SubscriberNotificationService {
     /**
      * The receiver for getting data from a remote source.
      */
-    private final @NonNull BlockingArtifactReceiver dataReceiver;
+    private final @NonNull MultipartArtifactRetriever dataReceiver;
 
     /**
      * The verifier for the data access.

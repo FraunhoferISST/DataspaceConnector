@@ -135,14 +135,14 @@ class HttpServiceTest {
         Mockito.doReturn(response).when(httpSvc).get(Mockito.any());
 
         /* ACT */
-        final var result = service.request(HttpService.Method.GET, target, args);
+        final var result = (HttpResponse) service.request(HttpService.Method.GET, target, args);
 
         /* ASSERT */
         Mockito.doReturn(response2).when(httpSvc).get(Mockito.any());
-        final var expected = service.get(target, args);
+        final var expected = (HttpResponse) service.get(target, args);
         assertEquals(expected.getCode(), result.getCode());
         assertTrue(Arrays.areEqual("someBody".getBytes(StandardCharsets.UTF_8),
-                result.getBody().readAllBytes()));
+                result.getData().readAllBytes()));
     }
 
     @Test
