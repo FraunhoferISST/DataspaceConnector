@@ -17,7 +17,9 @@ package io.dataspaceconnector.controller.gui;
 
 import io.dataspaceconnector.controller.gui.util.GuiUtils;
 import io.dataspaceconnector.service.ProjectInformationService;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -84,6 +86,8 @@ class GuiControllerTest {
     @Test
     @WithMockUser("ADMIN")
     void getProjectUpdateInformation() throws Exception {
+        Mockito.when(projectInformationService.projectUpdateAvailable()).thenReturn(new JSONObject());
+
         mockMvc.perform(
                 get("/api/configmanager/update"))
                 .andExpect(status().isOk()).andReturn();
