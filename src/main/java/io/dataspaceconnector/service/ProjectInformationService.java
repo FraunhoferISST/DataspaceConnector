@@ -30,6 +30,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -84,12 +86,12 @@ public class ProjectInformationService {
     /**
      * Compares latest release with the current version.
      *
-     * @return Response-Message if an update exists or not.
+     * @return Response-Map with current and update data.
      * @throws IOException If an error occurs when retrieving the release version.
      */
-    public JSONObject projectUpdateAvailable() throws IOException {
+    public Map<String, String> projectUpdateAvailable() throws IOException {
         final var latestData = getLatestData();
-        final var latestVersion = latestData.get("latest").toString().split("\\.");
+        final var latestVersion = latestData.get("latest").split("\\.");
         final var currentVersion = projectVersion.split("\\.");
 
         latestData.put("update", isOutdated(latestVersion, currentVersion).toString());
@@ -103,7 +105,7 @@ public class ProjectInformationService {
      * @return Data of the API, which should be displayed in case of an available update.
      * @throws IOException If an error occurs while retrieving the latest release information.
      */
-    public JSONObject getLatestData() throws IOException {
+    public Map<String, String> getLatestData() throws IOException {
         final var builder = new Request.Builder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme(repoConfig.getScheme())
@@ -130,11 +132,11 @@ public class ProjectInformationService {
      * @return The necessary data to determine whether there is an update and
      * additional display data.
      */
-    private JSONObject parseResponse(final String response) {
+    private Map<String, String> parseResponse(final String response) {
         final var responseObj = new JSONObject(response);
         final var latestTag = responseObj.get("tag_name").toString().replace("v", "");
 
-        final var release = new JSONObject();
+        final var release = new HashMap<String, String>();
         release.put("location", responseObj.get("html_url").toString());
         release.put("latest", latestTag.trim());
         release.put("version", projectVersion);

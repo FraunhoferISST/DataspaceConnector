@@ -26,14 +26,17 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpStatus;
+import org.springframework.boot.actuate.info.Info;
+import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * The api class offers the possibilities to provide other api's which could be needed.
@@ -73,28 +76,27 @@ public class GuiController {
     }
 
     /**
-     * API checks if a newer version of the connector is available than the one used.
-     *
-     * @return The response message or an error.
+     * Expands the actuator-endpoint if enabled and gets release data at runtime
+     * on info-endpoint request.
      */
-    @Hidden
-    @GetMapping(value = "/update", produces = "application/json")
-    @Operation(summary = "Get information about project update is available")
-    @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
-    @ApiResponse(responseCode = ResponseCode.BAD_GATEWAY, description
-            = ResponseDescription.BAD_GATEWAY)
-    ResponseEntity<Object> getProjectUpdateInformation() {
-        try {
-            final var updateInfo = projectInformationService.projectUpdateAvailable();
-            return new ResponseEntity<>(updateInfo.toString(), HttpStatus.OK);
-        } catch (IOException exception) {
-            if (log.isDebugEnabled()) {
-                log.debug("Failed to determine if a project update is available."
-                        + " [exception=({})]", exception.getMessage());
-            }
+    @Component
+    public class ConnectorReleaseContributor implements InfoContributor {
 
-            return new ResponseEntity<>("Failed to determine if a project update is available",
-                    HttpStatus.BAD_GATEWAY);
+        /**
+         * Computes additional data to be added at runtime on actuator-info API request.
+         * @param builder The builder that can add additional information to the endpoint.
+         */
+        @Override
+        public void contribute(final Info.Builder builder) {
+            try {
+                final var updateInfo = projectInformationService.projectUpdateAvailable();
+                builder.withDetail("connector", updateInfo);
+            } catch (IOException exception) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Failed to determine if a project update is available."
+                            + " [exception=({})]", exception.getMessage());
+                }
+            }
         }
     }
 }
