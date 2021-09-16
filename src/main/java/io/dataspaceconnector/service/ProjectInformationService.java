@@ -89,8 +89,8 @@ public class ProjectInformationService {
      * @return Response-Map with current and update data.
      * @throws IOException If an error occurs when retrieving the release version.
      */
-    public Map<String, Map<String, String>> projectUpdateAvailable() throws IOException {
-        final var versionInfo = new HashMap<String, Map<String, String>>();
+    public Map<String, Object> projectUpdateAvailable() throws IOException {
+        final var versionInfo = new HashMap<String, Object>();
         final var latestData = getLatestData();
         final var latestVersion = latestData.get("update.version").split("\\.");
         final var currentVersion = projectVersion.split("\\.");
@@ -99,22 +99,10 @@ public class ProjectInformationService {
         latestData.put("update.type", updateType.toString());
         latestData.put("update.available", Udpate.NO_UPDATE.equals(updateType) ? "false" : "true");
 
-        final var connectorData = getConnectorData();
-
-        versionInfo.put("update", latestData);
-        versionInfo.put("connector", connectorData);
+        versionInfo.put("connector.update", latestData);
+        versionInfo.put("connector.version", projectVersion);
 
         return versionInfo;
-    }
-
-    /**
-     * Gets current connector data.
-     * @return Map containing information about the current connector.
-     */
-    private HashMap<String, String> getConnectorData() {
-        final var connectorData = new HashMap<String, String>();
-        connectorData.put("connector.version", projectVersion);
-        return connectorData;
     }
 
     /**
