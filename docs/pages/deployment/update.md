@@ -38,3 +38,11 @@ connector.update:
    update:version:      "6.2.0"
    update:location:     "https://github.com/International-Data-Spaces-Association/DataspaceConnector/releases/tag/v6.2.0"
 ```
+
+To make this API usable, `info` must be present in the allowed web outputs within the `application.properties`.
+
+```xml
+management.endpoints.web.exposure.include=info
+```
+
+More information about the actuator API and further configuration options are also available in the logging documentation section.
