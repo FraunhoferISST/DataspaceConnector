@@ -85,7 +85,7 @@
 
 	<properties>
 		<!-- General -->
-		<revision>6.2.0</revision>
+		<revision>6.3.0</revision>
 		<email>info@dataspace-connector.de</email>
 
 		<!-- Build info -->
@@ -94,7 +94,7 @@
 		<maven.minimum.version>3.3.9</maven.minimum.version>
 
 		<!-- Dependencies -->
-		<ids-messaging-services.version>4.3.0</ids-messaging-services.version>
+		<ids-messaging-services.version>5.0.0</ids-messaging-services.version>
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.6.2</swagger-annotations.version>
 		<okhttp.version>4.9.1</okhttp.version>
@@ -106,15 +106,15 @@
 		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
 		<velocity.version>1.7</velocity.version>
-		<camel.version>3.11.1</camel.version>
+		<camel.version>3.11.2</camel.version>
 		<idscp2.version>0.5.0</idscp2.version>
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
-		<maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
+		<maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
 		<pitest.version>1.7.0</pitest.version>
-		<pitest-junit5-plugin.version>0.14</pitest-junit5-plugin.version>
+		<pitest-junit5-plugin.version>0.15</pitest-junit5-plugin.version>
 		<tidy.version>1.1.0</tidy.version>
 		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
 		<maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
@@ -123,14 +123,14 @@
 		<checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
 		<checkstyle.version>9.0</checkstyle.version>
 		<jacoco.version>0.8.7</jacoco.version>
-		<pmd-plugin.version>3.14.0</pmd-plugin.version>
+		<pmd-plugin.version>3.15.0</pmd-plugin.version>
 		<pmd.version>6.38.0</pmd.version>
 		<versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
 		<license-plugin.version>4.1</license-plugin.version>
 		<dms.version>2.2.0</dms.version>
 		<taglist.version>2.4</taglist.version>
 		<jxr.version>3.1.1</jxr.version>
-		<dependency-check.version>6.2.2</dependency-check.version>
+		<dependency-check.version>6.3.1</dependency-check.version>
 
 		<!-- License -->
 		<license_name>Apache License, Version 2.0</license_name>
@@ -760,6 +760,7 @@
 					</targetClasses>
 					<targetTests>
 						<param>io.dataspaceconnector.model*</param>
+						<param>io.dataspaceconnector.service.resource.templatebuilder*</param>
 					</targetTests>
 <!--					<excludedTestClasses>-->
 <!--						<param>**</param>-->
@@ -783,7 +784,7 @@
 					<verbose>false</verbose>
 					<threads>2</threads>
 					<timestampedReports>false</timestampedReports>
-					<coverageThreshold>89</coverageThreshold>
+					<coverageThreshold>90</coverageThreshold>
 					<mutationThreshold>93</mutationThreshold>
 				</configuration>
 			</plugin>

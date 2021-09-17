@@ -19,17 +19,17 @@ import de.fraunhofer.iais.eis.AppRoute;
 import de.fraunhofer.iais.eis.AppRouteBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
  * Converts dsc routes to ids app routes.
  */
 @Component
-@RequiredArgsConstructor
 public final class IdsAppRouteBuilder extends AbstractIdsBuilder<Route, AppRoute> {
 
     /**
@@ -41,6 +41,22 @@ public final class IdsAppRouteBuilder extends AbstractIdsBuilder<Route, AppRoute
      * The builder for IDS route steps.
      */
     private final @NonNull IdsRouteStepBuilder routeStepBuilder;
+
+    /**
+     * Constructs an IdsAppRouteBuilder.
+     *
+     * @param selfLinkHelper the self link helper.
+     * @param idsEndpointBuilder the endpoint builder.
+     * @param idsRouteStepBuilder the route step builder.
+     */
+    @Autowired
+    public IdsAppRouteBuilder(final SelfLinkHelper selfLinkHelper,
+                              final IdsEndpointBuilder idsEndpointBuilder,
+                              final IdsRouteStepBuilder idsRouteStepBuilder) {
+        super(selfLinkHelper);
+        this.endpointBuilder = idsEndpointBuilder;
+        this.routeStepBuilder = idsRouteStepBuilder;
+    }
 
     @Override
     protected AppRoute createInternal(final Route route, final int currentDepth,

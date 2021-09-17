@@ -13,22 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.resource.view.proxy;
+package io.dataspaceconnector.model.message;
 
-import io.dataspaceconnector.model.proxy.Proxy;
-import org.modelmapper.ModelMapper;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
+import java.net.URI;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
- * The view assembler for the proxy.
+ * Class for all request message parameters.
  */
-public class ProxyViewAssembler implements RepresentationModelAssembler<Proxy, ProxyView> {
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class ProcessCreationMessageDesc extends MessageDesc {
 
-    @Override
-    public final ProxyView toModel(final Proxy proxy) {
-        final var proxyView = new ModelMapper().map(proxy, ProxyView.class);
-        proxyView.setAuthenticationSet(proxy.getAuthentication() != null);
-
-        return proxyView;
+    /**
+     * All args constructor.
+     *
+     * @param recipient The message's recipient.
+     */
+    public ProcessCreationMessageDesc(final URI recipient) {
+        super(recipient);
     }
+
 }

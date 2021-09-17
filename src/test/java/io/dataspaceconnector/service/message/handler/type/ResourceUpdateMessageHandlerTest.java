@@ -15,6 +15,16 @@
  */
 package io.dataspaceconnector.service.message.handler.type;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
@@ -29,6 +39,7 @@ import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.service.EntityUpdateService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -40,25 +51,19 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class ResourceUpdateMessageHandlerTest {
 
     @SpyBean
     EntityUpdateService updateService;
+
+    @SpyBean
+    ConnectorService connectorService;
 
     @Autowired
     ResourceUpdateMessageHandler handler;
@@ -224,6 +229,10 @@ class ResourceUpdateMessageHandlerTest {
 
         Mockito.doNothing().when(updateService).updateResource(Mockito.any());
         Mockito.doNothing().when(publisher).publishEvent(Mockito.any());
+        when(connectorService.getCurrentDat()).thenReturn(new DynamicAttributeTokenBuilder()
+                ._tokenFormat_(TokenFormat.JWT)
+                ._tokenValue_("value")
+                .build());
 
         /* ACT */
         final var result = (BodyResponse<?>) handler.handleMessage((ResourceUpdateMessageImpl) message, payload);

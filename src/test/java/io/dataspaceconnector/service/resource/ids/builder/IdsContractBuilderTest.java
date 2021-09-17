@@ -19,6 +19,7 @@ import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.ids.messaging.util.SerializerProvider;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.contract.ContractDesc;
@@ -27,9 +28,11 @@ import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.rule.ContractRuleDesc;
 import io.dataspaceconnector.model.rule.ContractRuleFactory;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.net.URI;
 import java.time.ZoneOffset;
@@ -43,6 +46,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {ContractFactory.class, ContractRuleFactory.class,
         IdsContractBuilder.class, IdsPermissionBuilder.class, IdsProhibitionBuilder.class,
@@ -58,11 +63,22 @@ public class IdsContractBuilderTest {
     @Autowired
     private IdsContractBuilder idsContractBuilder;
 
+    @MockBean
+    private SelfLinkHelper selfLinkHelper;
+
     private final ZonedDateTime date = ZonedDateTime.now(ZoneOffset.UTC);
 
     private final URI provider = URI.create("https://provider.com");
 
     private final URI consumer = URI.create("https://consumer.com");
+
+    private final UUID uuid = UUID.randomUUID();
+
+    @BeforeEach
+    void init() {
+        final var uri = URI.create("https://" + uuid);
+        when(selfLinkHelper.getSelfLink(any(Entity.class))).thenReturn(uri);
+    }
 
     @Test
     public void create_inputNull_throwNullPointerException() {
@@ -194,7 +210,7 @@ public class IdsContractBuilderTest {
 
         final var idField = Entity.class.getDeclaredField("id");
         idField.setAccessible(true);
-        idField.set(rule, UUID.randomUUID());
+        idField.set(rule, uuid);
 
         final var creationDateField = Entity.class.getDeclaredField("creationDate");
         creationDateField.setAccessible(true);
@@ -216,7 +232,7 @@ public class IdsContractBuilderTest {
 
         final var idField = Entity.class.getDeclaredField("id");
         idField.setAccessible(true);
-        idField.set(contract, UUID.randomUUID());
+        idField.set(contract, uuid);
 
         final var creationDateField = Entity.class.getDeclaredField("creationDate");
         creationDateField.setAccessible(true);
