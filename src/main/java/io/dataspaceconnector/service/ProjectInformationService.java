@@ -92,12 +92,12 @@ public class ProjectInformationService {
     public Map<String, Object> projectUpdateAvailable() throws IOException {
         final var versionInfo = new HashMap<String, Object>();
         final var latestData = getLatestData();
-        final var latestVersion = latestData.get("update.version").split("\\.");
+        final var latestVersion = latestData.get("update.version").toString().split("\\.");
         final var currentVersion = projectVersion.split("\\.");
         final var updateType = isOutdated(latestVersion, currentVersion);
 
         latestData.put("update.type", updateType.toString());
-        latestData.put("update.available", Udpate.NO_UPDATE.equals(updateType) ? "false" : "true");
+        latestData.put("update.available", !Udpate.NO_UPDATE.equals(updateType));
 
         versionInfo.put("connector.update", latestData);
         versionInfo.put("connector.version", projectVersion);
@@ -111,7 +111,7 @@ public class ProjectInformationService {
      * @return Data of the API, which should be displayed in case of an available update.
      * @throws IOException If an error occurs while retrieving the latest release information.
      */
-    public Map<String, String> getLatestData() throws IOException {
+    public Map<String, Object> getLatestData() throws IOException {
         final var builder = new Request.Builder();
         final var urlBuilder = new HttpUrl.Builder()
                 .scheme(repoConfig.getScheme())
@@ -138,11 +138,11 @@ public class ProjectInformationService {
      * @return The necessary data to determine whether there is an update and
      * additional display data.
      */
-    private Map<String, String> parseResponse(final String response) {
+    private Map<String, Object> parseResponse(final String response) {
         final var responseObj = new JSONObject(response);
         final var latestTag = responseObj.get("tag_name").toString().replace("v", "");
 
-        final var release = new HashMap<String, String>();
+        final var release = new HashMap<String, Object>();
         release.put("update.location", responseObj.get("html_url").toString());
         release.put("update.version", latestTag.trim());
 
