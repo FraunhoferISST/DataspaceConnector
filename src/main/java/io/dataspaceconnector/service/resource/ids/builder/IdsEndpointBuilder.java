@@ -22,10 +22,12 @@ import de.fraunhofer.iais.eis.GenericEndpointBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -34,6 +36,16 @@ import org.springframework.stereotype.Component;
 @Component
 public final class IdsEndpointBuilder
         extends AbstractIdsBuilder<Endpoint, de.fraunhofer.iais.eis.Endpoint> {
+
+    /**
+     * Constructs an IdsEndpointBuilder.
+     *
+     * @param selfLinkHelper the self link helper.
+     */
+    @Autowired
+    public IdsEndpointBuilder(final SelfLinkHelper selfLinkHelper) {
+        super(selfLinkHelper);
+    }
 
     @Override
     protected de.fraunhofer.iais.eis.Endpoint createInternal(

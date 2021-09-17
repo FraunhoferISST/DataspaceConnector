@@ -21,22 +21,28 @@ import java.util.UUID;
 
 import de.fraunhofer.iais.eis.AppRoute;
 import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.auth.BasicAuth;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.datasource.DataSource;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.route.Route;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {IdsAppRouteBuilder.class, IdsRouteStepBuilder.class,
         IdsEndpointBuilder.class})
@@ -45,9 +51,20 @@ public class IdsAppRouteBuilderTest {
     @Autowired
     private IdsAppRouteBuilder builder;
 
+    @MockBean
+    private SelfLinkHelper selfLinkHelper;
+
     private final URI endpointLocation = URI.create("https://location.com");
 
     private final URI endpointDocumentation = URI.create("https://documentation.com");
+
+    private final UUID uuid = UUID.randomUUID();
+
+    @BeforeEach
+    void init() {
+        final var uri = URI.create("https://" + uuid);
+        when(selfLinkHelper.getSelfLink(any(Entity.class))).thenReturn(uri);
+    }
 
     @Test
     public void create_inputNull_throwNullPointerException() {
@@ -159,7 +176,7 @@ public class IdsAppRouteBuilderTest {
 
     private Route getRoute() {
         final var route = new Route();
-        ReflectionTestUtils.setField(route, "id", UUID.randomUUID());
+        ReflectionTestUtils.setField(route, "id", uuid);
         ReflectionTestUtils.setField(route, "deploy", DeployMethod.CAMEL);
         ReflectionTestUtils.setField(route, "configuration", "config");
         ReflectionTestUtils.setField(route, "description", "desc");
@@ -184,7 +201,7 @@ public class IdsAppRouteBuilderTest {
 
     private Route getSubRoute() {
         final var route = new Route();
-        ReflectionTestUtils.setField(route, "id", UUID.randomUUID());
+        ReflectionTestUtils.setField(route, "id", uuid);
         ReflectionTestUtils.setField(route, "deploy", DeployMethod.CAMEL);
         ReflectionTestUtils.setField(route, "configuration", "sub-route-config");
         ReflectionTestUtils.setField(route, "description", "sub-route-desc");
@@ -208,7 +225,7 @@ public class IdsAppRouteBuilderTest {
         ReflectionTestUtils.setField(dataSource, "authentication", auth);
 
         final var endpoint = new GenericEndpoint();
-        ReflectionTestUtils.setField(endpoint, "id", UUID.randomUUID());
+        ReflectionTestUtils.setField(endpoint, "id", uuid);
         ReflectionTestUtils.setField(endpoint, "location", endpointLocation);
         ReflectionTestUtils.setField(endpoint, "docs", endpointDocumentation);
         ReflectionTestUtils.setField(endpoint, "info", "info");
@@ -220,7 +237,7 @@ public class IdsAppRouteBuilderTest {
 
     private ConnectorEndpoint getConnectorEndpoint() {
         final var endpoint = new ConnectorEndpoint();
-        ReflectionTestUtils.setField(endpoint, "id", UUID.randomUUID());
+        ReflectionTestUtils.setField(endpoint, "id", uuid);
         ReflectionTestUtils.setField(endpoint, "location", endpointLocation);
         ReflectionTestUtils.setField(endpoint, "docs", endpointDocumentation);
         ReflectionTestUtils.setField(endpoint, "info", "info");
