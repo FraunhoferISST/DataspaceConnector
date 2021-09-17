@@ -3535,6 +3535,18 @@ paths:
             '*/*':
               schema:
                 type: object
+        "409":
+          description: Conflict
+          content:
+            '*/*':
+              schema:
+                type: object
+        "404":
+          description: Not found
+          content:
+            '*/*':
+              schema:
+                type: object
   /api/subscriptions:
     get:
       tags:
