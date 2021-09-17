@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [X.X.X] - XXXX-XX-XX
 
 ### Added
-- New GUI helper endpoint API to compare the current connector version with the latest release version.
+- New `/actuator/info` API data `connector` to output the current version as well as information if a newer release is available on GitHub.
 - Added `authenticationSet` as boolean indicator in output of configuration APIs whether authentication credentials for a proxy are present.
 
 ### Fixed
