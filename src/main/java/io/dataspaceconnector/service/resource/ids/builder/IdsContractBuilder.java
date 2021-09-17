@@ -29,6 +29,7 @@ import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,22 +45,22 @@ public final class IdsContractBuilder extends AbstractIdsBuilder<Contract, Contr
     /**
      * The builder for ids permission.
      */
-    private final IdsPermissionBuilder permBuilder;
+    private final @NonNull IdsPermissionBuilder permBuilder;
 
     /**
      * The builder for ids prohibition.
      */
-    private final IdsProhibitionBuilder prohBuilder;
+    private final @NonNull IdsProhibitionBuilder prohBuilder;
 
     /**
      * The builder for ids duty.
      */
-    private final IdsDutyBuilder dutyBuilder;
+    private final @NonNull IdsDutyBuilder dutyBuilder;
 
     /**
      * The service for deserializing strings to ids rules.
      */
-    private final DeserializationService deserializer;
+    private final @NonNull DeserializationService deserializer;
 
     /**
      * Constructs an IdsContractBuilder.

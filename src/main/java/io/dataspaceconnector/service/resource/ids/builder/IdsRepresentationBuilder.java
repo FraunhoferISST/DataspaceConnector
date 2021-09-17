@@ -22,6 +22,7 @@ import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
 import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,7 +39,7 @@ public final class IdsRepresentationBuilder extends AbstractIdsBuilder<Represent
     /**
      * The builder for ids artifacts.
      */
-    private final IdsArtifactBuilder artifactBuilder;
+    private final @NonNull IdsArtifactBuilder artifactBuilder;
 
     /**
      * Constructs an IdsRepresentationBuilder.

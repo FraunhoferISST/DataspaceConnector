@@ -21,6 +21,7 @@ import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -33,12 +34,12 @@ public class IdsRuleBuilder<T extends Rule> extends AbstractIdsBuilder<ContractR
     /**
      * The service for deserializing strings to ids rules.
      */
-    private final DeserializationService deserializer;
+    private final @NonNull DeserializationService deserializer;
 
     /**
      * The type of the rule to be build. Needed for the deserializer.
      */
-    private final Class<T> ruleType;
+    private final @NonNull Class<T> ruleType;
 
     /**
      * Constructs an IdsRuleBuilder.

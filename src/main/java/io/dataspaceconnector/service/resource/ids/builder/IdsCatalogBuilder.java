@@ -22,6 +22,7 @@ import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +35,7 @@ public final class IdsCatalogBuilder extends AbstractIdsBuilder<Catalog, Resourc
     /**
      * The builder for ids resource (from offered resource).
      */
-    private final IdsResourceBuilder<OfferedResource> resourceBuilder;
+    private final @NonNull IdsResourceBuilder<OfferedResource> resourceBuilder;
 
     /**
      * Constructs an IdsCatalogBuilder.

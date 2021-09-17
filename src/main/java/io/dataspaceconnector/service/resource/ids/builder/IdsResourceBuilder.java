@@ -28,6 +28,7 @@ import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.resource.Resource;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
 import io.dataspaceconnector.service.resource.type.ResourceService;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -46,17 +47,17 @@ public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBui
     /**
      * The builder for ids representation.
      */
-    private final IdsRepresentationBuilder repBuilder;
+    private final @NonNull IdsRepresentationBuilder repBuilder;
 
     /**
      * The builder for ids contract offer.
      */
-    private final IdsContractBuilder contractBuilder;
+    private final @NonNull IdsContractBuilder contractBuilder;
 
     /**
      * The service for resource handling.
      */
-    private final ResourceService<T, OfferedResourceDesc> resourceSvc;
+    private final @NonNull ResourceService<T, OfferedResourceDesc> resourceSvc;
 
     /**
      * Constructs an IdsResourceBuilder.

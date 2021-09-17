@@ -22,6 +22,7 @@ import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +35,7 @@ public final class IdsRouteStepBuilder extends AbstractIdsBuilder<Route, RouteSt
     /**
      * The builder for ids endpoints.
      */
-    private final IdsEndpointBuilder endpointBuilder;
+    private final @NonNull IdsEndpointBuilder endpointBuilder;
 
     /**
      * Constructs an IdsRouteStepBuilder.
