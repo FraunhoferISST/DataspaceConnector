@@ -44,6 +44,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import okhttp3.Response;
 import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -114,6 +115,29 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     }
 
     /**
+     * Get the AppStores related to the given app.
+     *
+     * @param appId The id of app for which related appstores should be found.
+     * @return The app store.
+     */
+    @GetMapping("/{id}/appstore")
+    @Operation(summary = "Get appstore by app id", description = "Get appstore holding this app.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+            @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
+                    description = ResponseDescription.BAD_REQUEST),
+            @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
+                    description = ResponseDescription.INTERNAL_SERVER_ERROR),
+            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                    description = ResponseDescription.UNAUTHORIZED)})
+    @ResponseBody
+    public final ResponseEntity<Object> relatedAppStore(final @PathVariable("id") UUID appId) {
+        return ResponseEntity.ok(getService().getAppStoreByAppId(appId));
+    }
+
+    /**
+     * Perform actions on the apps.
+     *
      * @param appId The id of the container.
      * @param type  The action type.
      * @return Response depending on the action on an app.
@@ -139,76 +163,19 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
             @RequestParam("actionType") final String type) {
         final var action = Normalizer.normalize(type.toUpperCase(Locale.ROOT), Normalizer.Form.NFC);
         final var app = getService().get(appId);
-        var containerId = ((AppImpl) app).getContainerId();
+        final var containerId = ((AppImpl) app).getContainerId();
 
-        Response response;
         try {
-            portainerSvc.resetToken();
-            portainerSvc.createEndpointId();
+            initPortainerSvc();
 
             if (ActionType.START.name().equals(action)) {
-                if (containerId == null || containerId.equals("")) {
-                    containerId = deployApp(app);
-                } else {
-                    if (isAppRunning(containerId)) {
-                        return new ResponseEntity<>("App is already running.",
-                                HttpStatus.BAD_REQUEST);
-                    }
-                }
-
-                response = portainerSvc.startContainer(containerId);
-                return readResponse(response, "Successfully started the app.");
+                return startApp(app, containerId);
             } else if (ActionType.STOP.name().equals(action)) {
-                if (containerId == null || containerId.equals("")) {
-                    return new ResponseEntity<>("No container id provided.",
-                            HttpStatus.NOT_FOUND);
-                }
-                var usedBy = appRouteResolver.isAppUsed(app);
-                if (usedBy.isPresent()) {
-                    return new ResponseEntity<>(
-                            String.format(
-                                    "Selected App is in use by camel route %s"
-                                            + " and cannot be stopped. Camel routes have"
-                                            + " to be stopped before stopping the app.",
-                                    usedBy.get()
-                            ),
-                            HttpStatus.CONFLICT
-                    );
-                }
-                response = portainerSvc.stopContainer(containerId);
-                return readResponse(response, "Successfully stopped the app.");
+                return stopApp(app, containerId);
             } else if (ActionType.DELETE.name().equals(action)) {
-                if (containerId == null || containerId.equals("")) {
-                    return new ResponseEntity<>("No running container found.",
-                            HttpStatus.NOT_FOUND);
-                }
-
-                if (isAppRunning(containerId)) {
-                    return new ResponseEntity<>("Cannot delete a running app.",
-                            HttpStatus.BAD_REQUEST);
-                }
-
-                response = portainerSvc.deleteContainer(containerId);
-                getService().deleteContainerIdFromApp(appId);
-                portainerSvc.deleteUnusedVolumes();
-                return readResponse(response, "Successfully deleted the app.");
+                return deleteApp(appId, containerId);
             } else if (ActionType.DESCRIBE.name().equals(action)) {
-                if (containerId == null || containerId.equals("")) {
-                    return new ResponseEntity<>("No container id provided.", HttpStatus.NOT_FOUND);
-                } else {
-                    final var descriptionResponse = portainerSvc
-                            .getDescriptionByContainerId(containerId);
-                    final var responseBody = descriptionResponse.body();
-
-                    if (descriptionResponse.isSuccessful() && responseBody != null) {
-                        return ResponseEntity.ok(responseBody.string());
-                    } else if (responseBody != null) {
-                        return ResponseEntity.internalServerError().body(responseBody.string());
-                    } else {
-                        return ResponseEntity.internalServerError().body("Response not successful"
-                                + " and empty response body!");
-                    }
-                }
+                return describeApp(containerId);
             } else {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
@@ -219,6 +186,96 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         } catch (RuntimeException | IOException e) {
             return ResponseUtils.respondPortainerError(e);
         }
+    }
+
+    private void initPortainerSvc() throws PortainerNotConfigured, IOException {
+        portainerSvc.resetToken();
+        portainerSvc.createEndpointId();
+    }
+
+    @NotNull
+    private ResponseEntity<Object> describeApp(final String containerId) throws IOException {
+        if (containerId == null || containerId.equals("")) {
+            return new ResponseEntity<>("No container id provided.", HttpStatus.NOT_FOUND);
+        } else {
+            final var descriptionResponse = portainerSvc
+                    .getDescriptionByContainerId(containerId);
+            final var responseBody = descriptionResponse.body();
+
+            if (descriptionResponse.isSuccessful() && responseBody != null) {
+                return ResponseEntity.ok(responseBody.string());
+            } else if (responseBody != null) {
+                return ResponseEntity.internalServerError().body(responseBody.string());
+            } else {
+                return ResponseEntity.internalServerError().body("Response not successful"
+                        + " and empty response body!");
+            }
+        }
+    }
+
+    @NotNull
+    private ResponseEntity<Object> deleteApp(final @PathVariable("id") UUID appId,
+                                             final String containerId) throws IOException {
+        Response response;
+        if (containerId == null || containerId.equals("")) {
+            return new ResponseEntity<>("No running container found.",
+                    HttpStatus.NOT_FOUND);
+        }
+
+        if (isAppRunning(containerId)) {
+            return new ResponseEntity<>("Cannot delete a running app.",
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        response = portainerSvc.deleteContainer(containerId);
+        getService().deleteContainerIdFromApp(appId);
+        portainerSvc.deleteUnusedVolumes();
+        return readResponse(response, "Successfully deleted the app.");
+    }
+
+    @NotNull
+    private ResponseEntity<Object> stopApp(final App app,
+                                           final String containerId) throws IOException {
+        Response response;
+        if (containerId == null || containerId.equals("")) {
+            return new ResponseEntity<>("No container id provided.", HttpStatus.NOT_FOUND);
+        }
+
+        final var usedBy = appRouteResolver.isAppUsed(app);
+        if (usedBy.isPresent()) {
+            return new ResponseEntity<>(
+                    String.format(
+                            "Selected App is in use by camel route %s"
+                                    + " and cannot be stopped. Camel routes have"
+                                    + " to be stopped before stopping the app.",
+                            usedBy.get()
+                    ),
+                    HttpStatus.CONFLICT
+            );
+        }
+        response = portainerSvc.stopContainer(containerId);
+
+        return readResponse(response, "Successfully stopped the app.");
+    }
+
+    @NotNull
+    private ResponseEntity<Object> startApp(final App app,
+                                            final String containerId)
+            throws IOException, AppNotDeployedException {
+        String deployedContainerId;
+
+        if (containerId == null || containerId.equals("")) {
+            deployedContainerId = deployApp(app);
+        } else {
+            deployedContainerId = containerId;
+            if (isAppRunning(deployedContainerId)) {
+                return new ResponseEntity<>("App is already running.",
+                        HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        return readResponse(portainerSvc.startContainer(deployedContainerId),
+                "Successfully started the app.");
     }
 
     private boolean isAppRunning(final String containerID) throws IOException {
@@ -305,27 +362,6 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
                 appEndpointSvc.setLocation(endpoint, URI.create(location));
             }
         }
-    }
-
-    /**
-     * Get the AppStores related to the given app.
-     *
-     * @param appId The id of app for which related appstores should be found.
-     * @return The app store.
-     */
-    @GetMapping("/{id}/appstore")
-    @Operation(summary = "Get appstore by app id", description = "Get appstore holding this app.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
-                    description = ResponseDescription.BAD_REQUEST),
-            @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
-                    description = ResponseDescription.INTERNAL_SERVER_ERROR),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
-    @ResponseBody
-    public final ResponseEntity<Object> relatedAppStore(final @PathVariable("id") UUID appId) {
-        return ResponseEntity.ok(getService().getAppStoreByAppId(appId));
     }
 
     private ResponseEntity<Object> readResponse(final Response response, final Object body) {
