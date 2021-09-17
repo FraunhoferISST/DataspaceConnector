@@ -65,6 +65,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -112,6 +113,7 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      * @param artifactId   Artifact id.
      * @param download     If the data should be forcefully downloaded.
      * @param agreementUri The agreement which should be used for access control.
+     * @param routeIds     The routes the data should be sent to.
      * @param params       All request parameters.
      * @param headers      All request headers.
      * @param request      The current http request.
@@ -128,6 +130,7 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
             @Valid @PathVariable(name = "id") final UUID artifactId,
             @RequestParam(required = false) final Boolean download,
             @RequestParam(required = false) final URI agreementUri,
+            @RequestParam(required = false) final List<URI> routeIds,
             @RequestParam(required = false) final Map<String, String> params,
             @RequestHeader final Map<String, String> headers,
             final HttpServletRequest request) throws IOException {
@@ -154,9 +157,10 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
             to check if the data access is restricted by the usage control.
          */
         final var data = (agreementUri == null)
-                ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput)
+                ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput,
+                routeIds)
                 : artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
-                new RetrievalInformation(agreementUri, download, queryInput));
+                new RetrievalInformation(agreementUri, download, queryInput), routeIds);
 
         return returnData(artifactId, data);
     }
@@ -167,6 +171,7 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      * used when fetching the data.
      *
      * @param artifactId Artifact id.
+     * @param routeIds   The routes the data should be sent to.
      * @param queryInput Query input containing headers, query parameters, and path variables.
      * @return The data object.
      * @throws IOException                 if the data could not be stored.
@@ -180,13 +185,14 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
                     description = ResponseDescription.UNAUTHORIZED)})
     public ResponseEntity<StreamingResponseBody> getData(
             @Valid @PathVariable(name = "id") final UUID artifactId,
+            @RequestParam(required = false) final List<URI> routeIds,
             @RequestBody(required = false) final QueryInput queryInput)
             throws IOException,
             UnexpectedResponseException,
             io.dataspaceconnector.common.exception.UnexpectedResponseException {
         ValidationUtils.validateQueryInput(queryInput);
         final var data =
-                artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput);
+                artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput, routeIds);
         return returnData(artifactId, data);
     }
 

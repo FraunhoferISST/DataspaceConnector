@@ -210,7 +210,7 @@ class ArtifactServiceTest {
 
         /* ACT && ASSERT */
         assertThrows(IllegalArgumentException.class, () -> service.getData(null,
-                null, null, queryInput));
+                null, null, queryInput, null));
     }
 
     @Test
@@ -222,7 +222,7 @@ class ArtifactServiceTest {
 
         /* ACT && ASSERT */
         assertThrows(ResourceNotFoundException.class, () -> service.getData(null,
-                null, unknownUuid, (QueryInput) null));
+                null, unknownUuid, (QueryInput) null, null));
     }
 
     @Test
@@ -238,7 +238,8 @@ class ArtifactServiceTest {
         final var data = service.getData(null,
                                                     null,
                                                     localArtifact.getId(),
-                                                    (QueryInput) null);
+                                                    (QueryInput) null,
+                                                    null);
 
         /* ASSERT */
         assertTrue(Arrays.compare(getLocalData().getValue(), IOUtils.toByteArray(data)) == 0);
@@ -257,7 +258,7 @@ class ArtifactServiceTest {
         final var before = localArtifact.getNumAccessed();
 
         /* ACT */
-        service.getData(null, null, localArtifact.getId(), (QueryInput) null);
+        service.getData(null, null, localArtifact.getId(), (QueryInput) null, null);
 
         /* ASSERT */
         Field numAccessedField = Artifact.class.getDeclaredField("numAccessed");
@@ -286,7 +287,8 @@ class ArtifactServiceTest {
         final var data = service.getData(null,
                                                     null,
                                                     remoteArtifact.getId(),
-                                                    (QueryInput)  null);
+                                                    (QueryInput)  null,
+                                                    null);
 
         /* ASSERT */
         assertEquals(response.getData(), data);
@@ -308,7 +310,7 @@ class ArtifactServiceTest {
 
         /* ACT */
         final var data = service.getData(null, null,
-                remoteArtifact.getId(),(QueryInput)  null);
+                remoteArtifact.getId(),(QueryInput) null, null);
 
         /* ASSERT */
         assertEquals(response.getData(), data);
@@ -331,7 +333,7 @@ class ArtifactServiceTest {
 
         /* ACT */
         final var data = service.getData(null, null,
-                                         remoteArtifact.getId(), queryInput);
+                                         remoteArtifact.getId(), queryInput, null);
 
         /* ASSERT */
         assertEquals(response.getData(), data);
@@ -353,7 +355,8 @@ class ArtifactServiceTest {
 
         /* ACT && ASSERT */
         assertThrows(RuntimeException.class, () -> service.getData(null, null,
-                                                                   remoteArtifact.getId(), queryInput),
+                                                                   remoteArtifact.getId(),
+                                                                   queryInput, null),
                 expectedExceptionMessage);
     }
 
@@ -371,7 +374,8 @@ class ArtifactServiceTest {
 
         /* ACT && ASSERT */
         assertThrows(UnreachableLineException.class,
-                     () -> service.getData(null, null, unknownArtifact.getId(), (QueryInput) null));
+                     () -> service.getData(null, null, unknownArtifact.getId(), (QueryInput) null,
+                             null));
     }
 
     @Test

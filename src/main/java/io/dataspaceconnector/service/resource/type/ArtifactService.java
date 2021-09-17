@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import io.dataspaceconnector.common.exception.DataDispatchException;
 import io.dataspaceconnector.common.exception.DataRetrievalException;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.NotImplemented;
@@ -35,6 +36,7 @@ import io.dataspaceconnector.common.net.HttpAuthentication;
 import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.net.RetrievalInformation;
+import io.dataspaceconnector.common.routing.RouteDataDispatcher;
 import io.dataspaceconnector.common.usagecontrol.AccessVerificationInput;
 import io.dataspaceconnector.common.usagecontrol.PolicyVerifier;
 import io.dataspaceconnector.common.usagecontrol.VerificationResult;
@@ -101,6 +103,11 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private final @NonNull RouteDataRetriever routeRetriever;
 
     /**
+     * Dispatches data using Camel routes.
+     */
+    private final @NonNull RouteDataDispatcher routeDispatcher;
+
+    /**
      * Constructor for ArtifactService.
      *
      * @param repository               The artifact repository.
@@ -110,6 +117,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param authenticationRepository The AuthType repository.
      * @param routeRepository          The Route repository.
      * @param routeDataRetriever       The route data retriever.
+     * @param routeDataDispatcher      The route data dispatcher.
      */
     public ArtifactService(final BaseEntityRepository<Artifact> repository,
                            final AbstractFactory<Artifact, ArtifactDesc> factory,
@@ -117,13 +125,15 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                            final @NonNull HttpService httpService,
                            final @NonNull AuthenticationRepository authenticationRepository,
                            final @NonNull RouteRepository routeRepository,
-                           final @NonNull RouteDataRetriever routeDataRetriever) {
+                           final @NonNull RouteDataRetriever routeDataRetriever,
+                           final @NonNull RouteDataDispatcher routeDataDispatcher) {
         super(repository, factory);
         this.dataRepo = dataRepository;
         this.httpSvc = httpService;
         this.authRepo = authenticationRepository;
         this.routeRepo = routeRepository;
         this.routeRetriever = routeDataRetriever;
+        this.routeDispatcher = routeDataDispatcher;
     }
 
     /**
@@ -169,6 +179,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param retriever      Retrieves the data from an external source.
      * @param artifactId     The id of the artifact.
      * @param queryInput     The query for the backend.
+     * @param routeIds       The routes the data should be sent to.
      * @return The artifacts data.
      * @throws PolicyRestrictionException                                       if the data
      * access has been denied.
@@ -180,24 +191,25 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      */
     public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
-                               final QueryInput queryInput)
+                               final QueryInput queryInput, final List<URI> routeIds)
             throws PolicyRestrictionException, IOException {
         final var agreements =
                 ((ArtifactRepository) getRepository()).findRemoteOriginAgreements(artifactId);
         if (agreements.size() > 0) {
             return tryToAccessDataByUsingAnyAgreement(accessVerifier, retriever, artifactId,
-                    queryInput, agreements);
+                    queryInput, agreements, routeIds);
         }
 
         // The artifact is not assigned to any requested resources. It must be offered if it exists.
-        return new BackendDataService(routeRetriever, httpSvc, queryInput)
+        var data = new BackendDataService(routeRetriever, httpSvc, queryInput)
                 .getDataFromInternalDB((ArtifactImpl) get(artifactId));
+        return new DataDispatcher(routeIds, data).dispatch();
     }
 
     private InputStream tryToAccessDataByUsingAnyAgreement(
             final PolicyVerifier<AccessVerificationInput> accessVerifier,
             final ArtifactRetriever retriever, final UUID artifactId, final QueryInput queryInput,
-            final List<URI> agreements) throws IOException {
+            final List<URI> agreements, final List<URI> routeIds) throws IOException {
         /*
          * NOTE: Check if agreements with remoteIds are set for this artifact. If such agreements
          * exist the artifact must be assigned to a requested resource. The data access should
@@ -211,7 +223,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         for (final var agRemoteId : agreements) {
             try {
                 final var info = new RetrievalInformation(agRemoteId, null, queryInput);
-                return getData(accessVerifier, retriever, artifactId, info);
+                return getData(accessVerifier, retriever, artifactId, info, routeIds);
             } catch (PolicyRestrictionException exception) {
                 // Access denied, log it and try the next agreement.
                 if (log.isDebugEnabled()) {
@@ -241,6 +253,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param retriever      Retrieves the data from an external source.
      * @param artifactId     The id of the artifact.
      * @param information    Information for pulling the data from a remote source.
+     * @param routeIds       The routes the data should be sent to.
      * @return The artifact's data.
      * @throws PolicyRestrictionException                                       if the data
      * access has been denied.
@@ -252,7 +265,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      */
     public InputStream getData(final PolicyVerifier<AccessVerificationInput> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
-                               final RetrievalInformation information)
+                               final RetrievalInformation information, final List<URI> routeIds)
             throws PolicyRestrictionException, IOException {
         // Check the artifact exists and access is granted.
         final var artifact = get(artifactId);
@@ -261,14 +274,16 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
 
         // Make sure the data exists and is up to date.
         if (shouldDownload(artifact, information)) {
-            final var data = downloadAndUpdateData(retriever, artifactId, information, artifact);
+            final var data = downloadAndUpdateData(retriever, artifactId, information, artifact,
+                    routeIds);
             incrementAccessCounter(artifact);
             return data;
         }
 
         // Artifact exists, access granted, data exists and data up to date.
-        return new BackendDataService(routeRetriever, httpSvc, information.getQueryInput())
+        var data = new BackendDataService(routeRetriever, httpSvc, information.getQueryInput())
                 .getDataFromInternalDB((ArtifactImpl) artifact);
+        return new DataDispatcher(routeIds, data).dispatch();
     }
 
     private void verifyDataAccess(final PolicyVerifier<AccessVerificationInput> accessVerifier,
@@ -286,13 +301,18 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private InputStream downloadAndUpdateData(final ArtifactRetriever retriever,
                                               final UUID artifactId,
                                               final RetrievalInformation information,
-                                              final Artifact artifact)
+                                              final Artifact artifact, final List<URI> routeIds)
             throws IOException {
         final var dataStream = retriever.retrieve(artifactId,
                 artifact.getRemoteAddress(),
                 information.getTransferContract(),
                 information.getQueryInput());
-        return setData(artifactId, dataStream);
+
+        if (routeIds != null && !routeIds.isEmpty()) {
+            return new DataDispatcher(routeIds, dataStream).dispatch();
+        } else {
+            return setData(artifactId, dataStream);
+        }
     }
 
     private void incrementAccessCounter(final Artifact artifact) {
@@ -387,10 +407,6 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         }
     }
 
-    private InputStream toInputStream(final byte[] data) {
-        return new ByteArrayInputStream(data);
-    }
-
     /**
      * Returns the route associated with an artifact, if any.
      *
@@ -481,6 +497,10 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             return toInputStream(data.getValue());
         }
 
+        private InputStream toInputStream(final byte[] data) {
+            return new ByteArrayInputStream(data);
+        }
+
         /**
          * Get remote data.
          *
@@ -526,6 +546,52 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                                     final List<? extends HttpAuthentication> authentications)
                 throws IOException, DataRetrievalException {
             return service.get(target, queryInput, authentications).getData();
+        }
+    }
+
+    /**
+     * Dispatches data via Camel routes.
+     */
+    @RequiredArgsConstructor
+    private class DataDispatcher {
+
+        /**
+         * The IDs of the routes to use for dispatching the data.
+         */
+        private final List<URI> routeIds;
+
+        /**
+         * The data.
+         */
+        private final @NonNull InputStream dataStream;
+
+        /**
+         * Dispatches the data via all specified routes.
+         *
+         * @return the data.
+         * @throws IOException if the data cannot be read or there is a failure in one of the
+         *                     routes.
+         */
+        public InputStream dispatch() throws IOException {
+            if (routeIds != null && !routeIds.isEmpty()) {
+                try {
+                    final var data = dataStream.readAllBytes();
+                    dataStream.close();
+                    for (var routeId: routeIds) {
+                        routeDispatcher.send(routeId, data);
+                    }
+                    return new ByteArrayInputStream(data);
+                } catch (IOException | DataDispatchException exception) {
+                    if (log.isWarnEnabled()) {
+                        log.warn("Could not send data via route. [exception=({})]",
+                                exception.getMessage(), exception);
+                    }
+
+                    throw new IOException("Could not send data via route.", exception);
+                }
+            } else {
+                return dataStream;
+            }
         }
     }
 }

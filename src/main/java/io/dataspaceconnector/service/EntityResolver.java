@@ -256,7 +256,8 @@ public class EntityResolver {
                                            final QueryInput queryInput)
             throws IOException {
         final var endpoint = EndpointUtils.getUUIDFromPath(requestedArtifact);
-        return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint, queryInput);
+        return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint, queryInput,
+                null);
     }
 
     /**

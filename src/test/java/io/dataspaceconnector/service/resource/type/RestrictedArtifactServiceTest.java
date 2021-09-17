@@ -88,7 +88,8 @@ public class RestrictedArtifactServiceTest {
         Mockito.doReturn(data).when(artifactReceiver).retrieve(artifactId, artifact.getRemoteAddress(), agreements.get(0), null);
 
         /* ACT */
-        final var result = service.getData(verifier, artifactReceiver, artifactId, (QueryInput) null);
+        final var result = service.getData(verifier, artifactReceiver, artifactId,
+                (QueryInput) null, null);
 
         /* ASSERT */
         final var resultBytes = result.readAllBytes();

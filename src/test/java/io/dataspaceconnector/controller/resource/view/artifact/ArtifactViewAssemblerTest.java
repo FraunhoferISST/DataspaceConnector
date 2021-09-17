@@ -172,7 +172,7 @@ public class ArtifactViewAssemblerTest {
     @SneakyThrows
     private String getArtifactDataLink(final UUID artifactId) {
         return linkTo(methodOn(ArtifactController.class)
-                .getData(artifactId, new QueryInput())).toString();
+                .getData(artifactId, null, new QueryInput())).toString();
     }
 
     private String getArtifactRepresentationsLink(final UUID artifactId) {

@@ -57,7 +57,7 @@ public class ArtifactViewAssembler extends SelfLinkHelper
         view.add(getSelfLink(artifact.getId()));
 
         final var dataLink = linkTo(methodOn(ArtifactController.class)
-                .getData(artifact.getId(), new QueryInput()))
+                .getData(artifact.getId(), null, new QueryInput()))
                 .withRel("data");
         view.add(dataLink);
 

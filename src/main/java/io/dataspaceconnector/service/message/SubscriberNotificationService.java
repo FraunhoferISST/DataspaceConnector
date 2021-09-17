@@ -286,7 +286,8 @@ public class SubscriberNotificationService {
         if (entity instanceof Artifact) {
             final var id = entity.getId();
             try {
-                return artifactSvc.getData(accessVerifier, dataReceiver, id, new QueryInput());
+                return artifactSvc.getData(accessVerifier, dataReceiver, id, new QueryInput(),
+                        null);
             } catch (IOException exception) {
                 if (log.isDebugEnabled()) {
                     log.debug("Failed to retrieve data. [exception=({})]", exception.getMessage());

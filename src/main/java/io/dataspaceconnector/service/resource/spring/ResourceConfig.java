@@ -16,6 +16,7 @@
 package io.dataspaceconnector.service.resource.spring;
 
 import io.dataspaceconnector.common.net.HttpService;
+import io.dataspaceconnector.common.routing.RouteDataDispatcher;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.agreement.AgreementFactory;
 import io.dataspaceconnector.model.app.AppFactory;
@@ -107,6 +108,7 @@ public class ResourceConfig {
      * @param authRepo       The auth repo.
      * @param routeRepo      The route repo.
      * @param retriever      The route data retriever.
+     * @param dispatcher     The route data dispatcher.
      * @return The artifact service bean.
      */
     @Bean("artifactService")
@@ -116,9 +118,10 @@ public class ResourceConfig {
             final HttpService httpService,
             final AuthenticationRepository authRepo,
             final RouteRepository routeRepo,
-            final RouteDataRetriever retriever) {
+            final RouteDataRetriever retriever,
+            final RouteDataDispatcher dispatcher) {
         return new ArtifactService(repository, new ArtifactFactory(),
-                dataRepository, httpService, authRepo, routeRepo, retriever);
+                dataRepository, httpService, authRepo, routeRepo, retriever, dispatcher);
     }
 
     /**

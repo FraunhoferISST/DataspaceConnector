@@ -112,10 +112,11 @@ class ArtifactControllerTest {
         final byte[] data = {0, 1, 2, 3};
         final var dataStream = new ByteArrayInputStream(data);
 
-        Mockito.doReturn(dataStream).when(service).getData(any(), any(), eq(artifactId), eq(queryInput));
+        Mockito.doReturn(dataStream).when(service)
+                .getData(any(), any(), eq(artifactId), eq(queryInput), any());
 
         /* ACT */
-        final var result = controller.getData(artifactId, queryInput);
+        final var result = controller.getData(artifactId, null, queryInput);
 
         /* ASSERT */
         assertEquals(HttpStatus.OK.value(), result.getStatusCode().value());

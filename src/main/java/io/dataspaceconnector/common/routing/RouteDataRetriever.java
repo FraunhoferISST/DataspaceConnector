@@ -68,6 +68,10 @@ public class RouteDataRetriever implements DataRetrievalService {
             final var result = template.send(camelDirect,
                     ExchangeBuilder.anExchange(context).build());
 
+            if (result.getException() != null) {
+                throw result.getException();
+            }
+
             final var data = result.getIn().getBody(String.class);
             return new RouteResponse(new ByteArrayInputStream(data.getBytes()));
         } catch (Exception exception) {
