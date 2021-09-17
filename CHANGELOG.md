@@ -3,17 +3,21 @@ All notable changes to this project will be documented in this file.
 
 ## [X.X.X] - XXXX-XX-XX
 
+### Added
+- Added `authenticationSet` as boolean indicator in output of configuration APIs whether authentication credentials for a proxy are present.
+
 ### Fixed
 - Fix self-reference of QueryInput in OpenApi schema.
 - Fix global exceptionhandler intercepting checked exceptions.
 - Create Clearing House process before logging, so that consumer can log under same ID.
+- When creating an artifact, check length of whole URL instead of just path.
 
 ### Changed
 - Add `ServiceResolver` to remove some Spring annotations from service classes.
 - Refactor and speed up tests.
 - Increase checkstyle version from 8.45.1 to 9.0.0.
 - Increase pmd version from 6.37.0 to 6.38.0.
-- Increase IDS messaging services version from 4.2.2 to 4.3.0.
+- Increase IDS messaging services version from 4.2.2 to 5.0.0.
 - Increase pitest version from 1.69.0 to 1.70.0.
 - Increase dependency-check-maven version from 6.2.2 to 6.3.1.
 - Increase maven-javadoc-plugin version from 3.3.0 to 3.3.1.

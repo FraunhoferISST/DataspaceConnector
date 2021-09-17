@@ -26,6 +26,9 @@ public class ProxyViewAssembler implements RepresentationModelAssembler<Proxy, P
 
     @Override
     public final ProxyView toModel(final Proxy proxy) {
-        return new ModelMapper().map(proxy, ProxyView.class);
+        final var proxyView = new ModelMapper().map(proxy, ProxyView.class);
+        proxyView.setAuthenticationSet(proxy.getAuthentication() != null);
+
+        return proxyView;
     }
 }
