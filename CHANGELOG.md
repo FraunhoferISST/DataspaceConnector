@@ -12,6 +12,8 @@ All notable changes to this project will be documented in this file.
 - Fix global exceptionhandler intercepting checked exceptions.
 - Create Clearing House process before logging, so that consumer can log under same ID.
 - When creating an artifact, check length of whole URL instead of just path.
+- Use language code instead of language ID when creating TypedLiterals.
+- Make SelfLinkHelper non-static, so that it can use Spring properties.
 
 ### Changed
 - Add `ServiceResolver` to remove some Spring annotations from service classes.
