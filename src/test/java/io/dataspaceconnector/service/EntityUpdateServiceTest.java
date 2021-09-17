@@ -23,6 +23,7 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.resource.RequestedResource;
@@ -82,6 +83,9 @@ public class EntityUpdateServiceTest {
 
     @MockBean
     private ArtifactService artifactService;
+
+    @MockBean
+    private SelfLinkHelper selfLinkHelper;
 
     @Autowired
     private EntityUpdateService entityUpdateService;

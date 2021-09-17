@@ -17,6 +17,7 @@ package io.dataspaceconnector.service.resource.ids.builder;
 
 import de.fraunhofer.iais.eis.Language;
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
@@ -25,9 +26,11 @@ import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.representation.RepresentationDesc;
 import io.dataspaceconnector.model.representation.RepresentationFactory;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.net.URI;
 import java.time.ZoneOffset;
@@ -41,6 +44,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {RepresentationFactory.class, ArtifactFactory.class,
         IdsRepresentationBuilder.class, IdsArtifactBuilder.class})
@@ -55,11 +60,22 @@ public class IdsRepresentationBuilderTest {
     @Autowired
     private IdsRepresentationBuilder idsRepresentationBuilder;
 
+    @MockBean
+    private SelfLinkHelper selfLinkHelper;
+
     private final String mediaType = "plain/text";
 
     private final URI standard = URI.create("http://standard.com");
 
     private final ZonedDateTime date = ZonedDateTime.now(ZoneOffset.UTC);
+
+    private final UUID uuid = UUID.randomUUID();
+
+    @BeforeEach
+    void init() {
+        final var uri = URI.create("https://" + uuid);
+        when(selfLinkHelper.getSelfLink(any(Entity.class))).thenReturn(uri);
+    }
 
     @Test
     public void create_inputNull_throwNullPointerException() {
@@ -189,7 +205,7 @@ public class IdsRepresentationBuilderTest {
 
         final var idField = Entity.class.getDeclaredField("id");
         idField.setAccessible(true);
-        idField.set(artifact, UUID.randomUUID());
+        idField.set(artifact, uuid);
 
         final var creationDateField = Entity.class.getDeclaredField("creationDate");
         creationDateField.setAccessible(true);
@@ -210,7 +226,7 @@ public class IdsRepresentationBuilderTest {
 
         final var idField = Entity.class.getDeclaredField("id");
         idField.setAccessible(true);
-        idField.set(representation, UUID.randomUUID());
+        idField.set(representation, uuid);
 
         final var creationDateField = Entity.class.getDeclaredField("creationDate");
         creationDateField.setAccessible(true);

@@ -19,23 +19,36 @@ import de.fraunhofer.iais.eis.RouteStep;
 import de.fraunhofer.iais.eis.RouteStepBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
  * Converts DSC routes to IDS route steps.
  */
 @Component
-@RequiredArgsConstructor
 public final class IdsRouteStepBuilder extends AbstractIdsBuilder<Route, RouteStep> {
 
     /**
      * The builder for ids endpoints.
      */
     private final @NonNull IdsEndpointBuilder endpointBuilder;
+
+    /**
+     * Constructs an IdsRouteStepBuilder.
+     *
+     * @param selfLinkHelper the self link helper.
+     * @param idsEndpointBuilder the endpoint builder.
+     */
+    @Autowired
+    public IdsRouteStepBuilder(final SelfLinkHelper selfLinkHelper,
+                             final IdsEndpointBuilder idsEndpointBuilder) {
+        super(selfLinkHelper);
+        this.endpointBuilder = idsEndpointBuilder;
+    }
 
     @Override
     protected RouteStep createInternal(final Route route, final int currentDepth,
