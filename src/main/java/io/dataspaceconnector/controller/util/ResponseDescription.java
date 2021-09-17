@@ -73,4 +73,9 @@ public class ResponseDescription {
      * Response code is CONFLICT.
      */
     public static final String CONFLICT = "Conflict";
+
+    /**
+     * Description is Not Allowed.
+     */
+    public static final String NOT_FOUND = "Not found";
 }

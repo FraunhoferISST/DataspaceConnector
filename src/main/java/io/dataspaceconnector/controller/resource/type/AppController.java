@@ -128,7 +128,11 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
             @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
                     description = ResponseDescription.INTERNAL_SERVER_ERROR),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.UNAUTHORIZED),
+            @ApiResponse(responseCode = ResponseCode.CONFLICT,
+                description = ResponseDescription.CONFLICT),
+            @ApiResponse(responseCode = ResponseCode.NOT_FOUND,
+                description = ResponseDescription.NOT_FOUND)})
     @ResponseBody
     public final ResponseEntity<Object> containerManagement(
             @PathVariable("id") final UUID appId,
