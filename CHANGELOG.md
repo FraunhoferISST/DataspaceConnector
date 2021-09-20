@@ -27,6 +27,7 @@ All notable changes to this project will be documented in this file.
 - Increase pmd-maven-plugin version from 3.14.0 to 3.15.0.
 - Increase camel version from 3.11.1 to 3.11.2.
 - Increase pitest-junit-plugin version from 0.14 to 0.15.
+- Increase spotbugs version from 4.3.0 to 4.4.1.
 - Resolve spotbugs warnings.
 
 ## [6.2.0] - 2021-09-01
