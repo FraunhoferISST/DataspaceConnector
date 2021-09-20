@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service;
+package io.dataspaceconnector.extension.actuator.update;
 
 import de.fraunhofer.ids.messaging.protocol.http.HttpService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -97,7 +95,7 @@ public class ProjectInformationService {
         final var updateType = isOutdated(latestVersion, currentVersion);
 
         latestData.put("update.type", updateType.toString());
-        latestData.put("update.available", !Udpate.NO_UPDATE.equals(updateType));
+        latestData.put("update.available", !UdpateType.NO_UPDATE.equals(updateType));
 
         versionInfo.put("connector.update", latestData);
         versionInfo.put("connector.version", projectVersion);
@@ -171,90 +169,23 @@ public class ProjectInformationService {
      * @param projectInfo Current version number.
      * @return Result and type of the present update.
      */
-    private Udpate isOutdated(final String[] releaseInfo, final String[] projectInfo) {
+    private UdpateType isOutdated(final String[] releaseInfo, final String[] projectInfo) {
         if (Integer.parseInt(releaseInfo[0]) > Integer.parseInt(projectInfo[0])) {
-            return Udpate.MAJOR;
+            return UdpateType.MAJOR;
         }
 
         if (Integer.parseInt(releaseInfo[0]) == Integer.parseInt(projectInfo[0])
                 && Integer.parseInt(releaseInfo[1]) > Integer.parseInt(projectInfo[1])) {
-            return Udpate.MINOR;
+            return UdpateType.MINOR;
         }
 
         if (Integer.parseInt(releaseInfo[0]) == Integer.parseInt(projectInfo[0])
                 && Integer.parseInt(releaseInfo[1]) == Integer.parseInt(projectInfo[1])
                 && Integer.parseInt(releaseInfo[2]) > Integer.parseInt(projectInfo[2])) {
-            return Udpate.PATCH;
+            return UdpateType.PATCH;
         }
 
-        return Udpate.NO_UPDATE;
+        return UdpateType.NO_UPDATE;
     }
 
-    /**
-     * Configuration for accessed repository.
-     */
-    @Getter
-    @AllArgsConstructor
-    public static class RepoConfig {
-
-        /**
-         * The port.
-         */
-        private int port;
-
-        /**
-         * The hostname.
-         */
-        private String host;
-
-        /**
-         * The scheme.
-         */
-        private String scheme;
-    }
-
-    /**
-     * Types which updates may be present.
-     */
-    private enum Udpate {
-
-        /**
-         * If no update is available.
-         */
-        NO_UPDATE("no update"),
-
-        /**
-         * A new major release is available.
-         */
-        MAJOR("major"),
-
-        /**
-         * A new minor release is available.
-         */
-        MINOR("minor"),
-
-        /**
-         * A new patch release is available.
-         */
-        PATCH("patch");
-
-        /**
-         * Holds the enums string.
-         */
-        private final String value;
-
-        /**
-         * Constructor.
-         *
-         * @param name The name of the update-enum .
-         */
-        Udpate(final String name) {
-            this.value = name;
-        }
-
-        @Override
-        public String toString() {
-            return value;
-        }
-    }
 }

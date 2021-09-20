@@ -16,6 +16,8 @@
 package io.dataspaceconnector.service;
 
 import de.fraunhofer.ids.messaging.protocol.http.HttpService;
+import io.dataspaceconnector.extension.actuator.update.ProjectInformationService;
+import io.dataspaceconnector.extension.actuator.update.RepoConfig;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -35,14 +37,14 @@ public class ProjectInformationServiceTest {
 
     public HttpService httpService;
 
-    public ProjectInformationService.RepoConfig repoConfig;
+    public RepoConfig repoConfig;
 
     private MockWebServer mockWebServer;
 
     @BeforeEach
     public void setUp() throws Exception {
         httpService = Mockito.mock(HttpService.class);
-        repoConfig = Mockito.mock(ProjectInformationService.RepoConfig.class);
+        repoConfig = Mockito.mock(RepoConfig.class);
 
         projectInformationService = new ProjectInformationService(httpService);
 

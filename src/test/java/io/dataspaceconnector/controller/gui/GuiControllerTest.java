@@ -16,7 +16,8 @@
 package io.dataspaceconnector.controller.gui;
 
 import io.dataspaceconnector.controller.gui.util.GuiUtils;
-import io.dataspaceconnector.service.ProjectInformationService;
+import io.dataspaceconnector.extension.actuator.update.ProjectInformationService;
+import io.dataspaceconnector.extension.actuator.update.SoftwareUpdateController;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -43,7 +44,7 @@ class GuiControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private GuiController.ConnectorReleaseContributor connectorReleaseContributor;
+    private SoftwareUpdateController connectorReleaseContributor;
 
     @MockBean
     private ProjectInformationService projectInformationService;
