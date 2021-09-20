@@ -58,7 +58,6 @@ public class RouteDataDispatcher {
      */
     public void send(final URI routeId, final byte[] bytes) throws IOException,
             DataDispatchException {
-        //TODO UTF-8 fails for locally stored data (is UTF-16)
         final var data = new String(bytes, StandardCharsets.UTF_8);
         final var routeUuid = UUIDUtils.uuidFromUri(routeId);
         final var camelDirect = "direct:" + routeUuid;

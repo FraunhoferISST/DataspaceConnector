@@ -111,7 +111,7 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
      */
     private boolean updateData(final AppImpl app, final String value) {
         final var newData = new LocalData();
-        final var data = value == null ? null : value.getBytes(StandardCharsets.UTF_16);
+        final var data = value == null ? null : value.getBytes(StandardCharsets.UTF_8);
         newData.setValue(data);
 
         final var oldData = app.getData();
