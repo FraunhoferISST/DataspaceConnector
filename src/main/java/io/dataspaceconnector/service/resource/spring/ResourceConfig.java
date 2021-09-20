@@ -296,6 +296,7 @@ public class ResourceConfig {
      * @param repo                 The route repository.
      * @param endpointRepository   The endpoint repository.
      * @param endpointServiceProxy The endpoint service proxy.
+     * @param artifactService      The artifact service.
      * @param routeHelper          The route helper.
      * @param platformTransactionManager The transaction manager.
      * @return The route service bean.
@@ -305,10 +306,11 @@ public class ResourceConfig {
             final RouteRepository repo,
             final EndpointRepository endpointRepository,
             final EndpointServiceProxy endpointServiceProxy,
+            final ArtifactService artifactService,
             final RouteHelper routeHelper,
             final PlatformTransactionManager platformTransactionManager) {
         return new RouteService(repo, new RouteFactory(), endpointRepository,
-                endpointServiceProxy, routeHelper, platformTransactionManager);
+                endpointServiceProxy, artifactService, routeHelper, platformTransactionManager);
     }
 
     /**

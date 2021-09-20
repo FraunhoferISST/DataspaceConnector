@@ -32,9 +32,6 @@ class EntityLinkerServiceTest {
     @Autowired
     private RouteStepLinker routeStepLinker;
 
-    @Autowired
-    private RouteArtifactLinker routeArtifactLinker;
-
     @Test
     public void brokerOfferedResourcesLinker_getInternal_returnBrokerOfferedResources() {
         /* ARRANGE */
@@ -47,12 +44,5 @@ class EntityLinkerServiceTest {
         /* ARRANGE */
         /* ACT && ASSERT */
         assertNull(routeStepLinker.getInternal(new Route()));
-    }
-
-    @Test
-    public void routeArtifactsLinker_getInternal_returnBrokerOfferedResources() {
-        /* ARRANGE */
-        /* ACT && ASSERT */
-        assertNull(routeArtifactLinker.getInternal(new Route()));
     }
 }

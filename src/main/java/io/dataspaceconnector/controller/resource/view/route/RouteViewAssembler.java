@@ -18,7 +18,6 @@ package io.dataspaceconnector.controller.resource.view.route;
 import java.util.UUID;
 
 import io.dataspaceconnector.config.BaseType;
-import io.dataspaceconnector.controller.resource.relation.RoutesToArtifactsController;
 import io.dataspaceconnector.controller.resource.relation.RoutesToStepsController;
 import io.dataspaceconnector.controller.resource.type.RouteController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
@@ -59,10 +58,9 @@ public class RouteViewAssembler extends SelfLinkHelper
                 .withRel(BaseType.ROUTES);
         view.add(steps);
 
-        final var artifacts = linkTo(methodOn(RoutesToArtifactsController.class)
-                .getResource(route.getId(), null, null))
-                .withRel(BaseType.ARTIFACTS);
-        view.add(artifacts);
+        final var output = linkTo(methodOn(RouteController.class)
+                .getOutput(route.getId())).withRel("output");
+        view.add(output);
 
         return view;
     }

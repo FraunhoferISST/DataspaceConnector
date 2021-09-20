@@ -61,6 +61,11 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
     private final @NonNull EndpointServiceProxy endpointService;
 
     /**
+     * Service for artifacts.
+     */
+    private final @NonNull ArtifactService artifactSvc;
+
+    /**
      * Helper class for deploying and deleting Camel routes.
      */
     private final @NonNull RouteHelper routeHelper;
@@ -77,6 +82,7 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      * @param factory              The route factory.
      * @param endpointRepository   The endpoint repository.
      * @param endpointServiceProxy The endpoint service.
+     * @param artifactService      The artifact service.
      * @param camelRouteHelper     The helper class for Camel routes.
      * @param platformTransactionManager The transaction manager.
      */
@@ -85,6 +91,7 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
             final AbstractFactory<Route, RouteDesc> factory,
             final @NonNull EndpointRepository endpointRepository,
             final @NonNull EndpointServiceProxy endpointServiceProxy,
+            final @NonNull ArtifactService artifactService,
             final @NonNull RouteHelper camelRouteHelper,
             final @NonNull PlatformTransactionManager platformTransactionManager) {
         super(repository, factory);
@@ -92,6 +99,7 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
         this.endpointService = endpointServiceProxy;
         this.routeHelper = camelRouteHelper;
         this.transactionManager = platformTransactionManager;
+        this.artifactSvc = artifactService;
     }
 
     @Override
@@ -149,6 +157,25 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      */
     public void removeLastEndpoint(final UUID routeId) {
         persist(((RouteFactory) getFactory()).deleteLastEndpoint(get(routeId)));
+    }
+
+    /**
+     * Sets the output of a route.
+     *
+     * @param routeId    The route ID.
+     * @param artifactId ID of the artifact which is the output.
+     */
+    public void setOutput(final UUID routeId, final UUID artifactId) {
+        persist(((RouteFactory) getFactory()).setOutput(get(routeId), artifactSvc.get(artifactId)));
+    }
+
+    /**
+     * Removes the output from a route.
+     *
+     * @param routeId The route ID.
+     */
+    public void removeOutput(final UUID routeId) {
+        persist(((RouteFactory) getFactory()).deleteOutput(get(routeId)));
     }
 
     /**

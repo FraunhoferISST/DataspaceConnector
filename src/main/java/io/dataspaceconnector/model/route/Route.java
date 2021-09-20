@@ -86,6 +86,6 @@ public class Route extends NamedEntity {
     /**
      * List of offered resources.
      */
-    @OneToMany
-    private List<Artifact> output;
+    @OneToOne
+    private Artifact output;
 }

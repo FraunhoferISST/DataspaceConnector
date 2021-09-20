@@ -43,7 +43,7 @@ public class RouteFactoryTest {
         /* ASSERT */
         assertEquals(title, result.getTitle());
         assertEquals(description, result.getDescription());
-        assertTrue(result.getOutput().isEmpty());
+        assertNull(result.getOutput());
     }
 
     @Test
