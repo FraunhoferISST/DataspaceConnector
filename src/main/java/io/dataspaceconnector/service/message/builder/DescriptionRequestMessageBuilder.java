@@ -48,6 +48,7 @@ public class DescriptionRequestMessageBuilder extends
     /**
      * Builds a DescriptionRequestMessage according to the exchange properties and creates a Request
      * with the message as header and an empty payload.
+     *
      * @param exchange the exchange.
      * @return the {@link Request}.
      */

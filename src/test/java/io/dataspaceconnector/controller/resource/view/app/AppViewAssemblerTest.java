@@ -15,14 +15,13 @@
  */
 package io.dataspaceconnector.controller.resource.view.app;
 
+import java.net.URI;
+
 import io.dataspaceconnector.controller.resource.type.AppController;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.app.AppFactory;
 import org.junit.jupiter.api.Test;
-
-import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,7 +32,7 @@ class AppViewAssemblerTest {
     public void create_ValidApp_returnAppView() {
         /* ARRANGE */
         final var shouldLookLike = getApp();
-        final var link = ViewAssemblerHelper.getSelfLink(shouldLookLike.getId(),
+        final var link = new AppViewAssembler().getSelfLink(shouldLookLike.getId(),
                 AppController.class);
 
         /* ACT */

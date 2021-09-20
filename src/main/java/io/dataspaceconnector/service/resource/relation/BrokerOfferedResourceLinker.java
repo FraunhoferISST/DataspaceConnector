@@ -30,8 +30,8 @@ import java.util.List;
  */
 @Service
 @NoArgsConstructor
-public class BrokerOfferedResourceLinker extends OwningRelationService<Broker,
-        OfferedResource, BrokerService, OfferedResourceService> {
+public class BrokerOfferedResourceLinker extends OwningRelationService<Broker, OfferedResource,
+        BrokerService, OfferedResourceService> {
 
     @Override
     protected final List<OfferedResource> getInternal(final Broker owner) {

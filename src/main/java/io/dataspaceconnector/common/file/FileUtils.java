@@ -34,6 +34,7 @@ public final class FileUtils {
 
     /**
      * Return a list of all files in a directory.
+     *
      * @param directory The directory.
      * @return List of contained files.
      */
@@ -45,6 +46,7 @@ public final class FileUtils {
 
     /**
      * Open a file.
+     *
      * @param path The filepath.
      * @return The file.
      * @throws FileNotFoundException if the file does not exist.

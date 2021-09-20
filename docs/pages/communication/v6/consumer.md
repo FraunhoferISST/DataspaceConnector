@@ -98,8 +98,8 @@ or list of catalogs.
       "@id" : "https://localhost:8080/api/ids/data"
     }
   },
-  "ids:inboundModelVersion" : [ "4.0.0", "4.1.0", "4.1.2", "4.2.0" ],
-  "ids:outboundModelVersion" : "4.2.0"
+  "ids:inboundModelVersion" : [ "4.0.0", "4.1.0", "4.1.2", "4.2.0", "4.2.1", "4.2.2", "4.2.3" ],
+  "ids:outboundModelVersion" : "4.2.3"
 }
 ````
 

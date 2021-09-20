@@ -15,12 +15,13 @@
  */
 package io.dataspaceconnector.model.resource;
 
-import io.dataspaceconnector.model.named.AbstractNamedFactory;
-import io.dataspaceconnector.model.util.FactoryUtils;
-
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import io.dataspaceconnector.model.named.AbstractNamedFactory;
+import io.dataspaceconnector.model.util.FactoryUtils;
 
 /**
  * Base class for creating and updating resources.
@@ -69,7 +70,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
     /**
      * The default sample list assigned to all resources.
      */
-    public static final List<URI> DEFAULT_SAMPLES = new ArrayList<>();
+    public static final URI[] DEFAULT_SAMPLES = {};
 
     /**
      * Create a new resource.
@@ -254,7 +255,8 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
             validateSamples(resource, samples);
         }
         final var newList
-                = FactoryUtils.updateUriList(resource.getSamples(), samples, DEFAULT_SAMPLES);
+                = FactoryUtils.updateUriList(resource.getSamples(), samples,
+                                             Arrays.asList(DEFAULT_SAMPLES));
         newList.ifPresent(resource::setSamples);
 
         return newList.isPresent();

@@ -50,6 +50,7 @@ public class ConnectorUnavailableMessageBuilder
      * Builds a ConnectorUnavailableMessage according to the exchange properties as well as the
      * connector object and creates a Request with the message as header and the connector as
      * payload.
+     *
      * @param exchange the exchange.
      * @return the {@link Request}.
      */
@@ -73,7 +74,7 @@ public class ConnectorUnavailableMessageBuilder
                 .build();
 
         return new Request<>((ConnectorUnavailableMessageImpl) message, connector,
-                             Optional.empty());
+                Optional.empty());
     }
 
 }

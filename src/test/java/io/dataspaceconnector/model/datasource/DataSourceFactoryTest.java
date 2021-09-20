@@ -97,4 +97,18 @@ public class DataSourceFactoryTest {
         assertFalse(result);
         assertEquals(DataSourceFactory.DEFAULT_SOURCE_TYPE, dataSource.getType());
     }
+
+    @Test
+    void update_sameAuthHeader_willNotUpdate() {
+        /* ARRANGE */
+        final var desc = new DataSourceDesc();
+        desc.setAuthentication(new AuthenticationDesc("key", "value"));
+        final var dataSource = factory.create(desc);
+
+        /* ACT */
+        final var result = factory.update(dataSource, desc);
+
+        /* ASSERT */
+        assertFalse(result);
+    }
 }

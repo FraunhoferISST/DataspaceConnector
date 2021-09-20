@@ -15,38 +15,28 @@
  */
 package io.dataspaceconnector.model.subscription;
 
+import java.net.URI;
+
 import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.config.ConnectorConfig;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(MockitoExtension.class)
 public class SubscriptionFactory2Test {
 
-    @Mock
-    private ConnectorConfig connectorConfig;
+    private ConnectorConfig connectorConfig = Mockito.mock(ConnectorConfig.class);
 
-    private SubscriptionFactory factory;
+    private SubscriptionFactory factory = new SubscriptionFactory(connectorConfig);
 
     private URI newUrl = URI.create("http://valid-url.com");
 
     private URI initialUrl = URI.create("http://valid-url2.com");
-
-    @BeforeEach
-    public void init() {
-        this.factory = new SubscriptionFactory(connectorConfig);
-    }
 
     @Test
     public void create_descNull_throwIllegalArgumentException() {

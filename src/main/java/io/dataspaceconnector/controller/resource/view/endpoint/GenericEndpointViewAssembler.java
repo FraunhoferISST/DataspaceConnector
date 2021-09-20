@@ -15,10 +15,12 @@
  */
 package io.dataspaceconnector.controller.resource.view.endpoint;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.controller.resource.type.EndpointController;
 import io.dataspaceconnector.controller.resource.view.datasource.DataSourceViewAssembler;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.controller.resource.view.util.ViewAssemblerHelper;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +28,11 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 /**
  * Assembles the REST resource for a generic endpoint.
  */
 @Component
-public class GenericEndpointViewAssembler
+public class GenericEndpointViewAssembler extends SelfLinkHelper
         implements RepresentationModelAssembler<GenericEndpoint, GenericEndpointView>, SelfLinking {
 
     /**
@@ -40,6 +40,11 @@ public class GenericEndpointViewAssembler
      */
     @Autowired
     private DataSourceViewAssembler dataSourceViewAssembler;
+
+    @Override
+    public final Link getSelfLink(final UUID entityId) {
+        return getSelfLink(entityId, EndpointController.class);
+    }
 
     @Override
     public final GenericEndpointView toModel(final GenericEndpoint endpoint) {
@@ -53,10 +58,5 @@ public class GenericEndpointViewAssembler
         }
 
         return view;
-    }
-
-    @Override
-    public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, EndpointController.class);
     }
 }

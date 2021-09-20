@@ -73,12 +73,46 @@ Set environment variables
       name: {{ $name }}
       key: {{ $key }}
 {{- end }}
+{{- if .Values.postgresql.enabled }}
+- name: SPRING_DATASOURCE_PLATFORM
+  valueFrom:
+    configMapKeyRef:
+      name: {{ $name }}
+      key: SPRING_DATASOURCE_PLATFORM
+- name: SPRING_DATASOURCE_URL
+  valueFrom:
+    configMapKeyRef:
+      name: {{ $name }}
+      key: SPRING_DATASOURCE_URL
+- name: SPRING_DATASOURCE_DRIVERCLASSNAME
+  valueFrom:
+    configMapKeyRef:
+      name: {{ $name }}
+      key: SPRING_DATASOURCE_DRIVERCLASSNAME
+- name: SPRING_JPA_DATABASEPLATFORM
+  valueFrom:
+    configMapKeyRef:
+      name: {{ $name }}
+      key: SPRING_JPA_DATABASEPLATFORM
+{{- end }}
 {{- range $key, $value := .Values.env.secrets }}
 - name: {{ $key }}
   valueFrom:
     secretKeyRef:
       name: {{ $name }}
       key: {{ $key }}
+{{- end }}
+{{- if .Values.postgresql }}
+- name: SPRING_DATASOURCE_USERNAME
+  valueFrom:
+    secretKeyRef:
+      name: {{ $name }}
+      key: SPRING_DATASOURCE_USERNAME
+- name: SPRING_DATASOURCE_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ $name }}
+      key: SPRING_DATASOURCE_PASSWORD
 {{- end }}
 {{- end }}
 

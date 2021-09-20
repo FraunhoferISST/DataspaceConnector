@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.model.resource;
 
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import java.util.List;
+
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.catalog.Catalog;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import java.util.List;
 
 /**
  * Describes resources offered by this connector.
@@ -32,7 +32,7 @@ import java.util.List;
 @Where(clause = "deleted = false")
 @Entity
 @EqualsAndHashCode(callSuper = true)
-public final class OfferedResource extends Resource {
+public class OfferedResource extends Resource {
 
     /**
      * Serial version uid.

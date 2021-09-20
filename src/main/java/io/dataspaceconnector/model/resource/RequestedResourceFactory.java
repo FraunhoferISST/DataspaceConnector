@@ -16,7 +16,6 @@
 package io.dataspaceconnector.model.resource;
 
 import io.dataspaceconnector.model.util.FactoryUtils;
-import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.util.List;
@@ -24,7 +23,6 @@ import java.util.List;
 /**
  * Creates and updates a resource.
  */
-@Component
 public final class RequestedResourceFactory
         extends ResourceFactory<RequestedResource, RequestedResourceDesc> {
 

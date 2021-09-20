@@ -15,6 +15,19 @@
  */
 package io.dataspaceconnector.service.message.handler.type;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.UUID;
+import javax.persistence.PersistenceException;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -34,13 +47,14 @@ import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
+import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.contract.ContractDesc;
 import io.dataspaceconnector.model.contract.ContractFactory;
 import io.dataspaceconnector.model.rule.ContractRuleDesc;
 import io.dataspaceconnector.model.rule.ContractRuleFactory;
-import io.dataspaceconnector.service.EntityPersistenceService;
 import io.dataspaceconnector.service.EntityDependencyResolver;
+import io.dataspaceconnector.service.EntityPersistenceService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -49,27 +63,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.annotation.DirtiesContext;
-
-import javax.persistence.PersistenceException;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class ContractRequestHandlerTest {
 
     @MockBean
@@ -77,6 +77,9 @@ class ContractRequestHandlerTest {
 
     @SpyBean
     EntityDependencyResolver dependencyResolver;
+
+    @SpyBean
+    ConnectorService connectorService;
 
     @Autowired
     ContractRequestHandler handler;
@@ -482,6 +485,10 @@ class ContractRequestHandlerTest {
         Mockito.doReturn(Arrays.asList(rule)).when(dependencyResolver).getRulesByContractOffer(Mockito.eq(contract));
         Mockito.doReturn(getContractAgreement()).when(persistenceService).buildAndSaveContractAgreement(
                 any(), Mockito.eq(Arrays.asList(artifactId)), Mockito.eq(issuerConnector));
+        when(connectorService.getCurrentDat()).thenReturn(new DynamicAttributeTokenBuilder()
+                ._tokenFormat_(TokenFormat.JWT)
+                ._tokenValue_("value")
+                .build());
 
         /* ACT */
         final var result = (BodyResponse<?>) handler

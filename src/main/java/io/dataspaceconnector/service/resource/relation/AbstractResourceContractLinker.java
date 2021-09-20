@@ -26,6 +26,7 @@ import java.util.List;
 
 /**
  * Base class for handling resource-contract relations.
+ *
  * @param <T> The resource type.
  */
 @NoArgsConstructor
@@ -33,6 +34,7 @@ public abstract class AbstractResourceContractLinker<T extends Resource>
         extends OwningRelationService<T, Contract, ResourceService<T, ?>, ContractService> {
     /**
      * Get the list of contracts owned by the resource.
+     *
      * @param owner The owner of the contracts.
      * @return The list of owned contracts.
      */

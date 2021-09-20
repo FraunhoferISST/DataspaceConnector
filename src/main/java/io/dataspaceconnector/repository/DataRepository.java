@@ -20,6 +20,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * The repository containing all objects of type {@link Data}.
@@ -32,6 +33,7 @@ public interface DataRepository extends JpaRepository<Data, Long> {
      * @param entityId The entity id.
      * @param data     The new data.
      */
+    @Transactional
     @Modifying
     @Query("UPDATE LocalData a "
             + "SET a.value = :data "

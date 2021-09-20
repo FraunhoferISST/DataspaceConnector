@@ -15,10 +15,11 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.resource.Resource;
 import io.dataspaceconnector.model.resource.ResourceDesc;
+import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
-import lombok.NoArgsConstructor;
 
 /**
  * Handles the basic logic for resources.
@@ -26,7 +27,17 @@ import lombok.NoArgsConstructor;
  * @param <T> The resource type.
  * @param <D> The resource description type.
  */
-@NoArgsConstructor
 public class ResourceService<T extends Resource, D extends ResourceDesc>
         extends BaseEntityService<T, D> {
+
+    /**
+     * Constructor.
+     *
+     * @param repository The resource repository.
+     * @param factory    The resource factory.
+     */
+    public ResourceService(final BaseEntityRepository<T> repository,
+                           final AbstractFactory<T, D> factory) {
+        super(repository, factory);
+    }
 }

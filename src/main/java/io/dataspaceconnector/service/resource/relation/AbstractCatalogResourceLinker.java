@@ -23,6 +23,7 @@ import io.dataspaceconnector.service.resource.type.ResourceService;
 
 /**
  * Base class for handling catalog-resource relations.
+ *
  * @param <T> The resource type.
  */
 public abstract class AbstractCatalogResourceLinker<T extends Resource>

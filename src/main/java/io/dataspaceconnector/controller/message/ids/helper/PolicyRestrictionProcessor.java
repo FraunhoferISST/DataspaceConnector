@@ -35,6 +35,7 @@ class PolicyRestrictionProcessor extends IdsHelperProcessor {
     /**
      * Throws a PolicyRestrictionException, if the exception that occurred in the route is an
      * InvalidResponseException.
+     *
      * @param exchange the exchange.
      * @throws Exception a PolicyRestrictionException.
      */

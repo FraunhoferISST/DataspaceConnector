@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(BasePath.REPRESENTATIONS)
 @Tag(name = ResourceName.REPRESENTATIONS, description = ResourceDescription.REPRESENTATIONS)
-public class RepresentationController
-        extends BaseResourceNotificationController<Representation, RepresentationDesc,
-        RepresentationView, RepresentationService> {
+public class RepresentationController extends BaseResourceNotificationController<Representation,
+        RepresentationDesc, RepresentationView, RepresentationService> {
 }

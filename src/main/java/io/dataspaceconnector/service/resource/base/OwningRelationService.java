@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 /**
  * Creates a parent-children relationship between two types of resources.
  * Implements the owning side of a relationship.
+ *
  * @param <K> The type of the parent resource. (The owning side)
  * @param <W> The type of the child resource.
  * @param <T> The service type for the parent resource.
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
  */
 public abstract class OwningRelationService<
         K extends Entity, W extends Entity, T extends BaseEntityService<K, ?>, X
-                extends EntityService<W, ?>> extends AbstractRelationService<K, W, T, X> {
+        extends EntityService<W, ?>> extends AbstractRelationService<K, W, T, X> {
 
     @Override
     protected final void addInternal(final UUID ownerId, final Set<UUID> entities) {
@@ -43,7 +44,7 @@ public abstract class OwningRelationService<
 
     @Override
     protected final void removeInternal(final UUID ownerId, final Set<UUID> entities) {
-        final var owner =  getOneService().get(ownerId);
+        final var owner = getOneService().get(ownerId);
         final var existingEntities = getInternal(owner);
 
         for (final var entityId : entities) {
@@ -62,6 +63,7 @@ public abstract class OwningRelationService<
 
     /**
      * Adds children to an entity.
+     *
      * @param owner    The entity that the children should be assigned to.
      * @param entities The children added to the entity.
      */

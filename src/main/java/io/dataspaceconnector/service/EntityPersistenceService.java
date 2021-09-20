@@ -15,6 +15,19 @@
  */
 package io.dataspaceconnector.service;
 
+import javax.persistence.PersistenceException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.iais.eis.AppRepresentation;
 import de.fraunhofer.iais.eis.AppResource;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -30,11 +43,10 @@ import io.dataspaceconnector.controller.resource.type.AgreementController;
 import io.dataspaceconnector.model.agreement.AgreementDesc;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.appstore.AppStore;
-import io.dataspaceconnector.model.resource.RequestedResource;
-import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.service.message.AppStoreCommunication;
-import io.dataspaceconnector.service.resource.TemplateBuilder;
 import io.dataspaceconnector.service.resource.relation.AgreementArtifactLinker;
+import io.dataspaceconnector.service.resource.templatebuilder.AppTemplateBuilder;
+import io.dataspaceconnector.service.resource.templatebuilder.RequestedResourceTemplateBuilder;
 import io.dataspaceconnector.service.resource.type.AgreementService;
 import io.dataspaceconnector.service.resource.type.AppService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
@@ -47,19 +59,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import javax.persistence.PersistenceException;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * This service offers methods for saving contract agreements as well as metadata and data requested
@@ -107,9 +106,14 @@ public class EntityPersistenceService {
     private final @NonNull DeserializationService deserializationService;
 
     /**
-     * Template builder.
+     * Requested resource template builder.
      */
-    private final @NonNull TemplateBuilder<RequestedResource, RequestedResourceDesc> tempBuilder;
+    private final @NonNull RequestedResourceTemplateBuilder resourceTemplateBuilder;
+
+    /**
+     * App template builder.
+     */
+    private final @NonNull AppTemplateBuilder appTemplateBuilder;
 
     /**
      * Service for app store communication logic.
@@ -250,7 +254,7 @@ public class EntityPersistenceService {
             resourceTemplate.setRepresentations(representationTemplateList);
 
             // Save all entities.
-            tempBuilder.build(resourceTemplate);
+            resourceTemplateBuilder.build(resourceTemplate);
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not store resource. [exception=({})]", e.getMessage(), e);
@@ -287,7 +291,7 @@ public class EntityPersistenceService {
             final var resourceTemplate = TemplateUtils.getAppTemplate(resource, remoteUrl);
 
             // Save all entities.
-            app = tempBuilder.build(resourceTemplate);
+            app = appTemplateBuilder.build(resourceTemplate);
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not store app. [exception=({})]", e.getMessage(), e);

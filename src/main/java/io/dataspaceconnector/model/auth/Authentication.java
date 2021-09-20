@@ -17,6 +17,7 @@ package io.dataspaceconnector.model.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.dataspaceconnector.common.net.HttpService;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -57,6 +58,7 @@ public abstract class Authentication implements HttpService.Authentication, Seri
     @GeneratedValue
     @JsonIgnore
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @SuppressWarnings("PMD.ShortVariable")
     private Long id;
 

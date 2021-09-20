@@ -15,17 +15,15 @@
  */
 package io.dataspaceconnector.controller.resource.view.truststore;
 
+import java.net.URI;
+
 import io.dataspaceconnector.model.truststore.Truststore;
 import io.dataspaceconnector.model.truststore.TruststoreDesc;
 import io.dataspaceconnector.model.truststore.TruststoreFactory;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
 public class TrustStoreViewAssemblerTest {
 
     @Test

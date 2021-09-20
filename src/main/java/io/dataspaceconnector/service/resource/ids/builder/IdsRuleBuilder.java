@@ -17,18 +17,18 @@ package io.dataspaceconnector.service.resource.ids.builder;
 
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * The base class for constructing an ids rule from a dsc rule.
  *
  * @param <T> The ids rule type.
  */
-@RequiredArgsConstructor
 public class IdsRuleBuilder<T extends Rule> extends AbstractIdsBuilder<ContractRule, T> {
 
     /**
@@ -41,6 +41,22 @@ public class IdsRuleBuilder<T extends Rule> extends AbstractIdsBuilder<ContractR
      */
     private final @NonNull Class<T> ruleType;
 
+    /**
+     * Constructs an IdsRuleBuilder.
+     *
+     * @param selfLinkHelper the self link helper.
+     * @param deserializationService the deserialization service.
+     * @param type the rule type.
+     */
+    @Autowired
+    public IdsRuleBuilder(final SelfLinkHelper selfLinkHelper,
+                          final DeserializationService deserializationService,
+                          final Class<T> type) {
+        super(selfLinkHelper);
+        this.deserializer = deserializationService;
+        this.ruleType = type;
+    }
+
     @Override
     protected final T createInternal(final ContractRule rule, final int currentDepth,
                                      final int maxDepth)
@@ -49,7 +65,7 @@ public class IdsRuleBuilder<T extends Rule> extends AbstractIdsBuilder<ContractR
         final var selfLink = getAbsoluteSelfLink(rule);
         var newRule = rule.getValue();
 
-        // Note: Infomodel deserializer sets autogen ID, when ID is missing in original rule value.
+        // Note: IDS deserializer sets autogen ID, when ID is missing in original rule value.
         // If autogen ID not present in original rule value, it's equal to rule not having ID
         if (idsRule.getId() == null || !rule.getValue().contains(idsRule.getId().toString())) {
             // No id has been set for this rule. Thus, no references can be found.

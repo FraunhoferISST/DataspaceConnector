@@ -112,12 +112,17 @@ public class SubscriberNotificationService {
     private final @NonNull CamelContext context;
 
     /**
+     * Helper for creating self links.
+     */
+    private final @NonNull SelfLinkHelper selfLinkHelper;
+
+    /**
      * Notify subscribers on database update event.
      *
      * @param entity The updated entity.
      */
     public void notifyOnUpdate(final Entity entity) {
-        final var uri = SelfLinkHelper.getSelfLink(entity);
+        final var uri = selfLinkHelper.getSelfLink(entity);
         final var subscriptions = subscriptionSvc.getByTarget(uri);
 
         // Notify subscribers of child elements.
@@ -150,7 +155,6 @@ public class SubscriberNotificationService {
         notifyIdsSubscribers(subscriptions, entity);
     }
 
-
     private void notifySubscribers(final List<Subscription> subscriptions, final URI target,
                                    final Entity entity) {
         // Get list of non-ids subscribers.
@@ -167,10 +171,9 @@ public class SubscriberNotificationService {
 
         // Update non-ids subscribers.
         // final var notification = new Notification(new Date(), target, Event.UPDATED);
-        final var notification = new HashMap<String, String>() {{
-            put("ids-target", target.toString());
-            put("ids-event", Event.UPDATED.toString());
-        }};
+        final var notification = new HashMap<String, String>();
+        notification.put("ids-target", target.toString());
+        notification.put("ids-event", Event.UPDATED.toString());
         if (!recipients.isEmpty()) {
             sendNotification(recipients, notification, InputStream.nullInputStream());
         }
