@@ -28,8 +28,8 @@ import io.dataspaceconnector.service.resource.type.ConfigurationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
@@ -41,11 +41,11 @@ import java.nio.file.Paths;
  * Intercepts {@link de.fraunhofer.ids.messaging.core.config.ConfigProducer} and changes how the
  * startup configuration is loaded.
  */
-@Component
+@Configuration
 @Slf4j
 @AllArgsConstructor
 @Transactional
-@ConditionalOnProperty(prefix = "config", name = "interceptor", havingValue = "true")
+@ConditionalOnProperty(value = "interceptor.enabled", havingValue = "true")
 public class PreConfigInterceptor implements PreConfigProducerInterceptor {
 
     /**
