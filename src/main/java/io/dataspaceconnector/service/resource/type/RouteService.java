@@ -16,13 +16,16 @@
 package io.dataspaceconnector.service.resource.type;
 
 import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.RouteCreationException;
 import io.dataspaceconnector.common.exception.RouteDeletionException;
 import io.dataspaceconnector.common.util.Utils;
+import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteDesc;
 import io.dataspaceconnector.model.route.RouteFactory;
+import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.EndpointRepository;
 import io.dataspaceconnector.repository.RouteRepository;
@@ -63,7 +66,7 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
     /**
      * Service for artifacts.
      */
-    private final @NonNull ArtifactService artifactSvc;
+    private final @NonNull ArtifactRepository artifactRepo;
 
     /**
      * Helper class for deploying and deleting Camel routes.
@@ -82,7 +85,7 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      * @param factory              The route factory.
      * @param endpointRepository   The endpoint repository.
      * @param endpointServiceProxy The endpoint service.
-     * @param artifactService      The artifact service.
+     * @param artifactRepository   The artifact repository.
      * @param camelRouteHelper     The helper class for Camel routes.
      * @param platformTransactionManager The transaction manager.
      */
@@ -91,7 +94,7 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
             final AbstractFactory<Route, RouteDesc> factory,
             final @NonNull EndpointRepository endpointRepository,
             final @NonNull EndpointServiceProxy endpointServiceProxy,
-            final @NonNull ArtifactService artifactService,
+            final @NonNull ArtifactRepository artifactRepository,
             final @NonNull RouteHelper camelRouteHelper,
             final @NonNull PlatformTransactionManager platformTransactionManager) {
         super(repository, factory);
@@ -99,7 +102,7 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
         this.endpointService = endpointServiceProxy;
         this.routeHelper = camelRouteHelper;
         this.transactionManager = platformTransactionManager;
-        this.artifactSvc = artifactService;
+        this.artifactRepo = artifactRepository;
     }
 
     @Override
@@ -117,6 +120,16 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
         }
 
         return super.persist(route);
+    }
+
+    /**
+     * Returns the route associated with a given artifact.
+     *
+     * @param artifact the artifact.
+     * @return the associated route.
+     */
+    public Route findByOutput(final Artifact artifact) {
+        return ((RouteRepository) getRepository()).findRouteByOutput(artifact);
     }
 
     /**
@@ -166,7 +179,11 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      * @param artifactId ID of the artifact which is the output.
      */
     public void setOutput(final UUID routeId, final UUID artifactId) {
-        persist(((RouteFactory) getFactory()).setOutput(get(routeId), artifactSvc.get(artifactId)));
+        final var artifact = artifactRepo.findById(artifactId);
+        if (artifact.isEmpty()) {
+            throw new ResourceNotFoundException("Could not find artifact: " + artifactId);
+        }
+        persist(((RouteFactory) getFactory()).setOutput(get(routeId), artifact.get()));
     }
 
     /**

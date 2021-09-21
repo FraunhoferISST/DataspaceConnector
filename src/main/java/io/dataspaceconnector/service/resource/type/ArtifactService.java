@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +28,7 @@ import java.util.UUID;
 import io.dataspaceconnector.common.exception.DataDispatchException;
 import io.dataspaceconnector.common.exception.DataRetrievalException;
 import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
@@ -55,7 +57,6 @@ import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.DataRepository;
-import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.ArtifactRetriever;
 import io.dataspaceconnector.common.routing.RouteDataRetriever;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
@@ -95,7 +96,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     /**
      * Repository for storing routes.
      */
-    private final @NonNull RouteRepository routeRepo;
+    private final @NonNull RouteService routeSvc;
 
     /**
      * Retrieves data using Camel routes.
@@ -115,7 +116,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param dataRepository           The data repository.
      * @param httpService              The HTTP service for fetching remote data.
      * @param authenticationRepository The AuthType repository.
-     * @param routeRepository          The Route repository.
+     * @param routeService             The Route service.
      * @param routeDataRetriever       The route data retriever.
      * @param routeDataDispatcher      The route data dispatcher.
      */
@@ -124,14 +125,14 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                            final @NonNull DataRepository dataRepository,
                            final @NonNull HttpService httpService,
                            final @NonNull AuthenticationRepository authenticationRepository,
-                           final @NonNull RouteRepository routeRepository,
+                           final @NonNull RouteService routeService,
                            final @NonNull RouteDataRetriever routeDataRetriever,
                            final @NonNull RouteDataDispatcher routeDataDispatcher) {
         super(repository, factory);
         this.dataRepo = dataRepository;
         this.httpSvc = httpService;
         this.authRepo = authenticationRepository;
-        this.routeRepo = routeRepository;
+        this.routeSvc = routeService;
         this.routeRetriever = routeDataRetriever;
         this.routeDispatcher = routeDataDispatcher;
     }
@@ -165,10 +166,58 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             if (tmp.getData() instanceof LocalData) {
                 final var factory = (ArtifactFactory) getFactory();
                 factory.updateByteSize(artifact, ((LocalData) tmp.getData()).getValue());
+            } else if (tmp.getData() instanceof RemoteData) {
+                return checkAndPersistRoute(tmp);
             }
         }
 
         return super.persist(tmp);
+    }
+
+    /**
+     * Persists an artifact with remote data. If the access URL is a route reference, the
+     * corresponding route is read from the database. If that route is already linked to an
+     * artifact, an {@link InvalidEntityException} is thrown. Else, the artifact is linked to
+     * the route after it has been persisted.
+     *
+     * @param artifact the artifact to persist.
+     * @return the persisted artifact.
+     * @throws InvalidEntityException if the access URL is not a valid URI or the referenced route
+     *                                is already linked to an artifact.
+     */
+    private Artifact checkAndPersistRoute(final ArtifactImpl artifact) {
+        final var url = ((RemoteData) artifact.getData()).getAccessUrl();
+        try {
+            if (url.toString().startsWith(getRoutesApiUrl())) {
+                final var routeId = UUIDUtils.uuidFromUri(url.toURI());
+                final var route = routeSvc.get(routeId);
+
+                if (route.getOutput() != null) {
+                    throw new InvalidEntityException("Referenced route is already linked to "
+                            + "an artifact.");
+                }
+
+                final var persisted = super.persist(artifact);
+                routeSvc.setOutput(routeId, persisted.getId());
+                return persisted;
+            } else {
+                return super.persist(artifact);
+            }
+        } catch (URISyntaxException exception) {
+            if (log.isDebugEnabled()) {
+                log.debug("Route ID in access URL of artifact is not a valid URI. "
+                        + "[accessUrl=({}), exception=({})]", url, exception.getMessage(),
+                        exception);
+            }
+            throw new InvalidEntityException("Route ID in access URL of artifact is not a "
+                    + "valid URI.");
+        } catch (ResourceNotFoundException exception) {
+            if (log.isDebugEnabled()) {
+                log.debug("Could not find route matching the access URL. "
+                                + "[accessUrl=({})]", url, exception);
+            }
+            throw new InvalidEntityException("Could not find route matching the access URL.");
+        }
     }
 
     /**
@@ -408,6 +457,33 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     }
 
     /**
+     * Deletes an artifact with the given id. If the artifact references a route in its access URL,
+     * the artifact is removed from the route before deleting it.
+     *
+     * @param artifactId The id of the entity.
+     * @throws IllegalArgumentException if the passed id is null.
+     */
+    @Override
+    public void delete(final UUID artifactId) {
+        Utils.requireNonNull(artifactId, ErrorMessage.ENTITYID_NULL);
+
+        try {
+            final var artifact = (ArtifactImpl) get(artifactId);
+            if (artifact.getData() instanceof RemoteData) {
+                final var url = ((RemoteData) artifact.getData()).getAccessUrl();
+                if (url.toString().startsWith(getRoutesApiUrl())) {
+                    final var routeId = UUIDUtils.uuidFromUri(url.toURI());
+                    routeSvc.removeOutput(routeId);
+                }
+            }
+        } catch (URISyntaxException ignore) {
+            // If the access URL is not a valid URI, route and artifact could not have been linked
+        }
+
+        getRepository().deleteById(artifactId);
+    }
+
+    /**
      * Returns the route associated with an artifact, if any.
      *
      * @param artifactId The artifact ID.
@@ -416,22 +492,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      */
     public Route getAssociatedRoute(final UUID artifactId) {
         final var artifact = (ArtifactImpl) get(artifactId);
-        final var data = artifact.getData();
-
-        Route route = null;
-        if (data instanceof RemoteData) {
-            final var accessUrl = ((RemoteData) data).getAccessUrl().toString();
-            if (accessUrl.startsWith(getRoutesApiUrl())) {
-                final var routeId = UUIDUtils.uuidFromUri(URI.create(accessUrl));
-                final var optional = routeRepo.findById(routeId);
-                if (optional.isEmpty()) {
-                    throw new ResourceNotFoundException("Failed to find route: " + accessUrl);
-                }
-                route = optional.get();
-            }
-        }
-
-        return route;
+        return routeSvc.findByOutput(artifact);
     }
 
     /**

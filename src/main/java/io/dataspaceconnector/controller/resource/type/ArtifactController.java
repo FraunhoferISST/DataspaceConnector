@@ -289,7 +289,7 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         return route == null
-                ? new ResponseEntity<>(null, headers, HttpStatus.OK)
+                ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
                 : new ResponseEntity<>(routeAssembler.toModel(route), headers, HttpStatus.OK);
     }
 }

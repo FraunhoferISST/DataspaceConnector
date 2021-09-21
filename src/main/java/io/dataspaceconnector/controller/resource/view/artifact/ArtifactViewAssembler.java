@@ -76,6 +76,11 @@ public class ArtifactViewAssembler extends SelfLinkHelper
                 .withRel(BaseType.SUBSCRIPTIONS);
         view.add(subscriptionLink);
 
+        final var routeLink = linkTo(methodOn(ArtifactController.class)
+                .getRoute(artifact.getId()))
+                .withRel("route");
+        view.add(routeLink);
+
         return view;
     }
 

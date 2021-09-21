@@ -106,7 +106,7 @@ public class ResourceConfig {
      * @param dataRepository The data repository.
      * @param httpService    The http service.
      * @param authRepo       The auth repo.
-     * @param routeRepo      The route repo.
+     * @param routeSvc       The route service.
      * @param retriever      The route data retriever.
      * @param dispatcher     The route data dispatcher.
      * @return The artifact service bean.
@@ -117,11 +117,11 @@ public class ResourceConfig {
             final DataRepository dataRepository,
             final HttpService httpService,
             final AuthenticationRepository authRepo,
-            final RouteRepository routeRepo,
+            final RouteService routeSvc,
             final RouteDataRetriever retriever,
             final RouteDataDispatcher dispatcher) {
         return new ArtifactService(repository, new ArtifactFactory(),
-                dataRepository, httpService, authRepo, routeRepo, retriever, dispatcher);
+                dataRepository, httpService, authRepo, routeSvc, retriever, dispatcher);
     }
 
     /**
@@ -296,7 +296,7 @@ public class ResourceConfig {
      * @param repo                 The route repository.
      * @param endpointRepository   The endpoint repository.
      * @param endpointServiceProxy The endpoint service proxy.
-     * @param artifactService      The artifact service.
+     * @param artifactRepository   The artifact repository.
      * @param routeHelper          The route helper.
      * @param platformTransactionManager The transaction manager.
      * @return The route service bean.
@@ -306,11 +306,11 @@ public class ResourceConfig {
             final RouteRepository repo,
             final EndpointRepository endpointRepository,
             final EndpointServiceProxy endpointServiceProxy,
-            final ArtifactService artifactService,
+            final ArtifactRepository artifactRepository,
             final RouteHelper routeHelper,
             final PlatformTransactionManager platformTransactionManager) {
         return new RouteService(repo, new RouteFactory(), endpointRepository,
-                endpointServiceProxy, artifactService, routeHelper, platformTransactionManager);
+                endpointServiceProxy, artifactRepository, routeHelper, platformTransactionManager);
     }
 
     /**
