@@ -20,6 +20,8 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -68,7 +70,10 @@ public class ConnectorApplication {
         }
 
         return new OpenAPI()
-                .components(new Components())
+                .components(new Components().addSecuritySchemes("basicAuth", new SecurityScheme()
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("basic")
+                        .in(SecurityScheme.In.HEADER).name("Authorization")))
                 .info(new Info()
                         .title(properties.getProperty("title"))
                         .description(properties.getProperty("project_desc"))
@@ -81,6 +86,7 @@ public class ConnectorApplication {
                         .license(new License()
                                 .name(properties.getProperty("license"))
                                 .url(properties.getProperty("license_url")))
-                );
+                )
+                .addSecurityItem(new SecurityRequirement().addList("basicAuth"));
     }
 }
