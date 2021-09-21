@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - When creating an artifact, check length of whole URL instead of just path.
 - Use language code instead of language ID when creating TypedLiterals.
 - Make SelfLinkHelper non-static, so that it can use Spring properties.
+- Added missing security scheme for OpenAPI
 
 ### Changed
 - Add `ServiceResolver` to remove some Spring annotations from service classes.
