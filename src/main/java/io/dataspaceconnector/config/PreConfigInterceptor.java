@@ -27,6 +27,7 @@ import io.dataspaceconnector.service.resource.ids.builder.IdsConfigModelBuilder;
 import io.dataspaceconnector.service.resource.type.ConfigurationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +45,7 @@ import java.nio.file.Paths;
 @Slf4j
 @AllArgsConstructor
 @Transactional
+@ConditionalOnProperty(prefix = "config", name = "interceptor", havingValue = "true")
 public class PreConfigInterceptor implements PreConfigProducerInterceptor {
 
     /**
