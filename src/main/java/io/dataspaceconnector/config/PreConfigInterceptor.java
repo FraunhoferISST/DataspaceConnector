@@ -45,7 +45,7 @@ import java.nio.file.Paths;
 @Slf4j
 @AllArgsConstructor
 @Transactional
-@ConditionalOnProperty(value = "interceptor.enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "interceptor", name = "enabled", havingValue = "true")
 public class PreConfigInterceptor implements PreConfigProducerInterceptor {
 
     /**

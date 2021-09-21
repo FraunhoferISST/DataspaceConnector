@@ -15,8 +15,10 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import de.fraunhofer.ids.messaging.core.config.ssl.keystore.KeyStoreManager;
 import io.dataspaceconnector.common.runtime.ServiceResolver;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.configuration.Configuration;
@@ -141,21 +143,47 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
     }
 
     private void reload(final UUID newConfig) throws ConfigUpdateException {
-        log.info("getService");
-        final var configContainer = svcResolver.getService(ConfigContainer.class);
-        if (configContainer.isPresent()) {
-            log.info("findactive2");
+//        log.info("getService");
+//        final var configContainer = svcResolver.getService(ConfigContainer.class);
+//        if (configContainer.isPresent()) {
+//            log.info("findactive2");
+//            final var activeConfig = getActiveConfig();
+//            log.info("createconf");
+//            final var configuration = configBuilder.create(activeConfig);
+//            log.info("updateconf");
+//            configContainer.get().updateConfiguration(configuration);
+//            if (log.isInfoEnabled()) {
+//                log.info("Changing configuration profile [id=({})]", newConfig);
+//            }
+//
+//            // TODO Change loglevel during runtime.
+//        } else {}
+        try {
             final var activeConfig = getActiveConfig();
-            log.info("createconf");
             final var configuration = configBuilder.create(activeConfig);
-            log.info("updateconf");
-            configContainer.get().updateConfiguration(configuration);
+
+            // Get KeyStore Manager
+            final var keyStoreManagerObj = KeyStoreManager.class.newInstance();
+            final var keyStoreManagerMethod = ConfigContainer.class
+                    .getDeclaredMethod("rebuildKeyStoreManager", ConfigurationModel.class);
+            keyStoreManagerMethod.setAccessible(true);
+            final var keyStoreManager = (KeyStoreManager) keyStoreManagerMethod.
+                    invoke(keyStoreManagerObj, configuration);
+
+            // Get Configuration Container
+            final var constructor = ConfigContainer.class
+                    .getDeclaredConstructor(ConfigurationModel.class, KeyStoreManager.class);
+            constructor.setAccessible(true);
+            final var configContainer = constructor.newInstance(configuration, keyStoreManager);
+            configContainer.updateConfiguration(configuration);
             if (log.isInfoEnabled()) {
                 log.info("Changing configuration profile [id=({})]", newConfig);
             }
 
-            // TODO Change loglevel during runtime.
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug(e.getMessage(), e.getCause());
+            }
         }
     }
-
 }
