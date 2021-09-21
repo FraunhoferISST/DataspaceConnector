@@ -25,12 +25,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.ElementCollection;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -83,7 +78,7 @@ public class Entity implements Serializable {
      * Contains all additional fields that may have been defined but
      * could not be mapped.
      */
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Setter(AccessLevel.PACKAGE)
     private Map<String, String> additional;
 

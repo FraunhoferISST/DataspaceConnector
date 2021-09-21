@@ -50,18 +50,25 @@ public class PostConfigInterceptor implements PostConfigProducerInterceptor {
     @Override
     public void perform(final ConfigContainer configContainer)
             throws ConfigProducerInterceptorException {
+        log.info("loadconfig");
+        var config = configContainer.getConfigurationModel();
+        var configDesc = FromIdsObjectMapper.fromIdsConfig(config);
         var configuration = configurationSvc.findActiveConfig();
         if (configuration.isPresent()) {
-            configurationSvc.delete(configuration.get().getId());
+            log.info("isPresent!");
+            configurationSvc.update(configuration.get().getId(), configDesc);
+        } else {
+            log.info("else!");
+            final var dscConfig
+                    = configurationSvc.create(configDesc);
+            try {
+                log.info("swap!");
+                configurationSvc.swapActiveConfig(dscConfig.getId());
+            } catch (ConfigUpdateException e) {
+                throw new ConfigProducerInterceptorException(e.getMessage(), e.getCause());
+            }
         }
-        var config = configContainer.getConfigurationModel();
-        final var dscConfig
-                = configurationSvc.create(FromIdsObjectMapper.fromIdsConfig(config));
-        try {
-            configurationSvc.swapActiveConfig(dscConfig.getId());
-        } catch (ConfigUpdateException e) {
-            throw new ConfigProducerInterceptorException(e.getMessage(), e.getCause());
-        }
+
     }
 
 }

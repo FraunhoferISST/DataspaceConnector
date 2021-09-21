@@ -27,6 +27,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -41,6 +43,7 @@ import java.util.UUID;
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.NONE)
 @RequiredArgsConstructor
+@Slf4j
 public class BaseEntityService<T extends Entity, D extends Description>
     implements EntityService<T, D> {
     /**
@@ -81,9 +84,12 @@ public class BaseEntityService<T extends Entity, D extends Description>
         Utils.requireNonNull(entityId, ErrorMessage.ENTITYID_NULL);
         Utils.requireNonNull(desc, ErrorMessage.DESC_NULL);
 
+        log.info("getentity");
         var entity = get(entityId);
 
+        log.info("update");
         if (factory.update(entity, desc)) {
+            log.info("persist");
             entity = persist(entity);
         }
 

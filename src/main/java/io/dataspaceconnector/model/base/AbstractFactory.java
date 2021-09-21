@@ -18,6 +18,8 @@ package io.dataspaceconnector.model.base;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.util.FactoryUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -30,6 +32,7 @@ import java.util.Optional;
  * @param <T> The type of the entity.
  * @param <D> The type of the entity description.
  */
+@Slf4j
 public abstract class AbstractFactory<T extends Entity, D extends Description> {
 
     protected abstract T initializeEntity(D desc);
@@ -68,8 +71,11 @@ public abstract class AbstractFactory<T extends Entity, D extends Description> {
         Utils.requireNonNull(entity, ErrorMessage.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessage.DESC_NULL);
 
+        log.info("update additional");
         final var additional = updateAdditional(entity, desc.getAdditional());
+        log.info("update bootstrap");
         final var bootstrap = updateBootstrapId(entity, desc.getBootstrapId());
+        log.info("update internal");
         final var internal = updateInternal(entity, desc);
 
         return additional || bootstrap || internal;

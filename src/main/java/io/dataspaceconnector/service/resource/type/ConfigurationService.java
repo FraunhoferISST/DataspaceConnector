@@ -119,10 +119,13 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
      */
     @Override
     public Configuration update(final UUID entityId, final ConfigurationDesc desc) {
+        log.info("superupdate");
         final var config = super.update(entityId, desc);
         try {
+            log.info("findactive");
             final var activeConfig = findActiveConfig();
             if (activeConfig.isPresent() && activeConfig.get().getId().equals(config.getId())) {
+                log.info("reload");
                 reload(config.getId());
             }
         } catch (ConfigUpdateException ignored) {
@@ -138,10 +141,14 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
     }
 
     private void reload(final UUID newConfig) throws ConfigUpdateException {
+        log.info("getService");
         final var configContainer = svcResolver.getService(ConfigContainer.class);
         if (configContainer.isPresent()) {
+            log.info("findactive2");
             final var activeConfig = getActiveConfig();
+            log.info("createconf");
             final var configuration = configBuilder.create(activeConfig);
+            log.info("updateconf");
             configContainer.get().updateConfiguration(configuration);
             if (log.isInfoEnabled()) {
                 log.info("Changing configuration profile [id=({})]", newConfig);
