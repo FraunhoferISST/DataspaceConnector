@@ -78,4 +78,9 @@ public class ResponseDescription {
      * Response code is NOT_FOUND.
      */
     public static final String NOT_FOUND = "Not found";
+
+    /**
+     * Response code is BAD_GATEWAY.
+     */
+    public static final String BAD_GATEWAY = "Bad Gateway";
 }

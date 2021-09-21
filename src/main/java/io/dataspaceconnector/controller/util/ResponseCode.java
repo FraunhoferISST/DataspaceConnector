@@ -79,4 +79,9 @@ public class ResponseCode {
      * Response code is INTERNAL_SERVER_ERROR.
      */
     public static final String INTERNAL_SERVER_ERROR = "500";
+
+    /**
+     * Response code is BAD_GATEWAY.
+     */
+    public static final String BAD_GATEWAY = "502";
 }
