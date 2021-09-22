@@ -19,32 +19,21 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import io.dataspaceconnector.common.exception.DataDispatchException;
-import io.dataspaceconnector.common.exception.DataRetrievalException;
 import io.dataspaceconnector.common.exception.ErrorMessage;
-import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
-import io.dataspaceconnector.common.exception.ResourceNotFoundException;
-import io.dataspaceconnector.common.exception.UnreachableLineException;
-import io.dataspaceconnector.common.dataretrieval.DataRetrievalService;
-import io.dataspaceconnector.common.net.HttpAuthentication;
-import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.net.RetrievalInformation;
 import io.dataspaceconnector.common.routing.RouteDataDispatcher;
 import io.dataspaceconnector.common.usagecontrol.AccessVerificationInput;
 import io.dataspaceconnector.common.usagecontrol.PolicyVerifier;
 import io.dataspaceconnector.common.usagecontrol.VerificationResult;
-import io.dataspaceconnector.common.util.UUIDUtils;
 import io.dataspaceconnector.common.util.Utils;
-import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
@@ -58,16 +47,16 @@ import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.service.ArtifactRetriever;
-import io.dataspaceconnector.common.routing.RouteDataRetriever;
+import io.dataspaceconnector.service.DataRetriever;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
 import io.dataspaceconnector.service.resource.base.RemoteResolver;
+import io.dataspaceconnector.service.resource.relation.ArtifactRouteService;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * Handles the basic logic for artifacts.
@@ -84,24 +73,19 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private final @NonNull DataRepository dataRepo;
 
     /**
-     * Service for http communication.
-     **/
-    private final @NonNull HttpService httpSvc;
-
-    /**
      * Repository for storing AuthTypes.
      */
     private final @NonNull AuthenticationRepository authRepo;
 
     /**
-     * Repository for storing routes.
+     * Service for managing the relation between artifacts and routes.
      */
-    private final @NonNull RouteService routeSvc;
+    private final @NonNull ArtifactRouteService artifactRouteSvc;
 
     /**
-     * Retrieves data using Camel routes.
+     * Retrieves data from the local database, remote HTTP services and Camel routes.
      */
-    private final @NonNull RouteDataRetriever routeRetriever;
+    private final @NonNull DataRetriever dataRetriever;
 
     /**
      * Dispatches data using Camel routes.
@@ -114,26 +98,23 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param repository               The artifact repository.
      * @param factory                  The artifact logic repository.
      * @param dataRepository           The data repository.
-     * @param httpService              The HTTP service for fetching remote data.
      * @param authenticationRepository The AuthType repository.
-     * @param routeService             The Route service.
-     * @param routeDataRetriever       The route data retriever.
+     * @param artifactRouteService     The Artifact-Route-relation service.
+     * @param retriever                The data retriever.
      * @param routeDataDispatcher      The route data dispatcher.
      */
     public ArtifactService(final BaseEntityRepository<Artifact> repository,
                            final AbstractFactory<Artifact, ArtifactDesc> factory,
                            final @NonNull DataRepository dataRepository,
-                           final @NonNull HttpService httpService,
                            final @NonNull AuthenticationRepository authenticationRepository,
-                           final @NonNull RouteService routeService,
-                           final @NonNull RouteDataRetriever routeDataRetriever,
+                           final @NonNull ArtifactRouteService artifactRouteService,
+                           final @NonNull DataRetriever retriever,
                            final @NonNull RouteDataDispatcher routeDataDispatcher) {
         super(repository, factory);
         this.dataRepo = dataRepository;
-        this.httpSvc = httpService;
         this.authRepo = authenticationRepository;
-        this.routeSvc = routeService;
-        this.routeRetriever = routeDataRetriever;
+        this.artifactRouteSvc = artifactRouteService;
+        this.dataRetriever = retriever;
         this.routeDispatcher = routeDataDispatcher;
     }
 
@@ -167,58 +148,18 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                 final var factory = (ArtifactFactory) getFactory();
                 factory.updateByteSize(artifact, ((LocalData) tmp.getData()).getValue());
             } else if (tmp.getData() instanceof RemoteData) {
-                return checkAndPersistRoute(tmp);
+                final var url = ((RemoteData) tmp.getData()).getAccessUrl();
+                artifactRouteSvc.checkForRouteLinkUpdate(artifact, url);
+                artifactRouteSvc.ensureSingleArtifactPerRoute(url, artifact.getId());
+                final var persisted = super.persist(tmp);
+                artifactRouteSvc.createRouteLink(url, persisted.getId());
+                return persisted;
             }
         }
 
         return super.persist(tmp);
     }
 
-    /**
-     * Persists an artifact with remote data. If the access URL is a route reference, the
-     * corresponding route is read from the database. If that route is already linked to an
-     * artifact, an {@link InvalidEntityException} is thrown. Else, the artifact is linked to
-     * the route after it has been persisted.
-     *
-     * @param artifact the artifact to persist.
-     * @return the persisted artifact.
-     * @throws InvalidEntityException if the access URL is not a valid URI or the referenced route
-     *                                is already linked to an artifact.
-     */
-    private Artifact checkAndPersistRoute(final ArtifactImpl artifact) {
-        final var url = ((RemoteData) artifact.getData()).getAccessUrl();
-        try {
-            if (url.toString().startsWith(getRoutesApiUrl())) {
-                final var routeId = UUIDUtils.uuidFromUri(url.toURI());
-                final var route = routeSvc.get(routeId);
-
-                if (route.getOutput() != null) {
-                    throw new InvalidEntityException("Referenced route is already linked to "
-                            + "an artifact.");
-                }
-
-                final var persisted = super.persist(artifact);
-                routeSvc.setOutput(routeId, persisted.getId());
-                return persisted;
-            } else {
-                return super.persist(artifact);
-            }
-        } catch (URISyntaxException exception) {
-            if (log.isDebugEnabled()) {
-                log.debug("Route ID in access URL of artifact is not a valid URI. "
-                        + "[accessUrl=({}), exception=({})]", url, exception.getMessage(),
-                        exception);
-            }
-            throw new InvalidEntityException("Route ID in access URL of artifact is not a "
-                    + "valid URI.");
-        } catch (ResourceNotFoundException exception) {
-            if (log.isDebugEnabled()) {
-                log.debug("Could not find route matching the access URL. "
-                                + "[accessUrl=({})]", url, exception);
-            }
-            throw new InvalidEntityException("Could not find route matching the access URL.");
-        }
-    }
 
     /**
      * Get the artifacts data. If agreements for this resource exist, all of them will be tried for
@@ -250,9 +191,9 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         }
 
         // The artifact is not assigned to any requested resources. It must be offered if it exists.
-        var data = new BackendDataService(routeRetriever, httpSvc, queryInput)
-                .getDataFromInternalDB((ArtifactImpl) get(artifactId));
-        return new DataDispatcher(routeIds, data).dispatch();
+        final var artifact = get(artifactId);
+        var data = dataRetriever.retrieveData((ArtifactImpl) artifact, queryInput);
+        return returnData(artifact, data, routeIds);
     }
 
     private InputStream tryToAccessDataByUsingAnyAgreement(
@@ -295,6 +236,23 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     }
 
     /**
+     * Increases the access counter before returning data. If a list of route IDs for dispatching
+     * the data is specified, the data is dispatched via all referenced routes before returning it.
+     *
+     * @param artifact The artifact.
+     * @param data     The data.
+     * @param routeIds The route IDs for dispatching data.
+     * @return The data.
+     * @throws IOException if the data cannot be read or there is a failure in one of the
+     *                     routes.
+     */
+    private InputStream returnData(final Artifact artifact, final InputStream data,
+                                   final List<URI> routeIds) throws IOException {
+        incrementAccessCounter(artifact);
+        return new DataDispatcher(routeIds, data).dispatch();
+    }
+
+    /**
      * Get data restricted by a contract. If the data is not available an artifact requests will
      * pull the data.
      *
@@ -330,9 +288,9 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         }
 
         // Artifact exists, access granted, data exists and data up to date.
-        var data = new BackendDataService(routeRetriever, httpSvc, information.getQueryInput())
-                .getDataFromInternalDB((ArtifactImpl) artifact);
-        return new DataDispatcher(routeIds, data).dispatch();
+        var data = dataRetriever.retrieveData((ArtifactImpl) artifact,
+                information.getQueryInput());
+        return returnData(artifact, data, routeIds);
     }
 
     private void verifyDataAccess(final PolicyVerifier<AccessVerificationInput> accessVerifier,
@@ -467,18 +425,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     public void delete(final UUID artifactId) {
         Utils.requireNonNull(artifactId, ErrorMessage.ENTITYID_NULL);
 
-        try {
-            final var artifact = (ArtifactImpl) get(artifactId);
-            if (artifact.getData() instanceof RemoteData) {
-                final var url = ((RemoteData) artifact.getData()).getAccessUrl();
-                if (url.toString().startsWith(getRoutesApiUrl())) {
-                    final var routeId = UUIDUtils.uuidFromUri(url.toURI());
-                    routeSvc.removeOutput(routeId);
-                }
-            }
-        } catch (URISyntaxException ignore) {
-            // If the access URL is not a valid URI, route and artifact could not have been linked
-        }
+        final var artifact = (ArtifactImpl) get(artifactId);
+        artifactRouteSvc.removeRouteLink(artifact);
 
         getRepository().deleteById(artifactId);
     }
@@ -492,122 +440,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      */
     public Route getAssociatedRoute(final UUID artifactId) {
         final var artifact = (ArtifactImpl) get(artifactId);
-        return routeSvc.findByOutput(artifact);
-    }
-
-    /**
-     * Returns the URL to the routes API. Required for checking whether an access URL references
-     * a Camel route or a remote data source.
-     *
-     * @return the URL to the routes API.
-     */
-    private String getRoutesApiUrl() {
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-        return baseUrl + BasePath.ROUTES;
-    }
-
-    @RequiredArgsConstructor
-    private class BackendDataService {
-
-        /**
-         * Retrieves data using Camel routes.
-         */
-        private final @NonNull RouteDataRetriever retriever;
-
-        /**
-         * Retrieves data using HTTP.
-         */
-        private final @NonNull HttpService httpSvc;
-
-        /**
-         * QueryInput for the request.
-         */
-        private final QueryInput queryInput;
-
-        /**
-         * Get the data from the internal database. No policy enforcement is performed here!
-         *
-         * @param artifact   The artifact which data should be returned.
-         * @return The artifact's data.
-         * @throws IOException if the data cannot be received.
-         */
-        public InputStream getDataFromInternalDB(final ArtifactImpl artifact) throws IOException {
-            final var data = artifact.getData();
-
-            InputStream rawData;
-            if (data instanceof LocalData) {
-                rawData = getData((LocalData) data);
-            } else if (data instanceof RemoteData) {
-                rawData = getData((RemoteData) data);
-            } else {
-                throw new UnreachableLineException("Unknown data type.");
-            }
-
-            incrementAccessCounter(artifact);
-
-            return rawData;
-        }
-
-        /**
-         * Get local data.
-         *
-         * @param data The data container.
-         * @return The stored data.
-         */
-        private InputStream getData(final LocalData data) {
-            return toInputStream(data.getValue());
-        }
-
-        private InputStream toInputStream(final byte[] data) {
-            return new ByteArrayInputStream(data);
-        }
-
-        /**
-         * Get remote data.
-         *
-         * @param data       The data container.
-         * @return The stored data.
-         * @throws IOException if IO errors occur.
-         */
-        private InputStream getData(final RemoteData data)
-                throws IOException {
-            try {
-                return downloadDataFromBackend(data);
-            } catch (IOException | DataRetrievalException exception) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Could not connect to data source. [exception=({})]",
-                            exception.getMessage(), exception);
-                }
-
-                throw new IOException("Could not connect to data source.", exception);
-            }
-        }
-
-        private InputStream downloadDataFromBackend(final RemoteData data) throws IOException {
-            InputStream backendData;
-            if (data.getAccessUrl().toString().startsWith(getRoutesApiUrl())) {
-                backendData = getData(retriever, data.getAccessUrl());
-            } else {
-                if (!data.getAuthentication().isEmpty()) {
-                    backendData = getData(httpSvc, data.getAccessUrl(), data.getAuthentication());
-                } else {
-                    backendData = getData(httpSvc, data.getAccessUrl());
-                }
-            }
-
-            return backendData;
-        }
-
-        private InputStream getData(final DataRetrievalService service, final URL target)
-                throws IOException, DataRetrievalException {
-            return service.get(target, queryInput).getData();
-        }
-
-        private InputStream getData(final DataRetrievalService service, final URL target,
-                                    final List<? extends HttpAuthentication> authentications)
-                throws IOException, DataRetrievalException {
-            return service.get(target, queryInput, authentications).getData();
-        }
+        return artifactRouteSvc.getAssociatedRoute(artifact);
     }
 
     /**

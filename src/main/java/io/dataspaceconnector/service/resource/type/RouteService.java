@@ -128,7 +128,7 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      * @param artifact the artifact.
      * @return the associated route.
      */
-    public Route findByOutput(final Artifact artifact) {
+    public Route getByOutput(final Artifact artifact) {
         return ((RouteRepository) getRepository()).findRouteByOutput(artifact);
     }
 

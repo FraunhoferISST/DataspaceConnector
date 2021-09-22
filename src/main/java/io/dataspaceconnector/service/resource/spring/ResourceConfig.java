@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.spring;
 
-import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.common.routing.RouteDataDispatcher;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.agreement.AgreementFactory;
@@ -55,9 +54,10 @@ import io.dataspaceconnector.repository.RepresentationRepository;
 import io.dataspaceconnector.repository.RequestedResourcesRepository;
 import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.repository.RuleRepository;
-import io.dataspaceconnector.common.routing.RouteDataRetriever;
+import io.dataspaceconnector.service.DataRetriever;
 import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
 import io.dataspaceconnector.service.resource.ids.builder.IdsConfigModelBuilder;
+import io.dataspaceconnector.service.resource.relation.ArtifactRouteService;
 import io.dataspaceconnector.service.resource.type.AgreementService;
 import io.dataspaceconnector.service.resource.type.AppEndpointService;
 import io.dataspaceconnector.service.resource.type.AppService;
@@ -102,26 +102,24 @@ public class ResourceConfig {
     /**
      * Create an artifact service bean.
      *
-     * @param repository     The artifact repository.
-     * @param dataRepository The data repository.
-     * @param httpService    The http service.
-     * @param authRepo       The auth repo.
-     * @param routeSvc       The route service.
-     * @param retriever      The route data retriever.
-     * @param dispatcher     The route data dispatcher.
+     * @param repository       The artifact repository.
+     * @param dataRepository   The data repository.
+     * @param authRepo         The auth repo.
+     * @param artifactRouteSvc The artifact-route-relation service.
+     * @param retriever        The data retriever.
+     * @param dispatcher       The route data dispatcher.
      * @return The artifact service bean.
      */
     @Bean("artifactService")
     public ArtifactService createArtifactService(
             @Qualifier("artifactRepository") final ArtifactRepository repository,
             final DataRepository dataRepository,
-            final HttpService httpService,
             final AuthenticationRepository authRepo,
-            final RouteService routeSvc,
-            final RouteDataRetriever retriever,
+            final ArtifactRouteService artifactRouteSvc,
+            final DataRetriever retriever,
             final RouteDataDispatcher dispatcher) {
         return new ArtifactService(repository, new ArtifactFactory(),
-                dataRepository, httpService, authRepo, routeSvc, retriever, dispatcher);
+                dataRepository, authRepo, artifactRouteSvc, retriever, dispatcher);
     }
 
     /**
