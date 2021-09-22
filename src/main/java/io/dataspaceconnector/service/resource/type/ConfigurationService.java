@@ -33,6 +33,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -121,13 +122,10 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
      */
     @Override
     public Configuration update(final UUID entityId, final ConfigurationDesc desc) {
-        log.info("superupdate");
         final var config = super.update(entityId, desc);
         try {
-            log.info("findactive");
             final var activeConfig = findActiveConfig();
             if (activeConfig.isPresent() && activeConfig.get().getId().equals(config.getId())) {
-                log.info("reload");
                 reload(config.getId());
             }
         } catch (ConfigUpdateException ignored) {
@@ -162,7 +160,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
                 log.info("Changing configuration profile [id=({})]", newConfig);
             }
 
-        } catch (Exception e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             if (log.isDebugEnabled()) {
                 log.debug(e.getMessage(), e.getCause());
             }
