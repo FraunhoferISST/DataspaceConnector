@@ -47,6 +47,9 @@ import java.nio.file.Paths;
 @Transactional
 public class PreConfigInterceptor implements PreConfigProducerInterceptor {
 
+    /**
+     * The property for forcing to reload the configuration from a file or not.
+     */
     @Value("${configuration.force-reload.enabled:false}")
     private boolean forceReload;
 

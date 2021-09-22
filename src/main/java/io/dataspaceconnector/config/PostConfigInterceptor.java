@@ -42,7 +42,8 @@
 //    private final ConfigurationService configurationSvc;
 //
 //    /**
-//     * Write config parsed by {@link de.fraunhofer.ids.messaging.core.config.ConfigProducer} to DB.
+//     * Write config parsed by {@link de.fraunhofer.ids.messaging.core.config.ConfigProducer}
+//     to DB.
 //     *
 //     * @param configContainer the parsed configuration.
 //     * @throws ConfigProducerInterceptorException when config cannot be written to DB.

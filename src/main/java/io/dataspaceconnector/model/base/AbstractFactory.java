@@ -18,7 +18,6 @@ package io.dataspaceconnector.model.base;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.util.FactoryUtils;
-import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
 import java.util.HashMap;
