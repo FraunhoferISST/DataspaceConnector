@@ -31,6 +31,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -57,7 +58,7 @@ public class ArtifactViewAssembler extends SelfLinkHelper
         view.add(getSelfLink(artifact.getId()));
 
         final var dataLink = linkTo(methodOn(ArtifactController.class)
-                .getData(artifact.getId(), null, new QueryInput()))
+                .getData(artifact.getId(), new ArrayList<>(), new QueryInput()))
                 .withRel("data");
         view.add(dataLink);
 
