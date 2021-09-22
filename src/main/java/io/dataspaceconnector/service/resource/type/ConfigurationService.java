@@ -150,19 +150,23 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
             final var keyStoreManagerMethod = ConfigContainer.class
                     .getDeclaredMethod("rebuildKeyStoreManager", ConfigurationModel.class);
             keyStoreManagerMethod.setAccessible(true);
-            final var keyStoreManager = (KeyStoreManager) keyStoreManagerMethod.
-                    invoke(keyStoreManagerObj.get().getKeyStore(), configuration);
 
-            // Get Configuration Container
-            final var configContainer = new ConfigContainer(configuration, keyStoreManager);
-            configContainer.updateConfiguration(configuration);
-            if (log.isInfoEnabled()) {
-                log.info("Changing configuration profile [id=({})]", newConfig);
+            if (keyStoreManagerObj.isPresent()) {
+                final var keyStoreManager = (KeyStoreManager) keyStoreManagerMethod.
+                        invoke(keyStoreManagerObj.get().getKeyStore(), configuration);
+
+                // Get Configuration Container
+                final var configContainer = new ConfigContainer(configuration, keyStoreManager);
+                configContainer.updateConfiguration(configuration);
+                if (log.isInfoEnabled()) {
+                    log.info("Changing configuration profile [id=({})]", newConfig);
+                }
+            } else {
+                throw new IllegalAccessException("KeystoreManager could not be loaded!");
             }
-
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            if (log.isDebugEnabled()) {
-                log.debug(e.getMessage(), e.getCause());
+            if (log.isErrorEnabled()) {
+                log.error("Could not change configuration! [exception=({})]", e.getMessage());
             }
         }
     }
