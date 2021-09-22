@@ -20,7 +20,7 @@ All notable changes to this project will be documented in this file.
 - Refactor and speed up tests.
 - Increase checkstyle version from 8.45.1 to 9.0.0.
 - Increase pmd version from 6.37.0 to 6.38.0.
-- Increase IDS messaging services version from 4.2.2 to 5.0.0.
+- Increase IDS messaging services version from 4.2.2 to 5.0.1.
 - Increase pitest version from 1.69.0 to 1.70.0.
 - Increase dependency-check-maven version from 6.2.2 to 6.3.1.
 - Increase maven-javadoc-plugin version from 3.3.0 to 3.3.1.
