@@ -18,41 +18,40 @@ package io.dataspaceconnector.service.resource.ids.builder;
 import de.fraunhofer.iais.eis.RouteStep;
 import de.fraunhofer.iais.eis.RouteStepBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.common.util.ApiReferenceHelper;
 import io.dataspaceconnector.model.route.Route;
-import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
  * Converts DSC routes to IDS route steps.
  */
 @Component
-@RequiredArgsConstructor
-public final class IdsRouteStepBuilder extends AbstractIdsBuilder<Route, RouteStep> {
+public final class IdsRouteStepBuilder extends IdsRouteBuilder<RouteStep> {
 
     /**
-     * The builder for ids endpoints.
+     * Constructs an IdsRouteStepBuilder.
+     *
+     * @param idsEndpointBuilder The endpoint builder.
+     * @param idsArtifactBuilder The artifact builder.
+     * @param apiReferenceHelper The API reference helper.
      */
-    private final @NonNull IdsEndpointBuilder endpointBuilder;
+    public IdsRouteStepBuilder(final IdsEndpointBuilder idsEndpointBuilder,
+                               final IdsArtifactBuilder idsArtifactBuilder,
+                               final ApiReferenceHelper apiReferenceHelper) {
+        super(idsEndpointBuilder, idsArtifactBuilder, apiReferenceHelper);
+    }
 
     @Override
     protected RouteStep createInternal(final Route route, final int currentDepth,
                                        final int maxDepth) throws ConstraintViolationException {
 
-        final var start = create(endpointBuilder,
-                Util.asList(route.getStart()), currentDepth, maxDepth);
-
-        final var end = create(endpointBuilder,
-                Util.asList(route.getEnd()), currentDepth, maxDepth);
-
-        final var deployMode = route.getDeploy().toString();
-        final var description = route.getDescription();
+        final var start = buildRouteStart(route, currentDepth, maxDepth);
+        final var end = buildRouteEnd(route, currentDepth, maxDepth);
 
         final var builder = new RouteStepBuilder(getAbsoluteSelfLink(route))
-                ._routeDeployMethod_(deployMode)
-                ._routeDescription_(description);
+                ._routeDescription_(route.getDescription())
+                ._routeDeployMethod_(route.getDeploy().toString())
+                ._routeConfiguration_(route.getConfiguration());
         start.ifPresent(builder::_appRouteStart_);
         end.ifPresent(builder::_appRouteEnd_);
         return builder.build();

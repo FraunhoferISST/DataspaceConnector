@@ -22,7 +22,7 @@ import java.util.UUID;
 
 import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
-import io.dataspaceconnector.common.util.RouteReferenceHelper;
+import io.dataspaceconnector.common.util.ApiReferenceHelper;
 import io.dataspaceconnector.common.util.UUIDUtils;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
@@ -48,9 +48,9 @@ public class ArtifactRouteService {
     private final @NonNull RouteService routeSvc;
 
     /**
-     * Helper class for managing route references.
+     * Helper class for managing API endpoint references.
      */
-    private final @NonNull RouteReferenceHelper routeReferenceHelper;
+    private final @NonNull ApiReferenceHelper apiReferenceHelper;
 
     /**
      * Checks whether the route referenced by a URL can be linked to an artifact. If the route
@@ -63,7 +63,7 @@ public class ArtifactRouteService {
      */
     public void ensureSingleArtifactPerRoute(final URL url, final UUID artifactId) {
         try {
-            if (routeReferenceHelper.isRouteReference(url)) {
+            if (apiReferenceHelper.isRouteReference(url)) {
                 final var routeId = UUIDUtils.uuidFromUri(url.toURI());
                 final var route = routeSvc.get(routeId);
 
@@ -103,7 +103,7 @@ public class ArtifactRouteService {
             final var route = routeSvc.getByOutput(artifact);
             if (route != null) {
                 final var urlString = url.toString();
-                final boolean isRouteReference = routeReferenceHelper.isRouteReference(url);
+                final boolean isRouteReference = apiReferenceHelper.isRouteReference(url);
                 if (!isRouteReference || !urlString.contains(route.getId().toString())) {
                     routeSvc.removeOutput(route.getId());
                 }
@@ -120,7 +120,7 @@ public class ArtifactRouteService {
      */
     public void createRouteLink(final URL url, final UUID artifactId) {
         try {
-            if (routeReferenceHelper.isRouteReference(url)) {
+            if (apiReferenceHelper.isRouteReference(url)) {
                 final var routeId = UUIDUtils.uuidFromUri(url.toURI());
                 routeSvc.setOutput(routeId, artifactId);
             }
@@ -155,7 +155,7 @@ public class ArtifactRouteService {
         try {
             if (artifact.getData() instanceof RemoteData) {
                 final var url = ((RemoteData) artifact.getData()).getAccessUrl();
-                if (routeReferenceHelper.isRouteReference(url)) {
+                if (apiReferenceHelper.isRouteReference(url)) {
                     final var routeId = UUIDUtils.uuidFromUri(url.toURI());
                     routeSvc.removeOutput(routeId);
                 }

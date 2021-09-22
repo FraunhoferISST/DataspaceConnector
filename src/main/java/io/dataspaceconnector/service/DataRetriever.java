@@ -28,7 +28,7 @@ import io.dataspaceconnector.common.net.HttpAuthentication;
 import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.routing.RouteDataRetriever;
-import io.dataspaceconnector.common.util.RouteReferenceHelper;
+import io.dataspaceconnector.common.util.ApiReferenceHelper;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.model.artifact.RemoteData;
@@ -56,9 +56,9 @@ public class DataRetriever {
     private final @NonNull RouteDataRetriever routeRetriever;
 
     /**
-     * Helper class for managing route references.
+     * Helper class for managing API endpoint references.
      */
-    private final @NonNull RouteReferenceHelper routeReferenceHelper;
+    private final @NonNull ApiReferenceHelper apiReferenceHelper;
 
     /**
      * Retrieves the data for an artifact using the specified query input.
@@ -136,7 +136,7 @@ public class DataRetriever {
     private InputStream downloadDataFromBackend(final RemoteData data, final QueryInput queryInput)
             throws IOException {
         InputStream backendData;
-        if (routeReferenceHelper.isRouteReference(data.getAccessUrl())) {
+        if (apiReferenceHelper.isRouteReference(data.getAccessUrl())) {
             backendData = getData(routeRetriever, data.getAccessUrl(), queryInput);
         } else {
             if (!data.getAuthentication().isEmpty()) {

@@ -1,8 +1,10 @@
 package io.dataspaceconnector.common.util;
 
+import java.net.URI;
 import java.net.URL;
 
 import io.dataspaceconnector.config.BasePath;
+import io.dataspaceconnector.model.artifact.Artifact;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -13,7 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
  */
 @Component
 @RequiredArgsConstructor
-public final class RouteReferenceHelper {
+public final class ApiReferenceHelper {
 
     /**
      * The default HTTP base URL of the application.
@@ -24,14 +26,40 @@ public final class RouteReferenceHelper {
     /**
      * Checks whether a URL is a route reference by checking whether the URL starts with the path
      * to this connector's routes API. The full path to the routes API consists of the application's
-     * base URL and the path segment for the routes API. When communicating over IDSCP2, no request
-     * context is available to get the base URL from, so then a default value is used.
+     * base URL and the path segment for the routes API.
      *
      * @param url The URL to check.
      * @return True, if the URL is a route reference; false otherwise.
      */
     public boolean isRouteReference(final URL url) {
+        final var routesApiUrl = getBaseUrl() + BasePath.ROUTES;
+        return url.toString().startsWith(routesApiUrl);
+    }
+
+    /**
+     * Returns the URI pointing to an artifact's /data endpoint.
+     *
+     * @param artifact The artifact.
+     * @return URI of the /data endpoint.
+     */
+    public URI getDataUri(final Artifact artifact) {
+        final var uri = getBaseUrl()
+                .concat(BasePath.ARTIFACTS)
+                .concat("/")
+                .concat(artifact.getId().toString())
+                .concat("/data");
+        return URI.create(uri);
+    }
+
+    /**
+     * Returns the application base URL. When communicating over IDSCP2, no request context is
+     * available to get the base URL from, so then a default value is used.
+     *
+     * @return The base URL.
+     */
+    private String getBaseUrl() {
         String applicationBaseUrl;
+
         try {
             applicationBaseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         } catch (IllegalStateException e) {
@@ -39,8 +67,7 @@ public final class RouteReferenceHelper {
             applicationBaseUrl = defaultBaseUrl;
         }
 
-        final var routesApiUrl = applicationBaseUrl + BasePath.ROUTES;
-        return url.toString().startsWith(routesApiUrl);
+        return applicationBaseUrl;
     }
 
 }

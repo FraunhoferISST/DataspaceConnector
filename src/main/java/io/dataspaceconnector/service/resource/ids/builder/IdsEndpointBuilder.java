@@ -21,7 +21,6 @@ import de.fraunhofer.iais.eis.AppEndpointBuilder;
 import de.fraunhofer.iais.eis.AppEndpointType;
 import de.fraunhofer.iais.eis.BasicAuthentication;
 import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
-import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.GenericEndpointBuilder;
 import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -32,7 +31,6 @@ import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
 import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
-import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
@@ -71,14 +69,6 @@ public final class IdsEndpointBuilder
             idsEndpoint = new GenericEndpointBuilder(getAbsoluteSelfLink(endpoint))
                     ._accessURL_(location)
                     ._genericEndpointAuthentication_(basicAuth)
-                    ._endpointDocumentation_(Util.asList(documentation))
-                    ._endpointInformation_(Util.asList(info))
-                    .build();
-
-        } else if (endpoint instanceof ConnectorEndpoint) {
-
-            idsEndpoint = new ConnectorEndpointBuilder(getAbsoluteSelfLink(endpoint))
-                    ._accessURL_(location)
                     ._endpointDocumentation_(Util.asList(documentation))
                     ._endpointInformation_(Util.asList(info))
                     .build();
