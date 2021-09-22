@@ -143,38 +143,20 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
     }
 
     private void reload(final UUID newConfig) throws ConfigUpdateException {
-//        log.info("getService");
-//        final var configContainer = svcResolver.getService(ConfigContainer.class);
-//        if (configContainer.isPresent()) {
-//            log.info("findactive2");
-//            final var activeConfig = getActiveConfig();
-//            log.info("createconf");
-//            final var configuration = configBuilder.create(activeConfig);
-//            log.info("updateconf");
-//            configContainer.get().updateConfiguration(configuration);
-//            if (log.isInfoEnabled()) {
-//                log.info("Changing configuration profile [id=({})]", newConfig);
-//            }
-//
-//            // TODO Change loglevel during runtime.
-//        } else {}
         try {
             final var activeConfig = getActiveConfig();
             final var configuration = configBuilder.create(activeConfig);
 
             // Get KeyStore Manager
-            final var keyStoreManagerObj = KeyStoreManager.class.newInstance();
+            final var keyStoreManagerObj = svcResolver.getService(KeyStoreManager.class);
             final var keyStoreManagerMethod = ConfigContainer.class
                     .getDeclaredMethod("rebuildKeyStoreManager", ConfigurationModel.class);
             keyStoreManagerMethod.setAccessible(true);
             final var keyStoreManager = (KeyStoreManager) keyStoreManagerMethod.
-                    invoke(keyStoreManagerObj, configuration);
+                    invoke(keyStoreManagerObj.get().getKeyStore(), configuration);
 
             // Get Configuration Container
-            final var constructor = ConfigContainer.class
-                    .getDeclaredConstructor(ConfigurationModel.class, KeyStoreManager.class);
-            constructor.setAccessible(true);
-            final var configContainer = constructor.newInstance(configuration, keyStoreManager);
+            final var configContainer = new ConfigContainer(configuration, keyStoreManager);
             configContainer.updateConfiguration(configuration);
             if (log.isInfoEnabled()) {
                 log.info("Changing configuration profile [id=({})]", newConfig);

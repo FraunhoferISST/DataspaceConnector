@@ -25,9 +25,9 @@ import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.mapping.FromIdsObjectMapper;
 import io.dataspaceconnector.service.resource.ids.builder.IdsConfigModelBuilder;
 import io.dataspaceconnector.service.resource.type.ConfigurationService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,10 +43,12 @@ import java.nio.file.Paths;
  */
 @Configuration
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional
-@ConditionalOnProperty(prefix = "interceptor", name = "enabled", havingValue = "true")
 public class PreConfigInterceptor implements PreConfigProducerInterceptor {
+
+    @Value("${configuration.force-reload.enabled:false}")
+    private boolean forceReload;
 
     /**
      * Service for ids deserialization.
@@ -74,7 +76,7 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
     @Override
     public ConfigurationModel perform(final ConfigProperties properties)
             throws ConfigProducerInterceptorException {
-        if (doesStoredConfigExits()) {
+        if (doesStoredConfigExits() && !forceReload) {
             return loadConfigFromDb();
         } else {
             return loadConfigFromFile(properties);

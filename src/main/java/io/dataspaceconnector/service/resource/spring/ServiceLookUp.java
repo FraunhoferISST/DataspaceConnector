@@ -20,7 +20,6 @@ import java.util.Optional;
 import io.dataspaceconnector.common.runtime.ServiceResolver;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ServiceLookUp implements ServiceResolver {
 
     /**
@@ -42,7 +40,6 @@ public class ServiceLookUp implements ServiceResolver {
     @Override
     public <T> Optional<T> getService(final Class<T> clazz) {
         try {
-            log.info("getbean");
             return Optional.of(context.getBean(clazz));
         } catch (NoSuchBeanDefinitionException ignored) { }
 
