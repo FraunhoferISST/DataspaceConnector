@@ -80,8 +80,14 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
     public ConfigurationModel perform(final ConfigProperties properties)
             throws ConfigProducerInterceptorException {
         if (doesStoredConfigExits() && !forceReload) {
+            if (log.isInfoEnabled()) {
+                log.info("Loading configuration from DB.");
+            }
             return loadConfigFromDb();
         } else {
+            if (forceReload && log.isInfoEnabled()) {
+                log.info("Forced loading configuration from file.");
+            }
             return loadConfigFromFile(properties);
         }
     }

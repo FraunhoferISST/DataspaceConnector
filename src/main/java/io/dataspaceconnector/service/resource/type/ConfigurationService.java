@@ -15,10 +15,10 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import de.fraunhofer.ids.messaging.core.config.ssl.keystore.KeyStoreManager;
+import de.fraunhofer.ids.messaging.core.config.ssl.keystore.KeyStoreManagerInitializationException;
 import io.dataspaceconnector.common.runtime.ServiceResolver;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.configuration.Configuration;
@@ -33,7 +33,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -101,20 +100,11 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
         final var activeConfig = findActiveConfig();
 
         if (activeConfig.isPresent()) {
-            replaceActiveConfig(newConfig, activeConfig.get());
+            swapActiveConfigInDb(newConfig);
+            resetMessagingConfig();
         } else {
             ((ConfigurationRepository) getRepository()).setActive(newConfig);
         }
-    }
-
-    private void replaceActiveConfig(final UUID newConfig, final Configuration activeConfig)
-            throws ConfigUpdateException {
-        if (activeConfig.getId().equals(newConfig)) {
-            reload(newConfig);
-        }
-
-        swapActiveConfigInDb(newConfig);
-        reload(newConfig);
     }
 
     /**
@@ -124,10 +114,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
     public Configuration update(final UUID entityId, final ConfigurationDesc desc) {
         final var config = super.update(entityId, desc);
         try {
-            final var activeConfig = findActiveConfig();
-            if (activeConfig.isPresent() && activeConfig.get().getId().equals(config.getId())) {
-                reload(config.getId());
-            }
+            resetMessagingConfig();
         } catch (ConfigUpdateException ignored) {
         }
 
@@ -138,33 +125,40 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
         final var repo = (ConfigurationRepository) getRepository();
         repo.unsetActive();
         repo.setActive(newConfig);
+
+        if (log.isInfoEnabled()) {
+            log.info("Successfully swapped active configuration in Database.");
+        }
     }
 
-    private void reload(final UUID newConfig) throws ConfigUpdateException {
+    private void resetMessagingConfig() throws ConfigUpdateException {
+        if (log.isDebugEnabled()) {
+            log.debug("Updating Messaging-Services configuration...");
+        }
+
         try {
             final var activeConfig = getActiveConfig();
+
             final var configuration = configBuilder.create(activeConfig);
 
-            // Get KeyStore Manager
-            final var keyStoreManagerObj = svcResolver.getService(KeyStoreManager.class);
-            final var keyStoreManagerMethod = ConfigContainer.class
-                    .getDeclaredMethod("rebuildKeyStoreManager", ConfigurationModel.class);
-            keyStoreManagerMethod.setAccessible(true);
+            //Note: new KeyStoreManager called twice, once here, once while updateConfiguration
+            //existing bean can't be used without further ado due to changed credentials
+            //logs "Successfully loaded Keystore.","Successfully loaded Truststore."
+            final var keyStoreManager = new KeyStoreManager(
+                    configuration,
+                    activeConfig.getKeystore().getPassword().toCharArray(),
+                    activeConfig.getTruststore().getPassword().toCharArray(),
+                    activeConfig.getKeystore().getAlias());
 
-            if (keyStoreManagerObj.isPresent()) {
-                final var keyStoreManager = (KeyStoreManager) keyStoreManagerMethod.
-                        invoke(keyStoreManagerObj.get().getKeyStore(), configuration);
+            //KeyStoreManager will be build again in updateConfiguration, but also req. as param
+            //logs "Successfully loaded Keystore.","Successfully loaded Truststore."
+            final var configContainer = new ConfigContainer(configuration, keyStoreManager);
+            configContainer.updateConfiguration(configuration);
 
-                // Get Configuration Container
-                final var configContainer = new ConfigContainer(configuration, keyStoreManager);
-                configContainer.updateConfiguration(configuration);
-                if (log.isInfoEnabled()) {
-                    log.info("Changing configuration profile [id=({})]", newConfig);
-                }
-            } else {
-                throw new IllegalAccessException("KeystoreManager could not be loaded!");
+            if (log.isInfoEnabled()) {
+                log.info("Successfully updated Messaging-Services configuration.");
             }
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (KeyStoreManagerInitializationException e) {
             if (log.isErrorEnabled()) {
                 log.error("Could not change configuration! [exception=({})]", e.getMessage());
             }
