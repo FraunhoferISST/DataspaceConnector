@@ -20,7 +20,7 @@ The Clearing House is available at [https://ch-ids.aisec.fraunhofer.de/](https:/
 The repositories for [core](https://github.com/International-Data-Spaces-Association/ids-clearing-house-core)
 and [service](https://github.com/International-Data-Spaces-Association/ids-clearing-house-service)
 are open source and can be accessed at GitHub. Further documentation about the IDS Clearing House
-can be seen [here](https://github.com/International-Data-Spaces-Association/IDS-G/blob/master/core/ClearingHouse/README.md).
+can be seen [here](https://github.com/International-Data-Spaces-Association/IDS-G/blob/main/Components/ClearingHouse/README.md).
 
 The Dataspace Connector has local logging, that can be changed following
 [these](../../../deployment/logging.md) steps. In addition, it logs some information to the Clearing

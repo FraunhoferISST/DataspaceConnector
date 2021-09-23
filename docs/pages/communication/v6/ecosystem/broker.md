@@ -24,7 +24,7 @@ To get your IP address unblocked, please contact [us](mailto:info@dataspace-conn
 
 The [repository](https://github.com/International-Data-Spaces-Association/metadata-broker-open-core)
 is open source and can be accessed at GitHub. Further documentation about the IDS Metadata Broker
-can be seen [here](https://github.com/International-Data-Spaces-Association/IDS-G/blob/master/core/MetaDataBroker/README.md).
+can be seen [here](https://github.com/International-Data-Spaces-Association/IDS-G/blob/main/Components/MetaDataBroker/README.md).
 
 ---
 

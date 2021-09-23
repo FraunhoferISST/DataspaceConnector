@@ -23,9 +23,9 @@ by the Fraunhofer AISEC by default. It is available at [https://daps.aisec.fraun
 
 The [repository](https://github.com/International-Data-Spaces-Association/omejdn-daps) is open
 source and can be accessed at GitHub. Further documentation about the IDS Identity Provider/DAPS can
-be seen [here](https://github.com/International-Data-Spaces-Association/IDS-G/blob/master/core/DAPS/README.md).
+be seen [here](https://github.com/International-Data-Spaces-Association/IDS-G/blob/main/Components/IdentityProvider/README.md).
 The content of a Dynamic Attribute Token (DAT) is listed and explained
-[here](https://github.com/International-Data-Spaces-Association/IDS-G/blob/master/core/DAPS/README.md#dynamic-attribute-token-content).
+[here](https://github.com/International-Data-Spaces-Association/IDS-G/blob/main/Components/IdentityProvider/DAPS/README.md#dynamic-attribute-token-content).
 
 ## Participant Information System (ParIS)
 
@@ -33,5 +33,9 @@ The Participant Information System (ParIS) is available at [https://paris.ids.is
 It expects IDS multipart messages at [https://paris.ids.isst.fraunhofer.de/infrastructure](https://paris.ids.isst.fraunhofer.de/infrastructure).
 The GUI can be accessed at [https://paris.ids.isst.fraunhofer.de/browse](https://paris.ids.isst.fraunhofer.de/browse).
 To get your IP address unblocked, please contact [us](mailto:info@dataspace-connector.de).
+
+The [repository](https://github.com/International-Data-Spaces-Association/ParIS-open-core) is open
+core and can be accessed at GitHub. Further documentation about the ParIS can be seen
+[here](https://github.com/International-Data-Spaces-Association/IDS-G/blob/main/Components/IdentityProvider/ParIS/README.md).
 
 The Dataspace Connector currently does not offer any ParIS interaction.
