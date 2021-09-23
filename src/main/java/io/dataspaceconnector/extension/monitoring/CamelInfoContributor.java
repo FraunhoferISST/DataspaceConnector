@@ -56,10 +56,9 @@ public class CamelInfoContributor
             info.put("name", this.camelContext.getName());
             info.put("version", this.camelContext.getVersion());
             if (this.camelContext.getUptime() != null) {
+                info.put("startDate", this.camelContext.getStartDate());
                 info.put("uptime", this.camelContext.getUptime());
-                info.put("uptimeMillis", this.camelContext.getUptimeMillis());
             }
-
             info.put("status", this.camelContext.getStatus().name());
 
             builder.withDetail("camel", info);
