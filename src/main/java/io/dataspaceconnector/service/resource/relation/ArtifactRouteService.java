@@ -27,6 +27,7 @@ import io.dataspaceconnector.common.util.UUIDUtils;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.artifact.RemoteData;
+import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.service.resource.type.RouteService;
 import lombok.NonNull;
@@ -116,12 +117,18 @@ public class ArtifactRouteService {
      *
      * @param url        The URL referencing a route.
      * @param artifactId The artifact ID.
-     * @throws InvalidEntityException if the URL is not a valid URI.
+     * @throws InvalidEntityException if the URL is not a valid URI or the referenced route does
+     *                                not have deploy mode CAMEL.
      */
     public void createRouteLink(final URL url, final UUID artifactId) {
         try {
             if (apiReferenceHelper.isRouteReference(url)) {
                 final var routeId = UUIDUtils.uuidFromUri(url.toURI());
+                final var route = routeSvc.get(routeId);
+                if (!DeployMethod.CAMEL.equals(route.getDeploy())) {
+                    throw new InvalidEntityException("The referenced route does not have deploy"
+                            + " mode CAMEL.");
+                }
                 routeSvc.setOutput(routeId, artifactId);
             }
         } catch (URISyntaxException exception) {
