@@ -18,8 +18,6 @@ package io.dataspaceconnector.service.resource.type;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
-import de.fraunhofer.ids.messaging.core.config.ssl.keystore.KeyStoreManager;
-import de.fraunhofer.ids.messaging.core.config.ssl.keystore.KeyStoreManagerInitializationException;
 import io.dataspaceconnector.common.runtime.ServiceResolver;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.configuration.Configuration;
@@ -33,8 +31,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -100,7 +96,8 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
      * @param newConfig Id of the new active configuration.
      * @param startup true, if application is currently starting
      */
-    public void swapActiveConfig(final UUID newConfig, final boolean startup) throws ConfigUpdateException {
+    public void swapActiveConfig(final UUID newConfig, final boolean startup)
+            throws ConfigUpdateException {
         final var activeConfig = findActiveConfig();
 
         if (activeConfig.isPresent()) {
@@ -156,7 +153,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
 
         updateConfigProperties(activeConfig);
         final var configContainer = svcResolver.getService(ConfigContainer.class);
-        if(configContainer.isPresent()) {
+        if (configContainer.isPresent()) {
             configContainer.get().updateConfiguration(configuration);
         }
 
