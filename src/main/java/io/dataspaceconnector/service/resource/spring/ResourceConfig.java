@@ -27,7 +27,6 @@ import io.dataspaceconnector.model.configuration.ConfigurationFactory;
 import io.dataspaceconnector.model.contract.ContractFactory;
 import io.dataspaceconnector.model.datasource.DataSourceFactory;
 import io.dataspaceconnector.model.endpoint.AppEndpointFactory;
-import io.dataspaceconnector.model.endpoint.ConnectorEndpointFactory;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
 import io.dataspaceconnector.model.proxy.ProxyFactory;
 import io.dataspaceconnector.model.representation.RepresentationFactory;
@@ -44,7 +43,6 @@ import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.BrokerRepository;
 import io.dataspaceconnector.repository.CatalogRepository;
 import io.dataspaceconnector.repository.ConfigurationRepository;
-import io.dataspaceconnector.repository.ConnectorEndpointRepository;
 import io.dataspaceconnector.repository.ContractRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.repository.DataSourceRepository;
@@ -66,7 +64,6 @@ import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.resource.type.BrokerService;
 import io.dataspaceconnector.service.resource.type.CatalogService;
 import io.dataspaceconnector.service.resource.type.ConfigurationService;
-import io.dataspaceconnector.service.resource.type.ConnectorEndpointService;
 import io.dataspaceconnector.service.resource.type.ContractService;
 import io.dataspaceconnector.service.resource.type.DataSourceService;
 import io.dataspaceconnector.service.resource.type.EndpointServiceProxy;
@@ -212,25 +209,6 @@ public class ResourceConfig {
     }
 
     /**
-     * Create a connectorEndpoint service bean.
-     *
-     * @param repo             The connectorEndpoint repository.
-     * @param factory          The connectorEndpoint factory.
-     * @param routeRepository  The route repository.
-     * @param camelRouteHelper The camel route helper.
-     * @return The connectorEndpoint service bean.
-     */
-    @Bean("connectorEndpointService")
-    public ConnectorEndpointService createConnectorEndpointService(
-            final ConnectorEndpointRepository repo,
-            final ConnectorEndpointFactory factory,
-            final RouteRepository routeRepository,
-            final RouteHelper camelRouteHelper) {
-        return new ConnectorEndpointService(repo, factory,
-                routeRepository, camelRouteHelper);
-    }
-
-    /**
      * Creat a contract service bean.
      *
      * @param repo The contract repository.
@@ -320,15 +298,5 @@ public class ResourceConfig {
     @Bean("ruleService")
     public RuleService createRuleService(final RuleRepository repo) {
         return new RuleService(repo, new ContractRuleFactory());
-    }
-
-    /**
-     * Create a connectorEndpoint factory.
-     *
-     * @return The connectorEndpoint factory.
-     */
-    @Bean("connectorEndpointFactory")
-    public ConnectorEndpointFactory createConnectorEndpointFactory() {
-        return new ConnectorEndpointFactory();
     }
 }

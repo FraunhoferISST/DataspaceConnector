@@ -22,7 +22,6 @@ import io.dataspaceconnector.controller.resource.relation.RoutesToStepsControlle
 import io.dataspaceconnector.controller.resource.type.RouteController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.route.Route;
 import org.modelmapper.ModelMapper;
@@ -76,18 +75,12 @@ public class RouteViewAssembler extends SelfLinkHelper
                 if (view.getStart() instanceof GenericEndpoint) {
                     final var end = (GenericEndpoint) view.getStart();
                     end.setType("GENERIC");
-                } else {
-                    final var end = (ConnectorEndpoint) view.getStart();
-                    end.setType("CONNECTOR");
                 }
             }
             if (view.getEnd() != null) {
                 if (view.getEnd() instanceof GenericEndpoint) {
                     final var end = (GenericEndpoint) view.getEnd();
                     end.setType("GENERIC");
-                } else {
-                    final var end = (ConnectorEndpoint) view.getEnd();
-                    end.setType("CONNECTOR");
                 }
             }
         }

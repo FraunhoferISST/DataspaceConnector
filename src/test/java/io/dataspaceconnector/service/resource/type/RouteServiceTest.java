@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.Endpoint;
+import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteFactory;
 import io.dataspaceconnector.repository.EndpointRepository;
@@ -93,7 +93,7 @@ class RouteServiceTest {
         /* ARRANGE */
         final var endpointId = UUID.randomUUID();
         final var routeId = UUID.randomUUID();
-        final var endpoint = new ConnectorEndpoint();
+        final var endpoint = new GenericEndpoint();
         final var route = new Route();
 
         Mockito.doReturn(endpoint).when(endpointService).get(Mockito.eq(endpointId));
@@ -122,7 +122,7 @@ class RouteServiceTest {
         /* ARRANGE */
         final var endpointId = UUID.randomUUID();
         final var routeId = UUID.randomUUID();
-        final var endpoint = new ConnectorEndpoint();
+        final var endpoint = new GenericEndpoint();
         final var route = new Route();
 
         Mockito.doReturn(endpoint).when(endpointService).get(Mockito.eq(endpointId));

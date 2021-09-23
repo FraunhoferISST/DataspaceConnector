@@ -30,7 +30,6 @@ import java.net.URI;
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = ConnectorEndpointDesc.class, name = "CONNECTOR"),
         @JsonSubTypes.Type(value = GenericEndpointDesc.class, name = "GENERIC"),
         @JsonSubTypes.Type(value = AppEndpointDesc.class, name = "APP")}
 )

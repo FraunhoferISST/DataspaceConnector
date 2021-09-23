@@ -23,44 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 
 class EndpointFactoryProxyTest {
-    private ConnectorEndpointFactory connectorFactory = Mockito.spy(ConnectorEndpointFactory.class);
     private GenericEndpointFactory genericFactory = Mockito.spy(GenericEndpointFactory.class);
-    private EndpointFactoryProxy proxy = new EndpointFactoryProxy(connectorFactory, genericFactory);
-
-    @Test
-    public void create_newConnectorEndpoint() {
-        assertTrue(proxy.create(new ConnectorEndpointDesc()) instanceof ConnectorEndpoint);
-    }
+    private EndpointFactoryProxy proxy = new EndpointFactoryProxy(genericFactory);
 
     @Test
     public void create_newGenericEndpoint() {
         assertTrue(proxy.create(new GenericEndpointDesc()) instanceof GenericEndpoint);
-    }
-
-    @Test
-    public void update_callConnectorEndpointFactory_andWillUpdate() {
-        /* ARRANGE */
-        final var endpoint = new ConnectorEndpoint();
-        final var desc = new ConnectorEndpointDesc();
-
-        /* ACT */
-        assertTrue(proxy.update(endpoint, desc));
-
-        /* ASSERT */
-        Mockito.verify(connectorFactory, Mockito.atLeastOnce()).updateInternal(eq(endpoint), eq(desc));
-    }
-
-    @Test
-    public void update_callConnectorEndpointFactory_andWillNotUpdate() {
-        /* ARRANGE */
-        final var endpoint = connectorFactory.create(new ConnectorEndpointDesc());
-        final var desc = new ConnectorEndpointDesc();
-
-        /* ACT */
-        assertFalse(proxy.update(endpoint, desc));
-
-        /* ASSERT */
-        Mockito.verify(connectorFactory, Mockito.atLeastOnce()).updateInternal(eq(endpoint), eq(desc));
     }
 
     @Test

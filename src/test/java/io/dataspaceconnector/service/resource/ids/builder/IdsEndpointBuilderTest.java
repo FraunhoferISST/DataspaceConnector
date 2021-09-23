@@ -23,13 +23,11 @@ import java.util.UUID;
 
 import de.fraunhofer.iais.eis.AppEndpointImpl;
 import de.fraunhofer.iais.eis.AppEndpointType;
-import de.fraunhofer.iais.eis.ConnectorEndpointImpl;
 import de.fraunhofer.iais.eis.GenericEndpointImpl;
 import de.fraunhofer.iais.eis.Language;
 import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.datasource.DataSource;
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
-import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,21 +75,6 @@ public class IdsEndpointBuilderTest {
     }
 
     @Test
-    void create_inputConnectorEndpoint_returnConnectorEndpoint() {
-        /* ARRANGE */
-        final var endpoint = getConnectorEndpoint();
-
-        /* ACT */
-        final var result = builder.create(endpoint);
-
-        /* ASSERT */
-        assertTrue(result instanceof ConnectorEndpointImpl);
-        assertEquals(result.getAccessURL(), endpoint.getLocation());
-        assertEquals(result.getEndpointDocumentation().get(0), endpoint.getDocs());
-        assertEquals(result.getEndpointInformation().get(0).getValue(), endpoint.getInfo());
-    }
-
-    @Test
     void create_inputAppEndpoint_returnAppEndpoint() {
         /* ARRANGE */
         final var endpoint = getAppEndpoint();
@@ -134,17 +117,6 @@ public class IdsEndpointBuilderTest {
         ReflectionTestUtils.setField(endpoint, "docs", endpointDocumentation);
         ReflectionTestUtils.setField(endpoint, "info", "info");
         ReflectionTestUtils.setField(endpoint, "dataSource", dataSource);
-        ReflectionTestUtils.setField(endpoint, "additional", new HashMap<>());
-
-        return endpoint;
-    }
-
-    private ConnectorEndpoint getConnectorEndpoint() {
-        final var endpoint = new ConnectorEndpoint();
-        ReflectionTestUtils.setField(endpoint, "id", UUID.randomUUID());
-        ReflectionTestUtils.setField(endpoint, "location", endpointLocation);
-        ReflectionTestUtils.setField(endpoint, "docs", endpointDocumentation);
-        ReflectionTestUtils.setField(endpoint, "info", "info");
         ReflectionTestUtils.setField(endpoint, "additional", new HashMap<>());
 
         return endpoint;

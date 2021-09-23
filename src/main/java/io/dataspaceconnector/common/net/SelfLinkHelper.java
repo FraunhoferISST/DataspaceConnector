@@ -23,7 +23,6 @@ import io.dataspaceconnector.controller.resource.view.artifact.ArtifactViewAssem
 import io.dataspaceconnector.controller.resource.view.catalog.CatalogViewAssembler;
 import io.dataspaceconnector.controller.resource.view.contract.ContractViewAssembler;
 import io.dataspaceconnector.controller.resource.view.endpoint.AppEndpointViewAssembler;
-import io.dataspaceconnector.controller.resource.view.endpoint.ConnectorEndpointViewAssembler;
 import io.dataspaceconnector.controller.resource.view.endpoint.GenericEndpointViewAssembler;
 import io.dataspaceconnector.controller.resource.view.representation.RepresentationViewAssembler;
 import io.dataspaceconnector.controller.resource.view.resource.OfferedResourceViewAssembler;
@@ -38,7 +37,6 @@ import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
-import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
@@ -103,12 +101,6 @@ public final class SelfLinkHelper {
             new GenericEndpointViewAssembler();
 
     /**
-     * View assembler for connector endpoints.
-     */
-    private static final ConnectorEndpointViewAssembler CONNECTOR_ENDPOINT_ASSEMBLER =
-            new ConnectorEndpointViewAssembler();
-
-    /**
      * View assembler for app endpoints.
      */
     private static final AppEndpointViewAssembler APP_ENDPOINT_ASSEMBLER =
@@ -159,8 +151,6 @@ public final class SelfLinkHelper {
             return getSelfLink((Agreement) entity);
         } else if (entity instanceof GenericEndpoint) {
             return getSelfLink((GenericEndpoint) entity);
-        } else if (entity instanceof ConnectorEndpoint) {
-            return getSelfLink((ConnectorEndpoint) entity);
         } else if (entity instanceof AppEndpoint) {
             return getSelfLink((AppEndpoint) entity);
         } else if (entity instanceof Route) {
@@ -291,18 +281,6 @@ public final class SelfLinkHelper {
     private static URI getSelfLink(final GenericEndpoint endpoint)
             throws ResourceNotFoundException {
         return getSelfLink(endpoint, GENERIC_ENDPOINT_ASSEMBLER);
-    }
-
-    /**
-     * Get self-link of connector endpoint.
-     *
-     * @param endpoint the connector endpoint.
-     * @return the self-link to the connector endpoint.
-     * @throws ResourceNotFoundException If the resource could not be loaded.
-     */
-    private static URI getSelfLink(final ConnectorEndpoint endpoint)
-            throws ResourceNotFoundException {
-        return getSelfLink(endpoint, CONNECTOR_ENDPOINT_ASSEMBLER);
     }
 
     /**
