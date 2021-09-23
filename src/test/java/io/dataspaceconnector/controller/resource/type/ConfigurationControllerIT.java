@@ -130,6 +130,7 @@ public class ConfigurationControllerIT {
                                         .content("{}"))
                        .andExpect(status().isCreated()).andReturn();
 
+//TODO: for the DSC DB "{}" from above is a valid input with everything null in the configuration, but for the messaging services, setting the null-config as active below with all values null will not work.
         final var newObj = newObject.getResponse().getHeader("Location");
         final var activatePath = URI.create(newObj).getPath() + "/active";
 
