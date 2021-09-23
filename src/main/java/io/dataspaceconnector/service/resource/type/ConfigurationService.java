@@ -33,6 +33,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -54,6 +56,17 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
      * Builds the ids config.
      */
     private final @NonNull IdsConfigModelBuilder configBuilder;
+
+    /**
+     * The application context.
+     */
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    /**
+     * Used to determine if the connector ist starting or already running.
+     */
+    private boolean startup = true;
 
     /**
      * Constructor.
@@ -143,14 +156,22 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
 
             updateConfigProperties(activeConfig);
 
-            final var keyStoreManager = new KeyStoreManager(
-                    configuration,
-                    activeConfig.getKeystore().getPassword().toCharArray(),
-                    activeConfig.getTruststore().getPassword().toCharArray(),
-                    activeConfig.getKeystore().getAlias());
+            if (!startup) {
+                //No startup, bean exists
+                final var configContainer = applicationContext.getBean(ConfigContainer.class);
+                configContainer.updateConfiguration(configuration);
+            } else {
+                //Do something else at startup
+                final var keyStoreManager = new KeyStoreManager(
+                        configuration,
+                        activeConfig.getKeystore().getPassword().toCharArray(),
+                        activeConfig.getTruststore().getPassword().toCharArray(),
+                        activeConfig.getKeystore().getAlias());
 
-            final var configContainer = new ConfigContainer(configuration, keyStoreManager);
-            configContainer.updateConfiguration(configuration);
+                final var configContainer = new ConfigContainer(configuration, keyStoreManager);
+                configContainer.updateConfiguration(configuration);
+                startup = false;
+            }
 
             if (log.isInfoEnabled()) {
                 log.info("Successfully updated Messaging-Services configuration.");
