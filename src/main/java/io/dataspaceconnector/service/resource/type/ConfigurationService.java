@@ -15,11 +15,10 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
-import de.fraunhofer.ids.messaging.core.config.ssl.keystore.KeyStoreManager;
-import de.fraunhofer.ids.messaging.core.config.ssl.keystore.KeyStoreManagerInitializationException;
 import io.dataspaceconnector.common.runtime.ServiceResolver;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.configuration.Configuration;
@@ -33,8 +32,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -144,38 +141,30 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
             log.debug("Updating Messaging-Services configuration...");
         }
 
-        try {
-            final var activeConfig = getActiveConfig();
-            final var configuration = configBuilder.create(activeConfig);
+        final var activeConfig = getActiveConfig();
+        final var configuration = configBuilder.create(activeConfig);
 
-            updateConfigProperties(activeConfig);
+        //initial config-properties are loaded from application.properties
+        //need to be reset to load values from database instead
+        updateConfigProperties(activeConfig);
 
-            if (!startup) {
-                //No startup, bean exists
-                final var configContainer = svcResolver.getService(ConfigContainer.class);
-                if(configContainer.isPresent()) {
-                    configContainer.get().updateConfiguration(configuration);
-                }
-            } else {
-                //Do something else at startup
-                final var keyStoreManager = new KeyStoreManager(
-                        configuration,
-                        activeConfig.getKeystore().getPassword().toCharArray(),
-                        activeConfig.getTruststore().getPassword().toCharArray(),
-                        activeConfig.getKeystore().getAlias());
-
-                final var configContainer = new ConfigContainer(configuration, keyStoreManager);
-                configContainer.updateConfiguration(configuration);
-                startup = false;
-            }
-
+        if (!startup) {
+            //No startup, ConfigContainer bean exists, config changes at runtime
+            updateConfigContainer(configuration);
             if (log.isInfoEnabled()) {
-                log.info("Successfully updated Messaging-Services configuration.");
+                log.info("Successfully updated Messaging-Services configuration at runtime.");
             }
-        } catch (KeyStoreManagerInitializationException e) {
-            if (log.isErrorEnabled()) {
-                log.error("Could not change configuration! [exception=({})]", e.getMessage());
-            }
+        } else {
+            //startup, ConfigContainer bean doesnt exist yet, ConfigProducer will handle startup
+            startup = false;
+        }
+    }
+
+    private void updateConfigContainer(final ConfigurationModel configuration)
+            throws ConfigUpdateException {
+        final var configContainer = svcResolver.getService(ConfigContainer.class);
+        if(configContainer.isPresent()) {
+            configContainer.get().updateConfiguration(configuration);
         }
     }
 
