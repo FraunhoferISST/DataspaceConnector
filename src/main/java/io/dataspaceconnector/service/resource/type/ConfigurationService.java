@@ -58,12 +58,6 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
     private final @NonNull IdsConfigModelBuilder configBuilder;
 
     /**
-     * The application context.
-     */
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    /**
      * Used to determine if the connector ist starting or already running.
      */
     private boolean startup = true;
@@ -158,8 +152,10 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
 
             if (!startup) {
                 //No startup, bean exists
-                final var configContainer = applicationContext.getBean(ConfigContainer.class);
-                configContainer.updateConfiguration(configuration);
+                final var configContainer = svcResolver.getService(ConfigContainer.class);
+                if(configContainer.isPresent()) {
+                    configContainer.get().updateConfiguration(configuration);
+                }
             } else {
                 //Do something else at startup
                 final var keyStoreManager = new KeyStoreManager(
