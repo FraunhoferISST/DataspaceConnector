@@ -16,6 +16,7 @@
 package io.dataspaceconnector.service.resource.type;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
+import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import de.fraunhofer.ids.messaging.core.config.ssl.keystore.KeyStoreManager;
 import de.fraunhofer.ids.messaging.core.config.ssl.keystore.KeyStoreManagerInitializationException;
@@ -138,20 +139,16 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
 
         try {
             final var activeConfig = getActiveConfig();
-
             final var configuration = configBuilder.create(activeConfig);
 
-            //Note: new KeyStoreManager called twice, once here, once while updateConfiguration
-            //existing bean can't be used without further ado due to changed credentials
-            //logs "Successfully loaded Keystore.","Successfully loaded Truststore."
+            updateConfigProperties(activeConfig);
+
             final var keyStoreManager = new KeyStoreManager(
                     configuration,
                     activeConfig.getKeystore().getPassword().toCharArray(),
                     activeConfig.getTruststore().getPassword().toCharArray(),
                     activeConfig.getKeystore().getAlias());
 
-            //KeyStoreManager will be build again in updateConfiguration, but also req. as param
-            //logs "Successfully loaded Keystore.","Successfully loaded Truststore."
             final var configContainer = new ConfigContainer(configuration, keyStoreManager);
             configContainer.updateConfiguration(configuration);
 
@@ -161,6 +158,19 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
         } catch (KeyStoreManagerInitializationException e) {
             if (log.isErrorEnabled()) {
                 log.error("Could not change configuration! [exception=({})]", e.getMessage());
+            }
+        }
+    }
+
+    private void updateConfigProperties(final Configuration activeConfig) {
+        final var configProperties = svcResolver.getService(ConfigProperties.class);
+        if (configProperties.isPresent()) {
+            final var configBean = configProperties.get();
+            configBean.setKeyAlias(activeConfig.getKeystore().getAlias());
+            configBean.setKeyStorePassword(activeConfig.getKeystore().getPassword());
+            configBean.setTrustStorePassword(activeConfig.getTruststore().getPassword());
+            if (log.isInfoEnabled()) {
+                log.info("Successfully updated ConfigProperties.");
             }
         }
     }
