@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.extension.actuator.update;
+package io.dataspaceconnector.extension.monitoring.update;
 
 import de.fraunhofer.ids.messaging.protocol.http.HttpService;
 import io.dataspaceconnector.config.ConnectorConfig;
-import io.dataspaceconnector.extension.actuator.update.util.Repository;
-import io.dataspaceconnector.extension.actuator.update.util.UpdateType;
+import io.dataspaceconnector.extension.monitoring.update.util.Repository;
+import io.dataspaceconnector.extension.monitoring.update.util.UpdateType;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -38,7 +38,7 @@ import java.util.Objects;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class UpdateInformationService {
+public class UpdateInfoService {
 
     /**
      * Service for connector configurations.
@@ -66,7 +66,6 @@ public class UpdateInformationService {
     public Map<String, Object> getUpdateDetails() throws IOException {
         final var version = connectorConfig.getDefaultVersion();
 
-        final var connectorInfo = new HashMap<String, Object>();
         final var updateInfo = getLatestInformation();
 
         if (isOutdated(version, updateInfo.get("version").toString())) {
@@ -90,10 +89,7 @@ public class UpdateInformationService {
             updateInfo.put("available", false);
         }
 
-        connectorInfo.put("version", version);
-        connectorInfo.put("update", updateInfo);
-
-        return connectorInfo;
+        return updateInfo;
     }
 
     /**

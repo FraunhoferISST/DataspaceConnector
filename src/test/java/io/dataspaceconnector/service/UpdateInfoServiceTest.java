@@ -17,8 +17,8 @@ package io.dataspaceconnector.service;
 
 import de.fraunhofer.ids.messaging.protocol.http.HttpService;
 import io.dataspaceconnector.config.ConnectorConfig;
-import io.dataspaceconnector.extension.actuator.update.UpdateInformationService;
-import io.dataspaceconnector.extension.actuator.update.util.Repository;
+import io.dataspaceconnector.extension.monitoring.update.UpdateInfoService;
+import io.dataspaceconnector.extension.monitoring.update.util.Repository;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -30,11 +30,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
-public class UpdateInformationServiceTest {
+public class UpdateInfoServiceTest {
 
     private static String RESPONSE_STRING = "{\"url\":\"https://api.github.com/repos/International-Data-Spaces-Association/DataspaceConnector/releases/48802118\",\"assets_url\":\"https://api.github.com/repos/International-Data-Spaces-Association/DataspaceConnector/releases/48802118/assets\",\"upload_url\":\"https://uploads.github.com/repos/International-Data-Spaces-Association/DataspaceConnector/releases/48802118/assets{?name,label}\",\"html_url\":\"https://github.com/International-Data-Spaces-Association/DataspaceConnector/releases/tag/v6.2.0\",\"id\":48802118,\"author\":{\"login\":\"juliapampus\",\"id\":72392527,\"node_id\":\"MDQ6VXNlcjcyMzkyNTI3\",\"avatar_url\":\"https://avatars.githubusercontent.com/u/72392527?v=4\",\"gravatar_id\":\"\",\"url\":\"https://api.github.com/users/juliapampus\",\"html_url\":\"https://github.com/juliapampus\",\"followers_url\":\"https://api.github.com/users/juliapampus/followers\",\"following_url\":\"https://api.github.com/users/juliapampus/following{/other_user}\",\"gists_url\":\"https://api.github.com/users/juliapampus/gists{/gist_id}\",\"starred_url\":\"https://api.github.com/users/juliapampus/starred{/owner}{/repo}\",\"subscriptions_url\":\"https://api.github.com/users/juliapampus/subscriptions\",\"organizations_url\":\"https://api.github.com/users/juliapampus/orgs\",\"repos_url\":\"https://api.github.com/users/juliapampus/repos\",\"events_url\":\"https://api.github.com/users/juliapampus/events{/privacy}\",\"received_events_url\":\"https://api.github.com/users/juliapampus/received_events\",\"type\":\"User\",\"site_admin\":false},\"node_id\":\"MDc6UmVsZWFzZTQ4ODAyMTE4\",\"tag_name\":\"v6.2.0\",\"target_commitish\":\"main\",\"name\":\"Dataspace Connector v6.2.0 - AppStore communication\",\"draft\":false,\"prerelease\":false,\"created_at\":\"2021-09-01T09:21:50Z\",\"published_at\":\"2021-09-01T09:23:51Z\",\"assets\":[],\"tarball_url\":\"https://api.github.com/repos/International-Data-Spaces-Association/DataspaceConnector/tarball/v6.2.0\",\"zipball_url\":\"https://api.github.com/repos/International-Data-Spaces-Association/DataspaceConnector/zipball/v6.2.0\",\"body\":\"The according documentation can be found [here](https://international-data-spaces-association.github.io/DataspaceConnector/CommunicationGuide/v6/IdsEcosystem/AppStore). In `CHANGELOG.md`:\\r\\n\\r\\n### Added\\r\\n- Add app, app store, and app endpoint entities to the data model.\\r\\n  - Provide REST endpoints for managing entities and its relations.\\r\\n  - Add REST endpoint for managing image/container deployment with Portainer.\\r\\n- Add `POST api/ids/app` endpoint for downloading an IDS app's metadata and data from the IDS AppStore.\",\"reactions\":{\"url\":\"https://api.github.com/repos/International-Data-Spaces-Association/DataspaceConnector/releases/48802118/reactions\",\"total_count\":2,\"+1\":0,\"-1\":0,\"laugh\":0,\"hooray\":1,\"confused\":0,\"heart\":1,\"rocket\":0,\"eyes\":0}}";
 
-    private UpdateInformationService updateInformationService;
+    private UpdateInfoService updateInfoService;
 
     public HttpService httpService;
 
@@ -49,7 +49,7 @@ public class UpdateInformationServiceTest {
         httpService = Mockito.mock(HttpService.class);
         repository = Mockito.mock(Repository.class);
 
-        updateInformationService = new UpdateInformationService(connectorConfig, httpService);
+        updateInfoService = new UpdateInfoService(connectorConfig, httpService);
 
         mockWebServer = new MockWebServer();
         mockWebServer.start();
@@ -63,9 +63,9 @@ public class UpdateInformationServiceTest {
                     return new OkHttpClient().newCall(req).execute();
                 });
 
-        var configField = updateInformationService.getClass().getDeclaredField("repoConfig");
+        var configField = updateInfoService.getClass().getDeclaredField("repoConfig");
         configField.setAccessible(true);
-        configField.set(updateInformationService, repository);
+        configField.set(updateInfoService, repository);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class UpdateInformationServiceTest {
 
         /* ACT */
         mockWebServer.enqueue(mockResponse);
-        final var response = updateInformationService.getLatestInformation();
+        final var response = updateInfoService.getLatestInformation();
 
         /* ASSERT */
         Assertions.assertEquals(version, response.get("update.version"));

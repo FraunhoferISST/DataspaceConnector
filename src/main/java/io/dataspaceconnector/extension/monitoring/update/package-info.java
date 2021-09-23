@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Contains actuator extensions.
+ * Provides information about software updates.
  */
-package io.dataspaceconnector.extension.actuator;
+package io.dataspaceconnector.extension.monitoring.update;

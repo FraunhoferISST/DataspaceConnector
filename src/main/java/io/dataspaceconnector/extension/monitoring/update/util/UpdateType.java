@@ -13,40 +13,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.extension.actuator.update.util;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+package io.dataspaceconnector.extension.monitoring.update.util;
 
 /**
- * Configuration for accessed repository.
+ * Types which updates may be present.
  */
-@Getter
-@AllArgsConstructor
-public class Repository {
+public enum UpdateType {
 
     /**
-     * The port.
+     * If no update is available.
      */
-    private final int port;
+    NO_UPDATE("none"),
 
     /**
-     * The hostname.
+     * A new major release is available.
      */
-    private final String host;
+    MAJOR("major"),
 
     /**
-     * The scheme.
+     * A new minor release is available.
      */
-    private final String scheme;
+    MINOR("minor"),
 
     /**
-     * The repository's owner.
+     * A new patch release is available.
      */
-    private final String owner;
+    PATCH("patch");
 
     /**
-     * The project name.
+     * Holds the enums string.
      */
-    private final String name;
+    private final String value;
+
+    /**
+     * Constructor.
+     *
+     * @param name The name of the update-enum .
+     */
+    UpdateType(final String name) {
+        this.value = name;
+    }
+
+    @Override
+    public String toString() {
+        return value;
+    }
 }

@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Provides utility classes for update feature.
+ * Provides actuator extensions.
  */
-package io.dataspaceconnector.extension.actuator.update.util;
+package io.dataspaceconnector.extension.monitoring;
