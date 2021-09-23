@@ -104,6 +104,8 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
             swapActiveConfigInDb(newConfig);
             if (!startup) {
                 resetMessagingConfig();
+            } else {
+                updateConfigProperties(activeConfig.get());
             }
         } else {
             ((ConfigurationRepository) getRepository()).setActive(newConfig);
