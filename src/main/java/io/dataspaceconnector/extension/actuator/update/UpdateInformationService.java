@@ -17,7 +17,7 @@ package io.dataspaceconnector.extension.actuator.update;
 
 import de.fraunhofer.ids.messaging.protocol.http.HttpService;
 import io.dataspaceconnector.config.ConnectorConfig;
-import io.dataspaceconnector.extension.actuator.update.util.RepoConfig;
+import io.dataspaceconnector.extension.actuator.update.util.Repository;
 import io.dataspaceconnector.extension.actuator.update.util.UpdateType;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -51,34 +51,11 @@ public class UpdateInformationService {
     private final @NonNull HttpService httpSvc;
 
     /**
-     * The scheme.
-     */
-    private static final String SCHEME = "https";
-
-    /**
-     * GitHub API host address.
-     */
-    private static final String HOST = "api.github.com";
-
-    /**
-     * The port.
-     */
-    private static final Integer PORT = 443;
-
-    /**
-     * The project repository owner.
-     */
-    private static final String OWNER = "International-Data-Spaces-Association";
-
-    /**
-     * The project repository.
-     */
-    private static final String REPOSITORY = "DataspaceConnector";
-
-    /**
      * Config for repository.
      */
-    private final RepoConfig repoConfig = new RepoConfig(PORT, HOST, SCHEME);
+    private final Repository repository = new Repository(
+            443, "api.github.com", "https",
+            "International-Data-Spaces-Association", "DataspaceConnector");
 
     /**
      * Compares latest release with the current version.
@@ -127,10 +104,11 @@ public class UpdateInformationService {
      */
     public Map<String, Object> getLatestInformation() throws IOException {
         final var url = new HttpUrl.Builder()
-                .scheme(repoConfig.getScheme())
-                .host(repoConfig.getHost())
-                .port(repoConfig.getPort())
-                .addPathSegments("repos/" + OWNER + "/" + REPOSITORY + "/releases/latest")
+                .scheme(repository.getScheme())
+                .host(repository.getHost())
+                .port(repository.getPort())
+                .addPathSegments("repos/" + repository.getOwner() + "/" + repository.getName()
+                        + "/releases/latest")
                 .build();
 
         final var response = httpSvc.send(new Request.Builder().url(url).get().build());

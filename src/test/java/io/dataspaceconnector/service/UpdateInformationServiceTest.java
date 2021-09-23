@@ -18,7 +18,7 @@ package io.dataspaceconnector.service;
 import de.fraunhofer.ids.messaging.protocol.http.HttpService;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.extension.actuator.update.UpdateInformationService;
-import io.dataspaceconnector.extension.actuator.update.util.RepoConfig;
+import io.dataspaceconnector.extension.actuator.update.util.Repository;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -40,23 +40,23 @@ public class UpdateInformationServiceTest {
 
     public ConnectorConfig connectorConfig;
 
-    public RepoConfig repoConfig;
+    public Repository repository;
 
     private MockWebServer mockWebServer;
 
     @BeforeEach
     public void setUp() throws Exception {
         httpService = Mockito.mock(HttpService.class);
-        repoConfig = Mockito.mock(RepoConfig.class);
+        repository = Mockito.mock(Repository.class);
 
         updateInformationService = new UpdateInformationService(connectorConfig, httpService);
 
         mockWebServer = new MockWebServer();
         mockWebServer.start();
 
-        Mockito.when(repoConfig.getHost()).thenReturn(mockWebServer.getHostName());
-        Mockito.when(repoConfig.getPort()).thenReturn(mockWebServer.getPort());
-        Mockito.when(repoConfig.getScheme()).thenReturn("http");
+        Mockito.when(repository.getHost()).thenReturn(mockWebServer.getHostName());
+        Mockito.when(repository.getPort()).thenReturn(mockWebServer.getPort());
+        Mockito.when(repository.getScheme()).thenReturn("http");
         Mockito.when(httpService.send(Mockito.any(Request.class))).thenAnswer(
                 (Answer<Response>) invocationOnMock -> {
                     var req = invocationOnMock.getArgument(0, Request.class);
@@ -65,7 +65,7 @@ public class UpdateInformationServiceTest {
 
         var configField = updateInformationService.getClass().getDeclaredField("repoConfig");
         configField.setAccessible(true);
-        configField.set(updateInformationService, repoConfig);
+        configField.set(updateInformationService, repository);
     }
 
     @Test

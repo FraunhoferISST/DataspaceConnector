@@ -13,30 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.extension.actuator.update.util;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
- * Configuration for accessed repository.
+ * Provides utility classes for update feature.
  */
-@Getter
-@AllArgsConstructor
-public class RepoConfig {
-
-    /**
-     * The port.
-     */
-    private final int port;
-
-    /**
-     * The hostname.
-     */
-    private final String host;
-
-    /**
-     * The scheme.
-     */
-    private final String scheme;
-}
+package io.dataspaceconnector.extension.actuator.update.util;
