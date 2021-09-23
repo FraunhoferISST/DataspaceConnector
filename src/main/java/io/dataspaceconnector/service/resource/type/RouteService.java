@@ -173,7 +173,7 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
     }
 
     /**
-     * Sets the output of a route.
+     * Sets the output of a route and (re-)deploys the route in Camel.
      *
      * @param routeId    The route ID.
      * @param artifactId ID of the artifact which is the output.
@@ -187,12 +187,13 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
     }
 
     /**
-     * Removes the output from a route.
+     * Removes the output from a route and removes the route from the Camel context.
      *
      * @param routeId The route ID.
      */
     public void removeOutput(final UUID routeId) {
         persist(((RouteFactory) getFactory()).deleteOutput(get(routeId)));
+        routeHelper.delete(get(routeId));
     }
 
     /**
