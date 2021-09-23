@@ -106,7 +106,8 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
             if (!startup) {
                 resetMessagingConfig();
             } else {
-                updateConfigProperties(activeConfig.get());
+                final var newActiveConfig = findActiveConfig();
+                newActiveConfig.ifPresent(this::updateConfigProperties);
             }
         } else {
             ((ConfigurationRepository) getRepository()).setActive(newConfig);
