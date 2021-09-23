@@ -47,7 +47,7 @@ class ConfigurationServiceTest {
         final var config = service.create(new ConfigurationDesc());
 
         /* ACT */
-        service.swapActiveConfig(config.getId());
+        service.swapActiveConfig(config.getId(), true);
 
         /* ASSERT */
         assertEquals(config.getId(), service.getActiveConfig().getId());
