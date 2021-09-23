@@ -167,7 +167,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
             throws ConfigUpdateException {
         final var configContainer = svcResolver.getService(ConfigContainer.class);
 
-        if(configContainer.isPresent()) {
+        if (configContainer.isPresent()) {
             final var configBean = configContainer.get();
 
             try {
