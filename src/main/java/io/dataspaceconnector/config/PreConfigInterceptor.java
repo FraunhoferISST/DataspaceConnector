@@ -124,11 +124,9 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
 
         final var configModel = deserializationSvc.getConfigurationModel(config);
 
-        //Also set config values currently set in application.properties
+        //copy config values from application.properties as not part of config.json
         configModel.setKeyStorePassword(properties.getKeyStorePassword());
         configModel.setTrustStorePassword(properties.getTrustStorePassword());
-
-        //assumes Keystore/Truststore alias are the same
         configModel.setKeyStoreAlias(properties.getKeyAlias());
         configModel.setTrustStoreAlias(properties.getKeyAlias());
 
