@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.extension.actuator.update;
+package io.dataspaceconnector.extension.actuator;
 
+import io.dataspaceconnector.extension.actuator.update.UpdateInformationService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -31,24 +32,23 @@ import java.io.IOException;
 @Component
 @Log4j2
 @RequiredArgsConstructor
-public class SoftwareUpdateController implements InfoContributor {
+public class ActuatorController implements InfoContributor {
 
     /**
      * The project information service.
      */
-    private final @NonNull ProjectInformationService projectInformationService;
+    private final @NonNull UpdateInformationService updateInformationSvc;
 
     /**
-     * Computes additional data to be added at runtime on actuator-info API request.
+     * Computes additional data to be added at runtime on actuator-info endpoint request.
      *
      * @param builder The builder that can add additional information to the endpoint.
      */
     @Override
     public void contribute(final Info.Builder builder) {
         try {
-            final var updateInfo =
-                    projectInformationService.projectUpdateAvailable();
-            builder.withDetail("connector", updateInfo);
+            final var information = updateInformationSvc.getUpdateDetails();
+            builder.withDetail("connector", information);
         } catch (IOException exception) {
             if (log.isDebugEnabled()) {
                 log.debug("Failed to determine if a project update is available."

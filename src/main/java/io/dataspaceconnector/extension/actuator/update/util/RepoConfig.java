@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.extension.actuator.update;
+package io.dataspaceconnector.extension.actuator.update.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,15 +28,15 @@ public class RepoConfig {
     /**
      * The port.
      */
-    private int port;
+    private final int port;
 
     /**
      * The hostname.
      */
-    private String host;
+    private final String host;
 
     /**
      * The scheme.
      */
-    private String scheme;
+    private final String scheme;
 }

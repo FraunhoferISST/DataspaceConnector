@@ -203,7 +203,12 @@ public enum ErrorMessage {
     /**
      * If a resource update message could not be sent.
      */
-    UPDATE_MESSAGE_FAILED("Failed to send update message.");
+    UPDATE_MESSAGE_FAILED("Failed to send update message."),
+
+    /**
+     * If an http response is null.
+     */
+    RESPONSE_NULL("Received an empty response for http request.");
 
     /**
      * Holds the enums string.

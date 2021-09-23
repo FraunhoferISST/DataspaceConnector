@@ -16,8 +16,8 @@
 package io.dataspaceconnector.controller.gui;
 
 import io.dataspaceconnector.controller.gui.util.GuiUtils;
-import io.dataspaceconnector.extension.actuator.update.ProjectInformationService;
-import io.dataspaceconnector.extension.actuator.update.SoftwareUpdateController;
+import io.dataspaceconnector.extension.actuator.update.UpdateInformationService;
+import io.dataspaceconnector.extension.actuator.ActuatorController;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -44,10 +44,10 @@ class GuiControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private SoftwareUpdateController connectorReleaseContributor;
+    private ActuatorController connectorReleaseContributor;
 
     @MockBean
-    private ProjectInformationService projectInformationService;
+    private UpdateInformationService updateInformationService;
 
     @Test
     void unauthorizedGetEnum() throws Exception {
@@ -98,7 +98,7 @@ class GuiControllerTest {
                 "connector.update", "6.2.0",
                 "connector.version", "6.2.0"
         );
-        Mockito.when(projectInformationService.projectUpdateAvailable()).thenReturn(updateMap);
+        Mockito.when(updateInformationService.getUpdateDetails()).thenReturn(updateMap);
         connectorReleaseContributor.contribute(builder);
         var info = builder.build();
         Assertions.assertEquals(updateMap, info.get("connector"));

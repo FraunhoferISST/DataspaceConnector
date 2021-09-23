@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.extension.actuator.update;
+package io.dataspaceconnector.extension.actuator.update.util;
 
 /**
  * Types which updates may be present.
  */
-public enum UdpateType {
+public enum UpdateType {
 
     /**
      * If no update is available.
@@ -50,7 +50,7 @@ public enum UdpateType {
      *
      * @param name The name of the update-enum .
      */
-    UdpateType(final String name) {
+    UpdateType(final String name) {
         this.value = name;
     }
 
