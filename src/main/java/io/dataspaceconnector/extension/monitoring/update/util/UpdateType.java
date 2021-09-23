@@ -23,22 +23,22 @@ public enum UpdateType {
     /**
      * If no update is available.
      */
-    NO_UPDATE("none"),
+    NO_UPDATE("None"),
 
     /**
      * A new major release is available.
      */
-    MAJOR("major"),
+    MAJOR("Major"),
 
     /**
      * A new minor release is available.
      */
-    MINOR("minor"),
+    MINOR("Minor"),
 
     /**
      * A new patch release is available.
      */
-    PATCH("patch");
+    PATCH("Patch");
 
     /**
      * Holds the enums string.
