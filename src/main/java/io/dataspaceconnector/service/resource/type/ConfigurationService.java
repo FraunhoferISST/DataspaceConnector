@@ -97,13 +97,16 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
      * @param newConfig Id of the new active configuration.
      * @param startup true, if application is currently starting
      */
-    public void swapActiveConfig(final UUID newConfig, final boolean startup) throws ConfigUpdateException {
+    public void swapActiveConfig(final UUID newConfig, final boolean startup)
+            throws ConfigUpdateException {
         final var activeConfig = findActiveConfig();
 
         if (activeConfig.isPresent()) {
             swapActiveConfigInDb(newConfig);
             if (!startup) {
                 resetMessagingConfig();
+            } else {
+                updateConfigProperties(activeConfig.get());
             }
         } else {
             ((ConfigurationRepository) getRepository()).setActive(newConfig);

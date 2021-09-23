@@ -96,8 +96,15 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
         return configurationSvc.findActiveConfig().isPresent();
     }
 
-    private ConfigurationModel loadConfigFromDb() {
-        return configModelBuilder.create(configurationSvc.findActiveConfig().get());
+    private ConfigurationModel loadConfigFromDb() throws ConfigProducerInterceptorException {
+        var activeConfig = configurationSvc.findActiveConfig().get();
+        var configModel = configModelBuilder.create(activeConfig);
+        try {
+            configurationSvc.swapActiveConfig(activeConfig.getId(), true);
+        } catch (ConfigUpdateException e) {
+            throw new ConfigProducerInterceptorException(e.getMessage());
+        }
+        return configModel;
     }
 
     private ConfigurationModel loadConfigFromFile(final ConfigProperties properties)
