@@ -15,11 +15,10 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
-import de.fraunhofer.ids.messaging.core.config.ssl.keystore.KeyStoreManager;
-import de.fraunhofer.ids.messaging.core.config.ssl.keystore.KeyStoreManagerInitializationException;
 import io.dataspaceconnector.common.runtime.ServiceResolver;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.configuration.Configuration;
@@ -33,8 +32,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -155,14 +152,47 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
         final var configuration = configBuilder.create(activeConfig);
 
         updateConfigProperties(activeConfig);
-        final var configContainer = svcResolver.getService(ConfigContainer.class);
-        if(configContainer.isPresent()) {
-            configContainer.get().updateConfiguration(configuration);
-        }
+        updateConfigContainer(configuration, activeConfig);
 
         if (log.isInfoEnabled()) {
             log.info("Successfully updated Messaging-Services configuration.");
         }
+    }
+
+    private void updateConfigContainer(final ConfigurationModel configuration,
+                                       final Configuration activeConfig)
+            throws ConfigUpdateException {
+        final var configContainer = svcResolver.getService(ConfigContainer.class);
+
+        if(configContainer.isPresent()) {
+            final var configBean = configContainer.get();
+
+            try {
+                updateKeyStoreManager(activeConfig, configBean);
+            } catch (Exception e) {
+                throw new ConfigUpdateException("Could not update KeyStoreManager!", e.getCause());
+            }
+
+            configBean.updateConfiguration(configuration);
+        }
+    }
+
+    private void updateKeyStoreManager(final Configuration activeConfig,
+                                       final ConfigContainer configBean)
+            throws NoSuchFieldException, IllegalAccessException {
+        final var keyStoreManager = configBean.getKeyStoreManager();
+
+        final var keyStorePw = keyStoreManager.getClass().getDeclaredField("keyStorePw");
+        keyStorePw.setAccessible(true);
+        keyStorePw.set(keyStoreManager, activeConfig.getKeystore().getPassword().toCharArray());
+
+        final var trustStorePw = keyStoreManager.getClass().getDeclaredField("trustStorePw");
+        trustStorePw.setAccessible(true);
+        trustStorePw.set(keyStoreManager, activeConfig.getTruststore().getPassword().toCharArray());
+
+        final var keyAlias = keyStoreManager.getClass().getDeclaredField("keyAlias");
+        keyAlias.setAccessible(true);
+        keyAlias.set(keyStoreManager, activeConfig.getKeystore().getAlias());
     }
 
     private void updateConfigProperties(final Configuration activeConfig) {
@@ -172,9 +202,6 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
             configBean.setKeyAlias(activeConfig.getKeystore().getAlias());
             configBean.setKeyStorePassword(activeConfig.getKeystore().getPassword());
             configBean.setTrustStorePassword(activeConfig.getTruststore().getPassword());
-            if (log.isInfoEnabled()) {
-                log.info("Successfully updated ConfigProperties.");
-            }
         }
     }
 }
