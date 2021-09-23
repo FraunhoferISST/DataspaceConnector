@@ -132,7 +132,7 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
 
         final var dscConfig
                 = configurationSvc.create(FromIdsObjectMapper.fromIdsConfig(configModel));
-        configurationSvc.swapActiveConfig(dscConfig.getId());
+        configurationSvc.swapActiveConfig(dscConfig.getId(), true);
         return configModel;
     }
 

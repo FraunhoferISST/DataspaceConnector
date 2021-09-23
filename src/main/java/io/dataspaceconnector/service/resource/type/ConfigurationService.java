@@ -15,10 +15,11 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import de.fraunhofer.ids.messaging.core.config.ssl.keystore.KeyStoreManager;
+import de.fraunhofer.ids.messaging.core.config.ssl.keystore.KeyStoreManagerInitializationException;
 import io.dataspaceconnector.common.runtime.ServiceResolver;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.configuration.Configuration;
@@ -32,6 +33,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -53,11 +56,6 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
      * Builds the ids config.
      */
     private final @NonNull IdsConfigModelBuilder configBuilder;
-
-    /**
-     * Used to determine if the connector ist starting or already running.
-     */
-    private boolean startup = true;
 
     /**
      * Constructor.
@@ -100,16 +98,28 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
      * Mark a new configuration as active.
      *
      * @param newConfig Id of the new active configuration.
+     * @param startup true, if application is currently starting
      */
-    public void swapActiveConfig(final UUID newConfig) throws ConfigUpdateException {
+    public void swapActiveConfig(final UUID newConfig, final boolean startup) throws ConfigUpdateException {
         final var activeConfig = findActiveConfig();
 
         if (activeConfig.isPresent()) {
             swapActiveConfigInDb(newConfig);
-            resetMessagingConfig();
+            if (!startup) {
+                resetMessagingConfig();
+            }
         } else {
             ((ConfigurationRepository) getRepository()).setActive(newConfig);
         }
+    }
+
+    /**
+     * Mark a new configuration as active.
+     *
+     * @param newConfig Id of the new active configuration.
+     */
+    public void swapActiveConfig(final UUID newConfig) throws ConfigUpdateException {
+        swapActiveConfig(newConfig, false);
     }
 
     /**
@@ -144,27 +154,14 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
         final var activeConfig = getActiveConfig();
         final var configuration = configBuilder.create(activeConfig);
 
-        //initial config-properties are loaded from application.properties
-        //need to be reset to load values from database instead
         updateConfigProperties(activeConfig);
-
-        if (!startup) {
-            //No startup, ConfigContainer bean exists, config changes at runtime
-            updateConfigContainer(configuration);
-            if (log.isInfoEnabled()) {
-                log.info("Successfully updated Messaging-Services configuration at runtime.");
-            }
-        } else {
-            //startup, ConfigContainer bean doesnt exist yet, ConfigProducer will handle startup
-            startup = false;
-        }
-    }
-
-    private void updateConfigContainer(final ConfigurationModel configuration)
-            throws ConfigUpdateException {
         final var configContainer = svcResolver.getService(ConfigContainer.class);
-        if (configContainer.isPresent()) {
+        if(configContainer.isPresent()) {
             configContainer.get().updateConfiguration(configuration);
+        }
+
+        if (log.isInfoEnabled()) {
+            log.info("Successfully updated Messaging-Services configuration.");
         }
     }
 
