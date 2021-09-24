@@ -67,7 +67,8 @@ public class ExampleController {
      * @return A pattern enum or error.
      */
     @Operation(summary = "Get pattern of policy",
-            description = "Get the policy pattern represented by a given JSON string.")
+            description = "Get the policy pattern represented by a given JSON string.",
+            operationId = "post_get_policy_pattern")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
@@ -95,7 +96,8 @@ public class ExampleController {
      * @return An example policy object that can be filled out.
      */
     @Operation(summary = "Get example policy",
-            description = "Get an example policy for a given policy pattern.")
+            description = "Get an example policy for a given policy pattern.",
+            operationId = "post_get_example_policy")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),

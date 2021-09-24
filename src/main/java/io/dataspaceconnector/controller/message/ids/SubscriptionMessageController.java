@@ -82,7 +82,8 @@ public class SubscriptionMessageController {
      * @return The response entity.
      */
     @PostMapping("/subscribe")
-    @Operation(summary = "Send IDS request message for element subscription")
+    @Operation(summary = "Send IDS request message for element subscription",
+            operationId = "post_send_element_subscribe_message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -133,7 +134,8 @@ public class SubscriptionMessageController {
      * @return The response entity.
      */
     @PostMapping("/unsubscribe")
-    @Operation(summary = "Send IDS request message for element unsubscription")
+    @Operation(summary = "Send IDS request message for element unsubscription",
+            operationId = "post_send_element_unsubscribe_message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),

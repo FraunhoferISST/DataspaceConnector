@@ -68,7 +68,8 @@ public class NotificationController {
      */
     @PutMapping("/notify")
     @Operation(summary = "Notify all subscribers", description = "Can be used to manually notify "
-            + "all subscribers about a resource offer, representation, or artifact update.")
+            + "all subscribers about a resource offer, representation, or artifact update.",
+            operationId = "put_notify_subscribers")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "No Content"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),

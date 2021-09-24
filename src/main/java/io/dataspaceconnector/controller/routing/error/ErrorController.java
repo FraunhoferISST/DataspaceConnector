@@ -67,7 +67,7 @@ public class ErrorController {
      */
     @Hidden
     @GetMapping(value = "/route/error", produces = "application/ld+json")
-    @Operation(summary = "Get new route related errors")
+    @Operation(summary = "Get new route related errors", operationId = "get_error_routes")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
             description = ResponseDescription.UNAUTHORIZED)

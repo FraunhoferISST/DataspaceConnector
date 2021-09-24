@@ -98,7 +98,8 @@ public class ResourceUpdateMessageController {
      */
     @PostMapping("/resource/update")
     @Operation(summary = "Resource update message", description = "Can be used for registering "
-            + "or updating a resource at an IDS broker or consumer connector.")
+            + "or updating a resource at an IDS broker or consumer connector.",
+            operationId = "update_resource")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),

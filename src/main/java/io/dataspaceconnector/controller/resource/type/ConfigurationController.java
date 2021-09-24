@@ -66,7 +66,7 @@ public class ConfigurationController extends BaseResourceController<Configuratio
      * @return Ok or error response.
      */
     @PutMapping(value = "/{id}/active", consumes = {"*/*"})
-    @Operation(summary = "Update current configuration")
+    @Operation(summary = "Update current configuration", operationId = "put_active_config")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
                     description = ResponseDescription.NO_CONTENT),
@@ -96,7 +96,7 @@ public class ConfigurationController extends BaseResourceController<Configuratio
      * @return The configuration object or an error.
      */
     @GetMapping(value = "/active", produces = "application/hal+json")
-    @Operation(summary = "Get current configuration")
+    @Operation(summary = "Get current configuration", operationId = "get_active_config")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,

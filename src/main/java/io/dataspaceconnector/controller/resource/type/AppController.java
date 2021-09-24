@@ -101,7 +101,8 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
      */
     @SuppressFBWarnings("IMPROPER_UNICODE")
     @PutMapping("/{id}/actions")
-    @Operation(summary = "Actions on apps", description = "Can be used for managing apps.")
+    @Operation(summary = "Actions on apps", description = "Can be used for managing apps.",
+            operationId = "put_app_action")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
@@ -234,7 +235,8 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
      * @return The app store.
      */
     @GetMapping("/{id}/appstore")
-    @Operation(summary = "Get appstore by app id", description = "Get appstore holding this app.")
+    @Operation(summary = "Get appstore by app id", description = "Get appstore holding this app.",
+            operationId = "get_appstore_by_app_id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,

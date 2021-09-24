@@ -58,7 +58,8 @@ public class RouteController extends BaseResourceController<Route, RouteDesc, Ro
      * @return response status OK, if start endpoint is created.
      */
     @PutMapping("{id}/endpoint/start")
-    @Operation(summary = "Creates start endpoint for the route")
+    @Operation(summary = "Creates start endpoint for the route",
+            operationId = "put_route_start_endpoint")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
                     description = ResponseDescription.NO_CONTENT),
@@ -76,7 +77,8 @@ public class RouteController extends BaseResourceController<Route, RouteDesc, Ro
      * @return response status OK, if start endpoint is deleted.
      */
     @DeleteMapping("{id}/endpoint/start")
-    @Operation(summary = "Deletes the start endpoint of the route")
+    @Operation(summary = "Deletes the start endpoint of the route",
+            operationId = "delete_route_endpoint_start")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
                     description = ResponseDescription.NO_CONTENT),
@@ -94,7 +96,8 @@ public class RouteController extends BaseResourceController<Route, RouteDesc, Ro
      * @return response status OK, if last endpoint is created.
      */
     @PutMapping("{id}/endpoint/end")
-    @Operation(summary = "Creates last endpoint for the route")
+    @Operation(summary = "Creates last endpoint for the route",
+            operationId = "put_route_end_endpoint")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
                     description = ResponseDescription.NO_CONTENT),
@@ -112,7 +115,8 @@ public class RouteController extends BaseResourceController<Route, RouteDesc, Ro
      * @return response status OK, if last endpoint is deleted.
      */
     @DeleteMapping("{id}/endpoint/end")
-    @Operation(summary = "Deletes the start endpoint of the route")
+    @Operation(summary = "Deletes the last endpoint of the route",
+            operationId = "delete_route_end_endpoint")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
                     description = ResponseDescription.NO_CONTENT),

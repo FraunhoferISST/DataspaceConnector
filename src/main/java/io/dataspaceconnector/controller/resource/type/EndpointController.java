@@ -174,7 +174,8 @@ public class EndpointController implements CRUDController<Endpoint, EndpointDesc
      * @return response status OK if data source is created at generic endpoint.
      */
     @PutMapping("{id}/datasource/{dataSourceId}")
-    @Operation(summary = "Creates start endpoint for the route")
+    @Operation(summary = "Creates start endpoint for the route",
+            operationId = "put_route_start_endpoint")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
                     description = ResponseDescription.NO_CONTENT),

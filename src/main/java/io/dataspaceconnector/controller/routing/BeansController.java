@@ -71,7 +71,8 @@ public class BeansController {
      */
     @Hidden
     @PostMapping
-    @Operation(summary = "Add a bean to the application context.")
+    @Operation(summary = "Add a bean to the application context.",
+            operationId = "post_bean_to_context")
     @Tag(name = "Camel", description = "Endpoints for dynamically managing Camel routes.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
@@ -118,7 +119,8 @@ public class BeansController {
      */
     @Hidden
     @DeleteMapping("/{beanId}")
-    @Operation(summary = "Remove a bean from the application context.")
+    @Operation(summary = "Remove a bean from the application context.",
+            operationId = "delete_bean_from_context")
     @Tag(name = "Camel", description = "Endpoints for dynamically managing Camel routes.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),

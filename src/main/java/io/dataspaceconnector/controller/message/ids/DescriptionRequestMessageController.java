@@ -90,7 +90,8 @@ public class DescriptionRequestMessageController {
      * @return The response entity.
      */
     @PostMapping("/description")
-    @Operation(summary = "Send IDS description request message")
+    @Operation(summary = "Send IDS description request message",
+            operationId = "post_send_description_request_message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),

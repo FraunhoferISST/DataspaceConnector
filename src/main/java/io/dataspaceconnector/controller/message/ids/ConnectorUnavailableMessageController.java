@@ -98,7 +98,8 @@ public class ConnectorUnavailableMessageController {
      */
     @PostMapping("/connector/unavailable")
     @Operation(summary = "Connector unavailable message", description = "Can be used for "
-            + "unregistering the connector at an IDS broker.")
+            + "unregistering the connector at an IDS broker.",
+            operationId = "post_send_connector_unavailable_message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),

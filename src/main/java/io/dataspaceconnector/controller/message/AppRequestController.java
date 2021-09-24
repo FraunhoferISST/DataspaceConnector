@@ -94,7 +94,7 @@ public class AppRequestController {
      * @return Success, when app can be found and created from recipient response.
      */
     @PostMapping("/app")
-    @Operation(summary = "Download IDS app from AppStore")
+    @Operation(summary = "Download IDS app from AppStore", operationId = "post_download_ids_app")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "201", description = "Created"),

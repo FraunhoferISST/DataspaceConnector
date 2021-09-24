@@ -68,7 +68,7 @@ public class RoutesController {
      */
     @Hidden
     @PostMapping
-    @Operation(summary = "Add a route to the Camel context.")
+    @Operation(summary = "Add a route to the Camel context.", operationId = "post_route_to_camel")
     @Tag(name = "Camel", description = "Endpoints for dynamically managing Camel routes.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
@@ -124,7 +124,8 @@ public class RoutesController {
      */
     @Hidden
     @DeleteMapping("/{routeId}")
-    @Operation(summary = "Delete a route from the Camel context.")
+    @Operation(summary = "Delete a route from the Camel context.",
+            operationId = "delete_route_from_camel")
     @Tag(name = "Camel", description = "Endpoints for dynamically managing Camel routes.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),

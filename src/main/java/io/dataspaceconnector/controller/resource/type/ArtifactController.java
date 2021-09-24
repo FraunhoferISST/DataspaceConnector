@@ -110,7 +110,8 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      * @throws IOException if the data cannot be received.
      */
     @GetMapping("{id}/data/**")
-    @Operation(summary = "Get data by artifact id with query input")
+    @Operation(summary = "Get data by artifact id with query input",
+            operationId = "get_data_by_artifact_id_1")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
@@ -164,7 +165,8 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      * @throws UnexpectedResponseException if the ids response message has been unexpected.
      */
     @PostMapping("{id}/data")
-    @Operation(summary = "Get data by artifact id with query input")
+    @Operation(summary = "Get data by artifact id with query input",
+            operationId = "get_data_by_artifact_id_2")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,

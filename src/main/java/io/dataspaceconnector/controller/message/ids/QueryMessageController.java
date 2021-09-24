@@ -94,7 +94,7 @@ public class QueryMessageController {
      */
     @PostMapping("/query")
     @Operation(summary = "Query message", description = "Can be used for querying an "
-            + "IDS component (e.g. the Broker).")
+            + "IDS component (e.g. the Broker).",  operationId = "post_send_query_message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -157,7 +157,7 @@ public class QueryMessageController {
      */
     @PostMapping("/search")
     @Operation(summary = "Full text search", description = "Can be used for full text search at an "
-            + "IDS component (e.g. the Broker).")
+            + "IDS component (e.g. the Broker).", operationId = "post_send_full_text_query_message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),

@@ -56,7 +56,8 @@ public class SettingsController {
      * @return Http ok or error response.
      */
     @PutMapping(value = "/negotiation", produces = "application/json")
-    @Operation(summary = "Set contract negotiation status")
+    @Operation(summary = "Set contract negotiation status",
+            operationId = "put_contract_negotiation")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
@@ -75,7 +76,8 @@ public class SettingsController {
      * @return Http ok or error response.
      */
     @GetMapping(value = "/negotiation", produces = "application/json")
-    @Operation(summary = "Get contract negotiation status")
+    @Operation(summary = "Get contract negotiation status",
+            operationId = "get_contract_negotiation")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
@@ -100,7 +102,8 @@ public class SettingsController {
      */
     @PutMapping(value = "/pattern", produces = "application/json")
     @Operation(summary = "Allow unsupported patterns", description = "Allow "
-            + "requesting data without policy enforcement if an unsupported pattern is recognized.")
+            + "requesting data without policy enforcement if an unsupported pattern is recognized.",
+            operationId = "put_pattern_status")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
@@ -120,7 +123,8 @@ public class SettingsController {
      */
     @GetMapping(value = "/pattern", produces = "application/json")
     @Operation(summary = "Get pattern validation status",
-            description = "Return if unsupported patterns are ignored when requesting data.")
+            description = "Return if unsupported patterns are ignored when requesting data.",
+            operationId = "get_pattern_status")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),

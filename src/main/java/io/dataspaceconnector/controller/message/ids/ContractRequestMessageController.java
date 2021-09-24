@@ -126,7 +126,8 @@ public class ContractRequestMessageController {
      * @return The response entity.
      */
     @PostMapping("/contract")
-    @Operation(summary = "Send IDS contract request message")
+    @Operation(summary = "Send IDS contract request message",
+            operationId = "post_send_contract_request_message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "201", description = "Created"),

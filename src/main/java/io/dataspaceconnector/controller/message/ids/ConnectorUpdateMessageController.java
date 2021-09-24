@@ -98,7 +98,8 @@ public class ConnectorUpdateMessageController {
      */
     @PostMapping("/connector/update")
     @Operation(summary = "Connector update message", description = "Can be used for registering or "
-            + "updating the connector at an IDS broker.")
+            + "updating the connector at an IDS broker.",
+            operationId = "post_send_connector_update_message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),

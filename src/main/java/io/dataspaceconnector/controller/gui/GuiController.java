@@ -62,7 +62,7 @@ public class GuiController {
      */
     @Hidden
     @GetMapping(value = "/enum/{enumName}")
-    @Operation(summary = "Get the specific enum")
+    @Operation(summary = "Get the specific enum", operationId = "get_enum")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description
             = ResponseDescription.BAD_REQUEST)

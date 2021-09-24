@@ -69,7 +69,7 @@ public class MainController {
      * @return Self-description or error response.
      */
     @GetMapping(value = {"/", ""}, produces = "application/ld+json")
-    @Operation(summary = "Public IDS self-description")
+    @Operation(summary = "Public IDS self-description", operationId = "get_public_selfdescription")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
@@ -85,7 +85,8 @@ public class MainController {
      * @return Self-description or error response.
      */
     @GetMapping(value = "/api/connector", produces = "application/ld+json")
-    @Operation(summary = "Private IDS self-description")
+    @Operation(summary = "Private IDS self-description",
+            operationId = "get_private_selfdescription")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,

@@ -66,7 +66,7 @@ public class SubscriptionController extends BaseResourceController<Subscription,
      */
     @Override
     @PostMapping
-    @Operation(summary = "Create a base resource")
+    @Operation(summary = "Create a base resource", operationId = "post_subscription")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.CREATED,
                     description = ResponseDescription.CREATED),
@@ -86,6 +86,7 @@ public class SubscriptionController extends BaseResourceController<Subscription,
      * @return Response with code 200 (Ok) and the list of all endpoints of this resource type.
      */
     @GetMapping("owning")
+    @Operation(summary = "get list of all subscriptions", operationId = "get_all_subscriptions")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
                     description = ResponseDescription.METHOD_NOT_ALLOWED),
