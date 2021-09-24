@@ -50,7 +50,7 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
     /**
      * The property for forcing to reload the configuration from a file or not.
      */
-    @Value("${configuration.force-reload.enabled:false}")
+    @Value("${configuration.force.reload:false}")
     private boolean forceReload;
 
     /**
