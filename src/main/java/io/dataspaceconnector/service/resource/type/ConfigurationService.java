@@ -114,13 +114,8 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
                     if (log.isWarnEnabled()) {
                         log.warn("Updating configuration failed, rollback to last configuration!");
                     }
-                    //if updating fails due to invalid config values, rollback to old config
                     swapActiveConfigInDb(configToReplace.get().getId());
                     resetMessagingConfig();
-//                    throw new ConfigUpdateException(
-//                            "Selected configuration was invalid, had to roll back!",
-//                            e.getCause()
-//                    );
                 }
             } else {
                 final var newActiveConfig = findActiveConfig();
@@ -152,14 +147,16 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
         try {
             resetMessagingConfig();
         } catch (ConfigUpdateException e) {
-            //if reloading fails, rollback
             if (log.isWarnEnabled()) {
                 log.warn("Updating configuration failed, rollback to last configuration!");
             }
+
             super.update(entityId, oldDesc);
+
             try {
                 resetMessagingConfig();
             } catch (ConfigUpdateException ignored) {
+                //Nothing to do - old config didn't work too, nothing we can do here.
             }
         }
 
