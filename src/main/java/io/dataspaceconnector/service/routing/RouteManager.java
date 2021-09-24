@@ -124,10 +124,10 @@ public class RouteManager {
             throws RouteCreationException {
         if (routeStart.get(0) instanceof ConnectorEndpoint) {
             final var connectorEndpoint = (ConnectorEndpoint) routeStart.get(0);
-            velocityContext.put("startUrl", connectorEndpoint.getAccessURL().toString());
+            velocityContext.put("startUrl", connectorEndpoint.getPath());
         } else if (routeStart.get(0) instanceof GenericEndpoint) {
             final var genericEndpoint = (GenericEndpoint) routeStart.get(0);
-            velocityContext.put("startUrl", genericEndpoint.getAccessURL().toString());
+            velocityContext.put("startUrl", genericEndpoint.getPath());
             addBasicAuthHeaderForGenericEndpoint(velocityContext, genericEndpoint);
         } else {
             // TODO app is route start
@@ -146,10 +146,10 @@ public class RouteManager {
             throws RouteCreationException {
         if (routeEnd.get(0) instanceof ConnectorEndpoint) {
             final var connectorEndpoint = (ConnectorEndpoint) routeEnd.get(0);
-            velocityContext.put("endUrl", connectorEndpoint.getAccessURL().toString());
+            velocityContext.put("endUrl", connectorEndpoint.getPath());
         } else if (routeEnd.get(0) instanceof GenericEndpoint) {
             final var genericEndpoint = (GenericEndpoint) routeEnd.get(0);
-            velocityContext.put("endUrl", genericEndpoint.getAccessURL().toString());
+            velocityContext.put("endUrl", genericEndpoint.getPath());
             addBasicAuthHeaderForGenericEndpoint(velocityContext, genericEndpoint);
         } else {
             //TODO app is route end
@@ -225,14 +225,14 @@ public class RouteManager {
         if (AppEndpoint.class.isAssignableFrom(endpoint.getClass())) {
             final var appEndpoint = (AppEndpoint) endpoint;
             if (appEndpoint.getAppEndpointType() == AppEndpointType.OUTPUT_ENDPOINT) {
-                list.add(new RouteStepEndpoint(appEndpoint.getAccessURL(),
+                list.add(new RouteStepEndpoint(appEndpoint.getPath(),
                         HttpMethod.GET));
             } else {
-                list.add(new RouteStepEndpoint(appEndpoint.getAccessURL(),
+                list.add(new RouteStepEndpoint(appEndpoint.getPath(),
                         HttpMethod.POST));
             }
         } else {
-            list.add(new RouteStepEndpoint(endpoint.getAccessURL(),
+            list.add(new RouteStepEndpoint(endpoint.getPath(),
                     HttpMethod.POST));
         }
     }

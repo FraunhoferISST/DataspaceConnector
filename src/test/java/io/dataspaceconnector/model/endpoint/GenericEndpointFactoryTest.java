@@ -47,7 +47,7 @@ public class GenericEndpointFactoryTest {
     void update_newLocation_willUpdate() {
         /* ARRANGE */
         final var desc = new GenericEndpointDesc();
-        desc.setLocation(URI.create("https://someLocation"));
+        desc.setLocation("https://someLocation");
         final var endpoint = factory.create(new GenericEndpointDesc());
 
         /* ACT */

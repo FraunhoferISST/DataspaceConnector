@@ -38,7 +38,7 @@ public class EndpointDesc extends Description {
     /**
      * The location information about the endpoint.
      */
-    private URI location;
+    private String location;
     /**
      * The documentation url.
      */

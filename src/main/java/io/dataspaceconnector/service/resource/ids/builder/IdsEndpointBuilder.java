@@ -67,7 +67,7 @@ public final class IdsEndpointBuilder
             }
 
             idsEndpoint = new GenericEndpointBuilder(getAbsoluteSelfLink(endpoint))
-                    ._accessURL_(location)
+                    ._path_(location)
                     ._genericEndpointAuthentication_(basicAuth)
                     ._endpointDocumentation_(Util.asList(documentation))
                     ._endpointInformation_(Util.asList(info))
@@ -78,7 +78,7 @@ public final class IdsEndpointBuilder
             final var appEndpoint = (AppEndpoint) endpoint;
 
             idsEndpoint = new AppEndpointBuilder(getAbsoluteSelfLink(endpoint))
-                    ._accessURL_(location)
+                    ._path_(location)
                     ._endpointDocumentation_(Util.asList(documentation))
                     ._endpointInformation_(Util.asList(info))
                     ._appEndpointType_(AppEndpointType.valueOf(appEndpoint.getEndpointType()))

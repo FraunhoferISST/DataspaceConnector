@@ -52,7 +52,7 @@ public class AppEndpointFactoryTest {
         desc.setMediaType("json");
         desc.setDocs(URI.create("https://docs"));
         desc.setInfo("info");
-        desc.setLocation(URI.create("https://location"));
+        desc.setLocation("https://location");
 
         /* ACT */
         final var result = factory.create(desc);
@@ -73,7 +73,7 @@ public class AppEndpointFactoryTest {
     void update_newLocation_willUpdate() {
         /* ARRANGE */
         final var desc = new AppEndpointDesc();
-        desc.setLocation(URI.create("https://someLocation"));
+        desc.setLocation("https://someLocation");
         final var endpoint = factory.create(new AppEndpointDesc());
 
         /* ACT */
