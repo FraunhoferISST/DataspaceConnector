@@ -17,6 +17,9 @@ package io.dataspaceconnector.controller.resource.type;
 
 import java.net.URI;
 
+import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
+import io.dataspaceconnector.common.runtime.ServiceResolver;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,11 +39,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@Slf4j
 @AutoConfigureMockMvc(addFilters = false)
 public class ConfigurationControllerIT {
 
     @Autowired
     MockMvc mockMvc;
+
+    @Autowired
+    ServiceResolver svcResolver;
 
     @Test
     @WithMockUser("ADMIN")
@@ -125,17 +132,27 @@ public class ConfigurationControllerIT {
     @WithMockUser("ADMIN")
     @Transactional
     public void setConfiguration_invalidConfigInput_rollBack() throws Exception {
-        //Get initial active config
+        //--1. INITIAL CONFIG--
+        //get initial active config
         final var getActive =
                 mockMvc.perform(get("/api/configurations/active"))
                         .andExpect(status().isOk()).andReturn();
 
-        //Get UUID of inital active config
+        //get UUID of inital active config
         final var activeConfig = new JSONObject(getActive.getResponse().getContentAsString());
         final var links = new JSONObject(activeConfig.get("_links").toString());
         final var self = new JSONObject(links.get("self").toString());
         final var validUUID = self.get("href");
 
+        //get KeyAlias of keyStore in Messaging-Service of initial config
+        final var configContainer = svcResolver.getService(ConfigContainer.class);
+        final var configBean = configContainer.get();
+        final var keyStoreManager = configBean.getKeyStoreManager();
+        final var keyAlias = keyStoreManager.getClass().getDeclaredField("keyAlias");
+        keyAlias.setAccessible(true);
+        final var keyAliasContent = keyAlias.get(keyStoreManager);
+
+        //--2. ADD AND ACTIVATE INVALID CONFIG--
         //add invalid config to dsc db
         final var invalidConfig =
                 mockMvc.perform(post("/api/configurations")
@@ -148,6 +165,7 @@ public class ConfigurationControllerIT {
         final var invalidConfigURI = URI.create(invalidConfigPath).getPath() + "/active";
         mockMvc.perform(put(invalidConfigURI)).andExpect(status().isNoContent()).andReturn();
 
+        //--3. GET ACTIVE CONFIG AFTER ROLLBACK--
         //get active config again after possible rollback
         final var getActive2 =
                 mockMvc.perform(get("/api/configurations/active"))
@@ -159,7 +177,18 @@ public class ConfigurationControllerIT {
         final var self2 = new JSONObject(links2.get("self").toString());
         final var validUUID2 = self2.get("href");
 
-        //test rollback: test if old config still active after rollback
+        //get KeyAlias of now active keyStore in Messaging-Service after rollback
+        final var configContainer2 = svcResolver.getService(ConfigContainer.class);
+        final var configBean2 = configContainer2.get();
+        final var keyStoreManager2 = configBean2.getKeyStoreManager();
+        final var keyAlias2 = keyStoreManager2.getClass().getDeclaredField("keyAlias");
+        keyAlias2.setAccessible(true);
+        final var keyAliasContent2 = keyAlias2.get(keyStoreManager2);
+
+        //--4. TEST IF ROLLBACK ON ACTIVATING INVALID CONFIG DID THE JOB--
+        //1. test dsc db holding old config as active again
         assertEquals(validUUID, validUUID2);
+        //2. test messaging-services KeyStoreManager keystore alias same as before rollback
+        assertEquals(keyAliasContent, keyAliasContent2);
     }
 }
