@@ -20,9 +20,13 @@ import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.common.runtime.ServiceResolver;
+import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
+import io.dataspaceconnector.model.keystore.KeystoreDesc;
+import io.dataspaceconnector.model.proxy.ProxyDesc;
+import io.dataspaceconnector.model.truststore.TruststoreDesc;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.ConfigurationRepository;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
@@ -104,7 +108,13 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
         if (activeConfig.isPresent()) {
             swapActiveConfigInDb(newConfig);
             if (!startup) {
-                resetMessagingConfig();
+                try {
+                    resetMessagingConfig();
+                } catch (ConfigUpdateException e) {
+                    // if updating fails, rollback
+                    swapActiveConfigInDb(activeConfig.get().getId());
+                    resetMessagingConfig();
+                }
             } else {
                 final var newActiveConfig = findActiveConfig();
                 newActiveConfig.ifPresent(this::updateConfigProperties);
@@ -128,10 +138,20 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
      */
     @Override
     public Configuration update(final UUID entityId, final ConfigurationDesc desc) {
+        final var oldConfig = super.get(entityId);
+        //old description needs to be cached here to allow for rollbacks on error
+        final var oldDesc = fromConfigModel(oldConfig);
         final var config = super.update(entityId, desc);
         try {
             resetMessagingConfig();
-        } catch (ConfigUpdateException ignored) {
+        } catch (ConfigUpdateException e) {
+            //if reloading fails, rollback
+            log.warn("Updating configuration failed, rollback to last configuration!");
+            super.update(entityId, oldDesc);
+            try {
+                resetMessagingConfig();
+            } catch (ConfigUpdateException ignored) {
+            }
         }
 
         return config;
@@ -207,5 +227,53 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
             configBean.setKeyStorePassword(activeConfig.getKeystore().getPassword());
             configBean.setTrustStorePassword(activeConfig.getTruststore().getPassword());
         }
+    }
+
+    private ConfigurationDesc fromConfigModel(final Configuration configuration) {
+        final var desc = new ConfigurationDesc();
+        desc.setCurator(configuration.getCurator());
+        desc.setConnectorId(configuration.getConnectorId());
+        desc.setDeployMode(configuration.getDeployMode());
+        desc.setDefaultEndpoint(configuration.getDefaultEndpoint());
+        desc.setInboundModelVersion(configuration.getInboundModelVersion());
+        desc.setLogLevel(configuration.getLogLevel());
+        desc.setMaintainer(configuration.getMaintainer());
+        desc.setOutboundModelVersion(configuration.getOutboundModelVersion());
+        desc.setSecurityProfile(configuration.getSecurityProfile());
+        desc.setStatus(configuration.getStatus());
+        desc.setTitle(configuration.getTitle());
+        desc.setAdditional(configuration.getAdditional());
+        desc.setDescription(configuration.getDescription());
+
+        if (configuration.getKeystore() != null) {
+            final var keyStoreDesc = new KeystoreDesc();
+            keyStoreDesc.setLocation(configuration.getKeystore().getLocation());
+            keyStoreDesc.setAlias(configuration.getKeystore().getAlias());
+            keyStoreDesc.setPassword(configuration.getKeystore().getPassword());
+            desc.setKeystoreSettings(keyStoreDesc);
+        }
+
+        if (configuration.getTruststore() != null) {
+            final var trustStoreDesc = new TruststoreDesc();
+            trustStoreDesc.setAlias(configuration.getTruststore().getAlias());
+            trustStoreDesc.setLocation(configuration.getTruststore().getLocation());
+            trustStoreDesc.setPassword(configuration.getTruststore().getPassword());
+            desc.setTruststoreSettings(trustStoreDesc);
+        }
+
+        if (configuration.getProxy() != null) {
+            final var proxyDesc = new ProxyDesc();
+            proxyDesc.setExclusions(configuration.getProxy().getExclusions());
+            proxyDesc.setLocation(configuration.getProxy().getLocation());
+            if (configuration.getProxy().getAuthentication() != null) {
+                final var authDesc = new AuthenticationDesc(
+                        configuration.getProxy().getAuthentication().getUsername(),
+                        configuration.getProxy().getAuthentication().getPassword()
+                );
+                proxyDesc.setAuthentication(authDesc);
+            }
+            desc.setProxySettings(proxyDesc);
+        }
+        return desc;
     }
 }
