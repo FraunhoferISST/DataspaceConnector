@@ -28,6 +28,8 @@ All notable changes to this project will be documented in this file.
 - Increase camel version from 3.11.1 to 3.11.2.
 - Increase pitest-junit-plugin version from 0.14 to 0.15.
 - Increase spotbugs version from 4.3.0 to 4.4.1.
+- Increase postgresql version from 42.2.23 to 42.2.24.
+- Increase spring version from 2.5.4 to 2.5.5.
 - Resolve spotbugs warnings.
 
 ## [6.2.0] - 2021-09-01
