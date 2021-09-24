@@ -17,6 +17,7 @@ package io.dataspaceconnector.controller.resource.type;
 
 import java.net.URI;
 
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -123,24 +124,42 @@ public class ConfigurationControllerIT {
     @Test
     @WithMockUser("ADMIN")
     @Transactional
-    public void setConfiguration_validInput_swapConfig() throws Exception {
-        final var newObject =
+    public void setConfiguration_invalidConfigInput_rollBack() throws Exception {
+        //Get initial active config
+        final var getActive =
+                mockMvc.perform(get("/api/configurations/active"))
+                        .andExpect(status().isOk()).andReturn();
+
+        //Get UUID of inital active config
+        final var activeConfig = new JSONObject(getActive.getResponse().getContentAsString());
+        final var links = new JSONObject(activeConfig.get("_links").toString());
+        final var self = new JSONObject(links.get("self").toString());
+        final var validUUID = self.get("href");
+
+        //add invalid config to dsc db
+        final var invalidConfig =
                 mockMvc.perform(post("/api/configurations")
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .content("{}"))
-                       .andExpect(status().isCreated()).andReturn();
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                        .andExpect(status().isCreated()).andReturn();
 
-//For the DSC DB "{}" from above is a valid input with everything null in the configuration,
-//but for the Messaging-Services, setting the null-config as active config below with all values
-//null (e.g. for Key- and Truststore settings) will not work (will print Error-Log-Message)
+        //activate invalid config - will cause rollback to old active config
+        final var invalidConfigPath = invalidConfig.getResponse().getHeader("Location");
+        final var invalidConfigURI = URI.create(invalidConfigPath).getPath() + "/active";
+        mockMvc.perform(put(invalidConfigURI)).andExpect(status().isNoContent()).andReturn();
 
-//        final var newObj = newObject.getResponse().getHeader("Location");
-//        final var activatePath = URI.create(newObj).getPath() + "/active";
-//
-//        final var result =
-//                mockMvc.perform(put(activatePath))
-//                       .andExpect(status().isNoContent()).andReturn();
-//
-//        assertEquals(HttpStatus.NO_CONTENT.value(), result.getResponse().getStatus());
+        //get active config again after possible rollback
+        final var getActive2 =
+                mockMvc.perform(get("/api/configurations/active"))
+                        .andExpect(status().isOk()).andReturn();
+
+        //get UUID of now active config after rollback
+        final var activeConfig2 = new JSONObject(getActive2.getResponse().getContentAsString());
+        final var links2 = new JSONObject(activeConfig2.get("_links").toString());
+        final var self2 = new JSONObject(links2.get("self").toString());
+        final var validUUID2 = self2.get("href");
+
+        //test rollback: test if old config still active after rollback
+        assertEquals(validUUID, validUUID2);
     }
 }
