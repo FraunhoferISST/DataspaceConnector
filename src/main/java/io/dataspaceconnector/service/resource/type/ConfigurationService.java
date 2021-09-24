@@ -103,16 +103,16 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
      */
     public void swapActiveConfig(final UUID newConfig, final boolean startup)
             throws ConfigUpdateException {
-        final var activeConfig = findActiveConfig();
+        final var configToReplace = findActiveConfig();
 
-        if (activeConfig.isPresent()) {
+        if (configToReplace.isPresent()) {
             swapActiveConfigInDb(newConfig);
             if (!startup) {
                 try {
                     resetMessagingConfig();
                 } catch (ConfigUpdateException e) {
-                    // if updating fails, rollback
-                    swapActiveConfigInDb(activeConfig.get().getId());
+                    //if updating fails due to invalid config values, rollback to old config
+                    swapActiveConfigInDb(configToReplace.get().getId());
                     resetMessagingConfig();
                     throw new ConfigUpdateException(
                             "Selected configuration was invalid, had to roll back!",
