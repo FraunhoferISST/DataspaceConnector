@@ -16,6 +16,7 @@
 package io.dataspaceconnector.service.resource.ids.builder;
 
 import java.math.BigInteger;
+import java.net.URI;
 
 import de.fraunhofer.iais.eis.AppEndpointBuilder;
 import de.fraunhofer.iais.eis.AppEndpointType;
@@ -52,6 +53,13 @@ public final class IdsEndpointBuilder
         final var location = endpoint.getLocation();
         final var info = new TypedLiteral(endpoint.getInfo(), "EN");
 
+        URI accessUrl;
+        try {
+            accessUrl = URI.create(location);
+        } catch (IllegalArgumentException exception) {
+            accessUrl = URI.create("https://default-url");
+        }
+
         de.fraunhofer.iais.eis.Endpoint idsEndpoint;
         if (endpoint instanceof GenericEndpoint) {
 
@@ -68,6 +76,7 @@ public final class IdsEndpointBuilder
 
             idsEndpoint = new GenericEndpointBuilder(getAbsoluteSelfLink(endpoint))
                     ._path_(location)
+                    ._accessURL_(accessUrl)
                     ._genericEndpointAuthentication_(basicAuth)
                     ._endpointDocumentation_(Util.asList(documentation))
                     ._endpointInformation_(Util.asList(info))
@@ -79,6 +88,7 @@ public final class IdsEndpointBuilder
 
             idsEndpoint = new AppEndpointBuilder(getAbsoluteSelfLink(endpoint))
                     ._path_(location)
+                    ._accessURL_(accessUrl)
                     ._endpointDocumentation_(Util.asList(documentation))
                     ._endpointInformation_(Util.asList(info))
                     ._appEndpointType_(AppEndpointType.valueOf(appEndpoint.getEndpointType()))

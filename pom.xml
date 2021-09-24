@@ -105,7 +105,7 @@
 		<equalsverifier.version>3.7.1</equalsverifier.version>
 		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
-		<velocity.version>1.7</velocity.version>
+		<freemarker.version>2.3.31</freemarker.version>
 		<camel.version>3.11.1</camel.version>
 		<idscp2.version>0.5.0</idscp2.version>
 
@@ -405,18 +405,10 @@
 			<scope>runtime</scope>
 		</dependency>
 
-
-		<!-- https://mvnrepository.com/artifact/org.apache.velocity/velocity -->
 		<dependency>
-			<groupId>org.apache.velocity</groupId>
-			<artifactId>velocity</artifactId>
-			<version>${velocity.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-collections</groupId>
-					<artifactId>commons-collections</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>${freemarker.version}</version>
 		</dependency>
 
 		<dependency>
@@ -527,7 +519,7 @@
 					<include>conf/**/*.*</include>
 					<include>camel-routes/**/*.xml</include>
 					<include>log4j2.xml</include>
-					<include>camel-templates/**/*.vm</include>
+					<include>camel-templates/**/*.ftl</include>
 					<include>application.properties</include>
 					<include>banner.txt</include>
 				</includes>

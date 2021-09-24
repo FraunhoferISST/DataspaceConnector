@@ -1,26 +1,26 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
 
-    <route id="$routeId" errorHandlerRef="$errorHandlerRef">
+    <route id="${routeId}" errorHandlerRef="${errorHandlerRef}">
 
         <from uri="timer://foo?fixedRate=true&amp;period=60000"/>
 
         <setHeader name="CamelHttpMethod"><constant>GET</constant></setHeader>
-        #if($genericEndpointAuthHeader)
+        <#if genericEndpointAuthHeader??>
             <setHeader name="Authorization"><constant>${genericEndpointAuthHeader}</constant></setHeader>
-        #end
-        <to uri="$startUrl"/>
+        </#if>
+        <to uri="${startUrl}"/>
 
         <convertBodyTo type="java.lang.String"/>
-        <log message="Fetched data: ${body}"/>
+        <log message="Fetched data: ${r"${body}"}"/>
 
-        #foreach($endpoint in $routeStepEndpoints)
+        <#list routeStepEndpoints as endpoint>
             <setHeader name="CamelHttpMethod"><constant>$endpoint.getHttpMethod().toString()</constant></setHeader>
-            <to uri="$endpoint.getEndpointUrl().toString()"/>
-        #end
+            <to uri="${endpoint.getEndpointUrl().toString()}"/>
+        </#list>
 
         <setHeader name="CamelHttpMethod"><constant>PUT</constant></setHeader>
         <setHeader name="Authorization"><constant>${connectorAuthHeader}</constant></setHeader>
-        <to uri="$endUrl"/>
+        <to uri="${endUrl}"/>
 
     </route>
 

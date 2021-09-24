@@ -22,6 +22,9 @@ import de.fraunhofer.iais.eis.ConnectorEndpoint;
 import de.fraunhofer.iais.eis.Endpoint;
 import de.fraunhofer.iais.eis.GenericEndpoint;
 import de.fraunhofer.iais.eis.RouteStep;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import io.dataspaceconnector.common.exception.RouteCreationException;
 import io.dataspaceconnector.common.exception.RouteDeletionException;
 import io.dataspaceconnector.model.route.Route;
@@ -35,21 +38,19 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.Unmarshaller;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -81,6 +82,11 @@ public class RouteManager {
     private final @NonNull CamelContext camelContext;
 
     /**
+     * The Freemarker configuration.
+     */
+    private final @NonNull Configuration freemarkerConfig;
+
+    /**
      * Creates a Camel XML route from a given app route. The generated XML route is then added to
      * the application's Camel context for execution.
      *
@@ -88,25 +94,25 @@ public class RouteManager {
      * @throws RouteCreationException if the Camel route cannot be created or deployed
      */
     public void createAndDeployXMLRoute(final AppRoute appRoute) throws RouteCreationException {
-        final var velocityContext = new VelocityContext();
+        final var freemarkerInput = new HashMap<String, Object>();
 
         // Create id for Camel route.
         final var camelRouteId = getCamelRouteId(appRoute);
-        velocityContext.put("routeId", camelRouteId);
+        freemarkerInput.put("routeId", camelRouteId);
 
         // Get route start and end (will either be connector, app or generic endpoint).
-        addRouteStartToContext(velocityContext,
+        addRouteStartToContext(freemarkerInput,
                 (ArrayList<? extends Endpoint>) appRoute.getAppRouteStart());
 
-        addRouteEndToContext(velocityContext,
+        addRouteEndToContext(freemarkerInput,
                 (ArrayList<? extends Endpoint>) appRoute.getAppRouteEnd());
 
         // Get route steps (if any).
-        addRouteStepsToContext(velocityContext,
+        addRouteStepsToContext(freemarkerInput,
                 (ArrayList<? extends RouteStep>) appRoute.getHasSubRoute());
 
         try {
-            createDataspaceConnectorRoute(appRoute, velocityContext);
+            createDataspaceConnectorRoute(appRoute, freemarkerInput);
         } catch (Exception e) {
             throw new RouteCreationException("Error creating Camel route for AppRoute with ID '"
                     + appRoute.getId() + "'", e);
@@ -114,21 +120,21 @@ public class RouteManager {
     }
 
     /**
-     * Extracts the URL of the {@link AppRoute}'s start and adds it to the Velocity context.
+     * Extracts the URL of the {@link AppRoute}'s start and adds it to the input map.
      *
-     * @param velocityContext the Velocity context.
+     * @param freemarkerInput the input map.
      * @param routeStart      start of the AppRoute.
      */
-    private void addRouteStartToContext(final VelocityContext velocityContext,
+    private void addRouteStartToContext(final Map<String, Object> freemarkerInput,
                                         final ArrayList<? extends Endpoint> routeStart)
             throws RouteCreationException {
         if (routeStart.get(0) instanceof ConnectorEndpoint) {
             final var connectorEndpoint = (ConnectorEndpoint) routeStart.get(0);
-            velocityContext.put("startUrl", connectorEndpoint.getPath());
+            freemarkerInput.put("startUrl", connectorEndpoint.getPath());
         } else if (routeStart.get(0) instanceof GenericEndpoint) {
             final var genericEndpoint = (GenericEndpoint) routeStart.get(0);
-            velocityContext.put("startUrl", genericEndpoint.getPath());
-            addBasicAuthHeaderForGenericEndpoint(velocityContext, genericEndpoint);
+            freemarkerInput.put("startUrl", genericEndpoint.getPath());
+            addBasicAuthHeaderForGenericEndpoint(freemarkerInput, genericEndpoint);
         } else {
             // TODO app is route start
             throw new RouteCreationException("An app as the route start is not yet supported.");
@@ -136,21 +142,21 @@ public class RouteManager {
     }
 
     /**
-     * Extracts the URL of the {@link AppRoute}'s end and adds it to the Velocity context.
+     * Extracts the URL of the {@link AppRoute}'s end and adds it to the input map.
      *
-     * @param velocityContext the Velocity context.
+     * @param freemarkerInput the input map.
      * @param routeEnd        end of the AppRoute.
      */
-    private void addRouteEndToContext(final VelocityContext velocityContext,
+    private void addRouteEndToContext(final Map<String, Object> freemarkerInput,
                                       final ArrayList<? extends Endpoint> routeEnd)
             throws RouteCreationException {
         if (routeEnd.get(0) instanceof ConnectorEndpoint) {
             final var connectorEndpoint = (ConnectorEndpoint) routeEnd.get(0);
-            velocityContext.put("endUrl", connectorEndpoint.getPath());
+            freemarkerInput.put("endUrl", connectorEndpoint.getPath());
         } else if (routeEnd.get(0) instanceof GenericEndpoint) {
             final var genericEndpoint = (GenericEndpoint) routeEnd.get(0);
-            velocityContext.put("endUrl", genericEndpoint.getPath());
-            addBasicAuthHeaderForGenericEndpoint(velocityContext, genericEndpoint);
+            freemarkerInput.put("endUrl", genericEndpoint.getPath());
+            addBasicAuthHeaderForGenericEndpoint(freemarkerInput, genericEndpoint);
         } else {
             //TODO app is route end
             throw new RouteCreationException("An app as the route end is not yet supported.");
@@ -158,13 +164,13 @@ public class RouteManager {
     }
 
     /**
-     * Creates and adds the basic authentication header for calling a generic endpoint to a Velocity
-     * context, if basic authentication is defined for the given endpoint.
+     * Creates and adds the basic authentication header for calling a generic endpoint to an input
+     * map, if basic authentication is defined for the given endpoint.
      *
-     * @param velocityContext the Velocity context.
+     * @param freemarkerInput the input map.
      * @param genericEndpoint the generic endpoint.
      */
-    private void addBasicAuthHeaderForGenericEndpoint(final VelocityContext velocityContext,
+    private void addBasicAuthHeaderForGenericEndpoint(final Map<String, Object> freemarkerInput,
                                                       final GenericEndpoint genericEndpoint) {
         final var basicAuth = genericEndpoint.getGenericEndpointAuthentication();
         if (basicAuth != null && basicAuth.getAuthUsername() != null
@@ -175,18 +181,18 @@ public class RouteManager {
             final var auth = username + ":" + password;
             final var encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
             final var authHeader = "Basic " + new String(encodedAuth, StandardCharsets.UTF_8);
-            velocityContext.put("genericEndpointAuthHeader", authHeader);
+            freemarkerInput.put("genericEndpointAuthHeader", authHeader);
         }
     }
 
     /**
      * Extracts the start and end URLs of the {@link AppRoute}'s steps and adds them to the
-     * Velocity context.
+     * input map.
      *
-     * @param velocityContext the Velocity context.
+     * @param freemarkerInput the input map.
      * @param routeSteps      steps of the AppRoute.
      */
-    private void addRouteStepsToContext(final VelocityContext velocityContext,
+    private void addRouteStepsToContext(final Map<String, Object> freemarkerInput,
                                         final ArrayList<? extends RouteStep> routeSteps) {
         final var routeStepEndpoints = new ArrayList<RouteStepEndpoint>();
 
@@ -212,7 +218,7 @@ public class RouteManager {
             }
         }
 
-        velocityContext.put("routeStepEndpoints", routeStepEndpoints);
+        freemarkerInput.put("routeStepEndpoints", routeStepEndpoints);
     }
 
     /**
@@ -239,38 +245,35 @@ public class RouteManager {
 
     /**
      * Creates and deploys a Camel route for the Dataspace Connector. First, Dataspace Connector
-     * specific configuration is added to the Velocity Context, which should already contain
+     * specific configuration is added to the input map, which should already contain
      * general route information. Then, the correct route template for the given AppRoute object
      * is chosen from the Dataspace Connector templates. Last, the generated XML route is added to
      * the Camel context.
      *
      * @param appRoute        the AppRoute object.
-     * @param velocityContext the Velocity context.
+     * @param freemarkerInput the input map.
      * @throws Exception if the route file cannot be created or deployed.
      */
     private void createDataspaceConnectorRoute(final AppRoute appRoute,
-                                               final VelocityContext velocityContext)
+                                               final Map<String, Object> freemarkerInput)
             throws Exception {
 
         if (log.isDebugEnabled()) {
             log.debug("Creating route for Dataspace Connector...");
         }
 
-        // Add reference to Camel-Instance's error handler to Velocity context.
-        velocityContext.put("errorHandlerRef", camelErrorHandlerRef);
+        // Add reference to Camel-Instance's error handler to input map.
+        freemarkerInput.put("errorHandlerRef", camelErrorHandlerRef);
 
         // Add basic auth header for connector endpoint.
-        routeConfigurer.addBasicAuthToContext(velocityContext);
+        routeConfigurer.addBasicAuthToContext(freemarkerInput);
 
         // Choose correct XML template based on route.
         final var template = routeConfigurer.getRouteTemplate(appRoute);
 
         if (template != null) {
-            final var velocityEngine = new VelocityEngine();
-            velocityEngine.init();
-
-            // Populate route template with properties from velocity context to create route.
-            final var writer = populateTemplate(template, velocityEngine, velocityContext);
+            // Populate route template with properties from input map to create route.
+            final var writer = populateTemplate(template, freemarkerInput);
 
             final var inputStream = new ByteArrayInputStream(writer.toString()
                     .getBytes(StandardCharsets.UTF_8));
@@ -288,36 +291,31 @@ public class RouteManager {
     }
 
     /**
-     * Populates a given Velocity template using the values from a given Velocity context.
+     * Populates a given Freemarker template using the values from a given input map.
      *
-     * @param resource        the template.
-     * @param velocityEngine  the Velocity engine required for populating the template.
-     * @param velocityContext the context containing the values to insert into the template.
+     * @param template the route template.
+     * @param freemarkerInput the context containing the values to insert into the template.
      * @return the populated template as a string.
      * @throws IOException if an error occurs while filling out the route template.
      */
-    private StringWriter populateTemplate(final Resource resource,
-                                          final VelocityEngine velocityEngine,
-                                          final VelocityContext velocityContext)
-            throws IOException {
+    private StringWriter populateTemplate(final Template template,
+                                          final Map<String, Object> freemarkerInput)
+            throws IOException, TemplateException {
         final var stringWriter = new StringWriter();
-        InputStreamReader inputStreamReader;
 
         try {
-            inputStreamReader = new InputStreamReader(resource.getInputStream(),
-                    StandardCharsets.UTF_8);
-            velocityEngine.evaluate(velocityContext, stringWriter, "", inputStreamReader);
-        } catch (IOException e) {
-            final var camelRouteId = (String) velocityContext.get("routeId");
+            template.process(freemarkerInput, stringWriter);
+        } catch (IOException | TemplateException exception) {
+            final var camelRouteId = (String) freemarkerInput.get("routeId");
 
             if (log.isErrorEnabled()) {
                 log.error("An error occurred while populating template."
-                                + " Please check all respective files for connection"
-                                + " with ID '{}' for correctness! (Error message: {})",
-                        camelRouteId, e.toString());
+                                + " Failed to create Camel route for route"
+                                + " with ID '{}'! [exception=({})]",
+                        camelRouteId, exception.getMessage());
             }
 
-            throw e;
+            throw exception;
         }
 
         return stringWriter;
