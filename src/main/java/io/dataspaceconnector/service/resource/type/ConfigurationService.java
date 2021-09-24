@@ -114,6 +114,10 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
                     // if updating fails, rollback
                     swapActiveConfigInDb(activeConfig.get().getId());
                     resetMessagingConfig();
+                    throw new ConfigUpdateException(
+                            "Selected configuration was invalid, had to roll back!",
+                            e.getCause()
+                    );
                 }
             } else {
                 final var newActiveConfig = findActiveConfig();
