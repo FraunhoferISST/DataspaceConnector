@@ -150,7 +150,9 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
             resetMessagingConfig();
         } catch (ConfigUpdateException e) {
             //if reloading fails, rollback
-            log.warn("Updating configuration failed, rollback to last configuration!");
+            if (log.isWarnEnabled()) {
+                log.warn("Updating configuration failed, rollback to last configuration!");
+            }
             super.update(entityId, oldDesc);
             try {
                 resetMessagingConfig();
