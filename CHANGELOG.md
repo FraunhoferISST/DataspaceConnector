@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - New `/actuator/info` API data `connector` to output the current version as well as information if a newer release is available on GitHub.
 - Added `authenticationSet` as boolean indicator in output of configuration APIs whether authentication credentials for a proxy are present.
+- New application.properties setting `configuration.force.reload=true/false` which will force reloading configuration from config.json/application.properties instead of using latest active configuration from DB, default if not set is false.
 
 ### Fixed
 - Fix self-reference of QueryInput in OpenApi schema.
