@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - When creating an artifact, check length of whole URL instead of just path.
 - Use language code instead of language ID when creating TypedLiterals.
 - Make SelfLinkHelper non-static, so that it can use Spring properties.
+- Data to be deleted from a consumed artifact, if necessary, is now deleted only once and not with each scheduler call.
 
 ### Changed
 - Add `ServiceResolver` to remove some Spring annotations from service classes.
