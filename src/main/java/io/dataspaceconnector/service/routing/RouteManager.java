@@ -36,6 +36,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -127,7 +128,7 @@ public class RouteManager {
         }
         if (routeStart.get(0) instanceof GenericEndpoint) {
             final var genericEndpoint = (GenericEndpoint) routeStart.get(0);
-            freemarkerInput.put("startUrl", genericEndpoint.getPath());
+            freemarkerInput.put("startUrl", escapeForXml(genericEndpoint.getPath()));
             addBasicAuthHeaderForGenericEndpoint(freemarkerInput, genericEndpoint);
         } else if (routeStart.get(0) instanceof AppEndpoint) {
             // TODO app is route start
@@ -146,12 +147,22 @@ public class RouteManager {
             throws RouteCreationException {
         if (routeEnd.get(0) instanceof GenericEndpoint) {
             final var genericEndpoint = (GenericEndpoint) routeEnd.get(0);
-            freemarkerInput.put("endUrl", genericEndpoint.getPath());
+            freemarkerInput.put("endUrl", escapeForXml(genericEndpoint.getPath()));
             addBasicAuthHeaderForGenericEndpoint(freemarkerInput, genericEndpoint);
         } else if (routeEnd.get(0) instanceof AppEndpoint) {
             //TODO app is route end
             throw new RouteCreationException("An app as the route end is not yet supported.");
         }
+    }
+
+    /**
+     * Escapes a string to be valid URL. This includes e.g. replacing & by &amp;
+     *
+     * @param input the input string.
+     * @return the escaped string.
+     */
+    private String escapeForXml(final String input) {
+        return StringEscapeUtils.escapeXml11(StringEscapeUtils.unescapeXml(input));
     }
 
     /**
