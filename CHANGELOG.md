@@ -31,6 +31,7 @@ All notable changes to this project will be documented in this file.
 - Increase postgresql version from 42.2.23 to 42.2.24.
 - Increase spring version from 2.5.4 to 2.5.5.
 - Resolve spotbugs warnings.
+- Add additional representation for paymentMethod to GUI endpoint.
 
 ## [6.2.0] - 2021-09-01
 
