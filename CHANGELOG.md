@@ -32,6 +32,7 @@ All notable changes to this project will be documented in this file.
 - Increase spring version from 2.5.4 to 2.5.5.
 - Resolve spotbugs warnings.
 - Increase pmd version from 6.38.0 to 6.39.0.
+- Add additional representation for paymentMethod to GUI endpoint.
 
 ## [6.2.0] - 2021-09-01
 
