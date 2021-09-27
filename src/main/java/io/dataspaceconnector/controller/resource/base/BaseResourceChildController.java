@@ -113,7 +113,8 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
      */
     @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET)
-    @Operation(summary = "Get all children of a base resource with pagination")
+    @Operation(summary = "Get all children of a base resource with pagination",
+            operationId = "get_children_base_resource")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
@@ -143,7 +144,8 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
      * @return Response with code 200 (Ok) and the new children's list.
      */
     @PostMapping
-    @Operation(summary = "Add a list of children to a base resource")
+    @Operation(summary = "Add a list of children to a base resource",
+            operationId = "post_children_base_resource")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
@@ -168,7 +170,8 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
      * @return Response with code 204 (No_Content).
      */
     @PutMapping
-    @Operation(summary = "Replace the children of a base resource")
+    @Operation(summary = "Replace the children of a base resource",
+            operationId = "put_children_base_resource")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
                     description = ResponseDescription.NO_CONTENT),
@@ -188,7 +191,8 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
      * @return Response with code 204 (No_Content).
      */
     @DeleteMapping
-    @Operation(summary = "Remove a list of children from a base resource")
+    @Operation(summary = "Remove a list of children from a base resource",
+            operationId = "delete_children_base_resource")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
                     description = ResponseDescription.NO_CONTENT),
