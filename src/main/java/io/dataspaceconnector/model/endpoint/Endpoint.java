@@ -55,7 +55,6 @@ public class Endpoint extends Entity {
     /**+
      * The access url of the endpoint.
      */
-    @Convert(converter = UriConverter.class)
     private String location;
 
     /**

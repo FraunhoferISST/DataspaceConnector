@@ -18,11 +18,9 @@ package io.dataspaceconnector.service.routing;
 import de.fraunhofer.iais.eis.AppEndpoint;
 import de.fraunhofer.iais.eis.AppEndpointType;
 import de.fraunhofer.iais.eis.AppRoute;
-import de.fraunhofer.iais.eis.ConnectorEndpoint;
 import de.fraunhofer.iais.eis.Endpoint;
 import de.fraunhofer.iais.eis.GenericEndpoint;
 import de.fraunhofer.iais.eis.RouteStep;
-import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import io.dataspaceconnector.common.exception.RouteCreationException;
@@ -82,11 +80,6 @@ public class RouteManager {
     private final @NonNull CamelContext camelContext;
 
     /**
-     * The Freemarker configuration.
-     */
-    private final @NonNull Configuration freemarkerConfig;
-
-    /**
      * Creates a Camel XML route from a given app route. The generated XML route is then added to
      * the application's Camel context for execution.
      *
@@ -112,7 +105,7 @@ public class RouteManager {
                 (ArrayList<? extends RouteStep>) appRoute.getHasSubRoute());
 
         try {
-            createDataspaceConnectorRoute(appRoute, freemarkerInput);
+            createAndDeployRoute(appRoute, freemarkerInput);
         } catch (Exception e) {
             throw new RouteCreationException("Error creating Camel route for AppRoute with ID '"
                     + appRoute.getId() + "'", e);
@@ -128,14 +121,15 @@ public class RouteManager {
     private void addRouteStartToContext(final Map<String, Object> freemarkerInput,
                                         final ArrayList<? extends Endpoint> routeStart)
             throws RouteCreationException {
-        if (routeStart.get(0) instanceof ConnectorEndpoint) {
-            final var connectorEndpoint = (ConnectorEndpoint) routeStart.get(0);
-            freemarkerInput.put("startUrl", connectorEndpoint.getPath());
-        } else if (routeStart.get(0) instanceof GenericEndpoint) {
+        // If route starts from connector endpoint, route start is not set
+        if (routeStart == null || routeStart.isEmpty()) {
+            return;
+        }
+        if (routeStart.get(0) instanceof GenericEndpoint) {
             final var genericEndpoint = (GenericEndpoint) routeStart.get(0);
             freemarkerInput.put("startUrl", genericEndpoint.getPath());
             addBasicAuthHeaderForGenericEndpoint(freemarkerInput, genericEndpoint);
-        } else {
+        } else if (routeStart.get(0) instanceof AppEndpoint) {
             // TODO app is route start
             throw new RouteCreationException("An app as the route start is not yet supported.");
         }
@@ -150,14 +144,11 @@ public class RouteManager {
     private void addRouteEndToContext(final Map<String, Object> freemarkerInput,
                                       final ArrayList<? extends Endpoint> routeEnd)
             throws RouteCreationException {
-        if (routeEnd.get(0) instanceof ConnectorEndpoint) {
-            final var connectorEndpoint = (ConnectorEndpoint) routeEnd.get(0);
-            freemarkerInput.put("endUrl", connectorEndpoint.getPath());
-        } else if (routeEnd.get(0) instanceof GenericEndpoint) {
+        if (routeEnd.get(0) instanceof GenericEndpoint) {
             final var genericEndpoint = (GenericEndpoint) routeEnd.get(0);
             freemarkerInput.put("endUrl", genericEndpoint.getPath());
             addBasicAuthHeaderForGenericEndpoint(freemarkerInput, genericEndpoint);
-        } else {
+        } else if (routeEnd.get(0) instanceof AppEndpoint) {
             //TODO app is route end
             throw new RouteCreationException("An app as the route end is not yet supported.");
         }
@@ -247,15 +238,14 @@ public class RouteManager {
      * Creates and deploys a Camel route for the Dataspace Connector. First, Dataspace Connector
      * specific configuration is added to the input map, which should already contain
      * general route information. Then, the correct route template for the given AppRoute object
-     * is chosen from the Dataspace Connector templates. Last, the generated XML route is added to
-     * the Camel context.
+     * is chosen from the templates. Last, the generated XML route is added to the Camel context.
      *
      * @param appRoute        the AppRoute object.
      * @param freemarkerInput the input map.
      * @throws Exception if the route file cannot be created or deployed.
      */
-    private void createDataspaceConnectorRoute(final AppRoute appRoute,
-                                               final Map<String, Object> freemarkerInput)
+    private void createAndDeployRoute(final AppRoute appRoute,
+                                      final Map<String, Object> freemarkerInput)
             throws Exception {
 
         if (log.isDebugEnabled()) {
@@ -342,9 +332,7 @@ public class RouteManager {
      * @throws RouteDeletionException if the Camel route cannot be deleted.
      */
     public void deleteRoute(final AppRoute appRoute) throws RouteDeletionException {
-        final var appRouteId = UUID.fromString(appRoute.getId().toString()
-                .split("/")[appRoute.getId().toString().split("/").length - 1]);
-        final var camelRouteId = getCamelRouteId(appRouteId);
+        final var camelRouteId = getCamelRouteId(appRoute);
         deleteRouteById(camelRouteId);
     }
 
@@ -356,7 +344,7 @@ public class RouteManager {
      * @throws RouteDeletionException if the Camel route cannot be deleted.
      */
     public void deleteRoute(final Route route) {
-        final var camelRouteId = getCamelRouteId(route.getId());
+        final var camelRouteId = route.getId().toString();
         deleteRouteById(camelRouteId);
     }
 
@@ -389,20 +377,10 @@ public class RouteManager {
      * @return the Camel route id.
      */
     private String getCamelRouteId(final AppRoute appRoute) {
-        final var appRouteId = UUID.fromString(appRoute.getId().toString()
-                .split("/")[appRoute.getId().toString().split("/").length - 1]);
-        return getCamelRouteId(appRouteId);
-    }
-
-    /**
-     * Generates the id of the Camel route for a given UUID. The Camel route id consists of the
-     * String 'app-route_' followed by the route's UUID.
-     *
-     * @param uuid the uuid of the route.
-     * @return the Camel route id.
-     */
-    private String getCamelRouteId(final UUID uuid) {
-        return "app-route_" + uuid;
+        return UUID.fromString(appRoute.getId()
+                .toString()
+                .split("/")[appRoute.getId().toString().split("/").length - 1])
+                .toString();
     }
 
 }

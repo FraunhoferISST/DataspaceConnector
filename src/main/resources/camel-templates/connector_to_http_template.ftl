@@ -2,14 +2,16 @@
 
     <route id="${routeId}" errorHandlerRef="${errorHandlerRef}">
 
-        <from uri="timer://foo?fixedRate=true&amp;period=60000"/>
+        <from uri="direct:${routeId}"/>
 
-        <setHeader name="CamelHttpMethod"><constant>GET</constant></setHeader>
-        <setHeader name="Authorization"><constant>${connectorAuthHeader}</constant></setHeader>
-        <to uri="${startUrl}"/>
+        <#if startUrl??>
+            <setHeader name="CamelHttpMethod"><constant>GET</constant></setHeader>
+            <setHeader name="Authorization"><constant>${connectorAuthHeader}</constant></setHeader>
+            <to uri="${startUrl}"/>
+        </#if>
 
         <convertBodyTo type="java.lang.String"/>
-        <log message="Fetched data: ${r"${body}"}"/>
+        <log message="Sending data: ${r"${body}"}"/>
 
         <#list routeStepEndpoints as endpoint>
             <setHeader name="CamelHttpMethod"><constant>${endpoint.getHttpMethod().toString()}</constant></setHeader>

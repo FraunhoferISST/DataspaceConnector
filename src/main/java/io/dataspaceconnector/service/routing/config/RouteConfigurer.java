@@ -26,8 +26,6 @@ import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -61,11 +59,6 @@ public class RouteConfigurer {
     private final @NonNull Configuration freemarkerConfig;
 
     /**
-     * ResourceLoader for loading Camel route templates from the classpath.
-     */
-    private static final ResourceLoader RESOURCE_LOADER = new DefaultResourceLoader();
-
-    /**
      * Adds basic authentication information for the Dataspace Connector to the input map
      * for creating a Camel XML route to be used with the Dataspace Connector.
      *
@@ -89,11 +82,12 @@ public class RouteConfigurer {
 
         Template template;
         try {
-            if (routeStart.get(0) instanceof GenericEndpoint) {
-                template = freemarkerConfig.getTemplate("http_to_connector_template.ftl");
-            } else if (routeStart.get(0) instanceof ConnectorEndpoint
+            if (routeStart == null || routeStart.isEmpty()
+                    || routeStart.get(0) instanceof ConnectorEndpoint
                     || routeStart.get(0) == null) {
                 template = freemarkerConfig.getTemplate("connector_to_http_template.ftl");
+            } else if (routeStart.get(0) instanceof GenericEndpoint) {
+                template = freemarkerConfig.getTemplate("http_to_connector_template.ftl");
             } else {
                 template = null;
             }
