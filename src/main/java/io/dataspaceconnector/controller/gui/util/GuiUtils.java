@@ -97,6 +97,7 @@ public final class GuiUtils {
                 jsonObject.put("originalName", paymentmethod.name());
                 jsonObject.put("displayName", PaymentMethod.class.getField(paymentmethod.name())
                         .getAnnotation(JsonProperty.class).value());
+                jsonObject.put("representation", paymentmethod.getRepresentation());
                 jsonArray.add(jsonObject);
             } catch (NoSuchFieldException e) {
                 if (log.isDebugEnabled()) {
