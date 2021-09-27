@@ -16,6 +16,7 @@
 package io.dataspaceconnector.service.resource.type;
 
 import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.RouteCreationException;
 import io.dataspaceconnector.common.exception.RouteDeletionException;
@@ -36,6 +37,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -51,6 +53,7 @@ import javax.annotation.PostConstruct;
  */
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.NONE)
+@Log4j2
 public class RouteService extends BaseEntityService<Route, RouteDesc> {
 
     /**
@@ -105,6 +108,14 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
         this.artifactRepo = artifactRepository;
     }
 
+    /**
+     * Persists a route. Before the route is persisted, the corresponding Camel route is created
+     * and deployed.
+     *
+     * @param route the route.
+     * @return the persisted route.
+     * @throws RouteCreationException if creating the Camel route fails.
+     */
     @Override
     protected final Route persist(final Route route) throws RouteCreationException {
         if (route.getStart() != null) {
@@ -183,7 +194,20 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
         if (artifact.isEmpty()) {
             throw new ResourceNotFoundException("Could not find artifact: " + artifactId);
         }
-        persist(((RouteFactory) getFactory()).setOutput(get(routeId), artifact.get()));
+
+        // If the Camel route cannot be created, remove the link to the artifact.
+        try {
+            persist(((RouteFactory) getFactory()).setOutput(get(routeId), artifact.get()));
+        } catch (RouteCreationException exception) {
+            if (log.isDebugEnabled()) {
+                log.debug("Failed to create and deploy Camel route. "
+                                + "[routeId=({}), exception=({})]", routeId, exception.getMessage(),
+                        exception);
+            }
+            removeOutput(routeId);
+
+            throw new InvalidEntityException("Failed to create and deploy Camel route.");
+        }
     }
 
     /**
