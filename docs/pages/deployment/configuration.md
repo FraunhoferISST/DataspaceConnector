@@ -246,10 +246,10 @@ will not be checked.
 
 To turn on the [DAT](https://github.com/International-Data-Spaces-Association/IDS-G/blob/master/core/DAPS/README.md#dynamic-attribute-token-content)
 checking, you need to set the `ids:connectorDeployMode` to`idsc:PRODUCTIVE_DEPLOYMENT`. For getting
-a trusted certificate, contact[Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de). Add the keystore
-with the IDS certificate inside to the `resources/conf` and change the filename at `ids:keyStore`
-accordingly. **In addition, set your connector id to a meaningful URL that uniquely identifies your
-connector towards e.g. the IDS Metadata Broker**:
+a trusted certificate, see [here](../communication/v6/ecosystem/identityProvider.md#aisec-daps-issuing-an-ids-certificate).
+Add the keystore with the IDS certificate inside to the `resources/conf` and change the filename at
+`ids:keyStore` accordingly. **In addition, set your connector id to a meaningful URL that uniquely
+identifies your connector towards e.g. the IDS Metadata Broker**:
 
 ```json
 "ids:connectorDescription" : {
