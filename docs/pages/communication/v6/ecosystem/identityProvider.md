@@ -22,8 +22,8 @@ IDS connectors request a digitally signed JSON web token (JWT) from a central ID
 Dynamic Attribute Provisioning Service (DAPS) in order to authenticate themselves. Without these
 DAPS tokens (DATs) no connector can participate in the IDS.
 
-The Dataspace Connector communicates with the Dynamic Attribute Provisioning Service (DAPS) provided
-by the Fraunhofer AISEC by default. It is available at [https://daps.aisec.fraunhofer.de/](https://daps.aisec.fraunhofer.de/).
+The Dataspace Connector communicates with the DAPS provided by the Fraunhofer AISEC by default. It
+is available at [https://daps.aisec.fraunhofer.de/](https://daps.aisec.fraunhofer.de/).
 
 The [repository](https://github.com/International-Data-Spaces-Association/omejdn-daps) is open
 source and can be accessed at GitHub. Further documentation about the IDS Identity Provider/DAPS can
@@ -49,10 +49,10 @@ DAPS:
 2. Enter a request for a DAPS certificate in
    [this](https://industrialdataspace.jiveon.com/docs/DOC-2002) list. The mandatory pieces of
    information for the certificate include:
-   - Country
-   - Organization
-   - Organizational Unit
-   - Domain
+   - Country,
+   - Organization,
+   - Organizational Unit,
+   - and Domain.
 
 Afterwards, you will receive the certificate and its corresponding key material bundled as
 .p12-archive via e-mail.
