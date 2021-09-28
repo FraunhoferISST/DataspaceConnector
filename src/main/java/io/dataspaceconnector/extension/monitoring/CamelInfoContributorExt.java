@@ -63,6 +63,5 @@ public class CamelInfoContributorExt
 
             builder.withDetail("camel", info);
         }
-
     }
 }

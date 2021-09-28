@@ -47,8 +47,8 @@ public class UpdateInfoContributorTest {
         var builder = new Info.Builder();
         updateInfoContributor.contribute(builder);
         Map<String, Object> updateMap = Map.of(
-                "connector.update", "6.2.0",
-                "connector.version", "6.2.0"
+                "update", "6.2.0",
+                "version", "6.2.0"
         );
         Mockito.when(updateInfoService.getUpdateDetails()).thenReturn(updateMap);
 
