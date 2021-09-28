@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.service.routing.config;
 
+import de.fraunhofer.iais.eis.AppEndpoint;
 import de.fraunhofer.iais.eis.AppRoute;
 import de.fraunhofer.iais.eis.ConnectorEndpoint;
 import de.fraunhofer.iais.eis.GenericEndpoint;
@@ -79,15 +80,39 @@ public class RouteConfigurer {
      */
     public Template getRouteTemplate(final AppRoute appRoute) {
         final var routeStart = appRoute.getAppRouteStart();
+        final var routeEnd = appRoute.getAppRouteEnd();
 
-        Template template;
+        //Possible combinations:
+        //Connector -> Generic
+        //Generic -> Connector
+        //Connector -> App
+        //App -> Connector
+        //Generic -> App
+        //App -> Generic
+        //App -> App
+
+        Template template = null;
         try {
             if (routeStart == null || routeStart.isEmpty()
                     || routeStart.get(0) instanceof ConnectorEndpoint
                     || routeStart.get(0) == null) {
-                template = freemarkerConfig.getTemplate("connector_to_http_template.ftl");
-            } else if (routeStart.get(0) instanceof GenericEndpoint) {
+                if (routeEnd.get(0) instanceof GenericEndpoint
+                        || routeEnd.get(0) instanceof AppEndpoint) {
+                    template = freemarkerConfig.getTemplate("connector_to_http_template.ftl");
+                }
+            } else if ((routeStart.get(0) instanceof GenericEndpoint
+                    || routeStart.get(0) instanceof AppEndpoint)
+                    && (routeEnd == null || routeEnd.isEmpty()
+                    || routeEnd.get(0) instanceof ConnectorEndpoint
+                    || routeEnd.get(0) == null)) {
                 template = freemarkerConfig.getTemplate("http_to_connector_template.ftl");
+            } else if ((routeStart.get(0) instanceof GenericEndpoint
+                    && routeEnd.get(0) instanceof AppEndpoint)
+                    || (routeStart.get(0) instanceof AppEndpoint
+                    && routeEnd.get(0) instanceof GenericEndpoint)
+                    || (routeStart.get(0) instanceof AppEndpoint
+                    && routeEnd.get(0) instanceof AppEndpoint)) {
+                template = freemarkerConfig.getTemplate("http_to_http_template.ftl");
             } else {
                 template = null;
             }

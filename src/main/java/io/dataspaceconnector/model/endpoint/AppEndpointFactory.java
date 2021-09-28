@@ -17,8 +17,6 @@ package io.dataspaceconnector.model.endpoint;
 
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
-
 /**
  * Creates and updates an app endpoint.
  */
@@ -63,7 +61,7 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpointImpl, AppEndp
      * @param location The location URI (access URL) of the AppEndpoint.
      * @return The app endpoint with updated location URI.
      */
-    public AppEndpointImpl setLocation(final AppEndpointImpl appEndpoint, final URI location) {
+    public AppEndpointImpl setLocation(final AppEndpointImpl appEndpoint, final String location) {
         appEndpoint.setLocation(location);
         return appEndpoint;
     }

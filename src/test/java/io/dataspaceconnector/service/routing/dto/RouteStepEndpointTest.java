@@ -18,16 +18,14 @@ package io.dataspaceconnector.service.routing.dto;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 
-import java.net.URI;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteStepEndpointTest {
 
     @Test
-    public void create_validRouteStepEndpoint_returnNew() {
+    void create_validRouteStepEndpoint_returnNew() {
         /* ARRANGE */
-        final var accessUrl = URI.create("https://appstore.com");
+        final var accessUrl = "https://appstore.com";
 
         /* ACT */
         final var routeStepEndpoint = new RouteStepEndpoint(accessUrl, HttpMethod.GET);

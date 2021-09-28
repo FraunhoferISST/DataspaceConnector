@@ -131,8 +131,10 @@ public class RouteManager {
             freemarkerInput.put("startUrl", escapeForXml(genericEndpoint.getPath()));
             addBasicAuthHeaderForGenericEndpoint(freemarkerInput, genericEndpoint);
         } else if (routeStart.get(0) instanceof AppEndpoint) {
-            // TODO app is route start
-            throw new RouteCreationException("An app as the route start is not yet supported.");
+            final var appEndpoint = (AppEndpoint) routeStart.get(0);
+            freemarkerInput.put("startUrl", escapeForXml(appEndpoint.getPath()));
+        } else {
+            throw new RouteCreationException("The route start can not be identified");
         }
     }
 
@@ -150,8 +152,10 @@ public class RouteManager {
             freemarkerInput.put("endUrl", escapeForXml(genericEndpoint.getPath()));
             addBasicAuthHeaderForGenericEndpoint(freemarkerInput, genericEndpoint);
         } else if (routeEnd.get(0) instanceof AppEndpoint) {
-            //TODO app is route end
-            throw new RouteCreationException("An app as the route end is not yet supported.");
+            final var appEndpoint = (AppEndpoint) routeEnd.get(0);
+            freemarkerInput.put("endUrl", escapeForXml(appEndpoint.getPath()));
+        } else {
+            throw new RouteCreationException("The route end can not be identified");
         }
     }
 

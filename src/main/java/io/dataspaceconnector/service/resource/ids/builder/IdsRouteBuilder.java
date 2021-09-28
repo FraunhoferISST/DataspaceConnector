@@ -24,18 +24,18 @@ import de.fraunhofer.iais.eis.ModelClass;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.common.util.ApiReferenceHelper;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Abstract class for IDS builders that construct IDS objects from DSC routes.
  *
  * @param <X> The type of IDS object created from the DSC route.
  */
-@RequiredArgsConstructor
 public abstract class IdsRouteBuilder<X extends ModelClass> extends AbstractIdsBuilder<Route, X> {
 
     /**
@@ -52,6 +52,25 @@ public abstract class IdsRouteBuilder<X extends ModelClass> extends AbstractIdsB
      * Helper class for managing API endpoint references.
      */
     private final @NonNull ApiReferenceHelper apiReferenceHelper;
+
+    /**
+     * Constructs an IdsRouteBuilder.
+     *
+     * @param selfLinkHelper the self link helper.
+     * @param idsEndpointBuilder the endpoint builder.
+     * @param idsArtifactBuilder the artifact builder.
+     * @param referenceHelper the API reference helper.
+     */
+    @Autowired
+    protected IdsRouteBuilder(final SelfLinkHelper selfLinkHelper,
+                           final @NonNull IdsEndpointBuilder idsEndpointBuilder,
+                           final @NonNull IdsArtifactBuilder idsArtifactBuilder,
+                           final @NonNull ApiReferenceHelper referenceHelper) {
+        super(selfLinkHelper);
+        this.endpointBuilder = idsEndpointBuilder;
+        this.artifactBuilder = idsArtifactBuilder;
+        this.apiReferenceHelper = referenceHelper;
+    }
 
     protected abstract X createInternal(Route entity, int currentDepth, int maxDepth)
             throws ConstraintViolationException;

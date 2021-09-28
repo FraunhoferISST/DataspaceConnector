@@ -57,7 +57,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.Locale;
@@ -359,7 +358,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
                 final var exposedPort = endpoint.getExposedPort();
 
                 final var location = protocol + containerName + ":" + exposedPort + suffix;
-                appEndpointSvc.setLocation(endpoint, URI.create(location));
+                appEndpointSvc.setLocation(endpoint, location);
             }
         }
     }

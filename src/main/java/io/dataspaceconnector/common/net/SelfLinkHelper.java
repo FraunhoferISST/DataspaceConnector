@@ -45,7 +45,6 @@ import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.subscription.Subscription;
 import lombok.NonNull;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -105,7 +104,7 @@ public final class SelfLinkHelper {
     /**
      * View assembler for app endpoints.
      */
-    private final @NonNull AppEndpointViewAssembler appEndpointViewAssembler;
+    private final @NonNull AppEndpointViewAssembler appEndpointAssembler;
 
     /**
      * View assembler for routes.
@@ -285,7 +284,7 @@ public final class SelfLinkHelper {
      */
     private URI getSelfLink(final AppEndpoint endpoint)
             throws ResourceNotFoundException {
-        return getSelfLink(endpoint, appEndpointViewAssembler);
+        return getSelfLink(endpoint, appEndpointAssembler);
     }
 
     /**

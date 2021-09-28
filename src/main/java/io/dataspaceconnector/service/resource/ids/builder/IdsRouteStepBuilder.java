@@ -19,12 +19,8 @@ import de.fraunhofer.iais.eis.RouteStep;
 import de.fraunhofer.iais.eis.RouteStepBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.common.util.ApiReferenceHelper;
-import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.route.Route;
-import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
-import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -36,14 +32,16 @@ public final class IdsRouteStepBuilder extends IdsRouteBuilder<RouteStep> {
     /**
      * Constructs an IdsRouteStepBuilder.
      *
+     * @param selfLinkHelper     The self link helper.
      * @param idsEndpointBuilder The endpoint builder.
      * @param idsArtifactBuilder The artifact builder.
      * @param apiReferenceHelper The API reference helper.
      */
-    public IdsRouteStepBuilder(final IdsEndpointBuilder idsEndpointBuilder,
+    public IdsRouteStepBuilder(final SelfLinkHelper selfLinkHelper,
+                               final IdsEndpointBuilder idsEndpointBuilder,
                                final IdsArtifactBuilder idsArtifactBuilder,
                                final ApiReferenceHelper apiReferenceHelper) {
-        super(idsEndpointBuilder, idsArtifactBuilder, apiReferenceHelper);
+        super(selfLinkHelper, idsEndpointBuilder, idsArtifactBuilder, apiReferenceHelper);
     }
 
     @Override
