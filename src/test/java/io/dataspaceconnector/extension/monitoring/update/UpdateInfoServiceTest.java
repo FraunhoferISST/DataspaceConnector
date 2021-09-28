@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.service;
+package io.dataspaceconnector.extension.monitoring.update;
 
 import de.fraunhofer.ids.messaging.protocol.http.HttpService;
 import io.dataspaceconnector.config.ConnectorConfig;
-import io.dataspaceconnector.extension.monitoring.update.UpdateInfoService;
 import io.dataspaceconnector.extension.monitoring.update.util.Repository;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
