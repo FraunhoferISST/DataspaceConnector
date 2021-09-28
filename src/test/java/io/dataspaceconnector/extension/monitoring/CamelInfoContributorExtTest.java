@@ -1,6 +1,7 @@
 package io.dataspaceconnector.extension.monitoring;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ServiceStatus;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 
+import java.util.Date;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,28 +28,35 @@ class CamelInfoContributorExtTest {
     @WithMockUser("ADMIN")
     public void contribute_validContextInformation_equals() {
         /* ARRANGE */
-        var builder = new Info.Builder();
-        camelInfoContributor.contribute(builder);
-
+        final var date = new Date();
+        final var status = ServiceStatus.Started;
         Map<String, Object> map = Map.of(
                 "name", "camel-1",
                 "version", "3.11.2",
-                "startDate", "2021-09-23T12:04:42.682+00:00",
+                "startDate", date,
                 "uptime", "6s783ms",
-                "status", "status"
+                "status", status
         );
 
         Mockito.doReturn("camel-1").when(camelContext).getName();
         Mockito.doReturn("3.11.2").when(camelContext).getVersion();
-        Mockito.doReturn("2021-09-23T12:04:42.682+00:00").when(camelContext).getStartDate();
+        Mockito.doReturn(date).when(camelContext).getStartDate();
         Mockito.doReturn("6s783ms").when(camelContext).getUptime();
-        Mockito.doReturn("status").when(camelContext).getStatus();
+        Mockito.doReturn(status).when(camelContext).getStatus();
+
+        var builder = new Info.Builder();
+        camelInfoContributor.contribute(builder);
 
         /* ACT */
         camelInfoContributor.contribute(builder);
         var info = builder.build();
 
         /* ASSERT */
-        assertEquals(map, info.get("camel"));
+        final var resultMap = (Map<String, Object>) info.get("camel");
+        assertEquals(map.get("name"), resultMap.get("name"));
+        assertEquals(map.get("version"), resultMap.get("version"));
+        assertEquals(map.get("startDate"), resultMap.get("startDate"));
+        assertEquals(map.get("uptime"), resultMap.get("uptime"));
+        assertEquals(map.get("status").toString(), resultMap.get("status").toString());
     }
 }
