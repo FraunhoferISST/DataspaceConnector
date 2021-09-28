@@ -6888,8 +6888,6 @@ components:
       - ids:leftOperand
       - ids:operator
       type: object
-      discriminator:
-        propertyName: '@type'
       allOf:
       - $ref: '#/components/schemas/AbstractConstraint'
       - type: object
@@ -6982,8 +6980,6 @@ components:
       - '@type'
       - ids:action
       type: object
-      discriminator:
-        propertyName: '@type'
       allOf:
       - $ref: '#/components/schemas/Rule'
       - type: object
@@ -6995,8 +6991,6 @@ components:
       - '@id'
       - '@type'
       type: object
-      discriminator:
-        propertyName: '@type'
       allOf:
       - $ref: '#/components/schemas/AbstractConstraint'
       - type: object
@@ -7021,8 +7015,6 @@ components:
       - '@type'
       - ids:action
       type: object
-      discriminator:
-        propertyName: '@type'
       allOf:
       - $ref: '#/components/schemas/Rule'
       - type: object
@@ -7043,8 +7035,6 @@ components:
       - '@type'
       - ids:action
       type: object
-      discriminator:
-        propertyName: '@type'
       allOf:
       - $ref: '#/components/schemas/Rule'
       - type: object
