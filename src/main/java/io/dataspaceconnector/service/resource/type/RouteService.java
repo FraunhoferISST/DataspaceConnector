@@ -257,9 +257,24 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
             @Override
             protected void doInTransactionWithoutResult(@NotNull final TransactionStatus status) {
                 final var routes = ((RouteRepository) getRepository()).findAllTopLevelRoutes();
-                routes.forEach(routeHelper::deploy);
+                routes.forEach(RouteService.this::redeploy);
             }
         });
+    }
+
+    /**
+     * Redeploys a persisted route. If the corresponding Camel route cannot be created, a warning
+     * is logged.
+     *
+     * @param route the route to redeploy.
+     */
+    private void redeploy(final Route route) {
+        try {
+            routeHelper.deploy(route);
+        } catch (RouteCreationException exception) {
+            log.warn("Failed to redeploy persisted route. [routeId=({}), exception=({})]",
+                    route.getId(), exception.getMessage());
+        }
     }
 
 }
