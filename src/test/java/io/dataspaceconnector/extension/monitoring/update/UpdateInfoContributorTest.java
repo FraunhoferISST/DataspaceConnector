@@ -16,20 +16,25 @@
 package io.dataspaceconnector.extension.monitoring.update;
 
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.info.Info;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 
+import java.io.IOException;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@SpringBootTest(classes = { UpdateInfoContributor.class })
 public class UpdateInfoContributorTest {
 
     @Autowired
-    private UpdateInfoContributor connectorReleaseContributor;
+    private UpdateInfoContributor updateInfoContributor;
 
     @MockBean
     private UpdateInfoService updateInfoService;
@@ -37,16 +42,38 @@ public class UpdateInfoContributorTest {
     @Test
     @WithMockUser("ADMIN")
     @SneakyThrows
-    public void testReleaseContributor() {
+    public void contribute_validInput_equals() {
+        /* ARRANGE */
         var builder = new Info.Builder();
-        connectorReleaseContributor.contribute(new Info.Builder());
+        updateInfoContributor.contribute(builder);
         Map<String, Object> updateMap = Map.of(
                 "connector.update", "6.2.0",
                 "connector.version", "6.2.0"
         );
         Mockito.when(updateInfoService.getUpdateDetails()).thenReturn(updateMap);
-        connectorReleaseContributor.contribute(builder);
+
+        /* ACT */
+        updateInfoContributor.contribute(builder);
         var info = builder.build();
-        Assertions.assertEquals(updateMap, info.get("connector"));
+
+        /* ASSERT */
+        assertEquals(updateMap, info.get("update"));
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    @SneakyThrows
+    public void contribute_thrownException_catchException() {
+        /* ARRANGE */
+        var builder = new Info.Builder();
+        updateInfoContributor.contribute(builder);
+        Mockito.doThrow(new IOException()).when(updateInfoService).getUpdateDetails();
+
+        /* ACT */
+        updateInfoContributor.contribute(builder);
+        var info = builder.build().get("update");
+
+        /* ASSERT */
+        assertNotNull(info);
     }
 }
