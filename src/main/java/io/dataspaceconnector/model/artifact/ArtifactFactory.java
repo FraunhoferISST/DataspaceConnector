@@ -176,6 +176,16 @@ public final class ArtifactFactory extends AbstractNamedFactory<Artifact, Artifa
             if (artifact.getByteSize() != 0 || artifact.getCheckSum() != 0) {
                 artifact.setByteSize(0);
                 artifact.setCheckSum(calculateChecksum(bytes));
+
+                //Update byte size and check sum for consumed resources
+                if (artifact.getAdditional().containsKey("ids:byteSize")) {
+                    artifact.getAdditional().put("ids:byteSize", String.valueOf(0));
+                }
+                if (artifact.getAdditional().containsKey("ids:checkSum")) {
+                    artifact.getAdditional().put("ids:checkSum",
+                            String.valueOf(calculateChecksum(bytes)));
+                }
+
                 return true;
             }
 
