@@ -2,11 +2,11 @@
 
     <route id="${routeId}" errorHandlerRef="${errorHandlerRef}">
 
-        <from uri="timer://foo?fixedRate=true&amp;period=60000"/>
+        <from uri="direct:${routeId}"/>
 
         <setHeader name="CamelHttpMethod"><constant>GET</constant></setHeader>
-        <#if genericEndpointAuthHeader??>
-            <setHeader name="Authorization"><constant>${genericEndpointAuthHeader}</constant></setHeader>
+        <#if genericEndpointAuthHeaderKey?? && genericEndpointAuthHeaderValue??>
+            <setHeader name="${genericEndpointAuthHeaderKey}"><constant>${genericEndpointAuthHeaderValue}</constant></setHeader>
         </#if>
         <to uri="${startUrl}"/>
 
@@ -18,9 +18,11 @@
             <to uri="${endpoint.getEndpointUrl().toString()}"/>
         </#list>
 
-        <setHeader name="CamelHttpMethod"><constant>PUT</constant></setHeader>
-        <setHeader name="Authorization"><constant>${connectorAuthHeader}</constant></setHeader>
-        <to uri="${endUrl}"/>
+        <#if endUrl??>
+            <setHeader name="CamelHttpMethod"><constant>PUT</constant></setHeader>
+            <setHeader name="Authorization"><constant>${connectorAuthHeader}</constant></setHeader>
+            <to uri="${endUrl}"/>
+        </#if>
 
     </route>
 

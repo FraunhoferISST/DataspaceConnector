@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.model.datasource;
 
+import io.dataspaceconnector.common.exception.InvalidEntityException;
+import io.dataspaceconnector.model.auth.ApiKey;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.base.AbstractFactory;
@@ -46,9 +48,15 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
     @Override
     protected boolean updateInternal(final DataSource dataSource, final DataSourceDesc desc) {
         final var hasUpdatedAuthentication = updateAuthentication(
-                dataSource, desc.getAuthentication());
+                dataSource, desc.getBasicAuth(), desc.getApiKey());
         final var hasUpdatedDataSourceType = updateDataSourceType(
                 dataSource, desc.getType());
+
+        if (DataSourceType.DATABASE.equals(dataSource.getType())
+                && dataSource.getAuthentication() instanceof ApiKey) {
+            throw new InvalidEntityException("A data source of type DATABASE"
+                    + " cannot have API key authentication.");
+        }
 
         return hasUpdatedAuthentication || hasUpdatedDataSourceType;
     }
@@ -71,21 +79,36 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
 
     /**
      * @param dataSource     The entity to be updated.
-     * @param authentication The updated authentication.
+     * @param basicAuth      The updated basic auth.
+     * @param apiKey         The updates api key auth.
      * @return updated entity.
      */
     public boolean updateAuthentication(final DataSource dataSource,
-                                        final AuthenticationDesc authentication) {
-        if (dataSource.getAuthentication() == null && authentication == null) {
+                                        final AuthenticationDesc basicAuth,
+                                        final AuthenticationDesc apiKey) {
+        if (dataSource.getAuthentication() == null && basicAuth == null && apiKey == null) {
             return false;
         }
 
-        final var auth = new BasicAuth(authentication);
-        if (auth.equals(dataSource.getAuthentication())) {
-            return false;
+        if (basicAuth != null) {
+            final var auth = new BasicAuth(basicAuth);
+            if (auth.equals(dataSource.getAuthentication())) {
+                return false;
+            }
+            dataSource.setAuthentication(auth);
+            return true;
+        } else if (apiKey != null) {
+            final var auth = new ApiKey(apiKey.getKey(), apiKey.getValue());
+            if (auth.equals(dataSource.getAuthentication())) {
+                return false;
+            }
+            dataSource.setAuthentication(auth);
+            return true;
+        } else if (dataSource.getAuthentication() != null) {
+            dataSource.setAuthentication(null);
+            return true;
         }
 
-        dataSource.setAuthentication(auth);
-        return true;
+        return false;
     }
 }

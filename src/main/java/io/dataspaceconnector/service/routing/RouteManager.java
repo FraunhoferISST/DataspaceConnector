@@ -174,16 +174,27 @@ public class RouteManager {
      */
     private void addBasicAuthHeaderForGenericEndpoint(final Map<String, Object> freemarkerInput,
                                                       final GenericEndpoint genericEndpoint) {
-        final var basicAuth = genericEndpoint.getGenericEndpointAuthentication();
-        if (basicAuth != null && basicAuth.getAuthUsername() != null
-                && !basicAuth.getAuthUsername().isBlank() && basicAuth.getAuthPassword() != null
-                && !basicAuth.getAuthPassword().isBlank()) {
-            final var username = basicAuth.getAuthUsername();
-            final var password = basicAuth.getAuthPassword();
-            final var auth = username + ":" + password;
-            final var encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
-            final var authHeader = "Basic " + new String(encodedAuth, StandardCharsets.UTF_8);
-            freemarkerInput.put("genericEndpointAuthHeader", authHeader);
+        final var auth = genericEndpoint.getGenericEndpointAuthentication();
+        if (auth != null && auth.getAuthUsername() != null
+                && !auth.getAuthUsername().isBlank() && auth.getAuthPassword() != null
+                && !auth.getAuthPassword().isBlank()) {
+
+            final var type = (String) auth.getProperties().get("type");
+            if ("basic".equals(type)) {
+                final var username = auth.getAuthUsername();
+                final var password = auth.getAuthPassword();
+                final var authString = username + ":" + password;
+                final var encodedAuth = Base64
+                        .encodeBase64(authString.getBytes(StandardCharsets.UTF_8));
+                final var authHeader = "Basic " + new String(encodedAuth, StandardCharsets.UTF_8);
+                freemarkerInput.put("genericEndpointAuthHeaderKey", "Authorization");
+                freemarkerInput.put("genericEndpointAuthHeaderValue", authHeader);
+            } else {
+                final var headerKey = auth.getAuthUsername();
+                final var headerValue = auth.getAuthPassword();
+                freemarkerInput.put("genericEndpointAuthHeaderKey", headerKey);
+                freemarkerInput.put("genericEndpointAuthHeaderValue", headerValue);
+            }
         }
     }
 
@@ -201,7 +212,7 @@ public class RouteManager {
         if (routeSteps != null) {
             Endpoint lastStepEnd = null;
 
-            for (int i = 0; i < routeSteps.size(); i++) {
+            for (var i = 0; i < routeSteps.size(); i++) {
                 final var routeStep = routeSteps.get(i);
 
                 final var stepStart = routeStep.getAppRouteStart().get(0);

@@ -30,6 +30,7 @@ import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
+import io.dataspaceconnector.model.auth.ApiKey;
 import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.Endpoint;
@@ -64,20 +65,33 @@ public final class IdsEndpointBuilder
         if (endpoint instanceof GenericEndpoint) {
 
             final var genericEndpoint = (GenericEndpoint) endpoint;
-            BasicAuthentication basicAuth = null;
+            BasicAuthentication idsAuth = null;
             if (genericEndpoint.getDataSource() != null
                     && genericEndpoint.getDataSource().getAuthentication() != null) {
-                final var auth = (BasicAuth) genericEndpoint.getDataSource().getAuthentication();
-                basicAuth = new BasicAuthenticationBuilder()
-                        ._authUsername_(auth.getUsername())
-                        ._authPassword_(auth.getPassword())
-                        .build();
+
+                final var auth = genericEndpoint.getDataSource().getAuthentication();
+
+                if (auth instanceof BasicAuth) {
+                    final var basicAuth = (BasicAuth) auth;
+                    idsAuth = new BasicAuthenticationBuilder()
+                            ._authUsername_(basicAuth.getUsername())
+                            ._authPassword_(basicAuth.getPassword())
+                            .build();
+                    idsAuth.setProperty("type", "basic");
+                } else {
+                    final var apiKeyAuth = (ApiKey) auth;
+                    idsAuth = new BasicAuthenticationBuilder()
+                            ._authUsername_(apiKeyAuth.getKey())
+                            ._authPassword_(apiKeyAuth.getValue())
+                            .build();
+                    idsAuth.setProperty("type", "api-key");
+                }
             }
 
             idsEndpoint = new GenericEndpointBuilder(getAbsoluteSelfLink(endpoint))
                     ._path_(location)
                     ._accessURL_(accessUrl)
-                    ._genericEndpointAuthentication_(basicAuth)
+                    ._genericEndpointAuthentication_(idsAuth)
                     ._endpointDocumentation_(Util.asList(documentation))
                     ._endpointInformation_(Util.asList(info))
                     .build();

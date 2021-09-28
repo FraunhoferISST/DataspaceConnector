@@ -19,8 +19,8 @@
         </#list>
 
         <setHeader name="CamelHttpMethod"><constant>POST</constant></setHeader>
-        <#if genericEndpointAuthHeader??>
-            <setHeader name="Authorization"><constant>${genericEndpointAuthHeader}</constant></setHeader>
+        <#if genericEndpointAuthHeaderKey?? && genericEndpointAuthHeaderValue??>
+            <setHeader name="${genericEndpointAuthHeaderKey}"><constant>${genericEndpointAuthHeaderValue}</constant></setHeader>
         </#if>
         <to uri="${endUrl}"/>
 

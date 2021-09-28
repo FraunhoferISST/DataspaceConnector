@@ -28,9 +28,14 @@ import lombok.EqualsAndHashCode;
 public class DataSourceDesc extends Description {
 
     /**
-     * The authentication for the data source.
+     * The basic authentication for the data location.
      */
-    private AuthenticationDesc authentication;
+    private AuthenticationDesc basicAuth;
+
+    /**
+     * The API key authentication for the data location.
+     */
+    private AuthenticationDesc apiKey;
 
     /**
      * The type of the data source.

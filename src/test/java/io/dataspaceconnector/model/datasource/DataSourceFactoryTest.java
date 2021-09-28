@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.model.datasource;
 
+import io.dataspaceconnector.common.exception.InvalidEntityException;
+import io.dataspaceconnector.model.auth.ApiKey;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.auth.BasicAuth;
 
@@ -23,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DataSourceFactoryTest {
@@ -43,10 +46,20 @@ public class DataSourceFactoryTest {
     }
 
     @Test
-    void update_newAuth_willUpdate() {
+    void create_typeDatabaseWithApiKey_throwInvalidEntityException() {
+        /* ARRANGE */
+        desc.setType(DataSourceType.DATABASE);
+        desc.setApiKey(new AuthenticationDesc("key", "value"));
+
+        /* ACT && ASSERT */
+        assertThrows(InvalidEntityException.class, () -> factory.create(desc));
+    }
+
+    @Test
+    void update_newBasicAuth_willUpdate() {
         /* ARRANGE */
         final var desc = new DataSourceDesc();
-        desc.setAuthentication(new AuthenticationDesc("", ""));
+        desc.setBasicAuth(new AuthenticationDesc("", ""));
         final var dataSource = factory.create(new DataSourceDesc());
 
         /* ACT */
@@ -54,7 +67,24 @@ public class DataSourceFactoryTest {
 
         /* ASSERT */
         assertTrue(result);
-        assertEquals(new BasicAuth(desc.getAuthentication()), dataSource.getAuthentication());
+        assertEquals(new BasicAuth(desc.getBasicAuth()), dataSource.getAuthentication());
+    }
+
+    @Test
+    void update_newApiKeyAuth_willUpdate() {
+        /* ARRANGE */
+        final var desc = new DataSourceDesc();
+        desc.setType(DataSourceType.REST);
+        desc.setApiKey(new AuthenticationDesc("", ""));
+        final var dataSource = factory.create(new DataSourceDesc());
+
+        /* ACT */
+        final var result = factory.update(dataSource, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(new ApiKey(desc.getApiKey().getKey(), desc.getApiKey().getValue()),
+                dataSource.getAuthentication());
     }
 
     @Test
@@ -102,7 +132,8 @@ public class DataSourceFactoryTest {
     void update_sameAuthHeader_willNotUpdate() {
         /* ARRANGE */
         final var desc = new DataSourceDesc();
-        desc.setAuthentication(new AuthenticationDesc("key", "value"));
+        desc.setType(DataSourceType.REST);
+        desc.setApiKey(new AuthenticationDesc("key", "value"));
         final var dataSource = factory.create(desc);
 
         /* ACT */
