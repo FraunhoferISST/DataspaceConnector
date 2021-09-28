@@ -325,4 +325,12 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
     public void deleteContainerId(final AppImpl app) {
         app.setContainerId(null);
     }
+
+    /**
+     * @param app The app entity.
+     * @param name The name of the container.
+     */
+    public void setContainerName(final AppImpl app, final String name) {
+        app.setContainerName(name);
+    }
 }

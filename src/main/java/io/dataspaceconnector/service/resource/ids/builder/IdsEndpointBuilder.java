@@ -31,11 +31,13 @@ import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
 import io.dataspaceconnector.model.auth.ApiKey;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -44,6 +46,16 @@ import org.springframework.stereotype.Component;
 @Component
 public final class IdsEndpointBuilder
         extends AbstractIdsBuilder<Endpoint, de.fraunhofer.iais.eis.Endpoint> {
+
+    /**
+     * Constructs an IdsEndpointBuilder.
+     *
+     * @param selfLinkHelper the self link helper.
+     */
+    @Autowired
+    public IdsEndpointBuilder(final SelfLinkHelper selfLinkHelper) {
+        super(selfLinkHelper);
+    }
 
     @Override
     protected de.fraunhofer.iais.eis.Endpoint createInternal(

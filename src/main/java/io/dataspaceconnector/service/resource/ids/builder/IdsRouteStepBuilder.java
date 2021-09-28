@@ -19,7 +19,12 @@ import de.fraunhofer.iais.eis.RouteStep;
 import de.fraunhofer.iais.eis.RouteStepBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.common.util.ApiReferenceHelper;
+import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.route.Route;
+import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
+import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**

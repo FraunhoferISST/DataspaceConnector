@@ -19,15 +19,19 @@ import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.ProhibitionImpl;
 import de.fraunhofer.ids.messaging.util.SerializerProvider;
 import io.dataspaceconnector.common.ids.DeserializationService;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.rule.ContractRuleDesc;
 import io.dataspaceconnector.model.rule.ContractRuleFactory;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -35,6 +39,8 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {ContractRuleFactory.class, IdsProhibitionBuilder.class,
         DeserializationService.class, SerializerProvider.class})
@@ -46,7 +52,18 @@ public class IdsProhibitionBuilderTest {
     @Autowired
     private IdsProhibitionBuilder idsProhibitionBuilder;
 
+    @MockBean
+    private SelfLinkHelper selfLinkHelper;
+
     private final ZonedDateTime date = ZonedDateTime.now(ZoneOffset.UTC);
+
+    private final UUID uuid = UUID.randomUUID();
+
+    @BeforeEach
+    void init() {
+        final var uri = URI.create("https://" + uuid);
+        when(selfLinkHelper.getSelfLink(any(Entity.class))).thenReturn(uri);
+    }
 
     @Test
     public void create_inputNull_throwNullPointerException() {
@@ -141,7 +158,7 @@ public class IdsProhibitionBuilderTest {
 
         final var idField = Entity.class.getDeclaredField("id");
         idField.setAccessible(true);
-        idField.set(rule, UUID.randomUUID());
+        idField.set(rule, uuid);
 
         final var creationDateField = Entity.class.getDeclaredField("creationDate");
         creationDateField.setAccessible(true);

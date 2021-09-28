@@ -15,48 +15,35 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
+import javax.persistence.Entity;
 
 /**
- * Describes an app endpoint. Use this structure to create
- * or update an app endpoint.
+ * Contains the data kept in an artifact.
  */
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
+@Entity
+@SQLDelete(sql = "UPDATE endpoint SET deleted=true WHERE id=?")
+@Where(clause = "deleted = false")
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
-public class AppEndpointDesc extends EndpointDesc {
+@RequiredArgsConstructor
+public class AppEndpointImpl extends AppEndpoint {
 
     /**
-     * Holds the information about the endpoint type.
-     */
-    private String endpointType;
+     * Serial version uid.
+     **/
+    private static final long serialVersionUID = 1L;
 
     /**
-     * Port of the Endpoint.
+     * The exposed port.
      */
-    private int endpointPort;
+    private int exposedPort;
 
-    /**
-     * Endpoint accepted mediatype.
-     */
-    private String mediaType;
-
-    /**
-     * Protocol used by endpoint.
-     */
-    private String protocol;
-
-    /**
-     * Language of the endpoint.
-     */
-    private String language;
-
-    /**
-     * Endpoint path suffix.
-     */
-    private String path;
 }

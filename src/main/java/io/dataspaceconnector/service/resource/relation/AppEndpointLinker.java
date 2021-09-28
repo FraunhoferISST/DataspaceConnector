@@ -16,7 +16,7 @@
 package io.dataspaceconnector.service.resource.relation;
 
 import io.dataspaceconnector.model.app.App;
-import io.dataspaceconnector.model.endpoint.AppEndpoint;
+import io.dataspaceconnector.model.endpoint.AppEndpointImpl;
 import io.dataspaceconnector.service.resource.base.OwningRelationService;
 import io.dataspaceconnector.service.resource.type.AppEndpointService;
 import io.dataspaceconnector.service.resource.type.AppService;
@@ -30,11 +30,11 @@ import java.util.List;
  */
 @Service
 @NoArgsConstructor
-public class AppEndpointLinker extends OwningRelationService<App, AppEndpoint, AppService,
+public class AppEndpointLinker extends OwningRelationService<App, AppEndpointImpl, AppService,
         AppEndpointService> {
 
     @Override
-    protected final List<AppEndpoint> getInternal(final App owner) {
+    public final List<AppEndpointImpl> getInternal(final App owner) {
         return owner.getEndpoints();
     }
 }

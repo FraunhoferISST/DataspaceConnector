@@ -20,7 +20,8 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.base.Entity;
-import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.net.URI;
 import java.util.List;
@@ -35,13 +36,18 @@ import java.util.stream.Collectors;
  * @param <T> The type of the DSC object.
  * @param <X> The type of the ids object.
  */
-@NoArgsConstructor
+@RequiredArgsConstructor
 public abstract class AbstractIdsBuilder<T extends Entity, X extends ModelClass> {
 
     /**
      * The default depth the builder will follow dependencies.
      */
     public static final int DEFAULT_DEPTH = -1;
+
+    /**
+     * Helper for creating self links.
+     */
+    private final @NonNull SelfLinkHelper selfLinkHelper;
 
     /**
      * Convert a DSC object to an ids object. The default depth will be used to determine the
@@ -96,7 +102,7 @@ public abstract class AbstractIdsBuilder<T extends Entity, X extends ModelClass>
      * @return The absolute path to this entity.
      */
     protected <K extends Entity> URI getAbsoluteSelfLink(final K entity) {
-        return SelfLinkHelper.getSelfLink(entity);
+        return selfLinkHelper.getSelfLink(entity);
     }
 
     private static boolean shouldGenerate(final int currentDepth, final int maxDepth) {

@@ -78,6 +78,11 @@ public class EntityUpdateService {
     private final @NonNull ArtifactService artifactService;
 
     /**
+     * Helper for creating self links.
+     */
+    private final @NonNull SelfLinkHelper selfLinkHelper;
+
+    /**
      * Update database resource.
      *
      * @param resource The ids resource.
@@ -86,7 +91,7 @@ public class EntityUpdateService {
         try {
             final var updated = requestedResourceUpdater.update(resource);
             if (log.isDebugEnabled()) {
-                log.debug("Updated resource. [uri=({})]", SelfLinkHelper.getSelfLink(updated));
+                log.debug("Updated resource. [uri=({})]", selfLinkHelper.getSelfLink(updated));
             }
 
             final var representations = resource.getRepresentation();
@@ -111,7 +116,7 @@ public class EntityUpdateService {
             final var updated = representationUpdater.update(representation);
             if (log.isDebugEnabled()) {
                 log.debug("Updated representation. [uri=({})]",
-                        SelfLinkHelper.getSelfLink(updated));
+                        selfLinkHelper.getSelfLink(updated));
             }
 
             final var artifacts = representation.getInstance();
@@ -134,7 +139,7 @@ public class EntityUpdateService {
         try {
             final var updated = artifactUpdater.update(artifact);
             if (log.isDebugEnabled()) {
-                log.debug("Updated artifact. [uri=({})]", SelfLinkHelper.getSelfLink(updated));
+                log.debug("Updated artifact. [uri=({})]", selfLinkHelper.getSelfLink(updated));
             }
         } catch (ResourceNotFoundException exception) {
             if (log.isDebugEnabled()) {

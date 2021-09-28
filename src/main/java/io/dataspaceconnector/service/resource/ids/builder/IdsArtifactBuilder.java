@@ -18,9 +18,10 @@ package io.dataspaceconnector.service.resource.ids.builder;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
-import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
@@ -29,9 +30,18 @@ import java.math.BigInteger;
  * Converts dsc artifacts to ids artifacts.
  */
 @Component
-@NoArgsConstructor
 public final class IdsArtifactBuilder extends AbstractIdsBuilder<Artifact,
         de.fraunhofer.iais.eis.Artifact> {
+
+    /**
+     * Constructs an IdsArtifactBuilder.
+     *
+     * @param selfLinkHelper the self link helper.
+     */
+    @Autowired
+    public IdsArtifactBuilder(final SelfLinkHelper selfLinkHelper) {
+        super(selfLinkHelper);
+    }
 
     @Override
     protected de.fraunhofer.iais.eis.Artifact createInternal(final Artifact artifact,

@@ -61,6 +61,11 @@ public final class DataAccessVerifier implements PolicyVerifier<AccessVerificati
     private final @NonNull EntityResolver entityResolver;
 
     /**
+     * Helper for creating self links.
+     */
+    private final @NonNull SelfLinkHelper selfLinkHelper;
+
+    /**
      * Policy check on data access on consumer side. Ignore if unknown patterns are allowed.
      *
      * @param target      The requested artifact.
@@ -79,7 +84,7 @@ public final class DataAccessVerifier implements PolicyVerifier<AccessVerificati
                 PolicyPattern.USAGE_NOTIFICATION);
 
         try {
-            final var artifactId = SelfLinkHelper.getSelfLink(target);
+            final var artifactId = selfLinkHelper.getSelfLink(target);
             checkForAccess(patternsToCheck, artifactId, target.getRemoteId(), agreementId);
         } catch (PolicyRestrictionException exception) {
             // Unknown patterns cause an exception. Ignore if unsupported patterns are allowed.

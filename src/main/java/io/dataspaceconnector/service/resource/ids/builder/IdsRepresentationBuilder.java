@@ -19,10 +19,11 @@ import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
 import de.fraunhofer.iais.eis.RepresentationBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -32,7 +33,6 @@ import java.util.Collections;
  * Converts dsc representation to ids representation.
  */
 @Component
-@RequiredArgsConstructor
 public final class IdsRepresentationBuilder extends AbstractIdsBuilder<Representation,
         de.fraunhofer.iais.eis.Representation> {
 
@@ -40,6 +40,19 @@ public final class IdsRepresentationBuilder extends AbstractIdsBuilder<Represent
      * The builder for ids artifacts.
      */
     private final @NonNull IdsArtifactBuilder artifactBuilder;
+
+    /**
+     * Constructs an IdsRepresentationBuilder.
+     *
+     * @param selfLinkHelper the self link helper.
+     * @param idsArtifactBuilder the artifact builder.
+     */
+    @Autowired
+    public IdsRepresentationBuilder(final SelfLinkHelper selfLinkHelper,
+                                    final IdsArtifactBuilder idsArtifactBuilder) {
+        super(selfLinkHelper);
+        this.artifactBuilder = idsArtifactBuilder;
+    }
 
     @Override
     protected de.fraunhofer.iais.eis.Representation createInternal(

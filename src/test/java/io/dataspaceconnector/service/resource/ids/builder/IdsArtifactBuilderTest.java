@@ -16,15 +16,19 @@
 package io.dataspaceconnector.service.resource.ids.builder;
 
 import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.model.base.Entity;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -35,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {ArtifactFactory.class, IdsArtifactBuilder.class})
 public class IdsArtifactBuilderTest {
@@ -45,7 +51,18 @@ public class IdsArtifactBuilderTest {
     @Autowired
     private IdsArtifactBuilder idsArtifactBuilder;
 
+    @MockBean
+    private SelfLinkHelper selfLinkHelper;
+
     private final ZonedDateTime date = ZonedDateTime.now(ZoneOffset.UTC);
+
+    private final UUID uuid = UUID.randomUUID();
+
+    @BeforeEach
+    void init() {
+        final var uri = URI.create("https://" + uuid);
+        when(selfLinkHelper.getSelfLink(any(Entity.class))).thenReturn(uri);
+    }
 
     @Test
     public void create_inputNull_throwNullPointerException() {
@@ -142,7 +159,7 @@ public class IdsArtifactBuilderTest {
 
         final var idField = Entity.class.getDeclaredField("id");
         idField.setAccessible(true);
-        idField.set(artifact, UUID.randomUUID());
+        idField.set(artifact, uuid);
 
         final var creationDateField = Entity.class.getDeclaredField("creationDate");
         creationDateField.setAccessible(true);

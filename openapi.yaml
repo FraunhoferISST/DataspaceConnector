@@ -25,7 +25,7 @@ info:
   license:
     name: "Apache License, Version 2.0"
     url: https://www.apache.org/licenses/LICENSE-2.0.txt
-  version: 6.2.1
+  version: 6.3.0
 servers:
 - url: https://localhost:8080
   description: Generated server url
@@ -3535,6 +3535,18 @@ paths:
             '*/*':
               schema:
                 type: object
+        "409":
+          description: Conflict
+          content:
+            '*/*':
+              schema:
+                type: object
+        "404":
+          description: Not found
+          content:
+            '*/*':
+              schema:
+                type: object
   /api/subscriptions:
     get:
       tags:
@@ -6579,6 +6591,8 @@ components:
           type: array
           items:
             type: string
+        authenticationSet:
+          type: boolean
         _links:
           $ref: '#/components/schemas/Links'
     TruststoreView:

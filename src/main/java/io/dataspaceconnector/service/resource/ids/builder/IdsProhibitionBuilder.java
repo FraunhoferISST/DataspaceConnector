@@ -17,6 +17,7 @@ package io.dataspaceconnector.service.resource.ids.builder;
 
 import de.fraunhofer.iais.eis.Prohibition;
 import io.dataspaceconnector.common.ids.DeserializationService;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,7 +25,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class IdsProhibitionBuilder extends IdsRuleBuilder<Prohibition> {
-    IdsProhibitionBuilder(final DeserializationService deserializer) {
-        super(deserializer, Prohibition.class);
+    IdsProhibitionBuilder(final SelfLinkHelper selfLinkHelper,
+                          final DeserializationService deserializer) {
+        super(selfLinkHelper, deserializer, Prohibition.class);
     }
 }

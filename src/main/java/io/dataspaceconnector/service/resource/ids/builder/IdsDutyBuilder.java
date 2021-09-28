@@ -17,6 +17,7 @@ package io.dataspaceconnector.service.resource.ids.builder;
 
 import de.fraunhofer.iais.eis.Duty;
 import io.dataspaceconnector.common.ids.DeserializationService;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class IdsDutyBuilder extends IdsRuleBuilder<Duty> {
-    IdsDutyBuilder(final DeserializationService deserializer) {
-        super(deserializer, Duty.class);
+    IdsDutyBuilder(final SelfLinkHelper selfLinkHelper, final DeserializationService deserializer) {
+        super(selfLinkHelper, deserializer, Duty.class);
     }
 }

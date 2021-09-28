@@ -40,4 +40,9 @@ public class ProxyView extends RepresentationModel<ProxyView> {
      * The list of exclusions.
      */
     private List<String> exclusions;
+
+    /**
+     * Boolean value indicating whether auth-credentials for the proxy are present.
+     */
+    private boolean authenticationSet;
 }

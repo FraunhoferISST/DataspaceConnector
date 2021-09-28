@@ -84,16 +84,16 @@ Set environment variables
     configMapKeyRef:
       name: {{ $name }}
       key: SPRING_DATASOURCE_URL
-- name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+- name: SPRING_DATASOURCE_DRIVERCLASSNAME
   valueFrom:
     configMapKeyRef:
       name: {{ $name }}
-      key: SPRING_DATASOURCE_DRIVER_CLASS_NAME
-- name: SPRING_JPA_DATABASE_PLATFORM
+      key: SPRING_DATASOURCE_DRIVERCLASSNAME
+- name: SPRING_JPA_DATABASEPLATFORM
   valueFrom:
     configMapKeyRef:
       name: {{ $name }}
-      key: SPRING_JPA_DATABASE_PLATFORM
+      key: SPRING_JPA_DATABASEPLATFORM
 {{- end }}
 {{- range $key, $value := .Values.env.secrets }}
 - name: {{ $key }}

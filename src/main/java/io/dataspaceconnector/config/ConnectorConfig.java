@@ -70,14 +70,14 @@ public class ConnectorConfig {
     /**
      * The outbound model version.
      */
-    private static final String OUTBOUND_VERSION = "4.2.1";
+    private static final String OUTBOUND_VERSION = "4.2.3";
 
     /**
      * The inbound model versions.
      */
     private static final List<String> INBOUND_VERSIONS = List.of("4.0.0", "4.0.2", "4.0.3", "4.0.4",
             "4.0.5", "4.0.6", "4.0.7", "4.0.8", "4.0.9", "4.0.10", "4.0.11", "4.1.0", "4.1.1",
-            "4.1.2", "4.1.3", "4.2.0", "4.2.1");
+            "4.1.2", "4.1.3", "4.2.0", "4.2.1", "4.2.2", "4.2.3");
 
     /**
      * Get the outbound model version.

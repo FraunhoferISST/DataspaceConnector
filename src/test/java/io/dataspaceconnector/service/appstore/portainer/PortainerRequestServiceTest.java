@@ -18,17 +18,16 @@ package io.dataspaceconnector.service.appstore.portainer;
 import io.dataspaceconnector.common.net.HttpService;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.json.JSONException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 @SpringBootTest
@@ -131,10 +130,22 @@ class PortainerRequestServiceTest {
         Assertions.assertEquals(200, portainerRequestService.deleteVolume("").code());
         Assertions.assertEquals(200, portainerRequestService.pullImage(TEMPLATE).code());
         Assertions.assertEquals(200, portainerRequestService.disconnectContainerFromNetwork("id", "id", true).code());
+        Assertions.assertEquals("1", portainerRequestService.createContainer(TEMPLATE, Map.of(),
+                new ArrayList<>()));
         Assertions.assertDoesNotThrow(() -> portainerRequestService.deleteRegistry(1));
         Assertions.assertDoesNotThrow(() -> portainerRequestService.deleteUnusedVolumes());
         Assertions.assertDoesNotThrow(() -> portainerRequestService.createVolumes(TEMPLATE, "id"));
-        Assertions.assertEquals("1", portainerRequestService.createContainer(TEMPLATE, Map.of()));
+    }
+
+    @Test
+    public void testPortainer_createRegistry() throws Exception {
+        var arrayResponse = new MockResponse().setResponseCode(200).setBody(ARRAY_RESPONSE);
+        var objResponse = new MockResponse().setResponseCode(200).setBody(RESPONSE_STRING);
+
+        mockWebServer.enqueue(objResponse);
+        mockWebServer.enqueue(arrayResponse);
+        mockWebServer.enqueue(objResponse);
+
         Assertions.assertEquals(1, portainerRequestService.createRegistry(TEMPLATE));
     }
 
@@ -156,5 +167,4 @@ class PortainerRequestServiceTest {
         Assertions.assertDoesNotThrow(() -> portainerRequestService.createEndpointId());
         Assertions.assertEquals("1", portainerRequestService.getNetworkId("testdata"));
     }
-
 }

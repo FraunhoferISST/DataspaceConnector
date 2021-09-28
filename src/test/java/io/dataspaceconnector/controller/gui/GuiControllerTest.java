@@ -16,12 +16,18 @@
 package io.dataspaceconnector.controller.gui;
 
 import io.dataspaceconnector.controller.gui.util.GuiUtils;
+import io.dataspaceconnector.service.ProjectInformationService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -35,6 +41,12 @@ class GuiControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private GuiController.ConnectorReleaseContributor connectorReleaseContributor;
+
+    @MockBean
+    private ProjectInformationService projectInformationService;
 
     @Test
     void unauthorizedGetEnum() throws Exception {
@@ -74,5 +86,20 @@ class GuiControllerTest {
         mockMvc.perform(
                 get("/api/configmanager/enum/paymentmethod"))
                 .andExpect(status().isOk()).andReturn();
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    void testReleaseContributor() throws Exception {
+        var builder = new Info.Builder();
+        connectorReleaseContributor.contribute(builder);
+        Map<String, Object> updateMap = Map.of(
+                "connector.update", "6.2.0",
+                "connector.version", "6.2.0"
+        );
+        Mockito.when(projectInformationService.projectUpdateAvailable()).thenReturn(updateMap);
+        connectorReleaseContributor.contribute(builder);
+        var info = builder.build();
+        Assertions.assertEquals(updateMap, info.get("connector"));
     }
 }
