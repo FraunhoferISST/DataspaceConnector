@@ -27,7 +27,7 @@ import java.util.HashMap;
  */
 @Component
 @Log4j2
-public class CamelInfoContributor
+public class CamelInfoContributorExt
         extends org.apache.camel.spring.boot.actuate.info.CamelInfoContributor {
 
     /**
@@ -40,7 +40,7 @@ public class CamelInfoContributor
      *
      * @param context The camel context.
      */
-    public CamelInfoContributor(final CamelContext context) {
+    public CamelInfoContributorExt(final CamelContext context) {
         super(context);
         this.camelContext = context;
     }
