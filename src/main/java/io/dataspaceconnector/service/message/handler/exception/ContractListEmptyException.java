@@ -32,7 +32,7 @@ public class ContractListEmptyException extends RuntimeException {
      * The contract request.
      */
     @Getter
-    private final transient ContractRequest contractRequest;
+    private final ContractRequest contractRequest;
 
     /**
      * Constructs a ContractListEmptyException with the specified contract request and detail

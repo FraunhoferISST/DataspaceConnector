@@ -17,6 +17,7 @@ package io.dataspaceconnector.common.routing;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import io.dataspaceconnector.common.exception.DataRetrievalException;
@@ -73,7 +74,8 @@ public class RouteDataRetriever implements DataRetrievalService {
             }
 
             final var data = result.getIn().getBody(String.class);
-            return new RouteResponse(new ByteArrayInputStream(data.getBytes()));
+            return new RouteResponse(new ByteArrayInputStream(
+                    data.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception exception) {
             if (log.isDebugEnabled()) {
                 log.debug("Failed to retrieve data. [exception=({})]", exception.getMessage(),
