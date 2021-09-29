@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [X.X.X] - XXXX-XX-XX
+## [6.3.0] - 2021-30-09
 
 ### Added
 - Add `connector` object to `/actuator/info` endpoint to return available updates and further information.
