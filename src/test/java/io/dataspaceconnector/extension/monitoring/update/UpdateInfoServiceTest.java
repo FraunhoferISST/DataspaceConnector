@@ -18,6 +18,7 @@ package io.dataspaceconnector.extension.monitoring.update;
 import de.fraunhofer.ids.messaging.protocol.http.HttpService;
 import io.dataspaceconnector.config.ConnectorConfig;
 import lombok.SneakyThrows;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -57,7 +58,14 @@ public class UpdateInfoServiceTest {
         final var mockWebServer = new MockWebServer();
         mockWebServer.start();
         Mockito.doAnswer((Answer<Response>) invocationOnMock -> {
-            var req = invocationOnMock.getArgument(0, Request.class);
+            //send a request to mockwebserver when httpservice sends something
+            final var mockUrl = new HttpUrl.Builder()
+                    .scheme("http")
+                    .host(mockWebServer.getHostName())
+                    .port(mockWebServer.getPort())
+                    .build();
+            final var req = new Request.Builder().get().url(mockUrl).build();
+
             return new OkHttpClient().newCall(req).execute();
         }).when(httpService).send(Mockito.any(Request.class));
         mockWebServer.enqueue(response);
