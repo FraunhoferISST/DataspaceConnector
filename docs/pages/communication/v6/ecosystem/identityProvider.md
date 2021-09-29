@@ -60,7 +60,7 @@ Afterwards, you will receive the certificate and its corresponding key material 
 In urgent cases, you can also directly contact us for a certificate request, but we highly encourage
 using the standard way. Our mailing list dealing with DAPS certificates and questions regarding the
 key material (not the setup of other connectors) is
-[daps-certificates@aisec.fraunhofer.de](daps-certificates@aisec.fraunhofer.de).
+[daps-certificates@aisec.fraunhofer.de](mailto:daps-certificates@aisec.fraunhofer.de).
 
 ## Participant Information System (ParIS)
 
