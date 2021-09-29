@@ -102,9 +102,7 @@ public class RouteConfigurer {
                 }
             } else if ((routeStart.get(0) instanceof GenericEndpoint
                     || routeStart.get(0) instanceof AppEndpoint)
-                    && (routeEnd == null || routeEnd.isEmpty()
-                    || routeEnd.get(0) instanceof ConnectorEndpoint
-                    || routeEnd.get(0) == null)) {
+                    && routeEnd.get(0) instanceof ConnectorEndpoint) {
                 template = freemarkerConfig.getTemplate("http_to_connector_template.ftl");
             } else if ((routeStart.get(0) instanceof GenericEndpoint
                     && routeEnd.get(0) instanceof AppEndpoint)

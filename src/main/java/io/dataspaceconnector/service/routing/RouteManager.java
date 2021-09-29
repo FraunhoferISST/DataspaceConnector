@@ -18,6 +18,7 @@ package io.dataspaceconnector.service.routing;
 import de.fraunhofer.iais.eis.AppEndpoint;
 import de.fraunhofer.iais.eis.AppEndpointType;
 import de.fraunhofer.iais.eis.AppRoute;
+import de.fraunhofer.iais.eis.ConnectorEndpoint;
 import de.fraunhofer.iais.eis.Endpoint;
 import de.fraunhofer.iais.eis.GenericEndpoint;
 import de.fraunhofer.iais.eis.RouteStep;
@@ -134,7 +135,7 @@ public class RouteManager {
             final var appEndpoint = (AppEndpoint) routeStart.get(0);
             freemarkerInput.put("startUrl", escapeForXml(appEndpoint.getPath()));
         } else {
-            throw new RouteCreationException("The route start can not be identified");
+            throw new RouteCreationException("The route start can not be identified.");
         }
     }
 
@@ -154,13 +155,13 @@ public class RouteManager {
         } else if (routeEnd.get(0) instanceof AppEndpoint) {
             final var appEndpoint = (AppEndpoint) routeEnd.get(0);
             freemarkerInput.put("endUrl", escapeForXml(appEndpoint.getPath()));
-        } else {
-            throw new RouteCreationException("The route end can not be identified");
+        } else if (!(routeEnd.get(0) instanceof ConnectorEndpoint)) {
+            throw new RouteCreationException("The route end can not be identified.");
         }
     }
 
     /**
-     * Escapes a string to be valid URL. This includes e.g. replacing & by &amp;
+     * Escapes a string to be valid XML.
      *
      * @param input the input string.
      * @return the escaped string.
