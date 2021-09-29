@@ -436,7 +436,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      *
      * @param artifactId The artifact ID.
      * @return the associated route, if any. Null otherwise.
-     * @throws ResourceNotFoundException if the referenced route is unknown.
+     * @throws io.dataspaceconnector.common.exception.ResourceNotFoundException if the referenced
+     *                                                                          route is unknown.
      */
     public Route getAssociatedRoute(final UUID artifactId) {
         final var artifact = (ArtifactImpl) get(artifactId);

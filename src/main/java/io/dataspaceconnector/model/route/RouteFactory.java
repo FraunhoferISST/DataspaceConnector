@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model.route;
 
+import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.endpoint.Endpoint;
@@ -65,6 +66,11 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
     private boolean updateRouteDeployMethod(final Route route, final DeployMethod deployMethod) {
         if (route.getDeploy() != null && route.getDeploy() == deployMethod) {
             return false;
+        }
+
+        if (DeployMethod.NONE.equals(deployMethod) && route.getOutput() != null) {
+            throw new InvalidEntityException("Route that is linked to an artifact must have deploy "
+                    + "method CAMEL.");
         }
 
         route.setDeploy(Objects.requireNonNullElse(deployMethod, DeployMethod.NONE));
@@ -121,6 +127,10 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
      * @return The route without start endpoint.
      */
     public Route deleteStartEndpoint(final Route route) {
+        if (route.getOutput() != null) {
+            throw new InvalidEntityException("Route that is linked to an artifact must not have "
+                    + "an undefined start.");
+        }
         route.setStart(null);
         return route;
     }

@@ -226,12 +226,16 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      *
      * @param routeId The id of the entity.
      * @throws IllegalArgumentException if the passed id is null.
+     * @throws InvalidEntityException if the route is linked to an artifact.
      */
     @Override
     public void delete(final UUID routeId) throws RouteDeletionException {
         Utils.requireNonNull(routeId, ErrorMessage.ENTITYID_NULL);
 
         final var route = get(routeId);
+        if (route.getOutput() != null) {
+            throw new InvalidEntityException("Cannot delete route that is linked to artifact.");
+        }
         routeHelper.delete(route);
 
         final var linker = new RouteStepLinker();
