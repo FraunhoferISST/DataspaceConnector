@@ -408,7 +408,7 @@ If you want to change the base path, which will be used to find properties and c
 bootstrapping, you can customize the following line:
 
 ```properties
-bootstrap.path=.
+bootstrap.path=.src/test/resources
 bootstrap.enabled=false
 ```
 
