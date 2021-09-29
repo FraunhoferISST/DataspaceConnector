@@ -31,6 +31,12 @@ The Dataspace Connector provides some endpoints to send IDS messages that can be
 App Store. A full flow of how to query the App Store, download, and maintain an IDS App can be found
 in the following.
 
+## Prerequisites
+
+Please ensure that your connector uses a valid IDS certificate. For this, take a look at
+[these](../../../deployment/configuration.md#step-2-ids-certificate) configuration steps and
+[this](identityProvider.md#aisec-daps-issuing-an-ids-certificate) guide for issuing a certificate.
+
 ## Step 1: Configuration
 
 For managing and deploying images/containers via the provided API, Portainer has to run and be

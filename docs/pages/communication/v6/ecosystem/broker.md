@@ -60,6 +60,12 @@ The recipient can be either a URL where the addressed Broker expects IDS message
 brokers can be managed and persisted in the connector. So the broker can be referenced by its id
 when sending messages. Therefore, follow these steps:
 
+## Prerequisites
+
+Please ensure that your connector uses a valid IDS certificate. For this, take a look at
+[these](../../../deployment/configuration.md#step-2-ids-certificate) configuration steps and
+[this](identityProvider.md#aisec-daps-issuing-an-ids-certificate) guide for issuing a certificate.
+
 ## Step 1: Create broker entity (optional)
 
 First, create a broker via `POST /api/brokers`:
