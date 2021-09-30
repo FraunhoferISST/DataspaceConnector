@@ -15,6 +15,8 @@ All notable changes to this project will be documented in this file.
 - When creating an artifact, check length of whole URL instead of just path.
 - Use language code instead of language ID when creating TypedLiterals.
 - Make SelfLinkHelper non-static, so that it can use Spring properties.
+- Use only */data* and not request's context path as delimiter for determining additional path for data requests.
+- Create broker in database upon bootstrap start.
 
 ### Changed
 - Add `ServiceResolver` to remove some Spring annotations from service classes.
