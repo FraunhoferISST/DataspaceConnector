@@ -112,8 +112,8 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             return idsHttpService.sendAndCheckDat(body, recipient);
         } catch (SerializeException | ConstraintViolationException e) {
             final var msg = ErrorMessage.MESSAGE_BUILDING_FAILED;
-            if (log.isWarnEnabled()) {
-                log.warn(msg + "[exception=({})]", e.getMessage(), e);
+            if (log.isDebugEnabled()) {
+                log.debug(msg + "[exception=({})]", e.getMessage(), e);
             }
             throw new MessageException(msg, e);
         } catch (MultipartParseException | DeserializeException | ShaclValidatorException e) {
@@ -136,8 +136,8 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             throw new MessageException(msg, e);
         } catch (IOException e) {
             final var msg = ErrorMessage.MESSAGE_HANDLING_FAILED;
-            if (log.isWarnEnabled()) {
-                log.warn(msg + " [exception=({})]", e.getMessage(), e);
+            if (log.isDebugEnabled()) {
+                log.debug(msg + " [exception=({})]", e.getMessage(), e);
             }
             throw new MessageException(msg, e);
         }
