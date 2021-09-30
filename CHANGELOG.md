@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [X.X.X] - XXXX-XX-XX
+
+### Fixed
+- Check for maxDepth in IdsResourceBuilder when resolving samples and avoid possible StackOverFlow.
+
 ## [6.3.0] - 2021-30-09
 
 ### Added
@@ -16,7 +21,6 @@ All notable changes to this project will be documented in this file.
 - Make `SelfLinkHelper` non-static, so that it can use Spring properties.
 - Use only `/data` and not the request's context path as delimiter for determining additional path for data requests.
 - Create broker in database upon bootstrap start.
-- Check for maxDepth in IdsResourceBuilder when resolving samples and avoid possible StackOverFlow.
 
 ### Changed
 - Add `ServiceResolver` to remove some Spring annotations from service classes.
