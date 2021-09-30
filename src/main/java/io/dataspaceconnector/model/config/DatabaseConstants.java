@@ -26,6 +26,11 @@ public final class DatabaseConstants {
     public static final int URI_COLUMN_LENGTH = 2048;
 
     /**
+     * The maximum length of database columns containing desctiptons.
+     */
+    public static final int DESCRIPTION_COLUMN_LENGTH = 4000;
+
+    /**
      * Private constructor.
      */
     private DatabaseConstants() { }
