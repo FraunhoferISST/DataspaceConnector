@@ -115,14 +115,14 @@ public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBui
                 .build();
 
         // Get sample resources as list.
-        final List<de.fraunhofer.iais.eis.Resource> samples = currentDepth <= maxDepth
-                && maxDepth >= 0
-                ? resource.getSamples()
-                .stream()
-                .map(x -> this.create(resourceSvc.get(EndpointUtils.getUUIDFromPath(x)), -1))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList())
-                : new ArrayList<>();
+        var samples = new ArrayList<de.fraunhofer.iais.eis.Resource>();
+        if (currentDepth <= maxDepth && maxDepth >= 0) {
+            samples.addAll(resource.getSamples()
+                    .stream()
+                    .map(x -> this.create(resourceSvc.get(EndpointUtils.getUUIDFromPath(x)), -1))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
+        }
 
         // Build resource only if at least one representation and one contract is present.
         if (representations.isEmpty() || contracts.isEmpty() || representations.get().isEmpty()
