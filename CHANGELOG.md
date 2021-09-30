@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [X.X.X] - XXXX-XX-XX
+
+### Fixed
+- In case of exceptions during building and sending a message, the complete error stack trace log will be displayed only at debug-level.
+
 ## [6.3.0] - 2021-30-09
 
 ### Added
