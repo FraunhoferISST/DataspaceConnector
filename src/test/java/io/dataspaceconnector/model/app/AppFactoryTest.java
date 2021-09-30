@@ -442,7 +442,7 @@ public class AppFactoryTest {
         factory.update(app, desc);
 
         /* ASSERT */
-        assertArrayEquals(desc.getValue().getBytes(StandardCharsets.UTF_16),
+        assertArrayEquals(desc.getValue().getBytes(StandardCharsets.UTF_8),
                 ((LocalData) app.getData()).getValue());
     }
 

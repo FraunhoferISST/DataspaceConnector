@@ -8,7 +8,7 @@
         <to uri="$startUrl"/>
 
         <convertBodyTo type="java.lang.String"/>
-        <log message="Fetched data: ${body}"/>
+        <log message="Sending data: ${r"${body}"}"/>
 
         <#list routeStepEndpoints as endpoint>
             <setHeader name="CamelHttpMethod"><constant>$endpoint.getHttpMethod().toString()</constant></setHeader>

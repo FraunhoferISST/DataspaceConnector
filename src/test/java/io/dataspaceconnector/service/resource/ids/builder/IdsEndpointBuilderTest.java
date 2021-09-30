@@ -25,28 +25,42 @@ import de.fraunhofer.iais.eis.AppEndpointImpl;
 import de.fraunhofer.iais.eis.AppEndpointType;
 import de.fraunhofer.iais.eis.GenericEndpointImpl;
 import de.fraunhofer.iais.eis.Language;
+import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.auth.BasicAuth;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.datasource.DataSource;
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {IdsEndpointBuilder.class})
 public class IdsEndpointBuilderTest {
 
+    @MockBean
+    private SelfLinkHelper selfLinkHelper;
+
     @Autowired
     private IdsEndpointBuilder builder;
 
-    private final URI endpointLocation = URI.create("https://location.com");
+    private final String endpointLocation = "https://location.com";
 
     private final URI endpointDocumentation = URI.create("https://documentation.com");
+
+    @BeforeEach
+    void init() {
+        when(selfLinkHelper.getSelfLink(any(Entity.class))).thenReturn(URI.create("https://link"));
+    }
 
     @Test
     void create_inputNull_throwNullPointerException() {
@@ -64,7 +78,7 @@ public class IdsEndpointBuilderTest {
 
         /* ASSERT */
         assertTrue(result instanceof GenericEndpointImpl);
-        assertEquals(result.getAccessURL(), endpoint.getLocation());
+        assertEquals(result.getPath(), endpoint.getLocation());
         assertEquals(result.getEndpointDocumentation().get(0), endpoint.getDocs());
         assertEquals(result.getEndpointInformation().get(0).getValue(), endpoint.getInfo());
 
@@ -84,7 +98,7 @@ public class IdsEndpointBuilderTest {
 
         /* ASSERT */
         assertTrue(result instanceof AppEndpointImpl);
-        assertEquals(result.getAccessURL(), endpoint.getLocation());
+        assertEquals(result.getPath(), endpoint.getLocation());
         assertEquals(result.getEndpointDocumentation().get(0), endpoint.getDocs());
         assertEquals(result.getEndpointInformation().get(0).getValue(), endpoint.getInfo());
 

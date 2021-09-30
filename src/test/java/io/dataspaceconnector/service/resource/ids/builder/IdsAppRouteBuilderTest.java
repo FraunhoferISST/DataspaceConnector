@@ -63,8 +63,6 @@ public class IdsAppRouteBuilderTest {
     @MockBean
     private SelfLinkHelper selfLinkHelper;
 
-    private final URI endpointLocation = URI.create("https://location.com");
-
     private final URI endpointDocumentation = URI.create("https://documentation.com");
 
     private final UUID uuid = UUID.randomUUID();
@@ -167,7 +165,7 @@ public class IdsAppRouteBuilderTest {
 
     private void compareGenericEndpoints(final GenericEndpoint endpoint,
                                          final de.fraunhofer.iais.eis.GenericEndpoint idsEndpoint) {
-        assertEquals(idsEndpoint.getAccessURL(), endpoint.getLocation());
+        assertEquals(idsEndpoint.getPath(), endpoint.getLocation());
         assertEquals(idsEndpoint.getEndpointDocumentation().get(0), endpoint.getDocs());
         assertEquals(idsEndpoint.getEndpointInformation().get(0).getValue(), endpoint.getInfo());
 
@@ -176,8 +174,6 @@ public class IdsAppRouteBuilderTest {
         assertEquals(idsAuth.getAuthUsername(), auth.getUsername());
         assertEquals(idsAuth.getAuthPassword(), auth.getPassword());
     }
-
-
 
     private Route getRoute() {
         final var route = new Route();
@@ -231,7 +227,7 @@ public class IdsAppRouteBuilderTest {
 
         final var endpoint = new GenericEndpoint();
         ReflectionTestUtils.setField(endpoint, "id", uuid);
-        ReflectionTestUtils.setField(endpoint, "location", endpointLocation);
+        ReflectionTestUtils.setField(endpoint, "location", "https://location.com");
         ReflectionTestUtils.setField(endpoint, "docs", endpointDocumentation);
         ReflectionTestUtils.setField(endpoint, "info", "info");
         ReflectionTestUtils.setField(endpoint, "dataSource", dataSource);

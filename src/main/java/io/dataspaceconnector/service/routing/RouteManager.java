@@ -124,7 +124,8 @@ public class RouteManager {
                                         final ArrayList<? extends Endpoint> routeStart)
             throws RouteCreationException {
         // If route starts from connector endpoint, route start is not set
-        if (routeStart == null || routeStart.isEmpty()) {
+        if (routeStart == null || routeStart.isEmpty()
+                || routeStart.get(0) instanceof ConnectorEndpoint) {
             return;
         }
         if (routeStart.get(0) instanceof GenericEndpoint) {

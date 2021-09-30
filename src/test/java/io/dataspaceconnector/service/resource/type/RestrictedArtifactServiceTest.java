@@ -17,14 +17,17 @@ package io.dataspaceconnector.service.resource.type;
 
 import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.common.net.QueryInput;
+import io.dataspaceconnector.common.routing.RouteDataDispatcher;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
+import io.dataspaceconnector.service.DataRetriever;
 import io.dataspaceconnector.service.MultipartArtifactRetriever;
 import io.dataspaceconnector.common.usagecontrol.AllowAccessVerifier;
+import io.dataspaceconnector.service.resource.relation.ArtifactRouteService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -61,6 +64,15 @@ public class RestrictedArtifactServiceTest {
 
     @MockBean
     private ArtifactFactory artifactFactory;
+
+    @MockBean
+    private ArtifactRouteService artifactRouteService;
+
+    @MockBean
+    private DataRetriever dataRetriever;
+
+    @MockBean
+    private RouteDataDispatcher routeDataDispatcher;
 
     @MockBean
     private MultipartArtifactRetriever artifactReceiver;

@@ -38,15 +38,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.UUID;
-import javax.annotation.PostConstruct;
 
 /**
  * Service class for routes.
@@ -77,11 +70,6 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
     private final @NonNull RouteHelper routeHelper;
 
     /**
-     * Transaction manager. Required for transactions in @PostConstruct methods.
-     */
-    private final @NonNull PlatformTransactionManager transactionManager;
-
-    /**
      * Constructor for route service.
      *
      * @param repository           The route repository.
@@ -90,7 +78,6 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      * @param endpointServiceProxy The endpoint service.
      * @param artifactRepository   The artifact repository.
      * @param camelRouteHelper     The helper class for Camel routes.
-     * @param platformTransactionManager The transaction manager.
      */
     public RouteService(
             final BaseEntityRepository<Route> repository,
@@ -98,13 +85,11 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
             final @NonNull EndpointRepository endpointRepository,
             final @NonNull EndpointServiceProxy endpointServiceProxy,
             final @NonNull ArtifactRepository artifactRepository,
-            final @NonNull RouteHelper camelRouteHelper,
-            final @NonNull PlatformTransactionManager platformTransactionManager) {
+            final @NonNull RouteHelper camelRouteHelper) {
         super(repository, factory);
         this.endpointRepo = endpointRepository;
         this.endpointService = endpointServiceProxy;
         this.routeHelper = camelRouteHelper;
-        this.transactionManager = platformTransactionManager;
         this.artifactRepo = artifactRepository;
     }
 
@@ -248,37 +233,4 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
 
         super.delete(routeId);
     }
-
-    /**
-     * Loads and deploys all top-level routes from the database after application start. Thus,
-     * deployed Camel routes do not get lost through a restart.
-     */
-    @PostConstruct
-    @Transactional(readOnly = true)
-    public void redeploySavedRoutes() {
-        final var template = new TransactionTemplate(transactionManager);
-        template.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(@NotNull final TransactionStatus status) {
-                final var routes = ((RouteRepository) getRepository()).findAllTopLevelRoutes();
-                routes.forEach(RouteService.this::redeploy);
-            }
-        });
-    }
-
-    /**
-     * Redeploys a persisted route. If the corresponding Camel route cannot be created, a warning
-     * is logged.
-     *
-     * @param route the route to redeploy.
-     */
-    private void redeploy(final Route route) {
-        try {
-            routeHelper.deploy(route);
-        } catch (RouteCreationException exception) {
-            log.warn("Failed to redeploy persisted route. [routeId=({}), exception=({})]",
-                    route.getId(), exception.getMessage());
-        }
-    }
-
 }

@@ -69,7 +69,7 @@ public class GenericEndpointFactoryTest {
 
         /* ASSERT */
         assertFalse(result);
-        assertEquals(GenericEndpointFactory.DEFAULT_URI, endpoint.getLocation());
+        assertEquals(GenericEndpointFactory.DEFAULT_LOCATION, endpoint.getLocation());
     }
 
     @Test

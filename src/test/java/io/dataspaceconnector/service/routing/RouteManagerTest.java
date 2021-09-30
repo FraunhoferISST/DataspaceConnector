@@ -24,6 +24,7 @@ import de.fraunhofer.iais.eis.GenericEndpointBuilder;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.common.exception.RouteCreationException;
 import io.dataspaceconnector.config.camel.CamelConfig;
+import io.dataspaceconnector.config.camel.FreemarkerConfig;
 import io.dataspaceconnector.service.routing.config.RouteConfigurer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,8 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {RouteManager.class, RouteConfigurer.class, CamelConfig.class, DefaultCamelContext.class})
+@SpringBootTest(classes = {RouteManager.class, RouteConfigurer.class, CamelConfig.class,
+        DefaultCamelContext.class, FreemarkerConfig.class})
 public class RouteManagerTest {
     @Autowired
     private RouteManager routeManager;
@@ -45,21 +47,28 @@ public class RouteManagerTest {
 
     @Test
     void testCreateAndDeployXMLRoute_GenericEndpoint() throws RouteCreationException {
-        final var authenticationBuilder = new BasicAuthenticationBuilder();
-        final var authentication = authenticationBuilder._authPassword_("test")._authUsername_("test").build();
+        final var authentication = new BasicAuthenticationBuilder()
+                ._authPassword_("test")
+                ._authUsername_("test")
+                .build();
+        authentication.setProperty("type", "basic");
         final var uuid = UUID.randomUUID();
 
         final var appRoute = new AppRouteBuilder(URI.create("http://approute/" + uuid))
                 ._routeDeployMethod_("CAMEL")
                 ._appRouteStart_(Util.asList(new GenericEndpointBuilder()
                         ._genericEndpointAuthentication_(authentication)
-                        ._accessURL_(URI.create("http://test")).build()))
+                        ._accessURL_(URI.create("http://test"))
+                        ._path_("http://test")
+                        .build()))
                 ._appRouteOutput_(Util.asList())
                 ._appRouteEnd_(Util.asList(new ConnectorEndpointBuilder()
-                        ._accessURL_(URI.create("http://test")).build()))
+                        ._accessURL_(URI.create("http://test"))
+                        ._path_("http://test")
+                        .build()))
                 .build();
         routeManager.createAndDeployXMLRoute(appRoute);
-        assertTrue(camelContext.getRouteDefinitions().get(0).toString().startsWith("Route(app-route_" + uuid + ")"));
+        assertTrue(camelContext.getRouteDefinitions().get(0).toString().startsWith("Route(" + uuid + ")"));
     }
 
     @Test
@@ -69,14 +78,18 @@ public class RouteManagerTest {
         final var appRoute = new AppRouteBuilder(URI.create("http://approute/" + uuid))
                 ._routeDeployMethod_("CAMEL")
                 ._appRouteStart_(Util.asList(new ConnectorEndpointBuilder()
-                        ._accessURL_(URI.create("http://test")).build()))
+                        ._accessURL_(URI.create("http://test"))
+                        ._path_("http://test")
+                        .build()))
                 ._appRouteOutput_(Util.asList())
                 ._appRouteEnd_(Util.asList(new AppEndpointBuilder()
                         ._appEndpointType_(AppEndpointType.INPUT_ENDPOINT)
-                        ._accessURL_(URI.create("http://test")).build()))
+                        ._accessURL_(URI.create("http://test"))
+                        ._path_("http://test")
+                        .build()))
                 .build();
         routeManager.createAndDeployXMLRoute(appRoute);
-        assertTrue(camelContext.getRouteDefinitions().get(1).toString().startsWith("Route(app-route_" + uuid + ")"));
+        assertTrue(camelContext.getRouteDefinitions().get(1).toString().startsWith("Route(" + uuid + ")"));
     }
 
     @Test
@@ -87,13 +100,17 @@ public class RouteManagerTest {
                 ._routeDeployMethod_("CAMEL")
                 ._appRouteStart_(Util.asList(new AppEndpointBuilder()
                         ._appEndpointType_(AppEndpointType.OUTPUT_ENDPOINT)
-                        ._accessURL_(URI.create("http://test")).build()))
+                        ._accessURL_(URI.create("http://test"))
+                        ._path_("http://test")
+                        .build()))
                 ._appRouteOutput_(Util.asList())
                 ._appRouteEnd_(Util.asList(new AppEndpointBuilder()
                         ._appEndpointType_(AppEndpointType.INPUT_ENDPOINT)
-                        ._accessURL_(URI.create("http://test")).build()))
+                        ._accessURL_(URI.create("http://test"))
+                        ._path_("http://test")
+                        .build()))
                 .build();
         routeManager.createAndDeployXMLRoute(appRoute);
-        assertTrue(camelContext.getRouteDefinitions().get(2).toString().startsWith("Route(app-route_" + uuid + ")"));
+        assertTrue(camelContext.getRouteDefinitions().get(2).toString().startsWith("Route(" + uuid + ")"));
     }
 }

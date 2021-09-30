@@ -95,7 +95,7 @@ public class AppEndpointFactoryTest {
 
         /* ASSERT */
         assertFalse(result);
-        assertEquals(GenericEndpointFactory.DEFAULT_URI, endpoint.getLocation());
+        assertEquals(AppEndpointFactory.DEFAULT_LOCATION, endpoint.getLocation());
     }
 
     @Test
@@ -124,7 +124,7 @@ public class AppEndpointFactoryTest {
 
         /* ASSERT */
         assertFalse(result);
-        assertEquals(GenericEndpointFactory.DEFAULT_URI, endpoint.getDocs());
+        assertEquals(AppEndpointFactory.DEFAULT_URI, endpoint.getDocs());
     }
 
     @Test
@@ -153,7 +153,7 @@ public class AppEndpointFactoryTest {
 
         /* ASSERT */
         assertFalse(result);
-        assertEquals(GenericEndpointFactory.DEFAULT_INFORMATION, endpoint.getInfo());
+        assertEquals(AppEndpointFactory.DEFAULT_INFORMATION, endpoint.getInfo());
     }
     @Test
     void update_newAdditionals_willUpdate() {

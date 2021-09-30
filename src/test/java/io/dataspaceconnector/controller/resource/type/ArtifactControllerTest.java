@@ -17,15 +17,19 @@ package io.dataspaceconnector.controller.resource.type;
 
 import de.fraunhofer.ids.messaging.protocol.UnexpectedResponseException;
 import io.dataspaceconnector.common.net.QueryInput;
+import io.dataspaceconnector.common.routing.RouteDataDispatcher;
 import io.dataspaceconnector.controller.resource.view.artifact.ArtifactViewAssembler;
+import io.dataspaceconnector.controller.resource.view.route.RouteViewAssembler;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
+import io.dataspaceconnector.service.DataRetriever;
 import io.dataspaceconnector.service.MultipartArtifactRetriever;
 import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.service.message.SubscriberNotificationService;
+import io.dataspaceconnector.service.resource.relation.ArtifactRouteService;
 import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
 import org.junit.jupiter.api.Test;
@@ -77,6 +81,18 @@ class ArtifactControllerTest {
 
     @MockBean
     private SubscriberNotificationService subscriberNotificationService;
+
+    @MockBean
+    private ArtifactRouteService artifactRouteService;
+
+    @MockBean
+    private DataRetriever dataRetriever;
+
+    @MockBean
+    private RouteDataDispatcher routeDataDispatcher;
+
+    @MockBean
+    private RouteViewAssembler routeViewAssembler;
 
     @SpyBean
     private ArtifactService service;

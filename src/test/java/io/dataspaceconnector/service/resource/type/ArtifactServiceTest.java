@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 package io.dataspaceconnector.service.resource.type;
+
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.common.net.HttpResponse;
 import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.common.net.QueryInput;
+import io.dataspaceconnector.common.routing.RouteDataDispatcher;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
@@ -32,6 +34,8 @@ import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
+import io.dataspaceconnector.service.DataRetriever;
+import io.dataspaceconnector.service.resource.relation.ArtifactRouteService;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
@@ -58,6 +62,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -82,6 +87,15 @@ class ArtifactServiceTest {
     @MockBean
     private ArtifactFactory artifactFactory;
 
+    @MockBean
+    private ArtifactRouteService artifactRouteService;
+
+    @MockBean
+    private DataRetriever dataRetriever;
+
+    @MockBean
+    private RouteDataDispatcher routeDataDispatcher;
+
     @Autowired
     private ArtifactService service;
 
@@ -90,12 +104,15 @@ class ArtifactServiceTest {
      *************************************************************************/
 
     @Test
+    @SneakyThrows
     public void persist_dataNull_persistArtifact() {
         /* ARRANGE */
         final var desc = new ArtifactDesc();
         ArtifactImpl artifact = new ArtifactImpl();
         when(artifactFactory.create(desc)).thenReturn(artifact);
         when(artifactRepository.saveAndFlush(artifact)).thenReturn(artifact);
+        when(dataRetriever.getDataFromInternalDB(eq(artifact), any()))
+                .thenReturn(new ByteArrayInputStream("data".getBytes(StandardCharsets.UTF_8)));
 
         /* ACT */
         service.create(desc);
@@ -233,6 +250,8 @@ class ArtifactServiceTest {
         when(artifactRepository.findById(any())).thenReturn(Optional.of(localArtifact));
         when(artifactFactory.create(any())).thenReturn(localArtifact);
         when(dataRepository.getById(any())).thenReturn(getLocalData());
+        when(dataRetriever.retrieveData(eq(localArtifact), any()))
+                .thenReturn(new ByteArrayInputStream(getLocalData().getValue()));
 
         /* ACT */
         final var data = service.getData(null,
@@ -254,6 +273,8 @@ class ArtifactServiceTest {
         when(artifactRepository.findById(any())).thenReturn(Optional.of(localArtifact));
         when(artifactFactory.create(any())).thenReturn(localArtifact);
         when(dataRepository.getById(any())).thenReturn(getLocalData());
+        when(dataRetriever.retrieveData(eq(localArtifact), any()))
+                .thenReturn(new ByteArrayInputStream(getLocalData().getValue()));
 
         final var before = localArtifact.getNumAccessed();
 
@@ -282,6 +303,12 @@ class ArtifactServiceTest {
         when(artifactRepository.findById(remoteArtifact.getId()))
                 .thenReturn(Optional.of(remoteArtifact));
         when(httpService.get(url, null, auth)).thenReturn(response);
+        when(artifactRepository.saveAndFlush(any())).thenAnswer(invocationOnMock -> {
+            Object[] args = invocationOnMock.getArguments();
+            return args[0];
+        });
+        when(dataRetriever.retrieveData(any(), any()))
+                .thenReturn(response.getData());
 
         /* ACT */
         final var data = service.getData(null,
@@ -307,6 +334,12 @@ class ArtifactServiceTest {
         when(artifactRepository.findById(remoteArtifact.getId()))
                 .thenReturn(Optional.of(remoteArtifact));
         when(httpService.get(url, (QueryInput) null)).thenReturn(response);
+        when(artifactRepository.saveAndFlush(any())).thenAnswer(invocationOnMock -> {
+            Object[] args = invocationOnMock.getArguments();
+            return args[0];
+        });
+        when(dataRetriever.retrieveData(any(), any()))
+                .thenReturn(response.getData());
 
         /* ACT */
         final var data = service.getData(null, null,
@@ -330,6 +363,12 @@ class ArtifactServiceTest {
         when(artifactRepository.findById(remoteArtifact.getId()))
                 .thenReturn(Optional.of(remoteArtifact));
         when(httpService.get(url, queryInput)).thenReturn(response);
+        when(artifactRepository.saveAndFlush(any())).thenAnswer(invocationOnMock -> {
+            Object[] args = invocationOnMock.getArguments();
+            return args[0];
+        });
+        when(dataRetriever.retrieveData(eq(remoteArtifact), any()))
+                .thenReturn(response.getData());
 
         /* ACT */
         final var data = service.getData(null, null,
@@ -362,7 +401,7 @@ class ArtifactServiceTest {
 
     @SneakyThrows
     @Test
-    public void getData_unknownDataType_throwNotImplementedException() {
+    public void getData_unknownDataType_throwUnreachableLineException() {
         /* ARRANGE */
         ArtifactImpl unknownArtifact = getUnknownArtifact();
         final var dataField = unknownArtifact.getClass().getDeclaredField("data");
@@ -371,6 +410,7 @@ class ArtifactServiceTest {
 
         when(artifactRepository.findById(unknownArtifact.getId()))
                 .thenReturn(Optional.of(unknownArtifact));
+        when(dataRetriever.retrieveData(any(), any())).thenThrow(UnreachableLineException.class);
 
         /* ACT && ASSERT */
         assertThrows(UnreachableLineException.class,
@@ -382,7 +422,7 @@ class ArtifactServiceTest {
     public void getAllByAgreement_validUuid_returnList() {
         /* ARRANGE */
         final var uuid = UUID.randomUUID();
-        Mockito.doReturn(List.of(getLocalArtifact())).when(artifactRepository).findAllByAgreement(Mockito.eq(uuid));
+        Mockito.doReturn(List.of(getLocalArtifact())).when(artifactRepository).findAllByAgreement(eq(uuid));
 
         /* ACT */
         final var result = service.getAllByAgreement(uuid);
@@ -397,7 +437,7 @@ class ArtifactServiceTest {
         /* ARRANGE */
         final var uuid = UUID.randomUUID();
         final var remoteId = URI.create("https://artifact");
-        Mockito.doReturn(Optional.of(uuid)).when(artifactRepository).identifyByRemoteId(Mockito.eq(remoteId));
+        Mockito.doReturn(Optional.of(uuid)).when(artifactRepository).identifyByRemoteId(eq(remoteId));
 
         /* ACT */
         final var result = service.identifyByRemoteId(remoteId);
