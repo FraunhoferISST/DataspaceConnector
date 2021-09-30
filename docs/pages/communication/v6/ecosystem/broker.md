@@ -24,7 +24,7 @@ To get your IP address unblocked, please contact [us](mailto:info@dataspace-conn
 
 The [repository](https://github.com/International-Data-Spaces-Association/metadata-broker-open-core)
 is open source and can be accessed at GitHub. Further documentation about the IDS Metadata Broker
-can be seen [here](https://github.com/International-Data-Spaces-Association/IDS-G/blob/master/core/MetaDataBroker/README.md).
+can be seen [here](https://github.com/International-Data-Spaces-Association/IDS-G/blob/main/Components/MetaDataBroker/README.md).
 
 ---
 
@@ -59,6 +59,12 @@ used for other purposes, e.g. see [here](../provider.md#resource-updates).
 The recipient can be either a URL where the addressed Broker expects IDS messages. Alternatively,
 brokers can be managed and persisted in the connector. So the broker can be referenced by its id
 when sending messages. Therefore, follow these steps:
+
+## Prerequisites
+
+Please ensure that your connector uses a valid IDS certificate. For this, take a look at
+[these](../../../deployment/configuration.md#step-2-ids-certificate) configuration steps and
+[this](identityProvider.md#aisec-daps-issuing-an-ids-certificate) guide for issuing a certificate.
 
 ## Step 1: Create broker entity (optional)
 
