@@ -98,19 +98,21 @@ public class RouteConfigurer {
                     || routeStart.get(0) == null) {
                 if (routeEnd.get(0) instanceof GenericEndpoint
                         || routeEnd.get(0) instanceof AppEndpoint) {
-                    template = freemarkerConfig.getTemplate("connector_to_http_template.ftl");
+                    template = freemarkerConfig.getTemplate("connector_to_generic_template.ftl");
                 }
             } else if ((routeStart.get(0) instanceof GenericEndpoint
                     || routeStart.get(0) instanceof AppEndpoint)
                     && routeEnd.get(0) instanceof ConnectorEndpoint) {
-                template = freemarkerConfig.getTemplate("http_to_connector_template.ftl");
-            } else if ((routeStart.get(0) instanceof GenericEndpoint
-                    && routeEnd.get(0) instanceof AppEndpoint)
-                    || (routeStart.get(0) instanceof AppEndpoint
-                    && routeEnd.get(0) instanceof GenericEndpoint)
-                    || (routeStart.get(0) instanceof AppEndpoint
-                    && routeEnd.get(0) instanceof AppEndpoint)) {
-                template = freemarkerConfig.getTemplate("http_to_http_template.ftl");
+                template = freemarkerConfig.getTemplate("generic_to_connector_template.ftl");
+            } else if (routeStart.get(0) instanceof GenericEndpoint
+                    && routeEnd.get(0) instanceof AppEndpoint) {
+                template = freemarkerConfig.getTemplate("generic_to_app_template.ftl");
+            } else if (routeStart.get(0) instanceof AppEndpoint
+                    && routeEnd.get(0) instanceof GenericEndpoint) {
+                template = freemarkerConfig.getTemplate("app_to_generic_template.ftl");
+            } else if (routeStart.get(0) instanceof AppEndpoint
+                    && routeEnd.get(0) instanceof AppEndpoint) {
+                template = freemarkerConfig.getTemplate("app_to_app_template.ftl");
             } else {
                 template = null;
             }

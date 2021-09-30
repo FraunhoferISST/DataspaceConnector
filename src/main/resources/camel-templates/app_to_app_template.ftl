@@ -5,9 +5,6 @@
         <from uri="timer://foo?fixedRate=true&amp;period=60000"/>
 
         <setHeader name="CamelHttpMethod"><constant>GET</constant></setHeader>
-        <#if genericEndpointAuthHeaderKey?? && genericEndpointAuthHeaderValue??>
-            <setHeader name="${genericEndpointAuthHeaderKey}"><constant>${genericEndpointAuthHeaderValue}</constant></setHeader>
-        </#if>
         <to uri="$startUrl"/>
 
         <convertBodyTo type="java.lang.String"/>
@@ -19,9 +16,6 @@
         </#list>
 
         <setHeader name="CamelHttpMethod"><constant>POST</constant></setHeader>
-        <#if genericEndpointAuthHeaderKey?? && genericEndpointAuthHeaderValue??>
-            <setHeader name="${genericEndpointAuthHeaderKey}"><constant>${genericEndpointAuthHeaderValue}</constant></setHeader>
-        </#if>
         <to uri="$endUrl"/>
 
     </route>
