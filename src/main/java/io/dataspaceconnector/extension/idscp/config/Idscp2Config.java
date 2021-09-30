@@ -97,10 +97,17 @@ public class Idscp2Config {
     private String tpm2dHost;
 
     /**
-     * Location of TPM root certificate
+     * Location of TPM root certificate.
      */
     @Value("${idscp2.tpm-root-certificate}")
     private String tpmRootCertificate;
+
+    /**
+     * PCR bitmask for TPM RA, specifies the PCR registers
+     * to check against golden values.
+     */
+    @Value("${idscp2.expected-pcr-mask}")
+    private int expectedPcrMask;
 
     /**
      * Hostname where CMC is found.
@@ -123,11 +130,19 @@ public class Idscp2Config {
     @Value("${idscp2.supported-ra-suites}")
     private String expectedRaSuites;
 
+    /**
+     * Getter for Spring Bean registration of supported RA suites.
+     * @return Supported RA suites
+     */
     @Bean("supportedRaSuites")
     public String getSupportedRaSuites() {
         return supportedRaSuites;
     }
 
+    /**
+     * Getter for Spring Bean registration of expected RA suites.
+     * @return Expected RA suites
+     */
     @Bean("expectedRaSuites")
     public String getExpectedRaSuites() {
         return expectedRaSuites;
@@ -212,6 +227,9 @@ public class Idscp2Config {
         idscp2CmcRatConfig();
     }
 
+    /**
+     * Method for configuration of IDSCP2 TPM attestation driver.
+     */
     public void idscp2TpmRatConfig() {
         // RAT prover configuration
         var tpm2dHostAndPort = tpm2dHost.split(":");
@@ -236,17 +254,18 @@ public class Idscp2Config {
                                 keyStoreAlias
                         )
                 )
-//                .addRootCaCertificates(Paths.get("/certs/tpm-truststore.p12"), "password".toCharArray())
-//                .setExpectedAttestationType(TpmAttestation.IdsAttestationType.ALL)
                 .addRootCaCertificateFromPem(Paths.get(tpmRootCertificate))
                 .setExpectedAttestationType(TpmAttestation.IdsAttestationType.ADVANCED)
-                .setExpectedAttestationMask(0x0603ff)
+                .setExpectedAttestationMask(expectedPcrMask)
                 .build();
         RatVerifierDriverRegistry.INSTANCE.registerDriver(
                 TpmVerifier.ID, TpmVerifier::new, verifierConfig
         );
     }
 
+    /**
+     * Method for configuration of IDSCP2 CMC attestation driver.
+     */
     public void idscp2CmcRatConfig() {
         // RAT prover configuration
         var cmcHostAndPort = cmcHost.split(":");
