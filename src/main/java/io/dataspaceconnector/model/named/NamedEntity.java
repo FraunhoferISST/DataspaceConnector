@@ -21,6 +21,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
 /**
@@ -43,5 +44,6 @@ public class NamedEntity extends Entity {
     /**
      * The description of the entity.
      */
+    @Column(length = 4000)
     private String description;
 }
