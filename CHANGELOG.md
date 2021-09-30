@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - Make SelfLinkHelper non-static, so that it can use Spring properties.
 - Use only */data* and not request's context path as delimiter for determining additional path for data requests.
 - Create broker in database upon bootstrap start.
+- Check for maxDepth in IdsResourceBuilder when resolving samples and avoid possible StackOverFlow.
 
 ### Changed
 - Add `ServiceResolver` to remove some Spring annotations from service classes.
