@@ -109,6 +109,31 @@ public class Idscp2Config {
     private String cmcHost;
 
     /**
+     * IDSCP2 Remote Attestation mechanisms supported by this connector,
+     * comma-separated list.
+     */
+    @Value("${idscp2.supported-ra-suites}")
+    private String supportedRaSuites;
+
+    /**
+     * Expected IDSCP2 Remote Attestation mechanisms, of which
+     * at least one must be supported by communication peer,
+     * comma-separated list.
+     */
+    @Value("${idscp2.supported-ra-suites}")
+    private String expectedRaSuites;
+
+    @Bean("supportedRaSuites")
+    public String getSupportedRaSuites() {
+        return supportedRaSuites;
+    }
+
+    @Bean("expectedRaSuites")
+    public String getExpectedRaSuites() {
+        return expectedRaSuites;
+    }
+
+    /**
      * Transaction manager required for creating a transaction policy for Camel routes.
      */
     private final @NonNull TransactionManager transactionManager;
