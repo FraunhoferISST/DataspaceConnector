@@ -23,7 +23,7 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-import io.dataspaceconnector.model.config.DatabaseConstants;
+import static io.dataspaceconnector.model.config.DatabaseConstants.DESCRIPTION_COLUMN_LENGTH;
 
 /**
  * The entity class which holds additional information like title, description.
