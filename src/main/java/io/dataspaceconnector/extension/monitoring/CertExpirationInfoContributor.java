@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.config;
+package io.dataspaceconnector.extension.monitoring;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import lombok.RequiredArgsConstructor;
