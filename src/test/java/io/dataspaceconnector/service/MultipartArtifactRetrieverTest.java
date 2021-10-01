@@ -15,7 +15,9 @@
  */
 package io.dataspaceconnector.service;
 
+import de.fraunhofer.iais.eis.RejectionReason;
 import io.dataspaceconnector.common.exception.DataRetrievalException;
+import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
@@ -115,9 +117,13 @@ public class MultipartArtifactRetrieverTest {
         final var response = new HashMap<String, String>();
         response.put("payload", data);
 
+        final var exception = new UnexpectedResponseException(new HashMap<>() {{
+            put("reason", RejectionReason.BAD_PARAMETERS);
+        }});
+
         when(artifactService.get(artifactId)).thenReturn(artifact);
         when(messageService.sendMessage(recipient, artifact.getRemoteId(), transferContract,
-                null)).thenThrow(DataRetrievalException.class);
+                null)).thenThrow(exception);
         when(messageService.validateResponse(response)).thenReturn(false);
         when(messageService.getResponseContent(response)).thenReturn(new HashMap<>());
 
