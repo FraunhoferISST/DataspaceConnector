@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [X.X.X] - XXXX-XX-XX
+
+### Changed
+- Increase pitest-maven version from 1.7.0 to 1.7.1.
+
 ## [6.3.0] - 2021-30-09
 
 ### Added
