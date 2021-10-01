@@ -16,6 +16,7 @@
 package io.dataspaceconnector.extension.monitoring;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
+import de.fraunhofer.ids.messaging.core.daps.TokenProviderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
@@ -36,13 +37,38 @@ public class IdsInfoContributor implements InfoContributor {
     private final ConfigContainer configContainer;
 
     /**
+     * The Tokenprovider.
+     */
+    private final TokenProviderService tokenProvSvc;
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public void contribute(final Info.Builder builder) {
         final var info = new HashMap<String, Object>();
+
+        addValidDatInfo(info);
+        addCertExpirationInfo(info);
+
+        builder.withDetail("ids", info);
+    }
+
+    private void addCertExpirationInfo(HashMap<String, Object> info) {
         final var expiration = configContainer.getKeyStoreManager().getCertExpiration();
         info.put("certExpiration", expiration);
-        builder.withDetail("ids", info);
+    }
+
+    private void addValidDatInfo(HashMap<String, Object> info) {
+        try {
+            final var dat = tokenProvSvc.getDAT();
+            if (dat.toString().contains("INVALID_TOKEN")) {
+                throw new RuntimeException("INVALID_TOKEN");
+            } else {
+                info.put("DatObtained", true);
+            }
+        } catch (Exception e) {
+            info.put("DatObtained", false);
+        }
     }
 }
