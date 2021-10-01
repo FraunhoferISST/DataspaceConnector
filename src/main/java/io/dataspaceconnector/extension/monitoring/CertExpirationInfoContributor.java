@@ -21,8 +21,10 @@ import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+
 /**
- * Contributor, adding Cert Expiration to actuator info endpoint.
+ * Contributor, adding IDS-Cert expiration to actuator info endpoint.
  */
 @Component
 @RequiredArgsConstructor
@@ -38,8 +40,9 @@ public class CertExpirationInfoContributor implements InfoContributor {
      */
     @Override
     public void contribute(final Info.Builder builder) {
-        var expiration = configContainer.getKeyStoreManager().getCertExpiration();
-        builder.withDetail("CertExpiration", expiration.toString());
+        final var info = new HashMap<String, Object>();
+        final var expiration = configContainer.getKeyStoreManager().getCertExpiration();
+        info.put("certExpiration", expiration);
+        builder.withDetail("ids", info);
     }
-
 }
