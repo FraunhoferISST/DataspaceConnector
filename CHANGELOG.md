@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [X.X.X] - XXXX-XX-XX
+
+### Changed
+- Increase pitest-maven version from 1.7.0 to 1.7.1.
+- Increase swagger-annotations version from 1.6.2 to 1.6.3.
+- Increase dependency-check-maven version from 6.3.1 to 6.3.2.
+
 ## [6.3.0] - 2021-30-09
 
 ### Added
