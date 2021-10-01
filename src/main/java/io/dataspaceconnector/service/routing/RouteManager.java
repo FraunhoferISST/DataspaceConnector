@@ -22,6 +22,7 @@ import de.fraunhofer.iais.eis.ConnectorEndpoint;
 import de.fraunhofer.iais.eis.Endpoint;
 import de.fraunhofer.iais.eis.GenericEndpoint;
 import de.fraunhofer.iais.eis.RouteStep;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import io.dataspaceconnector.common.exception.RouteCreationException;
@@ -316,6 +317,7 @@ public class RouteManager {
      * @return the populated template as a string.
      * @throws IOException if an error occurs while filling out the route template.
      */
+    @SuppressFBWarnings("TEMPLATE_INJECTION_FREEMARKER")
     private StringWriter populateTemplate(final Template template,
                                           final Map<String, Object> freemarkerInput)
             throws IOException, TemplateException {
