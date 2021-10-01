@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+##[X.X.X] - XXXX-XX-XX
+
+### Added
+- Add `CertExpiration` field to `/actuator/info` endpoint, to monitor the connectors certificate expiration status.
+
 ## [6.3.0] - 2021-30-09
 
 ### Added
