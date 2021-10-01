@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 ##[X.X.X] - XXXX-XX-XX
 
 ### Added
-- Add `CertExpiration` field to `/actuator/info` endpoint, to monitor the connectors certificate expiration status.
+- Add `ids` field to `/actuator/info` endpoint, to monitor the connectors certificate expiration status and if valid dat is available using the connector-certificate.
 
 ## [6.3.0] - 2021-30-09
 
