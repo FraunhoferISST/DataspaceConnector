@@ -17,6 +17,7 @@ package io.dataspaceconnector.extension.monitoring;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.daps.TokenProviderService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
@@ -59,6 +60,8 @@ public class IdsInfoContributor implements InfoContributor {
         info.put("certExpiration", expiration);
     }
 
+    @SuppressFBWarnings(value = "REC_CATCH_EXCEPTION",
+            justification = "Catching all possible exceptions.")
     private void addValidDatInfo(final HashMap<String, Object> info) {
         try {
             final var dat = tokenProvSvc.getDAT();
