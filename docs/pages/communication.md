@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Communication Guide
-nav_order: 6
+nav_order: 7
 description: ""
 permalink: /CommunicationGuide
 has_children: true
