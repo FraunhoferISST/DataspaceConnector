@@ -28,7 +28,7 @@ import java.util.HashMap;
  */
 @Component
 @RequiredArgsConstructor
-public class CertExpirationInfoContributor implements InfoContributor {
+public class IdsInfoContributor implements InfoContributor {
 
     /**
      * The Configuration Container.
