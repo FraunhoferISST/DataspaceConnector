@@ -42,9 +42,12 @@ class RouteConfigurerTest {
     @Autowired
     RouteConfigurer routeConfigurer;
 
+    @Autowired
+    FreemarkerConfig freemarkerConfig;
+
     @Test
     void testConstructorAndSetter(){
-        RouteConfigurer configurer = new RouteConfigurer(new Configuration());
+        RouteConfigurer configurer = new RouteConfigurer(freemarkerConfig.freemarkerConfiguration());
         assertNotNull(configurer);
         configurer.setDataSpaceConnectorApiUsername("test");
         configurer.setDataSpaceConnectorApiPassword("test");
