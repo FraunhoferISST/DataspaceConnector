@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Increase pitest-maven version from 1.7.0 to 1.7.1.
+- Increase swagger-annotations version from 1.6.2 to 1.6.3.
 
 ## [6.3.0] - 2021-30-09
 
