@@ -54,21 +54,21 @@ public class IdsInfoContributor implements InfoContributor {
         builder.withDetail("ids", info);
     }
 
-    private void addCertExpirationInfo(HashMap<String, Object> info) {
+    private void addCertExpirationInfo(final HashMap<String, Object> info) {
         final var expiration = configContainer.getKeyStoreManager().getCertExpiration();
         info.put("certExpiration", expiration);
     }
 
-    private void addValidDatInfo(HashMap<String, Object> info) {
+    private void addValidDatInfo(final HashMap<String, Object> info) {
         try {
             final var dat = tokenProvSvc.getDAT();
             if (dat.toString().contains("INVALID_TOKEN")) {
                 throw new RuntimeException("INVALID_TOKEN");
             } else {
-                info.put("DatObtained", true);
+                info.put("datObtained", true);
             }
         } catch (Exception e) {
-            info.put("DatObtained", false);
+            info.put("datObtained", false);
         }
     }
 }
