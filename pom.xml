@@ -99,7 +99,7 @@
 		<swagger-annotations.version>1.6.3</swagger-annotations.version>
 		<okhttp.version>4.9.2</okhttp.version>
 		<modelmapper.version>2.4.4</modelmapper.version>
-		<jackson.version>2.12.5</jackson.version>
+		<jackson.version>2.13.0</jackson.version>
 		<postgres.version>42.2.24</postgres.version>
 		<springdoc.version>1.5.10</springdoc.version>
 		<equalsverifier.version>3.7.1</equalsverifier.version>
@@ -130,7 +130,7 @@
 		<dms.version>2.2.0</dms.version>
 		<taglist.version>2.4</taglist.version>
 		<jxr.version>3.1.1</jxr.version>
-		<dependency-check.version>6.3.1</dependency-check.version>
+		<dependency-check.version>6.3.2</dependency-check.version>
 
 		<!-- License -->
 		<license_name>Apache License, Version 2.0</license_name>
