@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Add `ids` field to `/actuator/info` endpoint, to monitor the connectors certificate expiration status and if valid dat is available using the connector-certificate.
 
+### Changed
+- Increase pitest-maven version from 1.7.0 to 1.7.1.
+
 ## [6.3.0] - 2021-30-09
 
 ### Added
