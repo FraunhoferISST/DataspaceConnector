@@ -101,6 +101,21 @@ public class DataSourceFactoryTest {
     }
 
     @Test
+    void update_setAuthenticationNull_willUpdate() {
+        /* ARRANGE */
+        final var desc = new DataSourceDesc();
+        desc.setBasicAuth(new AuthenticationDesc("key", "value"));
+        final var dataSource = factory.create(desc);
+
+        /* ACT */
+        final var result = factory.update(dataSource, new DataSourceDesc());
+
+        /* ASSERT */
+        assertTrue(result);
+        assertNull(dataSource.getAuthentication());
+    }
+
+    @Test
     void update_newType_willUpdate() {
         /* ARRANGE */
         final var desc = new DataSourceDesc();
