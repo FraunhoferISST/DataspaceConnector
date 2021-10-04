@@ -35,11 +35,13 @@ import io.dataspaceconnector.common.ids.model.TemplateUtils;
 import io.dataspaceconnector.extension.bootstrap.util.BootstrapUtils;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
+import io.dataspaceconnector.model.broker.BrokerDesc;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.dataspaceconnector.service.resource.templatebuilder.CatalogTemplateBuilder;
+import io.dataspaceconnector.service.resource.type.BrokerService;
 import io.dataspaceconnector.service.resource.type.CatalogService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -144,6 +146,11 @@ public class Bootstrapper {
     private final @NonNull GlobalMessageService brokerSvc;
 
     /**
+     * Service for the broker.
+     */
+    private final @NotNull BrokerService brokerService;
+
+    /**
      * Bootstrap the connector. Will load JSON-LD files containing IDS catalog entities and register
      * them in the DSC. Additionally, property files will be loaded and provide information on the
      * clearing house and broker that should be used, and which resources need to be registered at
@@ -212,6 +219,9 @@ public class Bootstrapper {
                 try {
                     if (!knownBrokers.contains(broker.toString())) {
                         knownBrokers.add(broker.toString());
+
+                        createBroker(broker);
+
                         var connectorResponse = brokerSvc
                                 .sendConnectorUpdateMessage(broker.toURI());
                         if (!brokerSvc.checkResponse(connectorResponse)) {
@@ -239,6 +249,15 @@ public class Bootstrapper {
             }
         }
         return true;
+    }
+
+    private void createBroker(final URL broker) throws URISyntaxException {
+        if (brokerService.findByLocation(broker.toURI()).isEmpty()) {
+            final var brokerDesc = new BrokerDesc();
+            brokerDesc.setLocation(broker.toURI());
+            brokerDesc.setTitle(broker.toString());
+            brokerService.create(brokerDesc);
+        }
     }
 
     private List<File> loadBootstrapData() {

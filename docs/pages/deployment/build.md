@@ -72,7 +72,7 @@ incoming IDS messages.**
 The `pom.xml` provides three Maven profiles: `no-documentation`, `no-tests`, and
 `release`. The first one skips the Javadocs generation, the second one skips the execution of
 tests. The `release` profile shows all warnings and errors. To run a profile, please have a look at
-[this guide](maven.apache.org/guides/introduction/introduction-to-profiles.html#details-on-profile-activation).
+[this guide](https://maven.apache.org/guides/introduction/introduction-to-profiles.html#details-on-profile-activation).
 
 ### Plugins
 
