@@ -400,8 +400,8 @@ public class RouteManager {
     }
 
     /**
-     * Generates the id of the Camel route for a given {@link AppRoute}. The Camel route id consists
-     * of the String 'app-route_' followed by the UUID from the AppRoute's id.
+     * Generates the id of the Camel route for a given {@link AppRoute}. The Camel route id is the
+     * UUID from the AppRoute's id.
      *
      * @param appRoute the AppRoute.
      * @return the Camel route id.

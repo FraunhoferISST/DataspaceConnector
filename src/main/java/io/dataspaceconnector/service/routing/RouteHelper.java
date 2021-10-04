@@ -52,6 +52,9 @@ public class RouteHelper {
     public void deploy(final Route route) throws RouteCreationException {
         if (shouldDeploy(route)) {
             routeManager.createAndDeployXMLRoute(appRouteBuilder.create(route));
+        } else {
+            // If a route should not be deployed after update, it might still be deployed in Camel.
+            delete(route);
         }
     }
 
