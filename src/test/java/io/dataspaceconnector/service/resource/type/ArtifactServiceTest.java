@@ -111,7 +111,7 @@ class ArtifactServiceTest {
         ArtifactImpl artifact = new ArtifactImpl();
         when(artifactFactory.create(desc)).thenReturn(artifact);
         when(artifactRepository.saveAndFlush(artifact)).thenReturn(artifact);
-        when(dataRetriever.getDataFromInternalDB(eq(artifact), any()))
+        when(dataRetriever.retrieveData(eq(artifact), any()))
                 .thenReturn(new ByteArrayInputStream("data".getBytes(StandardCharsets.UTF_8)));
 
         /* ACT */

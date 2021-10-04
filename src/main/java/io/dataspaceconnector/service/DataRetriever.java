@@ -81,7 +81,7 @@ public class DataRetriever {
      * @return The artifact's data.
      * @throws IOException if the data cannot be received.
      */
-    public InputStream getDataFromInternalDB(final ArtifactImpl artifact,
+    private InputStream getDataFromInternalDB(final ArtifactImpl artifact,
                                              final QueryInput queryInput) throws IOException {
         final var data = artifact.getData();
 
