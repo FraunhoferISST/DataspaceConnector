@@ -54,8 +54,8 @@ public class AppRouteResolver {
         for (final var endpoint : endpoints) {
             final var routes = routeRepository.findTopLevelRoutesByEndpoint(endpoint.getId());
             for (final var route : routes) {
-                if (camelContext.getRoute("app-route_" + route.getId()) != null) {
-                    return Optional.of("app-route_" + route.getId());
+                if (camelContext.getRoute(route.getId().toString()) != null) {
+                    return Optional.of(route.getId().toString());
                 }
             }
         }
