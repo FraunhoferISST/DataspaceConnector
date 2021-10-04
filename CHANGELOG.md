@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Increase dependency-check-maven version from 6.3.1 to 6.3.2.
 - Increase jackson version from 2.12.5 to 2.13.0.
 - Increase okhttp version from 4.9.1 to 4.9.2.
+- Increase  springdoc version from 1.5.10 to 1.5.11.
 
 ## [6.3.0] - 2021-30-09
 
