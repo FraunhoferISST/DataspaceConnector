@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Increase swagger-annotations version from 1.6.2 to 1.6.3.
 - Increase dependency-check-maven version from 6.3.1 to 6.3.2.
 - Increase jackson version from 2.12.5 to 2.13.0.
+- Increase okhttp version from 4.9.1 to 4.9.2.
 
 ## [6.3.0] - 2021-30-09
 
