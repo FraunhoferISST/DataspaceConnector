@@ -45,7 +45,7 @@ For an easy deployment, make sure that you have [Docker](https://docs.docker.com
 installed. Then, execute the following command:
 
 ```commandline
-docker run -p 8080:8080 --name connector-container ghcr.io/international-data-spaces-association/dataspace-connector:latest
+docker run -p 8080:8080 --name connector ghcr.io/international-data-spaces-association/dataspace-connector:latest
 ```
 
 If everything worked fine, the connector is available at
