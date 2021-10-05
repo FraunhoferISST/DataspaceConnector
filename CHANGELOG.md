@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [X.X.X] - XXXX-XX-XX
 
+### Fixed
+- Check for `maxDepth` in `IdsResourceBuilder` when resolving samples to avoid possible `StackOverFlowError`.
+
 ### Changed
 - Increase pitest-maven version from 1.7.0 to 1.7.1.
 - Increase swagger-annotations version from 1.6.2 to 1.6.3.
