@@ -25,7 +25,7 @@ info:
   license:
     name: "Apache License, Version 2.0"
     url: https://www.apache.org/licenses/LICENSE-2.0.txt
-  version: 6.3.0
+  version: 6.3.1
 servers:
   - url: https://localhost:8080
     description: Generated server url
@@ -6862,6 +6862,10 @@ components:
         - '@type'
       type: object
       properties:
+        properties:
+          type: object
+          additionalProperties:
+            type: object
         comment:
           type: array
           items:
@@ -6870,10 +6874,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
-        properties:
-          type: object
-          additionalProperties:
-            type: object
         '@id':
           type: string
           format: uri
@@ -6894,9 +6894,6 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
-            ids:unit:
-              type: string
-              format: uri
             ids:operator:
               type: string
               enum:
@@ -6946,6 +6943,9 @@ components:
                 - https://w3id.org/idsa/code/STRING_IS_CONTAINED
                 - https://w3id.org/idsa/code/TEMPORAL_DISJOINT
                 - https://w3id.org/idsa/code/TEMPORAL_EQUALS
+            ids:unit:
+              type: string
+              format: uri
             ids:leftOperand:
               type: string
               enum:
@@ -6968,10 +6968,10 @@ components:
                 - https://w3id.org/idsa/code/USER
             ids:rightOperand:
               $ref: '#/components/schemas/RdfResource'
-            ids:pipEndpoint:
+            ids:rightOperandReference:
               type: string
               format: uri
-            ids:rightOperandReference:
+            ids:pipEndpoint:
               type: string
               format: uri
             '@type':
@@ -7065,6 +7065,10 @@ components:
         - ids:action
       type: object
       properties:
+        properties:
+          type: object
+          additionalProperties:
+            type: object
         comment:
           type: array
           items:
@@ -7073,10 +7077,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
-        properties:
-          type: object
-          additionalProperties:
-            type: object
+        ids:target:
+          type: string
+          format: uri
         ids:assignee:
           type: array
           items:
@@ -7090,6 +7093,12 @@ components:
         ids:assetRefinement:
           oneOf:
             - $ref: '#/components/schemas/LogicalConstraint'
+        ids:constraint:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/Constraint'
+              - $ref: '#/components/schemas/LogicalConstraint'
         ids:action:
           type: array
           items:
@@ -7111,15 +7120,6 @@ components:
               - https://w3id.org/idsa/code/TRACK_PROVENANCE
               - https://w3id.org/idsa/code/USE
               - https://w3id.org/idsa/code/WRITE
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/Constraint'
-              - $ref: '#/components/schemas/LogicalConstraint'
-        ids:target:
-          type: string
-          format: uri
         ids:description:
           type: array
           items:
