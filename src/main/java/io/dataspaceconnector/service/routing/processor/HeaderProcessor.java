@@ -40,7 +40,7 @@ public class HeaderProcessor implements Processor {
         final var input = exchange
                 .getProperty(ParameterUtils.QUERY_INPUT_PARAM, QueryInput.class);
 
-        if (input != null && input.getHeaders() != null) {
+        if (input != null && input.getHeaders() != null && !input.getHeaders().isEmpty()) {
             input.getHeaders().forEach(exchange.getIn()::setHeader);
         }
     }
