@@ -133,7 +133,10 @@ public class HttpService implements DataRetrievalService {
                 MediaType.get("application/octet-stream"));
 
         final var requestBuilder = new Request.Builder().url(targetUrl).post(body);
-        args.getHeaders().forEach(requestBuilder::header);
+
+        if (args.getHeaders() != null && !args.getHeaders().isEmpty()) {
+            args.getHeaders().forEach(requestBuilder::header);
+        }
 
         final var response = httpSvc.send(requestBuilder.build());
 
