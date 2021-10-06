@@ -22,6 +22,7 @@
         <#if genericEndpointAuthHeaderKey?? && genericEndpointAuthHeaderValue??>
             <setHeader name="${genericEndpointAuthHeaderKey}"><constant>${genericEndpointAuthHeaderValue}</constant></setHeader>
         </#if>
+        <process ref="headerProcessor"/>
         <to uri="${endUrl}"/>
 
     </route>

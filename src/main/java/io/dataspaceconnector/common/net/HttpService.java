@@ -131,9 +131,11 @@ public class HttpService implements DataRetrievalService {
 
         final var body = RequestBody.create(data.readAllBytes(),
                 MediaType.get("application/octet-stream"));
-        final var request = new Request.Builder().url(targetUrl).post(body).build();
 
-        final var response = httpSvc.send(request);
+        final var requestBuilder = new Request.Builder().url(targetUrl).post(body);
+        args.getHeaders().forEach(requestBuilder::header);
+
+        final var response = httpSvc.send(requestBuilder.build());
 
         final var output = new HttpResponse(response.code(), getBody(response));
         response.close();

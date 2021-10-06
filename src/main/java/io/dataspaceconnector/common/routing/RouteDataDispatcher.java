@@ -20,6 +20,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 import io.dataspaceconnector.common.exception.DataDispatchException;
+import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.util.UUIDUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -58,13 +59,32 @@ public class RouteDataDispatcher {
      */
     public void send(final URI routeId, final byte[] bytes) throws IOException,
             DataDispatchException {
+        send(routeId, bytes, null);
+    }
+
+    /**
+     * Dispatches data via the specified route. The route will be triggered once with the data
+     * as the initial input using the headers from a {@link QueryInput} for the request to the
+     * backend.
+     *
+     * @param routeId the route ID.
+     * @param bytes the data as byte array.
+     * @param queryInput the query input for the backend.
+     * @throws IOException if the data cannot be read.
+     * @throws DataDispatchException if an error occurs during route execution.
+     */
+    public void send(final URI routeId, final byte[] bytes, final QueryInput queryInput)
+            throws IOException, DataDispatchException {
         final var data = new String(bytes, StandardCharsets.UTF_8);
         final var routeUuid = UUIDUtils.uuidFromUri(routeId);
         final var camelDirect = "direct:" + routeUuid;
 
         try {
             final var result = template
-                    .send(camelDirect, ExchangeBuilder.anExchange(context).withBody(data).build());
+                    .send(camelDirect, ExchangeBuilder.anExchange(context)
+                            .withProperty(ParameterUtils.QUERY_INPUT_PARAM, queryInput)
+                            .withBody(data)
+                            .build());
 
             if (result.getException() != null) {
                 throw result.getException();
