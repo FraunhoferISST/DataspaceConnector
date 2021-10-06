@@ -148,16 +148,32 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                 final var factory = (ArtifactFactory) getFactory();
                 factory.updateByteSize(artifact, ((LocalData) tmp.getData()).getValue());
             } else if (tmp.getData() instanceof RemoteData) {
-                final var url = ((RemoteData) tmp.getData()).getAccessUrl();
-                artifactRouteSvc.checkForRouteLinkUpdate(artifact, url);
-                artifactRouteSvc.ensureSingleArtifactPerRoute(url, artifact.getId());
-                final var persisted = super.persist(tmp);
-                artifactRouteSvc.createRouteLink(url, persisted.getId());
-                return persisted;
+                return persistWithRemoteData(tmp);
             }
         }
 
         return super.persist(tmp);
+    }
+
+    /**
+     * Persists an artifact with remote data, where the accessUrl can be a route reference. Before
+     * the artifact is persisted, validation is performed. This includes checking if the referenced
+     * route, if any, is valid and verifying that the route is not yet linked to another artifact.
+     * If the validation succeeds, the artifact is persisted. Afterwards, the persisted artifact is
+     * linked to the referenced route before being returned.
+     *
+     * @param artifact the artifact to persist.
+     * @return the persisted artifact.
+     */
+    private Artifact persistWithRemoteData(final ArtifactImpl artifact) {
+        final var url = ((RemoteData) artifact.getData()).getAccessUrl();
+        artifactRouteSvc.checkForRouteLinkUpdate(artifact, url);
+        artifactRouteSvc.ensureSingleArtifactPerRoute(url, artifact.getId());
+        artifactRouteSvc.checkForValidRoute(url);
+        final var persisted = super.persist(artifact);
+        artifactRouteSvc.createRouteLink(url, persisted.getId());
+
+        return persisted;
     }
 
 

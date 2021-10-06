@@ -113,22 +113,52 @@ public class ArtifactRouteService {
     }
 
     /**
+     * Checks whether the route referenced for an artifact is valid. In order to be valid, the
+     * route must have deploy method CAMEL and the start must be defined.
+     *
+     * @param url The URL referencing a route.
+     * @throws InvalidEntityException if the URL is not a valid URI or the referenced route does
+     *                                not have deploy mode CAMEL.
+     */
+    public void checkForValidRoute(final URL url) {
+        try {
+            if (apiReferenceHelper.isRouteReference(url)) {
+                final var routeId = UUIDUtils.uuidFromUri(url.toURI());
+                final var route = routeSvc.get(routeId);
+
+                if (!DeployMethod.CAMEL.equals(route.getDeploy())) {
+                    throw new InvalidEntityException("The referenced route does not have deploy"
+                            + " method CAMEL.");
+                }
+
+                if (route.getStart() == null) {
+                    throw new InvalidEntityException("The referenced route has an undefined"
+                            + " start.");
+                }
+            }
+        } catch (URISyntaxException exception) {
+            if (log.isDebugEnabled()) {
+                log.debug("Route ID in access URL of artifact is not a valid URI. "
+                                + "[accessUrl=({}), exception=({})]", url, exception.getMessage(),
+                        exception);
+            }
+            throw new InvalidEntityException("Route ID in access URL of artifact is not a "
+                    + "valid URI.");
+        }
+    }
+
+    /**
      * Links an artifact to a route.
      *
      * @param url        The URL referencing a route.
      * @param artifactId The artifact ID.
-     * @throws InvalidEntityException if the URL is not a valid URI or the referenced route does
-     *                                not have deploy mode CAMEL.
+     * @throws InvalidEntityException if the URL is not a valid URI or the Camel route cannot be
+     *                                created.
      */
     public void createRouteLink(final URL url, final UUID artifactId) {
         try {
             if (apiReferenceHelper.isRouteReference(url)) {
                 final var routeId = UUIDUtils.uuidFromUri(url.toURI());
-                final var route = routeSvc.get(routeId);
-                if (!DeployMethod.CAMEL.equals(route.getDeploy())) {
-                    throw new InvalidEntityException("The referenced route does not have deploy"
-                            + " mode CAMEL.");
-                }
                 routeSvc.setOutput(routeId, artifactId);
             }
         } catch (URISyntaxException exception) {
