@@ -31,6 +31,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.springframework.stereotype.Component;
@@ -71,6 +72,8 @@ public class RouteDataRetriever implements DataRetrievalService {
 
             if (result.getException() != null) {
                 throw result.getException();
+            } else if (result.getProperty(Exchange.EXCEPTION_CAUGHT) != null) {
+                throw result.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
             }
 
             final var data = result.getIn().getBody(String.class);

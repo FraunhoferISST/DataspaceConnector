@@ -219,7 +219,7 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
 
         final var route = get(routeId);
         if (route.getOutput() != null) {
-            throw new InvalidEntityException("Cannot delete route that is linked to artifact.");
+            throw new InvalidEntityException("Cannot delete route that is linked to an artifact.");
         }
         routeHelper.delete(route);
 
