@@ -194,6 +194,63 @@ class ArtifactRouteServiceTest {
 
     @Test
     @SneakyThrows
+    void checkForValidRoute_urlNotRoute_doNothing() {
+        /* ARRANGE */
+        final var url = new URL("https://" + routeId);
+
+        when(apiReferenceHelper.isRouteReference(any())).thenReturn(false);
+
+        /* ACT && ASSERT */
+        assertDoesNotThrow(() -> artifactRouteService.checkForValidRoute(url));
+    }
+
+    @Test
+    @SneakyThrows
+    void checkForValidRoute_deployMethodNotCamel_throwInvalidEntityException() {
+        /* ARRANGE */
+        final var route = getRoute(null);
+        ReflectionTestUtils.setField(route, "deploy", DeployMethod.NONE);
+        final var url = new URL("https://" + routeId);
+
+        when(apiReferenceHelper.isRouteReference(any())).thenReturn(true);
+        when(routeService.get(any())).thenReturn(route);
+
+        /* ACT && ASSERT */
+        assertThrows(InvalidEntityException.class,
+                () -> artifactRouteService.checkForValidRoute(url));
+    }
+
+    @Test
+    @SneakyThrows
+    void checkForValidRoute_malformedUri_throwInvalidEntityException() {
+        /* ARRANGE */
+        final var url = new URL("https://{not-allowed-in-uri}" + routeId);
+
+        when(apiReferenceHelper.isRouteReference(any())).thenReturn(true);
+
+        /* ACT && ASSERT */
+        assertThrows(InvalidEntityException.class,
+                () -> artifactRouteService.checkForValidRoute(url));
+    }
+
+    @Test
+    @SneakyThrows
+    void checkForValidRoute_startUndefined_throwInvalidEntityException() {
+        /* ARRANGE */
+        final var route = getRoute(null);
+        ReflectionTestUtils.setField(route, "deploy", DeployMethod.CAMEL);
+        final var url = new URL("https://" + routeId);
+
+        when(apiReferenceHelper.isRouteReference(any())).thenReturn(true);
+        when(routeService.get(any())).thenReturn(route);
+
+        /* ACT && ASSERT */
+        assertThrows(InvalidEntityException.class,
+                () -> artifactRouteService.checkForValidRoute(url));
+    }
+
+    @Test
+    @SneakyThrows
     void createRouteLink_urlNotRoute_doNothing() {
         /* ARRANGE */
         final var url = new URL("https://" + routeId);
@@ -209,7 +266,7 @@ class ArtifactRouteServiceTest {
 
     @Test
     @SneakyThrows
-    void createRouteLink_deployMethodCamel_setOutput() {
+    void createRouteLink_validInput_setOutput() {
         /* ARRANGE */
         final var route = getRoute(null);
         ReflectionTestUtils.setField(route, "deploy", DeployMethod.CAMEL);
@@ -223,22 +280,6 @@ class ArtifactRouteServiceTest {
 
         /* ASSERT */
         verify(routeService, times(1)).setOutput(routeId, artifactId);
-    }
-
-    @Test
-    @SneakyThrows
-    void createRouteLink_deployMethodNotCamel_throwInvalidEntityException() {
-        /* ARRANGE */
-        final var route = getRoute(null);
-        ReflectionTestUtils.setField(route, "deploy", DeployMethod.NONE);
-        final var url = new URL("https://" + routeId);
-
-        when(apiReferenceHelper.isRouteReference(any())).thenReturn(true);
-        when(routeService.get(any())).thenReturn(route);
-
-        /* ACT && ASSERT */
-        assertThrows(InvalidEntityException.class,
-                () -> artifactRouteService.createRouteLink(url, artifactId));
     }
 
     @Test
