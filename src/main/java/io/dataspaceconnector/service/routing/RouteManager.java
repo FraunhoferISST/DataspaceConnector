@@ -298,6 +298,10 @@ public class RouteManager {
                     .getBytes(StandardCharsets.UTF_8));
             final var routes = (RoutesDefinition) unmarshaller.unmarshal(inputStream);
             camelContext.adapt(ModelCamelContext.class).addRouteDefinitions(routes.getRoutes());
+            if (log.isDebugEnabled()) {
+                log.debug("Added route to Camel context. [routeId=({})]",
+                        freemarkerInput.get("routeId"));
+            }
         } else {
             if (log.isWarnEnabled()) {
                 log.warn("Template is null. Unable to create XML route file for AppRoute"
@@ -342,19 +346,6 @@ public class RouteManager {
     }
 
     /**
-     * Deletes all Camel routes associated with app routes in a given list.
-     *
-     * @param appRoutes the list of app routes to be deleted.
-     * @throws RouteDeletionException if any of the Camel routes cannot be deleted.
-     */
-    public void deleteRouteFiles(final List<AppRoute> appRoutes)
-            throws RouteDeletionException {
-        for (final var appRoute : appRoutes) {
-            deleteRoute(appRoute);
-        }
-    }
-
-    /**
      * Deletes the Camel route for a given {@link AppRoute}. The route is stopped at and removed
      * from the Camel context.
      *
@@ -391,6 +382,9 @@ public class RouteManager {
                 if (!camelContext.removeRoute(camelRouteId)) {
                     throw new IllegalStateException("Could not remove route because route was not "
                             + "stopped.");
+                }
+                if (log.isDebugEnabled()) {
+                    log.debug("Removed route from Camel context. [routeId=({})]", camelRouteId);
                 }
             } catch (Exception e) {
                 throw new RouteDeletionException("Error deleting Camel route for AppRoute with ID '"
