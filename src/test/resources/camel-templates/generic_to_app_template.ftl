@@ -2,7 +2,7 @@
 
     <route id="${routeId}" errorHandlerRef="${errorHandlerRef}">
 
-        <from uri="timer://foo?fixedRate=true&amp;period=60000"/>
+        <from uri="timer://generic-to-app-route?fixedRate=true&amp;period=60000"/>
 
         <setHeader name="CamelHttpMethod"><constant>GET</constant></setHeader>
         <#if genericEndpointAuthHeaderKey?? && genericEndpointAuthHeaderValue??>
