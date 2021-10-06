@@ -141,7 +141,7 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
         queryInput.setParams(params);
         queryInput.setHeaders(headers);
 
-        final var searchString = request.getContextPath() + "/data";
+        final var searchString = "/data";
         var optional = request.getRequestURI().substring(
                 request.getRequestURI().indexOf(searchString) + searchString.length());
         if ("/**".equals(optional)) {
