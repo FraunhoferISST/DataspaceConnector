@@ -36,6 +36,9 @@ jobs:
          TMP=$(echo "$TMP" | tr '[:upper:]' '[:lower:]')
          echo $TMP
          echo ::set-output name=BRANCH::$TMP
+      - 
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
       -
         name: Install SBoM generator
         run: |
@@ -78,7 +81,7 @@ jobs:
       -
        name: Build image
        run: |
-        docker build . -t $IMAGE:$BRANCH
+        docker buildx build --platform linux/arm64,linux/amd64 . -t $IMAGE:$BRANCH
         BOM="dataspace-connector-sbom.json"
         syft "${IMAGE}:${BRANCH}" -o spdx-json > "${BOM}"
        env:
@@ -99,8 +102,7 @@ jobs:
            # Its a version tag
            TMP=${TAG:1:${#TAG}}
            echo "Found a version tag"
-           docker tag $IMAGE:$BRANCH $IMAGE:latest
-           docker push $IMAGE:latest
+           docker buildx build --push --platform linux/arm64,linux/amd64 -t $IMAGE:latest
            oras push "${IMAGE}:latest-sbom" "${BOM}:application/json"
 
            echo "${COSIGN_KEY}" > /tmp/cosign.key
@@ -109,8 +111,7 @@ jobs:
            rm /tmp/cosign.key
          fi
          # Has tag
-         docker tag $IMAGE:$BRANCH $IMAGE:$TMP
-         docker push $IMAGE:$TMP
+         docker buildx build --push --platform linux/arm64,linux/amd64 -t $IMAGE:$TMP
          oras push "${IMAGE}:${TMP}-sbom" "${BOM}:application/json"
 
          echo "${COSIGN_KEY}" > /tmp/cosign.key
@@ -127,7 +128,7 @@ jobs:
       -
        name: Push branch image
        run: |
-         docker push $IMAGE:$BRANCH
+         docker buildx build --push --platform linux/arm64,linux/amd64 -t $IMAGE:$BRANCH
 
          BOM="dataspace-connector-sbom.json"
          oras push "${IMAGE}:${BRANCH}-sbom" "${BOM}:application/json"
@@ -171,6 +172,9 @@ jobs:
          TMP=$(echo "$TMP" | tr '[:upper:]' '[:lower:]')
          echo $TMP
          echo ::set-output name=BRANCH::$TMP
+      - 
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
       -
         name: Install SBoM generator
         run: |
@@ -213,7 +217,7 @@ jobs:
       -
        name: Build image
        run: |
-        docker build . -f scripts/ci/docker/Debug.dockerfile -t $IMAGE:$BRANCH
+        docker buildx build --platform linux/arm64,linux/amd64 . -f scripts/ci/docker/Debug.dockerfile -t $IMAGE:$BRANCH
         BOM="dataspace-connector-sbom.json"
         syft "${IMAGE}:${BRANCH}" -o spdx-json > "${BOM}"
        env:
@@ -236,8 +240,7 @@ jobs:
            echo "Found a version tag"
          fi
          # Has tag
-         docker tag $IMAGE:$BRANCH $IMAGE:$TMP-debug
-         docker push $IMAGE:$TMP-debug
+         docker buildx build --push --platform linux/arm64,linux/amd64 -t $IMAGE:$TMP-debug
          oras push "${IMAGE}:${TMP}-debug-sbom" "${BOM}:application/json"
 
          echo "${COSIGN_KEY}" > /tmp/cosign.key
@@ -254,8 +257,7 @@ jobs:
       -
        name: Push branch image
        run: |
-         docker tag $IMAGE:$BRANCH $IMAGE:$BRANCH-debug
-         docker push $IMAGE:$BRANCH-debug
+         docker buildx build --push --platform linux/arm64,linux/amd64 -t $IMAGE:$BRANCH-debug
          BOM="dataspace-connector-sbom.json"
          oras push "${IMAGE}:${BRANCH}-debug-sbom" "${BOM}:application/json"
 
