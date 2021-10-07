@@ -16,6 +16,7 @@
 package io.dataspaceconnector.extension.monitoring;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
+import de.fraunhofer.ids.messaging.core.daps.DapsValidator;
 import de.fraunhofer.ids.messaging.core.daps.TokenProviderService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
@@ -47,31 +48,46 @@ public class IdsInfoContributor implements InfoContributor {
      */
     @Override
     public void contribute(final Info.Builder builder) {
-        final var info = new HashMap<String, Object>();
-
-        addValidDatInfo(info);
-        addCertExpirationInfo(info);
-
-        builder.withDetail("ids", info);
+        addValidDatInfo(builder);
+        addConnectorInfo(builder);
     }
 
-    private void addCertExpirationInfo(final HashMap<String, Object> info) {
+    private void addConnectorInfo(final Info.Builder builder) {
+        final var conInfo = new HashMap<String, Object>();
         final var expiration = configContainer.getKeyStoreManager().getCertExpiration();
-        info.put("certExpiration", expiration);
+        conInfo.put("connectorCertExpiration", expiration);
+        final var inbound = configContainer.getConnector().getInboundModelVersion();
+        conInfo.put("inboundModelVersion", inbound);
+        final var outbound = configContainer.getConnector().getOutboundModelVersion();
+        conInfo.put("outboundModelVersion", outbound);
+        final var deploy = configContainer.getConfigurationModel().getConnectorDeployMode().getId();
+        conInfo.put("deployMode", deploy);
+        final var status = configContainer.getConfigurationModel().getConnectorStatus().getId();
+        conInfo.put("status", status);
+        builder.withDetail("connector", conInfo);
     }
 
     @SuppressFBWarnings(value = "REC_CATCH_EXCEPTION",
             justification = "Catching all possible exceptions.")
-    private void addValidDatInfo(final HashMap<String, Object> info) {
+    private void addValidDatInfo(final Info.Builder builder) {
+        final var datInfo = new HashMap<String, Object>();
         try {
             final var dat = tokenProvSvc.getDAT();
-            if (dat.toString().contains("INVALID_TOKEN")) {
-                throw new RuntimeException("INVALID_TOKEN");
-            } else {
-                info.put("datObtained", true);
-            }
+            var claims = DapsValidator.getClaims(
+                    dat,
+                    tokenProvSvc.providePublicKeys()
+            );
+            final var exp = claims.getBody().getExpiration();
+            datInfo.put("datExpiration", exp);
+            final var iss = claims.getBody().getIssuer();
+            datInfo.put("issuer", iss);
+            final var issuedAt = claims.getBody().getIssuedAt();
+            datInfo.put("issuedAt", issuedAt);
+            final var audience = claims.getBody().getAudience();
+            datInfo.put("audience", audience);
+            builder.withDetail("dat", datInfo);
         } catch (Exception e) {
-            info.put("datObtained", false);
+            builder.withDetail("dat", false);
         }
     }
 }
