@@ -26,6 +26,16 @@ public final class DatabaseConstants {
     public static final int URI_COLUMN_LENGTH = 2048;
 
     /**
+     * The maximum length of the database columns for auth keys.
+     */
+    public static final int AUTH_KEY_LENGTH = 2048;
+
+    /**
+     * The maximum length of the database columns for auth values.
+     */
+    public static final int AUTH_VALUE_LENGTH = 2048;
+
+    /**
      * Private constructor.
      */
     private DatabaseConstants() { }
