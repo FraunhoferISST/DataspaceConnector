@@ -16,9 +16,12 @@
 package io.dataspaceconnector.extension.monitoring;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
+import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
+import de.fraunhofer.ids.messaging.core.daps.ConnectorMissingCertExtensionException;
+import de.fraunhofer.ids.messaging.core.daps.DapsConnectionException;
+import de.fraunhofer.ids.messaging.core.daps.DapsEmptyResponseException;
 import de.fraunhofer.ids.messaging.core.daps.DapsValidator;
 import de.fraunhofer.ids.messaging.core.daps.TokenProviderService;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
@@ -67,8 +70,6 @@ public class IdsInfoContributor implements InfoContributor {
         builder.withDetail("connector", conInfo);
     }
 
-    @SuppressFBWarnings(value = "REC_CATCH_EXCEPTION",
-            justification = "Catching all possible exceptions.")
     private void addValidDatInfo(final Info.Builder builder) {
         final var datInfo = new HashMap<String, Object>();
         try {
@@ -86,7 +87,8 @@ public class IdsInfoContributor implements InfoContributor {
             final var audience = claims.getBody().getAudience();
             datInfo.put("audience", audience);
             builder.withDetail("dat", datInfo);
-        } catch (Exception e) {
+        } catch (ClaimsException | ConnectorMissingCertExtensionException
+                | DapsConnectionException | DapsEmptyResponseException e) {
             builder.withDetail("dat", false);
         }
     }
