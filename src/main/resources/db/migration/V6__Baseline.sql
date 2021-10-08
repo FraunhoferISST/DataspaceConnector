@@ -1,212 +1,212 @@
 CREATE TABLE public.agreement (
-                                  id uuid NOT NULL,
-                                  bootstrap_id character varying(2048),
-                                  created_date timestamp without time zone NOT NULL,
-                                  deleted boolean,
-                                  modified_date timestamp without time zone NOT NULL,
-                                  archived boolean NOT NULL,
-                                  confirmed boolean NOT NULL,
-                                  remote_id character varying(2048),
-                                  value text
+    id uuid NOT NULL,
+    bootstrap_id character varying(2048),
+    created_date timestamp without time zone NOT NULL,
+    deleted boolean,
+    modified_date timestamp without time zone NOT NULL,
+    archived boolean NOT NULL,
+    confirmed boolean NOT NULL,
+    remote_id character varying(2048),
+    value text
 );
 CREATE TABLE public.agreement_additional (
-                                             agreement_id uuid NOT NULL,
-                                             additional character varying(255),
-                                             additional_key character varying(255) NOT NULL
+    agreement_id uuid NOT NULL,
+    additional character varying(255),
+    additional_key character varying(255) NOT NULL
 );
 CREATE TABLE public.agreement_artifacts (
-                                            agreements_id uuid NOT NULL,
-                                            artifacts_id uuid NOT NULL
+    agreements_id uuid NOT NULL,
+    artifacts_id uuid NOT NULL
 );
 CREATE TABLE public.artifact (
-                                 dtype character varying(31) NOT NULL,
-                                 id uuid NOT NULL,
-                                 bootstrap_id character varying(2048),
-                                 created_date timestamp without time zone NOT NULL,
-                                 deleted boolean,
-                                 modified_date timestamp without time zone NOT NULL,
-                                 description character varying(255),
-                                 title character varying(255),
-                                 automated_download boolean NOT NULL,
-                                 byte_size bigint NOT NULL,
-                                 check_sum bigint NOT NULL,
-                                 num_accessed bigint NOT NULL,
-                                 remote_address character varying(2048),
-                                 remote_id character varying(2048),
-                                 data_id bigint
+    dtype character varying(31) NOT NULL,
+    id uuid NOT NULL,
+    bootstrap_id character varying(2048),
+    created_date timestamp without time zone NOT NULL,
+    deleted boolean,
+    modified_date timestamp without time zone NOT NULL,
+    description character varying(255),
+    title character varying(255),
+    automated_download boolean NOT NULL,
+    byte_size bigint NOT NULL,
+    check_sum bigint NOT NULL,
+    num_accessed bigint NOT NULL,
+    remote_address character varying(2048),
+    remote_id character varying(2048),
+    data_id bigint
 );
 CREATE TABLE public.artifact_additional (
-                                            artifact_id uuid NOT NULL,
-                                            additional character varying(255),
-                                            additional_key character varying(255) NOT NULL
+    artifact_id uuid NOT NULL,
+    additional character varying(255),
+    additional_key character varying(255) NOT NULL
 );
 CREATE TABLE public.artifact_subscriptions (
-                                               artifact_id uuid NOT NULL,
-                                               subscriptions_id uuid NOT NULL
+    artifact_id uuid NOT NULL,
+    subscriptions_id uuid NOT NULL
 );
 CREATE TABLE public.authentication (
-                                       dtype character varying(31) NOT NULL,
-                                       id bigint NOT NULL,
-                                       deleted boolean,
-                                       key character varying(255),
-                                       value character varying(255),
-                                       password character varying(255),
-                                       username character varying(255)
+    dtype character varying(31) NOT NULL,
+    id bigint NOT NULL,
+    deleted boolean,
+    key character varying(255),
+    value character varying(255),
+    password character varying(255),
+    username character varying(255)
 );
 CREATE TABLE public.broker (
-                               id uuid NOT NULL,
-                               bootstrap_id character varying(2048),
-                               created_date timestamp without time zone NOT NULL,
-                               deleted boolean,
-                               modified_date timestamp without time zone NOT NULL,
-                               description character varying(255),
-                               title character varying(255),
-                               location character varying(2048),
-                               status character varying(255)
+    id uuid NOT NULL,
+    bootstrap_id character varying(2048),
+    created_date timestamp without time zone NOT NULL,
+    deleted boolean,
+    modified_date timestamp without time zone NOT NULL,
+    description character varying(255),
+    title character varying(255),
+    location character varying(2048),
+    status character varying(255)
 );
 CREATE TABLE public.broker_additional (
-                                          broker_id uuid NOT NULL,
-                                          additional character varying(255),
-                                          additional_key character varying(255) NOT NULL
+    broker_id uuid NOT NULL,
+    additional character varying(255),
+    additional_key character varying(255) NOT NULL
 );
 CREATE TABLE public.broker_offered_resources (
-                                                 brokers_id uuid NOT NULL,
-                                                 offered_resources_id uuid NOT NULL
+    brokers_id uuid NOT NULL,
+    offered_resources_id uuid NOT NULL
 );
 CREATE TABLE public.catalog (
-                                id uuid NOT NULL,
-                                bootstrap_id character varying(2048),
-                                created_date timestamp without time zone NOT NULL,
-                                deleted boolean,
-                                modified_date timestamp without time zone NOT NULL,
-                                description character varying(255),
-                                title character varying(255)
+    id uuid NOT NULL,
+    bootstrap_id character varying(2048),
+    created_date timestamp without time zone NOT NULL,
+    deleted boolean,
+    modified_date timestamp without time zone NOT NULL,
+    description character varying(255),
+    title character varying(255)
 );
 CREATE TABLE public.catalog_additional (
-                                           catalog_id uuid NOT NULL,
-                                           additional character varying(255),
-                                           additional_key character varying(255) NOT NULL
+    catalog_id uuid NOT NULL,
+    additional character varying(255),
+    additional_key character varying(255) NOT NULL
 );
 CREATE TABLE public.catalog_offered_resources (
-                                                  catalogs_id uuid NOT NULL,
-                                                  offered_resources_id uuid NOT NULL
+    catalogs_id uuid NOT NULL,
+    offered_resources_id uuid NOT NULL
 );
 CREATE TABLE public.catalog_requested_resources (
-                                                    catalogs_id uuid NOT NULL,
-                                                    requested_resources_id uuid NOT NULL
+    catalogs_id uuid NOT NULL,
+    requested_resources_id uuid NOT NULL
 );
 CREATE TABLE public.configuration (
-                                      id uuid NOT NULL,
-                                      bootstrap_id character varying(2048),
-                                      created_date timestamp without time zone NOT NULL,
-                                      deleted boolean,
-                                      modified_date timestamp without time zone NOT NULL,
-                                      description character varying(255),
-                                      title character varying(255),
-                                      active boolean,
-                                      curator character varying(255),
-                                      default_endpoint character varying(255),
-                                      deploy_mode character varying(255),
-                                      log_level character varying(255),
-                                      maintainer character varying(255),
-                                      outbound_model_version character varying(255),
-                                      security_profile character varying(255),
-                                      status character varying(255),
-                                      version character varying(255),
-                                      keystore_id uuid,
-                                      proxy_id uuid,
-                                      truststore_id uuid
+    id uuid NOT NULL,
+    bootstrap_id character varying(2048),
+    created_date timestamp without time zone NOT NULL,
+    deleted boolean,
+    modified_date timestamp without time zone NOT NULL,
+    description character varying(255),
+    title character varying(255),
+    active boolean,
+    curator character varying(255),
+    default_endpoint character varying(255),
+    deploy_mode character varying(255),
+    log_level character varying(255),
+    maintainer character varying(255),
+    outbound_model_version character varying(255),
+    security_profile character varying(255),
+    status character varying(255),
+    version character varying(255),
+    keystore_id uuid,
+    proxy_id uuid,
+    truststore_id uuid
 );
 CREATE TABLE public.configuration_additional (
-                                                 configuration_id uuid NOT NULL,
-                                                 additional character varying(255),
-                                                 additional_key character varying(255) NOT NULL
+    configuration_id uuid NOT NULL,
+    additional character varying(255),
+    additional_key character varying(255) NOT NULL
 );
 CREATE TABLE public.configuration_inbound_model_version (
-                                                            configuration_id uuid NOT NULL,
-                                                            inbound_model_version character varying(255)
+    configuration_id uuid NOT NULL,
+    inbound_model_version character varying(255)
 );
 CREATE TABLE public.contract (
-                                 id uuid NOT NULL,
-                                 bootstrap_id character varying(2048),
-                                 created_date timestamp without time zone NOT NULL,
-                                 deleted boolean,
-                                 modified_date timestamp without time zone NOT NULL,
-                                 description character varying(255),
-                                 title character varying(255),
-                                 consumer character varying(2048),
-                                 contract_end timestamp without time zone,
-                                 provider character varying(2048),
-                                 remote_id character varying(2048),
-                                 contract_start timestamp without time zone
+    id uuid NOT NULL,
+    bootstrap_id character varying(2048),
+    created_date timestamp without time zone NOT NULL,
+    deleted boolean,
+    modified_date timestamp without time zone NOT NULL,
+    description character varying(255),
+    title character varying(255),
+    consumer character varying(2048),
+    contract_end timestamp without time zone,
+    provider character varying(2048),
+    remote_id character varying(2048),
+    contract_start timestamp without time zone
 );
 CREATE TABLE public.contract_additional (
-                                            contract_id uuid NOT NULL,
-                                            additional character varying(255),
-                                            additional_key character varying(255) NOT NULL
+    contract_id uuid NOT NULL,
+    additional character varying(255),
+    additional_key character varying(255) NOT NULL
 );
 CREATE TABLE public.contract_rule_additional (
-                                                 contract_rule_id uuid NOT NULL,
-                                                 additional character varying(255),
-                                                 additional_key character varying(255) NOT NULL
+    contract_rule_id uuid NOT NULL,
+    additional character varying(255),
+    additional_key character varying(255) NOT NULL
 );
 CREATE TABLE public.contract_rules (
-                                       contracts_id uuid NOT NULL,
-                                       rules_id uuid NOT NULL
+    contracts_id uuid NOT NULL,
+    rules_id uuid NOT NULL
 );
 CREATE TABLE public.contractrule (
-                                     id uuid NOT NULL,
-                                     bootstrap_id character varying(2048),
-                                     created_date timestamp without time zone NOT NULL,
-                                     deleted boolean,
-                                     modified_date timestamp without time zone NOT NULL,
-                                     description character varying(255),
-                                     title character varying(255),
-                                     remote_id character varying(2048),
-                                     value text
+    id uuid NOT NULL,
+    bootstrap_id character varying(2048),
+    created_date timestamp without time zone NOT NULL,
+    deleted boolean,
+    modified_date timestamp without time zone NOT NULL,
+    description character varying(255),
+    title character varying(255),
+    remote_id character varying(2048),
+    value text
 );
 CREATE TABLE public.data (
-                             dtype character varying(31) NOT NULL,
-                             id bigint NOT NULL,
-                             deleted boolean,
-                             value oid,
-                             access_url character varying(2048)
+    dtype character varying(31) NOT NULL,
+    id bigint NOT NULL,
+    deleted boolean,
+    value oid,
+    access_url character varying(2048)
 );
 CREATE TABLE public.data_authentication (
-                                            remote_data_id bigint NOT NULL,
-                                            authentication_id bigint NOT NULL
+    remote_data_id bigint NOT NULL,
+    authentication_id bigint NOT NULL
 );
 CREATE TABLE public.data_source_additional (
-                                               data_source_id uuid NOT NULL,
-                                               additional character varying(255),
-                                               additional_key character varying(255) NOT NULL
+    data_source_id uuid NOT NULL,
+    additional character varying(255),
+    additional_key character varying(255) NOT NULL
 );
 CREATE TABLE public.datasource (
-                                   id uuid NOT NULL,
-                                   bootstrap_id character varying(2048),
-                                   created_date timestamp without time zone NOT NULL,
-                                   deleted boolean,
-                                   modified_date timestamp without time zone NOT NULL,
-                                   type character varying(255),
-                                   authentication_id bigint
+    id uuid NOT NULL,
+    bootstrap_id character varying(2048),
+    created_date timestamp without time zone NOT NULL,
+    deleted boolean,
+    modified_date timestamp without time zone NOT NULL,
+    type character varying(255),
+    authentication_id bigint
 );
 CREATE TABLE public.endpoint (
-                                 dtype character varying(31) NOT NULL,
-                                 id uuid NOT NULL,
-                                 bootstrap_id character varying(2048),
-                                 created_date timestamp without time zone NOT NULL,
-                                 deleted boolean,
-                                 modified_date timestamp without time zone NOT NULL,
-                                 docs character varying(2048),
-                                 info character varying(255),
-                                 location character varying(2048),
-                                 type character varying(255),
-                                 data_source_id uuid
+    dtype character varying(31) NOT NULL,
+    id uuid NOT NULL,
+    bootstrap_id character varying(2048),
+    created_date timestamp without time zone NOT NULL,
+    deleted boolean,
+    modified_date timestamp without time zone NOT NULL,
+    docs character varying(2048),
+    info character varying(255),
+    location character varying(2048),
+    type character varying(255),
+    data_source_id uuid
 );
 CREATE TABLE public.endpoint_additional (
-                                            endpoint_id uuid NOT NULL,
-                                            additional character varying(255),
-                                            additional_key character varying(255) NOT NULL
+    endpoint_id uuid NOT NULL,
+    additional character varying(255),
+    additional_key character varying(255) NOT NULL
 );
 CREATE SEQUENCE public.hibernate_sequence
     START WITH 1
@@ -215,160 +215,161 @@ CREATE SEQUENCE public.hibernate_sequence
     NO MAXVALUE
     CACHE 1;
 CREATE TABLE public.keystore (
-                                 id uuid NOT NULL,
-                                 bootstrap_id character varying(2048),
-                                 created_date timestamp without time zone NOT NULL,
-                                 deleted boolean,
-                                 modified_date timestamp without time zone NOT NULL,
-                                 location character varying(2048),
-                                 password character varying(255)
+    id uuid NOT NULL,
+    bootstrap_id character varying(2048),
+    created_date timestamp without time zone NOT NULL,
+    deleted boolean,
+    modified_date timestamp without time zone NOT NULL,
+    location character varying(2048),
+    password character varying(255)
 );
 CREATE TABLE public.keystore_additional (
-                                            keystore_id uuid NOT NULL,
-                                            additional character varying(255),
-                                            additional_key character varying(255) NOT NULL
+    keystore_id uuid NOT NULL,
+    additional character varying(255),
+    additional_key character varying(255) NOT NULL
 );
 CREATE TABLE public.proxy (
-                              id uuid NOT NULL,
-                              bootstrap_id character varying(2048),
-                              created_date timestamp without time zone NOT NULL,
-                              deleted boolean,
-                              modified_date timestamp without time zone NOT NULL,
-                              location character varying(2048),
-                              authentication_id bigint
+    id uuid NOT NULL,
+    bootstrap_id character varying(2048),
+    created_date timestamp without time zone NOT NULL,
+    deleted boolean,
+    modified_date timestamp without time zone NOT NULL,
+    location character varying(2048),
+    authentication_id bigint
 );
 CREATE TABLE public.proxy_additional (
-                                         proxy_id uuid NOT NULL,
-                                         additional character varying(255),
-                                         additional_key character varying(255) NOT NULL
+    proxy_id uuid NOT NULL,
+    additional character varying(255),
+    additional_key character varying(255) NOT NULL
 );
 CREATE TABLE public.proxy_exclusions (
-                                         proxy_id uuid NOT NULL,
-                                         exclusions character varying(255)
+    proxy_id uuid NOT NULL,
+    exclusions character varying(255)
 );
 CREATE TABLE public.representation (
-                                       id uuid NOT NULL,
-                                       bootstrap_id character varying(2048),
-                                       created_date timestamp without time zone NOT NULL,
-                                       deleted boolean,
-                                       modified_date timestamp without time zone NOT NULL,
-                                       description character varying(255),
-                                       title character varying(255),
-                                       language character varying(255),
-                                       media_type character varying(255),
-                                       remote_id character varying(2048),
-                                       standard character varying(255)
+    id uuid NOT NULL,
+    bootstrap_id character varying(2048),
+    created_date timestamp without time zone NOT NULL,
+    deleted boolean,
+    modified_date timestamp without time zone NOT NULL,
+    description character varying(255),
+    title character varying(255),
+    language character varying(255),
+    media_type character varying(255),
+    remote_id character varying(2048),
+    standard character varying(255)
 );
 CREATE TABLE public.representation_additional (
-                                                  representation_id uuid NOT NULL,
-                                                  additional character varying(255),
-                                                  additional_key character varying(255) NOT NULL
+    representation_id uuid NOT NULL,
+    additional character varying(255),
+    additional_key character varying(255) NOT NULL
 );
 CREATE TABLE public.representation_artifacts (
-                                                 representations_id uuid NOT NULL,
-                                                 artifacts_id uuid NOT NULL
+    representations_id uuid NOT NULL,
+    artifacts_id uuid NOT NULL
 );
 CREATE TABLE public.representation_subscriptions (
-                                                     representation_id uuid NOT NULL,
-                                                     subscriptions_id uuid NOT NULL
+    representation_id uuid NOT NULL,
+    subscriptions_id uuid NOT NULL
 );
 CREATE TABLE public.resource (
-                                 dtype character varying(31) NOT NULL,
-                                 id uuid NOT NULL,
-                                 bootstrap_id character varying(2048),
-                                 created_date timestamp without time zone NOT NULL,
-                                 deleted boolean,
-                                 modified_date timestamp without time zone NOT NULL,
-                                 description character varying(255),
-                                 title character varying(255),
-                                 endpoint_documentation character varying(2048),
-                                 language character varying(255),
-                                 license character varying(2048),
-                                 publisher character varying(2048),
-                                 sovereign character varying(2048),
-                                 version bigint NOT NULL,
-                                 remote_id character varying(2048)
+    dtype character varying(31) NOT NULL,
+    id uuid NOT NULL,
+    bootstrap_id character varying(2048),
+    created_date timestamp without time zone NOT NULL,
+    deleted boolean,
+    modified_date timestamp without time zone NOT NULL,
+    description character varying(255),
+    title character varying(255),
+    endpoint_documentation character varying(2048),
+    language character varying(255),
+    license character varying(2048),
+    publisher character varying(2048),
+    sovereign character varying(2048),
+    version bigint NOT NULL,
+    remote_id character varying(2048)
 );
 CREATE TABLE public.resource_additional (
-                                            resource_id uuid NOT NULL,
-                                            additional character varying(255),
-                                            additional_key character varying(255) NOT NULL
+    resource_id uuid NOT NULL,
+    additional character varying(255),
+    additional_key character varying(255) NOT NULL
 );
 CREATE TABLE public.resource_contracts (
-                                           resources_id uuid NOT NULL,
-                                           contracts_id uuid NOT NULL
+    resources_id uuid NOT NULL,
+    contracts_id uuid NOT NULL
 );
 CREATE TABLE public.resource_keywords (
-                                          resource_id uuid NOT NULL,
-                                          keywords character varying(255)
+    resource_id uuid NOT NULL,
+    keywords character varying(255)
 );
 CREATE TABLE public.resource_representations (
-                                                 resources_id uuid NOT NULL,
-                                                 representations_id uuid NOT NULL
+    resources_id uuid NOT NULL,
+    representations_id uuid NOT NULL
 );
 CREATE TABLE public.resource_subscriptions (
-                                               resource_id uuid NOT NULL,
-                                               subscriptions_id uuid NOT NULL
+    resource_id uuid NOT NULL,
+    subscriptions_id uuid NOT NULL
 );
 CREATE TABLE public.route (
-                              id uuid NOT NULL,
-                              bootstrap_id character varying(2048),
-                              created_date timestamp without time zone NOT NULL,
-                              deleted boolean,
-                              modified_date timestamp without time zone NOT NULL,
-                              description character varying(255),
-                              title character varying(255),
-                              configuration text,
-                              deploy character varying(255),
-                              end_id uuid,
-                              start_id uuid
+    id uuid NOT NULL,
+    bootstrap_id character varying(2048),
+    created_date timestamp without time zone NOT NULL,
+    deleted boolean,
+    modified_date timestamp without time zone NOT NULL,
+    description character varying(255),
+    title character varying(255),
+    configuration text,
+    deploy character varying(255),
+    end_id uuid,
+    start_id uuid
 );
 CREATE TABLE public.route_additional (
-                                         route_id uuid NOT NULL,
-                                         additional character varying(255),
-                                         additional_key character varying(255) NOT NULL
+    route_id uuid NOT NULL,
+    additional character varying(255),
+    additional_key character varying(255) NOT NULL
 );
 CREATE TABLE public.route_output (
-                                     route_id uuid NOT NULL,
-                                     output_id uuid NOT NULL
+    route_id uuid NOT NULL,
+    output_id uuid NOT NULL
 );
 CREATE TABLE public.route_steps (
-                                    route_id uuid NOT NULL,
-                                    steps_id uuid NOT NULL
+    route_id uuid NOT NULL,
+    steps_id uuid NOT NULL
 );
 CREATE TABLE public.subscription (
-                                     id uuid NOT NULL,
-                                     bootstrap_id character varying(2048),
-                                     created_date timestamp without time zone NOT NULL,
-                                     deleted boolean,
-                                     modified_date timestamp without time zone NOT NULL,
-                                     description character varying(255),
-                                     title character varying(255),
-                                     ids_protocol boolean NOT NULL,
-                                     location bytea,
-                                     push_data boolean NOT NULL,
-                                     subscriber bytea,
-                                     target bytea
+    id uuid NOT NULL,
+    bootstrap_id character varying(2048),
+    created_date timestamp without time zone NOT NULL,
+    deleted boolean,
+    modified_date timestamp without time zone NOT NULL,
+    description character varying(255),
+    title character varying(255),
+    ids_protocol boolean NOT NULL,
+    location bytea,
+    push_data boolean NOT NULL,
+    subscriber bytea,
+    target bytea
 );
 CREATE TABLE public.subscription_additional (
-                                                subscription_id uuid NOT NULL,
-                                                additional character varying(255),
-                                                additional_key character varying(255) NOT NULL
+    subscription_id uuid NOT NULL,
+    additional character varying(255),
+    additional_key character varying(255) NOT NULL
 );
 CREATE TABLE public.truststore (
-                                   id uuid NOT NULL,
-                                   bootstrap_id character varying(2048),
-                                   created_date timestamp without time zone NOT NULL,
-                                   deleted boolean,
-                                   modified_date timestamp without time zone NOT NULL,
-                                   location character varying(2048),
-                                   password character varying(255)
+    id uuid NOT NULL,
+    bootstrap_id character varying(2048),
+    created_date timestamp without time zone NOT NULL,
+    deleted boolean,
+    modified_date timestamp without time zone NOT NULL,
+    location character varying(2048),
+    password character varying(255)
 );
 CREATE TABLE public.truststore_additional (
-                                              truststore_id uuid NOT NULL,
-                                              additional character varying(255),
-                                              additional_key character varying(255) NOT NULL
-);ALTER TABLE ONLY public.agreement_additional
+    truststore_id uuid NOT NULL,
+    additional character varying(255),
+    additional_key character varying(255) NOT NULL
+);
+ALTER TABLE ONLY public.agreement_additional
     ADD CONSTRAINT agreement_additional_pkey PRIMARY KEY (agreement_id, additional_key);
 ALTER TABLE ONLY public.agreement
     ADD CONSTRAINT agreement_pkey PRIMARY KEY (id);
