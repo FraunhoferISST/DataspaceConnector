@@ -22,15 +22,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v2
       with:
+       distribution: 'temurin'
        java-version: 11
-    - name: Cache maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+       cache: 'maven'
     - name: Run style checks
       run: mvn -B -U checkstyle:check --file pom.xml
 
@@ -43,15 +39,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v2
       with:
+       distribution: 'temurin'
        java-version: 11
-    - name: Cache maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+       cache: 'maven'
     - name: Run license checks
       run: mvn -B -U license:check --file pom.xml
 
@@ -87,15 +79,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v2
       with:
+       distribution: 'temurin'
        java-version: 11
-    - name: Cache maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+       cache: 'maven'
     - name: Run static code analysis
       run: mvn -B -U compile spotbugs:check --file pom.xml
 
@@ -111,15 +99,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v2
       with:
-        java-version: ${{ matrix.java }}
-    - name: Cache maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+       distribution: 'temurin'
+       java-version: 11
+       cache: 'maven'
     - name: Unit- and Integrationtests
       run: mvn -B -U verify --file pom.xml -Prelease
 
@@ -131,20 +115,16 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        java: [12, 13, 14, 15, 16]
+        java: [12, 13, 14, 15, 16, 17]
 
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v2
       with:
-        java-version: ${{ matrix.java }}
-    - name: Cache maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+       distribution: 'temurin'
+       java-version: ${{ matrix.java }}
+       cache: 'maven'
     - name: Unit- and Integrationtests
       run: mvn -B -U verify --file pom.xml -Prelease
 
@@ -158,15 +138,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v2
       with:
-       java-version: 11
-    - name: Cache maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+       distribution: 'temurin'
+       java-version: ${{ matrix.java }}
+       cache: 'maven'
     - name: Run Mutation Tests
       run: mvn -B -U -Dmaven.javadoc.skip=true test org.pitest:pitest-maven:mutationCoverage --file pom.xml
 
@@ -237,12 +213,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Cache maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
       - name: Setup environment
         run: |
           curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE=666 sh -
