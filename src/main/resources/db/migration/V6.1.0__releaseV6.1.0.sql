@@ -1,3 +1,5 @@
+TRUNCATE TABLE public.configuration CASCADE;
+
 CREATE TABLE public.resource_samples (
     resource_id uuid NOT NULL,
     samples character varying(2048)
