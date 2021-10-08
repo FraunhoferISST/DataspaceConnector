@@ -235,6 +235,13 @@
 			</exclusions>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>8.0.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -524,12 +531,7 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 				<includes>
-					<include>conf/**/*.*</include>
-					<include>camel-routes/**/*.xml</include>
-					<include>log4j2.xml</include>
-					<include>camel-templates/**/*.vm</include>
-					<include>application.properties</include>
-					<include>banner.txt</include>
+					<include>**</include>
 				</includes>
 				<excludes>
 					<!-- The key files are binary files, which the filtering destroys. -->
