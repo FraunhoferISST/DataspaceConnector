@@ -89,7 +89,7 @@
 		<email>info@dataspace-connector.de</email>
 
 		<!-- Build info -->
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 		<maven.compiler.release>${java.version}</maven.compiler.release>
 		<maven.minimum.version>3.3.9</maven.minimum.version>
 

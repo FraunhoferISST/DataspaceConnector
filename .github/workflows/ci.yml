@@ -25,7 +25,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
        distribution: 'temurin'
-       java-version: 11
+       java-version: 17
        cache: 'maven'
     - name: Run style checks
       run: mvn -B -U checkstyle:check --file pom.xml
@@ -42,7 +42,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
        distribution: 'temurin'
-       java-version: 11
+       java-version: 17
        cache: 'maven'
     - name: Run license checks
       run: mvn -B -U license:check --file pom.xml
@@ -82,7 +82,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
        distribution: 'temurin'
-       java-version: 11
+       java-version: 17
        cache: 'maven'
     - name: Run static code analysis
       run: mvn -B -U compile spotbugs:check --file pom.xml
@@ -102,28 +102,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
        distribution: 'temurin'
-       java-version: 11
-       cache: 'maven'
-    - name: Unit- and Integrationtests
-      run: mvn -B -U verify --file pom.xml -Prelease
-
-  unit-and-integration-tests-cross-version:
-    needs: [style, license, linting]
-    timeout-minutes: 30
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        java: [16, 17]
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v2
-      with:
-       distribution: 'temurin'
-       java-version: ${{ matrix.java }}
+       java-version: 17
        cache: 'maven'
     - name: Unit- and Integrationtests
       run: mvn -B -U verify --file pom.xml -Prelease
@@ -141,7 +120,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
        distribution: 'temurin'
-       java-version: 11
+       java-version: 17
        cache: 'maven'
     - name: Run Mutation Tests
       run: mvn -B -U -Dmaven.javadoc.skip=true test org.pitest:pitest-maven:mutationCoverage --file pom.xml
