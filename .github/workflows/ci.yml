@@ -218,7 +218,7 @@ jobs:
         with:
           name: image-${{ github.head_ref }}
       - name: Load image into docker
-        run: docker load --input "${GITHUB_WORKSPACE}/${GITHUB_SHA}.tar"
+        run: docker load --input "${GITHUB_WORKSPACE}/${GITHUB_HEAD_REF}.tar"
       - name: Build registry path
         id: get_repo
         run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspace-connector"
