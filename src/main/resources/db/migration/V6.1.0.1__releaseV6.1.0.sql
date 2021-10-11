@@ -23,15 +23,6 @@ ALTER TABLE public.keystore
 ALTER TABLE public.resource
     ADD COLUMN payment_modality character varying(255);
 
-ALTER TABLE public.subscription
-    ALTER COLUMN location TYPE character varying(2048);
-
-ALTER TABLE public.subscription
-    ALTER COLUMN subscriber TYPE character varying(2048);
-
-ALTER TABLE public.subscription
-    ALTER COLUMN target TYPE character varying(2048);
-
 ALTER TABLE public.truststore
     ADD COLUMN alias character varying(255);
 

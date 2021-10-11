@@ -52,8 +52,6 @@ CREATE TABLE public.app_supported_policies (
     supported_policies integer
 );
 
-ALTER TABLE public.app_supported_policies OWNER TO connector;
-
 CREATE TABLE public.appstore (
     id uuid NOT NULL,
     bootstrap_id character varying(2048),
