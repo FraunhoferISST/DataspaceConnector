@@ -174,17 +174,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
       - name: Pull last image
         run: |
           docker pull "$REGISTRY/$OWNER/dataspace-connector:latest"
       - name: Build tar ball
         run: |
-          docker save --output "~/${GITHUB_SHA}.tar" "$REGISTRY/$OWNER/dataspace-connector:latest"
+          docker save --output "${GITHUB_SHA}.tar" "$REGISTRY/$OWNER/dataspace-connector:latest"
       - name: Push image
         uses: actions/upload-artifact@v2
         with:
           name: image-XXX
-          path: "~/${GITHUB_SHA}.tar"
+          path: "./${GITHUB_SHA}.tar"
           retention-days: 1
 
   pull-test-artifact:
@@ -196,7 +198,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: image-XXX
-          path: "~/"
       - name: Display structure of downloaded files
         run: ls -R
         working-directory: "~/"
