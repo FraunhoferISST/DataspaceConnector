@@ -255,7 +255,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ${{ github.head_ref }}-image
-      - name: Load image into k3s
+      - name: Load image into cluster
         run: sudo k3s ctr images import "${GITHUB_WORKSPACE}/${GITHUB_HEAD_REF}.tar"
       - name: Test environment
         run: |
