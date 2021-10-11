@@ -170,97 +170,67 @@ jobs:
   #   - name: Run Mutation Tests
   #     run: mvn -B -U -Dmaven.javadoc.skip=true test org.pitest:pitest-maven:mutationCoverage --file pom.xml
 
-  build-test-artifact:
+  build-test-image:
+    # needs: unit-and-integration-tests
+    timeout-minutes: 15
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
 
     steps:
-      - name: Pull last image
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Build registry path
+        id: get_repo
+        run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspace-connector"
+      - name: Login to registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.IMAGE_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build image
         run: |
-          docker pull "$REGISTRY/$OWNER/dataspace-connector:latest"
+          docker build . -t $IMAGE:ci
+        env:
+          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
+          DOCKER_BUILDKIT: 1
       - name: Build tar ball
         run: |
-          docker save --output "${GITHUB_SHA}.tar" "$REGISTRY/$OWNER/dataspace-connector:latest"
-      - name: Display structure of downloaded files
-        run: ls -R
+          docker save --output "${GITHUB_SHA}.tar" $IMAGE:ci
       - name: Push image
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ github.sha }}
+          name: image-${{ github.sha }}
           path: ${{ github.workspace }}/${{ github.sha }}.tar
           retention-days: 1
 
-  pull-test-artifact:
-    needs: build-test-artifact
+  image-security-scan:
+    needs: build-test-image
+    timeout-minutes: 10
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
 
     steps:
       - name: Download image
         uses: actions/download-artifact@v2
         with:
-          name: ${{ github.sha }}
-      - name: Display structure of downloaded files
-        run: ls -R
-
-  # build-test-image:
-  #   # needs: unit-and-integration-tests
-  #   timeout-minutes: 15
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     fail-fast: false
-
-  #   steps:
-  #     - name: Checkout Repo
-  #       uses: actions/checkout@v2
-  #     - name: Build registry path
-  #       id: get_repo
-  #       run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspace-connector"
-  #     - name: Login to registry
-  #       uses: docker/login-action@v1
-  #       with:
-  #         registry: ${{ secrets.IMAGE_REGISTRY }}
-  #         username: ${{ github.actor }}
-  #         password: ${{ secrets.GITHUB_TOKEN }}
-  #     - name: Build image
-  #       run: |
-  #         docker build . -t $IMAGE:ci
-  #       env:
-  #         IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
-  #         DOCKER_BUILDKIT: 1
-  #     - name: Build tar ball
-  #       run: |
-  #         docker save --output ~/$IMAGE-ci.tar $IMAGE:ci
-  #     - name: Push image
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: image-XXX
-  #         path: ~/$IMAGE-ci.tar
-  #         retention-days: 1
-
-  # image-security-scan:
-  #   needs: build-test-image
-  #   timeout-minutes: 15
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     fail-fast: false
-
-  #   steps:
-  #     - name: Download image
-  #       uses: actions/download-artifact@v2
-  #       with:
-  #         name: image-XXX
-  #         path: ~/
-  #     - name: Build registry path
-  #       id: get_repo
-  #       run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspace-connector"
-  #     - name: Run vulnerability scanner
-  #       uses: aquasecurity/trivy-action@master
-  #       with:
-  #         image-ref: '${{ steps.get_repo.outputs.IMAGE }}:ci'
-  #         format: 'table'
-  #         exit-code: '1'
-  #         ignore-unfixed: true
-  #         vuln-type: 'os, library'
-  #         severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
+          name: image-${{ github.sha }}
+      - name: Load image into docker
+        run: docker load --input "${GITHUB_WORKSPACE}/${GITHUB_SHA}.tar"
+      - name: Build registry path
+        id: get_repo
+        run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspace-connector"
+      - name: Run vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ steps.get_repo.outputs.IMAGE }}:ci'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os, library'
+          severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
 
   # e2e-test:
   #   needs: build-test-image
