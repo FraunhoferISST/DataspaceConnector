@@ -203,7 +203,7 @@ jobs:
       - name: Push image
         uses: actions/upload-artifact@v2
         with:
-          name: image-${{ github.head_ref }}
+          name: ${{ github.head_ref }}-image
           path: ${{ github.workspace }}/${{ github.head_ref }}.tar
           retention-days: 1
 
@@ -218,7 +218,7 @@ jobs:
       - name: Download image
         uses: actions/download-artifact@v2
         with:
-          name: image-${{ github.head_ref }}
+          name: ${{ github.head_ref }}-image
       - name: Load image into docker
         run: docker load --input "${GITHUB_WORKSPACE}/${GITHUB_HEAD_REF}.tar"
       - name: Build registry path
@@ -254,9 +254,9 @@ jobs:
       - name: Download image
         uses: actions/download-artifact@v2
         with:
-          name: image-${{ github.head_ref }}
+          name: ${{ github.head_ref }}-image
       - name: Load image into k3s
-        run: k3s ctr images import "${GITHUB_WORKSPACE}/${GITHUB_HEAD_REF}.tar"
+        run: sudo k3s ctr images import "${GITHUB_WORKSPACE}/${GITHUB_HEAD_REF}.tar"
       - name: Test environment
         run: |
           kubectl cluster-info
