@@ -171,11 +171,9 @@ jobs:
       run: mvn -B -U -Dmaven.javadoc.skip=true test org.pitest:pitest-maven:mutationCoverage --file pom.xml
 
   build-test-image:
-    needs: unit-and-integration-tests
+    # needs: unit-and-integration-tests
     timeout-minutes: 15
     runs-on: ubuntu-latest
-    concurrency:
-      group: e2e
     strategy:
       fail-fast: false
 
@@ -197,10 +195,15 @@ jobs:
         env:
           IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
           DOCKER_BUILDKIT: 1
+      - name: Build tar ball
+        run: |
+          docker save --output /$IMAGE:ci.tar $IMAGE:ci
       - name: Push image
-        run: docker push $IMAGE:ci
-        env:
-          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: image-XXX
+          path: /$IMAGE:ci.tar
+          retention-days: 1
 
   image-security-scan:
     needs: build-test-image
@@ -210,8 +213,11 @@ jobs:
       fail-fast: false
 
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v2
+      - name: Download image
+        uses: actions/download-artifact@v2
+        with:
+          name: image-XXX
+          path: /
       - name: Build registry path
         id: get_repo
         run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspace-connector"
@@ -229,8 +235,6 @@ jobs:
     needs: build-test-image
     timeout-minutes: 30
     runs-on: ubuntu-latest
-    concurrency:
-      group: e2e
 
     steps:
       - name: Checkout Repo
