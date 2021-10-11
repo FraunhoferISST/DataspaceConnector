@@ -197,12 +197,12 @@ jobs:
           DOCKER_BUILDKIT: 1
       - name: Build tar ball
         run: |
-          docker save --output "${GITHUB_SHA}.tar" $IMAGE:ci
+          docker save --output "${GITHUB_HEAD_REF}.tar" "${IMAGE}:ci"
       - name: Push image
         uses: actions/upload-artifact@v2
         with:
-          name: image-${{ github.sha }}
-          path: ${{ github.workspace }}/${{ github.sha }}.tar
+          name: image-${{ github.head_ref }}
+          path: ${{ github.workspace }}/${{ github.head_ref }}.tar
           retention-days: 1
 
   image-security-scan:
@@ -216,7 +216,7 @@ jobs:
       - name: Download image
         uses: actions/download-artifact@v2
         with:
-          name: image-${{ github.sha }}
+          name: image-${{ github.head_ref }}
       - name: Load image into docker
         run: docker load --input "${GITHUB_WORKSPACE}/${GITHUB_SHA}.tar"
       - name: Build registry path
