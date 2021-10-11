@@ -22,6 +22,8 @@ function dsc::run_provider_consumer_test() {
     echo "Runnning test suite: $TEST_SUITE"
     echo "Setup provider ($PROVIDER_VERSION) and consumer ($CONSUMER_VERSION)"
 
+    # Set the pull policy to IfNotPresent so that the postgres image is loaded but the dsc image only read from local registry
+
     # Provider setup
     helm install provider ./charts/dataspace-connector --set image.pullPolicy=IfNotPresent --set image.tag="${PROVIDER_VERSION}" --set env.config.SPRING_APPLICATION_NAME="Provider Connector" 2>&1 > /dev/null
 
