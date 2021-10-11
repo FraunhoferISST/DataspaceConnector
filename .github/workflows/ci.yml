@@ -188,7 +188,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: image-XXX
-          path: "./${GITHUB_SHA}.tar"
+          path: "./${{GITHUB_SHA}}.tar"
           retention-days: 1
 
   pull-test-artifact:
