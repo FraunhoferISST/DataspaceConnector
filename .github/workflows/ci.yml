@@ -187,8 +187,8 @@ jobs:
       - name: Push image
         uses: actions/upload-artifact@v2
         with:
-          name: image-XXX
-          path: "./*.tar"
+          name: ${{ env.GITHUB_SHA }}
+          path: ${{ github.workspace }}/${{ env.GITHUB_SHA }}.tar
           retention-days: 1
 
   pull-test-artifact:
