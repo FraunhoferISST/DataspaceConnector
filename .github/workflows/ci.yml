@@ -21,7 +21,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK ${{ matrix.java }}
+    - name: Set up JDK
       uses: actions/setup-java@v2
       with:
        distribution: 'temurin'
@@ -38,7 +38,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK ${{ matrix.java }}
+    - name: Set up JDK
       uses: actions/setup-java@v2
       with:
        distribution: 'temurin'
@@ -60,14 +60,6 @@ jobs:
       with:
         dockerfile: Dockerfile
         config: .hadolint.yaml
-    # - name: Lint Docker and Yaml
-    #   uses: bridgecrewio/checkov-action@master
-    #   with:
-    #     directory: .
-    #     quiet: true
-    #     output_format: github_failed_only
-    #     download_external_modules: true
-    #     soft_fail: true
 
   static-code-analysis:
     needs: [style, license, linting]
@@ -78,7 +70,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK ${{ matrix.java }}
+    - name: Set up JDK
       uses: actions/setup-java@v2
       with:
        distribution: 'temurin'
@@ -94,11 +86,11 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        java: [11]
+        java: [17]
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK ${{ matrix.java }}
+    - name: Set up JDK
       uses: actions/setup-java@v2
       with:
        distribution: 'temurin'
@@ -116,7 +108,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK ${{ matrix.java }}
+    - name: Set up JDK
       uses: actions/setup-java@v2
       with:
        distribution: 'temurin'
