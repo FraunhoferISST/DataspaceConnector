@@ -197,12 +197,12 @@ jobs:
           DOCKER_BUILDKIT: 1
       - name: Build tar ball
         run: |
-          docker save --output /$IMAGE:ci.tar $IMAGE:ci
+          docker save --output ~/$IMAGE-ci.tar $IMAGE:ci
       - name: Push image
         uses: actions/upload-artifact@v2
         with:
           name: image-XXX
-          path: /$IMAGE:ci.tar
+          path: ~/$IMAGE-ci.tar
           retention-days: 1
 
   image-security-scan:
@@ -217,7 +217,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: image-XXX
-          path: /
+          path: ~/
       - name: Build registry path
         id: get_repo
         run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspace-connector"
