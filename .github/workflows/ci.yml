@@ -198,6 +198,8 @@ jobs:
       - name: Build tar ball
         run: |
           docker save --output "${GITHUB_HEAD_REF}.tar" "${IMAGE}:ci"
+        env:
+          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
       - name: Push image
         uses: actions/upload-artifact@v2
         with:
