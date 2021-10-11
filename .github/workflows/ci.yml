@@ -234,32 +234,32 @@ jobs:
           vuln-type: 'os, library'
           severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
 
-  # e2e-test:
-  #   needs: build-test-image
-  #   timeout-minutes: 30
-  #   runs-on: ubuntu-latest
+  e2e-test:
+    needs: build-test-image
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: Checkout Repo
-  #       uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: 0
-  #     - name: Cache maven packages
-  #       uses: actions/cache@v2
-  #       with:
-  #         path: ~/.m2
-  #         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-  #         restore-keys: ${{ runner.os }}-m2
-  #     - name: Setup environment
-  #       run: |
-  #         curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE=666 sh -
-  #         cat /etc/rancher/k3s/k3s.yaml
-  #         mkdir -p ~/.kube
-  #         cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
-  #         chmod 600 ~/.kube/config
-  #     - name: Test environment
-  #       run: |
-  #         kubectl cluster-info
-  #     - name: Run scripts
-  #       run: |
-  #         ./scripts/ci/e2e/test-provider-consumer.sh
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup environment
+        run: |
+          curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE=666 sh -
+          cat /etc/rancher/k3s/k3s.yaml
+          mkdir -p ~/.kube
+          cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+          chmod 600 ~/.kube/config
+      - name: Download image
+        uses: actions/download-artifact@v2
+        with:
+          name: image-${{ github.head_ref }}
+      - name: Load image into k3s
+        run: k3s ctr images import "${GITHUB_WORKSPACE}/${GITHUB_HEAD_REF}.tar"
+      - name: Test environment
+        run: |
+          kubectl cluster-info
+      - name: Run scripts
+        run: |
+          ./scripts/ci/e2e/test-provider-consumer.sh
