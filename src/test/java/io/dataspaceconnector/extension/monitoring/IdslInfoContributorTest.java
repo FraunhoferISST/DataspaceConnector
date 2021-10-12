@@ -16,6 +16,7 @@
 package io.dataspaceconnector.extension.monitoring;
 
 import com.github.jsonldjava.utils.Obj;
+import kotlin.reflect.jvm.internal.impl.builtins.CompanionObjectMappingUtilsKt;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.info.Info;
@@ -41,13 +42,7 @@ class IdslInfoContributorTest {
         var info = builder.build();
 
         /* ASSERT */
-        Map<String, Object> connInfo = (Map<String, Object>) info.get("connector");
-        assertNotNull(connInfo);
-        assertNotNull(connInfo.get("connectorCertExpiration"));
-        assertNotNull(connInfo.get("inboundModelVersion"));
-        assertNotNull(connInfo.get("outboundModelVersion"));
-        assertNotNull(connInfo.get("deployMode"));
-        assertNotNull(connInfo.get("status"));
         assertNotNull(info.get("dat"));
+        assertNotNull(info.get("connector"));
     }
 }
