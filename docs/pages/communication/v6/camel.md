@@ -158,3 +158,43 @@ route's end.
 ---
 
 **Note**: In this case the URL specified for the generic endpoint will be called using HTTP POST.
+
+## Deploying Camel routes from XML files
+
+The API for deploying Camel routes from XML files, that was previously offered by the
+[DSC Camel Instance](https://github.com/International-Data-Spaces-Association/DSC-Camel-Instance),
+has been integrated into the Dataspace Connector, which now provides the following endpoints for
+deploying and removing Camel routes and, if necessary, required beans:
+
+* **POST /api/camel/routes** (*multipart/form-data* with part *file* for the XML file): add routes
+* **DELETE /api/camel/routes/{route-id}**: remove route by ID
+* **POST /api/beans** (*multipart/form-data* with part *file* for the XML file): add beans
+* **DELETE /api/beans/{bean-id}**: remove bean by ID
+
+The files sent to the application should have the following structures for routes and beans respectively:
+
+```
+<routes xmlns="http://camel.apache.org/schema/spring">
+
+    <route id="...">
+        ...
+    </route>
+
+</routes>
+```
+
+```
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <bean id="..." class="...">
+        ...
+    </bean>
+
+</beans>
+```
+
+More information and examples on XML Camel routes can be found in the *DSC Camel Instance* repository.

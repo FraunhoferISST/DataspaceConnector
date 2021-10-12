@@ -8,7 +8,7 @@ parent: IDS Ecosystem
 grand_parent: Communication Guide
 ---
 
-# IDS AppStore
+# IDS App Store
 {: .fs-9 }
 
 This section provides a detailed guide on communication with the IDS AppStore.
@@ -16,19 +16,26 @@ This section provides a detailed guide on communication with the IDS AppStore.
 
 ---
 
-The IDS AppStore is available at
+The IDS App Store is available at
 [https://binac.fit.fraunhofer.de/](https://binac.fit.fraunhofer.de/). It expects IDS
 multipart messages at [https://binac.fit.fraunhofer.de/api/ids/data](https://binac.fit.fraunhofer.de/api/ids/data).
 The GUI can be accessed at [https://binac.fit.fraunhofer.de/appstore/](https://binac.fit.fraunhofer.de/appstore/).
 The access to all addresses is unrestricted.
 
 The [repository](https://github.com/International-Data-Spaces-Association/IDS-AppStore)
-is open source and can be accessed at GitHub. Further documentation about the IDS AppStore and IDS
-apps in general can be seen [here](https://github.com/International-Data-Spaces-Association/IDS-G).
+is open source and can be accessed at GitHub. Further documentation about the IDS App Store and IDS
+apps in general can be seen
+[here](https://github.com/International-Data-Spaces-Association/IDS-G/blob/main/Components/AppStore/README.md).
 
 The Dataspace Connector provides some endpoints to send IDS messages that can be processed by the
-AppStore. A full flow of how to query the AppStore, download, and maintain an IDS App can be found
+App Store. A full flow of how to query the App Store, download, and maintain an IDS App can be found
 in the following.
+
+## Prerequisites
+
+Please ensure that your connector uses a valid IDS certificate. For this, take a look at
+[these](../../../deployment/configuration.md#step-2-ids-certificate) configuration steps and
+[this](identityProvider.md#aisec-daps-issuing-an-ids-certificate) guide for issuing a certificate.
 
 ## Step 1: Configuration
 
