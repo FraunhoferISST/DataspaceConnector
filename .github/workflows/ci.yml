@@ -183,12 +183,6 @@ jobs:
       - name: Build registry path
         id: get_repo
         run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspace-connector"
-      - name: Login to registry
-        uses: docker/login-action@v1
-        with:
-          registry: ${{ secrets.IMAGE_REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build image
         run: |
           docker build . -t $IMAGE:ci
