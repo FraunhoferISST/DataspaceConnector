@@ -15,15 +15,11 @@
  */
 package io.dataspaceconnector.extension.monitoring;
 
-import com.github.jsonldjava.utils.Obj;
-import kotlin.reflect.jvm.internal.impl.builtins.CompanionObjectMappingUtilsKt;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
-
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
