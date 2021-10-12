@@ -1,7 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [X.X.X] - XXXX-XX-XX
+## [6.3.1] - 2021-10-05
+
+### Fixed
+- Check for `maxDepth` in `IdsResourceBuilder` when resolving samples to avoid possible `StackOverFlowError`.
 
 ### Changed
 - Increase pitest-maven version from 1.7.0 to 1.7.1.
@@ -11,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Increase checkstyle version from 9.0.0 to 9.0.1.
 - Increase okhttp version from 4.9.1 to 4.9.2.
 - Increase springdoc version from 1.5.10 to 1.5.11.
+- Increase camel version from 3.11.2 to 3.12.0.
 
 ## [6.3.0] - 2021-30-09
 
