@@ -127,3 +127,13 @@ class ResourceApi:
 
     def get_artifacts_for_agreement(self, agreement):
         return json.loads(self.session.get(agreement + "/artifacts").text)
+
+    def get_requested_artifact(self):
+        agreements = json.loads(self.session.get(self.recipient + "/api/agreements").text)
+        agreement = agreements["_embedded"]["agreements"][0]["_links"]["self"]["href"]
+        artifacts = json.loads(self.session.get(agreement + "/artifacts").text)
+        return artifacts["_embedded"]["artifacts"][0]["_links"]["self"]["href"]
+
+    def get_data_force_download(self, artifact):
+        params = {'download': 'true'}
+        return self.session.get(artifact + "/data", params=params)
