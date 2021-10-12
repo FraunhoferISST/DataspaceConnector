@@ -24,3 +24,6 @@ ALTER TABLE ONLY public.data_authentication
 
 ALTER TABLE ONLY public.data_authentication
     ADD CONSTRAINT fkkl77xdnuxec8upj9lugdv7v5h FOREIGN KEY (remote_data_id) REFERENCES public.data(id);
+
+SELECT lowrite(lo_open(value::oid, x'60000'::int), decode(regexp_replace(encode(lo_get(value::oid), 'escape'),
+    'idsc:', 'https://w3id.org/idsa/code/'), 'escape')) FROM public.agreement;

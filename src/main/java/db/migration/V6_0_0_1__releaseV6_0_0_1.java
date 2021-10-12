@@ -65,8 +65,13 @@ public class V6_0_0_1__releaseV6_0_0_1 extends BaseJavaMigration {
             try(final var rows = select.executeQuery("SELECT id,username,password FROM public.data WHERE username<>NULL AND password <> NULL")) {
                 while(rows.next()) {
                     try(final var insert = select.getConnection().createStatement()) {
-                        final var result = insert.executeQuery("INSERT INTO public.authentication (dtype, username, password) VALUES (BasicAuth, + " + rows.getString(2)  + "," + rows.getString(3) + " ) RETURNING id");
-                        insert.execute("INSERT INTO public.data_authentication (remote_data_id, authentication_id) VALUES("+ rows.getObject(1, UUID.class) + "," + result.getObject(1, UUID.class) +")");
+                        try(final var result = insert.executeQuery("INSERT INTO public.authentication (dtype, username, password) VALUES (BasicAuth, + " + rows.getString(2)  + "," + rows.getString(3) + " ) RETURNING id")) {
+                            insert.execute(
+                                    "INSERT INTO public.data_authentication (remote_data_id, authentication_id) VALUES("
+                                    + rows.getObject(1, UUID.class) + "," + result.getObject(1,
+                                                                                             UUID.class)
+                                    + ")");
+                        }
                     }
                 }
             }
