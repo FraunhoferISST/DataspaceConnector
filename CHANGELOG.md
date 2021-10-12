@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 ## [X.X.X] - XXXX-XX-XX
 
 ### Fixed
-- When resetting the artifacts data, the artifact bytesize and checksum are cleared from "additional"-Fields for consumed resources.
+
+- `UpdateByteSize` sets byteSize and checksum to 0, when data is removed
+- Add nullcheck to `ArtifactService.toInputStream`
 
 ## [6.3.1] - 2021-10-05
 
