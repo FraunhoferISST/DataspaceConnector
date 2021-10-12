@@ -37,7 +37,7 @@ public class ByteaToStringColumnReplacer {
 
     private void copyByteaToString(Context ctx, String src, String dst) throws Exception {
         try(final var select = ctx.getConnection().createStatement()) {
-            try(final var rows = select.executeQuery("SELECT id," + src + " FROM " + table)) {
+            try(final var rows = select.executeQuery("SELECT id," + src + " FROM " + table + " WHERE " + src + " IS NOT NULL;")) {
                 while(rows.next()) {
                     final var uri = toUri(rows.getBytes(2));
                     try(final var update = ctx.getConnection().createStatement()) {
