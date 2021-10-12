@@ -23,7 +23,6 @@ export FILE_PATH=./scripts/ci/libraries
 . "${FILE_PATH}"/libs.sh
 
 function init::setup_env_vars() {
-    export BUILD_FOLDER=build/e2e
     export TEST_SUITE=new-version
     export PROVIDER_VERSION=latest
     export CONSUMER_VERSION=latest
