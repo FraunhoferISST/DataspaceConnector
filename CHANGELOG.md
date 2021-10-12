@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 
 - `UpdateByteSize` sets byteSize and checksum to 0, when data is removed
 - Add nullcheck to `ArtifactService.toInputStream`
+- Check if representations are null or empty in `getMediaTypeOfArtifact`
 
 ## [6.3.1] - 2021-10-05
 

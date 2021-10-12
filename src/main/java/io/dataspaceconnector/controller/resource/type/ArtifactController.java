@@ -209,8 +209,14 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
         // NOTE: Assume that an artifact has only one representation.
         try {
             final var artifact = getService().get(artifactId);
-            final var mediaType = artifact.getRepresentations().get(0).getMediaType();
-            return MediaType.parseMediaType("application/" + mediaType);
+            if (artifact.getRepresentations() != null && !artifact.getRepresentations().isEmpty()) {
+                final var mediaType = artifact.getRepresentations().get(0).getMediaType();
+                return MediaType.parseMediaType("application/" + mediaType);
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("No representation found. Return data as stream.");
+                }
+            }
         } catch (ResourceNotFoundException | NullPointerException | InvalidMediaTypeException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Could not resolve media type. Return data as stream. [exception=({})]",
