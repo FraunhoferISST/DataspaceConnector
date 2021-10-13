@@ -86,6 +86,10 @@ public class IdsInfoContributor implements InfoContributor {
             datInfo.put("issuedAt", issuedAt);
             final var audience = claims.getBody().getAudience();
             datInfo.put("audience", audience);
+            final var ref = claims.getBody().get("referringConnector");
+            datInfo.put("referringConnector", ref);
+            final var securityProfile = claims.getBody().get("securityProfile");
+            datInfo.put("securityProfile", securityProfile);
             builder.withDetail("dat", datInfo);
         } catch (ClaimsException | ConnectorMissingCertExtensionException
                 | DapsConnectionException | DapsEmptyResponseException e) {
