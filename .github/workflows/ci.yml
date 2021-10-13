@@ -8,10 +8,6 @@ concurrency:
   group: ${{ github.head_ref }}
   cancel-in-progress: true
 
-env:
-  REGISTRY: ${{ secrets.IMAGE_REGISTRY }}
-  OWNER: ${{ secrets.REPO_USER }}
-
 jobs:
   style:
     timeout-minutes: 5
@@ -182,7 +178,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Build registry path
         id: get_repo
-        run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspace-connector"
+        run: echo ::set-output name=IMAGE::"ghcr.io/international-data-spaces-association/dataspace-connector"
       - name: Build image
         run: |
           docker build . -t $IMAGE:ci
@@ -217,7 +213,7 @@ jobs:
         run: docker load --input "${GITHUB_WORKSPACE}/${GITHUB_HEAD_REF}.tar"
       - name: Build registry path
         id: get_repo
-        run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspace-connector"
+        run: echo ::set-output name=IMAGE::"ghcr.io/international-data-spaces-association/dataspace-connector"
       - name: Run vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
