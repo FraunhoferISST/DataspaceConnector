@@ -19,7 +19,6 @@ import pprint
 import requests
 import sys
 
-from idsapi import IdsApi
 from resourceapi import ResourceApi
 from subscriptionapi import SubscriptionApi
 
@@ -51,7 +50,7 @@ provider = ResourceApi(providerUrl)
 providerSub = SubscriptionApi(providerUrl)
 
 # Consumer
-consumer = IdsApi(consumerUrl)
+consumerSub = SubscriptionApi(consumerUrl)
 
 ## Create resources
 dataValue = "SOME LONG VALUE"
@@ -107,13 +106,14 @@ provider.add_rule_to_contract(contract, use_rule)
 
 print("Created provider resources")
 
-#TODO get resource ID from offers
-providerSub.create_subscription(data={"value": f"""{
+response = consumerSub.subscription_message(data={"value": f"""{
                                       "title": "string",
                                       "description": "string",
                                       "target": "{offers}",
                                       "location": "{consumerUrl + "/api/ids/data"}",
                                       "subscriber": {consumerUrl}",
                                       "pushData": true
-                                      }"""})
+                                      }"""},
+                                            params={'recipient': providerUrl + '/api/ids/data'})
 
+pprint.pprint(response)

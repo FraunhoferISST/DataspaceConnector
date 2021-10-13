@@ -33,6 +33,10 @@ class SubscriptionApi:
         response = self.session.post(self.recipient + "/api/subscriptions", json=data)
         return response.headers["Location"]
 
+    def subscription_message(self, data={}, params={}):
+        response = self.session.post(self.recipient + "/api/ids/subscribe", json=data, params=params)
+        return json.loads(response.text)
+
     def get_subscriptions(self):
         response = self.session.get(self.recipient + "/api/subscriptions")
         return response
