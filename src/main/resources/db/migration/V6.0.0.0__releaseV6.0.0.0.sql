@@ -27,3 +27,6 @@ ALTER TABLE ONLY public.data_authentication
 
 SELECT lowrite(lo_open(value::oid, x'60000'::int), decode(regexp_replace(encode(lo_get(value::oid), 'escape'),
     'idsc:', 'https://w3id.org/idsa/code/'), 'escape')) FROM public.agreement;
+
+SELECT lowrite(lo_open(value::oid, x'60000'::int), decode(regexp_replace(encode(lo_get(value::oid), 'escape'),
+    'idsc:', 'https://w3id.org/idsa/code/'), 'escape')) FROM public.contractrule;
