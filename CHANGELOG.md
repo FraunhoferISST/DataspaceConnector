@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [X.X.X] - XXXX-XX-XX
+
+### Changed
+- Increase description column length to 4096.
+
 ## [6.3.1] - 2021-10-05
 
 ### Fixed
