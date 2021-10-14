@@ -184,18 +184,20 @@ jobs:
           docker build . -t $IMAGE:ci
         env:
           IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
-          DOCKER_BUILDKIT: 1
+          DOCKER_BUILDKIT: 1      
       - name: Build tar ball
+        id: build_tar_ball
         run: |
           TAR_NAME=$(echo "${GITHUB_HEAD_REF}.tar" | sed 's_/_\-_g' )
           docker save --output "${TAR_NAME}.tar" "${IMAGE}:ci"
+          echo ::set-output name=TAR_NAME::"${TAR_NAME}"
         env:
           IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
       - name: Push image
         uses: actions/upload-artifact@v2
         with:
           name: ${{ github.head_ref }}-image
-          path: ${{ github.workspace }}/${{ github.head_ref }}.tar
+          path: ${{ github.workspace }}/${{ steps.build_tar_ball.outputs.TAR_NAME }}.tar
           retention-days: 1
 
   image-security-scan:
