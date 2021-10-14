@@ -187,7 +187,8 @@ jobs:
           DOCKER_BUILDKIT: 1
       - name: Build tar ball
         run: |
-          docker save --output "${GITHUB_HEAD_REF}.tar" "${IMAGE}:ci"
+          TAR_NAME=$(echo "${GITHUB_HEAD_REF}.tar" | sed 's_/_\-_g' )
+          docker save --output "${TAR_NAME}.tar" "${IMAGE}:ci"
         env:
           IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
       - name: Push image
@@ -210,7 +211,9 @@ jobs:
         with:
           name: ${{ github.head_ref }}-image
       - name: Load image into docker
-        run: docker load --input "${GITHUB_WORKSPACE}/${GITHUB_HEAD_REF}.tar"
+        run: |
+          TAR_NAME=$(echo "${GITHUB_HEAD_REF}.tar" | sed 's_/_\-_g' )
+          docker load --input "${GITHUB_WORKSPACE}/${TAR_NAME}.tar"
       - name: Build registry path
         id: get_repo
         run: echo ::set-output name=IMAGE::"ghcr.io/international-data-spaces-association/dataspace-connector"
