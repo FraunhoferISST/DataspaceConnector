@@ -117,7 +117,7 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Unit- and Integrationtests
-      run: mvn -B -U verify --file pom.xml -Prelease
+      run: mvn -B verify --file pom.xml -Prelease
 
   unit-and-integration-tests-cross-version:
     needs: [style, license, linting]
