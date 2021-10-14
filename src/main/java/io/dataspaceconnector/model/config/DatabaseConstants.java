@@ -28,7 +28,7 @@ public final class DatabaseConstants {
     /**
      * The maximum length of database columns containing descriptions.
      */
-    public static final int DESCRIPTION_COLUMN_LENGTH = 4000;
+    public static final int DESCRIPTION_COLUMN_LENGTH = 4096;
 
     /**
      * Private constructor.
