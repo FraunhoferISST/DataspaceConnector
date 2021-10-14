@@ -735,13 +735,6 @@
 						<year>${project.inceptionYear}</year>
 					</properties>
 				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.pitest</groupId>
