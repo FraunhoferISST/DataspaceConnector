@@ -184,20 +184,24 @@ jobs:
           docker build . -t $IMAGE:ci
         env:
           IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
-          DOCKER_BUILDKIT: 1      
+          DOCKER_BUILDKIT: 1
+      - name: Build artifact name
+        id: get_artifact_name
+        run: |
+          IMAGE_ARTIFACT_NAME=$(echo "${GITHUB_HEAD_REF}" | sed 's_/_\-_g' )
+          echo ::set-output name=IMAGE_ARTIFACT_NAME::"${IMAGE_ARTIFACT_NAME}"
       - name: Build tar ball
         id: build_tar_ball
         run: |
-          TAR_NAME=$(echo "${GITHUB_HEAD_REF}.tar" | sed 's_/_\-_g' )
-          docker save --output "${TAR_NAME}.tar" "${IMAGE}:ci"
-          echo ::set-output name=TAR_NAME::"${TAR_NAME}"
+          docker save --output "${ARTIFACT}.tar" "${IMAGE}:ci"
         env:
           IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
+          ARTIFACT: ${{ steps.get_artifact_name.outputs.IMAGE_ARTIFACT_NAME }}
       - name: Push image
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ github.head_ref }}-image
-          path: ${{ github.workspace }}/${{ steps.build_tar_ball.outputs.TAR_NAME }}.tar
+          name: ${{ steps.get_artifact_name.outputs.IMAGE_ARTIFACT_NAME }}-image
+          path: ${{ github.workspace }}/${{ steps.get_artifact_name.outputs.IMAGE_ARTIFACT_NAME }}.tar
           retention-days: 1
 
   image-security-scan:
@@ -208,14 +212,19 @@ jobs:
       fail-fast: false
 
     steps:
+      - name: Build artifact name
+        id: get_artifact_name
+        run: |
+          IMAGE_ARTIFACT_NAME=$(echo "${GITHUB_HEAD_REF}" | sed 's_/_\-_g' )
+          echo ::set-output name=IMAGE_ARTIFACT_NAME::"${IMAGE_ARTIFACT_NAME}"
       - name: Download image
         uses: actions/download-artifact@v2
         with:
-          name: ${{ github.head_ref }}-image
+          name: ${{ steps.get_artifact_name.outputs.IMAGE_ARTIFACT_NAME }}-image
       - name: Load image into docker
-        run: |
-          TAR_NAME=$(echo "${GITHUB_HEAD_REF}.tar" | sed 's_/_\-_g' )
-          docker load --input "${GITHUB_WORKSPACE}/${TAR_NAME}.tar"
+        run: docker load --input "${GITHUB_WORKSPACE}/${ARTIFACT}.tar"
+        env:
+          ARTIFACT: ${{ steps.get_artifact_name.outputs.IMAGE_ARTIFACT_NAME }}
       - name: Build registry path
         id: get_repo
         run: echo ::set-output name=IMAGE::"ghcr.io/international-data-spaces-association/dataspace-connector"
