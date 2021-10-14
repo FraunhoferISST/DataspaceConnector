@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -35,6 +36,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationEn
 @Log4j2
 @Configuration
 @Getter(AccessLevel.PUBLIC)
+@EnableWebSecurity
 public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
     /**
@@ -43,25 +45,37 @@ public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
     @Value("${spring.h2.console.enabled}")
     private boolean isH2ConsoleEnabled;
 
+    /**
+     * Whether spring web security is enabled.
+     */
+    @Value("${security.enabled:true}")
+    private boolean isSecurityEnabled;
+
     @Override
     @SuppressFBWarnings("SPRING_CSRF_PROTECTION_DISABLED")
     protected final void configure(final HttpSecurity http) throws Exception {
-        http
-                .sessionManagement()
+
+        if (isSecurityEnabled) {
+            http
+                    .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
-                .authorizeRequests()
-                .antMatchers("/", "/api/ids/data").anonymous()
-                .antMatchers("/api/subscriptions/**").authenticated()
-                .antMatchers("/api/**").hasRole("ADMIN")
-                .antMatchers("/actuator/**").hasRole("ADMIN")
-                .antMatchers("/database/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-                .and()
-                .csrf().disable()
-                .httpBasic()
-                .authenticationEntryPoint(authenticationEntryPoint());
-        http.headers().xssProtection();
+                    .authorizeRequests()
+                    .antMatchers("/", "/api/ids/data").anonymous()
+                    .antMatchers("/api/subscriptions/**").authenticated()
+                    .antMatchers("/api/**").hasRole("ADMIN")
+                    .antMatchers("/actuator/**").hasRole("ADMIN")
+                    .antMatchers("/database/**").hasRole("ADMIN")
+                    .anyRequest().authenticated()
+                    .and()
+                    .csrf().disable()
+                    .httpBasic()
+                    .authenticationEntryPoint(authenticationEntryPoint());
+            http.headers().xssProtection();
+        } else {
+            http.authorizeRequests().antMatchers("/**").permitAll()
+                    .anyRequest().authenticated().and().csrf().disable();
+        }
 
         if (isH2ConsoleEnabled) {
             http.headers().frameOptions().disable();
