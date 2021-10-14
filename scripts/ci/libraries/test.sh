@@ -21,7 +21,6 @@ function test::reset_test_suit() {
 }
 
 function test::exit() {
-    rm -r -f $BUILD_FOLDER
     if [ "$TEST_SUITE_FAILURES" -gt 0 ]; then
         exit 1
     fi

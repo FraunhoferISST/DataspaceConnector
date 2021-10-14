@@ -13,26 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model.config;
+package io.dataspaceconnector.extension.monitoring.update.util;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
- * This class contains static constants for configuring database columns.
+ * Configuration for accessed repository.
  */
-public final class DatabaseConstants {
+@Getter
+@AllArgsConstructor
+public class Repository {
 
     /**
-     * The maximum length of database columns containing URIs.
+     * The port.
      */
-    public static final int URI_COLUMN_LENGTH = 2048;
+    private final int port;
 
     /**
-     * The maximum length of database columns containing descriptions.
+     * The hostname.
      */
-    public static final int DESCRIPTION_COLUMN_LENGTH = 4096;
+    private final String host;
 
     /**
-     * Private constructor.
+     * The scheme.
      */
-    private DatabaseConstants() { }
+    private final String scheme;
 
+    /**
+     * The repository's owner.
+     */
+    private final String owner;
+
+    /**
+     * The project name.
+     */
+    private final String name;
 }
