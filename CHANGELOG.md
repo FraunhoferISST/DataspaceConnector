@@ -1,5 +1,16 @@
+
 # Changelog
 All notable changes to this project will be documented in this file.
+
+## [X.X.X] - XXXX-XX-XX
+
+### Added
+
+### Fixed
+- Fix TransientObjectException while updating an artifact
+- Add default constructor to ApiKey class, to avoid InstantiationException
+
+### Changed
 
 ## [6.3.1] - 2021-10-05
 
