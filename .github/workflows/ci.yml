@@ -251,7 +251,9 @@ jobs:
         with:
           name: ${{ github.head_ref }}-image
       - name: Load image into cluster
-        run: sudo k3s ctr images import "${GITHUB_WORKSPACE}/${GITHUB_HEAD_REF}.tar"
+        run: |
+          TAR_NAME=$(echo "${GITHUB_HEAD_REF}.tar" | sed 's_/_\-_g' )
+          sudo k3s ctr images import "${GITHUB_WORKSPACE}/${TAR_NAME}.tar"
       - name: Test environment
         run: |
           kubectl cluster-info
