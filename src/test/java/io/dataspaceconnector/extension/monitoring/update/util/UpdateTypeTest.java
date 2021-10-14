@@ -13,26 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model.config;
+package io.dataspaceconnector.extension.monitoring.update.util;
 
-/**
- * This class contains static constants for configuring database columns.
- */
-public final class DatabaseConstants {
+import org.junit.jupiter.api.Test;
 
-    /**
-     * The maximum length of database columns containing URIs.
-     */
-    public static final int URI_COLUMN_LENGTH = 2048;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-    /**
-     * The maximum length of database columns containing descriptions.
-     */
-    public static final int DESCRIPTION_COLUMN_LENGTH = 4096;
+class UpdateTypeTest {
 
-    /**
-     * Private constructor.
-     */
-    private DatabaseConstants() { }
+    @Test
+    public void toString_nothing_correctMsg() {
+        /* ARRANGE */
+        final var input = UpdateType.NO_UPDATE;
 
+        /* ACT */
+        final var msg = input.toString();
+
+        /* ASSERT */
+        assertEquals("None", msg);
+    }
 }

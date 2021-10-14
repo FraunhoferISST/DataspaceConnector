@@ -13,26 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model.config;
-
 /**
- * This class contains static constants for configuring database columns.
+ * Provides actuator extensions.
  */
-public final class DatabaseConstants {
-
-    /**
-     * The maximum length of database columns containing URIs.
-     */
-    public static final int URI_COLUMN_LENGTH = 2048;
-
-    /**
-     * The maximum length of database columns containing descriptions.
-     */
-    public static final int DESCRIPTION_COLUMN_LENGTH = 4096;
-
-    /**
-     * Private constructor.
-     */
-    private DatabaseConstants() { }
-
-}
+package io.dataspaceconnector.extension.monitoring;

@@ -13,26 +13,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model.config;
+package io.dataspaceconnector.extension.monitoring.update.util;
 
 /**
- * This class contains static constants for configuring database columns.
+ * Types which updates may be present.
  */
-public final class DatabaseConstants {
+public enum UpdateType {
 
     /**
-     * The maximum length of database columns containing URIs.
+     * If no update is available.
      */
-    public static final int URI_COLUMN_LENGTH = 2048;
+    NO_UPDATE("None"),
 
     /**
-     * The maximum length of database columns containing descriptions.
+     * A new major release is available.
      */
-    public static final int DESCRIPTION_COLUMN_LENGTH = 4096;
+    MAJOR("Major"),
 
     /**
-     * Private constructor.
+     * A new minor release is available.
      */
-    private DatabaseConstants() { }
+    MINOR("Minor"),
 
+    /**
+     * A new patch release is available.
+     */
+    PATCH("Patch");
+
+    /**
+     * Holds the enums string.
+     */
+    private final String value;
+
+    /**
+     * Constructor.
+     *
+     * @param name The name of the update-enum .
+     */
+    UpdateType(final String name) {
+        this.value = name;
+    }
+
+    @Override
+    public String toString() {
+        return value;
+    }
 }

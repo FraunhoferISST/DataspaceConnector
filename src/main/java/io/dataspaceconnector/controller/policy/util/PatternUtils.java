@@ -139,7 +139,7 @@ public final class PatternUtils {
         final var start = input.getStart();
         final var end = input.getEnd();
 
-        if (ValidationUtils.isInvalidDate(start) || ValidationUtils.isInvalidDate(start)) {
+        if (ValidationUtils.isInvalidDate(start) || ValidationUtils.isInvalidDate(end)) {
             throw new Exception("This is not a valid datetime.");
         }
 
@@ -171,7 +171,7 @@ public final class PatternUtils {
         final var end = input.getEnd();
         final var date = input.getDate();
 
-        if (ValidationUtils.isInvalidDate(start) || ValidationUtils.isInvalidDate(start)
+        if (ValidationUtils.isInvalidDate(start) || ValidationUtils.isInvalidDate(end)
                 || ValidationUtils.isInvalidDate(date)) {
             throw new Exception("This is not a valid datetime.");
         }
