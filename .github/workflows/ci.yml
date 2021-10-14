@@ -28,7 +28,7 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Run style checks
-      run: mvn -B -U checkstyle:check --file pom.xml
+      run: mvn -B checkstyle:check --file pom.xml
 
   license:
     timeout-minutes: 5
@@ -49,7 +49,7 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Run license checks
-      run: mvn -B -U license:check --file pom.xml
+      run: mvn -B license:check --file pom.xml
 
   linting:
     timeout-minutes: 5
@@ -93,7 +93,7 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Run static code analysis
-      run: mvn -B -U compile spotbugs:check --file pom.xml
+      run: mvn -B compile spotbugs:check --file pom.xml
 
   unit-and-integration-tests:
     needs: [style, license, linting]
@@ -117,7 +117,7 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Unit- and Integrationtests
-      run: mvn -B verify --file pom.xml -Prelease
+      run: mvn -B -U verify --file pom.xml -Prelease
 
   unit-and-integration-tests-cross-version:
     needs: [style, license, linting]
@@ -142,7 +142,7 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Unit- and Integrationtests
-      run: mvn -B -U verify --file pom.xml -Prelease
+      run: mvn -B verify --file pom.xml -Prelease
 
   mutation-tests:
     needs: unit-and-integration-tests
@@ -164,7 +164,7 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Run Mutation Tests
-      run: mvn -B -U -Dmaven.javadoc.skip=true test org.pitest:pitest-maven:mutationCoverage --file pom.xml
+      run: mvn -B -Dmaven.javadoc.skip=true test org.pitest:pitest-maven:mutationCoverage --file pom.xml
 
   build-test-image:
     needs: unit-and-integration-tests
