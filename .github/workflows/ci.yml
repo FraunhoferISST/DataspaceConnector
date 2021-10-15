@@ -228,8 +228,6 @@ jobs:
       - name: Build registry path
         id: get_repo
         run: echo ::set-output name=IMAGE::"ghcr.io/international-data-spaces-association/dataspace-connector"
-      - name: Cache db
-        run: mkdir triv
       - name: Cache multiple paths
         uses: actions/cache@v2
         with:
