@@ -109,9 +109,13 @@ public class RouteManager {
 
         try {
             createAndDeployRoute(appRoute, freemarkerInput);
-        } catch (Exception e) {
+        } catch (Exception exception) {
+            if (log.isDebugEnabled()) {
+                log.debug("Failed to create Camel route. [exception=({})]",
+                        exception.getMessage());
+            }
             throw new RouteCreationException("Error creating Camel route for AppRoute with ID '"
-                    + appRoute.getId() + "'", e);
+                    + appRoute.getId() + "'", exception);
         }
     }
 
@@ -132,7 +136,7 @@ public class RouteManager {
         if (routeStart.get(0) instanceof GenericEndpoint) {
             final var genericEndpoint = (GenericEndpoint) routeStart.get(0);
             freemarkerInput.put("startUrl", escapeForXml(genericEndpoint.getPath()));
-            addBasicAuthHeaderForGenericEndpoint(freemarkerInput, genericEndpoint);
+            addGenericEndpointAuthHeader(freemarkerInput, genericEndpoint);
         } else if (routeStart.get(0) instanceof AppEndpoint) {
             final var appEndpoint = (AppEndpoint) routeStart.get(0);
             freemarkerInput.put("startUrl", escapeForXml(appEndpoint.getPath()));
@@ -153,7 +157,7 @@ public class RouteManager {
         if (routeEnd.get(0) instanceof GenericEndpoint) {
             final var genericEndpoint = (GenericEndpoint) routeEnd.get(0);
             freemarkerInput.put("endUrl", escapeForXml(genericEndpoint.getPath()));
-            addBasicAuthHeaderForGenericEndpoint(freemarkerInput, genericEndpoint);
+            addGenericEndpointAuthHeader(freemarkerInput, genericEndpoint);
         } else if (routeEnd.get(0) instanceof AppEndpoint) {
             final var appEndpoint = (AppEndpoint) routeEnd.get(0);
             freemarkerInput.put("endUrl", escapeForXml(appEndpoint.getPath()));
@@ -173,14 +177,20 @@ public class RouteManager {
     }
 
     /**
-     * Creates and adds the basic authentication header for calling a generic endpoint to an input
-     * map, if basic authentication is defined for the given endpoint.
+     * Creates and adds the authentication header for calling a generic endpoint to an input map.
      *
      * @param freemarkerInput the input map.
      * @param genericEndpoint the generic endpoint.
      */
-    private void addBasicAuthHeaderForGenericEndpoint(final Map<String, Object> freemarkerInput,
-                                                      final GenericEndpoint genericEndpoint) {
+    private void addGenericEndpointAuthHeader(final Map<String, Object> freemarkerInput,
+                                              final GenericEndpoint genericEndpoint) {
+        if (genericEndpoint.getProperties() != null
+                && genericEndpoint.getProperties().get("database") != null
+                && genericEndpoint.getProperties().get("database").equals("true")) {
+            // If the generic endpoint uses a database, authentication is handled through a bean.
+            return;
+        }
+
         final var auth = genericEndpoint.getGenericEndpointAuthentication();
         if (auth != null && auth.getAuthUsername() != null
                 && !auth.getAuthUsername().isBlank() && auth.getAuthPassword() != null
@@ -343,18 +353,6 @@ public class RouteManager {
         }
 
         return stringWriter;
-    }
-
-    /**
-     * Deletes the Camel route for a given {@link AppRoute}. The route is stopped at and removed
-     * from the Camel context.
-     *
-     * @param appRoute the AppRoute.
-     * @throws RouteDeletionException if the Camel route cannot be deleted.
-     */
-    public void deleteRoute(final AppRoute appRoute) throws RouteDeletionException {
-        final var camelRouteId = getCamelRouteId(appRoute);
-        deleteRouteById(camelRouteId);
     }
 
     /**

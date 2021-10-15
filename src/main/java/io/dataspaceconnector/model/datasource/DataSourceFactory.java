@@ -20,6 +20,7 @@ import io.dataspaceconnector.model.auth.ApiKey;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.base.AbstractFactory;
+import io.dataspaceconnector.model.util.FactoryUtils;
 
 /**
  * Creates and updates data sources.
@@ -27,30 +28,31 @@ import io.dataspaceconnector.model.base.AbstractFactory;
 public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDesc> {
 
     /**
-     * The default data source type.
-     */
-    public static final DataSourceType DEFAULT_SOURCE_TYPE = DataSourceType.DATABASE;
-
-    /**
      * @param desc The description of the entity.
      * @return The new data source entity.
      */
     @Override
     protected DataSource initializeEntity(final DataSourceDesc desc) {
-        return new DataSource();
+        if (desc instanceof DatabaseDataSourceDesc) {
+            return new DatabaseDataSource();
+        } else {
+            return new DataSource();
+        }
     }
 
     /**
      * @param dataSource The data source entity.
      * @param desc       The description of the new entity.
      * @return True, if data source is updated.
+     * @throws InvalidEntityException if the desc type does not match the dataSource type or if
+     *                                API key auth is used for type database.
      */
     @Override
     protected boolean updateInternal(final DataSource dataSource, final DataSourceDesc desc) {
+        checkCorrectType(dataSource, desc);
+
         final var hasUpdatedAuthentication = updateAuthentication(
                 dataSource, desc.getBasicAuth(), desc.getApiKey());
-        final var hasUpdatedDataSourceType = updateDataSourceType(
-                dataSource, desc.getType());
 
         if (DataSourceType.DATABASE.equals(dataSource.getType())
                 && dataSource.getAuthentication() instanceof ApiKey) {
@@ -58,23 +60,19 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
                     + " cannot have API key authentication.");
         }
 
-        return hasUpdatedAuthentication || hasUpdatedDataSourceType;
+        final var hasUpdatedDatabaseProperties = updateDatabaseProperties(dataSource, desc);
+
+        return hasUpdatedAuthentication || hasUpdatedDatabaseProperties;
     }
 
-    /**
-     * @param dataSource     The data source entity.
-     * @param dataSourceType The type of the data source.
-     * @return True, if data source type is updated.
-     */
-    private boolean updateDataSourceType(final DataSource dataSource,
-                                         final DataSourceType dataSourceType) {
-        final var tmp = dataSourceType == null ? DEFAULT_SOURCE_TYPE : dataSourceType;
-        if (dataSource.getType() != null && dataSource.getType().equals(tmp)) {
-            return false;
+    private void checkCorrectType(final DataSource dataSource, final DataSourceDesc desc) {
+        if (dataSource instanceof DatabaseDataSource && !(desc instanceof DatabaseDataSourceDesc)) {
+            throw new InvalidEntityException("Cannot update datasource type.");
         }
 
-        dataSource.setType(tmp);
-        return true;
+        if (desc instanceof DatabaseDataSourceDesc && !(dataSource instanceof DatabaseDataSource)) {
+            throw new InvalidEntityException("Cannot update datasource type.");
+        }
     }
 
     /**
@@ -106,6 +104,74 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
             return true;
         } else if (dataSource.getAuthentication() != null) {
             dataSource.setAuthentication(null);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Updates the database specific fields, if applicable.
+     *
+     * @param dataSource The entity to be updated.
+     * @param desc       The updated descritpion.
+     * @return whether the entity has been updated.
+     */
+    private boolean updateDatabaseProperties(final DataSource dataSource,
+                                             final DataSourceDesc desc) {
+        if (dataSource instanceof DatabaseDataSource && desc instanceof DatabaseDataSourceDesc) {
+            final var databaseDataSource = (DatabaseDataSource) dataSource;
+            final var databaseDataSourceDesc = (DatabaseDataSourceDesc) desc;
+
+            final var updatedUrl = updateDatabaseUrl(databaseDataSource,
+                    databaseDataSourceDesc.getUrl());
+            final var updatedDriver = updateDriverClass(databaseDataSource,
+                    databaseDataSourceDesc.getDriverClassName());
+
+            return updatedUrl || updatedDriver;
+        }
+
+        return false;
+    }
+
+    /**
+     * Updates the database URL.
+     *
+     * @param dataSource The entity to be updated.
+     * @param url        The updated URL.
+     * @return whether the entity has been updated.
+     */
+    private boolean updateDatabaseUrl(final DatabaseDataSource dataSource,
+                                      final String url) {
+        final var newUrl = FactoryUtils.updateString(dataSource.getUrl(), url, "");
+        if (newUrl.isPresent()) {
+            if (newUrl.get().isBlank()) {
+                throw new InvalidEntityException("Database datasource must not have a blank URL.");
+            }
+            dataSource.setUrl(newUrl.get());
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Updates the driver class name.
+     *
+     * @param dataSource  The entity to be updated.
+     * @param driverClass The updated driver class name.
+     * @return whether the entity has been updated.
+     */
+    private boolean updateDriverClass(final DatabaseDataSource dataSource,
+                                      final String driverClass) {
+        final var newDriver = FactoryUtils
+                .updateString(dataSource.getDriverClassName(), driverClass, "");
+        if (newDriver.isPresent()) {
+            if (newDriver.get().isBlank()) {
+                throw new InvalidEntityException("Database datasource must not have a blank "
+                        + "driver class name.");
+            }
+            dataSource.setDriverClassName(newDriver.get());
             return true;
         }
 

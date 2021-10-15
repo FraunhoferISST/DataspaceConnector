@@ -30,37 +30,34 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DataSourceFactoryTest {
 
-    final DataSourceDesc desc = new DataSourceDesc();
+    final DataSourceDesc desc = new RestDataSourceDesc();
     final DataSourceFactory factory = new DataSourceFactory();
 
     @Test
     void create_validDesc_returnNew() {
-        /* ARRANGE */
-        desc.setType(DataSourceType.DATABASE);
-
         /* ACT */
         final var result = factory.create(desc);
 
         /* ASSERT */
-        assertEquals(DataSourceType.DATABASE, result.getType());
+        assertEquals(DataSourceType.REST, result.getType());
     }
 
     @Test
     void create_typeDatabaseWithApiKey_throwInvalidEntityException() {
         /* ARRANGE */
-        desc.setType(DataSourceType.DATABASE);
-        desc.setApiKey(new AuthenticationDesc("key", "value"));
+        final var databaseDesc = new DatabaseDataSourceDesc();
+        databaseDesc.setApiKey(new AuthenticationDesc("key", "value"));
 
         /* ACT && ASSERT */
-        assertThrows(InvalidEntityException.class, () -> factory.create(desc));
+        assertThrows(InvalidEntityException.class, () -> factory.create(databaseDesc));
     }
 
     @Test
     void update_newBasicAuth_willUpdate() {
         /* ARRANGE */
-        final var desc = new DataSourceDesc();
+        final var desc = new RestDataSourceDesc();
         desc.setBasicAuth(new AuthenticationDesc("", ""));
-        final var dataSource = factory.create(new DataSourceDesc());
+        final var dataSource = factory.create(new RestDataSourceDesc());
 
         /* ACT */
         final var result = factory.update(dataSource, desc);
@@ -73,10 +70,9 @@ public class DataSourceFactoryTest {
     @Test
     void update_newApiKeyAuth_willUpdate() {
         /* ARRANGE */
-        final var desc = new DataSourceDesc();
-        desc.setType(DataSourceType.REST);
+        final var desc = new RestDataSourceDesc();
         desc.setApiKey(new AuthenticationDesc("", ""));
-        final var dataSource = factory.create(new DataSourceDesc());
+        final var dataSource = factory.create(new RestDataSourceDesc());
 
         /* ACT */
         final var result = factory.update(dataSource, desc);
@@ -90,10 +86,10 @@ public class DataSourceFactoryTest {
     @Test
     void update_sameAuth_willNotUpdate() {
         /* ARRANGE */
-        final var dataSource = factory.create(new DataSourceDesc());
+        final var dataSource = factory.create(new RestDataSourceDesc());
 
         /* ACT */
-        final var result = factory.update(dataSource, new DataSourceDesc());
+        final var result = factory.update(dataSource, new RestDataSourceDesc());
 
         /* ASSERT */
         assertFalse(result);
@@ -103,12 +99,12 @@ public class DataSourceFactoryTest {
     @Test
     void update_setAuthenticationNull_willUpdate() {
         /* ARRANGE */
-        final var desc = new DataSourceDesc();
+        final var desc = new RestDataSourceDesc();
         desc.setBasicAuth(new AuthenticationDesc("key", "value"));
         final var dataSource = factory.create(desc);
 
         /* ACT */
-        final var result = factory.update(dataSource, new DataSourceDesc());
+        final var result = factory.update(dataSource, new RestDataSourceDesc());
 
         /* ASSERT */
         assertTrue(result);
@@ -116,38 +112,35 @@ public class DataSourceFactoryTest {
     }
 
     @Test
-    void update_newType_willUpdate() {
+    void update_newType_throwException() {
         /* ARRANGE */
-        final var desc = new DataSourceDesc();
-        desc.setType(DataSourceType.REST);
-        final var dataSource = factory.create(new DataSourceDesc());
+        final var desc = new RestDataSourceDesc();
+        final var newDesc = new DatabaseDataSourceDesc();
+        newDesc.setUrl("https://someUrl");
+        newDesc.setDriverClassName("some.driver.class");
+        final var dataSource = factory.create(newDesc);
 
-        /* ACT */
-        final var result = factory.update(dataSource, desc);
-
-        /* ASSERT */
-        assertTrue(result);
-        assertEquals(desc.getType(), dataSource.getType());
+        /* ACT && ASSERT */
+        assertThrows(InvalidEntityException.class, () -> factory.update(dataSource, desc));
     }
 
     @Test
     void update_sameType_willNotUpdate() {
         /* ARRANGE */
-        final var dataSource = factory.create(new DataSourceDesc());
+        final var dataSource = factory.create(new RestDataSourceDesc());
 
         /* ACT */
-        final var result = factory.update(dataSource, new DataSourceDesc());
+        final var result = factory.update(dataSource, new RestDataSourceDesc());
 
         /* ASSERT */
         assertFalse(result);
-        assertEquals(DataSourceFactory.DEFAULT_SOURCE_TYPE, dataSource.getType());
+        assertEquals(DataSourceType.REST, dataSource.getType());
     }
 
     @Test
     void update_sameAuthHeader_willNotUpdate() {
         /* ARRANGE */
-        final var desc = new DataSourceDesc();
-        desc.setType(DataSourceType.REST);
+        final var desc = new RestDataSourceDesc();
         desc.setApiKey(new AuthenticationDesc("key", "value"));
         final var dataSource = factory.create(desc);
 

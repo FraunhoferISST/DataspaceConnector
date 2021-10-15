@@ -72,6 +72,7 @@ import io.dataspaceconnector.service.resource.type.RepresentationService;
 import io.dataspaceconnector.service.resource.type.RequestedResourceService;
 import io.dataspaceconnector.service.resource.type.RouteService;
 import io.dataspaceconnector.service.resource.type.RuleService;
+import io.dataspaceconnector.service.routing.BeanManager;
 import io.dataspaceconnector.service.routing.RouteHelper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -222,11 +223,13 @@ public class ResourceConfig {
      * Create a datasource service bean.
      *
      * @param repo The datasource repository.
+     * @param beanManager The manager for datasource beans.
      * @return The datasource service bean.
      */
     @Bean("dataSourceService")
-    public DataSourceService createDataSourceService(final DataSourceRepository repo) {
-        return new DataSourceService(repo, new DataSourceFactory());
+    public DataSourceService createDataSourceService(final DataSourceRepository repo,
+                                                     final BeanManager beanManager) {
+        return new DataSourceService(repo, new DataSourceFactory(), beanManager);
     }
 
     /**

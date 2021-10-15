@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.model.datasource;
 
-import io.dataspaceconnector.model.auth.Authentication;
-import io.dataspaceconnector.model.base.Entity;
+import javax.persistence.Entity;
+
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,25 +24,16 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.CascadeType;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Inheritance;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 /**
- * Entity which holds information about the data sources.
+ * Subclass of {@link DataSource} that holds information specific for databases.
  */
-@javax.persistence.Entity
-@Inheritance
+@SQLDelete(sql = "UPDATE datasource SET deleted=true WHERE id=?")
+@Where(clause = "deleted = false")
+@Entity
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
-@SQLDelete(sql = "UPDATE datasource SET deleted=true WHERE id=?")
-@Where(clause = "deleted = false")
-@Table(name = "datasource")
-public class DataSource extends Entity {
+public class DatabaseDataSource extends DataSource {
 
     /**
      * Serial version uid.
@@ -50,21 +41,20 @@ public class DataSource extends Entity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Creates a DataSource with default type REST.
+     * Creates a DatabaseDataSource with default type DATABASE.
      */
-    public DataSource() {
-        this.type = DataSourceType.REST;
+    public DatabaseDataSource() {
+        this.setType(DataSourceType.DATABASE);
     }
 
     /**
-     * The authentication for the data source.
+     * JDBC URL of the database.
      */
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    private Authentication authentication;
+    private String url;
 
     /**
-     * The type of the data source.
+     * Name of the driver class to use for connecting to the database.
      */
-    @Enumerated(EnumType.STRING)
-    private DataSourceType type;
+    private String driverClassName;
+
 }

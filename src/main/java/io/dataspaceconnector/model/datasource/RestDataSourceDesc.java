@@ -15,32 +15,13 @@
  */
 package io.dataspaceconnector.model.datasource;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.dataspaceconnector.model.auth.AuthenticationDesc;
-import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * Describing data source's properties.
+ * Describes properties of a {@link DataSource} with type REST.
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = RestDataSourceDesc.class, name = "REST"),
-        @JsonSubTypes.Type(value = DatabaseDataSourceDesc.class, name = "DATABASE")
-})
 @Data
 @EqualsAndHashCode(callSuper = true)
-public abstract class DataSourceDesc extends Description {
-
-    /**
-     * The basic authentication for the data location.
-     */
-    private AuthenticationDesc basicAuth;
-
-    /**
-     * The API key authentication for the data location.
-     */
-    private AuthenticationDesc apiKey;
+public class RestDataSourceDesc extends DataSourceDesc {
 }

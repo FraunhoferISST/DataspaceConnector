@@ -17,6 +17,7 @@ package io.dataspaceconnector.service.resource.ids.builder;
 
 import java.math.BigInteger;
 import java.net.URI;
+import java.util.HashMap;
 
 import de.fraunhofer.iais.eis.AppEndpointBuilder;
 import de.fraunhofer.iais.eis.AppEndpointType;
@@ -33,6 +34,7 @@ import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
 import io.dataspaceconnector.model.auth.ApiKey;
 import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.auth.BasicAuth;
+import io.dataspaceconnector.model.datasource.DatabaseDataSource;
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
@@ -63,7 +65,7 @@ public final class IdsEndpointBuilder
             throws ConstraintViolationException {
 
         final var documentation = endpoint.getDocs();
-        final var location = endpoint.getLocation();
+        var location = endpoint.getLocation();
         final var info = new TypedLiteral(endpoint.getInfo(), "EN");
 
         URI accessUrl;
@@ -78,10 +80,12 @@ public final class IdsEndpointBuilder
 
             final var genericEndpoint = (GenericEndpoint) endpoint;
             BasicAuthentication idsAuth = null;
+            final var additional = new HashMap<String, String>();
             if (genericEndpoint.getDataSource() != null
                     && genericEndpoint.getDataSource().getAuthentication() != null) {
 
-                final var auth = genericEndpoint.getDataSource().getAuthentication();
+                final var dataSource = genericEndpoint.getDataSource();
+                final var auth = dataSource.getAuthentication();
 
                 if (auth instanceof BasicAuth) {
                     final var basicAuth = (BasicAuth) auth;
@@ -98,6 +102,16 @@ public final class IdsEndpointBuilder
                             .build();
                     idsAuth.setProperty("type", "api-key");
                 }
+
+                if (dataSource instanceof DatabaseDataSource) {
+                    additional.put("database", "true");
+
+                    if (location.contains("?")) {
+                        location = location.concat("&dataSource=#" + dataSource.getId());
+                    } else {
+                        location = location.concat("?dataSource=#" + dataSource.getId());
+                    }
+                }
             }
 
             idsEndpoint = new GenericEndpointBuilder(getAbsoluteSelfLink(endpoint))
@@ -107,6 +121,7 @@ public final class IdsEndpointBuilder
                     ._endpointDocumentation_(Util.asList(documentation))
                     ._endpointInformation_(Util.asList(info))
                     .build();
+            additional.forEach(idsEndpoint::setProperty);
 
         } else if (endpoint instanceof AppEndpoint) {
 
