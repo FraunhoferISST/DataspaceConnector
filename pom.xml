@@ -778,7 +778,7 @@
 					<threads>2</threads>
 					<timestampedReports>false</timestampedReports>
 					<coverageThreshold>90</coverageThreshold>
-					<mutationThreshold>93</mutationThreshold>
+					<mutationThreshold>90</mutationThreshold>
 				</configuration>
 			</plugin>
 			<plugin>
