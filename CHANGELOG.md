@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Add `ids` field to `/actuator/info` endpoint, to monitor the connectors certificate expiration status and DAT infos (if a DAT can be received).
 
+### Changed
+- Increase description column length to 4096.
+
 ## [6.3.1] - 2021-10-05
 
 ### Fixed
