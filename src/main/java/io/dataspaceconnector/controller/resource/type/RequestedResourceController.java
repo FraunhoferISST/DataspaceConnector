@@ -49,9 +49,7 @@ public class RequestedResourceController extends BaseResourceController<Requeste
     @Hidden
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
     @Override
     public final ResponseEntity<RequestedResourceView> create(
             final RequestedResourceDesc desc) {

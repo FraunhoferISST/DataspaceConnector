@@ -71,7 +71,6 @@ public class NotificationController {
             + "all subscribers about a resource offer, representation, or artifact update.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "No Content"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @ResponseBody

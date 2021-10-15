@@ -115,9 +115,7 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
     @RequestMapping(method = RequestMethod.GET)
     @Operation(summary = "Get all children of a base resource with pagination")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)})
     public PagedModel<V> getResource(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @RequestParam(required = false, defaultValue = "0") final Integer page,
@@ -145,9 +143,7 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
     @PostMapping
     @Operation(summary = "Add a list of children to a base resource")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)})
     public PagedModel<V> addResources(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<URI> resources) {
@@ -171,9 +167,7 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
     @Operation(summary = "Replace the children of a base resource")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
-                    description = ResponseDescription.NO_CONTENT),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.NO_CONTENT)})
     public HttpEntity<Void> replaceResources(@Valid @PathVariable(name = "id") final UUID ownerId,
                                              @Valid @RequestBody final List<URI> resources) {
         linker.replace(ownerId, toSet(resources));
@@ -191,9 +185,7 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
     @Operation(summary = "Remove a list of children from a base resource")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
-                    description = ResponseDescription.NO_CONTENT),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.NO_CONTENT)})
     public HttpEntity<Void> removeResources(@Valid @PathVariable(name = "id") final UUID ownerId,
                                             @Valid @RequestBody final List<URI> resources) {
         linker.remove(ownerId, toSet(resources));

@@ -72,8 +72,6 @@ public class ConfigurationController extends BaseResourceController<Configuratio
                     description = ResponseDescription.NO_CONTENT),
             @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
                     description = ResponseDescription.BAD_REQUEST),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED),
             @ApiResponse(responseCode = ResponseCode.UNSUPPORTED_MEDIA_TYPE,
                     description = ResponseDescription.UNSUPPORTED_MEDIA_TYPE),
             @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
@@ -98,9 +96,7 @@ public class ConfigurationController extends BaseResourceController<Configuratio
     @GetMapping(value = "/active", produces = "application/hal+json")
     @Operation(summary = "Get current configuration")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)})
     @ResponseBody
     public ConfigurationView getConfiguration() {
         return get(configurationSvc.getActiveConfig().getId());

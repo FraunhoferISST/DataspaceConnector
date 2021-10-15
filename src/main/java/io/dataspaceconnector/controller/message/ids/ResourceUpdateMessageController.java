@@ -101,7 +101,6 @@ public class ResourceUpdateMessageController {
             + "or updating a resource at an IDS broker or consumer connector.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "417", description = "Expectation failed"),
             @ApiResponse(responseCode = "500", description = "Internal server error"),

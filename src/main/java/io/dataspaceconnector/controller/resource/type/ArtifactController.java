@@ -112,9 +112,7 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
     @GetMapping("{id}/data/**")
     @Operation(summary = "Get data by artifact id with query input")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)})
     public ResponseEntity<StreamingResponseBody> getData(
             @Valid @PathVariable(name = "id") final UUID artifactId,
             @RequestParam(required = false) final Boolean download,
@@ -166,9 +164,7 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
     @PostMapping("{id}/data")
     @Operation(summary = "Get data by artifact id with query input")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)})
     public ResponseEntity<StreamingResponseBody> getData(
             @Valid @PathVariable(name = "id") final UUID artifactId,
             @RequestBody(required = false) final QueryInput queryInput)
@@ -230,9 +226,7 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      */
     @PutMapping(value = "{id}/data", consumes = "*/*")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)})
     public ResponseEntity<Void> putData(
             @Valid @PathVariable(name = "id") final UUID artifactId,
             @RequestBody final byte[] inputStream) throws IOException {

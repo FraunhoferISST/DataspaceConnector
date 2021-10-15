@@ -177,9 +177,7 @@ public class EndpointController implements CRUDController<Endpoint, EndpointDesc
     @Operation(summary = "Creates start endpoint for the route")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
-                    description = ResponseDescription.NO_CONTENT),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.NO_CONTENT)})
     public final ResponseEntity<Void> linkDataSource(
             @Valid @PathVariable(name = "id") final UUID genericEndpointId,
             @Valid @PathVariable(name = "dataSourceId") final UUID dataSourceId) {

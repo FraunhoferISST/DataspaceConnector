@@ -56,10 +56,7 @@ public interface CRUDController<T extends Entity, D extends Description, V> {
     @Operation(summary = "Create a base resource")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.CREATED,
-                    description = ResponseDescription.CREATED),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)
-    })
+                    description = ResponseDescription.CREATED)})
     ResponseEntity<V> create(@RequestBody D desc);
 
     /**
@@ -72,10 +69,7 @@ public interface CRUDController<T extends Entity, D extends Description, V> {
     @RequestMapping(method = RequestMethod.GET)
     @Operation(summary = "Get a list of base resources with pagination")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)
-    })
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)})
     PagedModel<V> getAll(@RequestParam(required = false, defaultValue = "0") Integer page,
                          @RequestParam(required = false, defaultValue = "30") Integer size);
 
@@ -91,10 +85,7 @@ public interface CRUDController<T extends Entity, D extends Description, V> {
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @Operation(summary = "Get a base resource by id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)
-    })
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)})
     V get(@Valid @PathVariable(name = "id") UUID resourceId);
 
     /**
@@ -114,10 +105,7 @@ public interface CRUDController<T extends Entity, D extends Description, V> {
             @ApiResponse(responseCode = ResponseCode.CREATED,
                     description = ResponseDescription.CREATED),
             @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
-                    description = ResponseDescription.NO_CONTENT),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)
-    })
+                    description = ResponseDescription.NO_CONTENT)})
     ResponseEntity<V> update(@Valid @PathVariable(name = "id") UUID id, @RequestBody D desc);
 
     /**
@@ -131,9 +119,6 @@ public interface CRUDController<T extends Entity, D extends Description, V> {
     @Operation(summary = "Delete a base resource by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
-                    description = ResponseDescription.NO_CONTENT),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)
-    })
+                    description = ResponseDescription.NO_CONTENT)})
     ResponseEntity<Void> delete(@Valid @PathVariable(name = "id") UUID id);
 }

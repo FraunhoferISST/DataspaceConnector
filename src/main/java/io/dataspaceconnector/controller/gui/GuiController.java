@@ -54,8 +54,6 @@ public class GuiController {
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description
             = ResponseDescription.BAD_REQUEST)
-    @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED, description
-            = ResponseDescription.UNAUTHORIZED)
     ResponseEntity<String> getSpecificEnum(final @PathVariable String enumName) {
         final var enums = GuiUtils.getSpecificEnum(enumName);
         return enums == null ? ResponseEntity.badRequest().body("Could not get the enums")

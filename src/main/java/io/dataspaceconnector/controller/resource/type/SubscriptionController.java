@@ -69,9 +69,7 @@ public class SubscriptionController extends BaseResourceController<Subscription,
     @Operation(summary = "Create a base resource")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.CREATED,
-                    description = ResponseDescription.CREATED),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.CREATED)})
     public ResponseEntity<SubscriptionView> create(@RequestBody final SubscriptionDesc desc) {
         // Set boolean to false as this subscription has been created via a REST API call.
         desc.setIdsProtocol(false);
@@ -88,9 +86,7 @@ public class SubscriptionController extends BaseResourceController<Subscription,
     @GetMapping("owning")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
     public final PagedModel<SubscriptionView> getAllFiltered(
             @RequestParam(required = false, defaultValue = "0") final Integer page,
             @RequestParam(required = false, defaultValue = "30") final Integer size) {

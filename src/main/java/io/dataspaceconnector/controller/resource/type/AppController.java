@@ -75,9 +75,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     @Hidden
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
     @Override
     public final ResponseEntity<AppView> create(final AppDesc desc) {
         throw new MethodNotAllowed();
@@ -86,9 +84,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     @Hidden
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
     @Override
     public final ResponseEntity<AppView> update(final UUID resourceId, final AppDesc desc) {
         throw new MethodNotAllowed();
@@ -107,9 +103,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
             @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
                     description = ResponseDescription.BAD_REQUEST),
             @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
-                    description = ResponseDescription.INTERNAL_SERVER_ERROR),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.INTERNAL_SERVER_ERROR)})
     @ResponseBody
     public final ResponseEntity<Object> containerManagement(
             @PathVariable("id") final UUID appId,
@@ -240,9 +234,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
             @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
                     description = ResponseDescription.BAD_REQUEST),
             @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
-                    description = ResponseDescription.INTERNAL_SERVER_ERROR),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.INTERNAL_SERVER_ERROR)})
     @ResponseBody
     public final ResponseEntity<Object> relatedAppStore(final @PathVariable("id") UUID appId) {
         return ResponseEntity.ok(getService().getAppStoreByAppId(appId));

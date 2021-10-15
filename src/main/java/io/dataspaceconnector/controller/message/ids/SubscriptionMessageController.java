@@ -85,7 +85,6 @@ public class SubscriptionMessageController {
     @Operation(summary = "Send IDS request message for element subscription")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "417", description = "Expectation failed"),
             @ApiResponse(responseCode = "500", description = "Internal server error"),
             @ApiResponse(responseCode = "502", description = "Bad gateway")})
@@ -136,7 +135,6 @@ public class SubscriptionMessageController {
     @Operation(summary = "Send IDS request message for element unsubscription")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "417", description = "Expectation failed"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @PreAuthorize("hasPermission(#recipient, 'rw')")

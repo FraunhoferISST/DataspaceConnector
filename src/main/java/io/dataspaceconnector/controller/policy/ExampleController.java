@@ -71,8 +71,6 @@ public class ExampleController {
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED),
             @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
                     description = ResponseDescription.INTERNAL_SERVER_ERROR)})
     @PostMapping("/validation")
@@ -100,9 +98,7 @@ public class ExampleController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
-                    description = ResponseDescription.BAD_REQUEST),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.BAD_REQUEST)})
     @PostMapping("/policy")
     @ResponseBody
     public ResponseEntity<Object> getExampleUsagePolicy(@RequestBody final PatternDesc input) {

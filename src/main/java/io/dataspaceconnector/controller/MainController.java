@@ -38,6 +38,7 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -68,12 +69,11 @@ public class MainController {
      *
      * @return Self-description or error response.
      */
+    @SecurityRequirements
     @GetMapping(value = {"/", ""}, produces = "application/ld+json")
     @Operation(summary = "Public IDS self-description")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)})
     @ResponseBody
     public ResponseEntity<Object> getPublicSelfDescription() {
         return ResponseEntity.ok(connectorService.getConnectorWithoutResources().toRdf());
@@ -88,8 +88,6 @@ public class MainController {
     @Operation(summary = "Private IDS self-description")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED),
             @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
                     description = ResponseDescription.INTERNAL_SERVER_ERROR)})
     @ResponseBody
@@ -105,9 +103,7 @@ public class MainController {
     @Hidden
     @GetMapping("/api")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)})
     public ResponseEntity<RepresentationModel<?>> root() {
         final var model = new RepresentationModel<>();
 
