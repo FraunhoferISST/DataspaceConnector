@@ -14,9 +14,14 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Increase description column length to 4096.
+- Increase BasicAuth (username, password) and ApiKey (key, value) column length to 2048.
 - Increase dependency-check-maven version from 6.3.1 to 6.4.1.
 - Increase pitest version from 1.7.1 to 1.7.2.
 - Increase spotbugs version from 4.4.1 to 4.4.2.
+- Increase equalsverifier version from 3.7.1 to 3.7.2.
+
+### Fixed
+- Fix collisions in bootstrapping process setting a unique path for the `bootstrap.path` property.
 
 ## [6.3.1] - 2021-10-05
 
