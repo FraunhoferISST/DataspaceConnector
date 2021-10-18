@@ -71,7 +71,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-${{ ${{ needs.setup.outputs.branch_name }} }}-license-${{ hashFiles('**/pom.xml') }}
+        key: ${{ runner.os }}-${{ needs.setup.outputs.branch_name }}-license-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-${{ needs.setup.outputs.branch_name }}-license-
     - name: Run license checks
       run: mvn -B license:check --file pom.xml
