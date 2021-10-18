@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DataSourceFactoryTest {
+class DataSourceFactoryTest {
 
     final DataSourceDesc desc = new RestDataSourceDesc();
     final DataSourceFactory factory = new DataSourceFactory();
@@ -53,7 +53,7 @@ public class DataSourceFactoryTest {
     }
 
     @Test
-    void update_newBasicAuth_willUpdate() {
+    void update_restWithNewBasicAuth_willUpdate() {
         /* ARRANGE */
         final var desc = new RestDataSourceDesc();
         desc.setBasicAuth(new AuthenticationDesc("", ""));
@@ -68,7 +68,7 @@ public class DataSourceFactoryTest {
     }
 
     @Test
-    void update_newApiKeyAuth_willUpdate() {
+    void update_restWithNewApiKeyAuth_willUpdate() {
         /* ARRANGE */
         final var desc = new RestDataSourceDesc();
         desc.setApiKey(new AuthenticationDesc("", ""));
@@ -81,6 +81,24 @@ public class DataSourceFactoryTest {
         assertTrue(result);
         assertEquals(new ApiKey(desc.getApiKey().getKey(), desc.getApiKey().getValue()),
                 dataSource.getAuthentication());
+    }
+
+    @Test
+    void update_databaseWithNewBasicAuth_willUpdate() {
+        /* ARRANGE */
+        final var desc = new DatabaseDataSourceDesc();
+        desc.setBasicAuth(new AuthenticationDesc("", ""));
+        desc.setUrl("https://someUrl");
+        desc.setDriverClassName("someDriverClass");
+        final var dataSource = factory.create(desc);
+        desc.setBasicAuth(new AuthenticationDesc("user", "pw"));
+
+        /* ACT */
+        final var result = factory.update(dataSource, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+        assertEquals(new BasicAuth(desc.getBasicAuth()), dataSource.getAuthentication());
     }
 
     @Test
@@ -149,5 +167,115 @@ public class DataSourceFactoryTest {
 
         /* ASSERT */
         assertFalse(result);
+    }
+
+    @Test
+    void update_newUrl_willUpdate() {
+        /* ARRANGE */
+        final var desc = new DatabaseDataSourceDesc();
+        desc.setUrl("https://someUrl");
+        desc.setDriverClassName("driverClass");
+        final var dataSource = factory.create(desc);
+
+        final var newDesc = new DatabaseDataSourceDesc();
+        newDesc.setUrl("https://someUrl2");
+        newDesc.setDriverClassName("driverClass");
+
+        /* ACT */
+        final var result = factory.update(dataSource, newDesc);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
+
+    @Test
+    void update_blankUrl_throwInvalidEntityException() {
+        /* ARRANGE */
+        final var desc = new DatabaseDataSourceDesc();
+        desc.setUrl("https://someUrl");
+        desc.setDriverClassName("driverClass");
+        final var dataSource = factory.create(desc);
+
+        final var newDesc = new DatabaseDataSourceDesc();
+        newDesc.setUrl("");
+        newDesc.setDriverClassName("driverClass");
+
+        /* ACT && ASSERT */
+        assertThrows(InvalidEntityException.class, () -> factory.update(dataSource, newDesc));
+    }
+
+    @Test
+    void update_newDriverClassName_willUpdate() {
+        /* ARRANGE */
+        final var desc = new DatabaseDataSourceDesc();
+        desc.setUrl("https://someUrl");
+        desc.setDriverClassName("driverClass");
+        final var dataSource = factory.create(desc);
+
+        final var newDesc = new DatabaseDataSourceDesc();
+        newDesc.setUrl("https://someUrl");
+        newDesc.setDriverClassName("driverClass2");
+
+        /* ACT */
+        final var result = factory.update(dataSource, newDesc);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
+
+    @Test
+    void update_blankDriverClassName_throwInvalidEntityException() {
+        /* ARRANGE */
+        final var desc = new DatabaseDataSourceDesc();
+        desc.setUrl("https://someUrl");
+        desc.setDriverClassName("driverClass");
+        final var dataSource = factory.create(desc);
+
+        final var newDesc = new DatabaseDataSourceDesc();
+        newDesc.setUrl("https://someUrl");
+        newDesc.setDriverClassName("");
+
+        /* ACT && ASSERT */
+        assertThrows(InvalidEntityException.class, () -> factory.update(dataSource, newDesc));
+    }
+
+    @Test
+    void update_sameUrlAndDriverClassName_willNotUpdate() {
+        /* ARRANGE */
+        final var desc = new DatabaseDataSourceDesc();
+        desc.setUrl("https://someUrl");
+        desc.setDriverClassName("driverClass");
+        final var dataSource = factory.create(desc);
+
+        /* ACT */
+        final var result = factory.update(dataSource, desc);
+
+        /* ASSERT */
+        assertFalse(result);
+    }
+
+    @Test
+    void update_databaseDescWithRestDataSource_throwInvalidEntityException() {
+        /* ARRANGE */
+        final var dataSource = factory.create(new RestDataSourceDesc());
+        final var desc = new DatabaseDataSourceDesc();
+        desc.setUrl("https://someUrl");
+        desc.setDriverClassName("driverClass");
+
+        /* ACT && ASSERT */
+        assertThrows(InvalidEntityException.class, () -> factory.update(dataSource, desc));
+    }
+
+    @Test
+    void update_restDescWithDatabaseDataSource_throwInvalidEntityException() {
+        /* ARRANGE */
+        final var databaseDesc = new DatabaseDataSourceDesc();
+        databaseDesc.setUrl("https://someUrl");
+        databaseDesc.setDriverClassName("driverClass");
+        final var dataSource = factory.create(databaseDesc);
+
+        /* ACT && ASSERT */
+        assertThrows(InvalidEntityException.class,
+                () -> factory.update(dataSource, new RestDataSourceDesc()));
     }
 }
