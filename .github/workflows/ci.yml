@@ -66,20 +66,6 @@ jobs:
     - name: Run license checks
       run: mvn -B license:check --file pom.xml
 
-  linting:
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Lint Docker
-      uses: hadolint/hadolint-action@v1.5.0
-      with:
-        dockerfile: Dockerfile
-        config: .hadolint.yaml
-
   static-code-analysis:
     needs: [setup, style, license]
     timeout-minutes: 5
@@ -147,6 +133,20 @@ jobs:
         restore-keys: ${{ runner.os }}-${{ needs.setup.outputs.branch_name }}-m2-
     - name: Run Mutation Tests
       run: mvn -B -Dmaven.javadoc.skip=true test org.pitest:pitest-maven:mutationCoverage --file pom.xml
+
+  linting:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Lint Docker
+      uses: hadolint/hadolint-action@v1.5.0
+      with:
+        dockerfile: Dockerfile
+        config: .hadolint.yaml
 
   build_test_image:
     needs: [linting, unit-and-integration-tests]
