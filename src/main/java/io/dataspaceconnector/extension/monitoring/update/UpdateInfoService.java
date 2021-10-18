@@ -86,6 +86,7 @@ public class UpdateInfoService {
             }
         } else {
             // If no update is available, set boolean to false and show no more details.
+            updateInfo.clear();
             updateInfo.put("available", false);
         }
 
