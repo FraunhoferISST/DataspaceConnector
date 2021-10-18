@@ -64,14 +64,6 @@ jobs:
       with:
         dockerfile: Dockerfile
         config: .hadolint.yaml
-    # - name: Lint Docker and Yaml
-    #   uses: bridgecrewio/checkov-action@master
-    #   with:
-    #     directory: .
-    #     quiet: true
-    #     output_format: github_failed_only
-    #     download_external_modules: true
-    #     soft_fail: true
 
   static-code-analysis:
     needs: [style, license, linting]
@@ -160,6 +152,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ${{ steps.get_artifact_name.outputs.IMAGE_ARTIFACT_NAME }}-image
+          required: false
       - name: Load image into docker
         run: docker load --input "${GITHUB_WORKSPACE}/${ARTIFACT}.tar"
         env:
