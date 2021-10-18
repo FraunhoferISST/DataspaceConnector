@@ -16,8 +16,10 @@
 package io.dataspaceconnector.service;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 import io.dataspaceconnector.common.net.HttpResponse;
@@ -40,6 +42,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -111,6 +114,26 @@ class DataRetrieverTest {
         /* ASSERT */
         assertNotNull(result);
         assertArrayEquals(dataValue, result.readAllBytes());
+    }
+
+    @Test
+    void getData_withDataIsNull() throws Exception {
+        var emptyData = new LocalData();
+        var getDataMethod = retriever.getClass().getDeclaredMethod("getData", LocalData.class);
+        getDataMethod.setAccessible(true);
+        var emptyRes = (InputStream) getDataMethod.invoke(retriever, emptyData);
+        assertTrue(emptyRes.readAllBytes().length == 0);
+    }
+
+    @Test
+    void getData_withDataNotNull() throws Exception {
+        var data = new LocalData();
+        var value = new byte[]{1, 2, 3, 4};
+        data.setValue(value);
+        var getDataMethod = retriever.getClass().getDeclaredMethod("getData", LocalData.class);
+        getDataMethod.setAccessible(true);
+        var res = (InputStream) getDataMethod.invoke(retriever, data);
+        assertTrue(Arrays.equals(res.readAllBytes(), value));
     }
 
     private ArtifactImpl getArtifact(final Data data) {
