@@ -43,7 +43,7 @@ class DatasourceControllerIT {
     void create_validInput_returnNew() throws Exception {
         mockMvc.perform(post("/api/datasources")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
+                        .content("{\"type\":\"REST\"}"))
                .andExpect(status().isCreated());
     }
 
@@ -53,7 +53,7 @@ class DatasourceControllerIT {
         for(int i = 0; i < 5; i++) {
             mockMvc.perform(post("/api/datasources")
                                     .contentType(MediaType.APPLICATION_JSON)
-                                    .content("{}"))
+                                    .content("{\"type\":\"REST\"}"))
                    .andExpect(status().isCreated());
         }
 
@@ -66,7 +66,7 @@ class DatasourceControllerIT {
         final var newObject =
         mockMvc.perform(post("/api/datasources")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{}"))
+                                .content("{\"type\":\"REST\"}"))
                .andExpect(status().isCreated()).andReturn();
 
         final var newObj = newObject.getResponse().getHeader("Location");
@@ -80,14 +80,14 @@ class DatasourceControllerIT {
         final var newObject =
                 mockMvc.perform(post("/api/datasources")
                                         .contentType(MediaType.APPLICATION_JSON)
-                                        .content("{}"))
+                                        .content("{\"type\":\"REST\"}"))
                        .andExpect(status().isCreated()).andReturn();
 
         final var newObj = newObject.getResponse().getHeader("Location");
 
         mockMvc.perform(put(URI.create(newObj).getPath())
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{}"))
+                                .content("{\"type\":\"REST\"}"))
                .andExpect(status().isNoContent());
     }
 
@@ -97,7 +97,7 @@ class DatasourceControllerIT {
         final var newObject =
                 mockMvc.perform(post("/api/datasources")
                                         .contentType(MediaType.APPLICATION_JSON)
-                                        .content("{}"))
+                                        .content("{\"type\":\"REST\"}"))
                        .andExpect(status().isCreated()).andReturn();
 
         final var newObj = newObject.getResponse().getHeader("Location");
