@@ -7,7 +7,7 @@ on:
 concurrency:
   group: ${{ github.head_ref }}
   cancel-in-progress: true
-  
+
 jobs:
   setup:
     timeout-minutes: 5
@@ -16,7 +16,7 @@ jobs:
       branch_name: ${{ steps.get_branch_name.outputs.HEAD_REF }}
       image_artifact_name: ${{ steps.get_image_artifact_name.outputs.IMAGE_ARTIFACT_NAME }}
       image_name: ${{ steps.get_image_registry.outputs.IMAGE }}
- 
+
     steps:
     - name: Build branch name
       id: get_branch_name
@@ -31,7 +31,7 @@ jobs:
     - name: Build image name
       id: get_image_name
       run: echo ::set-output name=IMAGE::"ghcr.io/international-data-spaces-association/dataspace-connector"
-          
+
   style:
     needs: [setup]
     timeout-minutes: 5
@@ -180,7 +180,7 @@ jobs:
           docker save --output "${ARTIFACT}.tar" "${IMAGE}:ci"
         env:
           IMAGE: ${{ needs.setup.outputs.image_name }}
-          ARTIFACT: ${{ steps.get_image_artifact_name.outputs.IMAGE_ARTIFACT_NAME }}
+          ARTIFACT: ${{ needs.setup.outputs.image_artifact_name }}
       - name: Push image
         uses: actions/upload-artifact@v2
         with:
