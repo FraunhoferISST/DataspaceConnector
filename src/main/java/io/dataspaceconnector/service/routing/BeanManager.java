@@ -106,8 +106,8 @@ public class BeanManager {
         try {
             beanRegistry.removeBeanDefinition(id.toString());
         } catch (NoSuchBeanDefinitionException exception) {
-            if (log.isInfoEnabled()) {
-                log.info("Failed to delete bean {} because bean does not exist.", id);
+            if (log.isDebugEnabled()) {
+                log.debug("Failed to delete bean {} because bean does not exist.", id);
             }
             // No further action required.
         }

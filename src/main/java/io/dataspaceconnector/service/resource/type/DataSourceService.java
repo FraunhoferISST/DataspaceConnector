@@ -17,8 +17,6 @@ package io.dataspaceconnector.service.resource.type;
 
 import java.util.UUID;
 
-import javax.annotation.PostConstruct;
-
 import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.datasource.DataSource;
@@ -95,25 +93,5 @@ public class DataSourceService extends BaseEntityService<DataSource, DataSourceD
     public void delete(final UUID dataSourceId) {
         beanManager.removeDataSourceBean(dataSourceId);
         super.delete(dataSourceId);
-    }
-
-    /**
-     * Re-creates the datasource beans for all persisted DataSources.
-     */
-    @PostConstruct
-    public void recreateDataSourceBeans() {
-        final var dataSources = getRepository().findAll();
-        for (var dataSource : dataSources) {
-            if (dataSource instanceof DatabaseDataSource) {
-                try {
-                    beanManager.createDataSourceBean((DatabaseDataSource) dataSource);
-                } catch (BeanCreationException exception) {
-                    if (log.isWarnEnabled()) {
-                        log.warn("Failed to recreate datasource bean. Some routes might not"
-                                + " work correctly. [exception=({})]", exception.getMessage());
-                    }
-                }
-            }
-        }
     }
 }

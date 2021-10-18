@@ -25,6 +25,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -38,6 +39,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Component
 @RequiredArgsConstructor
 @Log4j2
+@DependsOn("beanReDeployer")
 public class RouteReDeployer {
 
     /**
