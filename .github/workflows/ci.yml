@@ -152,11 +152,9 @@ jobs:
     needs: [linting, unit-and-integration-tests]
     timeout-minutes: 15
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
     outputs:
       image_artifact_name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
-      image_name: ${{ steps.get_image_registry.outputs.image_name }}
+      image_name: ${{ steps.get_image_name.outputs.image_name }}
 
     steps:
       - name: Checkout Repo
