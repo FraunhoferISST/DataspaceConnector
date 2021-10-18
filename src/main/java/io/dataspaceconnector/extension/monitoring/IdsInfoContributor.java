@@ -15,19 +15,21 @@
  */
 package io.dataspaceconnector.extension.monitoring;
 
-import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.ConnectorMissingCertExtensionException;
 import de.fraunhofer.ids.messaging.core.daps.DapsConnectionException;
 import de.fraunhofer.ids.messaging.core.daps.DapsEmptyResponseException;
 import de.fraunhofer.ids.messaging.core.daps.DapsValidator;
 import de.fraunhofer.ids.messaging.core.daps.TokenProviderService;
+import io.dataspaceconnector.common.ids.ConnectorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.stereotype.Component;
 
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Contributor, adding IDS-Cert expiration to actuator info endpoint.
@@ -37,12 +39,12 @@ import java.util.HashMap;
 public class IdsInfoContributor implements InfoContributor {
 
     /**
-     * The Configuration Container.
+     * Service for connector details.
      */
-    private final ConfigContainer configContainer;
+    private final ConnectorService connectorSvc;
 
     /**
-     * The Tokenprovider.
+     * The token provider.
      */
     private final TokenProviderService tokenProvSvc;
 
@@ -51,49 +53,78 @@ public class IdsInfoContributor implements InfoContributor {
      */
     @Override
     public void contribute(final Info.Builder builder) {
-        addValidDatInfo(builder);
-        addConnectorInfo(builder);
+        builder.withDetail("configuration", getConfigDetails());
+        builder.withDetail("ids", getIdsDetails());
+
     }
 
-    private void addConnectorInfo(final Info.Builder builder) {
-        final var conInfo = new HashMap<String, Object>();
-        final var expiration = configContainer.getKeyStoreManager().getCertExpiration();
-        conInfo.put("connectorCertExpiration", expiration);
-        final var inbound = configContainer.getConnector().getInboundModelVersion();
-        conInfo.put("inboundModelVersion", inbound);
-        final var outbound = configContainer.getConnector().getOutboundModelVersion();
-        conInfo.put("outboundModelVersion", outbound);
-        final var deploy = configContainer.getConfigurationModel().getConnectorDeployMode().getId();
-        conInfo.put("deployMode", deploy);
-        final var status = configContainer.getConfigurationModel().getConnectorStatus().getId();
-        conInfo.put("status", status);
-        builder.withDetail("connector", conInfo);
+    private Map<String, Object> getConfigDetails() {
+        final var deploy = connectorSvc.getDeployMethod();
+        final var status = connectorSvc.getConnectorStatus();
+
+        return new HashMap<>() {{
+            put("deployMode", deploy);
+            put("connectorStatus", status);
+        }};
     }
 
-    private void addValidDatInfo(final Info.Builder builder) {
-        final var datInfo = new HashMap<String, Object>();
+    private Map<String, Object> getIdsDetails() {
+        final var map = new HashMap<String, Object>() {{
+            put("infoModel", getInfoModelDetails());
+            put("certificate", getCertDetails());
+        }};
+
         try {
-            final var dat = tokenProvSvc.getDAT();
-            var claims = DapsValidator.getClaims(
-                    dat,
-                    tokenProvSvc.providePublicKeys()
-            );
-            final var exp = claims.getBody().getExpiration();
-            datInfo.put("datExpiration", exp);
-            final var iss = claims.getBody().getIssuer();
-            datInfo.put("issuer", iss);
-            final var issuedAt = claims.getBody().getIssuedAt();
-            datInfo.put("issuedAt", issuedAt);
-            final var audience = claims.getBody().getAudience();
-            datInfo.put("audience", audience);
-            final var ref = claims.getBody().get("referringConnector");
-            datInfo.put("referringConnector", ref);
-            final var securityProfile = claims.getBody().get("securityProfile");
-            datInfo.put("securityProfile", securityProfile);
-            builder.withDetail("dat", datInfo);
+            map.put("dat", getDatDetails());
         } catch (ClaimsException | ConnectorMissingCertExtensionException
                 | DapsConnectionException | DapsEmptyResponseException e) {
-            builder.withDetail("dat", false);
+            map.put("dat", false);
         }
+
+        return map;
+    }
+
+    private Map<String, Object> getInfoModelDetails() {
+        return new HashMap<>() {{
+            put("inboundVersion", connectorSvc.getInboundModelVersion());
+            put("outboundVersion", connectorSvc.getOutboundModelVersion());
+        }};
+    }
+
+    private Map<String, Object> getCertDetails() {
+        final var keyStoreManager = connectorSvc.getKeyStoreManager();
+        final var cert = (X509Certificate) keyStoreManager.getCert();
+
+        return new HashMap<>() {{
+            put("expirationDate", keyStoreManager.getCertExpiration());
+            put("issuer", cert.getIssuerDN().getName());
+            put("issuedAt", cert.getNotBefore());
+            put("sigAlgName", cert.getSigAlgName());
+            put("type", cert.getType());
+            put("version", cert.getVersion());
+        }};
+    }
+
+    private Map<String, Object> getDatDetails() throws ClaimsException, DapsConnectionException,
+            ConnectorMissingCertExtensionException, DapsEmptyResponseException {
+        final var dat = tokenProvSvc.getDAT();
+        final var claims
+                = DapsValidator.getClaims(dat, tokenProvSvc.providePublicKeys());
+
+        final var exp = claims.getBody().getExpiration();
+        final var iss = claims.getBody().getIssuer();
+        final var issuedAt = claims.getBody().getIssuedAt();
+        final var audience = claims.getBody().getAudience();
+        final var ref = claims.getBody().get("referringConnector");
+        final var securityProfile = claims.getBody().get("securityProfile");
+
+        return new HashMap<>() {{
+            put("audience", audience);
+            put("expirationDate", exp);
+            put("issuer", iss);
+            put("issuedAt", issuedAt);
+            put("referringConnector", ref);
+            put("securityProfile", securityProfile);
+        }};
     }
 }
