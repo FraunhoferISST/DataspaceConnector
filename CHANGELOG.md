@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Increase description column length to 4096.
 - Increase dependency-check-maven version from 6.3.1 to 6.4.1.
+- Increase pitest version from 1.7.1 to 1.7.2.
 - Increase spotbugs version from 4.4.1 to 4.4.2.
 - Change encoding of local data from `UTF-16` to `UTF-8`.
 - Change relation between `Route` and `Artifact` to one-to-one (previously one-to-many).
