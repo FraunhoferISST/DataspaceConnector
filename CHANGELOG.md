@@ -3,9 +3,16 @@ All notable changes to this project will be documented in this file.
 
 ## [X.X.X] - XXXX-XX-XX
 
+### Fixed
+
+- `UpdateByteSize` sets byteSize and checksum to 0, when data is removed.
+- Add nullcheck to `ArtifactService.toInputStream`.
+- Check if representations are null or empty in `getMediaTypeOfArtifact`.
+
 ### Changed
 - Increase description column length to 4096.
 - Increase dependency-check-maven version from 6.3.1 to 6.4.1.
+- Increase pitest version from 1.7.1 to 1.7.2.
 - Increase spotbugs version from 4.4.1 to 4.4.2.
 
 ## [6.3.1] - 2021-10-05
