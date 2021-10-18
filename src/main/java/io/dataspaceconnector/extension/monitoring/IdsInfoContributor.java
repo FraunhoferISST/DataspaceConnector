@@ -61,12 +61,9 @@ public class IdsInfoContributor implements InfoContributor {
     }
 
     private Map<String, Object> getConfigDetails() {
-        final var deploy = connectorSvc.getDeployMethod();
-        final var status = connectorSvc.getConnectorStatus();
-
         return new HashMap<>() {{
-            put("deployMode", deploy);
-            put("connectorStatus", status);
+            put("deployMode", connectorSvc.getDeployMethod());
+            put("connectorStatus", connectorSvc.getConnectorStatus());
         }};
     }
 
@@ -119,22 +116,15 @@ public class IdsInfoContributor implements InfoContributor {
             ConnectorMissingCertExtensionException, DapsEmptyResponseException {
         final var dat = tokenProvSvc.getDAT();
         final var claims
-                = DapsValidator.getClaims(dat, tokenProvSvc.providePublicKeys());
-
-        final var exp = claims.getBody().getExpiration();
-        final var iss = claims.getBody().getIssuer();
-        final var issuedAt = claims.getBody().getIssuedAt();
-        final var audience = claims.getBody().getAudience();
-        final var ref = claims.getBody().get("referringConnector");
-        final var securityProfile = claims.getBody().get("securityProfile");
+                = DapsValidator.getClaims(dat, tokenProvSvc.providePublicKeys()).getBody();
 
         return new HashMap<>() {{
-            put("audience", audience);
-            put("expirationDate", exp);
-            put("issuer", iss);
-            put("issuedAt", issuedAt);
-            put("referringConnector", ref);
-            put("securityProfile", securityProfile);
+            put("audience", claims.getAudience());
+            put("expirationDate", claims.getExpiration());
+            put("issuer", claims.getIssuer());
+            put("issuedAt", claims.getIssuedAt());
+            put("referringConnector", claims.get("referringConnector"));
+            put("securityProfile", claims.get("securityProfile"));
         }};
     }
 }
