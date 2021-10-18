@@ -8,35 +8,8 @@ concurrency:
   group: ${{ github.head_ref }}
   cancel-in-progress: true
 
-jobs:
-  dependencies:
-    timeout-minutes: 5
-    runs-on: ${{ matrix.os }}
-    strategy:
-       matrix:
-         os: [ubuntu-latest, windows-latest, macos-latest]
-         java: [11]
-    
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v2
-      with:
-       distribution: 'temurin'
-       java-version: '11'
-    - name: Cache maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-${{github.head_ref}}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-${{github.head_ref}}-m2-
-    - name: Pull dependencies
-      run: mvn -e -B dependency:resolve
-    - name: Pull plugins
-      run: mvn -e -B dependency:resolve-plugins
-       
+jobs:    
   style:
-    needs: [dependencies]
     timeout-minutes: 5
     runs-on: ubuntu-latest
     strategy:
@@ -52,13 +25,12 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-${{github.head_ref}}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-${{github.head_ref}}-m2-
+        key: ${{ runner.os }}-${{github.head_ref}}-style-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-${{github.head_ref}}-style-
     - name: Run style checks
       run: mvn -B checkstyle:check --file pom.xml
 
   license:
-    needs: [dependencies]
     timeout-minutes: 5
     runs-on: ubuntu-latest
     strategy:
@@ -74,8 +46,8 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-${{github.head_ref}}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-${{github.head_ref}}-m2-
+        key: ${{ runner.os }}-${{github.head_ref}}-license-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-${{github.head_ref}}-license-
     - name: Run license checks
       run: mvn -B license:check --file pom.xml
 
@@ -118,8 +90,8 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-${{github.head_ref}}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-${{github.head_ref}}-m2-
+        key: ${{ runner.os }}-${{github.head_ref}}-analysis-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-${{github.head_ref}}-analysis-
     - name: Run static code analysis
       run: mvn -B compile spotbugs:check --file pom.xml
 
@@ -179,12 +151,19 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Cache maven packages
-        uses: actions/cache@v2
+      - name: Build artifact name
+        id: get_artifact_name
+        run: |
+          IMAGE_ARTIFACT_NAME=$(echo "${GITHUB_HEAD_REF}" | sed 's_/_\-_g' )
+          echo ::set-output name=IMAGE_ARTIFACT_NAME::"${IMAGE_ARTIFACT_NAME}"
+      - name: Download image
+        uses: actions/download-artifact@v2
         with:
-          path: ~/.m2
-          key: ${{ runner.os }}-${{github.head_ref}}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-${{github.head_ref}}-m2-
+          name: ${{ steps.get_artifact_name.outputs.IMAGE_ARTIFACT_NAME }}-image
+      - name: Load image into docker
+        run: docker load --input "${GITHUB_WORKSPACE}/${ARTIFACT}.tar"
+        env:
+          ARTIFACT: ${{ steps.get_artifact_name.outputs.IMAGE_ARTIFACT_NAME }}
       - name: Build registry path
         id: get_repo
         run: echo ::set-output name=IMAGE::"ghcr.io/international-data-spaces-association/dataspace-connector"
@@ -194,11 +173,6 @@ jobs:
         env:
           IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
           DOCKER_BUILDKIT: 1
-      - name: Build artifact name
-        id: get_artifact_name
-        run: |
-          IMAGE_ARTIFACT_NAME=$(echo "${GITHUB_HEAD_REF}" | sed 's_/_\-_g' )
-          echo ::set-output name=IMAGE_ARTIFACT_NAME::"${IMAGE_ARTIFACT_NAME}"
       - name: Build tar ball
         id: build_tar_ball
         run: |
