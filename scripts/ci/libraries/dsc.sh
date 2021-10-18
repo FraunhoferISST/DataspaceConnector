@@ -15,43 +15,20 @@
 # limitations under the License.
 #
 
-
-function dsc::setup_build_folder() {
-    export PROVIDER_CHART=$BUILD_FOLDER/$TEST_SUITE/provider
-    export CONSUMER_CHART=$BUILD_FOLDER/$TEST_SUITE/consumer
-
-    # Provider setup
-    rm -r -f $PROVIDER_CHART
-    mkdir -p $PROVIDER_CHART
-    cp -r charts $PROVIDER_CHART
-    sed -i "s/^appVersion:.*$/appVersion: $PROVIDER_VERSION/" $PROVIDER_CHART/charts/dataspace-connector/Chart.yaml
-
-    # Consumer setup
-    rm -r -f $CONSUMER_CHART
-    mkdir -p $CONSUMER_CHART
-    cp -r charts $CONSUMER_CHART
-    sed -i "s/^appVersion:.*$/appVersion: $CONSUMER_VERSION/" $CONSUMER_CHART/charts/dataspace-connector/Chart.yaml
-}
-
-function dsc::cleanup_build_folder() {
-    rm -r -f $PROVIDER_CHART
-    rm -r -f $CONSUMER_CHART
-}
-
 function dsc::run_provider_consumer_test() {
     test::reset_test_suit
     echo "$LINE_BREAK_STAR"
 
-    dsc::setup_build_folder
-
     echo "Runnning test suite: $TEST_SUITE"
     echo "Setup provider ($PROVIDER_VERSION) and consumer ($CONSUMER_VERSION)"
 
+    # Set the pull policy to IfNotPresent so that the postgres image is loaded but the dsc image only read from local registry
+
     # Provider setup
-    helm install provider "$PROVIDER_CHART"/charts/dataspace-connector --set env.config.SPRING_APPLICATION_NAME="Provider Connector" 2>&1 > /dev/null
+    helm install provider ./charts/dataspace-connector --set image.pullPolicy=IfNotPresent --set image.tag="${PROVIDER_VERSION}" --set env.config.SPRING_APPLICATION_NAME="Provider Connector" 2>&1 > /dev/null
 
     # Consumer setup
-    helm install consumer "$CONSUMER_CHART"/charts/dataspace-connector --set env.config.SPRING_APPLICATION_NAME="Consumer Connector" 2>&1 > /dev/null
+    helm install consumer ./charts/dataspace-connector --set image.pullPolicy=IfNotPresent --set image.tag="${CONSUMER_VERSION}" --set env.config.SPRING_APPLICATION_NAME="Consumer Connector" 2>&1 > /dev/null
 
     echo "Waiting for readiness"
     kubectl rollout status deployments/provider-dataspace-connector --timeout=360s 2>&1 > /dev/null
@@ -83,6 +60,4 @@ function dsc::run_provider_consumer_test() {
     helm uninstall consumer 2>&1 > /dev/null
     # Stop port forwarding
     pkill -f "port-forward"
-
-    dsc::cleanup_build_folder
 }

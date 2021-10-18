@@ -32,6 +32,7 @@ import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -113,11 +114,14 @@ public final class IdsResourceBuilder<T extends Resource> extends AbstractIdsBui
                 .build();
 
         // Get sample resources as list.
-        final var samples = resource.getSamples()
-                .stream()
-                .map(x -> this.create(resourceSvc.get(EndpointUtils.getUUIDFromPath(x)), -1))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        var samples = new ArrayList<de.fraunhofer.iais.eis.Resource>();
+        if (currentDepth <= maxDepth && maxDepth >= 0) {
+            samples.addAll(resource.getSamples()
+                    .stream()
+                    .map(x -> this.create(resourceSvc.get(EndpointUtils.getUUIDFromPath(x)), -1))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
+        }
 
         // Build resource only if at least one representation and one contract is present.
         if (representations.isEmpty() || contracts.isEmpty() || representations.get().isEmpty()

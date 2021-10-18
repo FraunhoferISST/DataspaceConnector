@@ -245,11 +245,11 @@ and for received messages, the sent [DAT](https://github.com/International-Data-
 will not be checked.
 
 To turn on the [DAT](https://github.com/International-Data-Spaces-Association/IDS-G/blob/master/core/DAPS/README.md#dynamic-attribute-token-content)
-checking, you need to set the `ids:connectorDeployMode` to`idsc:PRODUCTIVE_DEPLOYMENT`. For getting
-a trusted certificate, contact[Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de). Add the keystore
-with the IDS certificate inside to the `resources/conf` and change the filename at `ids:keyStore`
-accordingly. **In addition, set your connector id to a meaningful URL that uniquely identifies your
-connector towards e.g. the IDS Metadata Broker**:
+checking, you need to set the `ids:connectorDeployMode` to`idsc:PRODUCTIVE_DEPLOYMENT`. **For issuing
+a trusted IDS certificate, see [here](../communication/v6/ecosystem/identityProvider.md#aisec-daps-issuing-an-ids-certificate)**.
+Add the keystore with the IDS certificate inside to the `resources/conf` and change the filename at
+`ids:keyStore` accordingly. **In addition, set your connector id to a meaningful URL that uniquely
+identifies your connector towards e.g. the IDS Metadata Broker**:
 
 ```json
 "ids:connectorDescription" : {
@@ -263,7 +263,7 @@ connector towards e.g. the IDS Metadata Broker**:
 This mode is a **security risk** and cannot ensure that the connector is talking to a verified IDS
 participant. Furthermore, messages from the Dataspace Connector without a valid IDS certificate
 may not be accepted by other Connector implementations and will not be accepted by the IDS Metadata
-Broker running in the IDS lab.
+Broker running in the IDS lab and the public available IDS AppStore.
 
 ---
 
@@ -408,7 +408,7 @@ If you want to change the base path, which will be used to find properties and c
 bootstrapping, you can customize the following line:
 
 ```properties
-bootstrap.path=.
+bootstrap.path=./src/resources
 bootstrap.enabled=false
 ```
 

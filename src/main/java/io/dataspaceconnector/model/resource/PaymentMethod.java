@@ -16,6 +16,7 @@
 package io.dataspaceconnector.model.resource;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
 /**
  * Enumeration for resource payment modality.
@@ -26,23 +27,38 @@ public enum PaymentMethod {
      * To express that the payment method is not set.
      */
     @JsonProperty("undefined")
-    UNDEFINED,
+    UNDEFINED("Undefined"),
 
     /**
      * To express that the exchange of resource is with a fixed price.
      */
     @JsonProperty("fixedPrice")
-    FIXED_PRICE,
+    FIXED_PRICE("Fixed price"),
 
     /**
      * To express that the exchange of resource is free.
      */
     @JsonProperty("free")
-    FREE,
+    FREE("Free"),
 
     /**
      * To express that the exchange of resource is negotiation-based.
      */
     @JsonProperty("negotiationBasis")
-    NEGOTIATION_BASIS
+    NEGOTIATION_BASIS("Negotiation basis");
+
+    /**
+     * Text, which can be used as a representation.
+     */
+    @Getter
+    private final String representation;
+
+    /**
+     * Constructor.
+     *
+     * @param rep Text, which can be used as a representation.
+     */
+    PaymentMethod(final String rep) {
+        this.representation = rep;
+    }
 }
