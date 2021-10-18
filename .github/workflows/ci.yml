@@ -207,6 +207,12 @@ jobs:
       - name: Build registry path
         id: get_repo
         run: echo ::set-output name=IMAGE::"ghcr.io/international-data-spaces-association/dataspace-connector"
+      - name: Cache multiple paths
+        uses: actions/cache@v2
+        with:
+          path: .trivy
+          key: ${{ runner.os }}-trivy-${{ github.run_id }}
+          restore-keys: ${{ runner.os }}-trivy-
       - name: Run vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
@@ -216,6 +222,10 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
+          cache-dir: .trivy
+          timeout: "9m0s"
+      - name: Correct Trivy cache permissions # See: https://github.com/aquasecurity/trivy-action/issues/12#issuecomment-847854159
+        run: sudo chown -R $USER:$GROUP .trivy
 
   e2e-test:
     needs: build-test-image
