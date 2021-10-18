@@ -15,7 +15,7 @@
 
         <#list routeStepEndpoints as endpoint>
             <setHeader name="CamelHttpMethod"><constant>${endpoint.getHttpMethod().toString()}</constant></setHeader>
-            <to uri="${endpoint.getEndpointUrl().toString()}"/>
+            <to uri="${endpoint.getEndpointUrl()}"/>
         </#list>
 
         <setHeader name="CamelHttpMethod"><constant>POST</constant></setHeader>

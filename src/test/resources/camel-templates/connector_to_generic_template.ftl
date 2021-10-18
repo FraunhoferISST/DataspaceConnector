@@ -15,13 +15,14 @@
 
         <#list routeStepEndpoints as endpoint>
             <setHeader name="CamelHttpMethod"><constant>${endpoint.getHttpMethod().toString()}</constant></setHeader>
-            <to uri="${endpoint.getEndpointUrl().toString()}"/>
+            <to uri="${endpoint.getEndpointUrl()}"/>
         </#list>
 
         <setHeader name="CamelHttpMethod"><constant>POST</constant></setHeader>
         <#if genericEndpointAuthHeaderKey?? && genericEndpointAuthHeaderValue??>
             <setHeader name="${genericEndpointAuthHeaderKey}"><constant>${genericEndpointAuthHeaderValue}</constant></setHeader>
         </#if>
+        <process ref="headerProcessor"/>
         <to uri="${endUrl}"/>
 
     </route>
