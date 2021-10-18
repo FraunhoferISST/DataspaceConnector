@@ -173,7 +173,7 @@ jobs:
         run: |
           docker build . -t $IMAGE:ci
         env:
-          IMAGE: ${{ steps.get_image_registry.outputs.image_name }}
+          IMAGE: ${{ steps.get_image_name.outputs.image_name }}
           DOCKER_BUILDKIT: 1
       - name: Build tar ball
         id: build_tar_ball
