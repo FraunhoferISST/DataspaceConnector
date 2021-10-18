@@ -143,23 +143,6 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Build artifact name
-        id: get_artifact_name
-        run: |
-          IMAGE_ARTIFACT_NAME=$(echo "${GITHUB_HEAD_REF}" | sed 's_/_\-_g' )
-          echo ::set-output name=IMAGE_ARTIFACT_NAME::"${IMAGE_ARTIFACT_NAME}"
-      - name: Download image
-        uses: actions/download-artifact@v2
-        with:
-          name: ${{ steps.get_artifact_name.outputs.IMAGE_ARTIFACT_NAME }}-image
-        continue-on-error: true
-      - name: Load image into docker
-        run: |
-          if [ -f "${GITHUB_WORKSPACE}/${ARTIFACT}.tar" ]; then
-            docker load --input "${GITHUB_WORKSPACE}/${ARTIFACT}.tar"
-          fi
-        env:
-          ARTIFACT: ${{ steps.get_artifact_name.outputs.IMAGE_ARTIFACT_NAME }}
       - name: Build registry path
         id: get_repo
         run: echo ::set-output name=IMAGE::"ghcr.io/international-data-spaces-association/dataspace-connector"
@@ -169,6 +152,11 @@ jobs:
         env:
           IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
           DOCKER_BUILDKIT: 1
+      - name: Build artifact name
+        id: get_artifact_name
+        run: |
+          IMAGE_ARTIFACT_NAME=$(echo "${GITHUB_HEAD_REF}" | sed 's_/_\-_g' )
+          echo ::set-output name=IMAGE_ARTIFACT_NAME::"${IMAGE_ARTIFACT_NAME}"
       - name: Build tar ball
         id: build_tar_ball
         run: |
