@@ -118,13 +118,14 @@ public class IdsInfoContributor implements InfoContributor {
         final var claims
                 = DapsValidator.getClaims(dat, tokenProvSvc.providePublicKeys()).getBody();
 
-        return new HashMap<>() {{
-            put("audience", claims.getAudience());
-            put("expirationDate", claims.getExpiration());
-            put("issuer", claims.getIssuer());
-            put("issuedAt", claims.getIssuedAt());
-            put("referringConnector", claims.get("referringConnector"));
-            put("securityProfile", claims.get("securityProfile"));
-        }};
+        final var map = new HashMap<String, Object>();
+        map.put("audience", claims.getAudience());
+        map.put("expirationDate", claims.getExpiration());
+        map.put("issuer", claims.getIssuer());
+        map.put("issuedAt", claims.getIssuedAt());
+        map.put("referringConnector", claims.get("referringConnector"));
+        map.put("securityProfile", claims.get("securityProfile"));
+
+        return map;
     }
 }
