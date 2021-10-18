@@ -91,7 +91,7 @@ jobs:
         config: .hadolint.yaml
 
   static-code-analysis:
-    needs: [setup, style, license, linting]
+    needs: [setup, style, license]
     timeout-minutes: 5
     runs-on: ubuntu-latest
     strategy:
@@ -113,7 +113,7 @@ jobs:
       run: mvn -B compile spotbugs:check --file pom.xml
 
   unit-and-integration-tests:
-    needs: [setup, style, license, linting]
+    needs: [setup, style, license]
     timeout-minutes: 30
     runs-on: ${{ matrix.os }}
     strategy:
@@ -159,7 +159,7 @@ jobs:
       run: mvn -B -Dmaven.javadoc.skip=true test org.pitest:pitest-maven:mutationCoverage --file pom.xml
 
   build-test-image:
-    needs: [setup, unit-and-integration-tests]
+    needs: [setup, linting, unit-and-integration-tests]
     timeout-minutes: 15
     runs-on: ubuntu-latest
     strategy:
