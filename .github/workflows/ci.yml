@@ -148,7 +148,7 @@ jobs:
     - name: Run Mutation Tests
       run: mvn -B -Dmaven.javadoc.skip=true test org.pitest:pitest-maven:mutationCoverage --file pom.xml
 
-  build-test-image:
+  build_test_image:
     needs: [linting, unit-and-integration-tests]
     timeout-minutes: 15
     runs-on: ubuntu-latest
@@ -190,7 +190,7 @@ jobs:
           retention-days: 1
 
   image-security-scan:
-    needs: [build-test-image]
+    needs: [build_test_image]
     timeout-minutes: 10
     runs-on: ubuntu-latest
     strategy:
@@ -200,11 +200,11 @@ jobs:
       - name: Download image
         uses: actions/download-artifact@v2
         with:
-          name: ${{ needs.setup.outputs.image_artifact_name }}-image
+          name: ${{ needs.build_test_image.outputs.image_artifact_name }}-image
       - name: Load image into docker
         run: docker load --input "${GITHUB_WORKSPACE}/${ARTIFACT}.tar"
         env:
-          ARTIFACT: ${{ needs.setup.outputs.image_artifact_name }}
+          ARTIFACT: ${{ needs.build_test_image.outputs.image_artifact_name }}
       - name: Cache multiple paths
         uses: actions/cache@v2
         with:
@@ -214,7 +214,7 @@ jobs:
       - name: Run vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: '${{ needs.setup.outputs.image_name }}:ci'
+          image-ref: '${{ needs.build_test_image.outputs.image_name }}:ci'
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
@@ -226,7 +226,7 @@ jobs:
         run: sudo chown -R $USER:$GROUP .trivy
 
   e2e-test:
-    needs: [setup, build-test-image]
+    needs: [build_test_image]
     timeout-minutes: 30
     runs-on: ubuntu-latest
 
@@ -245,11 +245,11 @@ jobs:
       - name: Download image
         uses: actions/download-artifact@v2
         with:
-          name: ${{ needs.setup.outputs.image_artifact_name }}-image
+          name: ${{ needs.build_test_image.outputs.image_artifact_name }}-image
       - name: Load image into cluster
         run: sudo k3s ctr images import "${GITHUB_WORKSPACE}/${ARTIFACT}.tar"
         env:
-          ARTIFACT: ${{ needs.setup.outputs.image_artifact_name }}
+          ARTIFACT: ${{ needs.build_test_image.outputs.image_artifact_name }}
       - name: Test environment
         run: |
           kubectl cluster-info
