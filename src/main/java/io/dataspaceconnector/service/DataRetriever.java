@@ -108,7 +108,12 @@ public class DataRetriever {
     }
 
     private InputStream toInputStream(final byte[] data) {
-        return new ByteArrayInputStream(data);
+        if (data == null) {
+            return ByteArrayInputStream.nullInputStream();
+        } else {
+            return new ByteArrayInputStream(data);
+
+        }
     }
 
     /**
