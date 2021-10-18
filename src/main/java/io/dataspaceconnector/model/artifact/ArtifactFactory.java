@@ -16,7 +16,6 @@
 package io.dataspaceconnector.model.artifact;
 
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.model.auth.ApiKey;
 import io.dataspaceconnector.model.auth.AuthenticationDesc;
 import io.dataspaceconnector.model.auth.BasicAuth;
@@ -170,33 +169,33 @@ public final class ArtifactFactory extends AbstractNamedFactory<Artifact, Artifa
      * @param bytes    The data.
      * @return true if the artifact has been modified.
      */
-    @SuppressFBWarnings("NP_LOAD_OF_KNOWN_NULL_VALUE")
     public boolean updateByteSize(final Artifact artifact, final byte[] bytes) {
-        if (bytes == null) {
-            if (artifact.getByteSize() != 0 || artifact.getCheckSum() != 0) {
-                artifact.setByteSize(0);
-                artifact.setCheckSum(calculateChecksum(bytes));
+        if (bytes != null) {
+            final var byteSize = bytes.length;
+            final var checkSum = calculateChecksum(bytes);
+            if (artifact.getCheckSum() != checkSum || artifact.getByteSize() != byteSize) {
+                setByteSizeAndCheckSum(artifact, byteSize, checkSum);
                 return true;
             }
-
-            return false;
+        } else {
+            if (artifact.getByteSize() != 0 || artifact.getCheckSum() != 0) {
+                setByteSizeAndCheckSum(artifact, 0, 0);
+                return true;
+            }
         }
-
-        var hasChanged = false;
-
-        if (artifact.getByteSize() != bytes.length) {
-            artifact.setByteSize(bytes.length);
-            hasChanged = true;
-        }
-
-        final var checkSum = calculateChecksum(bytes);
-        if (artifact.getCheckSum() != checkSum) {
-            artifact.setCheckSum(checkSum);
-            hasChanged = true;
-        }
-
-        return hasChanged;
+        return false;
     }
+
+    private void setByteSizeAndCheckSum(
+            final Artifact artifact,
+            final long byteSize,
+            final long checkSum
+    ) {
+        //Update fields of artifact
+        artifact.setByteSize(byteSize);
+        artifact.setCheckSum(checkSum);
+    }
+
 
     private long calculateChecksum(final byte[] bytes) {
         if (bytes == null) {

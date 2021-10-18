@@ -690,6 +690,52 @@ public class ArtifactFactoryTest {
     }
 
     @Test
+    public void updateByteSize_setByteFromNullToEmpty_willNotUpdate() {
+        /* ARRANGE */
+        final var artifact = factory.create(new ArtifactDesc());
+
+        /* ACT */
+        final byte[] data = {};
+        final var checksum = new CRC32C();
+        checksum.update(data, 0, data.length);
+        final var result = factory.updateByteSize(artifact, data);
+
+        /* ASSERT */
+        //bytesize and checksum should still be 0
+        assertFalse(result);
+        assertEquals(0, artifact.getByteSize());
+        assertEquals(checksum.getValue(), artifact.getCheckSum());
+    }
+
+    @Test
+    public void updateByteSize_setByteFromValueToEmptyAndBack_willUpdate() {
+        /* ARRANGE */
+        final var artifact = factory.create(new ArtifactDesc());
+        artifact.setByteSize(20);
+        artifact.setCheckSum(3);
+
+        /* ACT */
+        final byte[] empty = {};
+        final var result1 = factory.updateByteSize(artifact, empty);
+
+        /* ASSERT */
+        assertTrue(result1);
+        assertEquals(0, artifact.getByteSize());
+        assertEquals(0, artifact.getCheckSum());
+
+        /* ACT */
+        final byte[] data = {1,2,1,1,23,12,2};
+        final var checksum = new CRC32C();
+        checksum.update(data, 0, data.length);
+        final var result2 = factory.updateByteSize(artifact, data);
+
+        /* ASSERT */
+        assertTrue(result2);
+        assertEquals(data.length, artifact.getByteSize());
+        assertEquals(checksum.getValue(), artifact.getCheckSum());
+    }
+
+    @Test
     public void updateByteSize_hasChanged_willUpdateByteSizeAndChecksum() {
         /* ARRANGE */
         final var artifact = factory.create(new ArtifactDesc());
