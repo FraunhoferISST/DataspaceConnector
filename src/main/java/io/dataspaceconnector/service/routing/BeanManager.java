@@ -21,6 +21,7 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.UUID;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
 import io.dataspaceconnector.model.auth.BasicAuth;
@@ -65,6 +66,7 @@ public class BeanManager {
      * @param dataSource input containing all required parameters for creating the bean.
      * @throws BeanCreationException if creating the bean fails.
      */
+    @SuppressFBWarnings("TEMPLATE_INJECTION_FREEMARKER")
     public void createDataSourceBean(final DatabaseDataSource dataSource)
             throws BeanCreationException {
         final var freemarkerInput = new HashMap<String, Object>();
