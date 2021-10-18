@@ -154,7 +154,10 @@ jobs:
           name: ${{ steps.get_artifact_name.outputs.IMAGE_ARTIFACT_NAME }}-image
         continue-on-error: true
       - name: Load image into docker
-        run: docker load --input "${GITHUB_WORKSPACE}/${ARTIFACT}.tar"
+        run: |
+          if [ -f "${GITHUB_WORKSPACE}/${ARTIFACT}.tar" ]; then
+            docker load --input "${GITHUB_WORKSPACE}/${ARTIFACT}.tar"
+          fi
         env:
           ARTIFACT: ${{ steps.get_artifact_name.outputs.IMAGE_ARTIFACT_NAME }}
       - name: Build registry path
@@ -198,10 +201,7 @@ jobs:
         with:
           name: ${{ steps.get_artifact_name.outputs.IMAGE_ARTIFACT_NAME }}-image
       - name: Load image into docker
-        run: |
-          if [ -f "${GITHUB_WORKSPACE}/${ARTIFACT}.tar" ]; then
-            docker load --input "${GITHUB_WORKSPACE}/${ARTIFACT}.tar"
-          fi
+        run: docker load --input "${GITHUB_WORKSPACE}/${ARTIFACT}.tar"
         env:
           ARTIFACT: ${{ steps.get_artifact_name.outputs.IMAGE_ARTIFACT_NAME }}
       - name: Build registry path
