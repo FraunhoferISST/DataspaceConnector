@@ -654,7 +654,13 @@ public final class FromIdsObjectMapper {
         }
     }
 
-    private static DeployMode fromIdsDeployMode(final ConnectorDeployMode deployMode) {
+    /**
+     * Get dsc deploy mode from ids deploy mode.
+     *
+     * @param deployMode The ids deploy mode.
+     * @return The internal deploy mode.
+     */
+    public static DeployMode fromIdsDeployMode(final ConnectorDeployMode deployMode) {
         return deployMode == ConnectorDeployMode.TEST_DEPLOYMENT
                 ? DeployMode.TEST : DeployMode.PRODUCTIVE;
     }
