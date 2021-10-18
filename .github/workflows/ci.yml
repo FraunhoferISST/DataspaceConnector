@@ -14,8 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       branch_name: ${{ steps.get_branch_name.outputs.HEAD_REF }}
-      image_artifact_name: ${{ steps.get_image_artifact_name.outputs.IMAGE_ARTIFACT_NAME }}
-      image_name: ${{ steps.get_image_registry.outputs.IMAGE }}
 
     steps:
     - name: Build branch name
@@ -23,14 +21,6 @@ jobs:
       run: |
           HEAD_REF=$(echo "${GITHUB_HEAD_REF}" | sed 's_/_\-_g' )
           echo ::set-output name=HEAD_REF::"${HEAD_REF}"
-    - name: Build image artifact name
-      id: get_image_artifact_name
-      run: |
-        IMAGE_ARTIFACT_NAME=$(echo "${GITHUB_HEAD_REF}" | sed 's_/_\-_g' )
-        echo ::set-output name=IMAGE_ARTIFACT_NAME::"${IMAGE_ARTIFACT_NAME}"
-    - name: Build image name
-      id: get_image_name
-      run: echo ::set-output name=IMAGE::"ghcr.io/international-data-spaces-association/dataspace-connector"
 
   style:
     needs: [setup]
@@ -159,37 +149,48 @@ jobs:
       run: mvn -B -Dmaven.javadoc.skip=true test org.pitest:pitest-maven:mutationCoverage --file pom.xml
 
   build-test-image:
-    needs: [setup, linting, unit-and-integration-tests]
+    needs: [linting, unit-and-integration-tests]
     timeout-minutes: 15
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+    outputs:
+      image_artifact_name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
+      image_name: ${{ steps.get_image_registry.outputs.image_name }}
 
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
+      - name: Build image artifact name
+        id: get_image_artifact_name
+        run: |
+          IMAGE_ARTIFACT_NAME=$(echo "${GITHUB_HEAD_REF}" | sed 's_/_\-_g' )
+          echo ::set-output name=image_artifact_name::"${IMAGE_ARTIFACT_NAME}"
+      - name: Build image name
+        id: get_image_name
+        run: echo ::set-output name=image_name::"ghcr.io/international-data-spaces-association/dataspace-connector"
       - name: Build image
         run: |
           docker build . -t $IMAGE:ci
         env:
-          IMAGE: ${{ needs.setup.outputs.image_name }}
+          IMAGE: ${{ steps.get_image_registry.outputs.image_name }}
           DOCKER_BUILDKIT: 1
       - name: Build tar ball
         id: build_tar_ball
         run: |
           docker save --output "${ARTIFACT}.tar" "${IMAGE}:ci"
         env:
-          IMAGE: ${{ needs.setup.outputs.image_name }}
-          ARTIFACT: ${{ needs.setup.outputs.image_artifact_name }}
+          IMAGE: ${{ steps.get_image_name.outputs.image_name }}
+          ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
       - name: Push image
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ needs.setup.outputs.image_artifact_name }}-image
-          path: ${{ github.workspace }}/${{ needs.setup.outputs.image_artifact_name }}.tar
+          name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-image
+          path: ${{ github.workspace }}/${{ steps.get_image_artifact_name.outputs.image_artifact_name }}.tar
           retention-days: 1
 
   image-security-scan:
-    needs: [setup, build-test-image]
+    needs: [build-test-image]
     timeout-minutes: 10
     runs-on: ubuntu-latest
     strategy:
