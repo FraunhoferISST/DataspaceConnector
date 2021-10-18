@@ -40,7 +40,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 @RequiredArgsConstructor
 @Log4j2
 @DependsOn("beanReDeployer")
-public class RouteReDeployer {
+public class RouteReDeployer extends TransactionCallbackWithoutResult {
 
     /**
      * Helper class for deploying and deleting Camel routes.
@@ -58,20 +58,14 @@ public class RouteReDeployer {
     private final @NonNull RouteRepository routeRepository;
 
     /**
-     * Loads and deploys all top-level routes from the database after application start. Thus,
-     * deployed Camel routes do not get lost through a restart.
+     * Re-deploys all persisted routes in Camel.
+     *
+     * @param status the associated transaction status
      */
-    @PostConstruct
-    @Transactional(readOnly = true)
-    public void redeploySavedRoutes() {
-        final var template = new TransactionTemplate(transactionManager);
-        template.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(@NotNull final TransactionStatus status) {
-                final var routes = routeRepository.findAllTopLevelRoutes();
-                routes.forEach(RouteReDeployer.this::redeploy);
-            }
-        });
+    @Override
+    protected void doInTransactionWithoutResult(@NotNull final TransactionStatus status) {
+        final var routes = routeRepository.findAllTopLevelRoutes();
+        routes.forEach(this::redeploy);
     }
 
     /**
@@ -87,5 +81,16 @@ public class RouteReDeployer {
             log.warn("Failed to redeploy persisted route. [routeId=({}), exception=({})]",
                     route.getId(), exception.getMessage());
         }
+    }
+
+    /**
+     * Loads and deploys all top-level routes from the database after application start. Thus,
+     * deployed Camel routes do not get lost through a restart.
+     */
+    @PostConstruct
+    @Transactional(readOnly = true)
+    public void redeploySavedRoutes() {
+        final var template = new TransactionTemplate(transactionManager);
+        template.execute(this);
     }
 }
