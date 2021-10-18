@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Increase dependency-check-maven version from 6.3.1 to 6.4.1.
 - Increase pitest version from 1.7.1 to 1.7.2.
 - Increase spotbugs version from 4.4.1 to 4.4.2.
+- Increase equalsverifier version from 3.7.1 to 3.7.2.
 
 ### Fixed
 - Fix collisions in bootstrapping process setting a unique path for the `bootstrap.path` property.
