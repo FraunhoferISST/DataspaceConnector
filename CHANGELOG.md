@@ -21,13 +21,18 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Increase description column length to 4096.
+- Increase BasicAuth (username, password) and ApiKey (key, value) column length to 2048.
 - Increase dependency-check-maven version from 6.3.1 to 6.4.1.
 - Increase pitest version from 1.7.1 to 1.7.2.
 - Increase spotbugs version from 4.4.1 to 4.4.2.
+- Increase equalsverifier version from 3.7.1 to 3.7.2.
 - Change encoding of local data from `UTF-16` to `UTF-8`.
 - Change relation between `Route` and `Artifact` to one-to-one (previously one-to-many).
   - Link is created automatically when an artifact is created with a route reference as access URL.
 - Replace template engine `Velocity` with `Freemarker`.
+
+### Fixed
+- Fix collisions in bootstrapping process setting a unique path for the `bootstrap.path` property.
 
 ### Removed
 - Remove entity `ConnectorEndpoint` and all corresponding classes.
