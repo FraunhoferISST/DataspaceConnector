@@ -21,11 +21,15 @@ jobs:
       uses: actions/setup-java@v1
       with:
        java-version: 11
+    - name: get_branch_name
+      run: |
+          HEAD_REF=$(echo "${GITHUB_HEAD_REF}" | sed 's_/_\-_g' )
+          echo ::set-output name=HEAD_REF::"${HEAD_REF}"
     - name: Cache maven packages
       uses: actions/cache@v2
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-${{github.head_ref}}-style-${{ hashFiles('**/pom.xml') }}
+        key: ${{ runner.os }}-${{ steps.get_branch_name.outputs.HEAD_REF }}-style-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-${{github.head_ref}}-style-
     - name: Run style checks
       run: mvn -B checkstyle:check --file pom.xml
@@ -42,11 +46,15 @@ jobs:
       uses: actions/setup-java@v1
       with:
        java-version: 11
+    - name: get_branch_name
+      run: |
+          HEAD_REF=$(echo "${GITHUB_HEAD_REF}" | sed 's_/_\-_g' )
+          echo ::set-output name=HEAD_REF::"${HEAD_REF}"
     - name: Cache maven packages
       uses: actions/cache@v2
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-${{github.head_ref}}-license-${{ hashFiles('**/pom.xml') }}
+        key: ${{ runner.os }}-${{ steps.get_branch_name.outputs.HEAD_REF }}-license-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-${{github.head_ref}}-license-
     - name: Run license checks
       run: mvn -B license:check --file pom.xml
@@ -78,11 +86,15 @@ jobs:
       uses: actions/setup-java@v1
       with:
        java-version: 11
+    - name: get_branch_name
+      run: |
+          HEAD_REF=$(echo "${GITHUB_HEAD_REF}" | sed 's_/_\-_g' )
+          echo ::set-output name=HEAD_REF::"${HEAD_REF}"
     - name: Cache maven packages
       uses: actions/cache@v2
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-${{github.head_ref}}-analysis-${{ hashFiles('**/pom.xml') }}
+        key: ${{ runner.os }}-${{ steps.get_branch_name.outputs.HEAD_REF }}-analysis-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-${{github.head_ref}}-analysis-
     - name: Run static code analysis
       run: mvn -B compile spotbugs:check --file pom.xml
@@ -102,11 +114,15 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: ${{ matrix.java }}
+    - name: get_branch_name
+      run: |
+          HEAD_REF=$(echo "${GITHUB_HEAD_REF}" | sed 's_/_\-_g' )
+          echo ::set-output name=HEAD_REF::"${HEAD_REF}"
     - name: Cache maven packages
       uses: actions/cache@v2
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-${{github.head_ref}}-m2-${{ hashFiles('**/pom.xml') }}
+        key: ${{ runner.os }}-${{ steps.get_branch_name.outputs.HEAD_REF }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-${{github.head_ref}}-m2-
     - name: Unit- and Integrationtests
       run: mvn -B -U verify --file pom.xml -Prelease
@@ -124,11 +140,15 @@ jobs:
       uses: actions/setup-java@v1
       with:
        java-version: 11
+    - name: get_branch_name
+      run: |
+          HEAD_REF=$(echo "${GITHUB_HEAD_REF}" | sed 's_/_\-_g' )
+          echo ::set-output name=HEAD_REF::"${HEAD_REF}"
     - name: Cache maven packages
       uses: actions/cache@v2
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-${{github.head_ref}}-m2-${{ hashFiles('**/pom.xml') }}
+        key: ${{ runner.os }}-${{ steps.get_branch_name.outputs.HEAD_REF }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-${{github.head_ref}}-m2-
     - name: Run Mutation Tests
       run: mvn -B -Dmaven.javadoc.skip=true test org.pitest:pitest-maven:mutationCoverage --file pom.xml
