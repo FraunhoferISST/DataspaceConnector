@@ -24,6 +24,7 @@ import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import de.fraunhofer.ids.messaging.core.config.ssl.keystore.KeyStoreManager;
 import de.fraunhofer.ids.messaging.core.daps.ConnectorMissingCertExtensionException;
 import de.fraunhofer.ids.messaging.core.daps.DapsConnectionException;
 import de.fraunhofer.ids.messaging.core.daps.DapsEmptyResponseException;
@@ -87,6 +88,14 @@ public class ConnectorService {
      * Service for offered resources.
      */
     private final @NonNull OfferedResourceService offeredResourceService;
+
+    /**
+     * Get keystore manager from ids messaging services.
+     * @return The keystore manager.
+     */
+    public KeyStoreManager getKeyStoreManager() {
+        return configContainer.getKeyStoreManager();
+    }
 
     /**
      * Get a local copy of the current connector and extract its id.
