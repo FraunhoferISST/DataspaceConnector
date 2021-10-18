@@ -21,7 +21,9 @@ import de.fraunhofer.ids.messaging.core.daps.DapsConnectionException;
 import de.fraunhofer.ids.messaging.core.daps.DapsEmptyResponseException;
 import de.fraunhofer.ids.messaging.core.daps.DapsValidator;
 import de.fraunhofer.ids.messaging.core.daps.TokenProviderService;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.ids.ConnectorService;
+import io.dataspaceconnector.common.util.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
@@ -77,7 +79,7 @@ public class IdsInfoContributor implements InfoContributor {
         try {
             map.put("dat", getDatDetails());
         } catch (ClaimsException | ConnectorMissingCertExtensionException
-                | DapsConnectionException | DapsEmptyResponseException e) {
+                | DapsConnectionException | DapsEmptyResponseException | NullPointerException e) {
             map.put("dat", false);
         }
 
@@ -93,16 +95,24 @@ public class IdsInfoContributor implements InfoContributor {
 
     private Map<String, Object> getCertDetails() {
         final var keyStoreManager = connectorSvc.getKeyStoreManager();
-        final var cert = (X509Certificate) keyStoreManager.getCert();
 
-        return new HashMap<>() {{
-            put("expirationDate", keyStoreManager.getCertExpiration());
-            put("issuer", cert.getIssuerDN().getName());
-            put("issuedAt", cert.getNotBefore());
-            put("sigAlgName", cert.getSigAlgName());
-            put("type", cert.getType());
-            put("version", cert.getVersion());
-        }};
+        final var map = new HashMap<String, Object>();
+
+        try {
+            map.put("expirationDate", keyStoreManager.getCertExpiration());
+
+            final var cert = (X509Certificate) keyStoreManager.getCert();
+            Utils.requireNonNull(cert, ErrorMessage.EMTPY_ENTITY);
+
+            map.put("issuer", cert.getIssuerDN().getName());
+            map.put("issuedAt", cert.getNotBefore());
+            map.put("sigAlgName", cert.getSigAlgName());
+            map.put("type", cert.getType());
+            map.put("version", cert.getVersion());
+        } catch (NullPointerException | IllegalArgumentException ignored) {
+        }
+
+        return map;
     }
 
     private Map<String, Object> getDatDetails() throws ClaimsException, DapsConnectionException,

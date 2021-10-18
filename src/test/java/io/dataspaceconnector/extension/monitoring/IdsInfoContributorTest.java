@@ -15,16 +15,25 @@
  */
 package io.dataspaceconnector.extension.monitoring;
 
+import de.fraunhofer.ids.messaging.core.daps.TokenProviderService;
+import io.dataspaceconnector.common.ids.ConnectorService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SpringBootTest
-class IdslInfoContributorTest {
+@SpringBootTest(classes = { IdsInfoContributor.class })
+class IdsInfoContributorTest {
+
+    @MockBean
+    ConnectorService connectorSvc;
+
+    @MockBean
+    TokenProviderService tokenProvSvc;
 
     @Autowired
     private IdsInfoContributor idsInfoContributor;
@@ -32,13 +41,15 @@ class IdslInfoContributorTest {
     @Test
     @WithMockUser("ADMIN")
     public void contribute_validInformation_equals() {
-        /* ACT */
+        /* ARRANGE */
         var builder = new Info.Builder();
+
+        /* ACT */
         idsInfoContributor.contribute(builder);
         var info = builder.build();
 
         /* ASSERT */
-        assertNotNull(info.get("dat"));
-        assertNotNull(info.get("connector"));
+        assertNotNull(info.get("configuration"));
+        assertNotNull(info.get("ids"));
     }
 }
