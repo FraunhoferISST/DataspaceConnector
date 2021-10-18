@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - `ArtifactFactory::updateByteSize` sets `byteSize` and `checksum` to 0 when data is removed.
 - Add nullcheck to `ArtifactService::toInputStream`.
 - Check if representations are null or empty in `getMediaTypeOfArtifact`.
+- Fix collisions in bootstrapping process setting a unique path for the `bootstrap.path` property.
 
 ### Changed
 - Increase description column length to 4096.
@@ -18,9 +19,6 @@ All notable changes to this project will be documented in this file.
 - Increase pitest version from 1.7.1 to 1.7.2.
 - Increase spotbugs version from 4.4.1 to 4.4.2.
 - Increase equalsverifier version from 3.7.1 to 3.7.2.
-
-### Fixed
-- Fix collisions in bootstrapping process setting a unique path for the `bootstrap.path` property.
 
 ## [6.3.1] - 2021-10-05
 
