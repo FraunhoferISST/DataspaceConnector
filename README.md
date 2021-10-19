@@ -38,21 +38,27 @@ usage policy patterns.
 
 ## Quick Start
 
-**We provide Docker images. These can be found
+We provide Docker images. These can be found
 [here](https://github.com/International-Data-Spaces-Association/DataspaceConnector/pkgs/container/dataspace-connector).
-For a Docker or Kubernetes deployment, as well as a full setup with the Connector
-and its GUI, see [here](https://github.com/International-Data-Spaces-Association/IDS-Deployment-Examples/tree/main/dataspace-connector).**
 
+For an easy deployment, make sure that you have [Docker](https://docs.docker.com/get-docker/)
+installed. Then, execute the following command:
 
-If you want to build and run locally, ensure that at least Java 11 is installed. Then, follow these steps:
+```commandline
+docker run -p 8080:8080 --name connector ghcr.io/international-data-spaces-association/dataspace-connector:latest
+```
 
-1.  Clone this repository.
-2.  Execute `cd DataspaceConnector` and `./mvnw clean package`.
-3.  Navigate to `/target` and run `java -jar dataspaceconnector-{VERSION}.jar`.
-4.  If everything worked fine, the connector is available at https://localhost:8080/. The API can
-    be accessed at https://localhost:8080/api. The Swagger UI can be found at https://localhost:8080/api/docs.
+If everything worked fine, the connector is available at
+[https://localhost:8080/](https://localhost:8080/). The API can be accessed at
+[https://localhost:8080/api](https://localhost:8080/api). The Swagger UI can be found at
+[https://localhost:8080/api/docs](https://localhost:8080/api/docs).
+Next, please take a look at our
+[communication guide](https://international-data-spaces-association.github.io/DataspaceConnector/CommunicationGuide).
 
-For more details, see [here](https://international-data-spaces-association.github.io/DataspaceConnector/).
+For a more detailed or advanced Docker or Kubernetes deployment, as well as a full setup with the
+Connector and its GUI, see [here](https://github.com/International-Data-Spaces-Association/IDS-Deployment-Examples/tree/main/dataspace-connector).
+
+If you want to build and run locally, follow [these](https://international-data-spaces-association.github.io/DataspaceConnector/GettingStarted#quick-start) steps.
 
 ## Contributing
 
@@ -77,6 +83,7 @@ with significant contributions, comments, and support by (in alphabetical order)
 * [Gökhan Kahriman](https://github.com/goekhanKahriman), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 * [Haydar Qarawlus](https://github.com/hqarawlus), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 * [Johannes Pieperbeck](https://github.com/jpieperbeck), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
+* [Omar Luiz Barreto Silva](https://github.com/ob-silva), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 * [René Brinkhege](https://github.com/renebrinkhege), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 * [Steffen Biehs](https://github.com/steffen-biehs), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 * [Tim Berthold](https://github.com/tmberthold), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)

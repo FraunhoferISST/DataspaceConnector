@@ -1,20 +1,58 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [X.X.X] - XXXX-XX-XX
+##[X.X.X] - XXXX-XX-XX
 
 ### Added
 - New `/actuator/info` API data `connector` to output the current version as well as information if a newer release is available on GitHub.
 - Added `authenticationSet` as boolean indicator in output of configuration APIs whether authentication credentials for a proxy are present.
 - New application.properties setting `configuration.force.reload=true/false` which will force reloading configuration from config.json/application.properties instead of using latest active configuration from DB, default if not set is false.
+- Add `ids` field to `/actuator/info` endpoint, to monitor the connectors certificate expiration status and DAT infos (if one can be received).
 
 ### Fixed
-- Fix self-reference of QueryInput in OpenApi schema.
-- Fix global exceptionhandler intercepting checked exceptions.
+- `ArtifactFactory::updateByteSize` sets `byteSize` and `checksum` to 0 when data is removed.
+- Add nullcheck to `ArtifactService::toInputStream`.
+- Check if representations are null or empty in `getMediaTypeOfArtifact`.
+- Fix collisions in bootstrapping process setting a unique path for the `bootstrap.path` property.
+
+### Changed
+- Increase description column length to 4096.
+- Increase `BasicAuth` (username, password) and `ApiKey` (key, value) column length to 2048.
+- Increase dependency-check-maven version from 6.3.1 to 6.4.1.
+- Increase pitest version from 1.7.1 to 1.7.2.
+- Increase spotbugs version from 4.4.1 to 4.4.2.
+- Increase equalsverifier version from 3.7.1 to 3.7.2.
+
+## [6.3.1] - 2021-10-05
+
+### Fixed
+- Check for `maxDepth` in `IdsResourceBuilder` when resolving samples to avoid possible `StackOverFlowError`.
+
+### Changed
+- Increase pitest-maven version from 1.7.0 to 1.7.1.
+- Increase swagger-annotations version from 1.6.2 to 1.6.3.
+- Increase dependency-check-maven version from 6.3.1 to 6.3.2.
+- Increase jackson version from 2.12.5 to 2.13.0.
+- Increase checkstyle version from 9.0.0 to 9.0.1.
+- Increase okhttp version from 4.9.1 to 4.9.2.
+- Increase springdoc version from 1.5.10 to 1.5.11.
+- Increase camel version from 3.11.2 to 3.12.0.
+
+## [6.3.0] - 2021-30-09
+
+### Added
+- Add `connector` object to `/actuator/info` endpoint to return available updates and further information.
+- Add boolean `authenticationSet` to configuration entity as indicator for present proxy's authentication credentials.
+
+### Fixed
+- Fix self-reference of `QueryInput` in OpenApi schema.
+- Fix global exception handler intercepting checked exceptions.
 - Create Clearing House process before logging, so that consumer can log under same ID.
 - When creating an artifact, check length of whole URL instead of just path.
-- Use language code instead of language ID when creating TypedLiterals.
-- Make SelfLinkHelper non-static, so that it can use Spring properties.
+- Use language code instead of language ID when creating `TypedLiterals`.
+- Make `SelfLinkHelper` non-static, so that it can use Spring properties.
+- Use only `/data` and not the request's context path as delimiter for determining additional path for data requests.
+- Create broker in database upon bootstrap start.
 
 ### Changed
 - Add `ServiceResolver` to remove some Spring annotations from service classes.
@@ -32,6 +70,8 @@ All notable changes to this project will be documented in this file.
 - Increase postgresql version from 42.2.23 to 42.2.24.
 - Increase spring version from 2.5.4 to 2.5.5.
 - Resolve spotbugs warnings.
+- Increase pmd version from 6.38.0 to 6.39.0.
+- Add additional representation for `paymentMethod` to GUI endpoint.
 
 ## [6.2.0] - 2021-09-01
 
@@ -39,8 +79,7 @@ All notable changes to this project will be documented in this file.
 - Add app, app store, and app endpoint entities to the data model.
   - Provide REST endpoints for managing entities and its relations.
   - Add REST endpoint for managing image/container deployment with Portainer.
-- Add `POST api/ids/app` endpoint for downloading an IDS app's metadata and data from the IDS
-  AppStore.
+- Add `POST api/ids/app` endpoint for downloading an IDS app's metadata and data from the IDS AppStore.
 
 ## [6.1.3] - 2021-08-27
 
@@ -76,10 +115,8 @@ All notable changes to this project will be documented in this file.
 - Add property for specifying the path from which Camel routes are loaded.
   * Defaults to the `camel-routes` directory in the `resources` folder.
   * Allow changing Camel routes without recompilation if an external directory is used.
-- Add `paymentModality` and `samples` to resource (for documentation, see
-  [here](https://international-data-spaces-association.github.io/DataspaceConnector/CommunicationGuide/v6/Provider#step-1-register-data-resources)).
-- Add online status validator. Provides the possibility to set the connector `offline`. See how to
-  use this [here](https://international-data-spaces-association.github.io/DataspaceConnector/Deployment/Configuration#step-1-connector-properties).
+- Add `paymentModality` and `samples` to resource (for documentation, see [here](https://international-data-spaces-association.github.io/DataspaceConnector/CommunicationGuide/v6/Provider#step-1-register-data-resources)).
+- Add online status validator. Provides the possibility to set the connector `offline`. See how to use this [here](https://international-data-spaces-association.github.io/DataspaceConnector/Deployment/Configuration#step-1-connector-properties).
 - Add `connectorId` to configuration entity.
 - Add alias to keystore and truststore entities.
 - Automatically notify subscribers on a local data update via `PUT /data`.
@@ -93,8 +130,7 @@ All notable changes to this project will be documented in this file.
 - Increase checkstyle version from 8.44 to 8.45.1.
 - Increase pmd version from 6.36.0 to 6.37.0.
 - Increase camel version from 3.11.0 to 3.11.1.
-- Return data with correct content-type in headers, if possible. Fallback stays
-  application/octet-stream.
+- Return data with correct content-type in headers, if possible. Fallback stays application/octet-stream.
 - Set default status in `config.json` to `CONNECTOR_ONLINE.`
 - Increase equalsverifier from 3.7.0 to 3.7.1.
 
@@ -112,28 +148,24 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Provide REST endpoint for full-text search at the IDS Broker: `/ids/search`.
-- Check if the issuer connector of an artifact request does correspond to the signed consumer of the
-  transfer contract.
+- Check if the issuer connector of an artifact request does correspond to the signed consumer of the transfer contract.
 - Integrate Camel-Spring-Boot version 3.10.0.
 - Integrate [DSC Camel Instance repository](https://github.com/International-Data-Spaces-Association/DSC-Camel-Instance).
   * Provide REST endpoints for adding and removing Camel routes and Spring beans at runtime.
 - Send `ArtifactRequest` and `ArtifactResponse` messages to the Clearing House.
-- Allow artifacts pointing to backend systems to be created with both BasicAuth and API key
-  authentication.
+- Allow artifacts pointing to backend systems to be created with both BasicAuth and API key authentication.
 - Integrate IDSCPv2 for IDS communication.
   * Add property `idscp2.enabled` for enabling and disabling IDSCPv2 server. Is disabled by default.
   * Add properties for configuring keystore and truststore for IDSCPv2.
   * When enabling IDSCPv2, a valid IDS certificate is required!
 - Implement subscription transfer pattern.
   * Add user profile for apps/services with access to subscription REST endpoints.
-  * Allow subscriptions for offered & requested resources, representations, and artifacts via REST
-    endpoints.
+  * Allow subscriptions for offered & requested resources, representations, and artifacts via REST endpoints.
   * Create `PUT /notify` endpoint to manually notify subscribers (ids & non-ids).
   * Automatically notify subscribers on entity updates.
   * Create REST endpoints for sending (un-)subscriptions via ids messages.
 - Integrate [IDS ConfigManager repository](https://github.com/International-Data-Spaces-Association/IDS-ConfigurationManager).
-  * Extend data model and REST API by entities: auth, broker, configuration, datasource, endpoint,
-    keystore, proxy, route, and truststore.
+  * Extend data model and REST API by entities: auth, broker, configuration, datasource, endpoint, keystore, proxy, route, and truststore.
   * Add Camel error handler for propagating errors in routes.
 - Persist connector configuration to database.
   * Load configuration from database.
@@ -142,12 +174,9 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Replace IDS Connector Framework v5.0.4 by IDS Messaging Services v2.0.1.
-- Edit response codes and response content for the following endpoints: `/ids/connector/unavailable`,
-  `/ids/connector/update`, `/ids/resource/unavailable`, `/ids/resource/update`, `/ids/query`.
-- Move implementation for sending IDS query, connector, and resource messages to
-  `GlobalMessageService`.
-- Handle DAT retrieving errors in `PRODUCTIVE_DEPLOYMENT` with status code 500 and a corresponding
-  message.
+- Edit response codes and response content for the following endpoints: `/ids/connector/unavailable`, `/ids/connector/update`, `/ids/resource/unavailable`, `/ids/resource/update`, `/ids/query`.
+- Move implementation for sending IDS query, connector, and resource messages to `GlobalMessageService`.
+- Handle DAT retrieving errors in `PRODUCTIVE_DEPLOYMENT` with status code 500 and a corresponding message.
 - Artifact PUT `/api/data` changed response code from Ok (200) to NoContent (204).
 - Change naming of the resource's license attribute from `licence` to `license`.
 - Change `AbstractEntity` to `Entity` and `NamedEntity`.
@@ -172,17 +201,14 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Add `BootstrapConfiguration`.
-  * Allow registering ids catalogs, offered resources, representations, artifacts, and contract
-    offers during start up.
+  * Allow registering ids catalogs, offered resources, representations, artifacts, and contract offers during start up.
   * Allow registering offered resources as part of the catalogs to brokers.
 - Add `CatalogTemplate` and matching mapping/build functions.
 - Add a method to `AbstractIdsBuilder` that allows to create elements with a custom base URI.
-- Add `bootstrap.path` to `application.properties` to define the base path where bootstrapping data
-  can be found.
+- Add `bootstrap.path` to `application.properties` to define the base path where bootstrapping data can be found.
 
 ### Changed
-- Change `ConnectorService` to use the connector's ID from `config.json` when
-  `getAllCatalogsWithOfferedResources` is called.
+- Change `ConnectorService` to use the connector's ID from `config.json` when `getAllCatalogsWithOfferedResources` is called.
 
 ### Fixed
 - Fixed missing IDS context in `/api/examples/policy`.
@@ -258,8 +284,7 @@ All notable changes to this project will be documented in this file.
 - Set default application name to `Dataspace Connector` in `application.properties`.
 - Add custom spring banner.
 - Add separate controller methods for each IDS message type.
-- Add global exception handlers for `ResourceNotFoundException`, `JsonProcessingException`, and any
-  `RuntimeException`.
+- Add global exception handlers for `ResourceNotFoundException`, `JsonProcessingException`, and any `RuntimeException`.
 - Add possibility to disable http tracer in `application.properties`.
 - Add possibility to restrict depth of returned IDS information on `DescriptionRequest`.
   * Change IDS self-description to returning only a list of catalogs instead of their whole content.
@@ -285,8 +310,7 @@ All notable changes to this project will be documented in this file.
 - Move Swagger UI to `/api/docs`.
 - Change response type from string to object.
 - Use correct response codes as defined by RFC 7231.
-- Replace old data model: catalogs, resources, representations, artifacts, contract, rules, and
-  agreements.
+- Replace old data model: catalogs, resources, representations, artifacts, contract, rules, and agreements.
   * Separate `ResourceRepresentation` into `Representation` and `Artifact`.
   * Separate `ResourceContract` into `Contract` and `Rule`.
   * Handle data in own database entity.
@@ -301,8 +325,7 @@ All notable changes to this project will be documented in this file.
   * Controller methods for resources and representations.
   * Provide strict access control to backend. Information can only be read and changed by services.
   * Strict state validation for entities via factory classes.
-- Change IDS messaging sequence: Start with `ContractRequestMessage` for automated
-  `DescriptionRequestMessage` and `ArtifactRequestMessage`.
+- Change IDS messaging sequence: Start with `ContractRequestMessage` for automated `DescriptionRequestMessage` and `ArtifactRequestMessage`.
 - Improve data transfer.
   * Process bytes instead of strings.
   * Remove limit for data in internal database.
@@ -352,8 +375,7 @@ All notable changes to this project will be documented in this file.
 - Add data string as request body instead of request parameter.
 
 ### Fixed
-- Exclusive use of the `ConfigurationContainer` for processing the connector's self-description and
-  configurations to avoid state errors (relevant for the broker communication).
+- Exclusive use of the `ConfigurationContainer` for processing the connector's self-description and configurations to avoid state errors (relevant for the broker communication).
 
 ## [4.0.2] - 2021-02-04
 
@@ -362,8 +384,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Answer with a `MessageProcessedNotificationMessage` to the consumer's `ContractAgreementMessage`.
-- Save the `ContractAgreement` to the database and the Clearing House when the second
-`AgreementMessage` has been processed.
+- Save the `ContractAgreement` to the database and the Clearing House when the second `AgreementMessage` has been processed.
 - Refine exception handling in the message building and sending process.
 - Update from IDS Framework v4.0.2 to v4.0.3.
 

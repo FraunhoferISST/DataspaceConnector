@@ -25,8 +25,12 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import java.util.HashMap;
+
+import static io.dataspaceconnector.model.config.DatabaseConstants.AUTH_KEY_LENGTH;
+import static io.dataspaceconnector.model.config.DatabaseConstants.AUTH_VALUE_LENGTH;
 
 /**
  * Entity used for containing Basic Auth information in the context of AuthTypes.
@@ -49,12 +53,14 @@ public class ApiKey extends Authentication {
      * The key associated to the ApiKey.
      */
     @NonNull
+    @Column(length = AUTH_KEY_LENGTH)
     private String key;
 
     /**
      * The value associated to the ApiKey.
      */
     @NonNull
+    @Column(length = AUTH_VALUE_LENGTH)
     private String value;
 
     /**

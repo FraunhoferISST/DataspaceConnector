@@ -30,7 +30,7 @@ Furthermore, an `IDS Usage Control Policy` contains several Data Usage Control s
 permissions, prohibitions and obligations) called `IDS Rules` and is specified in the `IDS Usage
 Control Language` which is a technology independent language. The technically enforceable rules
 shall be transformed to a technology dependent policy (e.g., MYDATA) to facilitate the Usage Control
-enforcement of data sovereignty." (p.22, [IDSA Position Paper Usage Control in the IDS](https://internationaldataspaces.org/wp-content/uploads/IDSA-Position-Paper-Usage-Control-in-the-IDS-V3.0.pdf))
+enforcement of data sovereignty." (p.22, [IDSA Position Paper Usage Control in the IDS](https://internationaldataspaces.org/download/21053/))
 
 ## Policy Patterns
 
