@@ -24,19 +24,22 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
 /**
- * This class is responsible for making the DSC API's publicly available
- * where no authentication is required.
+ * This class configures admin rights for all backend endpoints behind "/api" using the role
+ * defined in {@link MultipleEntryPointsSecurityConfig}.
  */
 @Log4j2
 @Configuration
 @Getter(AccessLevel.PUBLIC)
-@ConditionalOnProperty(value = "security.enabled", havingValue = "false")
-public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
+@EnableWebSecurity
+@ConditionalOnProperty(value = "security.enabled", havingValue = "true")
+public class ConfigurationAdapterBasicAuth extends WebSecurityConfigurerAdapter {
 
     /**
      * Whether the h2 console is enabled.
@@ -48,8 +51,21 @@ public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
     @SuppressFBWarnings("SPRING_CSRF_PROTECTION_DISABLED")
     protected final void configure(final HttpSecurity http) throws Exception {
 
-            http.authorizeRequests().antMatchers("/**").permitAll()
-                    .anyRequest().authenticated().and().csrf().disable();
+            http.sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests()
+                .antMatchers("/", "/api/ids/data").anonymous()
+                .antMatchers("/api/subscriptions/**").authenticated()
+                .antMatchers("/api/**").hasRole("ADMIN")
+                .antMatchers("/actuator/**").hasRole("ADMIN")
+                .antMatchers("/database/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+                .and()
+                .csrf().disable()
+                .httpBasic()
+                .authenticationEntryPoint(authenticationEntryPoint());
+            http.headers().xssProtection();
 
         if (isH2ConsoleEnabled) {
             http.headers().frameOptions().disable();
