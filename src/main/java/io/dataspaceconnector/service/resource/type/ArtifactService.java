@@ -25,6 +25,7 @@ import java.util.UUID;
 
 import io.dataspaceconnector.common.exception.DataDispatchException;
 import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
 import io.dataspaceconnector.common.net.QueryInput;
@@ -38,6 +39,7 @@ import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
+import io.dataspaceconnector.model.artifact.Data;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.model.artifact.RemoteData;
 import io.dataspaceconnector.model.base.AbstractFactory;
@@ -57,6 +59,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.SerializationUtils;
 
 /**
  * Handles the basic logic for artifacts.
@@ -119,63 +122,116 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     }
 
     /**
-     * Persist the artifact and its data.
+     * Creates a new artifact and the corresponding data. If it references a route, the route link
+     * is also created and the route is deployed in Camel.
      *
-     * @param artifact The artifact to persists.
-     * @return The persisted artifact.
+     * @param desc The description of the artifact.
+     * @return The persisted artifact
+     * @throws InvalidEntityException if the input is invalid or the referenced Camel route cannot
+     *                                be created.
      */
     @Override
-    protected Artifact persist(final Artifact artifact) {
+    public Artifact create(final ArtifactDesc desc) {
+        Utils.requireNonNull(desc, ErrorMessage.DESC_NULL);
+
+        final var artifact = getFactory().create(desc);
         final var tmp = (ArtifactImpl) artifact;
+
         if (tmp.getData() != null) {
-            if (tmp.getData().getId() == null) {
+            // The data element is new, insert
+            if (tmp.getData() instanceof RemoteData) {
+                var data = (RemoteData) tmp.getData();
+                data.getAuthentication().forEach(authRepo::saveAndFlush);
+            }
+            final var persistedData = dataRepo.saveAndFlush(tmp.getData());
+
+            if (tmp.getData() instanceof LocalData) {
+                final var factory = (ArtifactFactory) getFactory();
+                factory.updateByteSize(artifact, ((LocalData) tmp.getData()).getValue());
+            } else if (tmp.getData() instanceof RemoteData) {
+                final var url = ((RemoteData) tmp.getData()).getAccessUrl();
+                artifactRouteSvc.ensureSingleArtifactPerRoute(url, artifact.getId());
+                artifactRouteSvc.checkForValidRoute(url);
+                final var persisted = persist(artifact);
+                try {
+                    artifactRouteSvc.createRouteLink(url, persisted);
+                    return persisted;
+                } catch (InvalidEntityException exception) {
+                    // Artifact and data should not be persisted if route cannot be created.
+                    getRepository().deleteById(persisted.getId());
+                    dataRepo.deleteById(persistedData.getId());
+                    throw exception;
+                }
+            }
+        }
+
+        return persist(artifact);
+    }
+
+    /**
+     * Updates and artifact and its data.
+     *
+     * @param artifactId The artifact ID.
+     * @param desc The description of the artifact.
+     * @return The updated artifact.
+     * @throws InvalidEntityException if the input is invalid or the referenced Camel route cannot
+     *                                be created.
+     */
+    @Override
+    public Artifact update(final UUID artifactId, final ArtifactDesc desc) {
+        Utils.requireNonNull(artifactId, ErrorMessage.ENTITYID_NULL);
+        Utils.requireNonNull(desc, ErrorMessage.DESC_NULL);
+
+        var artifact = get(artifactId);
+        final var cached = SerializationUtils.clone(artifact);
+
+        if (getFactory().update(artifact, desc)) {
+            final var tmp = (ArtifactImpl) artifact;
+            final var tmpData = tmp.getData();
+            Data persistedData = null;
+            Data storedCopy = null;
+            if (tmpData.getId() == null) {
                 // The data element is new, insert
-                if (tmp.getData() instanceof RemoteData) {
-                    var data = (RemoteData) tmp.getData();
+                if (tmpData instanceof RemoteData) {
+                    var data = (RemoteData) tmpData;
                     data.getAuthentication().forEach(authRepo::saveAndFlush);
                 }
-                dataRepo.saveAndFlush(tmp.getData());
+                persistedData = dataRepo.saveAndFlush(tmp.getData());
             } else {
-                // The data element exists already, check if an update is
-                // required
-                final var storedCopy = dataRepo.getById(tmp.getData().getId());
+                // The data element exists already, check if an update is required
+                storedCopy = dataRepo.getById(tmp.getData().getId());
                 if (!storedCopy.equals(tmp.getData())) {
-                    dataRepo.saveAndFlush(tmp.getData());
+                    persistedData = dataRepo.saveAndFlush(tmp.getData());
                 }
             }
 
             if (tmp.getData() instanceof LocalData) {
                 final var factory = (ArtifactFactory) getFactory();
                 factory.updateByteSize(artifact, ((LocalData) tmp.getData()).getValue());
+                artifact = persist(artifact);
             } else if (tmp.getData() instanceof RemoteData) {
-                return persistWithRemoteData(tmp);
+                final var url = ((RemoteData) tmp.getData()).getAccessUrl();
+                artifactRouteSvc.ensureSingleArtifactPerRoute(url, artifact.getId());
+                artifactRouteSvc.checkForValidRoute(url);
+                try {
+                    artifactRouteSvc.createRouteLink(url, artifact);
+                    artifact = persist(artifact);
+                } catch (InvalidEntityException exception) {
+                    // If the route cannot be deployed, revert changes to artifact and data
+                    persist(cached);
+                    if (storedCopy != null) {
+                        dataRepo.saveAndFlush(storedCopy);
+                    } else {
+                        dataRepo.deleteRemoteData(persistedData.getId());
+                    }
+
+                    throw exception;
+                }
             }
         }
 
-        return super.persist(tmp);
+        return artifact;
     }
-
-    /**
-     * Persists an artifact with remote data, where the accessUrl can be a route reference. Before
-     * the artifact is persisted, validation is performed. This includes checking if the referenced
-     * route, if any, is valid and verifying that the route is not yet linked to another artifact.
-     * If the validation succeeds, the artifact is persisted. Afterwards, the persisted artifact is
-     * linked to the referenced route before being returned.
-     *
-     * @param artifact the artifact to persist.
-     * @return the persisted artifact.
-     */
-    private Artifact persistWithRemoteData(final ArtifactImpl artifact) {
-        final var url = ((RemoteData) artifact.getData()).getAccessUrl();
-        artifactRouteSvc.checkForRouteLinkUpdate(artifact, url);
-        artifactRouteSvc.ensureSingleArtifactPerRoute(url, artifact.getId());
-        artifactRouteSvc.checkForValidRoute(url);
-        final var persisted = super.persist(artifact);
-        artifactRouteSvc.createRouteLink(url, persisted.getId());
-
-        return persisted;
-    }
-
 
     /**
      * Get the artifacts data. If agreements for this resource exist, all of them will be tried for

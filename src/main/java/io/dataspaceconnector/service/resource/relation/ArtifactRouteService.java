@@ -92,27 +92,6 @@ public class ArtifactRouteService {
     }
 
     /**
-     * Checks whether an artifact has to be removed from a route on update. If the artifact's
-     * access URL referenced a route before and does not reference the same route after the update,
-     * the link between artifact and route is removed.
-     *
-     * @param artifact The updated artifact.
-     * @param url      The new access URL.
-     */
-    public void checkForRouteLinkUpdate(final Artifact artifact, final URL url) {
-        if (artifact.getId() != null) {
-            final var route = routeSvc.getByOutput(artifact);
-            if (route != null) {
-                final var urlString = url.toString();
-                final boolean isRouteReference = apiReferenceHelper.isRouteReference(url);
-                if (!isRouteReference || !urlString.contains(route.getId().toString())) {
-                    routeSvc.removeOutput(route.getId());
-                }
-            }
-        }
-    }
-
-    /**
      * Checks whether the route referenced for an artifact is valid. In order to be valid, the
      * route must have deploy method CAMEL and the start must be defined.
      *
@@ -148,18 +127,26 @@ public class ArtifactRouteService {
     }
 
     /**
-     * Links an artifact to a route.
+     * Links an artifact to a route. If the artifact was previously linked to another route, that
+     * link is removed. If the new route cannot be deployed, the link to the previous route is
+     * re-created.
      *
      * @param url        The URL referencing a route.
-     * @param artifactId The artifact ID.
+     * @param artifact   The artifact.
      * @throws InvalidEntityException if the URL is not a valid URI or the Camel route cannot be
      *                                created.
      */
-    public void createRouteLink(final URL url, final UUID artifactId) {
+    public void createRouteLink(final URL url, final Artifact artifact) {
+        Route currentRoute = null;
         try {
             if (apiReferenceHelper.isRouteReference(url)) {
+                currentRoute = routeSvc.getByOutput(artifact);
+                if (currentRoute != null) {
+                    routeSvc.removeOutput(currentRoute.getId());
+                }
+
                 final var routeId = UUIDUtils.uuidFromUri(url.toURI());
-                routeSvc.setOutput(routeId, artifactId);
+                routeSvc.setOutput(routeId, artifact.getId());
             }
         } catch (URISyntaxException exception) {
             if (log.isDebugEnabled()) {
@@ -169,6 +156,12 @@ public class ArtifactRouteService {
             }
             throw new InvalidEntityException("Route ID in access URL of artifact is not a "
                     + "valid URI.");
+        } catch (InvalidEntityException exception) {
+            // If linking to new route fails, re-create link to previously linked route
+            if (currentRoute != null) {
+                routeSvc.setOutput(currentRoute.getId(), artifact.getId());
+            }
+            throw exception;
         }
     }
 
