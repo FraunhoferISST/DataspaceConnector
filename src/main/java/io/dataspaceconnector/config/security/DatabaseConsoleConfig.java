@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.config.security;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +33,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class DatabaseConsoleConfig extends WebSecurityConfigurerAdapter {
 
     @Override
+    @SuppressFBWarnings("SPRING_CSRF_PROTECTION_DISABLED")
     protected final void configure(final HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity.authorizeRequests().antMatchers("/**")
