@@ -86,6 +86,7 @@ public class UpdateInfoService {
             }
         } else {
             // If no update is available, set boolean to false and show no more details.
+            updateInfo.clear();
             updateInfo.put("available", false);
         }
 
@@ -144,19 +145,22 @@ public class UpdateInfoService {
      * @return Result and type of the present update.
      */
     private static UpdateType getUpdateType(final String[] release, final String[] project) {
-        if (Integer.parseInt(release[0]) > Integer.parseInt(project[0])) {
-            return UpdateType.MAJOR;
-        }
+        try {
+            if (Integer.parseInt(release[0]) > Integer.parseInt(project[0])) {
+                return UpdateType.MAJOR;
+            }
 
-        if (Integer.parseInt(release[0]) == Integer.parseInt(project[0])
-                && Integer.parseInt(release[1]) > Integer.parseInt(project[1])) {
-            return UpdateType.MINOR;
-        }
+            if (Integer.parseInt(release[0]) == Integer.parseInt(project[0])
+                    && Integer.parseInt(release[1]) > Integer.parseInt(project[1])) {
+                return UpdateType.MINOR;
+            }
 
-        if (Integer.parseInt(release[0]) == Integer.parseInt(project[0])
-                && Integer.parseInt(release[1]) == Integer.parseInt(project[1])
-                && Integer.parseInt(release[2]) > Integer.parseInt(project[2])) {
-            return UpdateType.PATCH;
+            if (Integer.parseInt(release[0]) == Integer.parseInt(project[0])
+                    && Integer.parseInt(release[1]) == Integer.parseInt(project[1])
+                    && Integer.parseInt(release[2]) > Integer.parseInt(cleanVersion(project[2]))) {
+                return UpdateType.PATCH;
+            }
+        } catch (IllegalArgumentException ignored) {
         }
 
         return UpdateType.NO_UPDATE;
@@ -164,5 +168,13 @@ public class UpdateInfoService {
 
     private static boolean isOutdated(final String currentVersion, final String latestVersion) {
         return !currentVersion.equals(latestVersion);
+    }
+
+    private static String cleanVersion(final String string) {
+        if (string.contains("SNAPSHOT")) {
+            return string.replace("-SNAPSHOT", "");
+        }
+
+        return string;
     }
 }

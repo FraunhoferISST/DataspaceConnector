@@ -24,12 +24,14 @@ import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import de.fraunhofer.ids.messaging.core.config.ssl.keystore.KeyStoreManager;
 import de.fraunhofer.ids.messaging.core.daps.ConnectorMissingCertExtensionException;
 import de.fraunhofer.ids.messaging.core.daps.DapsConnectionException;
 import de.fraunhofer.ids.messaging.core.daps.DapsEmptyResponseException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenProvider;
 import io.dataspaceconnector.common.ids.mapping.FromIdsObjectMapper;
 import io.dataspaceconnector.model.configuration.ConnectorStatus;
+import io.dataspaceconnector.model.configuration.DeployMode;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.service.resource.ids.builder.IdsCatalogBuilder;
 import io.dataspaceconnector.service.resource.ids.builder.IdsResourceBuilder;
@@ -88,6 +90,14 @@ public class ConnectorService {
     private final @NonNull OfferedResourceService offeredResourceService;
 
     /**
+     * Get keystore manager from ids messaging services.
+     * @return The keystore manager.
+     */
+    public KeyStoreManager getKeyStoreManager() {
+        return configContainer.getKeyStoreManager();
+    }
+
+    /**
      * Get a local copy of the current connector and extract its id.
      *
      * @return The connector id.
@@ -107,6 +117,18 @@ public class ConnectorService {
         final var status = connector.getConnectorStatus();
 
         return FromIdsObjectMapper.fromIdsConnectorStatus(status);
+    }
+
+    /**
+     * Get the current deploy method.
+     *
+     * @return The connector's deploy method.
+     */
+    public DeployMode getDeployMethod() {
+        final var config = configContainer.getConfigurationModel();
+        final var deployMethod = config.getConnectorDeployMode();
+
+        return FromIdsObjectMapper.fromIdsDeployMode(deployMethod);
     }
 
     /**
