@@ -159,7 +159,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                 } catch (InvalidEntityException exception) {
                     // Artifact and data should not be persisted if route cannot be created.
                     getRepository().deleteById(persisted.getId());
-                    dataRepo.deleteById(persistedData.getId());
+                    dataRepo.deleteRemoteData(persistedData.getId());
                     throw exception;
                 }
             }
