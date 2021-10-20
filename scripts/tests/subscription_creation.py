@@ -106,14 +106,16 @@ provider.add_rule_to_contract(contract, use_rule)
 
 print("Created provider resources")
 
-response = consumerSub.subscription_message(data={"value": f"""{
-                                      "title": "string",
-                                      "description": "string",
-                                      "target": "{offers}",
-                                      "location": "{consumerUrl + "/api/ids/data"}",
-                                      "subscriber": {consumerUrl}",
-                                      "pushData": true
-                                      }"""},
-                                            params={'recipient': providerUrl + '/api/ids/data'})
+data = {
+    "title": "string",
+    "description": "string",
+    "target": offers,
+    "location": consumerUrl+"/api/ids/data",
+    "subscriber": consumerUrl,
+    "pushData": "true"
+}
+
+response = consumerSub.subscription_message(data=data,
+                                            params={'recipient': consumerUrl + '/api/ids/data'})
 
 pprint.pprint(response)
