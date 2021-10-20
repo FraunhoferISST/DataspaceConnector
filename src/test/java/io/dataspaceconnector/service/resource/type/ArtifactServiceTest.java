@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
@@ -63,6 +64,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -100,12 +102,12 @@ class ArtifactServiceTest {
     private ArtifactService service;
 
     /**************************************************************************
-     * persist
+     * create
      *************************************************************************/
 
     @Test
     @SneakyThrows
-    public void persist_dataNull_persistArtifact() {
+    public void create_dataNull_persistArtifact() {
         /* ARRANGE */
         final var desc = new ArtifactDesc();
         ArtifactImpl artifact = new ArtifactImpl();
@@ -124,7 +126,7 @@ class ArtifactServiceTest {
 
     @SneakyThrows
     @Test
-    public void persist_dataIdNull_persistDataAndArtifact() {
+    public void create_dataIdNull_persistDataAndArtifact() {
         /* ARRANGE */
         final var desc = new ArtifactDesc();
         ArtifactImpl artifact = new ArtifactImpl();
@@ -148,38 +150,7 @@ class ArtifactServiceTest {
 
     @SneakyThrows
     @Test
-    public void persist_dataPresentNotChanged_persistArtifact() {
-        /* ARRANGE */
-        final var desc = new ArtifactDesc();
-        ArtifactImpl artifact = new ArtifactImpl();
-        LocalData data = new LocalData();
-
-        Long dataId = 1L;
-
-        final var idField = data.getClass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(data, dataId);
-
-        final var dataField = artifact.getClass().getDeclaredField("data");
-        dataField.setAccessible(true);
-        dataField.set(artifact, data);
-
-        when(artifactFactory.create(desc)).thenReturn(artifact);
-        when(artifactRepository.saveAndFlush(artifact)).thenReturn(artifact);
-        when(dataRepository.saveAndFlush(data)).thenReturn(data);
-        when(dataRepository.getById(dataId)).thenReturn(data);
-
-        /* ACT */
-        service.create(desc);
-
-        /* ASSERT */
-        verify(artifactRepository, times(1)).saveAndFlush(artifact);
-        verify(dataRepository, never()).saveAndFlush(any());
-    }
-
-    @SneakyThrows
-    @Test
-    public void persist_dataPresentAndChanged_persistDataAndArtifact() {
+    public void create_dataPresentAndChanged_persistDataAndArtifact() {
         /* ARRANGE */
         final var desc = new ArtifactDesc();
 
@@ -213,6 +184,87 @@ class ArtifactServiceTest {
         /* ASSERT */
         verify(artifactRepository, times(1)).saveAndFlush(artifact);
         verify(dataRepository, times(1)).saveAndFlush(data);
+    }
+
+    /**************************************************************************
+     * update
+     *************************************************************************/
+
+    @Test
+    @SneakyThrows
+    void update_newLocalData_updateArtifactAndData() {
+        /* ARRANGE */
+        final var desc = new ArtifactDesc();
+
+        // create new data instance
+        LocalData data = new LocalData();
+        Long dataId = 1L;
+        final var idField = data.getClass().getSuperclass().getDeclaredField("id");
+        idField.setAccessible(true);
+        idField.set(data, dataId);
+
+        // create new artifact instance with previously created data
+        ArtifactImpl artifact = new ArtifactImpl();
+        final var dataField = artifact.getClass().getDeclaredField("data");
+        dataField.setAccessible(true);
+        dataField.set(artifact, data);
+
+        // create different data instance that will be the previously persisted data
+        LocalData dataOld = new LocalData();
+        final var valueField = dataOld.getClass().getDeclaredField("value");
+        valueField.setAccessible(true);
+        valueField.set(dataOld, "some value".getBytes());
+
+        when(artifactRepository.findById(any())).thenReturn(Optional.of(artifact));
+        when(artifactFactory.update(artifact, desc)).thenReturn(true);
+        when(artifactRepository.saveAndFlush(artifact)).thenReturn(artifact);
+        when(dataRepository.saveAndFlush(data)).thenReturn(data);
+        when(dataRepository.getById(dataId)).thenReturn(dataOld);
+
+        /* ACT */
+        service.update(UUID.randomUUID(), desc);
+
+        /* ASSERT */
+        verify(artifactRepository, times(1)).saveAndFlush(artifact);
+        verify(dataRepository, times(1)).saveAndFlush(data);
+    }
+
+    @Test
+    @SneakyThrows
+    void update_newRouteLinkAndRouteCannotBeCreated_revertChanges() {
+        final var desc = new ArtifactDesc();
+        final var artifactId = UUID.randomUUID();
+
+        // create new data instance
+        RemoteData data = new RemoteData();
+        Long dataId = 1L;
+        final var idField = data.getClass().getSuperclass().getDeclaredField("id");
+        idField.setAccessible(true);
+        idField.set(data, dataId);
+
+        // create new artifact instance with previously created data
+        ArtifactImpl artifact = new ArtifactImpl();
+        final var dataField = artifact.getClass().getDeclaredField("data");
+        dataField.setAccessible(true);
+        dataField.set(artifact, data);
+
+        // create different data instance that will be the previously persisted data
+        RemoteData dataOld = new RemoteData();
+
+        when(artifactRepository.findById(any())).thenReturn(Optional.of(artifact));
+        when(artifactFactory.update(artifact, desc)).thenReturn(true);
+        when(artifactRepository.saveAndFlush(artifact)).thenReturn(artifact);
+        when(dataRepository.saveAndFlush(data)).thenReturn(data);
+        when(dataRepository.getById(dataId)).thenReturn(dataOld);
+        doThrow(InvalidEntityException.class)
+                .when(artifactRouteService).createRouteLink(any(), any());
+
+        /* ACT && ASSERT */
+        assertThrows(InvalidEntityException.class, () -> service.update(artifactId, desc));
+
+        verify(artifactRepository, times(1)).saveAndFlush(artifact);
+        verify(dataRepository, times(1)).saveAndFlush(data);
+        verify(dataRepository, times(1)).saveAndFlush(dataOld);
     }
 
     /**************************************************************************

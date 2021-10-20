@@ -124,76 +124,6 @@ class ArtifactRouteServiceTest {
 
     @Test
     @SneakyThrows
-    void checkForRouteLinkUpdate_noRouteLinkedYet_doNothing() {
-        /* ARRANGE */
-        final var artifact = getArtifact();
-        final var url = new URL("https://" + routeId);
-
-        when(routeService.getByOutput(any())).thenReturn(null);
-
-        /* ACT */
-        artifactRouteService.checkForRouteLinkUpdate(artifact, url);
-
-        /* ASSERT */
-        verify(routeService, never()).removeOutput(any());
-    }
-
-    @Test
-    @SneakyThrows
-    void checkForRouteLinkUpdate_newUrlSameRoute_doNothing() {
-        /* ARRANGE */
-        final var artifact = getArtifact();
-        final var route = getRoute(artifact);
-        final var url = new URL("https://" + routeId);
-
-        when(routeService.getByOutput(any())).thenReturn(route);
-        when(apiReferenceHelper.isRouteReference(any())).thenReturn(true);
-
-        /* ACT */
-        artifactRouteService.checkForRouteLinkUpdate(artifact, url);
-
-        /* ASSERT */
-        verify(routeService, never()).removeOutput(any());
-    }
-
-    @Test
-    @SneakyThrows
-    void checkForRouteLinkUpdate_routeLinkedAndNewUrlNotRoute_removeOutput() {
-        /* ARRANGE */
-        final var artifact = getArtifact();
-        final var route = getRoute(artifact);
-        final var url = new URL("https://" + routeId);
-
-        when(routeService.getByOutput(any())).thenReturn(route);
-        when(apiReferenceHelper.isRouteReference(any())).thenReturn(false);
-
-        /* ACT */
-        artifactRouteService.checkForRouteLinkUpdate(artifact, url);
-
-        /* ASSERT */
-        verify(routeService, times(1)).removeOutput(routeId);
-    }
-
-    @Test
-    @SneakyThrows
-    void checkForRouteLinkUpdate_routeLinkedAndNewUrlDifferentRoute_removeOutput() {
-        /* ARRANGE */
-        final var artifact = getArtifact();
-        final var route = getRoute(artifact);
-        final var url = new URL("https://" + UUID.randomUUID());
-
-        when(routeService.getByOutput(any())).thenReturn(route);
-        when(apiReferenceHelper.isRouteReference(any())).thenReturn(true);
-
-        /* ACT */
-        artifactRouteService.checkForRouteLinkUpdate(artifact, url);
-
-        /* ASSERT */
-        verify(routeService, times(1)).removeOutput(routeId);
-    }
-
-    @Test
-    @SneakyThrows
     void checkForValidRoute_urlNotRoute_doNothing() {
         /* ARRANGE */
         final var url = new URL("https://" + routeId);
@@ -253,12 +183,13 @@ class ArtifactRouteServiceTest {
     @SneakyThrows
     void createRouteLink_urlNotRoute_doNothing() {
         /* ARRANGE */
+        final var artifact = getArtifact();
         final var url = new URL("https://" + routeId);
 
         when(apiReferenceHelper.isRouteReference(any())).thenReturn(false);
 
         /* ACT */
-        artifactRouteService.createRouteLink(url, artifactId);
+        artifactRouteService.createRouteLink(url, artifact);
 
         /* ASSERT */
         verify(routeService, never()).setOutput(any(), any());
@@ -268,15 +199,17 @@ class ArtifactRouteServiceTest {
     @SneakyThrows
     void createRouteLink_validInput_setOutput() {
         /* ARRANGE */
+        final var artifact = getArtifact();
         final var route = getRoute(null);
         ReflectionTestUtils.setField(route, "deploy", DeployMethod.CAMEL);
         final var url = new URL("https://" + routeId);
 
         when(apiReferenceHelper.isRouteReference(any())).thenReturn(true);
+        when(routeService.getByOutput(any())).thenReturn(null);
         when(routeService.get(any())).thenReturn(route);
 
         /* ACT */
-        artifactRouteService.createRouteLink(url, artifactId);
+        artifactRouteService.createRouteLink(url, artifact);
 
         /* ASSERT */
         verify(routeService, times(1)).setOutput(routeId, artifactId);
@@ -286,14 +219,37 @@ class ArtifactRouteServiceTest {
     @SneakyThrows
     void createRouteLink_malformedUri_throwInvalidEntityException() {
         /* ARRANGE */
+        final var artifact = getArtifact();
         final var url = new URL("https://{not-allowed-in-uri}" + routeId);
 
         when(apiReferenceHelper.isRouteReference(any())).thenReturn(true);
+        when(routeService.getByOutput(any())).thenReturn(null);
 
         /* ACT && ASSERT */
         assertThrows(InvalidEntityException.class,
-                () -> artifactRouteService.createRouteLink(url, artifactId));
+                () -> artifactRouteService.createRouteLink(url, artifact));
     }
+
+    @Test
+    @SneakyThrows
+    void checkForRouteLinkUpdate_routeLinkedAndNewUrlDifferentRoute_removeOutput() {
+        /* ARRANGE */
+        final var artifact = getArtifact();
+        final var route = getRoute(artifact);
+        final var newRouteId = UUID.randomUUID();
+        final var url = new URL("https://" + newRouteId);
+
+        when(apiReferenceHelper.isRouteReference(any())).thenReturn(true);
+        when(routeService.getByOutput(any())).thenReturn(route);
+
+        /* ACT */
+        artifactRouteService.createRouteLink(url, artifact);
+
+        /* ASSERT */
+        verify(routeService, times(1)).removeOutput(routeId);
+        verify(routeService, times(1)).setOutput(newRouteId, artifactId);
+    }
+
 
     @Test
     void getAssociatedRoute_noRouteAssociated_returnNull() {
