@@ -25,7 +25,7 @@ provider_alias = "http://provider-dataspace-connector"
 
 
 def main(argv):
-    if len(argv) == 2:
+    if len(argv) == 1:
         provider_alias = argv[0]
         print("Setting provider alias as:", provider_alias)
 
