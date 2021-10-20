@@ -94,7 +94,7 @@
 		<maven.minimum.version>3.3.9</maven.minimum.version>
 
 		<!-- Dependencies -->
-		<ids-messaging-services.version>5.0.1</ids-messaging-services.version>
+		<ids-messaging-services.version>5.1.0</ids-messaging-services.version>
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.6.3</swagger-annotations.version>
 		<okhttp.version>4.9.2</okhttp.version>
