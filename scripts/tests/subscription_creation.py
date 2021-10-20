@@ -110,12 +110,25 @@ data = {
     "title": "string",
     "description": "string",
     "target": offers,
-    "location": consumerUrl+"/api/ids/data",
+    "location": providerUrl+"/api/ids/data",
     "subscriber": consumerUrl,
     "pushData": "true"
 }
 
 response = consumerSub.subscription_message(data=data,
-                                            params={'recipient': consumerUrl + '/api/ids/data'})
+                                            params={'recipient': providerUrl + '/api/ids/data'})
 
-pprint.pprint(response)
+pprint.pprint(response.text)
+if response.status_code != 200:
+    exit(1)
+
+
+check = providerSub.get_subscriptions()
+pprint.pprint(check.text)
+if check.status_code != 200:
+    exit(1)
+
+if not check.text.__contains__(offers):
+    exit(1)
+
+exit(0)
