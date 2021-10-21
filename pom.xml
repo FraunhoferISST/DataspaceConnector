@@ -101,7 +101,7 @@
 		<modelmapper.version>2.4.4</modelmapper.version>
 		<jackson.version>2.13.0</jackson.version>
 		<postgres.version>42.3.0</postgres.version>
-		<springdoc.version>1.5.11</springdoc.version>
+		<springdoc.version>1.5.12</springdoc.version>
 		<equalsverifier.version>3.7.2</equalsverifier.version>
 		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
