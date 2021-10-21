@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
 - Increase equalsverifier version from 3.7.1 to 3.7.2.
 - Increase postgresql version from 42.2.24 to 42.3.0.
 - Increase springdoc version from 1.5.11 to 1.5.12.
+- Increase camel-idscp2 version from 0.5.0 to 0.6.0.
 
 ## [6.3.1] - 2021-10-05
 
