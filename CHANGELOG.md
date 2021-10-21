@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - `ArtifactFactory::updateByteSize` sets `byteSize` and `checksum` to 0 when data is removed.
 - Add nullcheck to `ArtifactService::toInputStream`.
 - Check if representations are null or empty in `getMediaTypeOfArtifact`.
+- Data to be deleted from a consumed artifact, if necessary, is now deleted only once and not with each scheduler call.
 - Fix collisions in bootstrapping process setting a unique path for the `bootstrap.path` property.
 
 ### Changed
