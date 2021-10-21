@@ -33,8 +33,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.time.format.DateTimeParseException;
+import java.util.UUID;
 
 /**
  * This class implements automated policy check.
@@ -103,32 +103,40 @@ public class ScheduledDataRemoval {
             final var idsAgreement = deserializationService.getContractAgreement(value);
             for (final var rule : ContractUtils.extractRulesFromContract(idsAgreement)) {
                 if (RuleUtils.checkRuleForPostDuties(rule)) {
-                    removeDataFromArtifact(rule.getTarget());
+                    final var artifactId = artifactService.identifyByRemoteId(rule.getTarget());
+                    if (artifactId.isPresent() && !isDataDeleted(artifactId.get())) {
+                        removeDataFromArtifact(artifactId.get());
+                    }
                 }
             }
         }
     }
 
     /**
+     * Check if an artifact already has the status deleted.
+     *
+     * @param artifactId The artifact uuid.
+     * @return True if the artifact data is deleted, false otherwise.
+     */
+    private boolean isDataDeleted(final UUID artifactId) {
+        return artifactService.isDataDeleted(artifactId);
+    }
+
+    /**
      * Delete data by artifact id.
      *
-     * @param target The artifact id.
-     * @throws ResourceNotFoundException If the artifact update fails.
+     * @param artifactId The artifact uuid.
      */
-    private void removeDataFromArtifact(final URI target) throws ResourceNotFoundException {
-        final var artifactId = artifactService.identifyByRemoteId(target);
-        if (artifactId.isPresent()) {
-            // Update data for artifact.
-            try {
-                artifactService.setData(artifactId.get(), InputStream.nullInputStream());
-                if (log.isDebugEnabled()) {
-                    log.debug("Removed data from artifact. [target=({})]", artifactId);
-                }
-            } catch (IOException e) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Failed to remove data from artifact. [target=({})]",
-                             artifactId);
-                }
+    private void removeDataFromArtifact(final UUID artifactId) {
+        try {
+            artifactService.setData(artifactId, InputStream.nullInputStream());
+            if (log.isDebugEnabled()) {
+                log.debug("Removed data from artifact [artifact=({})]", artifactId);
+            }
+        } catch (IOException | ResourceNotFoundException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to remove data from artifact. [artifact=({}), exception=({})]",
+                        artifactId, e.getMessage());
             }
         }
     }
