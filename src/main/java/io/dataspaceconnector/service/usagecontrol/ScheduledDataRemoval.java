@@ -104,20 +104,8 @@ public class ScheduledDataRemoval {
             for (final var rule : ContractUtils.extractRulesFromContract(idsAgreement)) {
                 if (RuleUtils.checkRuleForPostDuties(rule)) {
                     final var artifactId = artifactService.identifyByRemoteId(rule.getTarget());
-
                     if (artifactId.isPresent() && !isDataDeleted(artifactId.get())) {
-                        try {
-                            removeDataFromArtifact(artifactId.get());
-                            if (log.isDebugEnabled()) {
-                                log.debug("Removed data from artifact [artifact=({})]", artifactId);
-                            }
-                        } catch (IOException | ResourceNotFoundException e) {
-                            if (log.isWarnEnabled()) {
-                                log.warn("Failed to remove data from artifact."
-                                        + " [artifact=({}), exception=({})]",
-                                        artifactId, e.getMessage());
-                            }
-                        }
+                        removeDataFromArtifact(artifactId.get());
                     }
                 }
             }
@@ -138,11 +126,18 @@ public class ScheduledDataRemoval {
      * Delete data by artifact id.
      *
      * @param artifactId The artifact uuid.
-     * @throws ResourceNotFoundException If the artifact update fails.
-     * @throws IOException If the data could not be stored.
      */
-    private void removeDataFromArtifact(final UUID artifactId) throws ResourceNotFoundException,
-            IOException {
-        artifactService.setData(artifactId, InputStream.nullInputStream());
+    private void removeDataFromArtifact(final UUID artifactId) {
+        try {
+            artifactService.setData(artifactId, InputStream.nullInputStream());
+            if (log.isDebugEnabled()) {
+                log.debug("Removed data from artifact [artifact=({})]", artifactId);
+            }
+        } catch (IOException | ResourceNotFoundException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to remove data from artifact. [artifact=({}), exception=({})]",
+                        artifactId, e.getMessage());
+            }
+        }
     }
 }

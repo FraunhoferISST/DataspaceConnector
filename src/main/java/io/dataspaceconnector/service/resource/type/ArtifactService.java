@@ -15,14 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
@@ -53,6 +45,14 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Handles the basic logic for artifacts.
@@ -450,7 +450,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             final var value = ((LocalData) currentData).getValue();
             return (value == null || !(value.length > 0));
         } else {
-            //Only local data deletion supported
+            // Only local data deletion supported.
             return false;
         }
     }
