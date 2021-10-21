@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-##[X.X.X] - XXXX-XX-XX
+## [X.X.X] - XXXX-XX-XX
 
 ### Added
 - New `/actuator/info` API data `connector` to output the current version as well as information if a newer release is available on GitHub.
@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - Increase spotbugs version from 4.4.1 to 4.4.2.
 - Increase equalsverifier version from 3.7.1 to 3.7.2.
 - Increase postgresql version from 42.2.24 to 42.3.0.
+- Increase springdoc version from 1.5.11 to 1.5.12.
 
 ## [6.3.1] - 2021-10-05
 
