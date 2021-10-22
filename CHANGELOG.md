@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [X.X.X} - XXXX-XX-XX
+
+### Changed
+- Increase spring version from 2.5.5 to 2.5.6.
+
 ## [6.4.0] - 2021-10-21
 
 ### Added
