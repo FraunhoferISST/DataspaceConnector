@@ -18,6 +18,7 @@
 import requests
 import json
 
+
 class SubscriptionApi:
     session = None
     recipient = None
@@ -34,10 +35,11 @@ class SubscriptionApi:
         return response.headers["Location"]
 
     def subscription_message(self, data={}, params={}):
-        response = self.session.post(self.recipient + "/api/ids/subscribe", json=data, params=params)
+        response = self.session.post(
+            self.recipient + "/api/ids/subscribe", json=data, params=params
+        )
         return response
 
     def get_subscriptions(self):
         response = self.session.get(self.recipient + "/api/subscriptions")
         return response
-
