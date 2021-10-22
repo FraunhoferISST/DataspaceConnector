@@ -1,10 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-##[X.X.X] - XXXX-XX-XX
+## [X.X.X} - XXXX-XX-XX
 
 ### Added
-- Add `ids` field to `/actuator/info` endpoint, to monitor the connectors certificate expiration status and DAT infos (if one can be received).
+
 - Allow using route ID (URI) as access URL for artifacts.
 - Allow using route ID (URI) as location for subscriptions.
 - Allow specifying route IDs when calling `GET /data` endpoint to automatically dispatch data via these routes.
@@ -13,12 +13,32 @@ All notable changes to this project will be documented in this file.
 - Create sub-types for `DataSourceDesc` for types `REST` and `DATABASE` to allow adding database driver and URL.
 - Create datasource beans from `DataSources` of type `DATABASE` automatically.
 
+### Changed
+- Increase spring version from 2.5.5 to 2.5.6.
+- Change encoding of local data from `UTF-16` to `UTF-8`.
+- Change relation between `Route` and `Artifact` to one-to-one (previously one-to-many).
+  - Link is created automatically when an artifact is created with a route reference as access URL.
+- Replace template engine `Velocity` with `Freemarker`.
+
+### Fixed
+
+- XML-escape URLs before injecting them into Camel route templates.
+
+### Removed
+
+- Remove entity `ConnectorEndpoint` and all corresponding classes.
+
+## [6.4.0] - 2021-10-21
+
+### Added
+- Add `ids` field to `/actuator/info` endpoint, to monitor the connectors certificate expiration status and DAT infos (if one can be received).
+
 ### Fixed
 - `ArtifactFactory::updateByteSize` sets `byteSize` and `checksum` to 0 when data is removed.
 - Add nullcheck to `ArtifactService::toInputStream`.
 - Check if representations are null or empty in `getMediaTypeOfArtifact`.
+- Data to be deleted from a consumed artifact, if necessary, is now deleted only once and not with each scheduler call.
 - Fix collisions in bootstrapping process setting a unique path for the `bootstrap.path` property.
-- XML-escape URLs before injecting them into Camel route templates.
 
 ### Changed
 - Increase description column length to 4096.
@@ -28,16 +48,8 @@ All notable changes to this project will be documented in this file.
 - Increase spotbugs version from 4.4.1 to 4.4.2.
 - Increase equalsverifier version from 3.7.1 to 3.7.2.
 - Increase postgresql version from 42.2.24 to 42.3.0.
-- Change encoding of local data from `UTF-16` to `UTF-8`.
-- Change relation between `Route` and `Artifact` to one-to-one (previously one-to-many).
-  - Link is created automatically when an artifact is created with a route reference as access URL.
-- Replace template engine `Velocity` with `Freemarker`.
-
-### Fixed
-- Fix collisions in bootstrapping process setting a unique path for the `bootstrap.path` property.
-
-### Removed
-- Remove entity `ConnectorEndpoint` and all corresponding classes.
+- Increase springdoc version from 1.5.11 to 1.5.12.
+- Increase camel-idscp2 version from 0.5.0 to 0.6.0.
 
 ## [6.3.1] - 2021-10-05
 

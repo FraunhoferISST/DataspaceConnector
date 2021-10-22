@@ -33,10 +33,10 @@ should at least include the following information:
 
 The [labels](https://github.com/International-Data-Spaces-Association/DataspaceConnector/labels) are listed at the
 [issues](https://github.com/International-Data-Spaces-Association/DataspaceConnector/issues).
-There are three types of labels: the `type` describes the content of the issue and should be used
-by the developer that creates the issue. The other one, starting with `status`, will be added from
-the developer that takes on the issue. New issues should be initially marked with `status: open`.
-Furthermore, the issues of type `scope` help to specify the scope of the issue.
+There are three types of labels: the `type` describes the content of the issue, `scope` helps to
+specify the scope of the issue. The `open for contribution` label can be seen as an invitation to
+contribute to the project. Independent functionalities and improvements that will not be implemented
+by the core developer team are marked with it.
 
 ## Branches
 

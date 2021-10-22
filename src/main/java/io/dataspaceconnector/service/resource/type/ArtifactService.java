@@ -517,6 +517,24 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     }
 
     /**
+     * Gets the deleted status of the artifacts data.
+     *
+     * @param artifactId The artifact uuid.
+     * @return True if artifact data null, else false.
+     */
+    public boolean isDataDeleted(final UUID artifactId) {
+        final var artifact = get(artifactId);
+        final var currentData = ((ArtifactImpl) artifact).getData();
+        if (currentData instanceof LocalData) {
+            final var value = ((LocalData) currentData).getValue();
+            return (value == null || !(value.length > 0));
+        } else {
+            // Only local data deletion supported.
+            return false;
+        }
+    }
+
+    /**
      * Dispatches data via Camel routes.
      */
     @RequiredArgsConstructor
