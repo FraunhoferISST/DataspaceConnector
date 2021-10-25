@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - Change encoding of local data from `UTF-16` to `UTF-8`.
 - Change relation between `Route` and `Artifact` to one-to-one (previously one-to-many).
   - Link is created automatically when an artifact is created with a route reference as access URL.
+- Change field `location` of `Endpoint` from URI to String.
 - Replace template engine `Velocity` with `Freemarker`.
 
 ### Fixed
