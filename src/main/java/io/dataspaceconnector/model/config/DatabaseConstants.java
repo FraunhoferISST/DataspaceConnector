@@ -53,7 +53,7 @@ public final class DatabaseConstants {
     /**
      * The maximum length of the database column for endpoint location.
      */
-    public static final int ENDPOINT_LOCATION_LENGTH = 1024;
+    public static final int ENDPOINT_LOCATION_LENGTH = 2048;
 
     /**
      * Private constructor.
