@@ -30,6 +30,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.Table;
 import java.net.URI;
 
+import static io.dataspaceconnector.model.config.DatabaseConstants.ENDPOINT_LOCATION_LENGTH;
 import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
@@ -54,6 +55,7 @@ public class Endpoint extends Entity {
     /**+
      * The access url of the endpoint.
      */
+    @Column(length = ENDPOINT_LOCATION_LENGTH)
     private String location;
 
     /**
