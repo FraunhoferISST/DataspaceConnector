@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.controller.routing.error;
 
+import io.dataspaceconnector.common.net.ResponseType;
+import io.dataspaceconnector.controller.routing.tag.CamelDescription;
+import io.dataspaceconnector.controller.routing.tag.CamelName;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -36,7 +39,7 @@ import java.util.stream.Collectors;
 @RestController("configManagerRoutesController")
 @NoArgsConstructor
 @RequestMapping("/api/configmanager")
-@Tag(name = "ConfigManager: Routes")
+@Tag(name = CamelName.CAMEL, description = CamelDescription.CAMEL)
 public class ErrorController {
     /**
      * Max. amount of route errors to be logged.
@@ -66,8 +69,8 @@ public class ErrorController {
      * @return Response-Code and all logged Route-Errors.
      */
     @Hidden
-    @GetMapping(value = "/route/error", produces = "application/ld+json")
-    @Operation(summary = "Get new route related errors")
+    @GetMapping(value = "/route/error", produces = ResponseType.JSON_LD)
+    @Operation(summary = "Get new route related errors.")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
             description = ResponseDescription.UNAUTHORIZED)

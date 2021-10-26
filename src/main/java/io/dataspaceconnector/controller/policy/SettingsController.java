@@ -15,7 +15,10 @@
  */
 package io.dataspaceconnector.controller.policy;
 
+import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.config.ConnectorConfig;
+import io.dataspaceconnector.controller.policy.tag.PolicyDescription;
+import io.dataspaceconnector.controller.policy.tag.PolicyName;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,7 +43,13 @@ import org.springframework.web.bind.annotation.RestController;
  * This class provides endpoints for connector configurations via a connected config manager.
  */
 @RestController
+@ApiResponses(value = {
+        @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+        @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                description = ResponseDescription.UNAUTHORIZED)})
+
 @RequestMapping("/api/configuration")
+@Tag(name = PolicyName.POLICIES, description = PolicyDescription.POLICY_SETTINGS)
 @RequiredArgsConstructor
 public class SettingsController {
 
@@ -55,13 +64,8 @@ public class SettingsController {
      * @param status The desired state.
      * @return Http ok or error response.
      */
-    @PutMapping(value = "/negotiation", produces = "application/json")
-    @Operation(summary = "Set contract negotiation status")
-    @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @PutMapping(value = "/negotiation", produces = ResponseType.JSON)
+    @Operation(summary = "Set contract negotiation status.")
     @ResponseBody
     public ResponseEntity<JSONObject> setNegotiationStatus(
             @RequestParam("status") final boolean status) {
@@ -74,13 +78,8 @@ public class SettingsController {
      *
      * @return Http ok or error response.
      */
-    @GetMapping(value = "/negotiation", produces = "application/json")
-    @Operation(summary = "Get contract negotiation status")
-    @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @GetMapping(value = "/negotiation", produces = ResponseType.JSON)
+    @Operation(summary = "Get contract negotiation status.")
     @ResponseBody
     public ResponseEntity<JSONObject> getNegotiationStatus() {
         final var headers = new HttpHeaders();
@@ -98,14 +97,9 @@ public class SettingsController {
      * @param status The desired state.
      * @return Http ok or error response.
      */
-    @PutMapping(value = "/pattern", produces = "application/json")
-    @Operation(summary = "Allow unsupported patterns", description = "Allow "
-            + "requesting data without policy enforcement if an unsupported pattern is recognized.")
-    @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @PutMapping(value = "/pattern", produces = ResponseType.JSON)
+    @Operation(summary = "Allow unsupported patterns.", description = "Allow requesting data "
+            + "without policy enforcement if an unsupported pattern is recognized.")
     @ResponseBody
     public ResponseEntity<JSONObject> setPatternStatus(
             @RequestParam("status") final boolean status) {
@@ -118,14 +112,9 @@ public class SettingsController {
      *
      * @return Http ok or error response.
      */
-    @GetMapping(value = "/pattern", produces = "application/json")
-    @Operation(summary = "Get pattern validation status",
-            description = "Return if unsupported patterns are ignored when requesting data.")
-    @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @GetMapping(value = "/pattern", produces = ResponseType.JSON)
+    @Operation(summary = "Get pattern validation status.",
+            description = "Return whether unsupported patterns are ignored when requesting data.")
     @ResponseBody
     public ResponseEntity<JSONObject> getPatternStatus() {
         final var headers = new HttpHeaders();

@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.controller.routing;
 
+import io.dataspaceconnector.controller.routing.tag.CamelDescription;
+import io.dataspaceconnector.controller.routing.tag.CamelName;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -50,7 +52,14 @@ import java.nio.charset.StandardCharsets;
 @Log4j2
 @RequiredArgsConstructor
 @RestController
+@ApiResponses(value = {
+        @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+        @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                description = ResponseDescription.UNAUTHORIZED),
+        @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
+                description = ResponseDescription.BAD_REQUEST)})
 @RequestMapping("/api/beans")
+@Tag(name = CamelName.CAMEL, description = CamelDescription.CAMEL)
 public class BeansController {
 
     /**
@@ -72,13 +81,6 @@ public class BeansController {
     @Hidden
     @PostMapping
     @Operation(summary = "Add a bean to the application context.")
-    @Tag(name = "Camel", description = "Endpoints for dynamically managing Camel routes.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED),
-            @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
-                    description = ResponseDescription.BAD_REQUEST)})
     public ResponseEntity<String> addBeans(@RequestParam("file") final MultipartFile file) {
         try {
             if (file == null) {
@@ -119,13 +121,6 @@ public class BeansController {
     @Hidden
     @DeleteMapping("/{beanId}")
     @Operation(summary = "Remove a bean from the application context.")
-    @Tag(name = "Camel", description = "Endpoints for dynamically managing Camel routes.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED),
-            @ApiResponse(responseCode = ResponseCode.BAD_REQUEST, description =
-                    ResponseDescription.BAD_REQUEST)})
     public ResponseEntity<String> removeBean(@PathVariable("beanId") final String beanId) {
         try {
             beanRegistry.removeBeanDefinition(beanId);

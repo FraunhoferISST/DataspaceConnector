@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller;
 
 import io.dataspaceconnector.common.ids.ConnectorService;
+import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.type.AgreementController;
 import io.dataspaceconnector.controller.resource.type.AppController;
@@ -38,6 +39,7 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +56,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * This class provides endpoints for basic connector services.
  */
 @RestController
-@Tag(name = "Connector", description = "Endpoints for connector information")
+@ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+        description = ResponseDescription.UNAUTHORIZED)
+@Tag(name = "Connector", description = "Endpoints for connector information.")
 @RequiredArgsConstructor
 public class MainController {
 
@@ -68,12 +72,10 @@ public class MainController {
      *
      * @return Self-description or error response.
      */
-    @GetMapping(value = {"/", ""}, produces = "application/ld+json")
-    @Operation(summary = "Public IDS self-description")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @SecurityRequirements
+    @GetMapping(value = {"/", ""}, produces = ResponseType.JSON_LD)
+    @Operation(summary = "Get the public IDS self-description.")
+    @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     @ResponseBody
     public ResponseEntity<Object> getPublicSelfDescription() {
         return ResponseEntity.ok(connectorService.getConnectorWithoutResources().toRdf());
@@ -84,12 +86,10 @@ public class MainController {
      *
      * @return Self-description or error response.
      */
-    @GetMapping(value = "/api/connector", produces = "application/ld+json")
-    @Operation(summary = "Private IDS self-description")
+    @GetMapping(value = "/api/connector", produces = ResponseType.JSON_LD)
+    @Operation(summary = "Get the private IDS self-description.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED),
             @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
                     description = ResponseDescription.INTERNAL_SERVER_ERROR)})
     @ResponseBody
@@ -104,10 +104,7 @@ public class MainController {
      */
     @Hidden
     @GetMapping("/api")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     public ResponseEntity<RepresentationModel<?>> root() {
         final var model = new RepresentationModel<>();
 
