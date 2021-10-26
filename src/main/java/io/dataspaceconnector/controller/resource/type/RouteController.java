@@ -46,9 +46,9 @@ import java.util.UUID;
  * Offers the endpoints for managing routes.
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(BasePath.ROUTES)
 @Tag(name = ResourceName.ROUTES, description = ResourceDescription.ROUTES)
-@RequiredArgsConstructor
 public class RouteController extends BaseResourceController<Route, RouteDesc, RouteView,
         RouteService> {
 

@@ -49,8 +49,8 @@ import java.util.UUID;
  * Offers the endpoints for managing configurations.
  */
 @RestController
-@RequestMapping(BasePath.CONFIGURATIONS)
 @RequiredArgsConstructor
+@RequestMapping(BasePath.CONFIGURATIONS)
 @Tag(name = ResourceName.CONFIGURATIONS, description = ResourceDescription.CONFIGURATIONS)
 public class ConfigurationController extends BaseResourceController<Configuration,
         ConfigurationDesc, ConfigurationView, ConfigurationService> {

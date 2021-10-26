@@ -29,6 +29,8 @@ import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
+import io.dataspaceconnector.controller.util.ResponseCode;
+import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,6 +63,8 @@ import java.util.Optional;
  */
 @RestController
 @RequiredArgsConstructor
+@ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+        description = ResponseDescription.UNAUTHORIZED)
 @RequestMapping("/api/ids")
 @Tag(name = "Messages", description = "Endpoints for invoke sending messages")
 public class QueryMessageController {

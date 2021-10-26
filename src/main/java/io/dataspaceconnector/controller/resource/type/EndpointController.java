@@ -58,8 +58,10 @@ import java.util.UUID;
  * Offers the endpoints for managing different endpoints.
  */
 @RestController
-@RequestMapping(BasePath.ENDPOINTS)
 @RequiredArgsConstructor
+@ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+        description = ResponseDescription.UNAUTHORIZED)
+@RequestMapping(BasePath.ENDPOINTS)
 @Tag(name = ResourceName.ENDPOINTS, description = ResourceDescription.ENDPOINTS)
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.NONE)

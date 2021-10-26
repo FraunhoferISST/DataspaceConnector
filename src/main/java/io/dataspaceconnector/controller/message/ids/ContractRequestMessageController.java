@@ -130,6 +130,7 @@ public class ContractRequestMessageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "417", description = "Expectation failed"),
             @ApiResponse(responseCode = "500", description = "Internal server error"),

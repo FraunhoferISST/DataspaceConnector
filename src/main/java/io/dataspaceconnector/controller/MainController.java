@@ -55,6 +55,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * This class provides endpoints for basic connector services.
  */
 @RestController
+@ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+        description = ResponseDescription.UNAUTHORIZED)
 @Tag(name = "Connector", description = "Endpoints for connector information")
 @RequiredArgsConstructor
 public class MainController {
@@ -72,8 +74,7 @@ public class MainController {
     @SecurityRequirements
     @GetMapping(value = {"/", ""}, produces = "application/ld+json")
     @Operation(summary = "Public IDS self-description")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)})
+    @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     @ResponseBody
     public ResponseEntity<Object> getPublicSelfDescription() {
         return ResponseEntity.ok(connectorService.getConnectorWithoutResources().toRdf());
@@ -102,8 +103,7 @@ public class MainController {
      */
     @Hidden
     @GetMapping("/api")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)})
+    @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     public ResponseEntity<RepresentationModel<?>> root() {
         final var model = new RepresentationModel<>();
 

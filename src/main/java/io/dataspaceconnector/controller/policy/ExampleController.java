@@ -52,6 +52,11 @@ import org.springframework.web.bind.annotation.RestController;
  * This class provides endpoints exposing example resources and configurations.
  */
 @RestController
+@ApiResponses(value = {
+        @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+        @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                description = ResponseDescription.UNAUTHORIZED)})
+
 @RequestMapping("/api/examples")
 @RequiredArgsConstructor
 public class ExampleController {
@@ -69,10 +74,8 @@ public class ExampleController {
     @Operation(summary = "Get pattern of policy",
             description = "Get the policy pattern represented by a given JSON string.")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
-                    description = ResponseDescription.INTERNAL_SERVER_ERROR)})
+    @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
+            description = ResponseDescription.INTERNAL_SERVER_ERROR)
     @PostMapping("/validation")
     @ResponseBody
     public ResponseEntity<Object> getPolicyPattern(
@@ -95,10 +98,8 @@ public class ExampleController {
     @Operation(summary = "Get example policy",
             description = "Get an example policy for a given policy pattern.")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
-                    description = ResponseDescription.BAD_REQUEST)})
+    @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
+            description = ResponseDescription.BAD_REQUEST)
     @PostMapping("/policy")
     @ResponseBody
     public ResponseEntity<Object> getExampleUsagePolicy(@RequestBody final PatternDesc input) {

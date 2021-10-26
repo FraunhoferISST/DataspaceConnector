@@ -46,8 +46,8 @@ import org.springframework.web.bind.annotation.RestController;
  * Offers the endpoints for managing subscriptions.
  */
 @RestController
-@RequestMapping(BasePath.SUBSCRIPTIONS)
 @RequiredArgsConstructor
+@RequestMapping(BasePath.SUBSCRIPTIONS)
 @Tag(name = ResourceName.SUBSCRIPTIONS, description = ResourceDescription.SUBSCRIPTIONS)
 public class SubscriptionController extends BaseResourceController<Subscription, SubscriptionDesc,
         SubscriptionView, SubscriptionService> {
