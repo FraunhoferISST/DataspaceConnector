@@ -9,6 +9,10 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Increase spring version from 2.5.5 to 2.5.6.
 
+### Fixed
+- Only create agreements from contract offers with valid start and end date.
+- Check if agreement has expired before returning data.
+
 ## [6.4.0] - 2021-10-21
 
 ### Added
