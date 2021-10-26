@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.extension.monitoring;
 
-import lombok.extern.log4j.Log4j2;
 import org.apache.camel.CamelContext;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.stereotype.Component;
@@ -26,7 +25,6 @@ import java.util.HashMap;
  * Expands the actuator-endpoint if enabled and exposes camel data at runtime at the info-endpoint.
  */
 @Component
-@Log4j2
 public class CamelInfoContributorExt
         extends org.apache.camel.spring.boot.actuate.info.CamelInfoContributor {
 
