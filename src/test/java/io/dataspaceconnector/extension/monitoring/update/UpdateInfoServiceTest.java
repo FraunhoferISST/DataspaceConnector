@@ -69,6 +69,7 @@ public class UpdateInfoServiceTest {
             return new OkHttpClient().newCall(req).execute();
         }).when(httpService).send(Mockito.any(Request.class));
         mockWebServer.enqueue(response);
+        mockWebServer.close();
 
         /* ACT */
         final var result = updateInfoService.getLatestInformation();
