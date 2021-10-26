@@ -18,31 +18,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 13.4 (Debian 13.4-4.pgdg110+1)
--- Dumped by pg_dump version 14.0 (Ubuntu 14.0-1.pgdg20.04+1)
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
-DROP DATABASE connectordb;
---
--- Name: connectordb; Type: DATABASE; Schema: -; Owner: connector
---
-
-CREATE DATABASE connectordb WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE = 'en_US.utf8';
-
-
-ALTER DATABASE connectordb OWNER TO connector;
-
-\connect connectordb
+-- Dumped from database version 13.3 (Debian 13.3-1.pgdg100+1)
+-- Dumped by pg_dump version 13.3 (Debian 13.3-1.pgdg100+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -64,15 +41,15 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.agreement (
-    id uuid NOT NULL,
-    bootstrap_id character varying(2048),
-    created_date timestamp without time zone NOT NULL,
-    deleted boolean,
-    modified_date timestamp without time zone NOT NULL,
-    archived boolean NOT NULL,
-    confirmed boolean NOT NULL,
-    remote_id character varying(2048),
-    value text
+                                  id uuid NOT NULL,
+                                  bootstrap_id character varying(2048),
+                                  created_date timestamp without time zone NOT NULL,
+                                  deleted boolean,
+                                  modified_date timestamp without time zone NOT NULL,
+                                  archived boolean NOT NULL,
+                                  confirmed boolean NOT NULL,
+                                  remote_id character varying(2048),
+                                  value text
 );
 
 
@@ -83,9 +60,9 @@ ALTER TABLE public.agreement OWNER TO connector;
 --
 
 CREATE TABLE public.agreement_additional (
-    agreement_id uuid NOT NULL,
-    additional character varying(255),
-    additional_key character varying(255) NOT NULL
+                                             agreement_id uuid NOT NULL,
+                                             additional character varying(255),
+                                             additional_key character varying(255) NOT NULL
 );
 
 
@@ -96,33 +73,159 @@ ALTER TABLE public.agreement_additional OWNER TO connector;
 --
 
 CREATE TABLE public.agreement_artifacts (
-    agreements_id uuid NOT NULL,
-    artifacts_id uuid NOT NULL
+                                            agreements_id uuid NOT NULL,
+                                            artifacts_id uuid NOT NULL
 );
 
 
 ALTER TABLE public.agreement_artifacts OWNER TO connector;
 
 --
+-- Name: app; Type: TABLE; Schema: public; Owner: connector
+--
+
+CREATE TABLE public.app (
+                            dtype character varying(31) NOT NULL,
+                            id uuid NOT NULL,
+                            bootstrap_id character varying(2048),
+                            created_date timestamp without time zone NOT NULL,
+                            deleted boolean,
+                            modified_date timestamp without time zone NOT NULL,
+                            description character varying(4096),
+                            title character varying(255),
+                            distribution_service character varying(2048),
+                            docs character varying(255),
+                            endpoint_documentation character varying(2048),
+                            env_variables character varying(255),
+                            language character varying(255),
+                            license character varying(2048),
+                            publisher character varying(2048),
+                            remote_address character varying(2048),
+                            remote_id character varying(2048),
+                            runtime_environment character varying(255),
+                            sovereign character varying(2048),
+                            storage_config character varying(255),
+                            version bigint NOT NULL,
+                            container_id character varying(255),
+                            app_store_id uuid,
+                            data_id bigint
+);
+
+
+ALTER TABLE public.app OWNER TO connector;
+
+--
+-- Name: app_additional; Type: TABLE; Schema: public; Owner: connector
+--
+
+CREATE TABLE public.app_additional (
+                                       app_id uuid NOT NULL,
+                                       additional character varying(255),
+                                       additional_key character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.app_additional OWNER TO connector;
+
+--
+-- Name: app_endpoints; Type: TABLE; Schema: public; Owner: connector
+--
+
+CREATE TABLE public.app_endpoints (
+                                      app_id uuid NOT NULL,
+                                      endpoints_id uuid NOT NULL
+);
+
+
+ALTER TABLE public.app_endpoints OWNER TO connector;
+
+--
+-- Name: app_keywords; Type: TABLE; Schema: public; Owner: connector
+--
+
+CREATE TABLE public.app_keywords (
+                                     app_id uuid NOT NULL,
+                                     keywords character varying(255)
+);
+
+
+ALTER TABLE public.app_keywords OWNER TO connector;
+
+--
+-- Name: app_store_additional; Type: TABLE; Schema: public; Owner: connector
+--
+
+CREATE TABLE public.app_store_additional (
+                                             app_store_id uuid NOT NULL,
+                                             additional character varying(255),
+                                             additional_key character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.app_store_additional OWNER TO connector;
+
+--
+-- Name: app_supported_policies; Type: TABLE; Schema: public; Owner: connector
+--
+
+CREATE TABLE public.app_supported_policies (
+                                               app_id uuid NOT NULL,
+                                               supported_policies integer
+);
+
+
+ALTER TABLE public.app_supported_policies OWNER TO connector;
+
+--
+-- Name: appstore; Type: TABLE; Schema: public; Owner: connector
+--
+
+CREATE TABLE public.appstore (
+                                 id uuid NOT NULL,
+                                 bootstrap_id character varying(2048),
+                                 created_date timestamp without time zone NOT NULL,
+                                 deleted boolean,
+                                 modified_date timestamp without time zone NOT NULL,
+                                 description character varying(4096),
+                                 title character varying(255),
+                                 location bytea
+);
+
+
+ALTER TABLE public.appstore OWNER TO connector;
+
+--
+-- Name: appstore_apps; Type: TABLE; Schema: public; Owner: connector
+--
+
+CREATE TABLE public.appstore_apps (
+                                      app_store_id uuid NOT NULL,
+                                      apps_id uuid NOT NULL
+);
+
+
+ALTER TABLE public.appstore_apps OWNER TO connector;
+
+--
 -- Name: artifact; Type: TABLE; Schema: public; Owner: connector
 --
 
 CREATE TABLE public.artifact (
-    dtype character varying(31) NOT NULL,
-    id uuid NOT NULL,
-    bootstrap_id character varying(2048),
-    created_date timestamp without time zone NOT NULL,
-    deleted boolean,
-    modified_date timestamp without time zone NOT NULL,
-    description character varying(255),
-    title character varying(255),
-    automated_download boolean NOT NULL,
-    byte_size bigint NOT NULL,
-    check_sum bigint NOT NULL,
-    num_accessed bigint NOT NULL,
-    remote_address character varying(2048),
-    remote_id character varying(2048),
-    data_id bigint
+                                 dtype character varying(31) NOT NULL,
+                                 id uuid NOT NULL,
+                                 bootstrap_id character varying(2048),
+                                 created_date timestamp without time zone NOT NULL,
+                                 deleted boolean,
+                                 modified_date timestamp without time zone NOT NULL,
+                                 description character varying(4096),
+                                 title character varying(255),
+                                 automated_download boolean NOT NULL,
+                                 byte_size bigint NOT NULL,
+                                 check_sum bigint NOT NULL,
+                                 num_accessed bigint NOT NULL,
+                                 remote_address character varying(2048),
+                                 remote_id character varying(2048),
+                                 data_id bigint
 );
 
 
@@ -133,9 +236,9 @@ ALTER TABLE public.artifact OWNER TO connector;
 --
 
 CREATE TABLE public.artifact_additional (
-    artifact_id uuid NOT NULL,
-    additional character varying(255),
-    additional_key character varying(255) NOT NULL
+                                            artifact_id uuid NOT NULL,
+                                            additional character varying(255),
+                                            additional_key character varying(255) NOT NULL
 );
 
 
@@ -146,8 +249,8 @@ ALTER TABLE public.artifact_additional OWNER TO connector;
 --
 
 CREATE TABLE public.artifact_subscriptions (
-    artifact_id uuid NOT NULL,
-    subscriptions_id uuid NOT NULL
+                                               artifact_id uuid NOT NULL,
+                                               subscriptions_id uuid NOT NULL
 );
 
 
@@ -158,13 +261,13 @@ ALTER TABLE public.artifact_subscriptions OWNER TO connector;
 --
 
 CREATE TABLE public.authentication (
-    dtype character varying(31) NOT NULL,
-    id bigint NOT NULL,
-    deleted boolean,
-    key character varying(255),
-    value character varying(255),
-    password character varying(255),
-    username character varying(255)
+                                       dtype character varying(31) NOT NULL,
+                                       id bigint NOT NULL,
+                                       deleted boolean,
+                                       key character varying(2048),
+                                       value character varying(2048),
+                                       password character varying(2048),
+                                       username character varying(2048)
 );
 
 
@@ -175,15 +278,15 @@ ALTER TABLE public.authentication OWNER TO connector;
 --
 
 CREATE TABLE public.broker (
-    id uuid NOT NULL,
-    bootstrap_id character varying(2048),
-    created_date timestamp without time zone NOT NULL,
-    deleted boolean,
-    modified_date timestamp without time zone NOT NULL,
-    description character varying(255),
-    title character varying(255),
-    location character varying(2048),
-    status character varying(255)
+                               id uuid NOT NULL,
+                               bootstrap_id character varying(2048),
+                               created_date timestamp without time zone NOT NULL,
+                               deleted boolean,
+                               modified_date timestamp without time zone NOT NULL,
+                               description character varying(4096),
+                               title character varying(255),
+                               location character varying(2048),
+                               status character varying(255)
 );
 
 
@@ -194,9 +297,9 @@ ALTER TABLE public.broker OWNER TO connector;
 --
 
 CREATE TABLE public.broker_additional (
-    broker_id uuid NOT NULL,
-    additional character varying(255),
-    additional_key character varying(255) NOT NULL
+                                          broker_id uuid NOT NULL,
+                                          additional character varying(255),
+                                          additional_key character varying(255) NOT NULL
 );
 
 
@@ -207,8 +310,8 @@ ALTER TABLE public.broker_additional OWNER TO connector;
 --
 
 CREATE TABLE public.broker_offered_resources (
-    brokers_id uuid NOT NULL,
-    offered_resources_id uuid NOT NULL
+                                                 brokers_id uuid NOT NULL,
+                                                 offered_resources_id uuid NOT NULL
 );
 
 
@@ -219,13 +322,13 @@ ALTER TABLE public.broker_offered_resources OWNER TO connector;
 --
 
 CREATE TABLE public.catalog (
-    id uuid NOT NULL,
-    bootstrap_id character varying(2048),
-    created_date timestamp without time zone NOT NULL,
-    deleted boolean,
-    modified_date timestamp without time zone NOT NULL,
-    description character varying(255),
-    title character varying(255)
+                                id uuid NOT NULL,
+                                bootstrap_id character varying(2048),
+                                created_date timestamp without time zone NOT NULL,
+                                deleted boolean,
+                                modified_date timestamp without time zone NOT NULL,
+                                description character varying(4096),
+                                title character varying(255)
 );
 
 
@@ -236,9 +339,9 @@ ALTER TABLE public.catalog OWNER TO connector;
 --
 
 CREATE TABLE public.catalog_additional (
-    catalog_id uuid NOT NULL,
-    additional character varying(255),
-    additional_key character varying(255) NOT NULL
+                                           catalog_id uuid NOT NULL,
+                                           additional character varying(255),
+                                           additional_key character varying(255) NOT NULL
 );
 
 
@@ -249,8 +352,8 @@ ALTER TABLE public.catalog_additional OWNER TO connector;
 --
 
 CREATE TABLE public.catalog_offered_resources (
-    catalogs_id uuid NOT NULL,
-    offered_resources_id uuid NOT NULL
+                                                  catalogs_id uuid NOT NULL,
+                                                  offered_resources_id uuid NOT NULL
 );
 
 
@@ -261,8 +364,8 @@ ALTER TABLE public.catalog_offered_resources OWNER TO connector;
 --
 
 CREATE TABLE public.catalog_requested_resources (
-    catalogs_id uuid NOT NULL,
-    requested_resources_id uuid NOT NULL
+                                                    catalogs_id uuid NOT NULL,
+                                                    requested_resources_id uuid NOT NULL
 );
 
 
@@ -273,27 +376,27 @@ ALTER TABLE public.catalog_requested_resources OWNER TO connector;
 --
 
 CREATE TABLE public.configuration (
-    id uuid NOT NULL,
-    bootstrap_id character varying(2048),
-    created_date timestamp without time zone NOT NULL,
-    deleted boolean,
-    modified_date timestamp without time zone NOT NULL,
-    description character varying(255),
-    title character varying(255),
-    active boolean,
-    connector_id character varying(2048),
-    curator character varying(2048),
-    default_endpoint character varying(2048),
-    deploy_mode character varying(255),
-    log_level character varying(255),
-    maintainer character varying(2048),
-    outbound_model_version character varying(255),
-    security_profile character varying(255),
-    status character varying(255),
-    version character varying(255),
-    keystore_id uuid,
-    proxy_id uuid,
-    truststore_id uuid
+                                      id uuid NOT NULL,
+                                      bootstrap_id character varying(2048),
+                                      created_date timestamp without time zone NOT NULL,
+                                      deleted boolean,
+                                      modified_date timestamp without time zone NOT NULL,
+                                      description character varying(4096),
+                                      title character varying(255),
+                                      active boolean,
+                                      connector_id character varying(2048),
+                                      curator character varying(2048),
+                                      default_endpoint character varying(2048),
+                                      deploy_mode character varying(255),
+                                      log_level character varying(255),
+                                      maintainer character varying(2048),
+                                      outbound_model_version character varying(255),
+                                      security_profile character varying(255),
+                                      status character varying(255),
+                                      version character varying(255),
+                                      keystore_id uuid,
+                                      proxy_id uuid,
+                                      truststore_id uuid
 );
 
 
@@ -304,9 +407,9 @@ ALTER TABLE public.configuration OWNER TO connector;
 --
 
 CREATE TABLE public.configuration_additional (
-    configuration_id uuid NOT NULL,
-    additional character varying(255),
-    additional_key character varying(255) NOT NULL
+                                                 configuration_id uuid NOT NULL,
+                                                 additional character varying(255),
+                                                 additional_key character varying(255) NOT NULL
 );
 
 
@@ -317,8 +420,8 @@ ALTER TABLE public.configuration_additional OWNER TO connector;
 --
 
 CREATE TABLE public.configuration_inbound_model_version (
-    configuration_id uuid NOT NULL,
-    inbound_model_version character varying(255)
+                                                            configuration_id uuid NOT NULL,
+                                                            inbound_model_version character varying(255)
 );
 
 
@@ -329,18 +432,18 @@ ALTER TABLE public.configuration_inbound_model_version OWNER TO connector;
 --
 
 CREATE TABLE public.contract (
-    id uuid NOT NULL,
-    bootstrap_id character varying(2048),
-    created_date timestamp without time zone NOT NULL,
-    deleted boolean,
-    modified_date timestamp without time zone NOT NULL,
-    description character varying(255),
-    title character varying(255),
-    consumer character varying(2048),
-    contract_end timestamp without time zone,
-    provider character varying(2048),
-    remote_id character varying(2048),
-    contract_start timestamp without time zone
+                                 id uuid NOT NULL,
+                                 bootstrap_id character varying(2048),
+                                 created_date timestamp without time zone NOT NULL,
+                                 deleted boolean,
+                                 modified_date timestamp without time zone NOT NULL,
+                                 description character varying(4096),
+                                 title character varying(255),
+                                 consumer character varying(2048),
+                                 contract_end timestamp without time zone,
+                                 provider character varying(2048),
+                                 remote_id character varying(2048),
+                                 contract_start timestamp without time zone
 );
 
 
@@ -351,9 +454,9 @@ ALTER TABLE public.contract OWNER TO connector;
 --
 
 CREATE TABLE public.contract_additional (
-    contract_id uuid NOT NULL,
-    additional character varying(255),
-    additional_key character varying(255) NOT NULL
+                                            contract_id uuid NOT NULL,
+                                            additional character varying(255),
+                                            additional_key character varying(255) NOT NULL
 );
 
 
@@ -364,9 +467,9 @@ ALTER TABLE public.contract_additional OWNER TO connector;
 --
 
 CREATE TABLE public.contract_rule_additional (
-    contract_rule_id uuid NOT NULL,
-    additional character varying(255),
-    additional_key character varying(255) NOT NULL
+                                                 contract_rule_id uuid NOT NULL,
+                                                 additional character varying(255),
+                                                 additional_key character varying(255) NOT NULL
 );
 
 
@@ -377,8 +480,8 @@ ALTER TABLE public.contract_rule_additional OWNER TO connector;
 --
 
 CREATE TABLE public.contract_rules (
-    contracts_id uuid NOT NULL,
-    rules_id uuid NOT NULL
+                                       contracts_id uuid NOT NULL,
+                                       rules_id uuid NOT NULL
 );
 
 
@@ -389,15 +492,15 @@ ALTER TABLE public.contract_rules OWNER TO connector;
 --
 
 CREATE TABLE public.contractrule (
-    id uuid NOT NULL,
-    bootstrap_id character varying(2048),
-    created_date timestamp without time zone NOT NULL,
-    deleted boolean,
-    modified_date timestamp without time zone NOT NULL,
-    description character varying(255),
-    title character varying(255),
-    remote_id character varying(2048),
-    value text
+                                     id uuid NOT NULL,
+                                     bootstrap_id character varying(2048),
+                                     created_date timestamp without time zone NOT NULL,
+                                     deleted boolean,
+                                     modified_date timestamp without time zone NOT NULL,
+                                     description character varying(4096),
+                                     title character varying(255),
+                                     remote_id character varying(2048),
+                                     value text
 );
 
 
@@ -408,11 +511,11 @@ ALTER TABLE public.contractrule OWNER TO connector;
 --
 
 CREATE TABLE public.data (
-    dtype character varying(31) NOT NULL,
-    id bigint NOT NULL,
-    deleted boolean,
-    value oid,
-    access_url character varying(2048)
+                             dtype character varying(31) NOT NULL,
+                             id bigint NOT NULL,
+                             deleted boolean,
+                             value oid,
+                             access_url character varying(2048)
 );
 
 
@@ -423,8 +526,8 @@ ALTER TABLE public.data OWNER TO connector;
 --
 
 CREATE TABLE public.data_authentication (
-    remote_data_id bigint NOT NULL,
-    authentication_id bigint NOT NULL
+                                            remote_data_id bigint NOT NULL,
+                                            authentication_id bigint NOT NULL
 );
 
 
@@ -435,9 +538,9 @@ ALTER TABLE public.data_authentication OWNER TO connector;
 --
 
 CREATE TABLE public.data_source_additional (
-    data_source_id uuid NOT NULL,
-    additional character varying(255),
-    additional_key character varying(255) NOT NULL
+                                               data_source_id uuid NOT NULL,
+                                               additional character varying(255),
+                                               additional_key character varying(255) NOT NULL
 );
 
 
@@ -448,13 +551,13 @@ ALTER TABLE public.data_source_additional OWNER TO connector;
 --
 
 CREATE TABLE public.datasource (
-    id uuid NOT NULL,
-    bootstrap_id character varying(2048),
-    created_date timestamp without time zone NOT NULL,
-    deleted boolean,
-    modified_date timestamp without time zone NOT NULL,
-    type character varying(255),
-    authentication_id bigint
+                                   id uuid NOT NULL,
+                                   bootstrap_id character varying(2048),
+                                   created_date timestamp without time zone NOT NULL,
+                                   deleted boolean,
+                                   modified_date timestamp without time zone NOT NULL,
+                                   type character varying(255),
+                                   authentication_id bigint
 );
 
 
@@ -465,17 +568,22 @@ ALTER TABLE public.datasource OWNER TO connector;
 --
 
 CREATE TABLE public.endpoint (
-    dtype character varying(31) NOT NULL,
-    id uuid NOT NULL,
-    bootstrap_id character varying(2048),
-    created_date timestamp without time zone NOT NULL,
-    deleted boolean,
-    modified_date timestamp without time zone NOT NULL,
-    docs character varying(2048),
-    info character varying(255),
-    location character varying(2048),
-    type character varying(255),
-    data_source_id uuid
+                                 dtype character varying(31) NOT NULL,
+                                 id uuid NOT NULL,
+                                 bootstrap_id character varying(2048),
+                                 created_date timestamp without time zone NOT NULL,
+                                 deleted boolean,
+                                 modified_date timestamp without time zone NOT NULL,
+                                 docs character varying(2048),
+                                 info character varying(255),
+                                 location character varying(2048),
+                                 type character varying(255),
+                                 endpoint_port integer,
+                                 endpoint_type character varying(255),
+                                 language character varying(255),
+                                 media_type character varying(255),
+                                 protocol character varying(255),
+                                 data_source_id uuid
 );
 
 
@@ -486,9 +594,9 @@ ALTER TABLE public.endpoint OWNER TO connector;
 --
 
 CREATE TABLE public.endpoint_additional (
-    endpoint_id uuid NOT NULL,
-    additional character varying(255),
-    additional_key character varying(255) NOT NULL
+                                            endpoint_id uuid NOT NULL,
+                                            additional character varying(255),
+                                            additional_key character varying(255) NOT NULL
 );
 
 
@@ -513,14 +621,14 @@ ALTER TABLE public.hibernate_sequence OWNER TO connector;
 --
 
 CREATE TABLE public.keystore (
-    id uuid NOT NULL,
-    bootstrap_id character varying(2048),
-    created_date timestamp without time zone NOT NULL,
-    deleted boolean,
-    modified_date timestamp without time zone NOT NULL,
-    alias character varying(255),
-    location character varying(2048),
-    password character varying(255)
+                                 id uuid NOT NULL,
+                                 bootstrap_id character varying(2048),
+                                 created_date timestamp without time zone NOT NULL,
+                                 deleted boolean,
+                                 modified_date timestamp without time zone NOT NULL,
+                                 alias character varying(255),
+                                 location character varying(2048),
+                                 password character varying(255)
 );
 
 
@@ -531,9 +639,9 @@ ALTER TABLE public.keystore OWNER TO connector;
 --
 
 CREATE TABLE public.keystore_additional (
-    keystore_id uuid NOT NULL,
-    additional character varying(255),
-    additional_key character varying(255) NOT NULL
+                                            keystore_id uuid NOT NULL,
+                                            additional character varying(255),
+                                            additional_key character varying(255) NOT NULL
 );
 
 
@@ -544,13 +652,13 @@ ALTER TABLE public.keystore_additional OWNER TO connector;
 --
 
 CREATE TABLE public.proxy (
-    id uuid NOT NULL,
-    bootstrap_id character varying(2048),
-    created_date timestamp without time zone NOT NULL,
-    deleted boolean,
-    modified_date timestamp without time zone NOT NULL,
-    location character varying(2048),
-    authentication_id bigint
+                              id uuid NOT NULL,
+                              bootstrap_id character varying(2048),
+                              created_date timestamp without time zone NOT NULL,
+                              deleted boolean,
+                              modified_date timestamp without time zone NOT NULL,
+                              location character varying(2048),
+                              authentication_id bigint
 );
 
 
@@ -561,9 +669,9 @@ ALTER TABLE public.proxy OWNER TO connector;
 --
 
 CREATE TABLE public.proxy_additional (
-    proxy_id uuid NOT NULL,
-    additional character varying(255),
-    additional_key character varying(255) NOT NULL
+                                         proxy_id uuid NOT NULL,
+                                         additional character varying(255),
+                                         additional_key character varying(255) NOT NULL
 );
 
 
@@ -574,8 +682,8 @@ ALTER TABLE public.proxy_additional OWNER TO connector;
 --
 
 CREATE TABLE public.proxy_exclusions (
-    proxy_id uuid NOT NULL,
-    exclusions character varying(255)
+                                         proxy_id uuid NOT NULL,
+                                         exclusions character varying(255)
 );
 
 
@@ -586,17 +694,17 @@ ALTER TABLE public.proxy_exclusions OWNER TO connector;
 --
 
 CREATE TABLE public.representation (
-    id uuid NOT NULL,
-    bootstrap_id character varying(2048),
-    created_date timestamp without time zone NOT NULL,
-    deleted boolean,
-    modified_date timestamp without time zone NOT NULL,
-    description character varying(255),
-    title character varying(255),
-    language character varying(255),
-    media_type character varying(255),
-    remote_id character varying(2048),
-    standard character varying(255)
+                                       id uuid NOT NULL,
+                                       bootstrap_id character varying(2048),
+                                       created_date timestamp without time zone NOT NULL,
+                                       deleted boolean,
+                                       modified_date timestamp without time zone NOT NULL,
+                                       description character varying(4096),
+                                       title character varying(255),
+                                       language character varying(255),
+                                       media_type character varying(255),
+                                       remote_id character varying(2048),
+                                       standard character varying(255)
 );
 
 
@@ -607,9 +715,9 @@ ALTER TABLE public.representation OWNER TO connector;
 --
 
 CREATE TABLE public.representation_additional (
-    representation_id uuid NOT NULL,
-    additional character varying(255),
-    additional_key character varying(255) NOT NULL
+                                                  representation_id uuid NOT NULL,
+                                                  additional character varying(255),
+                                                  additional_key character varying(255) NOT NULL
 );
 
 
@@ -620,8 +728,8 @@ ALTER TABLE public.representation_additional OWNER TO connector;
 --
 
 CREATE TABLE public.representation_artifacts (
-    representations_id uuid NOT NULL,
-    artifacts_id uuid NOT NULL
+                                                 representations_id uuid NOT NULL,
+                                                 artifacts_id uuid NOT NULL
 );
 
 
@@ -632,8 +740,8 @@ ALTER TABLE public.representation_artifacts OWNER TO connector;
 --
 
 CREATE TABLE public.representation_subscriptions (
-    representation_id uuid NOT NULL,
-    subscriptions_id uuid NOT NULL
+                                                     representation_id uuid NOT NULL,
+                                                     subscriptions_id uuid NOT NULL
 );
 
 
@@ -644,22 +752,22 @@ ALTER TABLE public.representation_subscriptions OWNER TO connector;
 --
 
 CREATE TABLE public.resource (
-    dtype character varying(31) NOT NULL,
-    id uuid NOT NULL,
-    bootstrap_id character varying(2048),
-    created_date timestamp without time zone NOT NULL,
-    deleted boolean,
-    modified_date timestamp without time zone NOT NULL,
-    description character varying(255),
-    title character varying(255),
-    endpoint_documentation character varying(2048),
-    language character varying(255),
-    license character varying(2048),
-    payment_modality character varying(255),
-    publisher character varying(2048),
-    sovereign character varying(2048),
-    version bigint NOT NULL,
-    remote_id character varying(2048)
+                                 dtype character varying(31) NOT NULL,
+                                 id uuid NOT NULL,
+                                 bootstrap_id character varying(2048),
+                                 created_date timestamp without time zone NOT NULL,
+                                 deleted boolean,
+                                 modified_date timestamp without time zone NOT NULL,
+                                 description character varying(4096),
+                                 title character varying(255),
+                                 endpoint_documentation character varying(2048),
+                                 language character varying(255),
+                                 license character varying(2048),
+                                 payment_modality character varying(255),
+                                 publisher character varying(2048),
+                                 sovereign character varying(2048),
+                                 version bigint NOT NULL,
+                                 remote_id character varying(2048)
 );
 
 
@@ -670,9 +778,9 @@ ALTER TABLE public.resource OWNER TO connector;
 --
 
 CREATE TABLE public.resource_additional (
-    resource_id uuid NOT NULL,
-    additional character varying(255),
-    additional_key character varying(255) NOT NULL
+                                            resource_id uuid NOT NULL,
+                                            additional character varying(255),
+                                            additional_key character varying(255) NOT NULL
 );
 
 
@@ -683,8 +791,8 @@ ALTER TABLE public.resource_additional OWNER TO connector;
 --
 
 CREATE TABLE public.resource_contracts (
-    resources_id uuid NOT NULL,
-    contracts_id uuid NOT NULL
+                                           resources_id uuid NOT NULL,
+                                           contracts_id uuid NOT NULL
 );
 
 
@@ -695,8 +803,8 @@ ALTER TABLE public.resource_contracts OWNER TO connector;
 --
 
 CREATE TABLE public.resource_keywords (
-    resource_id uuid NOT NULL,
-    keywords character varying(255)
+                                          resource_id uuid NOT NULL,
+                                          keywords character varying(255)
 );
 
 
@@ -707,8 +815,8 @@ ALTER TABLE public.resource_keywords OWNER TO connector;
 --
 
 CREATE TABLE public.resource_representations (
-    resources_id uuid NOT NULL,
-    representations_id uuid NOT NULL
+                                                 resources_id uuid NOT NULL,
+                                                 representations_id uuid NOT NULL
 );
 
 
@@ -719,8 +827,8 @@ ALTER TABLE public.resource_representations OWNER TO connector;
 --
 
 CREATE TABLE public.resource_samples (
-    resource_id uuid NOT NULL,
-    samples character varying(2048)
+                                         resource_id uuid NOT NULL,
+                                         samples character varying(2048)
 );
 
 
@@ -731,8 +839,8 @@ ALTER TABLE public.resource_samples OWNER TO connector;
 --
 
 CREATE TABLE public.resource_subscriptions (
-    resource_id uuid NOT NULL,
-    subscriptions_id uuid NOT NULL
+                                               resource_id uuid NOT NULL,
+                                               subscriptions_id uuid NOT NULL
 );
 
 
@@ -743,17 +851,17 @@ ALTER TABLE public.resource_subscriptions OWNER TO connector;
 --
 
 CREATE TABLE public.route (
-    id uuid NOT NULL,
-    bootstrap_id character varying(2048),
-    created_date timestamp without time zone NOT NULL,
-    deleted boolean,
-    modified_date timestamp without time zone NOT NULL,
-    description character varying(255),
-    title character varying(255),
-    configuration text,
-    deploy character varying(255),
-    end_id uuid,
-    start_id uuid
+                              id uuid NOT NULL,
+                              bootstrap_id character varying(2048),
+                              created_date timestamp without time zone NOT NULL,
+                              deleted boolean,
+                              modified_date timestamp without time zone NOT NULL,
+                              description character varying(4096),
+                              title character varying(255),
+                              configuration text,
+                              deploy character varying(255),
+                              end_id uuid,
+                              start_id uuid
 );
 
 
@@ -764,9 +872,9 @@ ALTER TABLE public.route OWNER TO connector;
 --
 
 CREATE TABLE public.route_additional (
-    route_id uuid NOT NULL,
-    additional character varying(255),
-    additional_key character varying(255) NOT NULL
+                                         route_id uuid NOT NULL,
+                                         additional character varying(255),
+                                         additional_key character varying(255) NOT NULL
 );
 
 
@@ -777,8 +885,8 @@ ALTER TABLE public.route_additional OWNER TO connector;
 --
 
 CREATE TABLE public.route_output (
-    route_id uuid NOT NULL,
-    output_id uuid NOT NULL
+                                     route_id uuid NOT NULL,
+                                     output_id uuid NOT NULL
 );
 
 
@@ -789,8 +897,8 @@ ALTER TABLE public.route_output OWNER TO connector;
 --
 
 CREATE TABLE public.route_steps (
-    route_id uuid NOT NULL,
-    steps_id uuid NOT NULL
+                                    route_id uuid NOT NULL,
+                                    steps_id uuid NOT NULL
 );
 
 
@@ -801,18 +909,18 @@ ALTER TABLE public.route_steps OWNER TO connector;
 --
 
 CREATE TABLE public.subscription (
-    id uuid NOT NULL,
-    bootstrap_id character varying(2048),
-    created_date timestamp without time zone NOT NULL,
-    deleted boolean,
-    modified_date timestamp without time zone NOT NULL,
-    description character varying(255),
-    title character varying(255),
-    ids_protocol boolean NOT NULL,
-    location character varying(2048),
-    push_data boolean NOT NULL,
-    subscriber character varying(2048),
-    target character varying(2048)
+                                     id uuid NOT NULL,
+                                     bootstrap_id character varying(2048),
+                                     created_date timestamp without time zone NOT NULL,
+                                     deleted boolean,
+                                     modified_date timestamp without time zone NOT NULL,
+                                     description character varying(4096),
+                                     title character varying(255),
+                                     ids_protocol boolean NOT NULL,
+                                     location character varying(2048),
+                                     push_data boolean NOT NULL,
+                                     subscriber character varying(2048),
+                                     target character varying(2048)
 );
 
 
@@ -823,9 +931,9 @@ ALTER TABLE public.subscription OWNER TO connector;
 --
 
 CREATE TABLE public.subscription_additional (
-    subscription_id uuid NOT NULL,
-    additional character varying(255),
-    additional_key character varying(255) NOT NULL
+                                                subscription_id uuid NOT NULL,
+                                                additional character varying(255),
+                                                additional_key character varying(255) NOT NULL
 );
 
 
@@ -836,14 +944,14 @@ ALTER TABLE public.subscription_additional OWNER TO connector;
 --
 
 CREATE TABLE public.truststore (
-    id uuid NOT NULL,
-    bootstrap_id character varying(2048),
-    created_date timestamp without time zone NOT NULL,
-    deleted boolean,
-    modified_date timestamp without time zone NOT NULL,
-    alias character varying(255),
-    location character varying(2048),
-    password character varying(255)
+                                   id uuid NOT NULL,
+                                   bootstrap_id character varying(2048),
+                                   created_date timestamp without time zone NOT NULL,
+                                   deleted boolean,
+                                   modified_date timestamp without time zone NOT NULL,
+                                   alias character varying(255),
+                                   location character varying(2048),
+                                   password character varying(255)
 );
 
 
@@ -854,9 +962,9 @@ ALTER TABLE public.truststore OWNER TO connector;
 --
 
 CREATE TABLE public.truststore_additional (
-    truststore_id uuid NOT NULL,
-    additional character varying(255),
-    additional_key character varying(255) NOT NULL
+                                              truststore_id uuid NOT NULL,
+                                              additional character varying(255),
+                                              additional_key character varying(255) NOT NULL
 );
 
 
@@ -883,6 +991,70 @@ COPY public.agreement_additional (agreement_id, additional, additional_key) FROM
 --
 
 COPY public.agreement_artifacts (agreements_id, artifacts_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: app; Type: TABLE DATA; Schema: public; Owner: connector
+--
+
+COPY public.app (dtype, id, bootstrap_id, created_date, deleted, modified_date, description, title, distribution_service, docs, endpoint_documentation, env_variables, language, license, publisher, remote_address, remote_id, runtime_environment, sovereign, storage_config, version, container_id, app_store_id, data_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: app_additional; Type: TABLE DATA; Schema: public; Owner: connector
+--
+
+COPY public.app_additional (app_id, additional, additional_key) FROM stdin;
+\.
+
+
+--
+-- Data for Name: app_endpoints; Type: TABLE DATA; Schema: public; Owner: connector
+--
+
+COPY public.app_endpoints (app_id, endpoints_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: app_keywords; Type: TABLE DATA; Schema: public; Owner: connector
+--
+
+COPY public.app_keywords (app_id, keywords) FROM stdin;
+\.
+
+
+--
+-- Data for Name: app_store_additional; Type: TABLE DATA; Schema: public; Owner: connector
+--
+
+COPY public.app_store_additional (app_store_id, additional, additional_key) FROM stdin;
+\.
+
+
+--
+-- Data for Name: app_supported_policies; Type: TABLE DATA; Schema: public; Owner: connector
+--
+
+COPY public.app_supported_policies (app_id, supported_policies) FROM stdin;
+\.
+
+
+--
+-- Data for Name: appstore; Type: TABLE DATA; Schema: public; Owner: connector
+--
+
+COPY public.appstore (id, bootstrap_id, created_date, deleted, modified_date, description, title, location) FROM stdin;
+\.
+
+
+--
+-- Data for Name: appstore_apps; Type: TABLE DATA; Schema: public; Owner: connector
+--
+
+COPY public.appstore_apps (app_store_id, apps_id) FROM stdin;
 \.
 
 
@@ -979,7 +1151,7 @@ COPY public.catalog_requested_resources (catalogs_id, requested_resources_id) FR
 --
 
 COPY public.configuration (id, bootstrap_id, created_date, deleted, modified_date, description, title, active, connector_id, curator, default_endpoint, deploy_mode, log_level, maintainer, outbound_model_version, security_profile, status, version, keystore_id, proxy_id, truststore_id) FROM stdin;
-0befae22-c71e-4015-a3c6-d294da873512	\N	2021-10-08 11:50:32.676323	f	2021-10-08 11:50:32.676366	IDS Connector with static example resources hosted by the Fraunhofer ISST	Dataspace Connector	t	https://localhost:8080	https://www.isst.fraunhofer.de/	https://localhost:8080/api/ids/data	TEST	WARN	https://www.isst.fraunhofer.de/	4.1.2	BASE_SECURITY	ONLINE	6.1.0	d9841172-7d33-48a5-b03b-ab55496a0aeb	\N	8c9893b5-9781-4820-afff-79046a614869
+acf466cd-0848-4c94-9e4d-490956cc2a38	\N	2021-10-25 10:19:32.426208	f	2021-10-25 10:19:32.426251	IDS Connector with static example resources hosted by the Fraunhofer ISST	Dataspace Connector	t	https://w3id.org/idsa/autogen/baseConnector/7b934432-a85e-41c5-9f65-669219dde4ea	https://www.isst.fraunhofer.de/	https://localhost:8080/api/ids/data	TEST	WARN	https://www.isst.fraunhofer.de/	4.2.3	BASE_SECURITY	ONLINE	6.4.0	ee8ffa97-fc96-480c-8180-342b6ddcd955	\N	aa6c9486-4093-4463-a9c1-f6757ad311b3
 \.
 
 
@@ -996,9 +1168,13 @@ COPY public.configuration_additional (configuration_id, additional, additional_k
 --
 
 COPY public.configuration_inbound_model_version (configuration_id, inbound_model_version) FROM stdin;
-0befae22-c71e-4015-a3c6-d294da873512	4.1.2
-0befae22-c71e-4015-a3c6-d294da873512	4.0.0
-0befae22-c71e-4015-a3c6-d294da873512	4.1.0
+acf466cd-0848-4c94-9e4d-490956cc2a38	4.2.0
+acf466cd-0848-4c94-9e4d-490956cc2a38	4.2.1
+acf466cd-0848-4c94-9e4d-490956cc2a38	4.1.2
+acf466cd-0848-4c94-9e4d-490956cc2a38	4.0.0
+acf466cd-0848-4c94-9e4d-490956cc2a38	4.1.0
+acf466cd-0848-4c94-9e4d-490956cc2a38	4.2.2
+acf466cd-0848-4c94-9e4d-490956cc2a38	4.2.3
 \.
 
 
@@ -1078,7 +1254,7 @@ COPY public.datasource (id, bootstrap_id, created_date, deleted, modified_date, 
 -- Data for Name: endpoint; Type: TABLE DATA; Schema: public; Owner: connector
 --
 
-COPY public.endpoint (dtype, id, bootstrap_id, created_date, deleted, modified_date, docs, info, location, type, data_source_id) FROM stdin;
+COPY public.endpoint (dtype, id, bootstrap_id, created_date, deleted, modified_date, docs, info, location, type, endpoint_port, endpoint_type, language, media_type, protocol, data_source_id) FROM stdin;
 \.
 
 
@@ -1095,7 +1271,7 @@ COPY public.endpoint_additional (endpoint_id, additional, additional_key) FROM s
 --
 
 COPY public.keystore (id, bootstrap_id, created_date, deleted, modified_date, alias, location, password) FROM stdin;
-d9841172-7d33-48a5-b03b-ab55496a0aeb	\N	2021-10-08 11:50:32.658579	f	2021-10-08 11:50:32.658615	1	file:///conf/keystore-localhost.p12
+ee8ffa97-fc96-480c-8180-342b6ddcd955	\N	2021-10-25 10:19:32.418012	f	2021-10-25 10:19:32.418066	1	file:///conf/keystore-localhost.p12
 \.
 
 
@@ -1272,7 +1448,7 @@ COPY public.subscription_additional (subscription_id, additional, additional_key
 --
 
 COPY public.truststore (id, bootstrap_id, created_date, deleted, modified_date, alias, location, password) FROM stdin;
-8c9893b5-9781-4820-afff-79046a614869	\N	2021-10-08 11:50:32.674488	f	2021-10-08 11:50:32.674515	1	file:///conf/truststore.p12
+aa6c9486-4093-4463-a9c1-f6757ad311b3	\N	2021-10-25 10:19:32.424605	f	2021-10-25 10:19:32.424654	1	file:///conf/truststore.p12
 \.
 
 
@@ -1305,6 +1481,38 @@ ALTER TABLE ONLY public.agreement_additional
 
 ALTER TABLE ONLY public.agreement
     ADD CONSTRAINT agreement_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: app_additional app_additional_pkey; Type: CONSTRAINT; Schema: public; Owner: connector
+--
+
+ALTER TABLE ONLY public.app_additional
+    ADD CONSTRAINT app_additional_pkey PRIMARY KEY (app_id, additional_key);
+
+
+--
+-- Name: app app_pkey; Type: CONSTRAINT; Schema: public; Owner: connector
+--
+
+ALTER TABLE ONLY public.app
+    ADD CONSTRAINT app_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: app_store_additional app_store_additional_pkey; Type: CONSTRAINT; Schema: public; Owner: connector
+--
+
+ALTER TABLE ONLY public.app_store_additional
+    ADD CONSTRAINT app_store_additional_pkey PRIMARY KEY (app_store_id, additional_key);
+
+
+--
+-- Name: appstore appstore_pkey; Type: CONSTRAINT; Schema: public; Owner: connector
+--
+
+ALTER TABLE ONLY public.appstore
+    ADD CONSTRAINT appstore_pkey PRIMARY KEY (id);
 
 
 --
@@ -1580,6 +1788,14 @@ ALTER TABLE ONLY public.artifact_subscriptions
 
 
 --
+-- Name: app_endpoints uk_92agm4wc83hl2d8b2ju1m44e1; Type: CONSTRAINT; Schema: public; Owner: connector
+--
+
+ALTER TABLE ONLY public.app_endpoints
+    ADD CONSTRAINT uk_92agm4wc83hl2d8b2ju1m44e1 UNIQUE (endpoints_id);
+
+
+--
 -- Name: configuration uk_bj5efn7lht054mm1nfr2rscud; Type: CONSTRAINT; Schema: public; Owner: connector
 --
 
@@ -1604,6 +1820,22 @@ ALTER TABLE ONLY public.representation_subscriptions
 
 
 --
+-- Name: appstore_apps uk_jddjmacirf1r4mv8mdb2mxws7; Type: CONSTRAINT; Schema: public; Owner: connector
+--
+
+ALTER TABLE ONLY public.appstore_apps
+    ADD CONSTRAINT uk_jddjmacirf1r4mv8mdb2mxws7 UNIQUE (apps_id);
+
+
+--
+-- Name: appstore uk_jq36lxpgxfs4ktn7wrq28wo0f; Type: CONSTRAINT; Schema: public; Owner: connector
+--
+
+ALTER TABLE ONLY public.appstore
+    ADD CONSTRAINT uk_jq36lxpgxfs4ktn7wrq28wo0f UNIQUE (location);
+
+
+--
 -- Name: resource_subscriptions uk_l81if7mwa7ftd3st366piovp1; Type: CONSTRAINT; Schema: public; Owner: connector
 --
 
@@ -1617,6 +1849,22 @@ ALTER TABLE ONLY public.resource_subscriptions
 
 ALTER TABLE ONLY public.route_output
     ADD CONSTRAINT uk_luhfgdmupuurnoxtybwl25jc4 UNIQUE (output_id);
+
+
+--
+-- Name: app_endpoints fk14e6ry1nbaaht8jrnoomp51af; Type: FK CONSTRAINT; Schema: public; Owner: connector
+--
+
+ALTER TABLE ONLY public.app_endpoints
+    ADD CONSTRAINT fk14e6ry1nbaaht8jrnoomp51af FOREIGN KEY (endpoints_id) REFERENCES public.endpoint(id);
+
+
+--
+-- Name: app fk15dufq0dmdaablabyi3w0a5on; Type: FK CONSTRAINT; Schema: public; Owner: connector
+--
+
+ALTER TABLE ONLY public.app
+    ADD CONSTRAINT fk15dufq0dmdaablabyi3w0a5on FOREIGN KEY (data_id) REFERENCES public.data(id);
 
 
 --
@@ -1657,6 +1905,14 @@ ALTER TABLE ONLY public.representation_artifacts
 
 ALTER TABLE ONLY public.resource_contracts
     ADD CONSTRAINT fk5asnjcfur742nl713f8lcrbib FOREIGN KEY (contracts_id) REFERENCES public.contract(id);
+
+
+--
+-- Name: app_endpoints fk5frfuow3in3t1vvqsikdyek6q; Type: FK CONSTRAINT; Schema: public; Owner: connector
+--
+
+ALTER TABLE ONLY public.app_endpoints
+    ADD CONSTRAINT fk5frfuow3in3t1vvqsikdyek6q FOREIGN KEY (app_id) REFERENCES public.app(id);
 
 
 --
@@ -1732,6 +1988,14 @@ ALTER TABLE ONLY public.catalog_offered_resources
 
 
 --
+-- Name: app_additional fk99lj4jqenphyk8p9clabsbn4n; Type: FK CONSTRAINT; Schema: public; Owner: connector
+--
+
+ALTER TABLE ONLY public.app_additional
+    ADD CONSTRAINT fk99lj4jqenphyk8p9clabsbn4n FOREIGN KEY (app_id) REFERENCES public.app(id);
+
+
+--
 -- Name: datasource fka61ig1wcffdnldgy6ktghysnt; Type: FK CONSTRAINT; Schema: public; Owner: connector
 --
 
@@ -1745,6 +2009,14 @@ ALTER TABLE ONLY public.datasource
 
 ALTER TABLE ONLY public.contract_rules
     ADD CONSTRAINT fka7kvb987lhl2yi5m2ayrgr6kk FOREIGN KEY (rules_id) REFERENCES public.contractrule(id);
+
+
+--
+-- Name: app_supported_policies fkaa5ftvmg6u73e59nlqcxst1s1; Type: FK CONSTRAINT; Schema: public; Owner: connector
+--
+
+ALTER TABLE ONLY public.app_supported_policies
+    ADD CONSTRAINT fkaa5ftvmg6u73e59nlqcxst1s1 FOREIGN KEY (app_id) REFERENCES public.app(id);
 
 
 --
@@ -1852,6 +2124,30 @@ ALTER TABLE ONLY public.agreement_additional
 
 
 --
+-- Name: appstore_apps fkg5n5yrj2rfuuo6rn5nh6stjej; Type: FK CONSTRAINT; Schema: public; Owner: connector
+--
+
+ALTER TABLE ONLY public.appstore_apps
+    ADD CONSTRAINT fkg5n5yrj2rfuuo6rn5nh6stjej FOREIGN KEY (apps_id) REFERENCES public.app(id);
+
+
+--
+-- Name: appstore_apps fkgyl0wchrplmiw0gvtu372my22; Type: FK CONSTRAINT; Schema: public; Owner: connector
+--
+
+ALTER TABLE ONLY public.appstore_apps
+    ADD CONSTRAINT fkgyl0wchrplmiw0gvtu372my22 FOREIGN KEY (app_store_id) REFERENCES public.appstore(id);
+
+
+--
+-- Name: app_store_additional fkh3c21rppm9g3wsbeek216gfx2; Type: FK CONSTRAINT; Schema: public; Owner: connector
+--
+
+ALTER TABLE ONLY public.app_store_additional
+    ADD CONSTRAINT fkh3c21rppm9g3wsbeek216gfx2 FOREIGN KEY (app_store_id) REFERENCES public.appstore(id);
+
+
+--
 -- Name: contract_rule_additional fkh7xh0ik3ls87p4kvacl9q2med; Type: FK CONSTRAINT; Schema: public; Owner: connector
 --
 
@@ -1881,6 +2177,14 @@ ALTER TABLE ONLY public.endpoint
 
 ALTER TABLE ONLY public.endpoint_additional
     ADD CONSTRAINT fkhaseuf282r6ygev7hk5tl30to FOREIGN KEY (endpoint_id) REFERENCES public.endpoint(id);
+
+
+--
+-- Name: app_keywords fki2vl4xsoexo93tr68fpuonkdo; Type: FK CONSTRAINT; Schema: public; Owner: connector
+--
+
+ALTER TABLE ONLY public.app_keywords
+    ADD CONSTRAINT fki2vl4xsoexo93tr68fpuonkdo FOREIGN KEY (app_id) REFERENCES public.app(id);
 
 
 --
@@ -1929,6 +2233,14 @@ ALTER TABLE ONLY public.proxy_exclusions
 
 ALTER TABLE ONLY public.data_authentication
     ADD CONSTRAINT fkkl77xdnuxec8upj9lugdv7v5h FOREIGN KEY (remote_data_id) REFERENCES public.data(id);
+
+
+--
+-- Name: app fkkppvq72vte94spl0jy1j58o92; Type: FK CONSTRAINT; Schema: public; Owner: connector
+--
+
+ALTER TABLE ONLY public.app
+    ADD CONSTRAINT fkkppvq72vte94spl0jy1j58o92 FOREIGN KEY (app_store_id) REFERENCES public.appstore(id);
 
 
 --

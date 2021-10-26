@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package db.migration;
 
 import java.sql.SQLException;
@@ -6,8 +21,38 @@ import java.util.UUID;
 import org.flywaydb.core.api.migration.BaseJavaMigration;
 import org.flywaydb.core.api.migration.Context;
 
+import static db.migration.MigrationConstants.COLUMN_LENGTH_2048;
+
+/**
+ * Performs migration operations for v6.0.0 in addition to the migration script.
+ */
+@SuppressWarnings("typename")
 public class V6_0_0_1__releaseV6_0_0_1 extends BaseJavaMigration {
 
+    /**
+     * Query for selecting username and password from the data table.
+     */
+    private static final String SELECT_AUTH_INFO_FROM_DATA = "SELECT id,username,password"
+            + " FROM public.data WHERE username<>NULL AND password <> NULL";
+
+    /**
+     * Prepared query for inserting a new authentication.
+     */
+    private static final String INSERT_AUTH = "INSERT INTO public.authentication"
+            + " (dtype, username, password) VALUES (BasicAuth, %s, %s) RETURNING id";
+
+    /**
+     * Prepared query for setting the reference between data and authentication.
+     */
+    private static final String SET_AUTH_REFERENCE = "INSERT INTO public.data_authentication"
+            + " (remote_data_id, authentication_id) VALUES(%s, %s)";
+
+    /**
+     * Performs the migration.
+     *
+     * @param ctx The Flyway context.
+     * @throws Exception if any error occurs.
+     */
     @Override
     public void migrate(final Context ctx) throws Exception {
         migrateAgreements(ctx);
@@ -15,62 +60,121 @@ public class V6_0_0_1__releaseV6_0_0_1 extends BaseJavaMigration {
         migrateCatalogs(ctx);
         migrateContracts(ctx);
         migrateContractRules(ctx);
-        migrateData(ctx);
+        migrateRemoteData(ctx);
         migrateRepresentation(ctx);
         migrateResource(ctx);
     }
 
+    /**
+     * Migrates agreements. Changes the type of the column bootstrap_id from URI to string.
+     *
+     * @param ctx The Flyway context.
+     * @throws Exception if any error occurs.
+     */
     private void migrateAgreements(final Context ctx) throws Exception {
         final var replacer = new ByteaToStringColumnReplacer("public.agreement");
-        replacer.replace(ctx, "bootstrap_id", 2048);
+        replacer.replace(ctx, "bootstrap_id", COLUMN_LENGTH_2048);
     }
 
+    /**
+     * Migrates artifacts. Changes the type of the column bootstrap_id from URI to string.
+     *
+     * @param ctx The Flyway context.
+     * @throws Exception if any error occurs.
+     */
     private void migrateArtifacts(final Context ctx) throws Exception {
         final var replacer = new ByteaToStringColumnReplacer("public.artifact");
-        replacer.replace(ctx, "bootstrap_id", 2048);
+        replacer.replace(ctx, "bootstrap_id", COLUMN_LENGTH_2048);
     }
 
+    /**
+     * Migrates catalogs. Changes the type of the column bootstrap_id from URI to string.
+     *
+     * @param ctx The Flyway context.
+     * @throws Exception if any error occurs.
+     */
     private void migrateCatalogs(final Context ctx) throws Exception {
         final var replacer = new ByteaToStringColumnReplacer("public.catalog");
-        replacer.replace(ctx, "bootstrap_id", 2048);
+        replacer.replace(ctx, "bootstrap_id", COLUMN_LENGTH_2048);
     }
 
+    /**
+     * Migrates contracts. Changes the type of the column bootstrap_id from URI to string.
+     *
+     * @param ctx The Flyway context.
+     * @throws Exception if any error occurs.
+     */
     private void migrateContracts(final Context ctx) throws Exception {
         final var replacer = new ByteaToStringColumnReplacer("public.contract");
-        replacer.replace(ctx, "bootstrap_id", 2048);
+        replacer.replace(ctx, "bootstrap_id", COLUMN_LENGTH_2048);
     }
 
+    /**
+     * Migrates contract rules. Changes the type of the column bootstrap_id from URI to string.
+     *
+     * @param ctx The Flyway context.
+     * @throws Exception if any error occurs.
+     */
     private void migrateContractRules(final Context ctx) throws Exception {
         final var replacer = new ByteaToStringColumnReplacer("public.contractrule");
-        replacer.replace(ctx, "bootstrap_id", 2048);
+        replacer.replace(ctx, "bootstrap_id", COLUMN_LENGTH_2048);
     }
 
-    private void migrateData(final Context ctx) throws SQLException {
+    /**
+     * Migrates remote data. Exchanges the columns username and password for a column that links
+     * to the authentication table.
+     *
+     * @param ctx The Flyway context.
+     * @throws SQLException if any error occurs when performing database operations.
+     */
+    private void migrateRemoteData(final Context ctx) throws SQLException {
         replaceUsernameAndPasswordWithAuthentication(ctx);
     }
 
+    /**
+     * Migrates representations. Changes the type of the column bootstrap_id from URI to string.
+     *
+     * @param ctx The Flyway context.
+     * @throws Exception if any error occurs.
+     */
     private void migrateRepresentation(final Context ctx) throws Exception {
         final var replacer = new ByteaToStringColumnReplacer("public.representation");
-        replacer.replace(ctx, "bootstrap_id", 2048);
+        replacer.replace(ctx, "bootstrap_id", COLUMN_LENGTH_2048);
     }
 
+    /**
+     * Migrates resources. Changes the type of the column bootstrap_id from URI to string.
+     *
+     * @param ctx The Flyway context.
+     * @throws Exception if any error occurs.
+     */
     private void migrateResource(final Context ctx) throws Exception {
         final var replacer = new ByteaToStringColumnReplacer("public.resource");
-        replacer.replace(ctx, "bootstrap_id", 2048);
+        replacer.replace(ctx, "bootstrap_id", COLUMN_LENGTH_2048);
     }
 
+    /**
+     * Exchanges the columns username and password of the data table for a column that links to
+     * the authentication table. Username and password are read from the data table and inserted
+     * into the authentication table. Afterwards, the new authentication ID is linked to the
+     * data entry where username and password were extracted.
+     *
+     * @param ctx The Flyway context.
+     * @throws SQLException if any error occurs when performing database operations.
+     */
     private void replaceUsernameAndPasswordWithAuthentication(final Context ctx)
             throws SQLException {
-        try(final var select = ctx.getConnection().createStatement()) {
-            try(final var rows = select.executeQuery("SELECT id,username,password FROM public.data WHERE username<>NULL AND password <> NULL")) {
-                while(rows.next()) {
-                    try(final var insert = select.getConnection().createStatement()) {
-                        try(final var result = insert.executeQuery("INSERT INTO public.authentication (dtype, username, password) VALUES (BasicAuth, + " + rows.getString(2)  + "," + rows.getString(3) + " ) RETURNING id")) {
-                            insert.execute(
-                                    "INSERT INTO public.data_authentication (remote_data_id, authentication_id) VALUES("
-                                    + rows.getObject(1, UUID.class) + "," + result.getObject(1,
-                                                                                             UUID.class)
-                                    + ")");
+        try (var select = ctx.getConnection().createStatement()) {
+            try (var rows = select.executeQuery(SELECT_AUTH_INFO_FROM_DATA)) {
+                while (rows.next()) {
+                    try (var insert = select.getConnection().createStatement()) {
+                        final var username = rows.getString(2);
+                        final var password = rows.getString(3);
+                        try (var result = insert
+                                .executeQuery(String.format(INSERT_AUTH, username, password))) {
+                            final var dataId = rows.getObject(1, UUID.class);
+                            final var authId = result.getObject(1, UUID.class);
+                            insert.execute(String.format(SET_AUTH_REFERENCE, dataId, authId));
                         }
                     }
                 }
