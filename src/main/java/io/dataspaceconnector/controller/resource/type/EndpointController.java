@@ -33,7 +33,6 @@ import io.dataspaceconnector.service.resource.type.EndpointServiceProxy;
 import io.dataspaceconnector.service.resource.type.GenericEndpointService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -176,10 +175,9 @@ public class EndpointController implements CRUDController<Endpoint, EndpointDesc
      * @return response status OK if data source is created at generic endpoint.
      */
     @PutMapping("{id}/datasource/{dataSourceId}")
-    @Operation(summary = "Creates start endpoint for the route")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
-                    description = ResponseDescription.NO_CONTENT)})
+    @Operation(summary = "Creates start endpoint for a route.")
+    @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
+            description = ResponseDescription.NO_CONTENT)
     public final ResponseEntity<Void> linkDataSource(
             @Valid @PathVariable(name = "id") final UUID genericEndpointId,
             @Valid @PathVariable(name = "dataSourceId") final UUID dataSourceId) {

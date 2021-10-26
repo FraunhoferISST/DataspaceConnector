@@ -22,6 +22,8 @@ import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.RdfBuilderException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
+import io.dataspaceconnector.controller.message.tag.MessageDescription;
+import io.dataspaceconnector.controller.message.tag.MessageName;
 import io.dataspaceconnector.controller.resource.view.app.AppViewAssembler;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.service.ArtifactDataDownloader;
@@ -58,7 +60,7 @@ import java.net.URI;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
-@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
+@Tag(name = MessageName.MESSAGES, description = MessageDescription.MESSAGES)
 public class AppRequestController {
 
     /**
@@ -94,7 +96,7 @@ public class AppRequestController {
      * @return Success, when app can be found and created from recipient response.
      */
     @PostMapping("/app")
-    @Operation(summary = "Download IDS app from AppStore")
+    @Operation(summary = "Download an IDS app from an IDS AppStore.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "201", description = "Created"),

@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller;
 
 import io.dataspaceconnector.common.ids.ConnectorService;
+import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.type.AgreementController;
 import io.dataspaceconnector.controller.resource.type.AppController;
@@ -57,7 +58,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
         description = ResponseDescription.UNAUTHORIZED)
-@Tag(name = "Connector", description = "Endpoints for connector information")
+@Tag(name = "Connector", description = "Endpoints for connector information.")
 @RequiredArgsConstructor
 public class MainController {
 
@@ -72,8 +73,8 @@ public class MainController {
      * @return Self-description or error response.
      */
     @SecurityRequirements
-    @GetMapping(value = {"/", ""}, produces = "application/ld+json")
-    @Operation(summary = "Public IDS self-description")
+    @GetMapping(value = {"/", ""}, produces = ResponseType.JSON_LD)
+    @Operation(summary = "Get the public IDS self-description.")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     @ResponseBody
     public ResponseEntity<Object> getPublicSelfDescription() {
@@ -85,8 +86,8 @@ public class MainController {
      *
      * @return Self-description or error response.
      */
-    @GetMapping(value = "/api/connector", produces = "application/ld+json")
-    @Operation(summary = "Private IDS self-description")
+    @GetMapping(value = "/api/connector", produces = ResponseType.JSON_LD)
+    @Operation(summary = "Get the private IDS self-description.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,

@@ -51,7 +51,7 @@ public class GuiController {
      */
     @Hidden
     @GetMapping(value = "/enum/{enumName}")
-    @Operation(summary = "Get the specific enum")
+    @Operation(summary = "Get a list of enums by value name.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
@@ -60,7 +60,7 @@ public class GuiController {
                     description = ResponseDescription.UNAUTHORIZED)})
     ResponseEntity<String> getSpecificEnum(final @PathVariable String enumName) {
         final var enums = GuiUtils.getSpecificEnum(enumName);
-        return enums == null ? ResponseEntity.badRequest().body("Could not get the enums")
+        return enums == null ? ResponseEntity.badRequest().body("Could not get the enums.")
                 : ResponseEntity.ok(enums);
     }
 

@@ -228,7 +228,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
      * @return The app store.
      */
     @GetMapping("/{id}/appstore")
-    @Operation(summary = "Get appstore by app id", description = "Get appstore holding this app.")
+    @Operation(summary = "Get AppStore by app id.", description = "Get appstore holding this app.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,

@@ -29,7 +29,6 @@ import io.dataspaceconnector.model.subscription.SubscriptionDesc;
 import io.dataspaceconnector.service.resource.type.SubscriptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -66,10 +65,8 @@ public class SubscriptionController extends BaseResourceController<Subscription,
      */
     @Override
     @PostMapping
-    @Operation(summary = "Create a base resource")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.CREATED,
-                    description = ResponseDescription.CREATED)})
+    @Operation(summary = "Create a base resource.")
+    @ApiResponse(responseCode = ResponseCode.CREATED, description = ResponseDescription.CREATED)
     public ResponseEntity<SubscriptionView> create(@RequestBody final SubscriptionDesc desc) {
         // Set boolean to false as this subscription has been created via a REST API call.
         desc.setIdsProtocol(false);
@@ -84,9 +81,9 @@ public class SubscriptionController extends BaseResourceController<Subscription,
      * @return Response with code 200 (Ok) and the list of all endpoints of this resource type.
      */
     @GetMapping("owning")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
+    @Operation(summary = "Get all subscriptions owned by this connector.")
+    @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+            description = ResponseDescription.METHOD_NOT_ALLOWED)
     public final PagedModel<SubscriptionView> getAllFiltered(
             @RequestParam(required = false, defaultValue = "0") final Integer page,
             @RequestParam(required = false, defaultValue = "30") final Integer size) {

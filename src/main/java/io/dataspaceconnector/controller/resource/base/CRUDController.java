@@ -55,7 +55,7 @@ public interface CRUDController<T extends Entity, D extends Description, V> {
      * @throws IllegalArgumentException if the description is null.
      */
     @PostMapping
-    @Operation(summary = "Create a base resource")
+    @Operation(summary = "Create a base resource.")
     @ApiResponse(responseCode = ResponseCode.CREATED, description = ResponseDescription.CREATED)
     ResponseEntity<V> create(@RequestBody D desc);
 
@@ -67,7 +67,7 @@ public interface CRUDController<T extends Entity, D extends Description, V> {
      * @return Response with code 200 (Ok) and the list of all endpoints of this resource type.
      */
     @RequestMapping(method = RequestMethod.GET)
-    @Operation(summary = "Get a list of base resources with pagination")
+    @Operation(summary = "Get a list of base resources with pagination.")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     PagedModel<V> getAll(@RequestParam(required = false, defaultValue = "0") Integer page,
                          @RequestParam(required = false, defaultValue = "30") Integer size);
@@ -82,7 +82,7 @@ public interface CRUDController<T extends Entity, D extends Description, V> {
      * unknown.
      */
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    @Operation(summary = "Get a base resource by id")
+    @Operation(summary = "Get a base resource by id.")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     V get(@Valid @PathVariable(name = "id") UUID resourceId);
 
@@ -98,7 +98,7 @@ public interface CRUDController<T extends Entity, D extends Description, V> {
      * unknown.
      */
     @PutMapping("{id}")
-    @Operation(summary = "Update a base resource by id")
+    @Operation(summary = "Update a base resource by id.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.CREATED,
                     description = ResponseDescription.CREATED),
@@ -114,7 +114,7 @@ public interface CRUDController<T extends Entity, D extends Description, V> {
      * @throws IllegalArgumentException if the resourceId is null.
      */
     @DeleteMapping("{id}")
-    @Operation(summary = "Delete a base resource by id")
+    @Operation(summary = "Delete a base resource by id.")
     @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
             description = ResponseDescription.NO_CONTENT)
     ResponseEntity<Void> delete(@Valid @PathVariable(name = "id") UUID id);

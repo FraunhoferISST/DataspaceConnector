@@ -18,6 +18,8 @@ package io.dataspaceconnector.controller.policy;
 import io.dataspaceconnector.common.exception.ContractException;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.policy.RuleUtils;
+import io.dataspaceconnector.controller.policy.tag.PolicyDescription;
+import io.dataspaceconnector.controller.policy.tag.PolicyName;
 import io.dataspaceconnector.controller.policy.util.PatternUtils;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
@@ -58,6 +60,7 @@ import org.springframework.web.bind.annotation.RestController;
                 description = ResponseDescription.UNAUTHORIZED)})
 
 @RequestMapping("/api/examples")
+@Tag(name = PolicyName.POLICIES, description = PolicyDescription.POLICIES)
 @RequiredArgsConstructor
 public class ExampleController {
     /**
@@ -71,15 +74,13 @@ public class ExampleController {
      * @param ruleAsString Policy as string.
      * @return A pattern enum or error.
      */
-    @Operation(summary = "Get pattern of policy",
-            description = "Get the policy pattern represented by a given JSON string.")
-    @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
+    @Operation(summary = "Get the policy pattern represented by a given JSON string.")
     @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
             description = ResponseDescription.INTERNAL_SERVER_ERROR)
     @PostMapping("/validation")
     @ResponseBody
     public ResponseEntity<Object> getPolicyPattern(
-            @Parameter(description = "The JSON string representing a policy", required = true)
+            @Parameter(description = "The JSON string representing a policy.", required = true)
             @RequestBody final String ruleAsString) {
         try {
             final var rule = deserializationService.getRule(ruleAsString);
@@ -95,9 +96,7 @@ public class ExampleController {
      * @param input Policy pattern type and values.
      * @return An example policy object that can be filled out.
      */
-    @Operation(summary = "Get example policy",
-            description = "Get an example policy for a given policy pattern.")
-    @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
+    @Operation(summary = "Get an example policy for a given policy pattern.")
     @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
             description = ResponseDescription.BAD_REQUEST)
     @PostMapping("/policy")

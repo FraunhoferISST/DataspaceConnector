@@ -39,17 +39,16 @@ import org.springframework.web.bind.annotation.RestController;
  * Offers the endpoints for managing requested resources.
  */
 @RestController
-@RequestMapping(BasePath.REQUESTS)
 @RequiredArgsConstructor
+@RequestMapping(BasePath.REQUESTS)
 @Tag(name = ResourceName.REQUESTS, description = ResourceDescription.REQUESTS)
 public class RequestedResourceController extends BaseResourceController<RequestedResource,
         RequestedResourceDesc, RequestedResourceView, ResourceService<RequestedResource,
         RequestedResourceDesc>> {
 
     @Hidden
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
+    @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+            description = ResponseDescription.METHOD_NOT_ALLOWED)
     @Override
     public final ResponseEntity<RequestedResourceView> create(
             final RequestedResourceDesc desc) {

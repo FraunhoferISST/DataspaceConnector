@@ -35,7 +35,6 @@ import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -69,9 +68,9 @@ import java.util.UUID;
  */
 @Log4j2
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(BasePath.ARTIFACTS)
 @Tag(name = ResourceName.ARTIFACTS, description = ResourceDescription.ARTIFACTS)
-@RequiredArgsConstructor
 public class ArtifactController extends BaseResourceNotificationController<Artifact, ArtifactDesc,
         ArtifactView, ArtifactService> {
 
@@ -110,9 +109,8 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      * @throws IOException if the data cannot be received.
      */
     @GetMapping("{id}/data/**")
-    @Operation(summary = "Get data by artifact id with query input")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)})
+    @Operation(summary = "Get data by artifact id with query input.")
+    @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     public ResponseEntity<StreamingResponseBody> getData(
             @Valid @PathVariable(name = "id") final UUID artifactId,
             @RequestParam(required = false) final Boolean download,
@@ -162,9 +160,8 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      * @throws UnexpectedResponseException if the ids response message has been unexpected.
      */
     @PostMapping("{id}/data")
-    @Operation(summary = "Get data by artifact id with query input")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)})
+    @Operation(summary = "Get data by artifact id with query input.")
+    @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     public ResponseEntity<StreamingResponseBody> getData(
             @Valid @PathVariable(name = "id") final UUID artifactId,
             @RequestBody(required = false) final QueryInput queryInput)
@@ -231,8 +228,7 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      * @throws IOException if the data could not be stored.
      */
     @PutMapping(value = "{id}/data", consumes = "*/*")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)})
+    @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     public ResponseEntity<Void> putData(
             @Valid @PathVariable(name = "id") final UUID artifactId,
             @RequestBody final byte[] inputStream) throws IOException {

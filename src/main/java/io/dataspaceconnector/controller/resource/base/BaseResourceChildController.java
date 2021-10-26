@@ -163,7 +163,7 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
      * @return Response with code 204 (No_Content).
      */
     @PutMapping
-    @Operation(summary = "Replace the children of a base resource")
+    @Operation(summary = "Replace the children of a base resource.")
     @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
             description = ResponseDescription.NO_CONTENT)
     public HttpEntity<Void> replaceResources(@Valid @PathVariable(name = "id") final UUID ownerId,
@@ -180,7 +180,7 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
      * @return Response with code 204 (No_Content).
      */
     @DeleteMapping
-    @Operation(summary = "Remove a list of children from a base resource")
+    @Operation(summary = "Remove a list of children from a base resource.")
     @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
             description = ResponseDescription.NO_CONTENT)
     public HttpEntity<Void> removeResources(@Valid @PathVariable(name = "id") final UUID ownerId,
