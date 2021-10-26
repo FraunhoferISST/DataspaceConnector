@@ -18,6 +18,7 @@ package io.dataspaceconnector.service.message.handler.validator;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.iais.eis.Rule;
+import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
 import io.dataspaceconnector.common.ids.policy.ContractUtils;
 import io.dataspaceconnector.service.EntityDependencyResolver;
@@ -113,7 +114,15 @@ class RuleValidator extends IdsValidator<Request<ContractRequestMessageImpl,
         }
 
         try {
-            return ruleValidator.validateRulesOfRequest(validContracts, targetRuleMap, target);
+            final var contract = ruleValidator
+                    .findMatchingContractForRequest(validContracts, targetRuleMap, target);
+            if (contract.isEmpty()) {
+                return false;
+            } else {
+                // Set the end date of the matching contract offer for the request
+                request.setContractEnd(ToIdsObjectMapper.getGregorianOf(contract.get().getEnd()));
+                return true;
+            }
         } catch (IllegalArgumentException e) {
             throw new MalformedRuleException("Malformed rule.", e);
         }
