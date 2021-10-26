@@ -102,9 +102,12 @@ class RuleValidator extends IdsValidator<Request<ContractRequestMessageImpl,
             throw new ContractListEmptyException(request, "List of contracts is empty.");
         }
 
-        // Abort negotiation if no contract offer for the issuer connector could be found.
-        final var validContracts =
-                ContractUtils.removeContractsWithInvalidConsumer(contracts, issuer);
+        // Abort negotiation if no contract offer with a valid time interval could be found
+        // for the issuer connector.
+        final var contractsWithValidTimeInterval = ContractUtils
+                .removeContractsWithInvalidDates(contracts);
+        final var validContracts = ContractUtils
+                .removeContractsWithInvalidConsumer(contractsWithValidTimeInterval, issuer);
         if (validContracts.isEmpty()) {
             throw new ContractListEmptyException(request, "List of valid contracts is empty.");
         }
