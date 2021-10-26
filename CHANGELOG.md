@@ -1,7 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [X.X.X} - XXXX-XX-XX
+## [X.X.X] - XXXX-XX-XX
+
+### Added
+- New `application.properties` setting `configuration.force.reload` that forces reloading the configuration from the `config.json` instead of using the latest active configuration from the database. If not set, the default value is `false`.
 
 ### Changed
 - Increase spring version from 2.5.5 to 2.5.6.
