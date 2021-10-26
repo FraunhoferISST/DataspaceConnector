@@ -25,7 +25,7 @@ info:
   license:
     name: "Apache License, Version 2.0"
     url: https://www.apache.org/licenses/LICENSE-2.0.txt
-  version: 6.3.1
+  version: 6.5.0-SNAPSHOT
 servers:
   - url: https://localhost:8080
     description: Generated server url
@@ -85,6 +85,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SubscriptionView'
         "200":
           description: Ok
           content:
@@ -110,6 +116,12 @@ paths:
               $ref: '#/components/schemas/SubscriptionDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SubscriptionView'
         "201":
           description: Created
           content:
@@ -135,6 +147,8 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/rules/{id}:
@@ -151,6 +165,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ContractRuleView'
         "200":
           description: Ok
           content:
@@ -176,6 +196,12 @@ paths:
               $ref: '#/components/schemas/ContractRuleDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ContractRuleView'
         "201":
           description: Created
           content:
@@ -201,13 +227,15 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/rules/{id}/contracts:
     get:
       tags:
         - Rules
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource
       parameters:
         - name: id
@@ -231,6 +259,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelContractView'
         "200":
           description: Ok
           content:
@@ -259,12 +293,14 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
     post:
       tags:
         - Rules
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources
       parameters:
         - name: id
@@ -283,6 +319,12 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelContractView'
         "200":
           description: Ok
           content:
@@ -311,6 +353,8 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/routes/{id}:
@@ -327,6 +371,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RouteView'
         "200":
           description: Ok
           content:
@@ -352,6 +402,12 @@ paths:
               $ref: '#/components/schemas/RouteDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RouteView'
         "201":
           description: Created
           content:
@@ -377,13 +433,15 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/routes/{id}/steps:
     get:
       tags:
         - Routes
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_1
       parameters:
         - name: id
@@ -407,6 +465,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRouteView'
         "200":
           description: Ok
           content:
@@ -435,12 +499,14 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
     post:
       tags:
         - Routes
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_1
       parameters:
         - name: id
@@ -459,6 +525,12 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRouteView'
         "200":
           description: Ok
           content:
@@ -487,13 +559,15 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/routes/{id}/outputs:
     get:
       tags:
         - Routes
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_2
       parameters:
         - name: id
@@ -517,6 +591,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelArtifactView'
         "200":
           description: Ok
           content:
@@ -545,12 +625,14 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
     post:
       tags:
         - Routes
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_2
       parameters:
         - name: id
@@ -569,6 +651,12 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelArtifactView'
         "200":
           description: Ok
           content:
@@ -597,6 +685,8 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/routes/{id}/endpoint/start:
@@ -620,6 +710,12 @@ paths:
               format: uuid
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: string
         "204":
           description: No content
           content:
@@ -639,6 +735,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: string
         "204":
           description: No content
           content:
@@ -666,6 +768,12 @@ paths:
               format: uuid
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: string
         "204":
           description: No content
           content:
@@ -685,6 +793,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: string
         "204":
           description: No content
           content:
@@ -705,6 +819,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RequestedResourceView'
         "200":
           description: Ok
           content:
@@ -730,6 +850,12 @@ paths:
               $ref: '#/components/schemas/RequestedResourceDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RequestedResourceView'
         "201":
           description: Created
           content:
@@ -755,13 +881,15 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/requests/{id}/representations:
     get:
       tags:
         - Requested Resources
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_4
       parameters:
         - name: id
@@ -785,6 +913,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRepresentationView'
         "200":
           description: Ok
           content:
@@ -813,12 +947,14 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
     post:
       tags:
         - Requested Resources
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_3
       parameters:
         - name: id
@@ -837,6 +973,12 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRepresentationView'
         "200":
           description: Ok
           content:
@@ -865,13 +1007,15 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/requests/{id}/catalogs:
     get:
       tags:
         - Requested Resources
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_6
       parameters:
         - name: id
@@ -895,6 +1039,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelCatalogView'
         "200":
           description: Ok
           content:
@@ -923,12 +1073,14 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
     post:
       tags:
         - Requested Resources
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_4
       parameters:
         - name: id
@@ -947,6 +1099,12 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelCatalogView'
         "200":
           description: Ok
           content:
@@ -975,6 +1133,8 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/representations/{id}:
@@ -991,6 +1151,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RepresentationView'
         "200":
           description: Ok
           content:
@@ -1016,6 +1182,12 @@ paths:
               $ref: '#/components/schemas/RepresentationDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RepresentationView'
         "201":
           description: Created
           content:
@@ -1041,13 +1213,15 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/representations/{id}/requests:
     get:
       tags:
         - Representations
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_8
       parameters:
         - name: id
@@ -1071,6 +1245,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRequestedResourceView'
         "200":
           description: Ok
           content:
@@ -1099,12 +1279,14 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
     post:
       tags:
         - Representations
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_5
       parameters:
         - name: id
@@ -1123,6 +1305,12 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRequestedResourceView'
         "200":
           description: Ok
           content:
@@ -1151,13 +1339,15 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/representations/{id}/offers:
     get:
       tags:
         - Representations
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_9
       parameters:
         - name: id
@@ -1181,6 +1371,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelOfferedResourceView'
         "200":
           description: Ok
           content:
@@ -1209,12 +1405,14 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
     post:
       tags:
         - Representations
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_6
       parameters:
         - name: id
@@ -1233,6 +1431,12 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelOfferedResourceView'
         "200":
           description: Ok
           content:
@@ -1261,13 +1465,15 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/representations/{id}/artifacts:
     get:
       tags:
         - Representations
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_10
       parameters:
         - name: id
@@ -1291,6 +1497,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelArtifactView'
         "200":
           description: Ok
           content:
@@ -1319,12 +1531,14 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
     post:
       tags:
         - Representations
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_7
       parameters:
         - name: id
@@ -1343,6 +1557,12 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelArtifactView'
         "200":
           description: Ok
           content:
@@ -1371,6 +1591,8 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/offers/{id}:
@@ -1387,6 +1609,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OfferedResourceView'
         "200":
           description: Ok
           content:
@@ -1412,6 +1640,12 @@ paths:
               $ref: '#/components/schemas/OfferedResourceDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OfferedResourceView'
         "201":
           description: Created
           content:
@@ -1437,13 +1671,15 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/offers/{id}/representations:
     get:
       tags:
         - Offered Resources
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_12
       parameters:
         - name: id
@@ -1467,6 +1703,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRepresentationView'
         "200":
           description: Ok
           content:
@@ -1495,12 +1737,14 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
     post:
       tags:
         - Offered Resources
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_8
       parameters:
         - name: id
@@ -1519,6 +1763,12 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRepresentationView'
         "200":
           description: Ok
           content:
@@ -1547,13 +1797,15 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/offers/{id}/contracts:
     get:
       tags:
         - Offered Resources
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_13
       parameters:
         - name: id
@@ -1577,6 +1829,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelContractView'
         "200":
           description: Ok
           content:
@@ -1605,12 +1863,14 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
     post:
       tags:
         - Offered Resources
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_9
       parameters:
         - name: id
@@ -1629,6 +1889,12 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelContractView'
         "200":
           description: Ok
           content:
@@ -1657,13 +1923,15 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/offers/{id}/catalogs:
     get:
       tags:
         - Offered Resources
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_14
       parameters:
         - name: id
@@ -1687,6 +1955,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelCatalogView'
         "200":
           description: Ok
           content:
@@ -1715,12 +1989,14 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
     post:
       tags:
         - Offered Resources
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_10
       parameters:
         - name: id
@@ -1739,6 +2015,12 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelCatalogView'
         "200":
           description: Ok
           content:
@@ -1767,6 +2049,8 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/notify:
@@ -1786,6 +2070,12 @@ paths:
             type: string
             format: uri
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "404":
           description: Not found
           content:
@@ -1818,6 +2108,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "200":
           description: Ok
           content:
@@ -1847,6 +2143,12 @@ paths:
                 - $ref: '#/components/schemas/GenericEndpointDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "201":
           description: Created
           content:
@@ -1872,6 +2174,8 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/endpoints/{id}/datasource/{dataSourceId}:
@@ -1894,6 +2198,8 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/datasources/{id}:
@@ -1910,6 +2216,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DataSourceView'
         "200":
           description: Ok
           content:
@@ -1935,6 +2247,12 @@ paths:
               $ref: '#/components/schemas/DataSourceDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DataSourceView'
         "201":
           description: Created
           content:
@@ -1960,6 +2278,8 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/contracts/{id}:
@@ -1976,6 +2296,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ContractView'
         "200":
           description: Ok
           content:
@@ -2001,6 +2327,12 @@ paths:
               $ref: '#/components/schemas/ContractDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ContractView'
         "201":
           description: Created
           content:
@@ -2026,13 +2358,15 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/contracts/{id}/rules:
     get:
       tags:
         - Contracts
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_16
       parameters:
         - name: id
@@ -2056,6 +2390,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelContractRuleView'
         "200":
           description: Ok
           content:
@@ -2084,12 +2424,14 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
     post:
       tags:
         - Contracts
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_11
       parameters:
         - name: id
@@ -2108,6 +2450,12 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelContractRuleView'
         "200":
           description: Ok
           content:
@@ -2136,13 +2484,15 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/contracts/{id}/offers:
     get:
       tags:
         - Contracts
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_18
       parameters:
         - name: id
@@ -2166,6 +2516,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelOfferedResourceView'
         "200":
           description: Ok
           content:
@@ -2194,12 +2550,14 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
     post:
       tags:
         - Contracts
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_12
       parameters:
         - name: id
@@ -2218,6 +2576,12 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelOfferedResourceView'
         "200":
           description: Ok
           content:
@@ -2246,6 +2610,8 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/configurations/{id}:
@@ -2262,6 +2628,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConfigurationView'
         "200":
           description: Ok
           content:
@@ -2287,6 +2659,12 @@ paths:
               $ref: '#/components/schemas/ConfigurationDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConfigurationView'
         "201":
           description: Created
           content:
@@ -2312,6 +2690,8 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/configurations/{id}/active:
@@ -2328,6 +2708,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "500":
           description: Internal server error
           content:
@@ -2360,6 +2746,17 @@ paths:
       description: Return if unsupported patterns are ignored when requesting data.
       operationId: getPatternStatus
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  empty:
+                    type: boolean
+                additionalProperties:
+                  type: object
         "200":
           description: Ok
           content:
@@ -2385,6 +2782,17 @@ paths:
           schema:
             type: boolean
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  empty:
+                    type: boolean
+                additionalProperties:
+                  type: object
         "200":
           description: Ok
           content:
@@ -2403,6 +2811,17 @@ paths:
       summary: Get contract negotiation status
       operationId: getNegotiationStatus
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  empty:
+                    type: boolean
+                additionalProperties:
+                  type: object
         "200":
           description: Ok
           content:
@@ -2426,6 +2845,17 @@ paths:
           schema:
             type: boolean
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  empty:
+                    type: boolean
+                additionalProperties:
+                  type: object
         "200":
           description: Ok
           content:
@@ -2451,6 +2881,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CatalogView'
         "200":
           description: Ok
           content:
@@ -2476,6 +2912,12 @@ paths:
               $ref: '#/components/schemas/CatalogDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CatalogView'
         "201":
           description: Created
           content:
@@ -2501,13 +2943,15 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/catalogs/{id}/offers:
     get:
       tags:
         - Catalogs
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_19
       parameters:
         - name: id
@@ -2531,6 +2975,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelOfferedResourceView'
         "200":
           description: Ok
           content:
@@ -2559,12 +3009,14 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
     post:
       tags:
         - Catalogs
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_13
       parameters:
         - name: id
@@ -2583,6 +3035,12 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelOfferedResourceView'
         "200":
           description: Ok
           content:
@@ -2611,6 +3069,8 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/brokers/{id}:
@@ -2627,6 +3087,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BrokerView'
         "200":
           description: Ok
           content:
@@ -2652,6 +3118,12 @@ paths:
               $ref: '#/components/schemas/BrokerDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BrokerView'
         "201":
           description: Created
           content:
@@ -2677,6 +3149,8 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/artifacts/{id}:
@@ -2693,6 +3167,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ArtifactView'
         "200":
           description: Ok
           content:
@@ -2718,6 +3198,12 @@ paths:
               $ref: '#/components/schemas/ArtifactDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ArtifactView'
         "201":
           description: Created
           content:
@@ -2743,13 +3229,15 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/artifacts/{id}/representations:
     get:
       tags:
         - Artifacts
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_22
       parameters:
         - name: id
@@ -2773,6 +3261,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRepresentationView'
         "200":
           description: Ok
           content:
@@ -2801,12 +3295,14 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
     post:
       tags:
         - Artifacts
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_14
       parameters:
         - name: id
@@ -2825,6 +3321,12 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRepresentationView'
         "200":
           description: Ok
           content:
@@ -2853,6 +3355,8 @@ paths:
                 format: uri
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/artifacts/{id}/data:
@@ -2877,6 +3381,8 @@ paths:
                 format: byte
         required: true
       responses:
+        "401":
+          description: Unauthorized
         "200":
           description: Ok
     post:
@@ -2895,6 +3401,12 @@ paths:
         content:
           application/json: {}
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/StreamingResponseBody'
         "200":
           description: Ok
           content:
@@ -2915,6 +3427,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppStoreView'
         "200":
           description: Ok
           content:
@@ -2940,6 +3458,12 @@ paths:
               $ref: '#/components/schemas/AppStoreDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppStoreView'
         "201":
           description: Created
           content:
@@ -2965,6 +3489,8 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/apps/{id}/actions:
@@ -2987,6 +3513,12 @@ paths:
           schema:
             type: string
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "500":
           description: Internal server error
           content:
@@ -3027,6 +3559,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelSubscriptionView'
         "200":
           description: Ok
           content:
@@ -3045,6 +3583,12 @@ paths:
               $ref: '#/components/schemas/SubscriptionDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SubscriptionView'
         "201":
           description: Created
           content:
@@ -3073,6 +3617,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelContractRuleView'
         "200":
           description: Ok
           content:
@@ -3091,6 +3641,12 @@ paths:
               $ref: '#/components/schemas/ContractRuleDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ContractRuleView'
         "201":
           description: Created
           content:
@@ -3119,6 +3675,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRouteView'
         "200":
           description: Ok
           content:
@@ -3137,6 +3699,12 @@ paths:
               $ref: '#/components/schemas/RouteDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RouteView'
         "201":
           description: Created
           content:
@@ -3165,6 +3733,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRepresentationView'
         "200":
           description: Ok
           content:
@@ -3183,6 +3757,12 @@ paths:
               $ref: '#/components/schemas/RepresentationDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RepresentationView'
         "201":
           description: Created
           content:
@@ -3211,6 +3791,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelOfferedResourceView'
         "200":
           description: Ok
           content:
@@ -3229,6 +3815,12 @@ paths:
               $ref: '#/components/schemas/OfferedResourceDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OfferedResourceView'
         "201":
           description: Created
           content:
@@ -3257,6 +3849,12 @@ paths:
             type: string
             format: uri
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "500":
           description: Internal server error
           content:
@@ -3296,6 +3894,12 @@ paths:
               $ref: '#/components/schemas/SubscriptionDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "500":
           description: Internal server error
           content:
@@ -3366,6 +3970,12 @@ paths:
             '*/*':
               schema:
                 type: object
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "500":
           description: Internal server error
           content:
@@ -3408,6 +4018,12 @@ paths:
             type: string
             format: uri
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "504":
           description: Gateway timeout
           content:
@@ -3467,6 +4083,12 @@ paths:
             type: string
             format: uri
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "504":
           description: Gateway timeout
           content:
@@ -3538,6 +4160,12 @@ paths:
             '*/*':
               schema:
                 type: object
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "500":
           description: Internal server error
           content:
@@ -3584,6 +4212,12 @@ paths:
             type: string
             format: uri
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "500":
           description: Internal server error
           content:
@@ -3660,6 +4294,12 @@ paths:
                   - $ref: '#/components/schemas/Prohibition'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "500":
           description: Internal server error
           content:
@@ -3713,6 +4353,12 @@ paths:
             type: string
             format: uri
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "504":
           description: Gateway timeout
           content:
@@ -3759,6 +4405,12 @@ paths:
             type: string
             format: uri
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "504":
           description: Gateway timeout
           content:
@@ -3811,6 +4463,12 @@ paths:
             type: string
             format: uri
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "500":
           description: Internal server error
           content:
@@ -3862,6 +4520,12 @@ paths:
               description: The JSON string representing a policy
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "500":
           description: Internal server error
           content:
@@ -3899,6 +4563,12 @@ paths:
                 - $ref: '#/components/schemas/UsageNumberDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "400":
           description: Bad request
           content:
@@ -3933,6 +4603,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelObject'
         "200":
           description: Ok
           content:
@@ -3955,6 +4631,12 @@ paths:
                 - $ref: '#/components/schemas/GenericEndpointDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "201":
           description: Created
           content:
@@ -3983,6 +4665,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelDataSourceView'
         "200":
           description: Ok
           content:
@@ -4001,6 +4689,12 @@ paths:
               $ref: '#/components/schemas/DataSourceDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DataSourceView'
         "201":
           description: Created
           content:
@@ -4029,6 +4723,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelContractView'
         "200":
           description: Ok
           content:
@@ -4047,6 +4747,12 @@ paths:
               $ref: '#/components/schemas/ContractDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ContractView'
         "201":
           description: Created
           content:
@@ -4075,6 +4781,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelConfigurationView'
         "200":
           description: Ok
           content:
@@ -4093,6 +4805,12 @@ paths:
               $ref: '#/components/schemas/ConfigurationDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ConfigurationView'
         "201":
           description: Created
           content:
@@ -4121,6 +4839,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelCatalogView'
         "200":
           description: Ok
           content:
@@ -4139,6 +4863,12 @@ paths:
               $ref: '#/components/schemas/CatalogDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CatalogView'
         "201":
           description: Created
           content:
@@ -4167,6 +4897,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelBrokerView'
         "200":
           description: Ok
           content:
@@ -4185,6 +4921,12 @@ paths:
               $ref: '#/components/schemas/BrokerDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/BrokerView'
         "201":
           description: Created
           content:
@@ -4213,6 +4955,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelArtifactView'
         "200":
           description: Ok
           content:
@@ -4231,6 +4979,12 @@ paths:
               $ref: '#/components/schemas/ArtifactDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ArtifactView'
         "201":
           description: Created
           content:
@@ -4259,6 +5013,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelAppStoreView'
         "200":
           description: Ok
           content:
@@ -4277,6 +5037,12 @@ paths:
               $ref: '#/components/schemas/AppStoreDesc'
         required: true
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppStoreView'
         "201":
           description: Created
           content:
@@ -4304,6 +5070,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelSubscriptionView'
         "405":
           description: Not allowed
           content:
@@ -4332,6 +5104,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRequestedResourceView'
         "200":
           description: Ok
           content:
@@ -4342,7 +5120,7 @@ paths:
     get:
       tags:
         - Requested Resources
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_3
       parameters:
         - name: id
@@ -4366,6 +5144,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelSubscriptionView'
         "200":
           description: Ok
           content:
@@ -4376,7 +5160,7 @@ paths:
     get:
       tags:
         - Requested Resources
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_5
       parameters:
         - name: id
@@ -4400,6 +5184,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelContractView'
         "200":
           description: Ok
           content:
@@ -4410,7 +5200,7 @@ paths:
     get:
       tags:
         - Representations
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_7
       parameters:
         - name: id
@@ -4434,6 +5224,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelSubscriptionView'
         "200":
           description: Ok
           content:
@@ -4444,7 +5240,7 @@ paths:
     get:
       tags:
         - Offered Resources
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_11
       parameters:
         - name: id
@@ -4468,6 +5264,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelSubscriptionView'
         "200":
           description: Ok
           content:
@@ -4478,7 +5280,7 @@ paths:
     get:
       tags:
         - Offered Resources
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_15
       parameters:
         - name: id
@@ -4502,6 +5304,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelBrokerView'
         "200":
           description: Ok
           content:
@@ -4512,7 +5320,7 @@ paths:
     get:
       tags:
         - Contracts
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_17
       parameters:
         - name: id
@@ -4536,6 +5344,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRequestedResourceView'
         "200":
           description: Ok
           content:
@@ -4549,6 +5363,12 @@ paths:
       summary: Private IDS self-description
       operationId: getPrivateSelfDescription
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            application/ld+json:
+              schema:
+                type: object
         "500":
           description: Internal server error
           content:
@@ -4568,6 +5388,12 @@ paths:
       summary: Get current configuration
       operationId: getConfiguration
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationView'
         "200":
           description: Ok
           content:
@@ -4578,7 +5404,7 @@ paths:
     get:
       tags:
         - Brokers
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_20
       parameters:
         - name: id
@@ -4602,6 +5428,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelOfferedResourceView'
         "200":
           description: Ok
           content:
@@ -4612,7 +5444,7 @@ paths:
     get:
       tags:
         - Artifacts
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_21
       parameters:
         - name: id
@@ -4636,6 +5468,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelSubscriptionView'
         "200":
           description: Ok
           content:
@@ -4667,6 +5505,12 @@ paths:
             type: string
             format: uri
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/StreamingResponseBody'
         "200":
           description: Ok
           content:
@@ -4677,7 +5521,7 @@ paths:
     get:
       tags:
         - Artifacts
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_23
       parameters:
         - name: id
@@ -4701,6 +5545,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelAgreementView'
         "200":
           description: Ok
           content:
@@ -4711,7 +5561,7 @@ paths:
     get:
       tags:
         - App Stores
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_24
       parameters:
         - name: id
@@ -4735,6 +5585,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelAppView'
         "200":
           description: Ok
           content:
@@ -4763,6 +5619,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelAppView'
         "200":
           description: Ok
           content:
@@ -4783,6 +5645,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AppView'
         "200":
           description: Ok
           content:
@@ -4802,13 +5670,15 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
         "204":
           description: No content
   /api/apps/{id}/endpoints:
     get:
       tags:
         - Apps
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_25
       parameters:
         - name: id
@@ -4832,6 +5702,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelAppEndpointView'
         "200":
           description: Ok
           content:
@@ -4853,6 +5729,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: object
         "500":
           description: Internal server error
           content:
@@ -4893,6 +5775,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelAgreementView'
         "200":
           description: Ok
           content:
@@ -4913,6 +5801,12 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AgreementView'
         "200":
           description: Ok
           content:
@@ -4923,7 +5817,7 @@ paths:
     get:
       tags:
         - Agreements
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_26
       parameters:
         - name: id
@@ -4947,6 +5841,12 @@ paths:
             format: int32
             default: 30
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelArtifactView'
         "200":
           description: Ok
           content:
@@ -4960,6 +5860,12 @@ paths:
       summary: Public IDS self-description
       operationId: getPublicSelfDescription_1
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            application/ld+json:
+              schema:
+                type: object
         "200":
           description: Ok
           content:
@@ -5991,6 +6897,9 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
+            ids:unit:
+              type: string
+              format: uri
             ids:operator:
               type: string
               enum:
@@ -6040,8 +6949,6 @@ components:
                 - https://w3id.org/idsa/code/STRING_IS_CONTAINED
                 - https://w3id.org/idsa/code/TEMPORAL_DISJOINT
                 - https://w3id.org/idsa/code/TEMPORAL_EQUALS
-            ids:rightOperand:
-              $ref: '#/components/schemas/RdfResource'
             ids:leftOperand:
               type: string
               enum:
@@ -6062,13 +6969,12 @@ components:
                 - https://w3id.org/idsa/code/STATE
                 - https://w3id.org/idsa/code/SYSTEM
                 - https://w3id.org/idsa/code/USER
-            ids:unit:
+            ids:rightOperand:
+              $ref: '#/components/schemas/RdfResource'
+            ids:pipEndpoint:
               type: string
               format: uri
             ids:rightOperandReference:
-              type: string
-              format: uri
-            ids:pipEndpoint:
               type: string
               format: uri
             '@type':
@@ -6177,21 +7083,6 @@ components:
         ids:target:
           type: string
           format: uri
-        ids:assigner:
-          type: array
-          items:
-            type: string
-            format: uri
-        ids:assignee:
-          type: array
-          items:
-            type: string
-            format: uri
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/LogicalConstraint'
         ids:action:
           type: array
           items:
@@ -6213,10 +7104,25 @@ components:
               - https://w3id.org/idsa/code/TRACK_PROVENANCE
               - https://w3id.org/idsa/code/USE
               - https://w3id.org/idsa/code/WRITE
+        ids:constraint:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/LogicalConstraint'
         ids:assetRefinement:
           oneOf:
             - $ref: '#/components/schemas/Constraint'
             - $ref: '#/components/schemas/LogicalConstraint'
+        ids:assignee:
+          type: array
+          items:
+            type: string
+            format: uri
+        ids:assigner:
+          type: array
+          items:
+            type: string
+            format: uri
         ids:description:
           type: array
           items:
