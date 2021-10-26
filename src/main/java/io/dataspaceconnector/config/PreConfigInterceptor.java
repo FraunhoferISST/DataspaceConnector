@@ -157,7 +157,8 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
         }
     }
 
-    @SuppressFBWarnings(value = "PATH_TRAVERSAL_IN", justification = "Path should be set by user.")
+    @SuppressFBWarnings(value = { "PATH_TRAVERSAL_IN", "REC_CATCH_EXCEPTION" },
+            justification = "Path should be set by user.")
     private String getClassPathConfig(final ConfigProperties properties) {
         if (log.isInfoEnabled()) {
             log.info("Loading config from classpath. [path=({})]",
