@@ -4,12 +4,21 @@ All notable changes to this project will be documented in this file.
 ## [X.X.X] - XXXX-XX-XX
 
 ### Added
+- New `application.properties` setting `configuration.force.reload` that forces reloading the configuration from the `config.json` instead of using the latest active configuration from the database. If not set, the default value is `false`.
+
+### Changed
+- Increase spring version from 2.5.5 to 2.5.6.
+
+## [6.4.0] - 2021-10-21
+
+### Added
 - Add `ids` field to `/actuator/info` endpoint, to monitor the connectors certificate expiration status and DAT infos (if one can be received).
 
 ### Fixed
 - `ArtifactFactory::updateByteSize` sets `byteSize` and `checksum` to 0 when data is removed.
 - Add nullcheck to `ArtifactService::toInputStream`.
 - Check if representations are null or empty in `getMediaTypeOfArtifact`.
+- Data to be deleted from a consumed artifact, if necessary, is now deleted only once and not with each scheduler call.
 - Fix collisions in bootstrapping process setting a unique path for the `bootstrap.path` property.
 
 ### Changed
@@ -21,6 +30,7 @@ All notable changes to this project will be documented in this file.
 - Increase equalsverifier version from 3.7.1 to 3.7.2.
 - Increase postgresql version from 42.2.24 to 42.3.0.
 - Increase springdoc version from 1.5.11 to 1.5.12.
+- Increase camel-idscp2 version from 0.5.0 to 0.6.0.
 
 ## [6.3.1] - 2021-10-05
 
