@@ -12,8 +12,6 @@ All notable changes to this project will be documented in this file.
 ## [6.4.0] - 2021-10-21
 
 ### Added
-- New `/actuator/info` API data `connector` to output the current version as well as information if a newer release is available on GitHub.
-- Added `authenticationSet` as boolean indicator in output of configuration APIs whether authentication credentials for a proxy are present.
 - Add `ids` field to `/actuator/info` endpoint, to monitor the connectors certificate expiration status and DAT infos (if one can be received).
 
 ### Fixed
