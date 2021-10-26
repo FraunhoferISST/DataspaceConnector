@@ -20,6 +20,7 @@ import de.fraunhofer.ids.messaging.core.config.ConfigProducerInterceptorExceptio
 import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import de.fraunhofer.ids.messaging.core.config.PreConfigProducerInterceptor;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.mapping.FromIdsObjectMapper;
 import io.dataspaceconnector.service.resource.ids.builder.IdsConfigModelBuilder;
@@ -102,7 +103,7 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
             configurationSvc.swapActiveConfig(activeConfig.getId(), true);
         } catch (ConfigUpdateException e) {
             if (log.isWarnEnabled()) {
-                log.warn("Failed to load config from db. [exception=({})]", e.getMessage(), e);
+                log.warn("Failed to load config from database.");
             }
             throw new ConfigProducerInterceptorException(e.getMessage());
         }
@@ -115,7 +116,7 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
             return loadConfig(properties);
         } catch (IOException | ConfigUpdateException e) {
             if (log.isWarnEnabled()) {
-                log.warn("Failed to load config from file. [exception=({})]", e.getMessage(), e);
+                log.warn("Failed to load config from file.");
             }
             throw new ConfigProducerInterceptorException(e.getMessage());
         }
@@ -147,7 +148,8 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
         return configModel;
     }
 
-    private String getConfiguration(final ConfigProperties properties) throws IOException {
+    @SuppressFBWarnings(value = "PATH_TRAVERSAL_IN", justification = "Path should be set by user.")
+    private String getConfiguration(final ConfigProperties properties) {
         if (Paths.get(properties.getPath()).isAbsolute()) {
             return getAbsolutePathConfig(properties);
         } else {
@@ -155,7 +157,8 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
         }
     }
 
-    private String getClassPathConfig(final ConfigProperties properties) throws IOException {
+    @SuppressFBWarnings(value = "PATH_TRAVERSAL_IN", justification = "Path should be set by user.")
+    private String getClassPathConfig(final ConfigProperties properties) {
         if (log.isInfoEnabled()) {
             log.info("Loading config from classpath. [path=({})]",
                     properties.getPath().replaceAll("[\r\n]", ""));
@@ -167,13 +170,13 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
             if (log.isWarnEnabled()) {
                 log.warn("Could not load config from classpath. [path=({})]",
                         properties.getPath().replaceAll("[\r\n]", ""));
-                throw new IOException(e.getMessage(), e);
             }
         }
         return "";
     }
 
-    private String getAbsolutePathConfig(final ConfigProperties properties) throws IOException {
+    @SuppressFBWarnings(value = "PATH_TRAVERSAL_IN", justification = "Path should be set by user.")
+    private String getAbsolutePathConfig(final ConfigProperties properties) {
         if (log.isInfoEnabled()) {
             log.info("Loading config from absolute path. [path=({})]",
                     properties.getPath().replaceAll("[\r\n]", ""));
@@ -181,11 +184,10 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
 
         try (var fis = new FileInputStream(properties.getPath())) {
             return new String(fis.readAllBytes(), StandardCharsets.UTF_8);
-        } catch (Exception e) {
+        } catch (IOException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not load config from absolute path. [path=({})]",
                         properties.getPath().replaceAll("[\r\n]", ""));
-                throw new IOException(e.getMessage(), e);
             }
         }
         return "";
