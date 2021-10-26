@@ -30,6 +30,8 @@ import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadExceptio
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
+import io.dataspaceconnector.controller.message.tag.MessageDescription;
+import io.dataspaceconnector.controller.message.tag.MessageName;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,7 +63,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
-@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
+@Tag(name = MessageName.MESSAGES, description = MessageDescription.MESSAGES)
 public class ResourceUnavailableMessageController {
 
     /**
@@ -97,8 +99,8 @@ public class ResourceUnavailableMessageController {
      * @return The response message or an error.
      */
     @PostMapping("/resource/unavailable")
-    @Operation(summary = "Resource unavailable message", description = "Can be used for e.g. "
-            + "unregistering a resource at an IDS broker.")
+    @Operation(summary = "Send an IDS ResourceUnavailableMessage.", description = "Can be used for "
+            + "e.g. unregistering an IDS resource at an IDS Broker.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),

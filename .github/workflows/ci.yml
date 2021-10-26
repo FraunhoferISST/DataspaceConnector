@@ -9,7 +9,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  setup:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    outputs:
+      branch_name: ${{ steps.get_branch_name.outputs.HEAD_REF }}
+
+    steps:
+    - name: Build branch name
+      id: get_branch_name
+      run: |
+          HEAD_REF=$(echo "${GITHUB_HEAD_REF}" | sed 's_/_\-_g' )
+          echo ::set-output name=HEAD_REF::"${HEAD_REF}"
+
   style:
+    needs: [setup]
     timeout-minutes: 5
     runs-on: ubuntu-latest
     strategy:
@@ -25,12 +39,13 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+        key: ${{ runner.os }}-${{ needs.setup.outputs.branch_name }}-style-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-${{ needs.setup.outputs.branch_name }}-style-
     - name: Run style checks
-      run: mvn -B -U checkstyle:check --file pom.xml
+      run: mvn -B checkstyle:check --file pom.xml
 
   license:
+    needs: [setup]
     timeout-minutes: 5
     runs-on: ubuntu-latest
     strategy:
@@ -46,35 +61,13 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+        key: ${{ runner.os }}-${{ needs.setup.outputs.branch_name }}-license-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-${{ needs.setup.outputs.branch_name }}-license-
     - name: Run license checks
-      run: mvn -B -U license:check --file pom.xml
-
-  linting:
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Lint Docker
-      uses: hadolint/hadolint-action@v1.5.0
-      with:
-        dockerfile: Dockerfile
-        config: .hadolint.yaml
-    # - name: Lint Docker and Yaml
-    #   uses: bridgecrewio/checkov-action@master
-    #   with:
-    #     directory: .
-    #     quiet: true
-    #     output_format: github_failed_only
-    #     download_external_modules: true
-    #     soft_fail: true
+      run: mvn -B license:check --file pom.xml
 
   static-code-analysis:
-    needs: [style, license, linting]
+    needs: [setup, style, license]
     timeout-minutes: 5
     runs-on: ubuntu-latest
     strategy:
@@ -90,13 +83,13 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+        key: ${{ runner.os }}-${{ needs.setup.outputs.branch_name }}-analysis-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-${{ needs.setup.outputs.branch_name }}-analysis-
     - name: Run static code analysis
-      run: mvn -B -U compile spotbugs:check --file pom.xml
+      run: mvn -B compile spotbugs:check --file pom.xml
 
   unit-and-integration-tests:
-    needs: [style, license, linting]
+    needs: [setup, style, license]
     timeout-minutes: 30
     runs-on: ${{ matrix.os }}
     strategy:
@@ -114,38 +107,13 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
-    - name: Unit- and Integrationtests
-      run: mvn -B -U verify --file pom.xml -Prelease
-
-  unit-and-integration-tests-cross-version:
-    needs: [style, license, linting]
-    timeout-minutes: 30
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        java: [12, 13, 14, 15, 16]
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ matrix.java }}
-    - name: Cache maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+        key: ${{ runner.os }}-${{ needs.setup.outputs.branch_name }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-${{ needs.setup.outputs.branch_name }}-m2-
     - name: Unit- and Integrationtests
       run: mvn -B -U verify --file pom.xml -Prelease
 
   mutation-tests:
-    needs: unit-and-integration-tests
+    needs: [setup, unit-and-integration-tests]
     timeout-minutes: 30
     runs-on: ubuntu-latest
     strategy:
@@ -161,44 +129,66 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+        key: ${{ runner.os }}-${{ needs.setup.outputs.branch_name }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-${{ needs.setup.outputs.branch_name }}-m2-
     - name: Run Mutation Tests
-      run: mvn -B -U -Dmaven.javadoc.skip=true test org.pitest:pitest-maven:mutationCoverage --file pom.xml
+      run: mvn -B -Dmaven.javadoc.skip=true test org.pitest:pitest-maven:mutationCoverage --file pom.xml
 
-  build-test-image:
-    needs: unit-and-integration-tests
-    timeout-minutes: 15
+  linting:
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
 
     steps:
+    - uses: actions/checkout@v2
+    - name: Lint Docker
+      uses: hadolint/hadolint-action@v1.5.0
+      with:
+        dockerfile: Dockerfile
+        config: .hadolint.yaml
+
+  build_test_image:
+    needs: [linting, unit-and-integration-tests]
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    outputs:
+      image_artifact_name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
+      image_name: ${{ steps.get_image_name.outputs.image_name }}
+
+    steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      - name: Build registry path
-        id: get_repo
-        run: echo ::set-output name=IMAGE::"ghcr.io/international-data-spaces-association/dataspace-connector"
+      - name: Build image artifact name
+        id: get_image_artifact_name
+        run: |
+          IMAGE_ARTIFACT_NAME=$(echo "${GITHUB_HEAD_REF}" | sed 's_/_\-_g' )
+          echo ::set-output name=image_artifact_name::"${IMAGE_ARTIFACT_NAME}"
+      - name: Build image name
+        id: get_image_name
+        run: echo ::set-output name=image_name::"ghcr.io/international-data-spaces-association/dataspace-connector"
       - name: Build image
         run: |
           docker build . -t $IMAGE:ci
         env:
-          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
+          IMAGE: ${{ steps.get_image_name.outputs.image_name }}
           DOCKER_BUILDKIT: 1
       - name: Build tar ball
+        id: build_tar_ball
         run: |
-          docker save --output "${GITHUB_HEAD_REF}.tar" "${IMAGE}:ci"
+          docker save --output "${ARTIFACT}.tar" "${IMAGE}:ci"
         env:
-          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
+          IMAGE: ${{ steps.get_image_name.outputs.image_name }}
+          ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
       - name: Push image
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ github.head_ref }}-image
-          path: ${{ github.workspace }}/${{ github.head_ref }}.tar
+          name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-image
+          path: ${{ github.workspace }}/${{ steps.get_image_artifact_name.outputs.image_artifact_name }}.tar
           retention-days: 1
 
   image-security-scan:
-    needs: build-test-image
+    needs: [build_test_image]
     timeout-minutes: 10
     runs-on: ubuntu-latest
     strategy:
@@ -208,24 +198,24 @@ jobs:
       - name: Download image
         uses: actions/download-artifact@v2
         with:
-          name: ${{ github.head_ref }}-image
+          name: ${{ needs.build_test_image.outputs.image_artifact_name }}-image
       - name: Load image into docker
-        run: docker load --input "${GITHUB_WORKSPACE}/${GITHUB_HEAD_REF}.tar"
-      - name: Build registry path
-        id: get_repo
-        run: echo ::set-output name=IMAGE::"ghcr.io/international-data-spaces-association/dataspace-connector"
+        run: docker load --input "${GITHUB_WORKSPACE}/${ARTIFACT}.tar"
+        env:
+          ARTIFACT: ${{ needs.build_test_image.outputs.image_artifact_name }}
       - name: Run vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: '${{ steps.get_repo.outputs.IMAGE }}:ci'
+          image-ref: '${{ needs.build_test_image.outputs.image_name }}:ci'
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
+          timeout: "9m0s"
 
   e2e-test:
-    needs: build-test-image
+    needs: [build_test_image]
     timeout-minutes: 30
     runs-on: ubuntu-latest
 
@@ -244,9 +234,11 @@ jobs:
       - name: Download image
         uses: actions/download-artifact@v2
         with:
-          name: ${{ github.head_ref }}-image
+          name: ${{ needs.build_test_image.outputs.image_artifact_name }}-image
       - name: Load image into cluster
-        run: sudo k3s ctr images import "${GITHUB_WORKSPACE}/${GITHUB_HEAD_REF}.tar"
+        run: sudo k3s ctr images import "${GITHUB_WORKSPACE}/${ARTIFACT}.tar"
+        env:
+          ARTIFACT: ${{ needs.build_test_image.outputs.image_artifact_name }}
       - name: Test environment
         run: |
           kubectl cluster-info

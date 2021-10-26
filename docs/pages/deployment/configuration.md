@@ -167,6 +167,8 @@ A full configuration example may look like this:
 }
 ```
 
+### Configuration Persistence
+
 **New**: Since v6.0.0, the Dataspace Connector offers CRUD endpoints for managing multiple
 configurations. For a first start, the `config.json` will be loaded. All settings will then be
 persisted in the database, so the application does not "forget" them on a restart.
@@ -232,6 +234,32 @@ An example configuration could look like this:
   }
 }
 ```
+
+### Force-load from file
+
+It is now possible to force the reloading of the configuration from the `config.json` when
+restarting the Connector. Thus, the configuration marked as active in the database is ignored on
+start-up. The data from the `config.json` and the `application.properties` (truststore/keystore
+password and alias) are then stored to the connector's database as new active config and can be
+changed via the REST API. Every new start of the connector with force reload will trigger the
+reloading of the config from the `config.json`. The force reload can be set in the
+`application.properties` and is thus needed as an environment variables depending on the setup:
+
+```properties
+configuration.force.reload=true/false
+```
+
+True will force reloading the config from `config.json` and `application.properties`. The default
+value is set to `false`.
+
+---
+
+**Note**: If a configuration is activated at runtime via the REST API that cannot be processed by
+the Messaging Services (which then throws a `ConfigUpdateException`), e.g. because values of the
+`KeyStore` or `TrustStore` settings are null, the system rolls back to the old working configuration
+and sets this as the active configuration.
+
+---
 
 
 ## Step 2: IDS Certificate
@@ -408,7 +436,7 @@ If you want to change the base path, which will be used to find properties and c
 bootstrapping, you can customize the following line:
 
 ```properties
-bootstrap.path=.
+bootstrap.path=./src/resources
 bootstrap.enabled=false
 ```
 

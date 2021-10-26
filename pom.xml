@@ -22,7 +22,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.5</version>
+		<version>2.5.6</version>
 		<relativePath/>
 		<!-- lookup parent from repository -->
 	</parent>
@@ -85,7 +85,7 @@
 
 	<properties>
 		<!-- General -->
-		<revision>6.3.1</revision>
+		<revision>6.5.0-SNAPSHOT</revision>
 		<email>info@dataspace-connector.de</email>
 
 		<!-- Build info -->
@@ -100,25 +100,25 @@
 		<okhttp.version>4.9.2</okhttp.version>
 		<modelmapper.version>2.4.4</modelmapper.version>
 		<jackson.version>2.13.0</jackson.version>
-		<postgres.version>42.2.24</postgres.version>
-		<springdoc.version>1.5.11</springdoc.version>
-		<equalsverifier.version>3.7.1</equalsverifier.version>
+		<postgres.version>42.3.0</postgres.version>
+		<springdoc.version>1.5.12</springdoc.version>
+		<equalsverifier.version>3.7.2</equalsverifier.version>
 		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
 		<velocity.version>1.7</velocity.version>
 		<camel.version>3.12.0</camel.version>
-		<idscp2.version>0.5.0</idscp2.version>
+		<idscp2.version>0.6.0</idscp2.version>
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
 		<maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-		<pitest.version>1.7.1</pitest.version>
+		<pitest.version>1.7.2</pitest.version>
 		<pitest-junit5-plugin.version>0.15</pitest-junit5-plugin.version>
 		<tidy.version>1.1.0</tidy.version>
 		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
 		<maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
-		<spotbugs.version>4.4.1</spotbugs.version>
+		<spotbugs.version>4.4.2</spotbugs.version>
 		<findsecbugs-plugin.version>1.11.0</findsecbugs-plugin.version>
 		<checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
 		<checkstyle.version>9.0.1</checkstyle.version>
@@ -130,7 +130,7 @@
 		<dms.version>2.2.0</dms.version>
 		<taglist.version>2.4</taglist.version>
 		<jxr.version>3.1.1</jxr.version>
-		<dependency-check.version>6.3.2</dependency-check.version>
+		<dependency-check.version>6.4.1</dependency-check.version>
 
 		<!-- License -->
 		<license_name>Apache License, Version 2.0</license_name>
@@ -735,13 +735,6 @@
 						<year>${project.inceptionYear}</year>
 					</properties>
 				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.pitest</groupId>
@@ -785,7 +778,7 @@
 					<threads>2</threads>
 					<timestampedReports>false</timestampedReports>
 					<coverageThreshold>90</coverageThreshold>
-					<mutationThreshold>93</mutationThreshold>
+					<mutationThreshold>90</mutationThreshold>
 				</configuration>
 			</plugin>
 			<plugin>
