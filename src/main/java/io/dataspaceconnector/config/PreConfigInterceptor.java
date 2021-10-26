@@ -20,7 +20,6 @@ import de.fraunhofer.ids.messaging.core.config.ConfigProducerInterceptorExceptio
 import de.fraunhofer.ids.messaging.core.config.ConfigProperties;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import de.fraunhofer.ids.messaging.core.config.PreConfigProducerInterceptor;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.mapping.FromIdsObjectMapper;
 import io.dataspaceconnector.service.resource.ids.builder.IdsConfigModelBuilder;
@@ -48,7 +47,7 @@ import java.nio.file.Paths;
 public class PreConfigInterceptor implements PreConfigProducerInterceptor {
 
     /**
-     * The property for forcing to reload the configuration from a file or not.
+     * The property for forcing to reload the configuration from the config.json.
      */
     @Value("${configuration.force.reload:false}")
     private boolean forceReload;
@@ -102,6 +101,9 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
         try {
             configurationSvc.swapActiveConfig(activeConfig.getId(), true);
         } catch (ConfigUpdateException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to load config from db. [exception=({})]", e.getMessage(), e);
+            }
             throw new ConfigProducerInterceptorException(e.getMessage());
         }
         return configModel;
@@ -112,6 +114,9 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
         try {
             return loadConfig(properties);
         } catch (IOException | ConfigUpdateException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to load config from file. [exception=({})]", e.getMessage(), e);
+            }
             throw new ConfigProducerInterceptorException(e.getMessage());
         }
     }
@@ -124,9 +129,8 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
         }
 
         final var config = getConfiguration(properties);
-
         if (log.isInfoEnabled()) {
-            log.info("Importing configuration from file.");
+            log.info("Loading configuration from file.");
         }
 
         final var configModel = deserializationSvc.getConfigurationModel(config);
@@ -143,8 +147,6 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
         return configModel;
     }
 
-    @SuppressFBWarnings(value = "PATH_TRAVERSAL_IN",
-            justification = "path of config json should be specified by user")
     private String getConfiguration(final ConfigProperties properties) throws IOException {
         if (Paths.get(properties.getPath()).isAbsolute()) {
             return getAbsolutePathConfig(properties);
@@ -153,14 +155,10 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
         }
     }
 
-    @SuppressFBWarnings(value = {"PATH_TRAVERSAL_IN", "REC_CATCH_EXCEPTION",
-            "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"},
-            justification = "path of config json should be specified by user")
     private String getClassPathConfig(final ConfigProperties properties) throws IOException {
         if (log.isInfoEnabled()) {
             log.info("Loading config from classpath. [path=({})]",
-                    properties.getPath().replaceAll("[\r\n]", "")
-            );
+                    properties.getPath().replaceAll("[\r\n]", ""));
         }
 
         try (var configStream = new ClassPathResource(properties.getPath()).getInputStream()) {
@@ -175,13 +173,12 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
         return "";
     }
 
-    @SuppressFBWarnings(value = {"PATH_TRAVERSAL_IN", "REC_CATCH_EXCEPTION"},
-            justification = "path of config json should be specified by user")
     private String getAbsolutePathConfig(final ConfigProperties properties) throws IOException {
         if (log.isInfoEnabled()) {
             log.info("Loading config from absolute path. [path=({})]",
                     properties.getPath().replaceAll("[\r\n]", ""));
         }
+
         try (var fis = new FileInputStream(properties.getPath())) {
             return new String(fis.readAllBytes(), StandardCharsets.UTF_8);
         } catch (Exception e) {
