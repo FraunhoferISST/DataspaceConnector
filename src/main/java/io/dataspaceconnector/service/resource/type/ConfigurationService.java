@@ -112,7 +112,8 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
                     resetMessagingConfig();
                 } catch (ConfigUpdateException e) {
                     if (log.isWarnEnabled()) {
-                        log.warn("Updating configuration failed, rollback to last configuration!");
+                        log.warn("Updating the configuration failed, rollback to the latest one. "
+                                + "[exception=({})]", e.getMessage(), e);
                     }
                     swapActiveConfigInDb(configToReplace.get().getId());
                     resetMessagingConfig();
@@ -141,14 +142,15 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
     @Override
     public Configuration update(final UUID entityId, final ConfigurationDesc desc) {
         final var oldConfig = super.get(entityId);
-        //old description needs to be cached here to allow for rollbacks on error
+        // Old description needs to be cached here to allow rollbacks on error.
         final var oldDesc = fromConfigModel(oldConfig);
         final var config = super.update(entityId, desc);
         try {
             resetMessagingConfig();
         } catch (ConfigUpdateException e) {
             if (log.isWarnEnabled()) {
-                log.warn("Updating configuration failed, rollback to last configuration!");
+                log.warn("Updating the configuration failed, rollback to the latest one. "
+                        + "[exception=({})]", e.getMessage(), e);
             }
 
             super.update(entityId, oldDesc);
@@ -156,7 +158,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
             try {
                 resetMessagingConfig();
             } catch (ConfigUpdateException ignored) {
-                //Nothing to do - old config didn't work too, nothing we can do here.
+                // Nothing to do - old config didn't work too, nothing we can do here.
             }
         }
 
@@ -169,13 +171,13 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
         repo.setActive(newConfig);
 
         if (log.isInfoEnabled()) {
-            log.info("Successfully swapped active configuration in Database.");
+            log.info("Successfully swapped active configuration in database.");
         }
     }
 
     private void resetMessagingConfig() throws ConfigUpdateException {
         if (log.isDebugEnabled()) {
-            log.debug("Updating Messaging-Services configuration...");
+            log.debug("Updating Messaging Services configuration...");
         }
 
         final var activeConfig = getActiveConfig();
@@ -184,8 +186,8 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
         updateConfigProperties(activeConfig);
         updateConfigContainer(configuration, activeConfig);
 
-        if (log.isInfoEnabled()) {
-            log.info("Successfully updated Messaging-Services configuration.");
+        if (log.isDebugEnabled()) {
+            log.debug("Successfully updated Messaging Services configuration.");
         }
     }
 
@@ -200,7 +202,11 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
             try {
                 updateKeyStoreManager(activeConfig, configBean);
             } catch (Exception e) {
-                throw new ConfigUpdateException("Could not update KeyStoreManager!", e.getCause());
+                if (log.isWarnEnabled()) {
+                    log.warn("Could not update KeyStoreManager. [exception=({})]",
+                            e.getMessage(), e);
+                }
+                throw new ConfigUpdateException("Could not update KeyStoreManager.", e.getCause());
             }
 
             configBean.updateConfiguration(configuration);
