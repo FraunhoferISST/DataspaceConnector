@@ -25,7 +25,7 @@ info:
   license:
     name: "Apache License, Version 2.0"
     url: https://www.apache.org/licenses/LICENSE-2.0.txt
-  version: 6.3.1
+  version: 6.4.0
 servers:
   - url: https://localhost:8080
     description: Generated server url
@@ -6946,6 +6946,9 @@ components:
             ids:unit:
               type: string
               format: uri
+            ids:rightOperandReference:
+              type: string
+              format: uri
             ids:leftOperand:
               type: string
               enum:
@@ -6968,9 +6971,6 @@ components:
                 - https://w3id.org/idsa/code/USER
             ids:rightOperand:
               $ref: '#/components/schemas/RdfResource'
-            ids:rightOperandReference:
-              type: string
-              format: uri
             ids:pipEndpoint:
               type: string
               format: uri
@@ -7080,25 +7080,9 @@ components:
         ids:target:
           type: string
           format: uri
-        ids:assignee:
-          type: array
-          items:
-            type: string
-            format: uri
-        ids:assigner:
-          type: array
-          items:
-            type: string
-            format: uri
         ids:assetRefinement:
           oneOf:
             - $ref: '#/components/schemas/LogicalConstraint'
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/Constraint'
-              - $ref: '#/components/schemas/LogicalConstraint'
         ids:action:
           type: array
           items:
@@ -7120,6 +7104,22 @@ components:
               - https://w3id.org/idsa/code/TRACK_PROVENANCE
               - https://w3id.org/idsa/code/USE
               - https://w3id.org/idsa/code/WRITE
+        ids:assignee:
+          type: array
+          items:
+            type: string
+            format: uri
+        ids:assigner:
+          type: array
+          items:
+            type: string
+            format: uri
+        ids:constraint:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/Constraint'
+              - $ref: '#/components/schemas/LogicalConstraint'
         ids:description:
           type: array
           items:

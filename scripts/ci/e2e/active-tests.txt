@@ -7,3 +7,4 @@
 ./scripts/tests/contract_negotation_security_level_access.py
 ./scripts/tests/multiple_artifacts.py
 ./scripts/tests/single_artifact_multiple_policies.py
+./scripts/tests/subscription_creation.py

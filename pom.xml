@@ -22,7 +22,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.5</version>
+		<version>2.5.6</version>
 		<relativePath/>
 		<!-- lookup parent from repository -->
 	</parent>
@@ -85,7 +85,7 @@
 
 	<properties>
 		<!-- General -->
-		<revision>6.3.2-SNAPSHOT</revision>
+		<revision>6.4.0</revision>
 		<email>info@dataspace-connector.de</email>
 
 		<!-- Build info -->
@@ -107,7 +107,7 @@
 		<jaeger.version>3.3.1</jaeger.version>
 		<velocity.version>1.7</velocity.version>
 		<camel.version>3.12.0</camel.version>
-		<idscp2.version>0.5.0</idscp2.version>
+		<idscp2.version>0.6.0</idscp2.version>
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
