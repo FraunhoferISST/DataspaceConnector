@@ -1,7 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [X.X.X} - XXXX-XX-XX
+## [X.X.X] - XXXX-XX-XX
+
+### Added
+- New `application.properties` setting `configuration.force.reload` that forces reloading the configuration from the `config.json` instead of using the latest active configuration from the database. If not set, the default value is `false`.
 
 ### Changed
 - Increase spring version from 2.5.5 to 2.5.6.
@@ -11,7 +14,6 @@ All notable changes to this project will be documented in this file.
 ### Added
 - New `/actuator/info` API data `connector` to output the current version as well as information if a newer release is available on GitHub.
 - Added `authenticationSet` as boolean indicator in output of configuration APIs whether authentication credentials for a proxy are present.
-- New application.properties setting `configuration.force.reload=true/false` which will force reloading configuration from config.json/application.properties instead of using latest active configuration from DB, default if not set is false.
 - Add `ids` field to `/actuator/info` endpoint, to monitor the connectors certificate expiration status and DAT infos (if one can be received).
 
 ### Fixed
