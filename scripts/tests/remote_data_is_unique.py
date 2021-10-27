@@ -17,8 +17,6 @@
 import requests
 import pprint
 import json
-from requests.models import InvalidURL
-import tqdm
 
 # Suppress ssl verification warning
 requests.packages.urllib3.disable_warnings()
