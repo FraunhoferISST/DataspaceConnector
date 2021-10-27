@@ -17,6 +17,8 @@
 import requests
 import json
 
+# Suppress ssl verification warning
+requests.packages.urllib3.disable_warnings()
 
 class ResourceApi:
     session = None
@@ -43,6 +45,10 @@ class ResourceApi:
 
     def create_artifact(self, data={"value": "SOME LONG VALUE"}):
         response = self.session.post(self.recipient + "/api/artifacts", json=data)
+        return response.headers["Location"]
+
+    def update_artifact(self, artifact, data):
+        response = self.session.put(artifact, json=data)
         return response.headers["Location"]
 
     def create_contract(
