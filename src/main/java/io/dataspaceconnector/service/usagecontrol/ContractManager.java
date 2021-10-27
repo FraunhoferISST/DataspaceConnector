@@ -44,6 +44,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,6 +109,13 @@ public class ContractManager {
         }
 
         final var idsAgreement = deserializationService.getContractAgreement(agreement.getValue());
+
+        // Validation of end date.
+        final var endDate = idsAgreement.getContractEnd()
+                .toGregorianCalendar().toZonedDateTime();
+        if (endDate.isBefore(ZonedDateTime.now())) {
+            throw new ContractException("The agreement has expired.");
+        }
 
         // Validation of issuer connector.
         if (!idsAgreement.getConsumer().equals(issuer)) {
