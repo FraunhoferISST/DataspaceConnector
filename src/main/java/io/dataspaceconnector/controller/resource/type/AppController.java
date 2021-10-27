@@ -317,25 +317,6 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     }
 
     /**
-     * Get the AppStores related to the given app.
-     *
-     * @param appId The id of app for which related appstores should be found.
-     * @return The app store.
-     */
-    @GetMapping("/{id}/appstore")
-    @Operation(summary = "Get AppStore by app id.", description = "Get appstore holding this app.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
-                    description = ResponseDescription.BAD_REQUEST),
-            @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
-                    description = ResponseDescription.INTERNAL_SERVER_ERROR)})
-    @ResponseBody
-    public final ResponseEntity<Object> relatedAppStore(final @PathVariable("id") UUID appId) {
-        return ResponseEntity.ok(getService().getAppStoreByAppId(appId));
-    }
-
-    /**
      * Persists the portainer container data, e.g. Container-ID, Container-Name and
      * Endpoint-AccessURLs.
      *
