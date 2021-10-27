@@ -1,6 +1,12 @@
 ALTER TABLE public.app
     ADD COLUMN container_name character varying(255);
 
+UPDATE public.endpoint AS e
+    SET data_source_id = NULL
+    FROM public.datasource AS d
+    WHERE d.type = DATABASE
+    AND d.id = e.data_source_id;
+
 DELETE FROM public.datasource
     WHERE "type" = DATABASE;
 
