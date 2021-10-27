@@ -47,9 +47,9 @@ class ResourceApi:
         response = self.session.post(self.recipient + "/api/artifacts", json=data)
         return response.headers["Location"]
 
-    def update_artifact(self, artifact, data):
+    def update_artifact(self, artifact, data) -> bool:
         response = self.session.put(artifact, json=data)
-        return response.headers["Location"]
+        return response.status_code == 204
 
     def create_contract(
         self,
