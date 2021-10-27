@@ -26,7 +26,7 @@ import org.flywaydb.core.api.migration.Context;
  * Performs migration operations for v6.5.0 in addition to the migration script.
  */
 @SuppressWarnings("typename")
-public class v6_5_0__releaseV6_5_0 extends BaseJavaMigration {
+public class v7_0_0__releaseV7_0_0 extends BaseJavaMigration {
 
     /**
      * Select query for getting ID and value of local data instances.
