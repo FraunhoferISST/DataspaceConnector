@@ -293,8 +293,8 @@ local data. The Dataspace Connector automatically classifies an artifact as `rem
 
 Currently, the Dataspace Connector can natively establish a connection via http, https, and https
 with basicAuth or apiKey. To use one of the authentications, just add the appropriate object to the
-body of your request. To connect to other backends, take a look at how to integrate routing
-frameworks as explained [here](../../deployment/camel.md).
+body of your request. To connect to other backends, you can define and use Camel routes as explained
+[here](camel.md#create-a-route-for-fetching-data).
 
 ---
 
