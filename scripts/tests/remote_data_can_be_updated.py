@@ -17,7 +17,7 @@
 
 from resourceapi import ResourceApi
 
-connector = ResourceApi("https://localhost:8080")
+connector = ResourceApi("http://localhost:8080")
 artifact = connector.create_artifact(
     data={
         "title": "string",
