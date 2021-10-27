@@ -17,6 +17,9 @@
 import requests
 import json
 
+# Suppress ssl verification warning
+requests.packages.urllib3.disable_warnings()
+
 
 class IdsApi:
     session = None

@@ -17,7 +17,6 @@
 
 from resourceapi import ResourceApi
 from idsapi import IdsApi
-import requests
 import pprint
 import sys
 
@@ -40,9 +39,6 @@ if __name__ == "__main__":
     main(sys.argv[1:])
 
 print("Starting script")
-
-# Suppress ssl verification warning
-requests.packages.urllib3.disable_warnings()
 
 # Provider
 provider = ResourceApi(providerUrl)

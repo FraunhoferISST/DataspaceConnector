@@ -1,10 +1,10 @@
+
 # Changelog
 All notable changes to this project will be documented in this file.
 
 ## [X.X.X] - XXXX-XX-XX
 
 ### Added
-- New `application.properties` setting `configuration.force.reload` that forces reloading the configuration from the `config.json` instead of using the latest active configuration from the database. If not set, the default value is `false`.
 - Allow using route ID (URI) as access URL for artifacts.
 - Allow using route ID (URI) as location for subscriptions.
 - Allow specifying route IDs when calling `GET /data` endpoint to automatically dispatch data via these routes.
@@ -15,8 +15,6 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Increase spring version from 2.5.5 to 2.5.6.
-- Increase messaging services version from 5.0.1 to 5.1.1.
-- Increase spring version from 2.5.5 to 2.5.6.
 - Change encoding of local data from `UTF-16` to `UTF-8`.
 - Change relation between `Route` and `Artifact` to one-to-one (previously one-to-many).
   - Link is created automatically when an artifact is created with a route reference as access URL.
@@ -24,13 +22,25 @@ All notable changes to this project will be documented in this file.
 - Replace template engine `Velocity` with `Freemarker`.
 
 ### Fixed
-- Only create agreements from contract offers with valid start and end date.
-- Check if agreement has expired before returning data.
 - XML-escape URLs before injecting them into Camel route templates.
 
 ### Removed
-
 - Remove entity `ConnectorEndpoint` and all corresponding classes.
+
+## [6.5.0] - 2021-10-27
+
+### Added
+- New `application.properties` setting `configuration.force.reload` that forces reloading the configuration from the `config.json` instead of using the latest active configuration from the database. If not set, the default value is `false`.
+
+### Changed
+- Increase spring version from 2.5.5 to 2.5.6.
+- Increase messaging services version from 5.0.1 to 5.1.1.
+
+### Fixed
+- Only create agreements from contract offers with valid start and end date.
+- Check if agreement has expired before returning data.
+- Fix `TransientObjectException` while updating an artifact.
+- Add default constructor to `ApiKey` class, to avoid `InstantiationException`.
 
 ## [6.4.0] - 2021-10-21
 

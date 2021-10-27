@@ -26,7 +26,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.Date;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -45,13 +44,6 @@ class CamelInfoContributorExtTest {
         /* ARRANGE */
         final var date = new Date();
         final var status = ServiceStatus.Started;
-        Map<String, Object> map = Map.of(
-                "name", "camel-1",
-                "version", "3.11.2",
-                "startDate", date,
-                "uptime", "6s783ms",
-                "status", status
-        );
 
         Mockito.doReturn("camel-1").when(camelContext).getName();
         Mockito.doReturn("3.11.2").when(camelContext).getVersion();
