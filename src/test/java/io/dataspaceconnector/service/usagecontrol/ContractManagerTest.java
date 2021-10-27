@@ -109,7 +109,7 @@ class ContractManagerTest {
     @Test
     void validateTransferContract_agreementNotFound_throwResourceNotFoundException() {
         /* ARRANGE */
-        when(entityResolver.getEntityById(agreementId)).thenThrow(ResourceNotFoundException.class);
+        when(entityResolver.getEntityById(agreementId)).thenReturn(Optional.empty());
 
         /* ASSERT */
         assertThrows(ResourceNotFoundException.class, () -> contractManager
