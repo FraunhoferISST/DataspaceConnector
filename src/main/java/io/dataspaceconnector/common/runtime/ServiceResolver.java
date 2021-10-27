@@ -21,11 +21,13 @@ import java.util.Optional;
  * Look up services at runtime.
  */
 public interface ServiceResolver {
+
     /**
      * Find a service at runtime based on type.
+     *
      * @param clazz The service type.
-     * @param <T> The type.
-     * @return The service when available.
+     * @param <T>   The type.
+     * @return The service if available.
      */
     <T> Optional<T> getService(Class<T> clazz);
 }

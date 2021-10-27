@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 /**
- * Start and Stop Apps depending on their AppEndpoints and use in Camel routes.
+ * Start and stop apps depending on their AppEndpoints and use in Camel routes.
  */
 @Log4j2
 @Service

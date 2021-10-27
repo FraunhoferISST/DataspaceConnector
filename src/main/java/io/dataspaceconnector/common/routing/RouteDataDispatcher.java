@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.common.routing;
 
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-
 import io.dataspaceconnector.common.exception.DataDispatchException;
 import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.util.UUIDUtils;
@@ -30,6 +26,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Dispatches data via Camel routes.
@@ -92,13 +92,12 @@ public class RouteDataDispatcher {
             } else if (result.getProperty(Exchange.EXCEPTION_CAUGHT) != null) {
                 throw result.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
             }
-        } catch (Exception exception) {
+        } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                log.debug("Failed to dispatch data. [exception=({})]", exception.getMessage(),
-                        exception);
+                log.debug("Failed to dispatch data. [exception=({})]", e.getMessage(), e);
             }
 
-            throw new DataDispatchException("Failed to dispatch data: " + exception.getMessage());
+            throw new DataDispatchException("Failed to dispatch data." + e.getMessage());
         }
     }
 

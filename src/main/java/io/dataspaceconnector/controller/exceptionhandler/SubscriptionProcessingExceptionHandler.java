@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Log4j2
 @Order(1)
 public final class SubscriptionProcessingExceptionHandler {
+
     /**
      * Handles thrown {@link SubscriptionProcessingException}.
      *
@@ -43,7 +44,7 @@ public final class SubscriptionProcessingExceptionHandler {
     public ResponseEntity<JSONObject> handleSubscriptionProcessingException(
             final SubscriptionProcessingException exception) {
         if (log.isDebugEnabled()) {
-            log.debug("Could not process subscription [exception=({})]", exception == null
+            log.debug("Could not process subscription. [exception=({})]", exception == null
                     ? "" : exception.getMessage(), exception);
         }
 

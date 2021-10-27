@@ -17,4 +17,4 @@
 /**
  * Contains interfaces used for retrieving data.
  */
-package io.dataspaceconnector.common.dataretrieval;
+package io.dataspaceconnector.common.routing.dataretrieval;

@@ -24,7 +24,7 @@ import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.common.routing.RouteDataDispatcher;
-import io.dataspaceconnector.common.util.ApiReferenceHelper;
+import io.dataspaceconnector.common.net.ApiReferenceHelper;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.base.Entity;

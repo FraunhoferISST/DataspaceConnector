@@ -15,20 +15,14 @@
  */
 package io.dataspaceconnector.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.List;
-
-import io.dataspaceconnector.common.dataretrieval.DataRetrievalService;
 import io.dataspaceconnector.common.exception.DataRetrievalException;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
+import io.dataspaceconnector.common.net.ApiReferenceHelper;
 import io.dataspaceconnector.common.net.HttpAuthentication;
 import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.routing.RouteDataRetriever;
-import io.dataspaceconnector.common.util.ApiReferenceHelper;
+import io.dataspaceconnector.common.routing.dataretrieval.DataRetrievalService;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.model.artifact.RemoteData;
@@ -36,6 +30,12 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.List;
 
 /**
  * Retrieves data from the local database, remote HTTP services and Camel routes.
@@ -91,6 +91,9 @@ public class DataRetriever {
         } else if (data instanceof RemoteData) {
             rawData = getData((RemoteData) data, queryInput);
         } else {
+            if (log.isWarnEnabled()) {
+                log.warn("Unknown data type. [artifactId=({})]", artifact.getId());
+            }
             throw new UnreachableLineException("Unknown data type.");
         }
 
@@ -112,7 +115,6 @@ public class DataRetriever {
             return ByteArrayInputStream.nullInputStream();
         } else {
             return new ByteArrayInputStream(data);
-
         }
     }
 
@@ -128,13 +130,12 @@ public class DataRetriever {
             throws IOException {
         try {
             return downloadDataFromBackend(data, queryInput);
-        } catch (IOException | DataRetrievalException exception) {
+        } catch (IOException | DataRetrievalException e) {
             if (log.isWarnEnabled()) {
-                log.warn("Could not connect to data source. [exception=({})]",
-                        exception.getMessage(), exception);
+                log.warn("Could not connect to data source. [exception=({})]", e.getMessage(), e);
             }
 
-            throw new IOException("Could not connect to data source.", exception);
+            throw new IOException("Could not connect to data source.", e);
         }
     }
 

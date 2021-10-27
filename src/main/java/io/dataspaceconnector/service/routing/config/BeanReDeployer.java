@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.service.routing.config;
 
-import javax.annotation.PostConstruct;
-
 import io.dataspaceconnector.model.datasource.DatabaseDataSource;
 import io.dataspaceconnector.repository.DataSourceRepository;
 import io.dataspaceconnector.service.routing.BeanManager;
@@ -25,6 +23,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Re-creates beans for persisted data sources and adds them to the application context on
@@ -57,7 +57,7 @@ public class BeanReDeployer {
                     beanManager.createDataSourceBean((DatabaseDataSource) dataSource);
                     if (log.isDebugEnabled()) {
                         log.debug("Added datasource bean to the application context."
-                                + " [dataSourceId=({})]", dataSource.getId());
+                                + " [id=({})]", dataSource.getId());
                     }
                 } catch (BeanCreationException exception) {
                     if (log.isWarnEnabled()) {

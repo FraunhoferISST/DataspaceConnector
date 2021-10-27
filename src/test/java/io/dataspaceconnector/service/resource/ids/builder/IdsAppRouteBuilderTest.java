@@ -24,7 +24,7 @@ import java.util.UUID;
 import de.fraunhofer.iais.eis.AppRoute;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.common.net.SelfLinkHelper;
-import io.dataspaceconnector.common.util.ApiReferenceHelper;
+import io.dataspaceconnector.common.net.ApiReferenceHelper;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.artifact.RemoteData;

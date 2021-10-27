@@ -111,7 +111,7 @@ public class PortainerRequestService {
     /**
      * Expiration date of the access token.
      */
-    private Calendar accessTokenValid = Calendar.getInstance();
+    private final Calendar accessTokenValid = Calendar.getInstance();
 
     /**
      * Authenticate at portainer.
@@ -138,14 +138,11 @@ public class PortainerRequestService {
         try {
             final var response = httpService.send(request);
             return checkResponseNotNull(response);
-        } catch (IOException exception) {
+        } catch (IOException e) {
             if (log.isWarnEnabled()) {
-                log.warn(
-                        "Failed to authenticate at portainer. [exception=({})]",
-                        exception.getMessage()
-                );
+                log.warn("Failed to authenticate at portainer. [exception=({})]", e.getMessage());
             }
-            return exception.getMessage();
+            return e.getMessage();
         }
     }
 
@@ -1062,7 +1059,7 @@ public class PortainerRequestService {
             final var response = authenticate();
             accessToken = response.substring(START_INDEX, response.length() - LAST_INDEX);
 
-            //Portainer token has an 8 hour validity, request new token after 7 hours
+            // Portainer token has an 8 hour validity, request new token after 7 hours.
             accessTokenValid.setTime(Calendar.getInstance().getTime());
             accessTokenValid.add(Calendar.HOUR_OF_DAY, TOKEN_VALID_HOURS);
         }
@@ -1079,11 +1076,10 @@ public class PortainerRequestService {
      */
     private String createRequestBodyForAuthentication(final String username,
                                                       final String password) {
-        final var jsonObject = new JSONObject();
-        jsonObject.put("Username", username);
-        jsonObject.put("Password", password);
-
-        return jsonObject.toString();
+        return new JSONObject() {{
+            put("Username", username);
+            put("Password", password);
+        }}.toString();
     }
 
     /**

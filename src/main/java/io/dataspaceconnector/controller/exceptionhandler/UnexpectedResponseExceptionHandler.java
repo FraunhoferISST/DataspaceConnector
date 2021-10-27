@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 @Order(1)
 public final class UnexpectedResponseExceptionHandler {
+
     /**
      * Handles thrown runtime exception with response code 417.
      *

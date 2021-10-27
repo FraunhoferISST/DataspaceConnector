@@ -25,6 +25,7 @@ import java.util.UUID;
  * Performs an artifact request for an artifact.
  */
 public interface ArtifactRetriever {
+
     /**
      * Perform an artifact request for a given artifact.
      *

@@ -17,7 +17,7 @@ package io.dataspaceconnector.common.net;
 
 import java.io.InputStream;
 
-import io.dataspaceconnector.common.dataretrieval.Response;
+import io.dataspaceconnector.common.routing.dataretrieval.Response;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

@@ -22,7 +22,7 @@ import java.util.UUID;
 
 import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.common.routing.RouteDataDispatcher;
-import io.dataspaceconnector.common.util.ApiReferenceHelper;
+import io.dataspaceconnector.common.net.ApiReferenceHelper;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;

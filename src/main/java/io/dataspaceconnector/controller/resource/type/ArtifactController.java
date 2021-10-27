@@ -18,7 +18,7 @@ package io.dataspaceconnector.controller.resource.type;
 import de.fraunhofer.ids.messaging.protocol.UnexpectedResponseException;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.net.QueryInput;
-import io.dataspaceconnector.common.net.RetrievalInformation;
+import io.dataspaceconnector.common.routing.dataretrieval.RetrievalInformation;
 import io.dataspaceconnector.common.util.ValidationUtils;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.BaseResourceNotificationController;
@@ -38,7 +38,6 @@ import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.usagecontrol.DataAccessVerifier;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -264,11 +263,8 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      * @return Response with code 200 and the associated route, if any.
      */
     @GetMapping("{id}/route")
-    @Operation(summary = "Get route associated with artifact by id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @Operation(summary = "Get route associated with artifact by id.")
+    @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     public ResponseEntity<RouteView> getRoute(
             @Valid @PathVariable(name = "id") final UUID artifactId) {
         final var route = artifactSvc.getAssociatedRoute(artifactId);

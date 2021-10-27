@@ -71,12 +71,9 @@ public class RouteController extends BaseResourceController<Route, RouteDesc, Ro
     @GetMapping("{id}/output")
     @Operation(summary = "Returns the output of the route")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK,
-                    description = ResponseDescription.OK),
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
-                    description = ResponseDescription.NO_CONTENT),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.NO_CONTENT)})
     public ResponseEntity<ArtifactView> getOutput(
             @Valid @PathVariable(name = "id") final UUID routeId) {
         final var route = getService().get(routeId);

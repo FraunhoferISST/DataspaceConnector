@@ -25,6 +25,7 @@ import org.springframework.http.HttpMethod;
 @Data
 @AllArgsConstructor
 public class RouteStepEndpoint {
+
     /**
      * The URL of the endpoint.
      */

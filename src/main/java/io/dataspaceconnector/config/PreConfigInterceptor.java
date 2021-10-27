@@ -116,7 +116,7 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
             return loadConfig(properties);
         } catch (IOException | ConfigUpdateException e) {
             if (log.isWarnEnabled()) {
-                log.warn("Failed to load config from file.");
+                log.warn("Failed to load config from file. [exception=({})]", e.getMessage());
             }
             throw new ConfigProducerInterceptorException(e.getMessage());
         }
@@ -169,8 +169,8 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
             return new String(configStream.readAllBytes(), StandardCharsets.UTF_8);
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
-                log.warn("Could not load config from classpath. [path=({})]",
-                        properties.getPath().replaceAll("[\r\n]", ""));
+                log.warn("Could not load config from classpath. [path=({}), exception=({})]",
+                        properties.getPath().replaceAll("[\r\n]", ""), e.getMessage());
             }
         }
         return "";
@@ -187,8 +187,8 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
             return new String(fis.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             if (log.isWarnEnabled()) {
-                log.warn("Could not load config from absolute path. [path=({})]",
-                        properties.getPath().replaceAll("[\r\n]", ""));
+                log.warn("Could not load config from absolute path. [path=({}), exception=({})]",
+                        properties.getPath().replaceAll("[\r\n]", ""), e.getMessage());
             }
         }
         return "";

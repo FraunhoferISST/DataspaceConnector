@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.common.net;
+package io.dataspaceconnector.common.routing.dataretrieval;
 
+import io.dataspaceconnector.common.net.QueryInput;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -30,6 +31,7 @@ import java.net.URI;
 @Data
 @RequiredArgsConstructor
 public class RetrievalInformation {
+
     /**
      * The transferContract with which the data transfer is authorized.
      */

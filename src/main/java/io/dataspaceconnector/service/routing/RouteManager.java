@@ -61,6 +61,7 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class RouteManager {
+
     /**
      * Setting on how to handle routing errors.
      */
@@ -111,8 +112,8 @@ public class RouteManager {
             createAndDeployRoute(appRoute, freemarkerInput);
         } catch (Exception exception) {
             if (log.isDebugEnabled()) {
-                log.debug("Failed to create Camel route. [exception=({})]",
-                        exception.getMessage());
+                log.debug("Failed to create Camel route. [appRouteId=({}), exception=({})]",
+                        appRoute.getId(), exception.getMessage());
             }
             throw new RouteCreationException("Error creating Camel route for AppRoute with ID '"
                     + appRoute.getId() + "'", exception);
@@ -141,7 +142,11 @@ public class RouteManager {
             final var appEndpoint = (AppEndpoint) routeStart.get(0);
             freemarkerInput.put("startUrl", escapeForXml(appEndpoint.getPath()));
         } else {
-            throw new RouteCreationException("The route start can not be identified.");
+            if (log.isDebugEnabled()) {
+                log.debug("The route start cannot be identified. [endpointId=({})]",
+                        routeStart.get(0).getId());
+            }
+            throw new RouteCreationException("The route start cannot be identified.");
         }
     }
 
@@ -162,7 +167,11 @@ public class RouteManager {
             final var appEndpoint = (AppEndpoint) routeEnd.get(0);
             freemarkerInput.put("endUrl", escapeForXml(appEndpoint.getPath()));
         } else if (!(routeEnd.get(0) instanceof ConnectorEndpoint)) {
-            throw new RouteCreationException("The route end can not be identified.");
+            if (log.isDebugEnabled()) {
+                log.debug("The route end cannot be identified. [endpointId=({})]",
+                        routeEnd.get(0).getId());
+            }
+            throw new RouteCreationException("The route end cannot be identified.");
         }
     }
 
@@ -314,8 +323,8 @@ public class RouteManager {
             }
         } else {
             if (log.isWarnEnabled()) {
-                log.warn("Template is null. Unable to create XML route file for AppRoute"
-                        + " with ID '{}'", appRoute.getId());
+                log.warn("Template is null. Unable to create XML route file for AppRoute. "
+                        + "[routeId=({})]", appRoute.getId());
             }
 
             throw new NoSuitableTemplateException("No suitable Camel route template found for "
@@ -342,10 +351,9 @@ public class RouteManager {
         } catch (IOException | TemplateException exception) {
             final var camelRouteId = (String) freemarkerInput.get("routeId");
 
-            if (log.isErrorEnabled()) {
-                log.error("An error occurred while populating template."
-                                + " Failed to create Camel route for route"
-                                + " with ID '{}'! [exception=({})]",
+            if (log.isWarnEnabled()) {
+                log.warn("An error occurred while populating template. Failed to create "
+                                + "Camel route for route. [routeId=({}), exception=({})]",
                         camelRouteId, exception.getMessage());
             }
 

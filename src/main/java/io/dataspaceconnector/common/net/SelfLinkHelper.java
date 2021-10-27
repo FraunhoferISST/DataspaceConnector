@@ -56,6 +56,7 @@ import java.net.URI;
 @Component
 @RequiredArgsConstructor
 public final class SelfLinkHelper {
+
     /**
      * View assembler for catalogs.
      */

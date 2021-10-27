@@ -25,13 +25,17 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 /**
- * Fallback security configuration incase security should be disabled.
+ * Fallback security configuration in case security should be disabled.
  */
 @Configuration
 @Getter(AccessLevel.PUBLIC)
 @ConditionalOnProperty(value = "spring.security.enabled", havingValue = "false")
 @Order(1)
 public class FallbackConfigurationAdapter extends WebSecurityConfigurerAdapter {
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SuppressFBWarnings("SPRING_CSRF_PROTECTION_DISABLED")
     protected final void configure(final HttpSecurity http) throws Exception {

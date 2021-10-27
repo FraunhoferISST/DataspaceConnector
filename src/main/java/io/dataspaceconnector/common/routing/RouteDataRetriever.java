@@ -15,17 +15,12 @@
  */
 package io.dataspaceconnector.common.routing;
 
-import java.io.ByteArrayInputStream;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
+import io.dataspaceconnector.common.routing.dataretrieval.DataRetrievalService;
+import io.dataspaceconnector.common.routing.dataretrieval.Response;
 import io.dataspaceconnector.common.exception.DataRetrievalException;
 import io.dataspaceconnector.common.exception.NotImplemented;
-import io.dataspaceconnector.common.dataretrieval.DataRetrievalService;
 import io.dataspaceconnector.common.net.HttpAuthentication;
 import io.dataspaceconnector.common.net.QueryInput;
-import io.dataspaceconnector.common.dataretrieval.Response;
 import io.dataspaceconnector.common.util.UUIDUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +30,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.springframework.stereotype.Component;
+
+import java.io.ByteArrayInputStream;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * Implementation of the DataRetrievalService that retrieves data using Camel routes.
@@ -79,12 +79,11 @@ public class RouteDataRetriever implements DataRetrievalService {
             final var data = result.getIn().getBody(String.class);
             return new RouteResponse(new ByteArrayInputStream(
                     data.getBytes(StandardCharsets.UTF_8)));
-        } catch (Exception exception) {
+        } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                log.debug("Failed to retrieve data. [exception=({})]", exception.getMessage(),
-                        exception);
+                log.debug("Failed to retrieve data. [exception=({})]", e.getMessage(), e);
             }
-            throw new DataRetrievalException("Failed to retrieve data: " + exception.getMessage());
+            throw new DataRetrievalException("Failed to retrieve data." + e.getMessage());
         }
 
     }

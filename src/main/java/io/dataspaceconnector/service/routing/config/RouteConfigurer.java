@@ -82,14 +82,14 @@ public class RouteConfigurer {
         final var routeStart = appRoute.getAppRouteStart();
         final var routeEnd = appRoute.getAppRouteEnd();
 
-        //Possible combinations:
-        //Connector -> Generic
-        //Generic -> Connector
-        //Connector -> App
-        //App -> Connector
-        //Generic -> App
-        //App -> Generic
-        //App -> App
+        // Possible combinations:
+        // Connector -> Generic
+        // Generic -> Connector
+        // Connector -> App
+        // App -> Connector
+        // Generic -> App
+        // App -> Generic
+        // App -> App
 
         Template template = null;
         try {
@@ -116,10 +116,9 @@ public class RouteConfigurer {
             } else {
                 template = null;
             }
-        } catch (IOException exception) {
-            if (log.isErrorEnabled()) {
-                log.error("Failed to get route template. [exception=({})].",
-                        exception.getMessage());
+        } catch (IOException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to get route template. [exception=({})].", e.getMessage());
             }
             template = null;
         }

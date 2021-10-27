@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.common.dataretrieval;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
+package io.dataspaceconnector.common.routing.dataretrieval;
 
 import io.dataspaceconnector.common.exception.DataRetrievalException;
 import io.dataspaceconnector.common.net.HttpAuthentication;
 import io.dataspaceconnector.common.net.QueryInput;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
 
 /**
  * Interface for services that retrieve data.

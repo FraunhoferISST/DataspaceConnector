@@ -25,7 +25,7 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.common.net.SelfLinkHelper;
-import io.dataspaceconnector.common.util.ApiReferenceHelper;
+import io.dataspaceconnector.common.net.ApiReferenceHelper;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
 import lombok.NonNull;

@@ -131,11 +131,11 @@ public class ScheduledDataRemoval {
         try {
             artifactService.setData(artifactId, InputStream.nullInputStream());
             if (log.isDebugEnabled()) {
-                log.debug("Removed data from artifact [artifact=({})]", artifactId);
+                log.debug("Removed data from artifact. [id=({})]", artifactId);
             }
         } catch (IOException | ResourceNotFoundException e) {
             if (log.isWarnEnabled()) {
-                log.warn("Failed to remove data from artifact. [artifact=({}), exception=({})]",
+                log.warn("Failed to remove data from artifact. [id=({}), exception=({})]",
                         artifactId, e.getMessage());
             }
         }

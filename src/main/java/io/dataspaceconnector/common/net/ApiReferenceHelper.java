@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.common.util;
-
-import java.net.URI;
-import java.net.URL;
+package io.dataspaceconnector.common.net;
 
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.model.artifact.Artifact;
@@ -24,6 +21,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.net.URL;
 
 /**
  * Helper class for managing route references.

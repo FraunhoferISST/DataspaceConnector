@@ -15,12 +15,6 @@
  */
 package io.dataspaceconnector.service.routing;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.UUID;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
@@ -35,6 +29,12 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.stereotype.Component;
 import org.xml.sax.InputSource;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * Component for creating Spring beans required in Camel routes.
@@ -60,8 +60,7 @@ public class BeanManager {
     private final @NonNull BeanDefinitionRegistry beanRegistry;
 
     /**
-     * Creates a data source bean for a
-     * {@link io.dataspaceconnector.model.datasource.DatabaseDataSource}.
+     * Creates a data source bean for a {@link DatabaseDataSource}.
      *
      * @param dataSource input containing all required parameters for creating the bean.
      * @throws BeanCreationException if creating the bean fails.
@@ -85,19 +84,17 @@ public class BeanManager {
             template.process(freemarkerInput, writer);
             final var xml = writer.toString();
             beanReader.loadBeanDefinitions(new InputSource(new StringReader(xml)));
-        } catch (IOException | TemplateException exception) {
+        } catch (IOException | TemplateException e) {
             if (log.isWarnEnabled()) {
-                log.warn("Failed to create data source bean. [exception=({})]",
-                        exception.getMessage());
+                log.warn("Failed to create data source bean. [exception=({})]", e.getMessage());
             }
 
-            throw new BeanCreationException("Failed to create data source bean.", exception);
+            throw new BeanCreationException("Failed to create data source bean.", e);
         }
     }
 
     /**
-     * Deletes a data source bean corresponding to a
-     * {@link io.dataspaceconnector.model.datasource.DatabaseDataSource}.
+     * Deletes a data source bean corresponding to a {@link DatabaseDataSource}.
      *
      * @param id ID of the {@link io.dataspaceconnector.model.datasource.DataSource} for which the
      *           bean should be deleted.
@@ -107,7 +104,7 @@ public class BeanManager {
             beanRegistry.removeBeanDefinition(id.toString());
         } catch (NoSuchBeanDefinitionException exception) {
             if (log.isDebugEnabled()) {
-                log.debug("Failed to delete bean {} because bean does not exist.", id);
+                log.debug("Failed to delete bean because it does not exist. [id=({})]", id);
             }
             // No further action required.
         }

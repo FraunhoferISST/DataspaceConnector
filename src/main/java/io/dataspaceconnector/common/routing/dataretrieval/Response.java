@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.common.dataretrieval;
+package io.dataspaceconnector.common.routing.dataretrieval;
 
 import java.io.InputStream;
 

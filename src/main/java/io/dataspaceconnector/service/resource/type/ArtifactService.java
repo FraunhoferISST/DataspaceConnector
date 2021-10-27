@@ -29,7 +29,7 @@ import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
 import io.dataspaceconnector.common.net.QueryInput;
-import io.dataspaceconnector.common.net.RetrievalInformation;
+import io.dataspaceconnector.common.routing.dataretrieval.RetrievalInformation;
 import io.dataspaceconnector.common.routing.RouteDataDispatcher;
 import io.dataspaceconnector.common.usagecontrol.AccessVerificationInput;
 import io.dataspaceconnector.common.usagecontrol.PolicyVerifier;

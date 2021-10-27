@@ -27,7 +27,7 @@ import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.routing.RouteDataRetriever;
 import io.dataspaceconnector.common.routing.RouteResponse;
-import io.dataspaceconnector.common.util.ApiReferenceHelper;
+import io.dataspaceconnector.common.net.ApiReferenceHelper;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.artifact.Data;
 import io.dataspaceconnector.model.artifact.LocalData;

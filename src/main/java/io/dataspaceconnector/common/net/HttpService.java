@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.common.net;
 
-import io.dataspaceconnector.common.dataretrieval.DataRetrievalService;
-import io.dataspaceconnector.common.dataretrieval.Response;
+import io.dataspaceconnector.common.routing.dataretrieval.DataRetrievalService;
+import io.dataspaceconnector.common.routing.dataretrieval.Response;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.common.util.Utils;
@@ -48,8 +48,7 @@ public class HttpService implements DataRetrievalService {
     /**
      * Service for building and sending http requests.
      */
-    private final @NonNull de.fraunhofer.ids.messaging.protocol.http.HttpService
-            httpSvc;
+    private final @NonNull de.fraunhofer.ids.messaging.protocol.http.HttpService httpSvc;
 
     /**
      * The request method.
@@ -74,6 +73,7 @@ public class HttpService implements DataRetrievalService {
     @Data
     @AllArgsConstructor
     public static class Pair {
+
         /**
          * First element.
          */
@@ -89,6 +89,7 @@ public class HttpService implements DataRetrievalService {
      */
     @Data
     public static class HttpArgs {
+
         /**
          * The request headers.
          */
