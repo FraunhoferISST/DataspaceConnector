@@ -43,7 +43,6 @@ import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.service.EntityDependencyResolver;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -56,7 +55,6 @@ import java.util.List;
  * This service offers methods related to contract management.
  */
 @Service
-@RequiredArgsConstructor
 public class ContractManager {
 
     /**
@@ -82,7 +80,29 @@ public class ContractManager {
     /**
      * Helper class for creating self-links.
      */
-    @Qualifier("utilSelfLinkHelper") private final @NonNull SelfLinkHelper selfLinkHelper;
+    private final @NonNull SelfLinkHelper selfLinkHelper;
+
+    /**
+     * Constructs a ContractManager.
+     *
+     * @param deserializationSvc The deserialization service.
+     * @param entityDependencyResolver The dependency resolver.
+     * @param resolver The entity resolver.
+     * @param connectorSvc The connector service.
+     * @param linkHelper The self link helper.
+     */
+    public ContractManager(@NonNull final DeserializationService deserializationSvc,
+                           @NonNull final EntityDependencyResolver entityDependencyResolver,
+                           @NonNull final EntityResolver resolver,
+                           @NonNull final ConnectorService connectorSvc,
+                           @NonNull @Qualifier("utilSelfLinkHelper")
+                           final SelfLinkHelper linkHelper) {
+        this.deserializationService = deserializationSvc;
+        this.dependencyResolver = entityDependencyResolver;
+        this.entityResolver = resolver;
+        this.connectorService = connectorSvc;
+        this.selfLinkHelper = linkHelper;
+    }
 
     /**
      * Check if the transfer contract is valid and the conditions are fulfilled.
