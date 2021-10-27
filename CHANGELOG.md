@@ -1,7 +1,8 @@
+
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [X.X.X] - XXXX-XX-XX
+## [6.5.0] - 2021-10-27
 
 ### Added
 - New `application.properties` setting `configuration.force.reload` that forces reloading the configuration from the `config.json` instead of using the latest active configuration from the database. If not set, the default value is `false`.
@@ -13,6 +14,8 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Only create agreements from contract offers with valid start and end date.
 - Check if agreement has expired before returning data.
+- Fix `TransientObjectException` while updating an artifact.
+- Add default constructor to `ApiKey` class, to avoid `InstantiationException`.
 
 ## [6.4.0] - 2021-10-21
 

@@ -16,7 +16,6 @@
 #
 
 import pprint
-import requests
 import sys
 
 from resourceapi import ResourceApi
@@ -41,9 +40,6 @@ if __name__ == "__main__":
     main(sys.argv[1:])
 
 print("Starting script")
-
-# Suppress ssl verification warning
-requests.packages.urllib3.disable_warnings()
 
 # Provider
 provider = ResourceApi(providerUrl)
@@ -74,13 +70,14 @@ data = {
     "title": "string",
     "description": "string",
     "target": offers,
-    "location": provider_alias+"/api/ids/data",
+    "location": provider_alias + "/api/ids/data",
     "subscriber": consumer_alias,
-    "pushData": "true"
+    "pushData": "true",
 }
 
-response = consumerSub.subscription_message(data=data,
-                                            params={'recipient': provider_alias + '/api/ids/data'})
+response = consumerSub.subscription_message(
+    data=data, params={"recipient": provider_alias + "/api/ids/data"}
+)
 
 pprint.pprint(response.text)
 if response.status_code != 200:

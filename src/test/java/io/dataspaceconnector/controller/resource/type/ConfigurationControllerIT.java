@@ -19,7 +19,6 @@ import java.net.URI;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import io.dataspaceconnector.common.runtime.ServiceResolver;
-import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@Slf4j
 @AutoConfigureMockMvc(addFilters = false)
 public class ConfigurationControllerIT {
 

@@ -19,7 +19,6 @@ from resourceapi import ResourceApi
 from idsapi import IdsApi
 import requests
 import pprint
-import json
 import sys
 
 

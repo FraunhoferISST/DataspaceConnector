@@ -69,7 +69,6 @@ class AppRequestControllerTest {
     @MockBean
     private ConnectorService connectorService;
 
-    private final String recipient = "https://someURL";
     private final DynamicAttributeToken token = new DynamicAttributeTokenBuilder()
             ._tokenValue_("token")
             ._tokenFormat_(TokenFormat.JWT)
