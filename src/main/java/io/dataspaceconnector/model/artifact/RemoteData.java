@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model.artifact;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -61,7 +62,7 @@ public class RemoteData extends Data {
     /**
      * List of additional authentication elements.
      */
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.ALL})
     private List<Authentication> authentication;
 
     /**

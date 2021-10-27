@@ -18,6 +18,8 @@ package io.dataspaceconnector.service.message.handler.type;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -395,6 +397,8 @@ class ContractRequestHandlerTest {
         final var issuerConnector = URI.create("https://localhost:8080");
         final var desc = new ContractDesc();
         desc.setConsumer(issuerConnector);
+        desc.setStart(ZonedDateTime.of(2020, 1, 1, 1, 1, 1, 1, ZoneId.systemDefault()));
+        desc.setEnd(ZonedDateTime.of(2030, 1, 1, 1, 1, 1, 1, ZoneId.systemDefault()));
         final var contract = new ContractFactory().create(desc);
 
         final var message = getMessage();
@@ -431,6 +435,8 @@ class ContractRequestHandlerTest {
         final var issuerConnector = URI.create("https://localhost:8080");
         final var contractDesc = new ContractDesc();
         contractDesc.setConsumer(issuerConnector);
+        contractDesc.setStart(ZonedDateTime.of(2020, 1, 1, 1, 1, 1, 1, ZoneId.systemDefault()));
+        contractDesc.setEnd(ZonedDateTime.of(2030, 1, 1, 1, 1, 1, 1, ZoneId.systemDefault()));
         final var contract = new ContractFactory().create(contractDesc);
 
         final var ruleDesc = new ContractRuleDesc();
@@ -473,6 +479,8 @@ class ContractRequestHandlerTest {
         final var issuerConnector = URI.create("https://localhost:8080");
         final var contractDesc = new ContractDesc();
         contractDesc.setConsumer(issuerConnector);
+        contractDesc.setStart(ZonedDateTime.of(2020, 1, 1, 1, 1, 1, 1, ZoneId.systemDefault()));
+        contractDesc.setEnd(ZonedDateTime.of(2030, 1, 1, 1, 1, 1, 1, ZoneId.systemDefault()));
         final var contract = new ContractFactory().create(contractDesc);
 
         final var ruleDesc = new ContractRuleDesc();

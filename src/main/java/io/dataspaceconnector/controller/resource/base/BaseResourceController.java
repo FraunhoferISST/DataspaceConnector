@@ -16,9 +16,12 @@
 package io.dataspaceconnector.controller.resource.base;
 
 import io.dataspaceconnector.common.util.Utils;
+import io.dataspaceconnector.controller.util.ResponseCode;
+import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.dataspaceconnector.model.base.Description;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.service.resource.base.EntityService;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,6 +48,8 @@ import java.util.UUID;
  */
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.NONE)
+@ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+        description = ResponseDescription.UNAUTHORIZED)
 public class BaseResourceController<T extends Entity, D extends Description, V
         extends RepresentationModel<V>, S extends EntityService<T, D>>
         implements CRUDController<T, D, V> {

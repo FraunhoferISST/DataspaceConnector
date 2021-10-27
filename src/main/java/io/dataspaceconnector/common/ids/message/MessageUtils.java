@@ -131,6 +131,7 @@ public final class MessageUtils {
     public static URI extractTargetId(final Message message) {
         final var start = 5;
         Utils.requireNonNull(message, ErrorMessage.MESSAGE_NULL);
+        Utils.requireNonNull(message.getProperties(), ErrorMessage.MESSAGE_HANDLING_FAILED);
         final var target =
                 message.getProperties().get("https://w3id.org/idsa/core/target").toString();
         return URI.create(target.substring(start, target.length() - 1));

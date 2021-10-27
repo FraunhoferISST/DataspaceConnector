@@ -25,55 +25,59 @@ info:
   license:
     name: "Apache License, Version 2.0"
     url: https://www.apache.org/licenses/LICENSE-2.0.txt
-  version: 6.3.1
+  version: 6.5.0
 servers:
   - url: https://localhost:8080
     description: Generated server url
+security:
+  - basicAuth: []
 tags:
-  - name: Data Sources/Sinks
-    description: Endpoints for operations on data sources/sinks
-  - name: Representations
-    description: Endpoints for operations on representations
-  - name: Apps
-    description: Endpoints for app handling
-  - name: Artifacts
-    description: Endpoints for operations on artifacts
-  - name: Rules
-    description: Endpoints for operations on rules
-  - name: Contracts
-    description: Endpoints for operations on contracts
-  - name: Endpoints
-    description: Endpoints for operations on endpoints
-  - name: Usage Control
-    description: Endpoints for contract/policy handling
-  - name: App Stores
-    description: Endpoints for app store handling
-  - name: Requested Resources
-    description: Endpoints for operations on requested resources
-  - name: Offered Resources
-    description: Endpoints for operations on offered resources
-  - name: Connector
-    description: Endpoints for connector information
   - name: Catalogs
-    description: Endpoints for operations on catalogs
-  - name: Routes
-    description: Endpoints for operations on routes
-  - name: Configurations
-    description: Endpoints for operations on configurations
+    description: Endpoints for operations on catalogs.
   - name: Subscriptions
-    description: Endpoints for operations on subscriptions
+    description: Endpoints for operations on subscriptions.
+  - name: Contracts
+    description: Endpoints for operations on contracts.
+  - name: Representations
+    description: Endpoints for operations on representations.
+  - name: Apps
+    description: Endpoints for app handling.
+  - name: Artifacts
+    description: Endpoints for operations on artifacts.
+  - name: Endpoints
+    description: Endpoints for operations on endpoints.
+  - name: Configurations
+    description: Endpoints for operations on configurations.
   - name: Messages
-    description: Endpoints for invoke sending messages
-  - name: Agreements
-    description: Endpoints for contract agreement handling
+    description: Endpoints for invoke sending messages.
+  - name: Rules
+    description: Endpoints for operations on rules.
+  - name: Offered Resources
+    description: Endpoints for operations on offered resources.
   - name: Brokers
-    description: Endpoints for operations on brokers
+    description: Endpoints for operations on brokers.
+  - name: Usage Control
+    description: Endpoints for policy settings.
+  - name: App Stores
+    description: Endpoints for app store handling.
+  - name: Requested Resources
+    description: Endpoints for operations on requested resources.
+  - name: Connector
+    description: Endpoints for connector information.
+  - name: Routes
+    description: Endpoints for operations on routes.
+  - name: Agreements
+    description: Endpoints for contract agreement handling.
+  - name: Usage Control
+    description: Endpoints for policy handling.
+  - name: Data Sources/Sinks
+    description: Endpoints for operations on data sources/sinks.
 paths:
   /api/subscriptions/{id}:
     get:
       tags:
         - Subscriptions
-      summary: Get a base resource by id
+      summary: Get a base resource by id.
       operationId: get
       parameters:
         - name: id
@@ -98,7 +102,7 @@ paths:
     put:
       tags:
         - Subscriptions
-      summary: Update a base resource by id
+      summary: Update a base resource by id.
       operationId: update
       parameters:
         - name: id
@@ -135,7 +139,7 @@ paths:
     delete:
       tags:
         - Subscriptions
-      summary: Delete a base resource by id
+      summary: Delete a base resource by id.
       operationId: delete
       parameters:
         - name: id
@@ -153,7 +157,7 @@ paths:
     get:
       tags:
         - Rules
-      summary: Get a base resource by id
+      summary: Get a base resource by id.
       operationId: get_1
       parameters:
         - name: id
@@ -178,7 +182,7 @@ paths:
     put:
       tags:
         - Rules
-      summary: Update a base resource by id
+      summary: Update a base resource by id.
       operationId: update_1
       parameters:
         - name: id
@@ -215,7 +219,7 @@ paths:
     delete:
       tags:
         - Rules
-      summary: Delete a base resource by id
+      summary: Delete a base resource by id.
       operationId: delete_1
       parameters:
         - name: id
@@ -233,7 +237,7 @@ paths:
     get:
       tags:
         - Rules
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource
       parameters:
         - name: id
@@ -272,7 +276,7 @@ paths:
     put:
       tags:
         - Rules
-      summary: Replace the children of a base resource
+      summary: Replace the children of a base resource.
       operationId: replaceResources
       parameters:
         - name: id
@@ -298,7 +302,7 @@ paths:
     post:
       tags:
         - Rules
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources
       parameters:
         - name: id
@@ -332,7 +336,7 @@ paths:
     delete:
       tags:
         - Rules
-      summary: Remove a list of children from a base resource
+      summary: Remove a list of children from a base resource.
       operationId: removeResources
       parameters:
         - name: id
@@ -359,7 +363,7 @@ paths:
     get:
       tags:
         - Routes
-      summary: Get a base resource by id
+      summary: Get a base resource by id.
       operationId: get_2
       parameters:
         - name: id
@@ -384,7 +388,7 @@ paths:
     put:
       tags:
         - Routes
-      summary: Update a base resource by id
+      summary: Update a base resource by id.
       operationId: update_2
       parameters:
         - name: id
@@ -421,7 +425,7 @@ paths:
     delete:
       tags:
         - Routes
-      summary: Delete a base resource by id
+      summary: Delete a base resource by id.
       operationId: delete_2
       parameters:
         - name: id
@@ -439,7 +443,7 @@ paths:
     get:
       tags:
         - Routes
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_1
       parameters:
         - name: id
@@ -478,7 +482,7 @@ paths:
     put:
       tags:
         - Routes
-      summary: Replace the children of a base resource
+      summary: Replace the children of a base resource.
       operationId: replaceResources_1
       parameters:
         - name: id
@@ -504,7 +508,7 @@ paths:
     post:
       tags:
         - Routes
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_1
       parameters:
         - name: id
@@ -538,7 +542,7 @@ paths:
     delete:
       tags:
         - Routes
-      summary: Remove a list of children from a base resource
+      summary: Remove a list of children from a base resource.
       operationId: removeResources_1
       parameters:
         - name: id
@@ -565,7 +569,7 @@ paths:
     get:
       tags:
         - Routes
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_2
       parameters:
         - name: id
@@ -604,7 +608,7 @@ paths:
     put:
       tags:
         - Routes
-      summary: Replace the children of a base resource
+      summary: Replace the children of a base resource.
       operationId: replaceResources_2
       parameters:
         - name: id
@@ -630,7 +634,7 @@ paths:
     post:
       tags:
         - Routes
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_2
       parameters:
         - name: id
@@ -664,7 +668,7 @@ paths:
     delete:
       tags:
         - Routes
-      summary: Remove a list of children from a base resource
+      summary: Remove a list of children from a base resource.
       operationId: removeResources_2
       parameters:
         - name: id
@@ -691,7 +695,7 @@ paths:
     put:
       tags:
         - Routes
-      summary: Creates start endpoint for the route
+      summary: Creates the start endpoint for a route.
       operationId: createStartEndpoint
       parameters:
         - name: id
@@ -723,7 +727,7 @@ paths:
     delete:
       tags:
         - Routes
-      summary: Deletes the start endpoint of the route
+      summary: Deletes the start endpoint of a route.
       operationId: deleteStartEndpoint
       parameters:
         - name: id
@@ -749,7 +753,7 @@ paths:
     put:
       tags:
         - Routes
-      summary: Creates last endpoint for the route
+      summary: Creates the last endpoint for the route.
       operationId: createLastEndpoint
       parameters:
         - name: id
@@ -781,7 +785,7 @@ paths:
     delete:
       tags:
         - Routes
-      summary: Deletes the start endpoint of the route
+      summary: Deletes the start endpoint of the route.
       operationId: deleteLastEndpoint
       parameters:
         - name: id
@@ -807,7 +811,7 @@ paths:
     get:
       tags:
         - Requested Resources
-      summary: Get a base resource by id
+      summary: Get a base resource by id.
       operationId: get_3
       parameters:
         - name: id
@@ -832,7 +836,7 @@ paths:
     put:
       tags:
         - Requested Resources
-      summary: Update a base resource by id
+      summary: Update a base resource by id.
       operationId: update_3
       parameters:
         - name: id
@@ -869,7 +873,7 @@ paths:
     delete:
       tags:
         - Requested Resources
-      summary: Delete a base resource by id
+      summary: Delete a base resource by id.
       operationId: delete_3
       parameters:
         - name: id
@@ -887,7 +891,7 @@ paths:
     get:
       tags:
         - Requested Resources
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_4
       parameters:
         - name: id
@@ -926,7 +930,7 @@ paths:
     put:
       tags:
         - Requested Resources
-      summary: Replace the children of a base resource
+      summary: Replace the children of a base resource.
       operationId: replaceResources_3
       parameters:
         - name: id
@@ -952,7 +956,7 @@ paths:
     post:
       tags:
         - Requested Resources
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_3
       parameters:
         - name: id
@@ -986,7 +990,7 @@ paths:
     delete:
       tags:
         - Requested Resources
-      summary: Remove a list of children from a base resource
+      summary: Remove a list of children from a base resource.
       operationId: removeResources_3
       parameters:
         - name: id
@@ -1013,7 +1017,7 @@ paths:
     get:
       tags:
         - Requested Resources
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_6
       parameters:
         - name: id
@@ -1052,7 +1056,7 @@ paths:
     put:
       tags:
         - Requested Resources
-      summary: Replace the children of a base resource
+      summary: Replace the children of a base resource.
       operationId: replaceResources_4
       parameters:
         - name: id
@@ -1078,7 +1082,7 @@ paths:
     post:
       tags:
         - Requested Resources
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_4
       parameters:
         - name: id
@@ -1112,7 +1116,7 @@ paths:
     delete:
       tags:
         - Requested Resources
-      summary: Remove a list of children from a base resource
+      summary: Remove a list of children from a base resource.
       operationId: removeResources_4
       parameters:
         - name: id
@@ -1139,7 +1143,7 @@ paths:
     get:
       tags:
         - Representations
-      summary: Get a base resource by id
+      summary: Get a base resource by id.
       operationId: get_4
       parameters:
         - name: id
@@ -1164,7 +1168,7 @@ paths:
     put:
       tags:
         - Representations
-      summary: Update a base resource by id
+      summary: Update a base resource by id.
       operationId: update_4
       parameters:
         - name: id
@@ -1201,7 +1205,7 @@ paths:
     delete:
       tags:
         - Representations
-      summary: Delete a base resource by id
+      summary: Delete a base resource by id.
       operationId: delete_4
       parameters:
         - name: id
@@ -1219,7 +1223,7 @@ paths:
     get:
       tags:
         - Representations
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_8
       parameters:
         - name: id
@@ -1258,7 +1262,7 @@ paths:
     put:
       tags:
         - Representations
-      summary: Replace the children of a base resource
+      summary: Replace the children of a base resource.
       operationId: replaceResources_5
       parameters:
         - name: id
@@ -1284,7 +1288,7 @@ paths:
     post:
       tags:
         - Representations
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_5
       parameters:
         - name: id
@@ -1318,7 +1322,7 @@ paths:
     delete:
       tags:
         - Representations
-      summary: Remove a list of children from a base resource
+      summary: Remove a list of children from a base resource.
       operationId: removeResources_5
       parameters:
         - name: id
@@ -1345,7 +1349,7 @@ paths:
     get:
       tags:
         - Representations
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_9
       parameters:
         - name: id
@@ -1384,7 +1388,7 @@ paths:
     put:
       tags:
         - Representations
-      summary: Replace the children of a base resource
+      summary: Replace the children of a base resource.
       operationId: replaceResources_6
       parameters:
         - name: id
@@ -1410,7 +1414,7 @@ paths:
     post:
       tags:
         - Representations
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_6
       parameters:
         - name: id
@@ -1444,7 +1448,7 @@ paths:
     delete:
       tags:
         - Representations
-      summary: Remove a list of children from a base resource
+      summary: Remove a list of children from a base resource.
       operationId: removeResources_6
       parameters:
         - name: id
@@ -1471,7 +1475,7 @@ paths:
     get:
       tags:
         - Representations
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_10
       parameters:
         - name: id
@@ -1510,7 +1514,7 @@ paths:
     put:
       tags:
         - Representations
-      summary: Replace the children of a base resource
+      summary: Replace the children of a base resource.
       operationId: replaceResources_7
       parameters:
         - name: id
@@ -1536,7 +1540,7 @@ paths:
     post:
       tags:
         - Representations
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_7
       parameters:
         - name: id
@@ -1570,7 +1574,7 @@ paths:
     delete:
       tags:
         - Representations
-      summary: Remove a list of children from a base resource
+      summary: Remove a list of children from a base resource.
       operationId: removeResources_7
       parameters:
         - name: id
@@ -1597,7 +1601,7 @@ paths:
     get:
       tags:
         - Offered Resources
-      summary: Get a base resource by id
+      summary: Get a base resource by id.
       operationId: get_5
       parameters:
         - name: id
@@ -1622,7 +1626,7 @@ paths:
     put:
       tags:
         - Offered Resources
-      summary: Update a base resource by id
+      summary: Update a base resource by id.
       operationId: update_5
       parameters:
         - name: id
@@ -1659,7 +1663,7 @@ paths:
     delete:
       tags:
         - Offered Resources
-      summary: Delete a base resource by id
+      summary: Delete a base resource by id.
       operationId: delete_5
       parameters:
         - name: id
@@ -1677,7 +1681,7 @@ paths:
     get:
       tags:
         - Offered Resources
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_12
       parameters:
         - name: id
@@ -1716,7 +1720,7 @@ paths:
     put:
       tags:
         - Offered Resources
-      summary: Replace the children of a base resource
+      summary: Replace the children of a base resource.
       operationId: replaceResources_8
       parameters:
         - name: id
@@ -1742,7 +1746,7 @@ paths:
     post:
       tags:
         - Offered Resources
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_8
       parameters:
         - name: id
@@ -1776,7 +1780,7 @@ paths:
     delete:
       tags:
         - Offered Resources
-      summary: Remove a list of children from a base resource
+      summary: Remove a list of children from a base resource.
       operationId: removeResources_8
       parameters:
         - name: id
@@ -1803,7 +1807,7 @@ paths:
     get:
       tags:
         - Offered Resources
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_13
       parameters:
         - name: id
@@ -1842,7 +1846,7 @@ paths:
     put:
       tags:
         - Offered Resources
-      summary: Replace the children of a base resource
+      summary: Replace the children of a base resource.
       operationId: replaceResources_9
       parameters:
         - name: id
@@ -1868,7 +1872,7 @@ paths:
     post:
       tags:
         - Offered Resources
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_9
       parameters:
         - name: id
@@ -1902,7 +1906,7 @@ paths:
     delete:
       tags:
         - Offered Resources
-      summary: Remove a list of children from a base resource
+      summary: Remove a list of children from a base resource.
       operationId: removeResources_9
       parameters:
         - name: id
@@ -1929,7 +1933,7 @@ paths:
     get:
       tags:
         - Offered Resources
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_14
       parameters:
         - name: id
@@ -1968,7 +1972,7 @@ paths:
     put:
       tags:
         - Offered Resources
-      summary: Replace the children of a base resource
+      summary: Replace the children of a base resource.
       operationId: replaceResources_10
       parameters:
         - name: id
@@ -1994,7 +1998,7 @@ paths:
     post:
       tags:
         - Offered Resources
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_10
       parameters:
         - name: id
@@ -2028,7 +2032,7 @@ paths:
     delete:
       tags:
         - Offered Resources
-      summary: Remove a list of children from a base resource
+      summary: Remove a list of children from a base resource.
       operationId: removeResources_10
       parameters:
         - name: id
@@ -2055,7 +2059,7 @@ paths:
     put:
       tags:
         - Messages
-      summary: Notify all subscribers
+      summary: Notify all subscribers.
       description: "Can be used to manually notify all subscribers about a resource\
         \ offer, representation, or artifact update."
       operationId: sendMessage
@@ -2096,7 +2100,7 @@ paths:
     get:
       tags:
         - Endpoints
-      summary: Get a base resource by id
+      summary: Get a base resource by id.
       operationId: get_6
       parameters:
         - name: id
@@ -2121,7 +2125,7 @@ paths:
     put:
       tags:
         - Endpoints
-      summary: Update a base resource by id
+      summary: Update a base resource by id.
       operationId: update_6
       parameters:
         - name: id
@@ -2162,7 +2166,7 @@ paths:
     delete:
       tags:
         - Endpoints
-      summary: Delete a base resource by id
+      summary: Delete a base resource by id.
       operationId: delete_6
       parameters:
         - name: id
@@ -2180,7 +2184,7 @@ paths:
     put:
       tags:
         - Endpoints
-      summary: Creates start endpoint for the route
+      summary: Creates start endpoint for a route.
       operationId: linkDataSource
       parameters:
         - name: id
@@ -2204,7 +2208,7 @@ paths:
     get:
       tags:
         - Data Sources/Sinks
-      summary: Get a base resource by id
+      summary: Get a base resource by id.
       operationId: get_7
       parameters:
         - name: id
@@ -2229,7 +2233,7 @@ paths:
     put:
       tags:
         - Data Sources/Sinks
-      summary: Update a base resource by id
+      summary: Update a base resource by id.
       operationId: update_7
       parameters:
         - name: id
@@ -2266,7 +2270,7 @@ paths:
     delete:
       tags:
         - Data Sources/Sinks
-      summary: Delete a base resource by id
+      summary: Delete a base resource by id.
       operationId: delete_7
       parameters:
         - name: id
@@ -2284,7 +2288,7 @@ paths:
     get:
       tags:
         - Contracts
-      summary: Get a base resource by id
+      summary: Get a base resource by id.
       operationId: get_8
       parameters:
         - name: id
@@ -2309,7 +2313,7 @@ paths:
     put:
       tags:
         - Contracts
-      summary: Update a base resource by id
+      summary: Update a base resource by id.
       operationId: update_8
       parameters:
         - name: id
@@ -2346,7 +2350,7 @@ paths:
     delete:
       tags:
         - Contracts
-      summary: Delete a base resource by id
+      summary: Delete a base resource by id.
       operationId: delete_8
       parameters:
         - name: id
@@ -2364,7 +2368,7 @@ paths:
     get:
       tags:
         - Contracts
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_16
       parameters:
         - name: id
@@ -2403,7 +2407,7 @@ paths:
     put:
       tags:
         - Contracts
-      summary: Replace the children of a base resource
+      summary: Replace the children of a base resource.
       operationId: replaceResources_11
       parameters:
         - name: id
@@ -2429,7 +2433,7 @@ paths:
     post:
       tags:
         - Contracts
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_11
       parameters:
         - name: id
@@ -2463,7 +2467,7 @@ paths:
     delete:
       tags:
         - Contracts
-      summary: Remove a list of children from a base resource
+      summary: Remove a list of children from a base resource.
       operationId: removeResources_11
       parameters:
         - name: id
@@ -2490,7 +2494,7 @@ paths:
     get:
       tags:
         - Contracts
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_18
       parameters:
         - name: id
@@ -2529,7 +2533,7 @@ paths:
     put:
       tags:
         - Contracts
-      summary: Replace the children of a base resource
+      summary: Replace the children of a base resource.
       operationId: replaceResources_12
       parameters:
         - name: id
@@ -2555,7 +2559,7 @@ paths:
     post:
       tags:
         - Contracts
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_12
       parameters:
         - name: id
@@ -2589,7 +2593,7 @@ paths:
     delete:
       tags:
         - Contracts
-      summary: Remove a list of children from a base resource
+      summary: Remove a list of children from a base resource.
       operationId: removeResources_12
       parameters:
         - name: id
@@ -2616,7 +2620,7 @@ paths:
     get:
       tags:
         - Configurations
-      summary: Get a base resource by id
+      summary: Get a base resource by id.
       operationId: get_9
       parameters:
         - name: id
@@ -2641,7 +2645,7 @@ paths:
     put:
       tags:
         - Configurations
-      summary: Update a base resource by id
+      summary: Update a base resource by id.
       operationId: update_9
       parameters:
         - name: id
@@ -2678,7 +2682,7 @@ paths:
     delete:
       tags:
         - Configurations
-      summary: Delete a base resource by id
+      summary: Delete a base resource by id.
       operationId: delete_9
       parameters:
         - name: id
@@ -2696,7 +2700,7 @@ paths:
     put:
       tags:
         - Configurations
-      summary: Update current configuration
+      summary: Update current configuration.
       operationId: setConfiguration
       parameters:
         - name: id
@@ -2740,8 +2744,9 @@ paths:
     get:
       tags:
         - Usage Control
-      summary: Get pattern validation status
-      description: Return if unsupported patterns are ignored when requesting data.
+      summary: Get pattern validation status.
+      description: Return whether unsupported patterns are ignored when requesting
+        data.
       operationId: getPatternStatus
       responses:
         "401":
@@ -2769,7 +2774,7 @@ paths:
     put:
       tags:
         - Usage Control
-      summary: Allow unsupported patterns
+      summary: Allow unsupported patterns.
       description: Allow requesting data without policy enforcement if an unsupported
         pattern is recognized.
       operationId: setPatternStatus
@@ -2806,7 +2811,7 @@ paths:
     get:
       tags:
         - Usage Control
-      summary: Get contract negotiation status
+      summary: Get contract negotiation status.
       operationId: getNegotiationStatus
       responses:
         "401":
@@ -2834,7 +2839,7 @@ paths:
     put:
       tags:
         - Usage Control
-      summary: Set contract negotiation status
+      summary: Set contract negotiation status.
       operationId: setNegotiationStatus
       parameters:
         - name: status
@@ -2869,7 +2874,7 @@ paths:
     get:
       tags:
         - Catalogs
-      summary: Get a base resource by id
+      summary: Get a base resource by id.
       operationId: get_10
       parameters:
         - name: id
@@ -2894,7 +2899,7 @@ paths:
     put:
       tags:
         - Catalogs
-      summary: Update a base resource by id
+      summary: Update a base resource by id.
       operationId: update_10
       parameters:
         - name: id
@@ -2931,7 +2936,7 @@ paths:
     delete:
       tags:
         - Catalogs
-      summary: Delete a base resource by id
+      summary: Delete a base resource by id.
       operationId: delete_10
       parameters:
         - name: id
@@ -2949,7 +2954,7 @@ paths:
     get:
       tags:
         - Catalogs
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_19
       parameters:
         - name: id
@@ -2988,7 +2993,7 @@ paths:
     put:
       tags:
         - Catalogs
-      summary: Replace the children of a base resource
+      summary: Replace the children of a base resource.
       operationId: replaceResources_13
       parameters:
         - name: id
@@ -3014,7 +3019,7 @@ paths:
     post:
       tags:
         - Catalogs
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_13
       parameters:
         - name: id
@@ -3048,7 +3053,7 @@ paths:
     delete:
       tags:
         - Catalogs
-      summary: Remove a list of children from a base resource
+      summary: Remove a list of children from a base resource.
       operationId: removeResources_13
       parameters:
         - name: id
@@ -3075,7 +3080,7 @@ paths:
     get:
       tags:
         - Brokers
-      summary: Get a base resource by id
+      summary: Get a base resource by id.
       operationId: get_11
       parameters:
         - name: id
@@ -3100,7 +3105,7 @@ paths:
     put:
       tags:
         - Brokers
-      summary: Update a base resource by id
+      summary: Update a base resource by id.
       operationId: update_11
       parameters:
         - name: id
@@ -3137,7 +3142,7 @@ paths:
     delete:
       tags:
         - Brokers
-      summary: Delete a base resource by id
+      summary: Delete a base resource by id.
       operationId: delete_11
       parameters:
         - name: id
@@ -3155,7 +3160,7 @@ paths:
     get:
       tags:
         - Artifacts
-      summary: Get a base resource by id
+      summary: Get a base resource by id.
       operationId: get_12
       parameters:
         - name: id
@@ -3180,7 +3185,7 @@ paths:
     put:
       tags:
         - Artifacts
-      summary: Update a base resource by id
+      summary: Update a base resource by id.
       operationId: update_12
       parameters:
         - name: id
@@ -3217,7 +3222,7 @@ paths:
     delete:
       tags:
         - Artifacts
-      summary: Delete a base resource by id
+      summary: Delete a base resource by id.
       operationId: delete_12
       parameters:
         - name: id
@@ -3235,7 +3240,7 @@ paths:
     get:
       tags:
         - Artifacts
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_22
       parameters:
         - name: id
@@ -3274,7 +3279,7 @@ paths:
     put:
       tags:
         - Artifacts
-      summary: Replace the children of a base resource
+      summary: Replace the children of a base resource.
       operationId: replaceResources_14
       parameters:
         - name: id
@@ -3300,7 +3305,7 @@ paths:
     post:
       tags:
         - Artifacts
-      summary: Add a list of children to a base resource
+      summary: Add a list of children to a base resource.
       operationId: addResources_14
       parameters:
         - name: id
@@ -3334,7 +3339,7 @@ paths:
     delete:
       tags:
         - Artifacts
-      summary: Remove a list of children from a base resource
+      summary: Remove a list of children from a base resource.
       operationId: removeResources_14
       parameters:
         - name: id
@@ -3386,7 +3391,7 @@ paths:
     post:
       tags:
         - Artifacts
-      summary: Get data by artifact id with query input
+      summary: Get data by artifact id with query input.
       operationId: getData
       parameters:
         - name: id
@@ -3415,7 +3420,7 @@ paths:
     get:
       tags:
         - App Stores
-      summary: Get a base resource by id
+      summary: Get a base resource by id.
       operationId: get_13
       parameters:
         - name: id
@@ -3440,7 +3445,7 @@ paths:
     put:
       tags:
         - App Stores
-      summary: Update a base resource by id
+      summary: Update a base resource by id.
       operationId: update_13
       parameters:
         - name: id
@@ -3477,7 +3482,7 @@ paths:
     delete:
       tags:
         - App Stores
-      summary: Delete a base resource by id
+      summary: Delete a base resource by id.
       operationId: delete_13
       parameters:
         - name: id
@@ -3539,7 +3544,7 @@ paths:
     get:
       tags:
         - Subscriptions
-      summary: Get a list of base resources with pagination
+      summary: Get a list of base resources with pagination.
       operationId: getAll
       parameters:
         - name: page
@@ -3572,7 +3577,7 @@ paths:
     post:
       tags:
         - Subscriptions
-      summary: Create a base resource
+      summary: Create a base resource.
       operationId: create
       requestBody:
         content:
@@ -3597,7 +3602,7 @@ paths:
     get:
       tags:
         - Rules
-      summary: Get a list of base resources with pagination
+      summary: Get a list of base resources with pagination.
       operationId: getAll_1
       parameters:
         - name: page
@@ -3630,7 +3635,7 @@ paths:
     post:
       tags:
         - Rules
-      summary: Create a base resource
+      summary: Create a base resource.
       operationId: create_1
       requestBody:
         content:
@@ -3655,7 +3660,7 @@ paths:
     get:
       tags:
         - Routes
-      summary: Get a list of base resources with pagination
+      summary: Get a list of base resources with pagination.
       operationId: getAll_2
       parameters:
         - name: page
@@ -3688,7 +3693,7 @@ paths:
     post:
       tags:
         - Routes
-      summary: Create a base resource
+      summary: Create a base resource.
       operationId: create_2
       requestBody:
         content:
@@ -3713,7 +3718,7 @@ paths:
     get:
       tags:
         - Representations
-      summary: Get a list of base resources with pagination
+      summary: Get a list of base resources with pagination.
       operationId: getAll_4
       parameters:
         - name: page
@@ -3746,7 +3751,7 @@ paths:
     post:
       tags:
         - Representations
-      summary: Create a base resource
+      summary: Create a base resource.
       operationId: create_3
       requestBody:
         content:
@@ -3771,7 +3776,7 @@ paths:
     get:
       tags:
         - Offered Resources
-      summary: Get a list of base resources with pagination
+      summary: Get a list of base resources with pagination.
       operationId: getAll_5
       parameters:
         - name: page
@@ -3804,7 +3809,7 @@ paths:
     post:
       tags:
         - Offered Resources
-      summary: Create a base resource
+      summary: Create a base resource.
       operationId: create_4
       requestBody:
         content:
@@ -3829,7 +3834,7 @@ paths:
     post:
       tags:
         - Messages
-      summary: Send IDS request message for element unsubscription
+      summary: Send an IDS request message for unsubscribe from an element.
       operationId: unsubscribe
       parameters:
         - name: recipient
@@ -3875,7 +3880,7 @@ paths:
     post:
       tags:
         - Messages
-      summary: Send IDS request message for element subscription
+      summary: Send an IDS request message for subscribing to (meta)data updates.
       operationId: subscribe
       parameters:
         - name: recipient
@@ -3926,7 +3931,7 @@ paths:
     post:
       tags:
         - Messages
-      summary: Full text search
+      summary: Perform full-text search.
       description: Can be used for full text search at an IDS component (e.g. the
         Broker).
       operationId: sendSearchMessage
@@ -3962,14 +3967,14 @@ paths:
               description: The search term.
         required: true
       responses:
-        "401":
-          description: Unauthorized
+        "504":
+          description: Gateway timeout
           content:
             '*/*':
               schema:
                 type: object
-        "504":
-          description: Gateway timeout
+        "401":
+          description: Unauthorized
           content:
             '*/*':
               schema:
@@ -3996,8 +4001,8 @@ paths:
     post:
       tags:
         - Messages
-      summary: Resource update message
-      description: Can be used for registering or updating a resource at an IDS broker
+      summary: Send an IDS ResourceUpdateMessage.
+      description: Can be used to register or update an IDS resource at an IDS Broker
         or consumer connector.
       operationId: sendMessage_1
       parameters:
@@ -4062,8 +4067,8 @@ paths:
     post:
       tags:
         - Messages
-      summary: Resource unavailable message
-      description: Can be used for e.g. unregistering a resource at an IDS broker.
+      summary: Send an IDS ResourceUnavailableMessage.
+      description: Can be used for e.g. unregistering an IDS resource at an IDS Broker.
       operationId: sendMessage_2
       parameters:
         - name: recipient
@@ -4127,8 +4132,8 @@ paths:
     post:
       tags:
         - Messages
-      summary: Query message
-      description: Can be used for querying an IDS component (e.g. the Broker).
+      summary: Send an IDS QueryMessage.
+      description: Can be used for querying an IDS component (e.g. the IDS Broker).
       operationId: sendQueryMessage
       parameters:
         - name: recipient
@@ -4152,14 +4157,14 @@ paths:
                 };
         required: true
       responses:
-        "401":
-          description: Unauthorized
+        "504":
+          description: Gateway timeout
           content:
             '*/*':
               schema:
                 type: object
-        "504":
-          description: Gateway timeout
+        "401":
+          description: Unauthorized
           content:
             '*/*':
               schema:
@@ -4192,7 +4197,7 @@ paths:
     post:
       tags:
         - Messages
-      summary: Send IDS description request message
+      summary: Send an IDS DescriptionRequestMessage to query metadata.
       operationId: sendMessage_3
       parameters:
         - name: recipient
@@ -4244,7 +4249,7 @@ paths:
     post:
       tags:
         - Messages
-      summary: Send IDS contract request message
+      summary: Send an IDS ContractRequestMessage to start the contract negotiation.
       operationId: sendMessage_4
       parameters:
         - name: recipient
@@ -4338,9 +4343,9 @@ paths:
     post:
       tags:
         - Messages
-      summary: Connector update message
+      summary: Send an IDS ConnectorUpdateMessage.
       description: Can be used for registering or updating the connector at an IDS
-        broker.
+        Broker.
       operationId: sendMessage_5
       parameters:
         - name: recipient
@@ -4391,8 +4396,8 @@ paths:
     post:
       tags:
         - Messages
-      summary: Connector unavailable message
-      description: Can be used for unregistering the connector at an IDS broker.
+      summary: Send an IDS ConnectorUnavailableMessage.
+      description: Can be used for unregistering the connector at an IDS Broker.
       operationId: sendMessage_6
       parameters:
         - name: recipient
@@ -4443,7 +4448,7 @@ paths:
     post:
       tags:
         - Messages
-      summary: Download IDS app from AppStore
+      summary: Download an IDS app from an IDS AppStore.
       operationId: sendMessage_7
       parameters:
         - name: recipient
@@ -4507,15 +4512,14 @@ paths:
     post:
       tags:
         - Usage Control
-      summary: Get pattern of policy
-      description: Get the policy pattern represented by a given JSON string.
+      summary: Get the policy pattern represented by a given JSON string.
       operationId: getPolicyPattern
       requestBody:
         content:
           application/json:
             schema:
               type: string
-              description: The JSON string representing a policy
+              description: The JSON string representing a policy.
         required: true
       responses:
         "401":
@@ -4540,8 +4544,7 @@ paths:
     post:
       tags:
         - Usage Control
-      summary: Get example policy
-      description: Get an example policy for a given policy pattern.
+      summary: Get an example policy for a given policy pattern.
       operationId: getExampleUsagePolicy
       requestBody:
         content:
@@ -4583,7 +4586,7 @@ paths:
     get:
       tags:
         - Endpoints
-      summary: Get a list of base resources with pagination
+      summary: Get a list of base resources with pagination.
       operationId: getAll_6
       parameters:
         - name: page
@@ -4616,7 +4619,7 @@ paths:
     post:
       tags:
         - Endpoints
-      summary: Create a base resource
+      summary: Create a base resource.
       operationId: create_5
       requestBody:
         content:
@@ -4645,7 +4648,7 @@ paths:
     get:
       tags:
         - Data Sources/Sinks
-      summary: Get a list of base resources with pagination
+      summary: Get a list of base resources with pagination.
       operationId: getAll_7
       parameters:
         - name: page
@@ -4678,7 +4681,7 @@ paths:
     post:
       tags:
         - Data Sources/Sinks
-      summary: Create a base resource
+      summary: Create a base resource.
       operationId: create_6
       requestBody:
         content:
@@ -4703,7 +4706,7 @@ paths:
     get:
       tags:
         - Contracts
-      summary: Get a list of base resources with pagination
+      summary: Get a list of base resources with pagination.
       operationId: getAll_8
       parameters:
         - name: page
@@ -4736,7 +4739,7 @@ paths:
     post:
       tags:
         - Contracts
-      summary: Create a base resource
+      summary: Create a base resource.
       operationId: create_7
       requestBody:
         content:
@@ -4761,7 +4764,7 @@ paths:
     get:
       tags:
         - Configurations
-      summary: Get a list of base resources with pagination
+      summary: Get a list of base resources with pagination.
       operationId: getAll_9
       parameters:
         - name: page
@@ -4794,7 +4797,7 @@ paths:
     post:
       tags:
         - Configurations
-      summary: Create a base resource
+      summary: Create a base resource.
       operationId: create_8
       requestBody:
         content:
@@ -4819,7 +4822,7 @@ paths:
     get:
       tags:
         - Catalogs
-      summary: Get a list of base resources with pagination
+      summary: Get a list of base resources with pagination.
       operationId: getAll_10
       parameters:
         - name: page
@@ -4852,7 +4855,7 @@ paths:
     post:
       tags:
         - Catalogs
-      summary: Create a base resource
+      summary: Create a base resource.
       operationId: create_9
       requestBody:
         content:
@@ -4877,7 +4880,7 @@ paths:
     get:
       tags:
         - Brokers
-      summary: Get a list of base resources with pagination
+      summary: Get a list of base resources with pagination.
       operationId: getAll_11
       parameters:
         - name: page
@@ -4910,7 +4913,7 @@ paths:
     post:
       tags:
         - Brokers
-      summary: Create a base resource
+      summary: Create a base resource.
       operationId: create_10
       requestBody:
         content:
@@ -4935,7 +4938,7 @@ paths:
     get:
       tags:
         - Artifacts
-      summary: Get a list of base resources with pagination
+      summary: Get a list of base resources with pagination.
       operationId: getAll_12
       parameters:
         - name: page
@@ -4968,7 +4971,7 @@ paths:
     post:
       tags:
         - Artifacts
-      summary: Create a base resource
+      summary: Create a base resource.
       operationId: create_11
       requestBody:
         content:
@@ -4993,7 +4996,7 @@ paths:
     get:
       tags:
         - App Stores
-      summary: Get a list of base resources with pagination
+      summary: Get a list of base resources with pagination.
       operationId: getAll_13
       parameters:
         - name: page
@@ -5026,7 +5029,7 @@ paths:
     post:
       tags:
         - App Stores
-      summary: Create a base resource
+      summary: Create a base resource.
       operationId: create_12
       requestBody:
         content:
@@ -5051,6 +5054,7 @@ paths:
     get:
       tags:
         - Subscriptions
+      summary: Get all subscriptions owned by this connector.
       operationId: getAllFiltered
       parameters:
         - name: page
@@ -5084,7 +5088,7 @@ paths:
     get:
       tags:
         - Requested Resources
-      summary: Get a list of base resources with pagination
+      summary: Get a list of base resources with pagination.
       operationId: getAll_3
       parameters:
         - name: page
@@ -5118,7 +5122,7 @@ paths:
     get:
       tags:
         - Requested Resources
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_3
       parameters:
         - name: id
@@ -5158,7 +5162,7 @@ paths:
     get:
       tags:
         - Requested Resources
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_5
       parameters:
         - name: id
@@ -5198,7 +5202,7 @@ paths:
     get:
       tags:
         - Representations
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_7
       parameters:
         - name: id
@@ -5238,7 +5242,7 @@ paths:
     get:
       tags:
         - Offered Resources
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_11
       parameters:
         - name: id
@@ -5278,7 +5282,7 @@ paths:
     get:
       tags:
         - Offered Resources
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_15
       parameters:
         - name: id
@@ -5318,7 +5322,7 @@ paths:
     get:
       tags:
         - Contracts
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_17
       parameters:
         - name: id
@@ -5358,7 +5362,7 @@ paths:
     get:
       tags:
         - Connector
-      summary: Private IDS self-description
+      summary: Get the private IDS self-description.
       operationId: getPrivateSelfDescription
       responses:
         "401":
@@ -5383,7 +5387,7 @@ paths:
     get:
       tags:
         - Configurations
-      summary: Get current configuration
+      summary: Get current configuration.
       operationId: getConfiguration
       responses:
         "401":
@@ -5402,7 +5406,7 @@ paths:
     get:
       tags:
         - Brokers
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_20
       parameters:
         - name: id
@@ -5442,7 +5446,7 @@ paths:
     get:
       tags:
         - Artifacts
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_21
       parameters:
         - name: id
@@ -5482,7 +5486,7 @@ paths:
     get:
       tags:
         - Artifacts
-      summary: Get data by artifact id with query input
+      summary: Get data by artifact id with query input.
       operationId: getData_1
       parameters:
         - name: id
@@ -5519,7 +5523,7 @@ paths:
     get:
       tags:
         - Artifacts
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_23
       parameters:
         - name: id
@@ -5559,7 +5563,7 @@ paths:
     get:
       tags:
         - App Stores
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_24
       parameters:
         - name: id
@@ -5599,7 +5603,7 @@ paths:
     get:
       tags:
         - Apps
-      summary: Get a list of base resources with pagination
+      summary: Get a list of base resources with pagination.
       operationId: getAll_14
       parameters:
         - name: page
@@ -5633,7 +5637,7 @@ paths:
     get:
       tags:
         - Apps
-      summary: Get a base resource by id
+      summary: Get a base resource by id.
       operationId: get_14
       parameters:
         - name: id
@@ -5658,7 +5662,7 @@ paths:
     delete:
       tags:
         - Apps
-      summary: Delete a base resource by id
+      summary: Delete a base resource by id.
       operationId: delete_14
       parameters:
         - name: id
@@ -5676,7 +5680,7 @@ paths:
     get:
       tags:
         - Apps
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_25
       parameters:
         - name: id
@@ -5716,7 +5720,7 @@ paths:
     get:
       tags:
         - Apps
-      summary: Get appstore by app id
+      summary: Get AppStore by app id.
       description: Get appstore holding this app.
       operationId: relatedAppStore
       parameters:
@@ -5755,7 +5759,7 @@ paths:
     get:
       tags:
         - Agreements
-      summary: Get a list of base resources with pagination
+      summary: Get a list of base resources with pagination.
       operationId: getAll_15
       parameters:
         - name: page
@@ -5789,7 +5793,7 @@ paths:
     get:
       tags:
         - Agreements
-      summary: Get a base resource by id
+      summary: Get a base resource by id.
       operationId: get_15
       parameters:
         - name: id
@@ -5815,7 +5819,7 @@ paths:
     get:
       tags:
         - Agreements
-      summary: Get all children of a base resource with pagination
+      summary: Get all children of a base resource with pagination.
       operationId: getResource_26
       parameters:
         - name: id
@@ -5855,7 +5859,7 @@ paths:
     get:
       tags:
         - Connector
-      summary: Public IDS self-description
+      summary: Get the public IDS self-description.
       operationId: getPublicSelfDescription_1
       responses:
         "401":
@@ -5870,6 +5874,7 @@ paths:
             application/ld+json:
               schema:
                 type: object
+      security: []
 components:
   schemas:
     SubscriptionDesc:
@@ -6894,6 +6899,34 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
+            ids:unit:
+              type: string
+              format: uri
+            ids:pipEndpoint:
+              type: string
+              format: uri
+            ids:rightOperand:
+              $ref: '#/components/schemas/RdfResource'
+            ids:leftOperand:
+              type: string
+              enum:
+                - https://w3id.org/idsa/code/ABSOLUTE_SPATIAL_POSITION
+                - https://w3id.org/idsa/code/COUNT
+                - https://w3id.org/idsa/code/DELAY
+                - https://w3id.org/idsa/code/ELAPSED_TIME
+                - https://w3id.org/idsa/code/ENDPOINT
+                - https://w3id.org/idsa/code/EVENT
+                - https://w3id.org/idsa/code/PATH
+                - https://w3id.org/idsa/code/PAYMENT
+                - https://w3id.org/idsa/code/PAY_AMOUNT
+                - https://w3id.org/idsa/code/POLICY_EVALUATION_TIME
+                - https://w3id.org/idsa/code/PURPOSE
+                - https://w3id.org/idsa/code/QUANTITY
+                - https://w3id.org/idsa/code/RECURRENCE_RATE
+                - https://w3id.org/idsa/code/SECURITY_LEVEL
+                - https://w3id.org/idsa/code/STATE
+                - https://w3id.org/idsa/code/SYSTEM
+                - https://w3id.org/idsa/code/USER
             ids:operator:
               type: string
               enum:
@@ -6943,35 +6976,7 @@ components:
                 - https://w3id.org/idsa/code/STRING_IS_CONTAINED
                 - https://w3id.org/idsa/code/TEMPORAL_DISJOINT
                 - https://w3id.org/idsa/code/TEMPORAL_EQUALS
-            ids:unit:
-              type: string
-              format: uri
-            ids:leftOperand:
-              type: string
-              enum:
-                - https://w3id.org/idsa/code/ABSOLUTE_SPATIAL_POSITION
-                - https://w3id.org/idsa/code/COUNT
-                - https://w3id.org/idsa/code/DELAY
-                - https://w3id.org/idsa/code/ELAPSED_TIME
-                - https://w3id.org/idsa/code/ENDPOINT
-                - https://w3id.org/idsa/code/EVENT
-                - https://w3id.org/idsa/code/PATH
-                - https://w3id.org/idsa/code/PAYMENT
-                - https://w3id.org/idsa/code/PAY_AMOUNT
-                - https://w3id.org/idsa/code/POLICY_EVALUATION_TIME
-                - https://w3id.org/idsa/code/PURPOSE
-                - https://w3id.org/idsa/code/QUANTITY
-                - https://w3id.org/idsa/code/RECURRENCE_RATE
-                - https://w3id.org/idsa/code/SECURITY_LEVEL
-                - https://w3id.org/idsa/code/STATE
-                - https://w3id.org/idsa/code/SYSTEM
-                - https://w3id.org/idsa/code/USER
-            ids:rightOperand:
-              $ref: '#/components/schemas/RdfResource'
             ids:rightOperandReference:
-              type: string
-              format: uri
-            ids:pipEndpoint:
               type: string
               format: uri
             '@type':
@@ -7001,15 +7006,15 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
-            ids:or:
-              type: array
-              items:
-                $ref: '#/components/schemas/Constraint'
             ids:and:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
             ids:xone:
+              type: array
+              items:
+                $ref: '#/components/schemas/Constraint'
+            ids:or:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
@@ -7090,15 +7095,6 @@ components:
           items:
             type: string
             format: uri
-        ids:assetRefinement:
-          oneOf:
-            - $ref: '#/components/schemas/LogicalConstraint'
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/Constraint'
-              - $ref: '#/components/schemas/LogicalConstraint'
         ids:action:
           type: array
           items:
@@ -7120,6 +7116,15 @@ components:
               - https://w3id.org/idsa/code/TRACK_PROVENANCE
               - https://w3id.org/idsa/code/USE
               - https://w3id.org/idsa/code/WRITE
+        ids:constraint:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/LogicalConstraint'
+        ids:assetRefinement:
+          oneOf:
+            - $ref: '#/components/schemas/Constraint'
+            - $ref: '#/components/schemas/LogicalConstraint'
         ids:description:
           type: array
           items:
@@ -7541,3 +7546,9 @@ components:
           type: string
         templated:
           type: boolean
+  securitySchemes:
+    basicAuth:
+      type: http
+      name: Authorization
+      in: header
+      scheme: basic

@@ -28,7 +28,6 @@ import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.service.resource.type.ResourceService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -39,19 +38,16 @@ import org.springframework.web.bind.annotation.RestController;
  * Offers the endpoints for managing requested resources.
  */
 @RestController
-@RequestMapping(BasePath.REQUESTS)
 @RequiredArgsConstructor
+@RequestMapping(BasePath.REQUESTS)
 @Tag(name = ResourceName.REQUESTS, description = ResourceDescription.REQUESTS)
 public class RequestedResourceController extends BaseResourceController<RequestedResource,
         RequestedResourceDesc, RequestedResourceView, ResourceService<RequestedResource,
         RequestedResourceDesc>> {
 
     @Hidden
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+            description = ResponseDescription.METHOD_NOT_ALLOWED)
     @Override
     public final ResponseEntity<RequestedResourceView> create(
             final RequestedResourceDesc desc) {

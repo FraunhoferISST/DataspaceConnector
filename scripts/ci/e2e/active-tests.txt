@@ -8,3 +8,5 @@
 ./scripts/tests/multiple_artifacts.py
 ./scripts/tests/single_artifact_multiple_policies.py
 ./scripts/tests/provider_authentication.py
+./scripts/tests/remote_data_can_be_updated.py
+./scripts/tests/subscription_creation.py

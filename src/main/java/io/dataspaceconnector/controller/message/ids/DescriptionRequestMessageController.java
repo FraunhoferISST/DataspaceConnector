@@ -23,6 +23,8 @@ import io.dataspaceconnector.common.ids.message.MessageUtils;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.config.ConnectorConfig;
+import io.dataspaceconnector.controller.message.tag.MessageDescription;
+import io.dataspaceconnector.controller.message.tag.MessageName;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.service.message.builder.type.DescriptionRequestService;
 import io.dataspaceconnector.service.message.handler.dto.Response;
@@ -54,7 +56,7 @@ import java.util.Objects;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
-@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
+@Tag(name = MessageName.MESSAGES, description = MessageDescription.MESSAGES)
 public class DescriptionRequestMessageController {
 
     /**
@@ -90,7 +92,7 @@ public class DescriptionRequestMessageController {
      * @return The response entity.
      */
     @PostMapping("/description")
-    @Operation(summary = "Send IDS description request message")
+    @Operation(summary = "Send an IDS DescriptionRequestMessage to query metadata.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),

@@ -31,6 +31,8 @@ import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadExceptio
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
+import io.dataspaceconnector.controller.message.tag.MessageDescription;
+import io.dataspaceconnector.controller.message.tag.MessageName;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -62,7 +64,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
-@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
+@Tag(name = MessageName.MESSAGES, description = MessageDescription.MESSAGES)
 public class ConnectorUpdateMessageController {
 
     /**
@@ -97,8 +99,8 @@ public class ConnectorUpdateMessageController {
      * @return The response message or an error.
      */
     @PostMapping("/connector/update")
-    @Operation(summary = "Connector update message", description = "Can be used for registering or "
-            + "updating the connector at an IDS broker.")
+    @Operation(summary = "Send an IDS ConnectorUpdateMessage.", description = "Can be used for "
+            + "registering or updating the connector at an IDS Broker.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),

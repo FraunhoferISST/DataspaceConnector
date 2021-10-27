@@ -41,6 +41,11 @@ import java.util.UUID;
  * @param <T> The type of the entity operated on.
  * @param <V> The type of the view model produces.
  */
+@ApiResponses(value = {
+        @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+                description = ResponseDescription.METHOD_NOT_ALLOWED),
+        @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+                description = ResponseDescription.UNAUTHORIZED)})
 public class BaseResourceChildRestrictedController<S extends RelationService<?, ?, ?, ?>,
         T extends Entity, V extends RepresentationModel<V>>
         extends BaseResourceChildController<S, T, V> {
@@ -50,9 +55,6 @@ public class BaseResourceChildRestrictedController<S extends RelationService<?, 
      */
     @Hidden
     @Override
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
     public PagedModel<V> addResources(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<URI> resources) {
@@ -64,9 +66,6 @@ public class BaseResourceChildRestrictedController<S extends RelationService<?, 
      */
     @Hidden
     @Override
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
     public HttpEntity<Void> replaceResources(@Valid @PathVariable(name = "id") final UUID ownerId,
                                              @Valid @RequestBody final List<URI> resources) {
         throw new MethodNotAllowed();
@@ -77,9 +76,6 @@ public class BaseResourceChildRestrictedController<S extends RelationService<?, 
      */
     @Hidden
     @Override
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
     public HttpEntity<Void> removeResources(@Valid @PathVariable(name = "id") final UUID ownerId,
                                             @Valid @RequestBody final List<URI> resources) {
         throw new MethodNotAllowed();

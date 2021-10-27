@@ -25,10 +25,11 @@ import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.mapping.FromIdsObjectMapper;
 import io.dataspaceconnector.service.resource.ids.builder.IdsConfigModelBuilder;
 import io.dataspaceconnector.service.resource.type.ConfigurationService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
@@ -40,11 +41,17 @@ import java.nio.file.Paths;
  * Intercepts {@link de.fraunhofer.ids.messaging.core.config.ConfigProducer} and changes how the
  * startup configuration is loaded.
  */
-@Component
+@Configuration
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional
 public class PreConfigInterceptor implements PreConfigProducerInterceptor {
+
+    /**
+     * The property for forcing to reload the configuration from the config.json.
+     */
+    @Value("${configuration.force.reload:false}")
+    private boolean forceReload;
 
     /**
      * Service for ids deserialization.
@@ -72,9 +79,15 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
     @Override
     public ConfigurationModel perform(final ConfigProperties properties)
             throws ConfigProducerInterceptorException {
-        if (doesStoredConfigExits()) {
+        if (doesStoredConfigExits() && !forceReload) {
+            if (log.isInfoEnabled()) {
+                log.info("Loading configuration from DB.");
+            }
             return loadConfigFromDb();
         } else {
+            if (forceReload && log.isInfoEnabled()) {
+                log.info("Forced loading configuration from file.");
+            }
             return loadConfigFromFile(properties);
         }
     }
@@ -83,8 +96,18 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
         return configurationSvc.findActiveConfig().isPresent();
     }
 
-    private ConfigurationModel loadConfigFromDb() {
-        return configModelBuilder.create(configurationSvc.findActiveConfig().get());
+    private ConfigurationModel loadConfigFromDb() throws ConfigProducerInterceptorException {
+        var activeConfig = configurationSvc.findActiveConfig().get();
+        var configModel = configModelBuilder.create(activeConfig);
+        try {
+            configurationSvc.swapActiveConfig(activeConfig.getId(), true);
+        } catch (ConfigUpdateException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to load config from database.");
+            }
+            throw new ConfigProducerInterceptorException(e.getMessage());
+        }
+        return configModel;
     }
 
     private ConfigurationModel loadConfigFromFile(final ConfigProperties properties)
@@ -92,6 +115,9 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
         try {
             return loadConfig(properties);
         } catch (IOException | ConfigUpdateException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to load config from file.");
+            }
             throw new ConfigProducerInterceptorException(e.getMessage());
         }
     }
@@ -104,21 +130,26 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
         }
 
         final var config = getConfiguration(properties);
-
         if (log.isInfoEnabled()) {
-            log.info("Importing configuration from file.");
+            log.info("Loading configuration from file.");
         }
 
         final var configModel = deserializationSvc.getConfigurationModel(config);
+
+        //copy config values from application.properties as not part of config.json
+        configModel.setKeyStorePassword(properties.getKeyStorePassword());
+        configModel.setTrustStorePassword(properties.getTrustStorePassword());
+        configModel.setKeyStoreAlias(properties.getKeyAlias());
+        configModel.setTrustStoreAlias(properties.getKeyAlias());
+
         final var dscConfig
                 = configurationSvc.create(FromIdsObjectMapper.fromIdsConfig(configModel));
-        configurationSvc.swapActiveConfig(dscConfig.getId());
+        configurationSvc.swapActiveConfig(dscConfig.getId(), true);
         return configModel;
     }
 
-    @SuppressFBWarnings(value = "PATH_TRAVERSAL_IN",
-            justification = "path of config json should be specified by user")
-    private String getConfiguration(final ConfigProperties properties) throws IOException {
+    @SuppressFBWarnings(value = "PATH_TRAVERSAL_IN", justification = "Path should be set by user.")
+    private String getConfiguration(final ConfigProperties properties) {
         if (Paths.get(properties.getPath()).isAbsolute()) {
             return getAbsolutePathConfig(properties);
         } else {
@@ -126,14 +157,12 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
         }
     }
 
-    @SuppressFBWarnings(value = {"PATH_TRAVERSAL_IN", "REC_CATCH_EXCEPTION",
-            "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"},
-            justification = "path of config json should be specified by user")
-    private String getClassPathConfig(final ConfigProperties properties) throws IOException {
+    @SuppressFBWarnings(value = { "PATH_TRAVERSAL_IN", "REC_CATCH_EXCEPTION" },
+            justification = "Path should be set by user.")
+    private String getClassPathConfig(final ConfigProperties properties) {
         if (log.isInfoEnabled()) {
             log.info("Loading config from classpath. [path=({})]",
-                    properties.getPath().replaceAll("[\r\n]", "")
-            );
+                    properties.getPath().replaceAll("[\r\n]", ""));
         }
 
         try (var configStream = new ClassPathResource(properties.getPath()).getInputStream()) {
@@ -142,26 +171,24 @@ public class PreConfigInterceptor implements PreConfigProducerInterceptor {
             if (log.isWarnEnabled()) {
                 log.warn("Could not load config from classpath. [path=({})]",
                         properties.getPath().replaceAll("[\r\n]", ""));
-                throw new IOException(e.getMessage(), e);
             }
         }
         return "";
     }
 
-    @SuppressFBWarnings(value = {"PATH_TRAVERSAL_IN", "REC_CATCH_EXCEPTION"},
-            justification = "path of config json should be specified by user")
-    private String getAbsolutePathConfig(final ConfigProperties properties) throws IOException {
+    @SuppressFBWarnings(value = "PATH_TRAVERSAL_IN", justification = "Path should be set by user.")
+    private String getAbsolutePathConfig(final ConfigProperties properties) {
         if (log.isInfoEnabled()) {
             log.info("Loading config from absolute path. [path=({})]",
                     properties.getPath().replaceAll("[\r\n]", ""));
         }
+
         try (var fis = new FileInputStream(properties.getPath())) {
             return new String(fis.readAllBytes(), StandardCharsets.UTF_8);
-        } catch (Exception e) {
+        } catch (IOException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not load config from absolute path. [path=({})]",
                         properties.getPath().replaceAll("[\r\n]", ""));
-                throw new IOException(e.getMessage(), e);
             }
         }
         return "";
