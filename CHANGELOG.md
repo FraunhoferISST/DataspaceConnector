@@ -6,12 +6,13 @@ All notable changes to this project will be documented in this file.
 ### Added
 - New `application.properties` setting `configuration.force.reload` that forces reloading the configuration from the `config.json` instead of using the latest active configuration from the database. If not set, the default value is `false`.
 
-### Changed
-- Increase spring version from 2.5.5 to 2.5.6.
-
 ### Fixed
 - Only create agreements from contract offers with valid start and end date.
 - Check if agreement has expired before returning data.
+
+### Changed
+- Increase spring version from 2.5.5 to 2.5.6.
+- Increase messaging services version from 5.0.1 to 5.1.1.
 
 ## [6.4.0] - 2021-10-21
 
