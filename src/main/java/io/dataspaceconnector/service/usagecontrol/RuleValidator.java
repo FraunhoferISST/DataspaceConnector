@@ -124,11 +124,11 @@ public class RuleValidator {
      * @param contractOffers The contract offer.
      * @param map            The target contract map.
      * @param target         The target value.
-     * @return True if everything is fine, false in case of mismatch.
+     * @return An optional of the matching contract; an empty optional if none was found.
      */
-    public boolean validateRulesOfRequest(final List<Contract> contractOffers,
-                                          final Map<URI, List<Rule>> map,
-                                          final URI target) {
+    public Optional<Contract> findMatchingContractForRequest(final List<Contract> contractOffers,
+                                                             final Map<URI, List<Rule>> map,
+                                                             final URI target) {
         for (final var contract : contractOffers) {
             // Get rule list from contract offer.
             final var ruleList = dependencyResolver.getRulesByContractOffer(contract);
@@ -137,11 +137,11 @@ public class RuleValidator {
 
             // Compare rules
             if (compareRulesOfOfferToRequest(ruleList, values)) {
-                return true;
+                return Optional.of(contract);
             }
         }
 
-        return false;
+        return Optional.empty();
     }
 
     /**

@@ -1,10 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [X.X.X} - XXXX-XX-XX
+## [X.X.X] - XXXX-XX-XX
 
 ### Added
-
+- New `application.properties` setting `configuration.force.reload` that forces reloading the configuration from the `config.json` instead of using the latest active configuration from the database. If not set, the default value is `false`.
 - Allow using route ID (URI) as access URL for artifacts.
 - Allow using route ID (URI) as location for subscriptions.
 - Allow specifying route IDs when calling `GET /data` endpoint to automatically dispatch data via these routes.
@@ -15,6 +15,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Increase spring version from 2.5.5 to 2.5.6.
+- Increase messaging services version from 5.0.1 to 5.1.1.
+- Increase spring version from 2.5.5 to 2.5.6.
 - Change encoding of local data from `UTF-16` to `UTF-8`.
 - Change relation between `Route` and `Artifact` to one-to-one (previously one-to-many).
   - Link is created automatically when an artifact is created with a route reference as access URL.
@@ -22,7 +24,8 @@ All notable changes to this project will be documented in this file.
 - Replace template engine `Velocity` with `Freemarker`.
 
 ### Fixed
-
+- Only create agreements from contract offers with valid start and end date.
+- Check if agreement has expired before returning data.
 - XML-escape URLs before injecting them into Camel route templates.
 
 ### Removed
@@ -33,13 +36,6 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Add `ids` field to `/actuator/info` endpoint, to monitor the connectors certificate expiration status and DAT infos (if one can be received).
-
-### Fixed
-- `ArtifactFactory::updateByteSize` sets `byteSize` and `checksum` to 0 when data is removed.
-- Add nullcheck to `ArtifactService::toInputStream`.
-- Check if representations are null or empty in `getMediaTypeOfArtifact`.
-- Data to be deleted from a consumed artifact, if necessary, is now deleted only once and not with each scheduler call.
-- Fix collisions in bootstrapping process setting a unique path for the `bootstrap.path` property.
 
 ### Changed
 - Increase description column length to 4096.
@@ -52,10 +48,14 @@ All notable changes to this project will be documented in this file.
 - Increase springdoc version from 1.5.11 to 1.5.12.
 - Increase camel-idscp2 version from 0.5.0 to 0.6.0.
 
-## [6.3.1] - 2021-10-05
-
 ### Fixed
-- Check for `maxDepth` in `IdsResourceBuilder` when resolving samples to avoid possible `StackOverFlowError`.
+- `ArtifactFactory::updateByteSize` sets `byteSize` and `checksum` to 0 when data is removed.
+- Add nullcheck to `ArtifactService::toInputStream`.
+- Check if representations are null or empty in `getMediaTypeOfArtifact`.
+- Data to be deleted from a consumed artifact, if necessary, is now deleted only once and not with each scheduler call.
+- Fix collisions in bootstrapping process setting a unique path for the `bootstrap.path` property.
+
+## [6.3.1] - 2021-10-05
 
 ### Changed
 - Increase pitest-maven version from 1.7.0 to 1.7.1.
@@ -67,21 +67,14 @@ All notable changes to this project will be documented in this file.
 - Increase springdoc version from 1.5.10 to 1.5.11.
 - Increase camel version from 3.11.2 to 3.12.0.
 
+### Fixed
+- Check for `maxDepth` in `IdsResourceBuilder` when resolving samples to avoid possible `StackOverFlowError`.
+
 ## [6.3.0] - 2021-30-09
 
 ### Added
 - Add `connector` object to `/actuator/info` endpoint to return available updates and further information.
 - Add boolean `authenticationSet` to configuration entity as indicator for present proxy's authentication credentials.
-
-### Fixed
-- Fix self-reference of `QueryInput` in OpenApi schema.
-- Fix global exception handler intercepting checked exceptions.
-- Create Clearing House process before logging, so that consumer can log under same ID.
-- When creating an artifact, check length of whole URL instead of just path.
-- Use language code instead of language ID when creating `TypedLiterals`.
-- Make `SelfLinkHelper` non-static, so that it can use Spring properties.
-- Use only `/data` and not the request's context path as delimiter for determining additional path for data requests.
-- Create broker in database upon bootstrap start.
 
 ### Changed
 - Add `ServiceResolver` to remove some Spring annotations from service classes.
@@ -101,6 +94,16 @@ All notable changes to this project will be documented in this file.
 - Resolve spotbugs warnings.
 - Increase pmd version from 6.38.0 to 6.39.0.
 - Add additional representation for `paymentMethod` to GUI endpoint.
+
+### Fixed
+- Fix self-reference of `QueryInput` in OpenApi schema.
+- Fix global exception handler intercepting checked exceptions.
+- Create Clearing House process before logging, so that consumer can log under same ID.
+- When creating an artifact, check length of whole URL instead of just path.
+- Use language code instead of language ID when creating `TypedLiterals`.
+- Make `SelfLinkHelper` non-static, so that it can use Spring properties.
+- Use only `/data` and not the request's context path as delimiter for determining additional path for data requests.
+- Create broker in database upon bootstrap start.
 
 ## [6.2.0] - 2021-09-01
 
@@ -238,27 +241,25 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Change `ConnectorService` to use the connector's ID from `config.json` when `getAllCatalogsWithOfferedResources` is called.
+- Increase IDS Framework version to 5.0.4.
+- Update default Infomodel version to 4.0.10.
+- Increase postgres version to 42.2.22.
 
 ### Fixed
 - Fixed missing IDS context in `/api/examples/policy`.
 - Disable autocommit on database transactions.
 - Remove encoding from optional path segment in `HttpService`.
 
-### Changed
-- Increase IDS Framework version to 5.0.4.
-- Update default Infomodel version to 4.0.10.
-- Increase postgres version to 42.2.22.
-
 ## [5.1.2] - 2021-06-14
+
+### Changed
+- Increase postgresql version to 42.2.21.
+- Increase spring-boot version to 2.5.1.
 
 ### Fixed
 - Fixed deletion of artifact data before the set time.
 - Fixed tags with different descriptions in openapi schema.
 - Fixed missing paging information in openapi schema.
-
-### Changed
-- Increase postgresql version to 42.2.21.
-- Increase spring-boot version to 2.5.1.
 
 ## [5.1.1] - 2021-06-09
 
@@ -467,13 +468,6 @@ All notable changes to this project will be documented in this file.
 
 ## [3.2.1] - 2020-11-05
 
-### Changed
-- Update to IDS framework v3.2.3.
-- Move self-service and example endpoints to admin API.
-- Improve Dockerfile.
-- Add key- and truststore to example configuration.
-- Add default policy (provide access) to resource on creation.
-
 ### Added
 - Update and delete resources from broker.
 - Add configuration controller for GET and PUT configuration model.
@@ -482,6 +476,13 @@ All notable changes to this project will be documented in this file.
 - Add a description of how the internal database can be replaced by another.
 - Add .dockerignore file.
 
+### Changed
+- Update to IDS framework v3.2.3.
+- Move self-service and example endpoints to admin API.
+- Improve Dockerfile.
+- Add key- and truststore to example configuration.
+- Add default policy (provide access) to resource on creation.
+
 ### Fixed
 - Add representation.
 - Fix token error in test classes.
@@ -489,32 +490,32 @@ All notable changes to this project will be documented in this file.
 
 ## [3.2.0] - 2020-10-09
 
-### Changed
-- Change call to BrokerService constructor (parameters changed) in BrokerController.
-- Change call to IDSHttpService constructor (parameters changed) in ConnectorRequestServiceImpl.
-- Replace ConfigProducer with ConfigurationContainer in IdsUtils, MainController and DescriptionMessageHandler.
-
 ### Added
 - Autowire ConfigurationContainer in constructor to instantiate Connector, KeyStoreManager or ConfigurationModel (previously directly autowired).
 - Add ClientProvider field to all classes using an OkHttpClient (create instance in constructor from autowired ConfigurationContainer) & replace calls to IDSUtils.getClient() with clientProvider.getClient().
 - Add file URI scheme to paths of KeyStore and TrustStore in config.json.
 - Add test classes: SelfDescriptionTest, RequestDescriptionTest, RequestArtifactTest, DescriptionRequestMessageHandlingTest, ArtifactRequestMessageHandlingTest.
 
+### Changed
+- Change call to BrokerService constructor (parameters changed) in BrokerController.
+- Change call to IDSHttpService constructor (parameters changed) in ConnectorRequestServiceImpl.
+- Replace ConfigProducer with ConfigurationContainer in IdsUtils, MainController and DescriptionMessageHandler.
+
 ### Removed
 - IDS Connector certificate file.
 
 ## [3.1.0] - 2020-09-29
+
+### Added
+- Detailed Javadoc.
+- Endpoint for example usage policies.
+- Create NotificationMessageHandler for incoming notification messages. (TODO: not yet working, due to a pending IDS Framework update)
 
 ### Changed
 - Integrate IDS policy language.
 - Modify policy patterns.
 - Adapt policy reader to new policy language.
 - Adapt usage control implementation to new patterns.
-
-### Added
-- Detailed Javadoc.
-- Endpoint for example usage policies.
-- Create NotificationMessageHandler for incoming notification messages. (TODO: not yet working, due to a pending IDS Framework update)
 
 ### Removed
 - Old ODRL and policy resource examples.

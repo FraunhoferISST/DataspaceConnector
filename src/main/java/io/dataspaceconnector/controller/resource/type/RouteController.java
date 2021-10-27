@@ -29,7 +29,6 @@ import io.dataspaceconnector.model.route.RouteDesc;
 import io.dataspaceconnector.service.resource.type.RouteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -50,9 +49,10 @@ import java.util.UUID;
  * Offers the endpoints for managing routes.
  */
 @RestController
+@RequiredArgsConstructor
+@ApiResponse(responseCode = ResponseCode.NO_CONTENT, description = ResponseDescription.NO_CONTENT)
 @RequestMapping(BasePath.ROUTES)
 @Tag(name = ResourceName.ROUTES, description = ResourceDescription.ROUTES)
-@RequiredArgsConstructor
 public class RouteController extends BaseResourceController<Route, RouteDesc, RouteView,
         RouteService> {
 
@@ -93,12 +93,7 @@ public class RouteController extends BaseResourceController<Route, RouteDesc, Ro
      * @return response status OK, if start endpoint is created.
      */
     @PutMapping("{id}/endpoint/start")
-    @Operation(summary = "Creates start endpoint for the route")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
-                    description = ResponseDescription.NO_CONTENT),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @Operation(summary = "Creates the start endpoint for a route.")
     public ResponseEntity<String> createStartEndpoint(
             @Valid @PathVariable(name = "id") final UUID routeId,
             @RequestBody final UUID endpointId) {
@@ -111,12 +106,7 @@ public class RouteController extends BaseResourceController<Route, RouteDesc, Ro
      * @return response status OK, if start endpoint is deleted.
      */
     @DeleteMapping("{id}/endpoint/start")
-    @Operation(summary = "Deletes the start endpoint of the route")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
-                    description = ResponseDescription.NO_CONTENT),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @Operation(summary = "Deletes the start endpoint of a route.")
     public ResponseEntity<String> deleteStartEndpoint(
             @Valid @PathVariable(name = "id") final UUID routeId) {
         getService().removeStartEndpoint(routeId);
@@ -129,12 +119,7 @@ public class RouteController extends BaseResourceController<Route, RouteDesc, Ro
      * @return response status OK, if last endpoint is created.
      */
     @PutMapping("{id}/endpoint/end")
-    @Operation(summary = "Creates last endpoint for the route")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
-                    description = ResponseDescription.NO_CONTENT),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @Operation(summary = "Creates the last endpoint for the route.")
     public ResponseEntity<String> createLastEndpoint(
             @Valid @PathVariable(name = "id") final UUID routeId,
             @RequestBody final UUID endpointId) {
@@ -147,12 +132,7 @@ public class RouteController extends BaseResourceController<Route, RouteDesc, Ro
      * @return response status OK, if last endpoint is deleted.
      */
     @DeleteMapping("{id}/endpoint/end")
-    @Operation(summary = "Deletes the start endpoint of the route")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
-                    description = ResponseDescription.NO_CONTENT),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @Operation(summary = "Deletes the start endpoint of the route.")
     public ResponseEntity<String> deleteLastEndpoint(
             @Valid @PathVariable(name = "id") final UUID routeId) {
         getService().removeLastEndpoint(routeId);

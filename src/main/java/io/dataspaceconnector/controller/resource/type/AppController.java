@@ -94,9 +94,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     @Hidden
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
     @Override
     public final ResponseEntity<AppView> create(final AppDesc desc) {
         throw new MethodNotAllowed();
@@ -105,9 +103,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     @Hidden
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
     @Override
     public final ResponseEntity<AppView> update(final UUID resourceId, final AppDesc desc) {
         throw new MethodNotAllowed();
@@ -318,6 +314,25 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         portainerSvc.deleteRegistry(registryId);
 
         return containerId;
+    }
+
+    /**
+     * Get the AppStores related to the given app.
+     *
+     * @param appId The id of app for which related appstores should be found.
+     * @return The app store.
+     */
+    @GetMapping("/{id}/appstore")
+    @Operation(summary = "Get AppStore by app id.", description = "Get appstore holding this app.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+            @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
+                    description = ResponseDescription.BAD_REQUEST),
+            @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
+                    description = ResponseDescription.INTERNAL_SERVER_ERROR)})
+    @ResponseBody
+    public final ResponseEntity<Object> relatedAppStore(final @PathVariable("id") UUID appId) {
+        return ResponseEntity.ok(getService().getAppStoreByAppId(appId));
     }
 
     /**

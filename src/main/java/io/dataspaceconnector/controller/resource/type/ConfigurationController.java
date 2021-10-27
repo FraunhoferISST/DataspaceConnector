@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.resource.type;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.BaseResourceController;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
@@ -49,8 +50,8 @@ import java.util.UUID;
  * Offers the endpoints for managing configurations.
  */
 @RestController
-@RequestMapping(BasePath.CONFIGURATIONS)
 @RequiredArgsConstructor
+@RequestMapping(BasePath.CONFIGURATIONS)
 @Tag(name = ResourceName.CONFIGURATIONS, description = ResourceDescription.CONFIGURATIONS)
 public class ConfigurationController extends BaseResourceController<Configuration,
         ConfigurationDesc, ConfigurationView, ConfigurationService> {
@@ -66,14 +67,12 @@ public class ConfigurationController extends BaseResourceController<Configuratio
      * @return Ok or error response.
      */
     @PutMapping(value = "/{id}/active", consumes = {"*/*"})
-    @Operation(summary = "Update current configuration")
+    @Operation(summary = "Update current configuration.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
                     description = ResponseDescription.NO_CONTENT),
             @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
                     description = ResponseDescription.BAD_REQUEST),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED),
             @ApiResponse(responseCode = ResponseCode.UNSUPPORTED_MEDIA_TYPE,
                     description = ResponseDescription.UNSUPPORTED_MEDIA_TYPE),
             @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
@@ -95,12 +94,9 @@ public class ConfigurationController extends BaseResourceController<Configuratio
      *
      * @return The configuration object or an error.
      */
-    @GetMapping(value = "/active", produces = "application/hal+json")
-    @Operation(summary = "Get current configuration")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @GetMapping(value = "/active", produces = ResponseType.HAL)
+    @Operation(summary = "Get current configuration.")
+    @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     @ResponseBody
     public ConfigurationView getConfiguration() {
         return get(configurationSvc.getActiveConfig().getId());

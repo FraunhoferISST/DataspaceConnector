@@ -27,6 +27,7 @@ import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.model.artifact.Artifact;
 
 import java.net.URI;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -168,6 +169,26 @@ public final class ContractUtils {
                 .filter(x -> x.getConsumer().equals(issuerConnector) || x.getConsumer()
                         .toString()
                         .isBlank())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Checks whether contracts are valid according to their start and end date. If the current
+     * time is before a contract's start date or after a contract's end data, the contract is
+     * removed from the list.
+     *
+     * @param contracts The list of contracts to filter.
+     * @return The filtered list.
+     */
+    public static List<io.dataspaceconnector.model.contract.Contract>
+    removeContractsWithInvalidDates(
+            final List<io.dataspaceconnector.model.contract.Contract> contracts) {
+        Utils.requireNonNull(contracts, ErrorMessage.LIST_NULL);
+
+        final var now = ZonedDateTime.now();
+        return contracts
+                .parallelStream()
+                .filter(x -> now.isAfter(x.getStart()) && now.isBefore(x.getEnd()))
                 .collect(Collectors.toList());
     }
 
