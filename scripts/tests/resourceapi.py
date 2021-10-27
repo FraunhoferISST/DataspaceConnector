@@ -20,6 +20,7 @@ import json
 # Suppress ssl verification warning
 requests.packages.urllib3.disable_warnings()
 
+
 class ResourceApi:
     session = None
     recipient = None
