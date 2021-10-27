@@ -18,6 +18,7 @@ package io.dataspaceconnector.service.message.handler.validator;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.iais.eis.Rule;
+import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
 import io.dataspaceconnector.common.ids.policy.ContractUtils;
 import io.dataspaceconnector.service.EntityDependencyResolver;
@@ -102,15 +103,26 @@ class RuleValidator extends IdsValidator<Request<ContractRequestMessageImpl,
             throw new ContractListEmptyException(request, "List of contracts is empty.");
         }
 
-        // Abort negotiation if no contract offer for the issuer connector could be found.
-        final var validContracts =
-                ContractUtils.removeContractsWithInvalidConsumer(contracts, issuer);
+        // Abort negotiation if no contract offer with a valid time interval could be found
+        // for the issuer connector.
+        final var contractsWithValidTimeInterval = ContractUtils
+                .removeContractsWithInvalidDates(contracts);
+        final var validContracts = ContractUtils
+                .removeContractsWithInvalidConsumer(contractsWithValidTimeInterval, issuer);
         if (validContracts.isEmpty()) {
             throw new ContractListEmptyException(request, "List of valid contracts is empty.");
         }
 
         try {
-            return ruleValidator.validateRulesOfRequest(validContracts, targetRuleMap, target);
+            final var contract = ruleValidator
+                    .findMatchingContractForRequest(validContracts, targetRuleMap, target);
+            if (contract.isEmpty()) {
+                return false;
+            } else {
+                // Set the end date of the matching contract offer for the request
+                request.setContractEnd(ToIdsObjectMapper.getGregorianOf(contract.get().getEnd()));
+                return true;
+            }
         } catch (IllegalArgumentException e) {
             throw new MalformedRuleException("Malformed rule.", e);
         }
