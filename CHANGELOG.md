@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Only create agreements from contract offers with valid start and end date.
 - Check if agreement has expired before returning data.
+- Always use default base URL when creating self-links.
 
 ## [6.4.0] - 2021-10-21
 
