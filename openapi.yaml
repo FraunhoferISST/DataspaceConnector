@@ -25,7 +25,7 @@ info:
   license:
     name: "Apache License, Version 2.0"
     url: https://www.apache.org/licenses/LICENSE-2.0.txt
-  version: 6.5.0-SNAPSHOT
+  version: 6.5.0
 servers:
   - url: https://localhost:8080
     description: Generated server url
@@ -6899,6 +6899,9 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
+            ids:unit:
+              type: string
+              format: uri
             ids:pipEndpoint:
               type: string
               format: uri
@@ -6924,9 +6927,6 @@ components:
                 - https://w3id.org/idsa/code/STATE
                 - https://w3id.org/idsa/code/SYSTEM
                 - https://w3id.org/idsa/code/USER
-            ids:unit:
-              type: string
-              format: uri
             ids:operator:
               type: string
               enum:
@@ -7006,15 +7006,15 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
-            ids:or:
-              type: array
-              items:
-                $ref: '#/components/schemas/Constraint'
             ids:and:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
             ids:xone:
+              type: array
+              items:
+                $ref: '#/components/schemas/Constraint'
+            ids:or:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
@@ -7085,11 +7085,16 @@ components:
         ids:target:
           type: string
           format: uri
-        ids:constraint:
+        ids:assignee:
           type: array
           items:
-            oneOf:
-              - $ref: '#/components/schemas/LogicalConstraint'
+            type: string
+            format: uri
+        ids:assigner:
+          type: array
+          items:
+            type: string
+            format: uri
         ids:action:
           type: array
           items:
@@ -7111,20 +7116,15 @@ components:
               - https://w3id.org/idsa/code/TRACK_PROVENANCE
               - https://w3id.org/idsa/code/USE
               - https://w3id.org/idsa/code/WRITE
-        ids:assignee:
+        ids:constraint:
           type: array
           items:
-            type: string
-            format: uri
+            oneOf:
+              - $ref: '#/components/schemas/LogicalConstraint'
         ids:assetRefinement:
           oneOf:
             - $ref: '#/components/schemas/Constraint'
             - $ref: '#/components/schemas/LogicalConstraint'
-        ids:assigner:
-          type: array
-          items:
-            type: string
-            format: uri
         ids:description:
           type: array
           items:

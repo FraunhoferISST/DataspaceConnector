@@ -16,7 +16,10 @@
 #
 
 import requests
-import json
+
+# Suppress ssl verification warning
+requests.packages.urllib3.disable_warnings()
+
 
 class SubscriptionApi:
     session = None
@@ -34,10 +37,11 @@ class SubscriptionApi:
         return response.headers["Location"]
 
     def subscription_message(self, data={}, params={}):
-        response = self.session.post(self.recipient + "/api/ids/subscribe", json=data, params=params)
+        response = self.session.post(
+            self.recipient + "/api/ids/subscribe", json=data, params=params
+        )
         return response
 
     def get_subscriptions(self):
         response = self.session.get(self.recipient + "/api/subscriptions")
         return response
-

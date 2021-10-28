@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.templatebuilder;
 
-import io.dataspaceconnector.model.resource.OfferedResourceDesc;
-import io.dataspaceconnector.model.template.ResourceTemplate;
 import io.dataspaceconnector.repository.OfferedResourcesRepository;
 import io.dataspaceconnector.service.resource.relation.OfferedResourceContractLinker;
 import io.dataspaceconnector.service.resource.relation.OfferedResourceRepresentationLinker;
@@ -25,7 +23,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 
