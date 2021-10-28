@@ -2,6 +2,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [X.X.X] - XXXX-XX-XX
+
+### Fixed
+- Always use default base URL when creating self-links.
+
 ## [6.5.0] - 2021-10-27
 
 ### Added

@@ -63,18 +63,4 @@ public class SelfLinkHelper {
 
         return link;
     }
-
-    /**
-     * Builds the self-link for an entity. If no request context is present, the resulting link
-     * will not be absolute.
-     *
-     * @param entityId The entity id.
-     * @param tClass   The controller class for managing the entity class.
-     * @param <T>      Type of the entity.
-     * @return The self-link of the entity.
-     * @throws IllegalArgumentException if the class is null.
-     */
-    public static <T> Link getSelfLinkWithoutDefault(final UUID entityId, final Class<T> tClass) {
-        return linkTo(tClass).slash(entityId).withSelfRel();
-    }
 }
