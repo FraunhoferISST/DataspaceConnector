@@ -34,13 +34,16 @@ import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.ids.policy.RuleUtils;
 import io.dataspaceconnector.common.exception.ContractException;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
+import io.dataspaceconnector.controller.resource.type.ArtifactController;
+import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.model.agreement.Agreement;
+import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.service.EntityDependencyResolver;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -52,7 +55,6 @@ import java.util.List;
  * This service offers methods related to contract management.
  */
 @Service
-@RequiredArgsConstructor
 public class ContractManager {
 
     /**
@@ -76,6 +78,33 @@ public class ContractManager {
     private final @NonNull ConnectorService connectorService;
 
     /**
+     * Helper class for creating self-links.
+     */
+    private final @NonNull SelfLinkHelper selfLinkHelper;
+
+    /**
+     * Constructs a ContractManager.
+     *
+     * @param deserializationSvc The deserialization service.
+     * @param entityDependencyResolver The dependency resolver.
+     * @param resolver The entity resolver.
+     * @param connectorSvc The connector service.
+     * @param linkHelper The self link helper.
+     */
+    public ContractManager(@NonNull final DeserializationService deserializationSvc,
+                           @NonNull final EntityDependencyResolver entityDependencyResolver,
+                           @NonNull final EntityResolver resolver,
+                           @NonNull final ConnectorService connectorSvc,
+                           @NonNull @Qualifier("utilSelfLinkHelper")
+                           final SelfLinkHelper linkHelper) {
+        this.deserializationService = deserializationSvc;
+        this.dependencyResolver = entityDependencyResolver;
+        this.entityResolver = resolver;
+        this.connectorService = connectorSvc;
+        this.selfLinkHelper = linkHelper;
+    }
+
+    /**
      * Check if the transfer contract is valid and the conditions are fulfilled.
      *
      * @param agreementId       The id of the contract.
@@ -97,7 +126,7 @@ public class ContractManager {
         final var agreement = (Agreement) entity.get();
         final var artifacts = dependencyResolver.getArtifactsByAgreement(agreement);
 
-        if (!ContractUtils.isMatchingTransferContract(artifacts, requestedArtifact)) {
+        if (!isMatchingTransferContract(artifacts, requestedArtifact)) {
             // If the requested artifact does not match the agreement, send rejection message.
             throw new ContractException("Transfer contract does not match the requested artifact.");
         }
@@ -124,6 +153,29 @@ public class ContractManager {
         }
 
         return idsAgreement;
+    }
+
+    /**
+     * Check if the transfer contract's target matches the requested artifact.
+     *
+     * @param artifacts         List of artifacts.
+     * @param requestedArtifact Id of the requested artifact.
+     * @return True if the requested artifact matches the transfer contract's artifacts.
+     * @throws ResourceNotFoundException If a resource could not be found.
+     */
+    private boolean isMatchingTransferContract(final List<Artifact> artifacts,
+                                               final URI requestedArtifact)
+            throws ResourceNotFoundException {
+        for (final var artifact : artifacts) {
+            final var endpoint = selfLinkHelper
+                    .getSelfLink(artifact.getId(), ArtifactController.class).toUri();
+            if (endpoint.equals(requestedArtifact)) {
+                return true;
+            }
+        }
+
+        // If the requested artifact could not be found in the transfer contract (agreement).
+        return false;
     }
 
     /**

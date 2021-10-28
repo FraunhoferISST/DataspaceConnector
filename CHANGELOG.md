@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Setting `spring.security.enabled=false` will disable BasicAuth and other security checks.
+- Always use default base URL when creating self-links.
 
 ## [6.5.0] - 2021-10-27
 
