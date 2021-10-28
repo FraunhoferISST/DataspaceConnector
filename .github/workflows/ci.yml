@@ -148,7 +148,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Lint Docker
-      uses: hadolint/hadolint-action@v1.5.0
+      uses: hadolint/hadolint-action@v1.6.0
       with:
         dockerfile: Dockerfile
         config: .hadolint.yaml
