@@ -17,6 +17,7 @@ package io.dataspaceconnector.config.security;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.log4j.Log4j2;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -34,13 +35,11 @@ public class DatabaseConsoleConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     @SuppressFBWarnings("SPRING_CSRF_PROTECTION_DISABLED")
-    protected final void configure(final HttpSecurity httpSecurity) throws Exception {
-
-        httpSecurity.authorizeRequests().antMatchers("/**")
-                .permitAll().anyRequest().authenticated();
-
-        httpSecurity.csrf().disable();
-        httpSecurity.headers().frameOptions().disable();
+    protected final void configure(final HttpSecurity http) throws Exception {
+        http.headers().frameOptions().disable();
+        if (log.isWarnEnabled()) {
+            log.warn("H2 Console enabled. Disabling frame protection.");
+        }
     }
 
 }
