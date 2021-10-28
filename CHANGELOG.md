@@ -14,7 +14,7 @@ All notable changes to this project will be documented in this file.
 - Create datasource beans from `DataSources` of type `DATABASE` automatically.
 
 ### Changed
-- Increase spring version from 2.5.5 to 2.5.6.
+- Change base image from debian 10 to 11.
 - Change encoding of local data from `UTF-16` to `UTF-8`.
 - Change relation between `Route` and `Artifact` to one-to-one (previously one-to-many).
   - Link is created automatically when an artifact is created with a route reference as access URL.
@@ -22,6 +22,8 @@ All notable changes to this project will be documented in this file.
 - Replace template engine `Velocity` with `Freemarker`.
 
 ### Fixed
+- Setting `spring.security.enabled=false` will disable BasicAuth and other security checks.
+- Always use default base URL when creating self-links.
 - XML-escape URLs before injecting them into Camel route templates.
 
 ### Removed

@@ -20,11 +20,7 @@ import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.common.exception.ContractException;
 import io.dataspaceconnector.common.exception.ErrorMessage;
-import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.util.Utils;
-import io.dataspaceconnector.controller.resource.type.ArtifactController;
-import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
-import io.dataspaceconnector.model.artifact.Artifact;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -190,29 +186,6 @@ public final class ContractUtils {
                 .parallelStream()
                 .filter(x -> now.isAfter(x.getStart()) && now.isBefore(x.getEnd()))
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Check if the transfer contract's target matches the requested artifact.
-     *
-     * @param artifacts         List of artifacts.
-     * @param requestedArtifact Id of the requested artifact.
-     * @return True if the requested artifact matches the transfer contract's artifacts.
-     * @throws ResourceNotFoundException If a resource could not be found.
-     */
-    public static boolean isMatchingTransferContract(final List<Artifact> artifacts,
-                                                     final URI requestedArtifact)
-            throws ResourceNotFoundException {
-        for (final var artifact : artifacts) {
-            final var endpoint = SelfLinkHelper
-                    .getSelfLinkWithoutDefault(artifact.getId(), ArtifactController.class).toUri();
-            if (endpoint.equals(requestedArtifact)) {
-                return true;
-            }
-        }
-
-        // If the requested artifact could not be found in the transfer contract (agreement).
-        return false;
     }
 
     /**
