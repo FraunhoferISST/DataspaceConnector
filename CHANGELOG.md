@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [X.X.X] - XXXX-XX-XX
 
+### Changed
+- Change base image from debian 10 to 11.
+
 ### Fixed
 - Always use default base URL when creating self-links.
 
