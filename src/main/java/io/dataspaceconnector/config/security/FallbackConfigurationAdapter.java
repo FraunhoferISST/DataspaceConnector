@@ -24,6 +24,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+/**
+ * Fallback security configuration incase security should be disabled.
+ */
 @Configuration
 @Getter(AccessLevel.PUBLIC)
 @ConditionalOnProperty(value = "spring.security.enabled", havingValue = "false")
