@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Change base image from debian 10 to 11.
+- Change jdk version from 11 to 17.
 
 ### Fixed
 - Setting `spring.security.enabled=false` will disable BasicAuth and other security checks.
