@@ -570,15 +570,15 @@ public final class FromIdsObjectMapper {
         desc.setDefaultEndpoint(connector.getHasDefaultEndpoint().getAccessURL());
         desc.setInboundModelVersion(connector.getInboundModelVersion());
         desc.setOutboundModelVersion(connector.getOutboundModelVersion());
-        desc.setKeystoreSettings(new KeystoreDesc(
+        desc.setKeystore(new KeystoreDesc(
                 configModel.getKeyStore(),
                 configModel.getKeyStorePassword(),
                 configModel.getKeyStoreAlias()));
         desc.setLogLevel(fromIdsLogLevel(configModel.getConfigurationModelLogLevel()));
         desc.setMaintainer(connector.getMaintainer());
-        desc.setProxySettings(fromIdsProxy(configModel.getConnectorProxy()));
+        desc.setProxy(fromIdsProxy(configModel.getConnectorProxy()));
         desc.setSecurityProfile(fromIdsSecurityProfile(connector.getSecurityProfile()));
-        desc.setTruststoreSettings(new TruststoreDesc(
+        desc.setTruststore(new TruststoreDesc(
                 configModel.getTrustStore(),
                 configModel.getTrustStorePassword(),
                 configModel.getTrustStoreAlias()));
