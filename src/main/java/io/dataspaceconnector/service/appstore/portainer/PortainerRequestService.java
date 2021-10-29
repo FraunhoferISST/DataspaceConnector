@@ -1076,10 +1076,11 @@ public class PortainerRequestService {
      */
     private String createRequestBodyForAuthentication(final String username,
                                                       final String password) {
-        return new JSONObject() {{
-            put("Username", username);
-            put("Password", password);
-        }}.toString();
+        final var jsonObject = new JSONObject();
+        jsonObject.put("Username", username);
+        jsonObject.put("Password", password);
+
+        return jsonObject.toString();
     }
 
     /**

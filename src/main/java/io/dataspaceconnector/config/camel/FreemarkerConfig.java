@@ -32,14 +32,14 @@ public class FreemarkerConfig {
      */
     @Bean
     public Configuration freemarkerConfiguration() {
-        return new Configuration(Configuration.VERSION_2_3_31) {{
-            setClassForTemplateLoading(this.getClass(), "/camel-templates");
-            setDefaultEncoding("UTF-8");
-            setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-            setLogTemplateExceptions(false);
-            setWrapUncheckedExceptions(true);
-            setFallbackOnNullLoopVariable(false);
-        }};
+        final var config = new Configuration(Configuration.VERSION_2_3_31);
+        config.setClassForTemplateLoading(this.getClass(), "/camel-templates");
+        config.setDefaultEncoding("UTF-8");
+        config.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+        config.setLogTemplateExceptions(false);
+        config.setWrapUncheckedExceptions(true);
+        config.setFallbackOnNullLoopVariable(false);
+        return config;
     }
 
 }
