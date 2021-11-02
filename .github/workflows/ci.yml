@@ -181,9 +181,18 @@ jobs:
       - name: Install SBoM generator
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-      - name: Generate SBoM
+      - name: Install SBom pusher
         run: |
-          syft "${IMAGE}:ci" -o spdx-json > "${ARTIFACT}-sbom.json"
+          curl -LO https://github.com/oras-project/oras/releases/download/v0.12.0/oras_0.12.0_linux_amd64.tar.gz
+          mkdir -p oras-install/
+          tar -zxf oras_0.12.0_*.tar.gz -C oras-install/
+          mv oras-install/oras /usr/local/bin/
+          rm -rf oras_0.12.0_*.tar.gz oras-install/
+      - name: Generate and push SBoM
+        run: |
+          BOM="${ARTIFACT}-sbom.json"
+          syft "${IMAGE}:ci" -o spdx-json > "${BOM}"
+          oras push "${IMAGE}-sbom:ci" "${BOM}:application/json"
         env:
           IMAGE: ${{ steps.get_image_name.outputs.image_name }}
           ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
@@ -203,7 +212,7 @@ jobs:
       - name: Push SBoM
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-image-sbom
+          name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-image-sbom.json
           path: ${{ github.workspace }}/${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-sbom.json
           retention-days: 1
 
