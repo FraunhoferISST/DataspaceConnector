@@ -154,7 +154,7 @@ jobs:
         config: .hadolint.yaml
 
   build_test_image:
-    needs: [linting, unit-and-integration-tests]
+    # needs: [linting, unit-and-integration-tests]
     timeout-minutes: 15
     runs-on: ubuntu-latest
     outputs:
