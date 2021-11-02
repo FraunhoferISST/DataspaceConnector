@@ -191,7 +191,11 @@ jobs:
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
       - name: Install SBom pusher
         run: |
+          ORAS_EXPECTED_DIGEST='660a4ecd87414d1f29610b2ed4630482f1f0d104431576d37e59752c27de37ed'
           curl -LO https://github.com/oras-project/oras/releases/download/v0.12.0/oras_0.12.0_linux_amd64.tar.gz
+          ORAS_RESULT_DIGEST=$(sha256sum cosign | cut -d' ' -f1);
+          if [[ $ORAS_RESULT_DIGEST != "${ORAS_EXPECTED_DIGEST}" ]]; then exit 1; fi
+
           mkdir -p oras-install/
           tar -zxf oras_0.12.0_*.tar.gz -C oras-install/
           mv oras-install/oras /usr/local/bin/

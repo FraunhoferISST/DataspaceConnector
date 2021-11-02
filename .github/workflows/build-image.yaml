@@ -40,6 +40,18 @@ jobs:
          echo $TMP
          echo ::set-output name=BRANCH::$TMP
       -
+        name: Install SBoM generator
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+      -
+        name: Install SBoM pusher
+        run: |
+          curl -LO https://github.com/oras-project/oras/releases/download/v0.12.0/oras_0.12.0_linux_amd64.tar.gz
+          mkdir -p oras-install/
+          tar -zxf oras_0.12.0_*.tar.gz -C oras-install/
+          mv oras-install/oras /usr/local/bin/
+          rm -rf oras_0.12.0_*.tar.gz oras-install/
+      -
        name: Login to registry
        uses: docker/login-action@v1
        with:
@@ -51,6 +63,8 @@ jobs:
        name: Build image
        run: |
         docker build . -t $IMAGE:$BRANCH
+        BOM="${IMAGE}-sbom.json"
+        syft "${IMAGE}:$BRANCH" -o spdx-json > "${BOM}"
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
          BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
@@ -62,6 +76,8 @@ jobs:
          echo $BRANCH
          echo $TAG
          TMP=$TAG
+         BOM="${IMAGE}-sbom.json"
+
          if [[ $TMP == v* ]]
          then
            # Its a version tag
@@ -69,10 +85,12 @@ jobs:
            echo "Found a version tag"
            docker tag $IMAGE:$BRANCH $IMAGE:latest
            docker push $IMAGE:latest
+           oras push "${IMAGE}-sbom:latest" "${BOM}:application/json"
          fi
          # Has tag
          docker tag $IMAGE:$BRANCH $IMAGE:$TMP
          docker push $IMAGE:$TMP
+         oras push "${IMAGE}-sbom:$TMP" "${BOM}:application/json"
        if: startsWith(github.ref, 'refs/tags')
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
@@ -82,10 +100,14 @@ jobs:
        name: Push branch image
        run: |
          docker push $IMAGE:$BRANCH
+
+         BOM="${IMAGE}-sbom.json"
+         oras push "${IMAGE}-sbom:$BRANCH" "${BOM}:application/json"
        if: startsWith(github.ref, 'refs/heads')
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
          BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
+
   debug:
     timeout-minutes: 30
     runs-on: ubuntu-latest
@@ -114,6 +136,18 @@ jobs:
          echo $TMP
          echo ::set-output name=BRANCH::$TMP
       -
+        name: Install SBoM generator
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+      -
+        name: Install SBoM pusher
+        run: |
+          curl -LO https://github.com/oras-project/oras/releases/download/v0.12.0/oras_0.12.0_linux_amd64.tar.gz
+          mkdir -p oras-install/
+          tar -zxf oras_0.12.0_*.tar.gz -C oras-install/
+          mv oras-install/oras /usr/local/bin/
+          rm -rf oras_0.12.0_*.tar.gz oras-install/
+      -
        name: Login to registry
        uses: docker/login-action@v1
        with:
@@ -136,6 +170,8 @@ jobs:
          echo $BRANCH
          echo $TAG
          TMP=$TAG
+         BOM="${IMAGE}-sbom.json"
+
          if [[ $TMP == v* ]]
          then
            # Its a version tag
@@ -145,6 +181,7 @@ jobs:
          # Has tag
          docker tag $IMAGE:$BRANCH $IMAGE:$TMP-debug
          docker push $IMAGE:$TMP-debug
+         oras push "${IMAGE}-sbom:$TMP-debug" "${BOM}:application/json"
        if: startsWith(github.ref, 'refs/tags')
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
@@ -155,6 +192,8 @@ jobs:
        run: |
          docker tag $IMAGE:$BRANCH $IMAGE:$BRANCH-debug
          docker push $IMAGE:$BRANCH-debug
+         BOM="${IMAGE}-sbom.json"
+         oras push "${IMAGE}-sbom:$BRANCH-debug" "${BOM}:application/json"
        if: startsWith(github.ref, 'refs/heads')
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
