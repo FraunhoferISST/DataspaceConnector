@@ -164,11 +164,18 @@ jobs:
     steps:
       - name: Install SBoM generator
         run: |
-          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+          SYFT_EXPECTED_DIGEST='74a9becd5ccb4c02de99050a632e7bfc72176d5e4e844093b1e2c5bedfb45888'
+          curl -sSfL https://github.com/anchore/syft/releases/download/v0.29.0/syft_0.29.0_linux_amd64.tar.gz -o syft.tar.gz
+          SYFT_RESULT_DIGEST=$(sha256sum syft.tar.gz | cut -d' ' -f1);
+
+          mkdir -p syft-install/
+          tar -zxf syft.tar.gz -C syft-install/
+          mv syft-install/syft /usr/local/bin/
+          rm -rf syft.tar.gz syft-install/
       - name: Install SBom pusher
         run: |
           ORAS_EXPECTED_DIGEST='660a4ecd87414d1f29610b2ed4630482f1f0d104431576d37e59752c27de37ed'
-          curl -L https://github.com/oras-project/oras/releases/download/v0.12.0/oras_0.12.0_linux_amd64.tar.gz -o oras.tar.gz
+          curl -sSfL https://github.com/oras-project/oras/releases/download/v0.12.0/oras_0.12.0_linux_amd64.tar.gz -o oras.tar.gz
           ORAS_RESULT_DIGEST=$(sha256sum oras.tar.gz | cut -d' ' -f1);
           if [[ $ORAS_RESULT_DIGEST != "${ORAS_EXPECTED_DIGEST}" ]]; then exit 1; fi
 
