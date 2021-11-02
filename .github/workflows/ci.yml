@@ -178,6 +178,15 @@ jobs:
         env:
           IMAGE: ${{ steps.get_image_name.outputs.image_name }}
           DOCKER_BUILDKIT: 1
+      - name: Install SBoM generator
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+      - name: Generate SBoM
+        run: |
+          syft "${IMAGE}:ci" -o spdx-json > "${ARTIFACT}-sbom.json"
+        env:
+          IMAGE: ${{ steps.get_image_name.outputs.image_name }}
+          ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
       - name: Build tar ball
         id: build_tar_ball
         run: |
@@ -190,6 +199,12 @@ jobs:
         with:
           name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-image
           path: ${{ github.workspace }}/${{ steps.get_image_artifact_name.outputs.image_artifact_name }}.tar
+          retention-days: 1
+      - name: Push SBom
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-image
+          path: ${{ github.workspace }}/${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-sbom.json
           retention-days: 1
 
   image-security-scan:
