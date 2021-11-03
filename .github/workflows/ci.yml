@@ -228,8 +228,7 @@ jobs:
       - name: Signing images
         run: |
           echo ${COSIGN_KEY} > /tmp/cosign.key && \
-          cosign sign --key /tmp/cosign.key "${IMAGE}:ci" && \
-          rm /tmp/cosign.key
+          cosign sign --key /tmp/cosign.key "${IMAGE}:ci"
         env:
           IMAGE: ${{ steps.get_image_name.outputs.image_name }}
           COSIGN_KEY: ${{secrets.COSIGN_KEY}}
