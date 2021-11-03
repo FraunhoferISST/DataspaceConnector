@@ -227,7 +227,7 @@ jobs:
           ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
       - name: Signing images
         run: |
-          echo ${COSIGN_KEY} > /tmp/cosign.key && \
+          echo ${COSIGN_KEY} > /tmp/cosign.key
           # cosign sign --key /tmp/cosign.key "${IMAGE}:ci"
         env:
           IMAGE: ${{ steps.get_image_name.outputs.image_name }}
