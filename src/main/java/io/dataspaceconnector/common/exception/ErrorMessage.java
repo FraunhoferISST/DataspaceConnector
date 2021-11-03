@@ -31,6 +31,11 @@ public enum ErrorMessage {
     DESC_NULL("The description parameter may not be null."),
 
     /**
+     * The passed dat may not be null.
+     */
+    DAT_NULL("The dat may not be null."),
+
+    /**
      * The passed message may not be null.
      */
     MESSAGE_NULL("The message may not be null."),
