@@ -60,6 +60,26 @@ Connector and its GUI, see [here](https://github.com/International-Data-Spaces-A
 
 If you want to build and run locally, follow [these](https://international-data-spaces-association.github.io/DataspaceConnector/GettingStarted#quick-start) steps.
 
+## Security and Verification
+
+The offical images of the Dataspace Connector can be found [here](https://github.com/International-Data-Spaces-Association/DataspaceConnector/pkgs/container/dataspace-connector) and are signed using [cosign](https://github.com/sigstore/cosign).
+The public key of the Dataspace Connector can be found at the root of the project structure [(here)](https://github.com/International-Data-Spaces-Association/DataspaceConnector/blob/main/dsc.pub).
+
+For verification that you have received an offical image from a trusted source run:
+```commandline
+cosign verify --key dsc.pub ghcr.io/international-data-spaces-association/dataspace-connector:latest
+```
+
+### Software Bill of Material (SBoM)
+The Software Bill of Material (SBoM) for every docker image is supplied as [SPDX-JSON](https://spdx.org/licenses/JSON.html) and can be found by appending "-sbom" to the docker image tag.
+
+E.g. the SBoM for "ghcr.io/international-data-spaces-association/dataspace-connector:latest" is "ghcr.io/international-data-spaces-association/dataspace-connector:latest-sbom".
+
+The SBoM can be pulled via tools like [oras](https://github.com/oras-project/oras).
+```commandline
+oras pull ghcr.io/international-data-spaces-association/dataspace-connector:latest-sbom -a
+```
+
 ## Contributing
 
 You are very welcome to contribute to this project when you find a bug, want to suggest an
