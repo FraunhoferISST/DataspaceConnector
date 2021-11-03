@@ -211,7 +211,8 @@ jobs:
         run: |
           BOM="${ARTIFACT}-sbom.json"
           syft "${IMAGE}:ci" -o spdx-json > "${BOM}"
-          oras push "${IMAGE}-sbom:ci" "${BOM}:application/json"
+          docker push "${IMAGE}:ci"
+          oras push "${IMAGE}:ci-sbom" "${BOM}:application/json"
         env:
           IMAGE: ${{ steps.get_image_name.outputs.image_name }}
           ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
