@@ -227,8 +227,9 @@ jobs:
           ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
       - name: Signing images
         run: |
-          echo ${COSIGN_KEY} > /tmp/cosign.key
-          # cosign sign --key /tmp/cosign.key "${IMAGE}:ci"
+          echo "${COSIGN_KEY}" > /tmp/cosign.key
+          cosign sign --key /tmp/cosign.key "${IMAGE}:ci"
+          rm /tmp/cosign.key
         env:
           IMAGE: ${{ steps.get_image_name.outputs.image_name }}
           COSIGN_KEY: ${{secrets.COSIGN_KEY}}
@@ -251,12 +252,6 @@ jobs:
         with:
           name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-image-sbom.json
           path: ${{ github.workspace }}/${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-sbom.json
-          retention-days: 1
-      - name: Push key
-        uses: actions/upload-artifact@v2
-        with:
-          name: cosign.key
-          path: /tmp/cosign.key
           retention-days: 1
 
   image-security-scan:
