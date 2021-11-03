@@ -252,6 +252,12 @@ jobs:
           name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-image-sbom.json
           path: ${{ github.workspace }}/${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-sbom.json
           retention-days: 1
+      - name: Push key
+        uses: actions/upload-artifact@v2
+        with:
+          name: cosign.key
+          path: /tmp/cosign.key
+          retention-days: 1
 
   image-security-scan:
     needs: [build_test_image]
