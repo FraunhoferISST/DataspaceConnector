@@ -154,7 +154,7 @@ jobs:
         config: .hadolint.yaml
 
   build_test_image:
-    # needs: [linting, unit-and-integration-tests]
+    needs: [linting, unit-and-integration-tests]
     timeout-minutes: 15
     runs-on: ubuntu-latest
     outputs:
@@ -184,14 +184,6 @@ jobs:
           tar -zxf oras.tar.gz -C oras-install/
           mv oras-install/oras /usr/local/bin/
           rm -rf oras.tar.gz oras-install/
-      - name: Install signing
-        run: |
-          COSIGN_EXPECTED_DIGEST='9604a5eb171748113f92a67495556007dde6f45804f0b38d3e55c3bc7e151774'
-          curl -sSfL https://github.com/sigstore/cosign/releases/download/v1.3.0/cosign-linux-amd64 -o cosign
-          COSIGN_RESULT_DIGEST=$(sha256sum cosign | cut -d' ' -f1);
-          if [[ $COSIGN_RESULT_DIGEST != "${COSIGN_EXPECTED_DIGEST}" ]]; then exit 1; fi
-          chmod +x cosign
-          mv cosign /usr/local/bin/cosign
       -
         name: Login to registry
         uses: docker/login-action@v1
@@ -216,24 +208,13 @@ jobs:
         env:
           IMAGE: ${{ steps.get_image_name.outputs.image_name }}
           DOCKER_BUILDKIT: 1
-      - name: Generate and push SBoM
+      - name: Generate SBoM
         run: |
           BOM="${ARTIFACT}-sbom.json"
           syft "${IMAGE}:ci" -o spdx-json > "${BOM}"
-          docker push "${IMAGE}:ci"
-          oras push "${IMAGE}:ci-sbom" "${BOM}:application/json"
         env:
           IMAGE: ${{ steps.get_image_name.outputs.image_name }}
           ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
-      - name: Signing images
-        run: |
-          echo "${COSIGN_KEY}" > /tmp/cosign.key
-          cosign sign --key /tmp/cosign.key "${IMAGE}:ci"
-          rm /tmp/cosign.key
-        env:
-          IMAGE: ${{ steps.get_image_name.outputs.image_name }}
-          COSIGN_KEY: ${{secrets.COSIGN_KEY}}
-          COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
       - name: Build tar ball
         id: build_tar_ball
         run: |
