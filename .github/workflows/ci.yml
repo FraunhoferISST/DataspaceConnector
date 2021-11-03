@@ -184,14 +184,6 @@ jobs:
           tar -zxf oras.tar.gz -C oras-install/
           mv oras-install/oras /usr/local/bin/
           rm -rf oras.tar.gz oras-install/
-      -
-        name: Login to registry
-        uses: docker/login-action@v1
-        with:
-          # This should use REGISTRY instead of the secret directly
-          registry: ${{ secrets.IMAGE_REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Checkout Repo
         uses: actions/checkout@v2
       - name: Build image artifact name
