@@ -7,10 +7,6 @@ on:
    release:
      types: [published]
 
-env:
-  REGISTRY: ${{ secrets.IMAGE_REGISTRY }}
-  OWNER: ${{ secrets.REPO_USER }}
-
 jobs:
   productive:
     environment: registry
@@ -23,7 +19,7 @@ jobs:
       -
         name: Build registry path
         id: get_repo
-        run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspace-connector"
+        run: echo ::set-output name=IMAGE::"ghcr.io/international-data-spaces-association/dataspace-connector"
       -
        name: Find tag
        id: get_tag
@@ -76,8 +72,7 @@ jobs:
        name: Login to registry
        uses: docker/login-action@v1
        with:
-         # This should use REGISTRY instead of the secret directly
-         registry: ${{ secrets.IMAGE_REGISTRY }}
+         registry: ghcr.io
          username: ${{ github.actor }}
          password: ${{ secrets.GITHUB_TOKEN }}
       -
@@ -159,7 +154,7 @@ jobs:
       -
         name: Build registry path
         id: get_repo
-        run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspace-connector"
+        run: echo ::set-output name=IMAGE::"ghcr.io/international-data-spaces-association/dataspace-connector"
       -
        name: Find tag
        id: get_tag
@@ -212,8 +207,7 @@ jobs:
        name: Login to registry
        uses: docker/login-action@v1
        with:
-         # This should use REGISTRY instead of the secret directly
-         registry: ${{ secrets.IMAGE_REGISTRY }}
+         registry: ghcr.io
          username: ${{ github.actor }}
          password: ${{ secrets.GITHUB_TOKEN }}
       -
