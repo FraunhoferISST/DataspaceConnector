@@ -167,6 +167,7 @@ jobs:
           SYFT_EXPECTED_DIGEST='74a9becd5ccb4c02de99050a632e7bfc72176d5e4e844093b1e2c5bedfb45888'
           curl -sSfL https://github.com/anchore/syft/releases/download/v0.29.0/syft_0.29.0_linux_amd64.tar.gz -o syft.tar.gz
           SYFT_RESULT_DIGEST=$(sha256sum syft.tar.gz | cut -d' ' -f1);
+          if [[ $SYFT_RESULT_DIGEST != "${SYFT_EXPECTED_DIGEST}" ]]; then exit 1; fi
 
           mkdir -p syft-install/
           tar -zxf syft.tar.gz -C syft-install/
@@ -183,6 +184,14 @@ jobs:
           tar -zxf oras.tar.gz -C oras-install/
           mv oras-install/oras /usr/local/bin/
           rm -rf oras.tar.gz oras-install/
+      - name: Install signing
+        run: |
+          COSIGN_EXPECTED_DIGEST='9604a5eb171748113f92a67495556007dde6f45804f0b38d3e55c3bc7e151774'
+          curl -sSfL https://github.com/sigstore/cosign/releases/download/v1.3.0/cosign-linux-amd64 -o cosign
+          COSIGN_RESULT_DIGEST=$(sha256sum oras.tar.gz | cut -d' ' -f1);
+          if [[ $COSIGN_RESULT_DIGEST != "${COSIGN_EXPECTED_DIGEST}" ]]; then exit 1; fi
+          chmod +x cosign
+          mv cosign /usr/local/bin/cosign
       -
         name: Login to registry
         uses: docker/login-action@v1
@@ -216,6 +225,15 @@ jobs:
         env:
           IMAGE: ${{ steps.get_image_name.outputs.image_name }}
           ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
+      - name: Signing images
+        run: |
+          echo ${COSIGN_KEY} > /tmp/cosign.key && \
+          cosign sign -key /tmp/cosign.key "${IMAGE}:ci" && \
+          rm /tmp/cosign.key
+        env:
+          IMAGE: ${{ steps.get_image_name.outputs.image_name }}
+          COSIGN_KEY: ${{secrets.COSIGN_KEY}}
+          COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
       - name: Build tar ball
         id: build_tar_ball
         run: |
