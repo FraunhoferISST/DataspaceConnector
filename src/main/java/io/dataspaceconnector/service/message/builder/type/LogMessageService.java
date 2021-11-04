@@ -52,6 +52,8 @@ public final class LogMessageService extends AbstractMessageService<LogMessageDe
         final var modelVersion = getConnectorService().getOutboundModelVersion();
         final var token = getConnectorService().getCurrentDat();
 
+        Utils.requireNonNull(token, ErrorMessage.DAT_NULL);
+
         final var recipient = desc.getRecipient();
 
         return new LogMessageBuilder()

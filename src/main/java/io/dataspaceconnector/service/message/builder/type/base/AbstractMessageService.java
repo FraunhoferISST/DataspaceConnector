@@ -110,10 +110,10 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             }
 
             return idsHttpService.sendAndCheckDat(body, recipient);
-        } catch (SerializeException | ConstraintViolationException e) {
+        } catch (SerializeException | ConstraintViolationException | IllegalArgumentException e) {
             final var msg = ErrorMessage.MESSAGE_BUILDING_FAILED;
             if (log.isWarnEnabled()) {
-                log.warn(msg + "[exception=({})]", e.getMessage(), e);
+                log.warn(msg + " [exception=({})]", e.getMessage());
             }
             throw new MessageException(msg, e);
         } catch (MultipartParseException | DeserializeException | ShaclValidatorException e) {
