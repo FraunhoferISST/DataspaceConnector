@@ -79,8 +79,8 @@ jobs:
        name: Build image
        run: |
         docker build . -t $IMAGE:$BRANCH
-        BOM="${IMAGE}-sbom.json"
-        syft "${IMAGE}:$BRANCH" -o spdx-json > "${BOM}"
+        BOM="dataspace-connector-sbom.json"
+        syft "${IMAGE}:${BRANCH}" -o spdx-json > "${BOM}"
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
          BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
@@ -92,7 +92,7 @@ jobs:
          echo $BRANCH
          echo $TAG
          TMP=$TAG
-         BOM="${IMAGE}-sbom.json"
+         BOM="dataspace-connector-sbom.json"
 
          if [[ $TMP == v* ]]
          then
@@ -129,7 +129,7 @@ jobs:
        run: |
          docker push $IMAGE:$BRANCH
 
-         BOM="${IMAGE}-sbom.json"
+         BOM="dataspace-connector-sbom.json"
          oras push "${IMAGE}:${BRANCH}-sbom" "${BOM}:application/json"
 
          echo "${COSIGN_KEY}" > /tmp/cosign.key
@@ -214,6 +214,8 @@ jobs:
        name: Build image
        run: |
         docker build . -f scripts/ci/docker/Debug.dockerfile -t $IMAGE:$BRANCH
+        BOM="dataspace-connector-sbom.json"
+        syft "${IMAGE}:${BRANCH}" -o spdx-json > "${BOM}"
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
          BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
@@ -225,7 +227,7 @@ jobs:
          echo $BRANCH
          echo $TAG
          TMP=$TAG
-         BOM="${IMAGE}-sbom.json"
+         BOM="dataspace-connector-sbom.json"
 
          if [[ $TMP == v* ]]
          then
@@ -254,7 +256,7 @@ jobs:
        run: |
          docker tag $IMAGE:$BRANCH $IMAGE:$BRANCH-debug
          docker push $IMAGE:$BRANCH-debug
-         BOM="${IMAGE}-sbom.json"
+         BOM="dataspace-connector-sbom.json"
          oras push "${IMAGE}:${BRANCH}-debug-sbom" "${BOM}:application/json"
 
          echo "${COSIGN_KEY}" > /tmp/cosign.key
