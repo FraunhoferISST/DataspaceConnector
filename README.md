@@ -66,6 +66,7 @@ The Docker images are signed using [cosign](https://github.com/sigstore/cosign).
 The public key of the Dataspace Connector can be found at the root of the project structure ([here](https://github.com/International-Data-Spaces-Association/DataspaceConnector/blob/main/dsc.pub)).
 
 For verifying that you have received an offical image from a trusted source, run:
+
 ```commandline
 cosign verify --key dsc.pub ghcr.io/international-data-spaces-association/dataspace-connector:latest
 ```
@@ -75,11 +76,12 @@ cosign verify --key dsc.pub ghcr.io/international-data-spaces-association/datasp
 The Software Bill of Material (SBoM) for every Docker image is supplied as [SPDX-JSON](https://spdx.org/licenses/JSON.html) and can be found by appending `-sbom` to the image tag. For example, the SBoM for `ghcr.io/international-data-spaces-association/dataspace-connector:latest` is `ghcr.io/international-data-spaces-association/dataspace-connector:latest-sbom`.
 
 The SBoM can be pulled via tools like [oras](https://github.com/oras-project/oras).
+
 ```commandline
 oras pull ghcr.io/international-data-spaces-association/dataspace-connector:latest-sbom -a
 ```
 
-**Note**: Also the SBoM images can be validated using [cosign](https://github.com/sigstore/cosign) as shown above.
+**Note**: Also the SBoM images can be validated using [cosign](https://github.com/sigstore/cosign) as shown [above](#security-and-verification).
 
 ## Contributing
 
