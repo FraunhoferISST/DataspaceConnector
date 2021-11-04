@@ -38,6 +38,7 @@ import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.UUID;
 
+import static io.dataspaceconnector.model.config.DatabaseConstants.DESCRIPTION_COLUMN_LENGTH;
 import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
@@ -86,6 +87,7 @@ public class Entity implements Serializable {
      */
     @ElementCollection(fetch = FetchType.EAGER)
     @Setter(AccessLevel.PACKAGE)
+    @Column(name = "value", length = DESCRIPTION_COLUMN_LENGTH)
     private Map<String, String> additional;
 
     /**
