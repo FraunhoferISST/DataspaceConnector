@@ -232,8 +232,8 @@ public final class ResponseUtils {
      * @return ResponseEntity with status code 417.
      */
     public static ResponseEntity<Object> respondWithContent(final Map<String, Object> response) {
-        if (log.isWarnEnabled()) {
-            log.warn("Received unexpected response message. [response=({})]", response);
+        if (log.isDebugEnabled()) {
+            log.debug("Received unexpected response message. [response=({})]", response);
         }
         return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
     }
