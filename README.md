@@ -38,8 +38,7 @@ usage policy patterns.
 
 ## Quick Start
 
-We provide Docker images. These can be found
-[here](https://github.com/International-Data-Spaces-Association/DataspaceConnector/pkgs/container/dataspace-connector).
+The offical Docker images of the Dataspace Connector can be found [here](https://github.com/International-Data-Spaces-Association/DataspaceConnector/pkgs/container/dataspace-connector).
 
 For an easy deployment, make sure that you have [Docker](https://docs.docker.com/get-docker/)
 installed. Then, execute the following command:
@@ -55,10 +54,34 @@ If everything worked fine, the connector is available at
 Next, please take a look at our
 [communication guide](https://international-data-spaces-association.github.io/DataspaceConnector/CommunicationGuide).
 
+**Note**: 
 For a more detailed or advanced Docker or Kubernetes deployment, as well as a full setup with the
 Connector and its GUI, see [here](https://github.com/International-Data-Spaces-Association/IDS-Deployment-Examples/tree/main/dataspace-connector).
-
 If you want to build and run locally, follow [these](https://international-data-spaces-association.github.io/DataspaceConnector/GettingStarted#quick-start) steps.
+
+
+### Security and Verification
+
+The Docker images are signed using [cosign](https://github.com/sigstore/cosign).
+The public key of the Dataspace Connector can be found at the root of the project structure ([here](https://github.com/International-Data-Spaces-Association/DataspaceConnector/blob/main/dsc.pub)).
+
+For verifying that you have received an offical image from a trusted source, run:
+
+```commandline
+cosign verify --key dsc.pub ghcr.io/international-data-spaces-association/dataspace-connector:latest
+```
+
+### Software Bill of Material (SBoM)
+
+The Software Bill of Material (SBoM) for every Docker image is supplied as [SPDX-JSON](https://spdx.org/licenses/JSON.html) and can be found by appending `-sbom` to the image tag. For example, the SBoM for `ghcr.io/international-data-spaces-association/dataspace-connector:latest` is `ghcr.io/international-data-spaces-association/dataspace-connector:latest-sbom`.
+
+The SBoM can be pulled via tools like [oras](https://github.com/oras-project/oras).
+
+```commandline
+oras pull ghcr.io/international-data-spaces-association/dataspace-connector:latest-sbom -a
+```
+
+**Note**: Also the SBoM images can be validated using [cosign](https://github.com/sigstore/cosign) as shown [above](#security-and-verification).
 
 ## Contributing
 

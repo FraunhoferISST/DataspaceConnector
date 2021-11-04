@@ -6,10 +6,14 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Change base image from debian 10 to 11.
+- Increase checkstyle version from 9.0.1 to 9.1.
+- Increase postgresql version from 42.3.0 to 42.3.1.
+- Increase pmd version from 6.39.0 to 6.40.0.
 
 ### Fixed
 - Setting `spring.security.enabled=false` will disable BasicAuth and other security checks.
 - Always use default base URL when creating self-links.
+- Check if dat is null before building an ids message. Remove stack trace, only log the error message.
 
 ## [6.5.0] - 2021-10-27
 
