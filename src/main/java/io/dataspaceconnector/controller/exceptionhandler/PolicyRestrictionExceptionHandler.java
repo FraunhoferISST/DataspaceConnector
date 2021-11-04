@@ -53,6 +53,7 @@ public final class PolicyRestrictionExceptionHandler {
 
         final var body = new JSONObject();
         body.put("message", "A policy restriction has been detected.");
+        body.put("details", exception == null ? "" : exception.getMessage());
 
         return new ResponseEntity<>(body, headers, HttpStatus.FORBIDDEN);
     }

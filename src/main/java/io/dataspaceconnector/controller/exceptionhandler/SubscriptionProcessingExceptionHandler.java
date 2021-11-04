@@ -52,7 +52,8 @@ public final class SubscriptionProcessingExceptionHandler {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         final var body = new JSONObject();
-        body.put("message", exception == null ? "" : exception.getMessage());
+        body.put("message", "Could not process subscription.");
+        body.put("details", exception == null ? "" : exception.getMessage());
 
         return new ResponseEntity<>(body, headers, HttpStatus.BAD_REQUEST);
     }

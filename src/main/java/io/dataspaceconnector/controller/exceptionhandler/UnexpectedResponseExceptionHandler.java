@@ -16,8 +16,12 @@
 package io.dataspaceconnector.controller.exceptionhandler;
 
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
-import io.dataspaceconnector.controller.util.ResponseUtils;
+import lombok.extern.log4j.Log4j2;
+import net.minidev.json.JSONObject;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,6 +30,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  * Global exception handler for {@link UnexpectedResponseException}.
  */
 @ControllerAdvice
+@Log4j2
 @Order(1)
 public final class UnexpectedResponseExceptionHandler {
 
@@ -37,6 +42,18 @@ public final class UnexpectedResponseExceptionHandler {
      */
     @ExceptionHandler(UnexpectedResponseException.class)
     public ResponseEntity<Object> handleAnyException(final UnexpectedResponseException exception) {
-        return ResponseUtils.respondWithContent(exception.getContent());
+        if (log.isDebugEnabled()) {
+            log.debug("Received unexpected response message. [exception=({})]", exception == null
+                    ? "" : exception.getMessage(), exception);
+        }
+
+        final var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        final var body = new JSONObject();
+        body.put("message", "Received unexpected response message.");
+        body.put("details", exception == null ? "" : exception.getContent());
+
+        return new ResponseEntity<>(body, headers, HttpStatus.EXPECTATION_FAILED);
     }
 }
