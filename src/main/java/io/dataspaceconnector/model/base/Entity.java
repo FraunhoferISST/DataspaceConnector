@@ -31,6 +31,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.net.URI;
@@ -87,6 +88,7 @@ public class Entity implements Serializable {
      */
     @ElementCollection(fetch = FetchType.EAGER)
     @Setter(AccessLevel.PACKAGE)
+    @MapKeyColumn(name = "key", length = DESCRIPTION_COLUMN_LENGTH)
     @Column(name = "value", length = DESCRIPTION_COLUMN_LENGTH)
     private Map<String, String> additional;
 

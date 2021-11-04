@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Change base image from debian 10 to 11.
-- Set value length of additional map to 4096.
+- Set value and key length of additional map to 4096.
 - Increase checkstyle version from 9.0.1 to 9.1.
 - Increase postgresql version from 42.3.0 to 42.3.1.
 - Increase pmd version from 6.39.0 to 6.40.0.
