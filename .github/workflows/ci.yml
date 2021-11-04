@@ -162,6 +162,28 @@ jobs:
       image_name: ${{ steps.get_image_name.outputs.image_name }}
 
     steps:
+      - name: Install SBoM generator
+        run: |
+          SYFT_EXPECTED_DIGEST='74a9becd5ccb4c02de99050a632e7bfc72176d5e4e844093b1e2c5bedfb45888'
+          curl -sSfL https://github.com/anchore/syft/releases/download/v0.29.0/syft_0.29.0_linux_amd64.tar.gz -o syft.tar.gz
+          SYFT_RESULT_DIGEST=$(sha256sum syft.tar.gz | cut -d' ' -f1);
+          if [[ $SYFT_RESULT_DIGEST != "${SYFT_EXPECTED_DIGEST}" ]]; then exit 1; fi
+
+          mkdir -p syft-install/
+          tar -zxf syft.tar.gz -C syft-install/
+          mv syft-install/syft /usr/local/bin/
+          rm -rf syft.tar.gz syft-install/
+      - name: Install SBom pusher
+        run: |
+          ORAS_EXPECTED_DIGEST='660a4ecd87414d1f29610b2ed4630482f1f0d104431576d37e59752c27de37ed'
+          curl -sSfL https://github.com/oras-project/oras/releases/download/v0.12.0/oras_0.12.0_linux_amd64.tar.gz -o oras.tar.gz
+          ORAS_RESULT_DIGEST=$(sha256sum oras.tar.gz | cut -d' ' -f1);
+          if [[ $ORAS_RESULT_DIGEST != "${ORAS_EXPECTED_DIGEST}" ]]; then exit 1; fi
+
+          mkdir -p oras-install/
+          tar -zxf oras.tar.gz -C oras-install/
+          mv oras-install/oras /usr/local/bin/
+          rm -rf oras.tar.gz oras-install/
       - name: Checkout Repo
         uses: actions/checkout@v2
       - name: Build image artifact name
@@ -178,6 +200,13 @@ jobs:
         env:
           IMAGE: ${{ steps.get_image_name.outputs.image_name }}
           DOCKER_BUILDKIT: 1
+      - name: Generate SBoM
+        run: |
+          BOM="${ARTIFACT}-sbom.json"
+          syft "${IMAGE}:ci" -o spdx-json > "${BOM}"
+        env:
+          IMAGE: ${{ steps.get_image_name.outputs.image_name }}
+          ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
       - name: Build tar ball
         id: build_tar_ball
         run: |
@@ -190,6 +219,12 @@ jobs:
         with:
           name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-image
           path: ${{ github.workspace }}/${{ steps.get_image_artifact_name.outputs.image_artifact_name }}.tar
+          retention-days: 1
+      - name: Push SBoM
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-image-sbom.json
+          path: ${{ github.workspace }}/${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-sbom.json
           retention-days: 1
 
   image-security-scan:
