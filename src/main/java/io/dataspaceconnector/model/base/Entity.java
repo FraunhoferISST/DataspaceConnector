@@ -25,12 +25,14 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
@@ -39,7 +41,8 @@ import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.UUID;
 
-import static io.dataspaceconnector.model.config.DatabaseConstants.DESCRIPTION_COLUMN_LENGTH;
+import static io.dataspaceconnector.model.config.DatabaseConstants.ADDITIONAL_KEY_LENGTH;
+import static io.dataspaceconnector.model.config.DatabaseConstants.ADDITIONAL_VALUE_LENGTH;
 import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
@@ -88,8 +91,9 @@ public class Entity implements Serializable {
      */
     @ElementCollection(fetch = FetchType.EAGER)
     @Setter(AccessLevel.PACKAGE)
-    @MapKeyColumn(name = "key", length = DESCRIPTION_COLUMN_LENGTH)
-    @Column(name = "value", length = DESCRIPTION_COLUMN_LENGTH)
+    @MapKeyColumn(name = "key", length = ADDITIONAL_KEY_LENGTH)
+    @Column(name = "value", length = ADDITIONAL_VALUE_LENGTH)
+    @CollectionTable(name = "additional", joinColumns = @JoinColumn(name = "id"))
     private Map<String, String> additional;
 
     /**
