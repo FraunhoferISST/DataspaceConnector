@@ -51,6 +51,16 @@ public final class DatabaseConstants {
     public static final int DESCRIPTION_COLUMN_LENGTH = 4096;
 
     /**
+     * The maximum length of database columns containing additional keys.
+     */
+    public static final int ADDITIONAL_KEY_LENGTH = 4096;
+
+    /**
+     * The maximum length of database columns containing additional values.
+     */
+    public static final int ADDITIONAL_VALUE_LENGTH = 4096;
+
+    /**
      * Private constructor.
      */
     private DatabaseConstants() { }
