@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.controller.gui.util;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Provides enum types that should be listed at the GUI.
  */
@@ -25,48 +23,57 @@ public enum EnumType {
     /**
      * The log level.
      */
-    @JsonProperty("loglevel")
-    LOG_LEVEL,
+    LOG_LEVEL("loglevel"),
 
     /**
      * The connector status.
      */
-    @JsonProperty("connectorstatus")
-    CONNECTOR_STATUS,
+    CONNECTOR_STATUS("connectorstatus"),
 
     /**
      * The connector deploy mode.
      */
-    @JsonProperty("connectordeploymode")
-    CONNECTOR_DEPLOY_MODE,
+    CONNECTOR_DEPLOY_MODE("connectordeploymode"),
 
     /**
      * The language.
      */
-    @JsonProperty("language")
-    LANGUAGE,
+    LANGUAGE("language"),
 
     /**
      * The deploy method of data routes.
      */
-    @JsonProperty("deploymethod")
-    DEPLOY_METHOD,
+    DEPLOY_METHOD("deploymethod"),
 
     /**
      * The broker status.
      */
-    @JsonProperty("brokerstatus")
-    BROKER_STATUS,
+    BROKER_STATUS("brokerstatus"),
 
     /**
      * The security profile.
      */
-    @JsonProperty("securityprofile")
-    SECURITY_PROFILE,
+    SECURITY_PROFILE("securityprofile"),
 
     /**
      * The payment method.
      */
-    @JsonProperty("paymentmethod")
-    PAYMENT_METHOD,
+    PAYMENT_METHOD("paymentmethod");
+
+    /**
+     * The type as string.
+     */
+    private final String type;
+
+    EnumType(final String name) {
+        this.type = name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return type;
+    }
 }
