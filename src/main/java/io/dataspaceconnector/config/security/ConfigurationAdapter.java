@@ -39,6 +39,9 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationEn
 @Order(1)
 public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SuppressFBWarnings("SPRING_CSRF_PROTECTION_DISABLED")
     protected final void configure(final HttpSecurity http) throws Exception {

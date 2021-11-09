@@ -207,8 +207,8 @@ public class Bootstrapper {
             if (properties.containsKey(propertyKey)) {
                 final var brokerUrl = BootstrapUtils.toUrl(properties.getProperty(propertyKey));
                 if (brokerUrl.isEmpty()) {
-                    if (log.isWarnEnabled()) {
-                        log.warn("Skipping broker due to invalid url. [broker=({})]",
+                    if (log.isDebugEnabled()) {
+                        log.debug("Skipping broker due to invalid url. [url=({})]",
                                 properties.getProperty(propertyKey));
                     }
                     return false;
@@ -355,8 +355,8 @@ public class Bootstrapper {
                 catalogs.add(deserializationSvc.getResourceCatalog(
                         Files.readString(jsonFile.toPath())));
             } catch (IOException e) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Could not deserialize ids catalog file. [path=({})]",
+                if (log.isDebugEnabled()) {
+                    log.debug("Could not deserialize ids catalog file. [path=({})]",
                             jsonFile.getPath(), e);
                 }
                 return Optional.empty();

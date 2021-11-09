@@ -114,7 +114,7 @@ public final class ArtifactFactory extends AbstractNamedFactory<Artifact, Artifa
 
     private boolean updateLocalData(final ArtifactImpl artifact, final String value) {
         final var data = new LocalData();
-        data.setValue(value == null ? null : value.getBytes(StandardCharsets.UTF_16));
+        data.setValue(value == null ? null : value.getBytes(StandardCharsets.UTF_8));
 
         final var currentData = artifact.getData();
         if (currentData instanceof LocalData) {

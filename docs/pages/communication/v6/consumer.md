@@ -387,6 +387,10 @@ used.
 Either way, the requested and downloaded data will be stored in the database as a bytestream and
 is automatically decoded on an API call.
 
+**Since version 7.x.x**: You can also immediately dispatch the requested data via Camel routes, which
+will prevent the data from being stored locally, as described in
+[the guide on dispatching data](camel.md#create-a-route-for-dispatching-data).
+
 ---
 **Parametrized Data Request**
 

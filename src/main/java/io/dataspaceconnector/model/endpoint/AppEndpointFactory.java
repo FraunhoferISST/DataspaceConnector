@@ -21,14 +21,14 @@ import org.springframework.stereotype.Component;
  * Creates and updates an app endpoint.
  */
 @Component
-public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpointDesc> {
+public class AppEndpointFactory extends EndpointFactory<AppEndpointImpl, AppEndpointDesc> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected AppEndpoint initializeEntity(final AppEndpointDesc desc) {
-        final var appEndpoint = new AppEndpoint();
+    protected AppEndpointImpl initializeEntity(final AppEndpointDesc desc) {
+        final var appEndpoint = new AppEndpointImpl();
         appEndpoint.setEndpointPort(desc.getEndpointPort());
         appEndpoint.setEndpointType(desc.getEndpointType());
         appEndpoint.setLanguage(desc.getLanguage());
@@ -36,7 +36,33 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
         appEndpoint.setMediaType(desc.getMediaType());
         appEndpoint.setDocs(desc.getDocs());
         appEndpoint.setInfo(desc.getInfo());
-        appEndpoint.setLocation(desc.getLocation());
+        appEndpoint.setPath(desc.getPath());
+
+        return appEndpoint;
+    }
+
+    /**
+     * Sets the external exposed ports of an AppEndpoint.
+     *
+     * @param appEndpoint The app endpoint.
+     * @param exposedPort The exposed port information
+     * @return The app endpoint with external port information.
+     */
+    public AppEndpointImpl setExternalPort(final AppEndpointImpl appEndpoint,
+                                           final int exposedPort) {
+        appEndpoint.setExposedPort(exposedPort);
+        return appEndpoint;
+    }
+
+    /**
+     * Sets the location of an AppEndpoint.
+     *
+     * @param appEndpoint The app endpoint.
+     * @param location The location URI (access URL) of the AppEndpoint.
+     * @return The app endpoint with updated location URI.
+     */
+    public AppEndpointImpl setLocation(final AppEndpointImpl appEndpoint, final String location) {
+        appEndpoint.setLocation(location);
         return appEndpoint;
     }
 }

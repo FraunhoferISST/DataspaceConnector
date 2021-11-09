@@ -50,10 +50,36 @@ public class RouteHelper {
      * @throws RouteCreationException if the Camel route cannot be created or deployed.
      */
     public void deploy(final Route route) throws RouteCreationException {
-        if (DeployMethod.CAMEL.equals(route.getDeploy())
-                && route.getStart() != null && route.getEnd() != null) {
+        if (shouldDeploy(route)) {
             routeManager.createAndDeployXMLRoute(appRouteBuilder.create(route));
+        } else {
+            // If a route should not be deployed after update, it might still be deployed in Camel.
+            delete(route);
         }
+    }
+
+    /**
+     * Checks whether a route should be deployed via Camel. If both start and end of the route are
+     * undefined, the route should not be deployed. If the end of the route is null, the route
+     * should only be deployed if it is linked to an artifact.
+     *
+     * @param route The route.
+     * @return True, if the route should be deployed; false otherwise.
+     */
+    private boolean shouldDeploy(final Route route) {
+        if (!DeployMethod.CAMEL.equals(route.getDeploy())) {
+            return false;
+        }
+
+        if (route.getEnd() == null) {
+            if (route.getStart() == null) {
+                return false;
+            }
+
+            return route.getOutput() != null;
+        }
+
+        return true;
     }
 
     /**

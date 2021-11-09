@@ -16,13 +16,16 @@
 package io.dataspaceconnector.model.app;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 import io.dataspaceconnector.common.ids.policy.PolicyPattern;
+import io.dataspaceconnector.model.artifact.LocalData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -395,6 +398,79 @@ public class AppFactoryTest {
 
         /* ASSERT */
         assertNull(app.getContainerId());
+    }
+
+    @Test
+    void setContainerName() {
+        /* ARRANGE */
+        final var app = new AppImpl();
+        final var containerName = "container";
+
+        /* ACT */
+        factory.setContainerName(app, containerName);
+
+        /* ASSERT */
+        assertEquals(containerName, app.getContainerName());
+    }
+
+    /**
+     * local data
+     */
+
+    @Test
+    public void create_nullValue_returnEmpty() {
+        /* ARRANGE */
+        final var desc = new AppDesc();
+        desc.setValue(null);
+
+        /* ACT */
+        final var result = (AppImpl) factory.create(desc);
+
+        /* ASSERT */
+        assertNull(((LocalData) result.getData()).getValue());
+    }
+
+    @Test
+    public void update_setValue_returnValue() {
+        /* ARRANGE */
+        final var app = (AppImpl) factory.create(new AppDesc());
+
+        final var desc = new AppDesc();
+        desc.setValue("Some Value");
+
+        /* ACT */
+        factory.update(app, desc);
+
+        /* ASSERT */
+        assertArrayEquals(desc.getValue().getBytes(StandardCharsets.UTF_8),
+                ((LocalData) app.getData()).getValue());
+    }
+
+    @Test
+    public void update_differentValue_returnTrue() {
+        /* ARRANGE */
+        final var app = (AppImpl) factory.create(new AppDesc());
+
+        final var desc = new AppDesc();
+        desc.setValue("Random Value");
+
+        /* ACT */
+        final var result = factory.update(app, desc);
+
+        /* ASSERT */
+        Assertions.assertTrue(result);
+    }
+
+    @Test
+    public void update_sameValue_returnFalse() {
+        /* ARRANGE */
+        final var app = (AppImpl) factory.create(new AppDesc());
+
+        /* ACT */
+        final var result = factory.update(app, new AppDesc());
+
+        /* ASSERT */
+        Assertions.assertFalse(result);
     }
 
 }

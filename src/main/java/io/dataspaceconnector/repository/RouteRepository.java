@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.repository;
 
+import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.route.Route;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -54,4 +55,11 @@ public interface RouteRepository extends BaseEntityRepository<Route> {
             + "WHERE r2.start.id = :endpointId OR r2.end.id = :endpointId)")
     List<Route> findTopLevelRoutesByEndpoint(UUID endpointId);
 
+    /**
+     * Returns the route associated with a given artifact.
+     *
+     * @param artifact the artifact.
+     * @return the associated route.
+     */
+    Route findRouteByOutput(Artifact artifact);
 }

@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Log4j2
 @Order(1)
 public final class DataRetrievalExceptionHandler {
+
     /**
      * Handles thrown {@link DataRetrievalException}.
      *

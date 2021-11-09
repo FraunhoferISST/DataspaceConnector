@@ -44,8 +44,7 @@ public class CamelConfig {
     @Bean
     public Unmarshaller unmarshaller() {
         try {
-            final var jaxb = JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES);
-            return jaxb.createUnmarshaller();
+            return JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES).createUnmarshaller();
         } catch (JAXBException e) {
             throw new BeanCreationException("Failed to create Unmarshaller.", e);
         }

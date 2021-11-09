@@ -32,11 +32,10 @@ public final class PortainerUtil {
     }
 
     /**
-     *
      * @param templateObject The template object.
-     * @param ports The list of ports.
-     * @param volumes Map of volumes.
-     * @param image The image name.
+     * @param ports          The list of ports.
+     * @param volumes        Map of volumes.
+     * @param image          The image name.
      * @return payload for the creation of a container.
      */
     public static JSONObject createContainerJSONPayload(final JSONObject templateObject,
@@ -44,57 +43,58 @@ public final class PortainerUtil {
                                                         final Map<String, String> volumes,
                                                         final String image) {
 
-        //build json payload
-        final var jsonPayload = new JSONObject();
+        // Build json payload and fill single fields.
+        final var jsonPayload = new JSONObject() {{
+            put("Env", new JSONArray());
+            put("OpenStdin", false);
+            put("Tty", false);
+            put("Labels", new JSONObject());
+            put("name", "");
+            put("Cmd", new JSONArray());
+            put("Image", templateObject.getString("registry")
+                    + "/" + templateObject.getString("image"));
+        }};
 
-        //fill single fields of json payload
-        jsonPayload.put("Env", new JSONArray());
-        jsonPayload.put("OpenStdin", false);
-        jsonPayload.put("Tty", false);
-        jsonPayload.put("Labels", new JSONObject());
-        jsonPayload.put("name", "");
-        jsonPayload.put("Cmd", new JSONArray());
-        jsonPayload.put("Image", templateObject.getString("registry")
-                + "/" + templateObject.getString("image"));
-
-        //build exposed ports part of json payload
+        // Build exposed ports part of json payload.
         final var exposedPorts = new JSONObject();
-        for (var port : ports) {
+        for (final var port : ports) {
             exposedPorts.put(port, new JSONObject());
         }
         jsonPayload.put("ExposedPorts", exposedPorts);
 
-        //build hostConfig part of json payload
-        final var hostConfig = new JSONObject();
-        hostConfig.put("Privileged", false);
-        hostConfig.put("ExtraHosts", new JSONArray());
-        hostConfig.put("NetworkMode", "bridge");
+        // Build hostConfig part of json payload.
+        final var hostConfig = new JSONObject() {{
+            put("Privileged", false);
+            put("ExtraHosts", new JSONArray());
+            put("NetworkMode", "bridge");
+        }};
+
         final String restartPolicy;
         if (templateObject.has("restart_policy")) {
             restartPolicy = templateObject.getString("restart_policy");
         } else {
             restartPolicy = "always";
         }
-        hostConfig.put("RestartPolicy", new JSONObject(
-                String.format("{\"Name\":\"%s\"}", restartPolicy))
-        );
+        hostConfig.put("RestartPolicy",
+                new JSONObject(String.format("{\"Name\":\"%s\"}", restartPolicy)));
+
         final var portBindings = new JSONObject();
-        for (var port : ports) {
-            portBindings.put(port, new JSONArray()
-                    .appendElement(new JSONObject()
-                            .put("HostPort", String.valueOf(SocketUtils.findAvailableTcpPort()))));
+        for (final var port : ports) {
+            portBindings.put(port, new JSONArray().appendElement(new JSONObject()
+                    .put("HostPort", String.valueOf(SocketUtils.findAvailableTcpPort()))));
         }
         hostConfig.put("PortBindings", portBindings);
+
         final var binds = new JSONArray();
         for (var bind : volumes.entrySet()) {
             binds.appendElement(bind.getValue() + ":" + bind.getKey());
         }
         hostConfig.put("Binds", binds);
-        jsonPayload.put("HostConfig", hostConfig);
 
+        jsonPayload.put("HostConfig", hostConfig);
         jsonPayload.put("name", image);
 
-        //build volumes part of json payload
+        // Build volumes part of json payload.
         final var volumesJSON = new JSONObject();
         for (var bind : volumes.entrySet()) {
             volumesJSON.put(bind.getKey(), new JSONObject());
@@ -106,25 +106,29 @@ public final class PortainerUtil {
 
     /**
      * @param networkName name of network to create
-     * @param pub true, if network should be public
-     * @param adminOnly true if only visible by admin
+     * @param pub         true, if network should be public
+     * @param adminOnly   true if only visible by admin
      * @return json payload for network creation requests
      */
     public static JSONObject createNetworkPayload(final String networkName,
                                                   final boolean pub,
                                                   final boolean adminOnly) {
-        var jsonPayload = new JSONObject();
-        jsonPayload.put("Name", networkName);
-        jsonPayload.put("CheckDuplicate", true);
-        var portainerJson = new JSONObject();
-        var resourceControl = new JSONObject();
-        resourceControl.put("TeamAccess", new org.json.JSONArray());
-        resourceControl.put("Public", pub);
-        resourceControl.put("AdministratorOnly", adminOnly);
-        resourceControl.put("System", false);
-        portainerJson.put("ResourceControl", resourceControl);
-        jsonPayload.put("Portainer", new JSONObject());
-        jsonPayload.put("Warning", "");
-        return jsonPayload;
+        final var resourceControl = new JSONObject() {{
+            put("TeamAccess", new org.json.JSONArray());
+            put("Public", pub);
+            put("AdministratorOnly", adminOnly);
+            put("System", false);
+        }};
+
+        final var portainerJson = new JSONObject() {{
+            put("ResourceControl", resourceControl);
+        }};
+
+        return new JSONObject() {{
+            put("Name", networkName);
+            put("CheckDuplicate", true);
+            put("Portainer", portainerJson);
+            put("Warning", "");
+        }};
     }
 }

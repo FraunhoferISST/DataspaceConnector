@@ -33,6 +33,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Order(2)
 public class DatabaseConsoleConfig extends WebSecurityConfigurerAdapter {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SuppressFBWarnings("SPRING_CSRF_PROTECTION_DISABLED")
     protected final void configure(final HttpSecurity http) throws Exception {

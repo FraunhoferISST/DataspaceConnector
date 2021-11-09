@@ -143,7 +143,7 @@ public class EntityResolver {
     /**
      * Performs a artifact requests.
      */
-    private final @NonNull BlockingArtifactReceiver artifactReceiver;
+    private final @NonNull MultipartArtifactRetriever artifactReceiver;
 
     /**
      * Service for deserialization.
@@ -157,10 +157,8 @@ public class EntityResolver {
      * @return The respective object.
      * @throws IllegalArgumentException If the resource is null or the elementId.
      */
-    @SuppressFBWarnings(
-            value = "REC_CATCH_EXCEPTION",
-            justification = "caught exceptions are unchecked"
-    )
+    @SuppressFBWarnings(value = "REC_CATCH_EXCEPTION",
+            justification = "exceptions are checked at a higher level")
     public Optional<Entity> getEntityById(final URI elementId) {
         Utils.requireNonNull(elementId, ErrorMessage.URI_NULL);
 
@@ -198,10 +196,8 @@ public class EntityResolver {
      * @param entity The connector's entity.
      * @return A rdf string of an ids object.
      */
-    @SuppressFBWarnings(
-            value = "REC_CATCH_EXCEPTION",
-            justification = "caught exceptions are unchecked"
-    )
+    @SuppressFBWarnings(value = "REC_CATCH_EXCEPTION",
+            justification = "exceptions are checked at a higher level")
     public <T extends Entity> String getEntityAsRdfString(final T entity)
             throws InvalidResourceException {
         // NOTE Maybe the builder class could be found without the ugly if array?
@@ -256,7 +252,8 @@ public class EntityResolver {
                                            final QueryInput queryInput)
             throws IOException {
         final var endpoint = EndpointUtils.getUUIDFromPath(requestedArtifact);
-        return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint, queryInput);
+        return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint, queryInput,
+                null);
     }
 
     /**

@@ -541,7 +541,7 @@ public class ArtifactFactoryTest {
         factory.update(artifact, desc);
 
         /* ASSERT */
-        assertArrayEquals(desc.getValue().getBytes(StandardCharsets.UTF_16), ((LocalData) artifact.getData()).getValue());
+        assertArrayEquals(desc.getValue().getBytes(StandardCharsets.UTF_8), ((LocalData) artifact.getData()).getValue());
     }
 
     @Test
