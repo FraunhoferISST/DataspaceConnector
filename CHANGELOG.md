@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
   - Link is created automatically when an artifact is created with a route reference as access URL.
 - Change field `location` of `Endpoint` from URI to String.
 - Replace template engine `Velocity` with `Freemarker`.
+- Remove suffix *settings* from `ConfigurationDesc` attributes.
 
 ### Fixed
 - XML-escape URLs before injecting them into Camel route templates.
