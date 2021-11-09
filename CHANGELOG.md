@@ -14,7 +14,6 @@ All notable changes to this project will be documented in this file.
 - Create datasource beans from `DataSources` of type `DATABASE` automatically.
 
 ### Changed
-- Change base image from debian 10 to 11.
 - Change encoding of local data from `UTF-16` to `UTF-8`.
 - Change relation between `Route` and `Artifact` to one-to-one (previously one-to-many).
   - Link is created automatically when an artifact is created with a route reference as access URL.
@@ -22,12 +21,25 @@ All notable changes to this project will be documented in this file.
 - Replace template engine `Velocity` with `Freemarker`.
 
 ### Fixed
-- Setting `spring.security.enabled=false` will disable BasicAuth and other security checks.
-- Always use default base URL when creating self-links.
 - XML-escape URLs before injecting them into Camel route templates.
 
 ### Removed
 - Remove entity `ConnectorEndpoint` and all corresponding classes.
+
+## [6.5.1] - 2021-11-09
+
+### Changed
+- Change base image from debian 10 to 11.
+- Increase checkstyle version from 9.0.1 to 9.1.
+- Increase postgresql version from 42.3.0 to 42.3.1.
+- Increase pmd version from 6.39.0 to 6.40.0.
+- Increase pitest-maven version from 1.7.2 to 1.7.3.
+- Increase dependency-check-maven version from 6.4.1 to 6.5.0.
+
+### Fixed
+- Setting `spring.security.enabled=false` will disable BasicAuth and other security checks.
+- Always use default base URL when creating self-links.
+- Check if dat is null before building an ids message. Remove stack trace, only log the error message.
 
 ## [6.5.0] - 2021-10-27
 

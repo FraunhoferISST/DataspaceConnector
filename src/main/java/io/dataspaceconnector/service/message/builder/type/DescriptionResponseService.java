@@ -47,6 +47,8 @@ public final class DescriptionResponseService
         final var modelVersion = getConnectorService().getOutboundModelVersion();
         final var token = getConnectorService().getCurrentDat();
 
+        Utils.requireNonNull(token, ErrorMessage.DAT_NULL);
+
         final var recipient = desc.getRecipient();
         final var correlationMessage = desc.getCorrelationMessage();
 
