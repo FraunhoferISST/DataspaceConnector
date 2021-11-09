@@ -18,54 +18,43 @@ package io.dataspaceconnector.service.resource.ids.builder;
 import de.fraunhofer.iais.eis.RouteStep;
 import de.fraunhofer.iais.eis.RouteStepBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.common.net.ApiReferenceHelper;
 import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.route.Route;
-import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
-import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
  * Converts DSC routes to IDS route steps.
  */
 @Component
-public final class IdsRouteStepBuilder extends AbstractIdsBuilder<Route, RouteStep> {
-
-    /**
-     * The builder for ids endpoints.
-     */
-    private final @NonNull IdsEndpointBuilder endpointBuilder;
+public final class IdsRouteStepBuilder extends IdsRouteBuilder<RouteStep> {
 
     /**
      * Constructs an IdsRouteStepBuilder.
      *
-     * @param selfLinkHelper the self link helper.
-     * @param idsEndpointBuilder the endpoint builder.
+     * @param selfLinkHelper     The self link helper.
+     * @param idsEndpointBuilder The endpoint builder.
+     * @param idsArtifactBuilder The artifact builder.
+     * @param apiReferenceHelper The API reference helper.
      */
-    @Autowired
     public IdsRouteStepBuilder(final SelfLinkHelper selfLinkHelper,
-                             final IdsEndpointBuilder idsEndpointBuilder) {
-        super(selfLinkHelper);
-        this.endpointBuilder = idsEndpointBuilder;
+                               final IdsEndpointBuilder idsEndpointBuilder,
+                               final IdsArtifactBuilder idsArtifactBuilder,
+                               final ApiReferenceHelper apiReferenceHelper) {
+        super(selfLinkHelper, idsEndpointBuilder, idsArtifactBuilder, apiReferenceHelper);
     }
 
     @Override
     protected RouteStep createInternal(final Route route, final int currentDepth,
                                        final int maxDepth) throws ConstraintViolationException {
 
-        final var start = create(endpointBuilder,
-                Util.asList(route.getStart()), currentDepth, maxDepth);
-
-        final var end = create(endpointBuilder,
-                Util.asList(route.getEnd()), currentDepth, maxDepth);
-
-        final var deployMode = route.getDeploy().toString();
-        final var description = route.getDescription();
+        final var start = buildRouteStart(route, currentDepth, maxDepth);
+        final var end = buildRouteEnd(route, currentDepth, maxDepth);
 
         final var builder = new RouteStepBuilder(getAbsoluteSelfLink(route))
-                ._routeDeployMethod_(deployMode)
-                ._routeDescription_(description);
+                ._routeDescription_(route.getDescription())
+                ._routeDeployMethod_(route.getDeploy().toString())
+                ._routeConfiguration_(route.getConfiguration());
         start.ifPresent(builder::_appRouteStart_);
         end.ifPresent(builder::_appRouteEnd_);
         return builder.build();

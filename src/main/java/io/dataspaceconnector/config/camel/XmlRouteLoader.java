@@ -80,7 +80,7 @@ public class XmlRouteLoader {
         try {
             Objects.requireNonNull(directory);
             if (log.isDebugEnabled()) {
-                log.debug("Loading Camel routes from: {}", directory);
+                log.debug("Loading Camel routes. [path=({})]", directory);
             }
             loadRoutes(directory);
         } catch (Exception e) {
@@ -117,10 +117,8 @@ public class XmlRouteLoader {
      * @param files the classpath resources.
      * @throws Exception if reading a file, parsing the XML or adding the route fails.
      */
-    @SuppressFBWarnings(
-            value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
-            justification = "The redundant nullcheck happens inside called method from spring"
-    )
+    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
+            justification = "The redundant nullcheck happens inside called method from spring")
     private void loadRoutes(final Resource[] files) throws Exception {
         for (var file : files) {
             try (var inputStream = file.getInputStream()) {
@@ -218,7 +216,7 @@ public class XmlRouteLoader {
             context.adapt(ModelCamelContext.class).addRouteDefinition(route);
 
             if (log.isDebugEnabled()) {
-                log.debug("Loaded route from XML file: {}", route.getRouteId());
+                log.debug("Loaded route from XML file. [routeId=({})]", route.getRouteId());
             }
         }
     }

@@ -83,8 +83,8 @@ public final class BootstrapUtils {
                     loadConfig(config, property, properties.getProperty(property));
                 }
             } catch (IOException e) {
-                if (log.isErrorEnabled()) {
-                    log.error("Could not open properties file. [name=({})]",
+                if (log.isDebugEnabled()) {
+                    log.debug("Could not open properties file. [path=({})]",
                             propertyFile.getPath(), e);
                 }
             }

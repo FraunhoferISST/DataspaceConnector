@@ -92,8 +92,8 @@ public class CamelHttpConfig {
                 .build();
 
         final var connectionManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
-        final var httpsComponent = camelContext.getComponent("https", HttpComponent.class);
-        httpsComponent.setClientConnectionManager(connectionManager);
+        camelContext.getComponent("https", HttpComponent.class)
+                .setClientConnectionManager(connectionManager);
     }
 
 }

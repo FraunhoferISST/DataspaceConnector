@@ -51,6 +51,11 @@ public final class DatabaseConstants {
     public static final int DESCRIPTION_COLUMN_LENGTH = 4096;
 
     /**
+     * The maximum length of the database column for endpoint location.
+     */
+    public static final int ENDPOINT_LOCATION_LENGTH = 2048;
+
+    /**
      * Private constructor.
      */
     private DatabaseConstants() { }

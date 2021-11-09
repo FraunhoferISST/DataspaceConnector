@@ -112,6 +112,7 @@ public class AppService extends BaseEntityService<App, AppDesc> implements Remot
      * @param data  The new data.
      * @throws IOException if the data could not be stored.
      */
+    @NonNull
     public void setData(final UUID appId, final InputStream data) throws IOException {
         final var app = get(appId);
         final var currentData = ((AppImpl) app).getData();
@@ -122,6 +123,7 @@ public class AppService extends BaseEntityService<App, AppDesc> implements Remot
         }
     }
 
+    @NonNull
     private void setAppTemplate(final UUID appArtifactId, final InputStream data,
                                 final LocalData localData) throws IOException {
         try {
@@ -186,6 +188,16 @@ public class AppService extends BaseEntityService<App, AppDesc> implements Remot
     public void deleteContainerIdFromApp(final UUID appId) {
         final var app = ((AppImpl) get(appId));
         ((AppFactory) getFactory()).deleteContainerId(app);
+        getRepository().save(app);
+    }
+
+    /**
+     * @param appId The id of the app.
+     * @param containerName The name of the container.
+     */
+    public void setContainerName(final UUID appId, final String containerName) {
+        final var app = ((AppImpl) get(appId));
+        ((AppFactory) getFactory()).setContainerName(app, containerName);
         getRepository().save(app);
     }
 }

@@ -52,7 +52,7 @@ public class AppEndpointFactoryTest {
         desc.setMediaType("json");
         desc.setDocs(URI.create("https://docs"));
         desc.setInfo("info");
-        desc.setLocation(URI.create("https://location"));
+        desc.setLocation("https://location");
 
         /* ACT */
         final var result = factory.create(desc);
@@ -73,7 +73,7 @@ public class AppEndpointFactoryTest {
     void update_newLocation_willUpdate() {
         /* ARRANGE */
         final var desc = new AppEndpointDesc();
-        desc.setLocation(URI.create("https://someLocation"));
+        desc.setLocation("https://someLocation");
         final var endpoint = factory.create(new AppEndpointDesc());
 
         /* ACT */
@@ -95,7 +95,7 @@ public class AppEndpointFactoryTest {
 
         /* ASSERT */
         assertFalse(result);
-        assertEquals(GenericEndpointFactory.DEFAULT_URI, endpoint.getLocation());
+        assertEquals(AppEndpointFactory.DEFAULT_LOCATION, endpoint.getLocation());
     }
 
     @Test
@@ -124,7 +124,7 @@ public class AppEndpointFactoryTest {
 
         /* ASSERT */
         assertFalse(result);
-        assertEquals(GenericEndpointFactory.DEFAULT_URI, endpoint.getDocs());
+        assertEquals(AppEndpointFactory.DEFAULT_URI, endpoint.getDocs());
     }
 
     @Test
@@ -153,7 +153,7 @@ public class AppEndpointFactoryTest {
 
         /* ASSERT */
         assertFalse(result);
-        assertEquals(GenericEndpointFactory.DEFAULT_INFORMATION, endpoint.getInfo());
+        assertEquals(AppEndpointFactory.DEFAULT_INFORMATION, endpoint.getInfo());
     }
     @Test
     void update_newAdditionals_willUpdate() {

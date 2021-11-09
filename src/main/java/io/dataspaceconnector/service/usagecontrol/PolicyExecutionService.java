@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.service.usagecontrol;
 
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.HashMap;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Rule;
@@ -33,6 +28,11 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
 
 /**
  * Executes policy conditions. Refers to the ids policy enforcement point (PEP).
@@ -126,13 +126,10 @@ public class PolicyExecutionService {
      * @return The log line.
      */
     public String buildLog(final URI target) {
-        final var id = connectorSvc.getConnectorId();
-
-        final var output = new HashMap<String, Object>();
-        output.put("target", target);
-        output.put("issuerConnector", id);
-        output.put("accessed", ZonedDateTime.now(ZoneOffset.UTC));
-
-        return output.toString();
+        return new HashMap<String, Object>() {{
+            put("target", target);
+            put("issuerConnector", connectorSvc.getConnectorId());
+            put("accessed", ZonedDateTime.now(ZoneOffset.UTC));
+        }}.toString();
     }
 }

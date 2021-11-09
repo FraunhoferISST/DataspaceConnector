@@ -18,8 +18,6 @@ package io.dataspaceconnector.service.resource.type;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.AppEndpointDesc;
-import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
-import io.dataspaceconnector.model.endpoint.ConnectorEndpointDesc;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.repository.EndpointRepository;
@@ -46,12 +44,6 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
     private GenericEndpointService generic;
 
     /**
-     * The connector endpoint service.
-     */
-    @Autowired
-    private ConnectorEndpointService connector;
-
-    /**
      * The app endpoint service.
      */
     @Autowired
@@ -72,9 +64,7 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
     @SuppressWarnings("unchecked")
     private <X extends Endpoint, Y extends EndpointDesc> EntityService<X, Y>
     getService(final Class<?> clazz) {
-        if (ConnectorEndpointDesc.class.equals(clazz) || ConnectorEndpoint.class.equals(clazz)) {
-            return (EntityService<X, Y>) connector;
-        } else if (AppEndpointDesc.class.equals(clazz) || AppEndpoint.class.equals(clazz)) {
+        if (AppEndpointDesc.class.equals(clazz) || AppEndpoint.class.equals(clazz)) {
             return (EntityService<X, Y>) app;
         }
 
@@ -102,10 +92,6 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
      */
     @Override
     public Endpoint get(final UUID entityId) {
-
-        try {
-            return connector.get(entityId);
-        } catch (ResourceNotFoundException ignored) { }
         try {
             return generic.get(entityId);
         } catch (ResourceNotFoundException ignored) { }
@@ -125,8 +111,7 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
      */
     @Override
     public final boolean doesExist(final UUID entityId) {
-        return   connector.doesExist(entityId)
-                || generic.doesExist(entityId)
+        return generic.doesExist(entityId)
                 || app.doesExist(entityId);
     }
 

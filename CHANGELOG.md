@@ -4,8 +4,28 @@ All notable changes to this project will be documented in this file.
 
 ## [X.X.X] - XXXX-XX-XX
 
+### Added
+- Allow using route ID (URI) as access URL for artifacts.
+- Allow using route ID (URI) as location for subscriptions.
+- Allow specifying route IDs when calling `GET /data` endpoint to automatically dispatch data via these routes.
+  - When a route is specified, requested data will not be persisted in the local database.
+- Allow using API key authentication for `DataSource`.
+- Create sub-types for `DataSourceDesc` for types `REST` and `DATABASE` to allow adding database driver and URL.
+- Create datasource beans from `DataSources` of type `DATABASE` automatically.
+
 ### Changed
+- Change encoding of local data from `UTF-16` to `UTF-8`.
+- Change relation between `Route` and `Artifact` to one-to-one (previously one-to-many).
+  - Link is created automatically when an artifact is created with a route reference as access URL.
+- Change field `location` of `Endpoint` from URI to String.
+- Replace template engine `Velocity` with `Freemarker`.
 - Remove suffix *settings* from `ConfigurationDesc` attributes.
+
+### Fixed
+- XML-escape URLs before injecting them into Camel route templates.
+
+### Removed
+- Remove entity `ConnectorEndpoint` and all corresponding classes.
 
 ## [6.5.1] - 2021-11-09
 

@@ -16,13 +16,17 @@
 package io.dataspaceconnector.service.resource.type;
 
 import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.exception.InvalidEntityException;
+import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.RouteCreationException;
 import io.dataspaceconnector.common.exception.RouteDeletionException;
 import io.dataspaceconnector.common.util.Utils;
+import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteDesc;
 import io.dataspaceconnector.model.route.RouteFactory;
+import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.EndpointRepository;
 import io.dataspaceconnector.repository.RouteRepository;
@@ -33,6 +37,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.UUID;
 
@@ -41,6 +46,7 @@ import java.util.UUID;
  */
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.NONE)
+@Log4j2
 public class RouteService extends BaseEntityService<Route, RouteDesc> {
 
     /**
@@ -54,6 +60,11 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
     private final @NonNull EndpointServiceProxy endpointService;
 
     /**
+     * Service for artifacts.
+     */
+    private final @NonNull ArtifactRepository artifactRepo;
+
+    /**
      * Helper class for deploying and deleting Camel routes.
      */
     private final @NonNull RouteHelper routeHelper;
@@ -65,6 +76,7 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      * @param factory              The route factory.
      * @param endpointRepository   The endpoint repository.
      * @param endpointServiceProxy The endpoint service.
+     * @param artifactRepository   The artifact repository.
      * @param camelRouteHelper     The helper class for Camel routes.
      */
     public RouteService(
@@ -72,13 +84,23 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
             final AbstractFactory<Route, RouteDesc> factory,
             final @NonNull EndpointRepository endpointRepository,
             final @NonNull EndpointServiceProxy endpointServiceProxy,
+            final @NonNull ArtifactRepository artifactRepository,
             final @NonNull RouteHelper camelRouteHelper) {
         super(repository, factory);
         this.endpointRepo = endpointRepository;
         this.endpointService = endpointServiceProxy;
         this.routeHelper = camelRouteHelper;
+        this.artifactRepo = artifactRepository;
     }
 
+    /**
+     * Persists a route. Before the route is persisted, the corresponding Camel route is created
+     * and deployed.
+     *
+     * @param route the route.
+     * @return the persisted route.
+     * @throws RouteCreationException if creating the Camel route fails.
+     */
     @Override
     protected final Route persist(final Route route) throws RouteCreationException {
         if (route.getStart() != null) {
@@ -94,6 +116,16 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
         }
 
         return super.persist(route);
+    }
+
+    /**
+     * Returns the route associated with a given artifact.
+     *
+     * @param artifact the artifact.
+     * @return the associated route.
+     */
+    public Route getByOutput(final Artifact artifact) {
+        return ((RouteRepository) getRepository()).findRouteByOutput(artifact);
     }
 
     /**
@@ -137,17 +169,58 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
     }
 
     /**
+     * Sets the output of a route and (re-)deploys the route in Camel.
+     *
+     * @param routeId    The route ID.
+     * @param artifactId ID of the artifact which is the output.
+     */
+    public void setOutput(final UUID routeId, final UUID artifactId) {
+        final var artifact = artifactRepo.findById(artifactId);
+        if (artifact.isEmpty()) {
+            throw new ResourceNotFoundException("Could not find artifact: " + artifactId);
+        }
+
+        // If the Camel route cannot be created, remove the link to the artifact.
+        try {
+            persist(((RouteFactory) getFactory()).setOutput(get(routeId), artifact.get()));
+        } catch (RouteCreationException exception) {
+            if (log.isDebugEnabled()) {
+                log.debug("Failed to create and deploy Camel route. "
+                                + "[routeId=({}), exception=({})]", routeId, exception.getMessage(),
+                        exception);
+            }
+            removeOutput(routeId);
+
+            throw new InvalidEntityException("Failed to create and deploy Camel route.");
+        }
+    }
+
+    /**
+     * Removes the output from a route and removes the route from the Camel context.
+     *
+     * @param routeId The route ID.
+     */
+    public void removeOutput(final UUID routeId) {
+        persist(((RouteFactory) getFactory()).deleteOutput(get(routeId)));
+        routeHelper.delete(get(routeId));
+    }
+
+    /**
      * Delete a route with the given id, after the associated Camel route has been successfully
      * deleted.
      *
      * @param routeId The id of the entity.
      * @throws IllegalArgumentException if the passed id is null.
+     * @throws InvalidEntityException if the route is linked to an artifact.
      */
     @Override
     public void delete(final UUID routeId) throws RouteDeletionException {
         Utils.requireNonNull(routeId, ErrorMessage.ENTITYID_NULL);
 
         final var route = get(routeId);
+        if (route.getOutput() != null) {
+            throw new InvalidEntityException("Cannot delete route that is linked to an artifact.");
+        }
         routeHelper.delete(route);
 
         final var linker = new RouteStepLinker();
@@ -160,5 +233,4 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
 
         super.delete(routeId);
     }
-
 }

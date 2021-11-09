@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import io.dataspaceconnector.common.exception.ResourceNotFoundException;
-import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
-import io.dataspaceconnector.model.endpoint.ConnectorEndpointDesc;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpointDesc;
@@ -33,7 +30,6 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -48,28 +44,10 @@ class EndpointServiceProxyTest {
     GenericEndpointService generic;
 
     @MockBean
-    ConnectorEndpointService connector;
-
-    @MockBean
     private EndpointRepository repository;
 
     @MockBean
     private AppEndpointService appEndpointService;
-
-    @Test
-    public void create_connectorEndpoint_returnConnectorEndpoint() {
-        /* ARRANGE */
-        final var desc = new ConnectorEndpointDesc();
-
-        Mockito.doReturn(new ConnectorEndpoint()).when(connector).create(desc);
-
-        /* ACT */
-        final var result = serviceProxy.create(desc);
-
-        /* ASSERT */
-        assertNotNull(result);
-        assertTrue(result instanceof ConnectorEndpoint);
-    }
 
     @Test
     public void create_genericEndpoint_returnGenericEndpoint() {
@@ -84,22 +62,6 @@ class EndpointServiceProxyTest {
         /* ASSERT */
         assertNotNull(result);
         assertTrue(result instanceof GenericEndpoint);
-    }
-
-    @Test
-    public void update_connectorEndpoint_returnUpdatedConnectorEndpoint() {
-        /* ARRANGE */
-        final var uuid = UUID.randomUUID();
-        final var desc = new ConnectorEndpointDesc();
-
-        Mockito.doReturn(new ConnectorEndpoint()).when(connector).update(uuid, desc);
-
-        /* ACT */
-        final var result = serviceProxy.update(uuid, desc);
-
-        /* ASSERT */
-        assertNotNull(result);
-        assertTrue(result instanceof ConnectorEndpoint);
     }
 
     @Test
@@ -119,26 +81,10 @@ class EndpointServiceProxyTest {
     }
 
     @Test
-    public void get_connectorEndpoint_returnConnectorEndpoint() {
-        /* ARRANGE */
-        final var uuid = UUID.randomUUID();
-
-        Mockito.doReturn(new ConnectorEndpoint()).when(connector).get(uuid);
-
-        /* ACT */
-        final var result = serviceProxy.get(uuid);
-
-        /* ASSERT */
-        assertNotNull(result);
-        assertTrue(result instanceof ConnectorEndpoint);
-    }
-
-    @Test
     public void get_genericEndpoint_returnGenericEndpoint() {
         /* ARRANGE */
         final var uuid = UUID.randomUUID();
 
-        Mockito.doThrow(new ResourceNotFoundException("")).when(connector).get(uuid);
         Mockito.doReturn(new GenericEndpoint()).when(generic).get(uuid);
 
         /* ACT */
@@ -159,32 +105,6 @@ class EndpointServiceProxyTest {
 
         /* ASSERT */
         assertNotNull(result);
-    }
-
-    @Test
-    public void doesExist_validConnectorEndpointId_returnTrue() {
-        /* ARRANGE */
-        final var uuid = UUID.randomUUID();
-        Mockito.doReturn(true).when(connector).doesExist(uuid);
-
-        /* ACT */
-        final var result = serviceProxy.doesExist(uuid);
-
-        /* ASSERT */
-        assertTrue(result);
-    }
-
-    @Test
-    public void doesExist_invalidConnectorEndpointId_returnFalse() {
-        /* ARRANGE */
-        final var uuid = UUID.randomUUID();
-        Mockito.doReturn(false).when(connector).doesExist(uuid);
-
-        /* ACT */
-        final var result = serviceProxy.doesExist(uuid);
-
-        /* ASSERT */
-        assertFalse(result);
     }
 
     @Test
@@ -211,15 +131,5 @@ class EndpointServiceProxyTest {
 
         /* ASSERT */
         assertFalse(result);
-    }
-
-    @Test
-    public void delete_connectorEndpointId_returnDelete() {
-        /* ARRANGE */
-        final var uuid = UUID.randomUUID();
-        Mockito.doReturn(new ConnectorEndpoint()).when(connector).get(uuid);
-
-        /* ACT & ASSERT */
-        assertDoesNotThrow(() -> serviceProxy.delete(uuid));
     }
 }

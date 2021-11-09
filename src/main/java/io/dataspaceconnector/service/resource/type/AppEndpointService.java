@@ -16,8 +16,9 @@
 package io.dataspaceconnector.service.resource.type;
 
 import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.AppEndpointDesc;
+import io.dataspaceconnector.model.endpoint.AppEndpointFactory;
+import io.dataspaceconnector.model.endpoint.AppEndpointImpl;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.routing.RouteHelper;
@@ -25,7 +26,7 @@ import io.dataspaceconnector.service.routing.RouteHelper;
 /**
  * Service class for app endpoints.
  */
-public class AppEndpointService extends EndpointService<AppEndpoint, AppEndpointDesc> {
+public class AppEndpointService extends EndpointService<AppEndpointImpl, AppEndpointDesc> {
     /**
      * Constructor for injection.
      *
@@ -35,10 +36,35 @@ public class AppEndpointService extends EndpointService<AppEndpoint, AppEndpoint
      * @param camelRouteHelper The helper class for Camel routes.
      */
     public AppEndpointService(
-            final BaseEntityRepository<AppEndpoint> repository,
-            final AbstractFactory<AppEndpoint, AppEndpointDesc> factory,
+            final BaseEntityRepository<AppEndpointImpl> repository,
+            final AbstractFactory<AppEndpointImpl, AppEndpointDesc> factory,
             final RouteRepository routeRepository,
             final RouteHelper camelRouteHelper) {
         super(repository, factory, routeRepository, camelRouteHelper);
+    }
+
+    /**
+     * Sets the external exposed ports of an AppEndpoint.
+     *
+     * @param appEndpoint The app endpoint.
+     * @param externalPort The external port.
+     */
+    public void setExternalEndpoint(final AppEndpointImpl appEndpoint,
+                                    final int externalPort) {
+        final var updatedAppEndpoint = ((AppEndpointFactory) getFactory())
+                .setExternalPort(appEndpoint, externalPort);
+        getRepository().save(updatedAppEndpoint);
+    }
+
+    /**
+     * Sets the location of an AppEndpoint.
+     *
+     * @param appEndpoint The app endpoint.
+     * @param location The location URI (access URL) of the AppEndpoint.
+     */
+    public void setLocation(final AppEndpointImpl appEndpoint, final String location) {
+        final var updatedAppEndpoint = ((AppEndpointFactory) getFactory())
+                .setLocation(appEndpoint, location);
+        getRepository().save(updatedAppEndpoint);
     }
 }

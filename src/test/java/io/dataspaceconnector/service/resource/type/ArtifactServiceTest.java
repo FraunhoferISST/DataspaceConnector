@@ -15,11 +15,14 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import io.dataspaceconnector.common.exception.InvalidEntityException;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
+import io.dataspaceconnector.common.net.HttpResponse;
 import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.common.net.QueryInput;
+import io.dataspaceconnector.common.routing.RouteDataDispatcher;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
@@ -32,6 +35,8 @@ import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
+import io.dataspaceconnector.service.DataRetriever;
+import io.dataspaceconnector.service.resource.relation.ArtifactRouteService;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
@@ -43,7 +48,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URL;
@@ -59,6 +63,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -83,20 +89,32 @@ class ArtifactServiceTest {
     @MockBean
     private ArtifactFactory artifactFactory;
 
+    @MockBean
+    private ArtifactRouteService artifactRouteService;
+
+    @MockBean
+    private DataRetriever dataRetriever;
+
+    @MockBean
+    private RouteDataDispatcher routeDataDispatcher;
+
     @Autowired
     private ArtifactService service;
 
     /**************************************************************************
-     * persist
+     * create
      *************************************************************************/
 
     @Test
-    public void persist_dataNull_persistArtifact() {
+    @SneakyThrows
+    public void create_dataNull_persistArtifact() {
         /* ARRANGE */
         final var desc = new ArtifactDesc();
         ArtifactImpl artifact = new ArtifactImpl();
         when(artifactFactory.create(desc)).thenReturn(artifact);
         when(artifactRepository.saveAndFlush(artifact)).thenReturn(artifact);
+        when(dataRetriever.retrieveData(eq(artifact), any()))
+                .thenReturn(new ByteArrayInputStream("data".getBytes(StandardCharsets.UTF_8)));
 
         /* ACT */
         service.create(desc);
@@ -108,7 +126,7 @@ class ArtifactServiceTest {
 
     @SneakyThrows
     @Test
-    public void persist_dataIdNull_persistDataAndArtifact() {
+    public void create_dataIdNull_persistDataAndArtifact() {
         /* ARRANGE */
         final var desc = new ArtifactDesc();
         ArtifactImpl artifact = new ArtifactImpl();
@@ -132,38 +150,7 @@ class ArtifactServiceTest {
 
     @SneakyThrows
     @Test
-    public void persist_dataPresentNotChanged_persistArtifact() {
-        /* ARRANGE */
-        final var desc = new ArtifactDesc();
-        ArtifactImpl artifact = new ArtifactImpl();
-        LocalData data = new LocalData();
-
-        Long dataId = 1L;
-
-        final var idField = data.getClass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(data, dataId);
-
-        final var dataField = artifact.getClass().getDeclaredField("data");
-        dataField.setAccessible(true);
-        dataField.set(artifact, data);
-
-        when(artifactFactory.create(desc)).thenReturn(artifact);
-        when(artifactRepository.saveAndFlush(artifact)).thenReturn(artifact);
-        when(dataRepository.saveAndFlush(data)).thenReturn(data);
-        when(dataRepository.getById(dataId)).thenReturn(data);
-
-        /* ACT */
-        service.create(desc);
-
-        /* ASSERT */
-        verify(artifactRepository, times(1)).saveAndFlush(artifact);
-        verify(dataRepository, never()).saveAndFlush(any());
-    }
-
-    @SneakyThrows
-    @Test
-    public void persist_dataPresentAndChanged_persistDataAndArtifact() {
+    public void create_dataPresentAndChanged_persistDataAndArtifact() {
         /* ARRANGE */
         final var desc = new ArtifactDesc();
 
@@ -200,6 +187,87 @@ class ArtifactServiceTest {
     }
 
     /**************************************************************************
+     * update
+     *************************************************************************/
+
+    @Test
+    @SneakyThrows
+    void update_newLocalData_updateArtifactAndData() {
+        /* ARRANGE */
+        final var desc = new ArtifactDesc();
+
+        // create new data instance
+        LocalData data = new LocalData();
+        Long dataId = 1L;
+        final var idField = data.getClass().getSuperclass().getDeclaredField("id");
+        idField.setAccessible(true);
+        idField.set(data, dataId);
+
+        // create new artifact instance with previously created data
+        ArtifactImpl artifact = new ArtifactImpl();
+        final var dataField = artifact.getClass().getDeclaredField("data");
+        dataField.setAccessible(true);
+        dataField.set(artifact, data);
+
+        // create different data instance that will be the previously persisted data
+        LocalData dataOld = new LocalData();
+        final var valueField = dataOld.getClass().getDeclaredField("value");
+        valueField.setAccessible(true);
+        valueField.set(dataOld, "some value".getBytes());
+
+        when(artifactRepository.findById(any())).thenReturn(Optional.of(artifact));
+        when(artifactFactory.update(artifact, desc)).thenReturn(true);
+        when(artifactRepository.saveAndFlush(artifact)).thenReturn(artifact);
+        when(dataRepository.saveAndFlush(data)).thenReturn(data);
+        when(dataRepository.getById(dataId)).thenReturn(dataOld);
+
+        /* ACT */
+        service.update(UUID.randomUUID(), desc);
+
+        /* ASSERT */
+        verify(artifactRepository, times(1)).saveAndFlush(artifact);
+        verify(dataRepository, times(1)).saveAndFlush(data);
+    }
+
+    @Test
+    @SneakyThrows
+    void update_newRouteLinkAndRouteCannotBeCreated_revertChanges() {
+        final var desc = new ArtifactDesc();
+        final var artifactId = UUID.randomUUID();
+
+        // create new data instance
+        RemoteData data = new RemoteData();
+        Long dataId = 1L;
+        final var idField = data.getClass().getSuperclass().getDeclaredField("id");
+        idField.setAccessible(true);
+        idField.set(data, dataId);
+
+        // create new artifact instance with previously created data
+        ArtifactImpl artifact = new ArtifactImpl();
+        final var dataField = artifact.getClass().getDeclaredField("data");
+        dataField.setAccessible(true);
+        dataField.set(artifact, data);
+
+        // create different data instance that will be the previously persisted data
+        RemoteData dataOld = new RemoteData();
+
+        when(artifactRepository.findById(any())).thenReturn(Optional.of(artifact));
+        when(artifactFactory.update(artifact, desc)).thenReturn(true);
+        when(artifactRepository.saveAndFlush(artifact)).thenReturn(artifact);
+        when(dataRepository.saveAndFlush(data)).thenReturn(data);
+        when(dataRepository.getById(dataId)).thenReturn(dataOld);
+        doThrow(InvalidEntityException.class)
+                .when(artifactRouteService).createRouteLink(any(), any());
+
+        /* ACT && ASSERT */
+        assertThrows(InvalidEntityException.class, () -> service.update(artifactId, desc));
+
+        verify(artifactRepository, times(1)).saveAndFlush(artifact);
+        verify(dataRepository, times(1)).saveAndFlush(data);
+        verify(dataRepository, times(1)).saveAndFlush(dataOld);
+    }
+
+    /**************************************************************************
      * getData.
      *************************************************************************/
 
@@ -211,7 +279,7 @@ class ArtifactServiceTest {
 
         /* ACT && ASSERT */
         assertThrows(IllegalArgumentException.class, () -> service.getData(null,
-                null, null, queryInput));
+                null, null, queryInput, null));
     }
 
     @Test
@@ -223,7 +291,7 @@ class ArtifactServiceTest {
 
         /* ACT && ASSERT */
         assertThrows(ResourceNotFoundException.class, () -> service.getData(null,
-                null, unknownUuid, (QueryInput) null));
+                null, unknownUuid, (QueryInput) null, null));
     }
 
     @Test
@@ -234,12 +302,15 @@ class ArtifactServiceTest {
         when(artifactRepository.findById(any())).thenReturn(Optional.of(localArtifact));
         when(artifactFactory.create(any())).thenReturn(localArtifact);
         when(dataRepository.getById(any())).thenReturn(getLocalData());
+        when(dataRetriever.retrieveData(eq(localArtifact), any()))
+                .thenReturn(new ByteArrayInputStream(getLocalData().getValue()));
 
         /* ACT */
         final var data = service.getData(null,
                                                     null,
                                                     localArtifact.getId(),
-                                                    (QueryInput) null);
+                                                    (QueryInput) null,
+                                                    null);
 
         /* ASSERT */
         assertTrue(Arrays.compare(getLocalData().getValue(), IOUtils.toByteArray(data)) == 0);
@@ -254,11 +325,13 @@ class ArtifactServiceTest {
         when(artifactRepository.findById(any())).thenReturn(Optional.of(localArtifact));
         when(artifactFactory.create(any())).thenReturn(localArtifact);
         when(dataRepository.getById(any())).thenReturn(getLocalData());
+        when(dataRetriever.retrieveData(eq(localArtifact), any()))
+                .thenReturn(new ByteArrayInputStream(getLocalData().getValue()));
 
         final var before = localArtifact.getNumAccessed();
 
         /* ACT */
-        service.getData(null, null, localArtifact.getId(), (QueryInput) null);
+        service.getData(null, null, localArtifact.getId(), (QueryInput) null, null);
 
         /* ASSERT */
         Field numAccessedField = Artifact.class.getDeclaredField("numAccessed");
@@ -277,21 +350,27 @@ class ArtifactServiceTest {
         URL url = ((RemoteData) remoteArtifact.getData()).getAccessUrl();
         final var auth = ((RemoteData) remoteArtifact.getData()).getAuthentication();
 
-        final var response = new HttpService.Response();
-        response.setBody(new ByteArrayInputStream(remoteData));
+        final var response = new HttpResponse(200, new ByteArrayInputStream(remoteData));
 
         when(artifactRepository.findById(remoteArtifact.getId()))
                 .thenReturn(Optional.of(remoteArtifact));
         when(httpService.get(url, null, auth)).thenReturn(response);
+        when(artifactRepository.saveAndFlush(any())).thenAnswer(invocationOnMock -> {
+            Object[] args = invocationOnMock.getArguments();
+            return args[0];
+        });
+        when(dataRetriever.retrieveData(any(), any()))
+                .thenReturn(response.getData());
 
         /* ACT */
         final var data = service.getData(null,
                                                     null,
                                                     remoteArtifact.getId(),
-                                                    (QueryInput)  null);
+                                                    (QueryInput)  null,
+                                                    null);
 
         /* ASSERT */
-        assertEquals(response.getBody(), data);
+        assertEquals(response.getData(), data);
     }
 
     @SneakyThrows
@@ -302,19 +381,24 @@ class ArtifactServiceTest {
         ArtifactImpl remoteArtifact = getRemoteArtifact(getRemoteData());
         URL url = ((RemoteData) remoteArtifact.getData()).getAccessUrl();
 
-        final var response = new HttpService.Response();
-        response.setBody(new ByteArrayInputStream(remoteData));
+        final var response = new HttpResponse(200, new ByteArrayInputStream(remoteData));
 
         when(artifactRepository.findById(remoteArtifact.getId()))
                 .thenReturn(Optional.of(remoteArtifact));
         when(httpService.get(url, (QueryInput) null)).thenReturn(response);
+        when(artifactRepository.saveAndFlush(any())).thenAnswer(invocationOnMock -> {
+            Object[] args = invocationOnMock.getArguments();
+            return args[0];
+        });
+        when(dataRetriever.retrieveData(any(), any()))
+                .thenReturn(response.getData());
 
         /* ACT */
         final var data = service.getData(null, null,
-                remoteArtifact.getId(),(QueryInput)  null);
+                remoteArtifact.getId(),(QueryInput) null, null);
 
         /* ASSERT */
-        assertEquals(response.getBody(), data);
+        assertEquals(response.getData(), data);
     }
 
     @SneakyThrows
@@ -326,19 +410,24 @@ class ArtifactServiceTest {
         URL url = ((RemoteData) remoteArtifact.getData()).getAccessUrl();
         QueryInput queryInput = getQueryInput();
 
-        final var response = new HttpService.Response();
-        response.setBody(new ByteArrayInputStream(remoteData));
+        final var response = new HttpResponse(200, new ByteArrayInputStream(remoteData));
 
         when(artifactRepository.findById(remoteArtifact.getId()))
                 .thenReturn(Optional.of(remoteArtifact));
         when(httpService.get(url, queryInput)).thenReturn(response);
+        when(artifactRepository.saveAndFlush(any())).thenAnswer(invocationOnMock -> {
+            Object[] args = invocationOnMock.getArguments();
+            return args[0];
+        });
+        when(dataRetriever.retrieveData(eq(remoteArtifact), any()))
+                .thenReturn(response.getData());
 
         /* ACT */
         final var data = service.getData(null, null,
-                                         remoteArtifact.getId(), queryInput);
+                                         remoteArtifact.getId(), queryInput, null);
 
         /* ASSERT */
-        assertEquals(response.getBody(), data);
+        assertEquals(response.getData(), data);
     }
 
     @SneakyThrows
@@ -357,13 +446,14 @@ class ArtifactServiceTest {
 
         /* ACT && ASSERT */
         assertThrows(RuntimeException.class, () -> service.getData(null, null,
-                                                                   remoteArtifact.getId(), queryInput),
+                                                                   remoteArtifact.getId(),
+                                                                   queryInput, null),
                 expectedExceptionMessage);
     }
 
     @SneakyThrows
     @Test
-    public void getData_unknownDataType_throwNotImplementedException() {
+    public void getData_unknownDataType_throwUnreachableLineException() {
         /* ARRANGE */
         ArtifactImpl unknownArtifact = getUnknownArtifact();
         final var dataField = unknownArtifact.getClass().getDeclaredField("data");
@@ -372,17 +462,19 @@ class ArtifactServiceTest {
 
         when(artifactRepository.findById(unknownArtifact.getId()))
                 .thenReturn(Optional.of(unknownArtifact));
+        when(dataRetriever.retrieveData(any(), any())).thenThrow(UnreachableLineException.class);
 
         /* ACT && ASSERT */
         assertThrows(UnreachableLineException.class,
-                     () -> service.getData(null, null, unknownArtifact.getId(), (QueryInput) null));
+                     () -> service.getData(null, null, unknownArtifact.getId(), (QueryInput) null,
+                             null));
     }
 
     @Test
     public void getAllByAgreement_validUuid_returnList() {
         /* ARRANGE */
         final var uuid = UUID.randomUUID();
-        Mockito.doReturn(List.of(getLocalArtifact())).when(artifactRepository).findAllByAgreement(Mockito.eq(uuid));
+        Mockito.doReturn(List.of(getLocalArtifact())).when(artifactRepository).findAllByAgreement(eq(uuid));
 
         /* ACT */
         final var result = service.getAllByAgreement(uuid);
@@ -397,7 +489,7 @@ class ArtifactServiceTest {
         /* ARRANGE */
         final var uuid = UUID.randomUUID();
         final var remoteId = URI.create("https://artifact");
-        Mockito.doReturn(Optional.of(uuid)).when(artifactRepository).identifyByRemoteId(Mockito.eq(remoteId));
+        Mockito.doReturn(Optional.of(uuid)).when(artifactRepository).identifyByRemoteId(eq(remoteId));
 
         /* ACT */
         final var result = service.identifyByRemoteId(remoteId);
@@ -406,26 +498,6 @@ class ArtifactServiceTest {
         assertNotNull(result);
         assertTrue(result.isPresent());
         assertEquals(uuid, result.get());
-    }
-
-    @Test
-    public void getData_withDataIsNull() throws Exception {
-        var emptyData = new LocalData();
-        var getDataMethod = service.getClass().getDeclaredMethod("getData", LocalData.class);
-        getDataMethod.setAccessible(true);
-        var emptyRes = (InputStream) getDataMethod.invoke(service, emptyData);
-        assertTrue(emptyRes.readAllBytes().length == 0);
-    }
-
-    @Test
-    public void getData_withDataNotNull() throws Exception {
-        var data = new LocalData();
-        var value = new byte[]{1, 2, 3, 4};
-        data.setValue(value);
-        var getDataMethod = service.getClass().getDeclaredMethod("getData", LocalData.class);
-        getDataMethod.setAccessible(true);
-        var res = (InputStream) getDataMethod.invoke(service, data);
-        assertTrue(Arrays.equals(res.readAllBytes(), value));
     }
 
     /**************************************************************************

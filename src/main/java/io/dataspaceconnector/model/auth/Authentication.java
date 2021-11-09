@@ -16,7 +16,7 @@
 package io.dataspaceconnector.model.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.dataspaceconnector.common.net.HttpService;
+import io.dataspaceconnector.common.net.HttpAuthentication;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,7 +44,7 @@ import java.io.Serializable;
 @SQLDelete(sql = "UPDATE authentication SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
 @Table(name = "authentication")
-public abstract class Authentication implements HttpService.Authentication, Serializable {
+public abstract class Authentication implements HttpAuthentication, Serializable {
 
     /**
      * Serial version uid.

@@ -25,32 +25,18 @@ import lombok.RequiredArgsConstructor;
 public class EndpointFactoryProxy extends EndpointFactory<Endpoint, EndpointDesc> {
 
     /**
-     * The factory for the connector endpoint.
-     */
-    private final @NonNull ConnectorEndpointFactory connector;
-
-    /**
      * The factory for the generic endpoint.
      */
     private final @NonNull GenericEndpointFactory generic;
 
     @Override
     protected final Endpoint initializeEntity(final EndpointDesc desc) {
-         if (desc instanceof ConnectorEndpointDesc) {
-            return connector.initializeEntity((ConnectorEndpointDesc) desc);
-        }
-
         assert desc instanceof GenericEndpointDesc;
         return generic.initializeEntity((GenericEndpointDesc) desc);
     }
 
     @Override
     protected final boolean updateInternal(final Endpoint endpoint, final EndpointDesc desc) {
-        if (endpoint instanceof ConnectorEndpoint && desc instanceof ConnectorEndpointDesc) {
-            return connector.updateInternal((ConnectorEndpoint) endpoint,
-                                            (ConnectorEndpointDesc) desc);
-        }
-
         assert endpoint instanceof GenericEndpoint && desc instanceof GenericEndpointDesc;
         return generic.updateInternal((GenericEndpoint) endpoint, (GenericEndpointDesc) desc);
     }
