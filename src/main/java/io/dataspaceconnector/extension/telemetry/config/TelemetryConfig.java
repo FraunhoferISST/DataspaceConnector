@@ -23,10 +23,10 @@ import org.springframework.context.annotation.Configuration;
  * Create an empty tracer when tracing should be disabled.
  * See: https://github.com/opentracing-contrib/java-spring-jaeger
  */
-@ConditionalOnProperty(
-        value = "opentracing.jaeger.enabled", havingValue = "false", matchIfMissing = false)
+@ConditionalOnProperty(value = "opentracing.jaeger.enabled", havingValue = "false")
 @Configuration
 public class TelemetryConfig {
+
     /**
      * Create an empty tracer.
      *

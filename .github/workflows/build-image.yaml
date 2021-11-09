@@ -7,12 +7,9 @@ on:
    release:
      types: [published]
 
-env:
-  REGISTRY: ${{ secrets.IMAGE_REGISTRY }}
-  OWNER: ${{ secrets.REPO_USER }}
-
 jobs:
   productive:
+    environment: registry
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
@@ -22,7 +19,7 @@ jobs:
       -
         name: Build registry path
         id: get_repo
-        run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspace-connector"
+        run: echo ::set-output name=IMAGE::"ghcr.io/international-data-spaces-association/dataspace-connector"
       -
        name: Find tag
        id: get_tag
@@ -40,17 +37,50 @@ jobs:
          echo $TMP
          echo ::set-output name=BRANCH::$TMP
       -
+        name: Install SBoM generator
+        run: |
+          SYFT_EXPECTED_DIGEST='74a9becd5ccb4c02de99050a632e7bfc72176d5e4e844093b1e2c5bedfb45888'
+          curl -sSfL https://github.com/anchore/syft/releases/download/v0.29.0/syft_0.29.0_linux_amd64.tar.gz -o syft.tar.gz
+          SYFT_RESULT_DIGEST=$(sha256sum syft.tar.gz | cut -d' ' -f1);
+          if [[ $SYFT_RESULT_DIGEST != "${SYFT_EXPECTED_DIGEST}" ]]; then exit 1; fi
+
+          mkdir -p syft-install/
+          tar -zxf syft.tar.gz -C syft-install/
+          mv syft-install/syft /usr/local/bin/
+          rm -rf syft.tar.gz syft-install/
+      -
+        name: Install SBoM pusher
+        run: |
+          ORAS_EXPECTED_DIGEST='660a4ecd87414d1f29610b2ed4630482f1f0d104431576d37e59752c27de37ed'
+          curl -sSfL https://github.com/oras-project/oras/releases/download/v0.12.0/oras_0.12.0_linux_amd64.tar.gz -o oras.tar.gz
+          ORAS_RESULT_DIGEST=$(sha256sum oras.tar.gz | cut -d' ' -f1);
+          if [[ $ORAS_RESULT_DIGEST != "${ORAS_EXPECTED_DIGEST}" ]]; then exit 1; fi
+
+          mkdir -p oras-install/
+          tar -zxf oras.tar.gz -C oras-install/
+          mv oras-install/oras /usr/local/bin/
+          rm -rf oras.tar.gz oras-install/
+      - name: Install signing
+        run: |
+          COSIGN_EXPECTED_DIGEST='9604a5eb171748113f92a67495556007dde6f45804f0b38d3e55c3bc7e151774'
+          curl -sSfL https://github.com/sigstore/cosign/releases/download/v1.3.0/cosign-linux-amd64 -o cosign
+          COSIGN_RESULT_DIGEST=$(sha256sum cosign | cut -d' ' -f1);
+          if [[ $COSIGN_RESULT_DIGEST != "${COSIGN_EXPECTED_DIGEST}" ]]; then exit 1; fi
+          chmod +x cosign
+          mv cosign /usr/local/bin/cosign
+      -
        name: Login to registry
        uses: docker/login-action@v1
        with:
-         # This should use REGISTRY instead of the secret directly
-         registry: ${{ secrets.IMAGE_REGISTRY }}
+         registry: ghcr.io
          username: ${{ github.actor }}
          password: ${{ secrets.GITHUB_TOKEN }}
       -
        name: Build image
        run: |
         docker build . -t $IMAGE:$BRANCH
+        BOM="dataspace-connector-sbom.json"
+        syft "${IMAGE}:${BRANCH}" -o spdx-json > "${BOM}"
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
          BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
@@ -62,6 +92,8 @@ jobs:
          echo $BRANCH
          echo $TAG
          TMP=$TAG
+         BOM="dataspace-connector-sbom.json"
+
          if [[ $TMP == v* ]]
          then
            # Its a version tag
@@ -69,24 +101,50 @@ jobs:
            echo "Found a version tag"
            docker tag $IMAGE:$BRANCH $IMAGE:latest
            docker push $IMAGE:latest
+           oras push "${IMAGE}:latest-sbom" "${BOM}:application/json"
+
+           echo "${COSIGN_KEY}" > /tmp/cosign.key
+           cosign sign --key /tmp/cosign.key "${IMAGE}:latest"
+           cosign sign --key /tmp/cosign.key "${IMAGE}:latest-sbom"
+           rm /tmp/cosign.key
          fi
          # Has tag
          docker tag $IMAGE:$BRANCH $IMAGE:$TMP
          docker push $IMAGE:$TMP
+         oras push "${IMAGE}:${TMP}-sbom" "${BOM}:application/json"
+
+         echo "${COSIGN_KEY}" > /tmp/cosign.key
+         cosign sign --key /tmp/cosign.key "${IMAGE}:${TMP}"
+         cosign sign --key /tmp/cosign.key "${IMAGE}:${TMP}-sbom"
+         rm /tmp/cosign.key
        if: startsWith(github.ref, 'refs/tags')
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
          BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
          TAG: ${{ steps.get_tag.outputs.TAG }}
+         COSIGN_KEY: ${{secrets.COSIGN_KEY}}
+         COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
       -
        name: Push branch image
        run: |
          docker push $IMAGE:$BRANCH
+
+         BOM="dataspace-connector-sbom.json"
+         oras push "${IMAGE}:${BRANCH}-sbom" "${BOM}:application/json"
+
+         echo "${COSIGN_KEY}" > /tmp/cosign.key
+         cosign sign --key /tmp/cosign.key "${IMAGE}:${BRANCH}"
+         cosign sign --key /tmp/cosign.key "${IMAGE}:${BRANCH}-sbom"
+         rm /tmp/cosign.key
        if: startsWith(github.ref, 'refs/heads')
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
          BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
+         COSIGN_KEY: ${{secrets.COSIGN_KEY}}
+         COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
+
   debug:
+    environment: registry
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
@@ -96,7 +154,7 @@ jobs:
       -
         name: Build registry path
         id: get_repo
-        run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspace-connector"
+        run: echo ::set-output name=IMAGE::"ghcr.io/international-data-spaces-association/dataspace-connector"
       -
        name: Find tag
        id: get_tag
@@ -114,17 +172,50 @@ jobs:
          echo $TMP
          echo ::set-output name=BRANCH::$TMP
       -
+        name: Install SBoM generator
+        run: |
+          SYFT_EXPECTED_DIGEST='74a9becd5ccb4c02de99050a632e7bfc72176d5e4e844093b1e2c5bedfb45888'
+          curl -sSfL https://github.com/anchore/syft/releases/download/v0.29.0/syft_0.29.0_linux_amd64.tar.gz -o syft.tar.gz
+          SYFT_RESULT_DIGEST=$(sha256sum syft.tar.gz | cut -d' ' -f1);
+          if [[ $SYFT_RESULT_DIGEST != "${SYFT_EXPECTED_DIGEST}" ]]; then exit 1; fi
+
+          mkdir -p syft-install/
+          tar -zxf syft.tar.gz -C syft-install/
+          mv syft-install/syft /usr/local/bin/
+          rm -rf syft.tar.gz syft-install/
+      -
+        name: Install SBoM pusher
+        run: |
+          ORAS_EXPECTED_DIGEST='660a4ecd87414d1f29610b2ed4630482f1f0d104431576d37e59752c27de37ed'
+          curl -sSfL https://github.com/oras-project/oras/releases/download/v0.12.0/oras_0.12.0_linux_amd64.tar.gz -o oras.tar.gz
+          ORAS_RESULT_DIGEST=$(sha256sum oras.tar.gz | cut -d' ' -f1);
+          if [[ $ORAS_RESULT_DIGEST != "${ORAS_EXPECTED_DIGEST}" ]]; then exit 1; fi
+
+          mkdir -p oras-install/
+          tar -zxf oras.tar.gz -C oras-install/
+          mv oras-install/oras /usr/local/bin/
+          rm -rf oras.tar.gz oras-install/
+      - name: Install signing
+        run: |
+          COSIGN_EXPECTED_DIGEST='9604a5eb171748113f92a67495556007dde6f45804f0b38d3e55c3bc7e151774'
+          curl -sSfL https://github.com/sigstore/cosign/releases/download/v1.3.0/cosign-linux-amd64 -o cosign
+          COSIGN_RESULT_DIGEST=$(sha256sum cosign | cut -d' ' -f1);
+          if [[ $COSIGN_RESULT_DIGEST != "${COSIGN_EXPECTED_DIGEST}" ]]; then exit 1; fi
+          chmod +x cosign
+          mv cosign /usr/local/bin/cosign
+      -
        name: Login to registry
        uses: docker/login-action@v1
        with:
-         # This should use REGISTRY instead of the secret directly
-         registry: ${{ secrets.IMAGE_REGISTRY }}
+         registry: ghcr.io
          username: ${{ github.actor }}
          password: ${{ secrets.GITHUB_TOKEN }}
       -
        name: Build image
        run: |
         docker build . -f scripts/ci/docker/Debug.dockerfile -t $IMAGE:$BRANCH
+        BOM="dataspace-connector-sbom.json"
+        syft "${IMAGE}:${BRANCH}" -o spdx-json > "${BOM}"
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
          BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
@@ -136,6 +227,8 @@ jobs:
          echo $BRANCH
          echo $TAG
          TMP=$TAG
+         BOM="dataspace-connector-sbom.json"
+
          if [[ $TMP == v* ]]
          then
            # Its a version tag
@@ -145,17 +238,34 @@ jobs:
          # Has tag
          docker tag $IMAGE:$BRANCH $IMAGE:$TMP-debug
          docker push $IMAGE:$TMP-debug
+         oras push "${IMAGE}:${TMP}-debug-sbom" "${BOM}:application/json"
+
+         echo "${COSIGN_KEY}" > /tmp/cosign.key
+         cosign sign --key /tmp/cosign.key "${IMAGE}:${TMP}-debug"
+         cosign sign --key /tmp/cosign.key "${IMAGE}:${TMP}-debug-sbom"
+         rm /tmp/cosign.key
        if: startsWith(github.ref, 'refs/tags')
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
          BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
          TAG: ${{ steps.get_tag.outputs.TAG }}
+         COSIGN_KEY: ${{secrets.COSIGN_KEY}}
+         COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
       -
        name: Push branch image
        run: |
          docker tag $IMAGE:$BRANCH $IMAGE:$BRANCH-debug
          docker push $IMAGE:$BRANCH-debug
+         BOM="dataspace-connector-sbom.json"
+         oras push "${IMAGE}:${BRANCH}-debug-sbom" "${BOM}:application/json"
+
+         echo "${COSIGN_KEY}" > /tmp/cosign.key
+         cosign sign --key /tmp/cosign.key "${IMAGE}:${BRANCH}-debug"
+         cosign sign --key /tmp/cosign.key "${IMAGE}:${BRANCH}-debug-sbom"
+         rm /tmp/cosign.key
        if: startsWith(github.ref, 'refs/heads')
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
          BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
+         COSIGN_KEY: ${{secrets.COSIGN_KEY}}
+         COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}

@@ -109,8 +109,8 @@ public class RoutesController {
             return new ResponseEntity<>("Could not read route(s) from XML file.",
                     HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Could not add route(s) to Camel Context. [exception=({})]",
+            if (log.isWarnEnabled()) {
+                log.warn("Could not add route(s) to Camel Context. [exception=({})]",
                         e.getMessage(), e);
             }
             return new ResponseEntity<>("Could not add route(s) to Camel Context.",
@@ -146,8 +146,8 @@ public class RoutesController {
             return new ResponseEntity<>("Successfully stopped and removed route with ID "
                     + routeId + " .", HttpStatus.OK);
         } catch (Exception e) {
-            if (log.isErrorEnabled()) {
-                log.error("Could not remove route from Camel context. [id=({}), "
+            if (log.isWarnEnabled()) {
+                log.warn("Could not remove route from Camel context. [id=({}), "
                         + "exception=({})]", routeId, e.getMessage(), e);
             }
             return new ResponseEntity<>("Could not stop or remove route.",

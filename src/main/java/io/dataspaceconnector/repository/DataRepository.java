@@ -39,4 +39,14 @@ public interface DataRepository extends JpaRepository<Data, Long> {
             + "SET a.value = :data "
             + "WHERE a.id = :entityId")
     void setLocalData(Long entityId, byte[] data);
+
+    /**
+     * Removes a RemoteData object from the database.
+     *
+     * @param entityId ID of the data to delete.
+     */
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM RemoteData r WHERE r.id =:entityId")
+    void deleteRemoteData(Long entityId);
 }

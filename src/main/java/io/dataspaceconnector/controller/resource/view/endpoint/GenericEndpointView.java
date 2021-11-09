@@ -56,7 +56,7 @@ public class GenericEndpointView extends RepresentationModel<GenericEndpointView
     /**
      * The location information.
      */
-    private URI location;
+    private String location;
 
     /**
      * The documentation of the endpoint.

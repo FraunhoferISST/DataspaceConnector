@@ -15,22 +15,40 @@
  */
 package io.dataspaceconnector.service.message;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import io.dataspaceconnector.common.net.HttpService;
+import io.dataspaceconnector.common.routing.RouteDataDispatcher;
+import io.dataspaceconnector.common.net.ApiReferenceHelper;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
+import io.dataspaceconnector.model.artifact.ArtifactImpl;
+import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
+import io.dataspaceconnector.model.subscription.Subscription;
 import io.dataspaceconnector.service.resource.templatebuilder.AbstractResourceTemplateBuilder;
 import io.dataspaceconnector.service.resource.relation.AbstractResourceContractLinker;
 import io.dataspaceconnector.service.resource.relation.AbstractResourceRepresentationLinker;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class SubscriberNotificationServiceTest {
+class SubscriberNotificationServiceTest {
 
     @Autowired
     private SubscriberNotificationService subscriberNotificationSvc;
@@ -44,8 +62,19 @@ public class SubscriberNotificationServiceTest {
     @SpyBean
     private AbstractResourceContractLinker<OfferedResource> resourceContractLinker;
 
+    @MockBean
+    private ApiReferenceHelper apiReferenceHelper;
+
+    @MockBean
+    private RouteDataDispatcher routeDataDispatcher;
+
+    @MockBean
+    private HttpService httpService;
+
+    private final URI target = URI.create("https://artifact");
+
     @Test
-    public void notifyOnUpdate_emptyArtifact_throwNothing() {
+    void notifyOnUpdate_emptyArtifact_throwNothing() {
         /* ARRANGE */
         final var desc = new ArtifactDesc();
         final var factory = new ArtifactFactory();
@@ -75,5 +104,45 @@ public class SubscriberNotificationServiceTest {
 //        /* ACT && ASSERT */
 //        assertDoesNotThrow(() -> subscriberNotificationSvc.notifyOnUpdate(artifact));
 //    }
+
+    @Test
+    @SneakyThrows
+    void notifyAll_nonIdsSubscriber_sendNotifications() {
+        /* ARRANGE */
+        final var nonRouteLocation = URI.create("https://location");
+        final var routeLocation = URI.create("https://route");
+        final var nonRouteSubscription = getSubscription(nonRouteLocation);
+        final var routeSubscription = getSubscription(routeLocation);
+        final var subscriptions = List.of(nonRouteSubscription, routeSubscription);
+        final var artifact = getArtifact();
+
+        when(apiReferenceHelper.isRouteReference(nonRouteLocation.toURL())).thenReturn(false);
+        when(apiReferenceHelper.isRouteReference(routeLocation.toURL())).thenReturn(true);
+
+        /* ACT */
+        subscriberNotificationSvc.notifyAll(subscriptions, target, artifact);
+
+        /* ASSERT */
+        verify(routeDataDispatcher, times(1)).send(any(), any(), any());
+        verify(httpService, times(1)).post(any(), any(), any());
+    }
+
+    private Subscription getSubscription(final URI location) {
+        final var subscription = new Subscription();
+        ReflectionTestUtils.setField(subscription, "id", UUID.randomUUID());
+        ReflectionTestUtils.setField(subscription, "target", target);
+        ReflectionTestUtils.setField(subscription, "location", location);
+        ReflectionTestUtils.setField(subscription, "idsProtocol", false);
+        ReflectionTestUtils.setField(subscription, "pushData", false);
+        return subscription;
+    }
+
+    private ArtifactImpl getArtifact() {
+        final var artifact = new ArtifactImpl();
+        ReflectionTestUtils.setField(artifact, "id", UUID.randomUUID());
+        ReflectionTestUtils
+                .setField(artifact, "representations", new ArrayList<Representation>());
+        return artifact;
+    }
 
 }

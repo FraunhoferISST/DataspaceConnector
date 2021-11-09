@@ -15,22 +15,28 @@
  */
 package io.dataspaceconnector.model.route;
 
+import io.dataspaceconnector.common.exception.InvalidEntityException;
+import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RouteFactoryTest {
+class RouteFactoryTest {
 
     final RouteDesc desc = new RouteDesc();
     final RouteFactory factory = new RouteFactory();
 
     @Test
-    public void create_validDesc_returnNew() {
+    void create_validDesc_returnNew() {
         /* ARRANGE */
         final var title = "MyRoute";
         final var description = "MyDesc";
@@ -43,11 +49,11 @@ public class RouteFactoryTest {
         /* ASSERT */
         assertEquals(title, result.getTitle());
         assertEquals(description, result.getDescription());
-        assertTrue(result.getOutput().isEmpty());
+        assertNull(result.getOutput());
     }
 
     @Test
-    public void update_newRouteConfig_willUpdate() {
+    void update_newRouteConfig_willUpdate() {
         /* ARRANGE */
         final var desc = new RouteDesc();
         desc.setConfiguration("config");
@@ -62,7 +68,7 @@ public class RouteFactoryTest {
     }
 
     @Test
-    public void update_sameRouteConfig_willNotUpdate() {
+    void update_sameRouteConfig_willNotUpdate() {
         /* ARRANGE */
         final var desc = new RouteDesc();
         final var route = factory.create(new RouteDesc());
@@ -77,7 +83,7 @@ public class RouteFactoryTest {
 
 
     @Test
-    public void update_newDeployMethod_willUpdate() {
+    void update_newDeployMethod_willUpdate() {
         /* ARRANGE */
         final var desc = new RouteDesc();
         desc.setDeploy(DeployMethod.CAMEL);
@@ -92,7 +98,20 @@ public class RouteFactoryTest {
     }
 
     @Test
-    public void update_sameDeployMethod_willNotUpdate() {
+    void update_deployMethodNoneButLinkedToArtifact_throwInvalidEntityException() {
+        /* ARRANGE */
+        final var desc = new RouteDesc();
+        desc.setDeploy(DeployMethod.CAMEL);
+        final var route = factory.create(desc);
+        ReflectionTestUtils.setField(route, "output", new ArtifactImpl());
+        final var newDesc = new RouteDesc();
+
+        /* ACT && ASSERT */
+        assertThrows(InvalidEntityException.class, () -> factory.update(route, newDesc));
+    }
+
+    @Test
+    void update_sameDeployMethod_willNotUpdate() {
         /* ARRANGE */
         final var desc = new RouteDesc();
         final var route = factory.create(new RouteDesc());
@@ -106,7 +125,7 @@ public class RouteFactoryTest {
     }
 
     @Test
-    public void setStartEndpoint_setValue_willUpdate() {
+    void setStartEndpoint_setValue_willUpdate() {
         final var route = new Route();
         final var endpoint = new GenericEndpoint();
 
@@ -114,7 +133,7 @@ public class RouteFactoryTest {
     }
 
     @Test
-    public void removeStartEndpoint_willRemove() {
+    void removeStartEndpoint_willRemove() {
         final var route = new Route();
         route.setStart(new GenericEndpoint());
 
@@ -122,7 +141,19 @@ public class RouteFactoryTest {
     }
 
     @Test
-    public void setLastEndpoint_setValue_willUpdate() {
+    void removeStartEndpoint_outputNotNull_throwInvalidEntityException() {
+        /* ARRANGE */
+        final var route = new Route();
+        final var artifact = new ArtifactImpl();
+        ReflectionTestUtils.setField(route, "output", artifact);
+        route.setStart(new GenericEndpoint());
+
+        /* ACT && ASSERT */
+        assertThrows(InvalidEntityException.class, () -> factory.deleteStartEndpoint(route));
+    }
+
+    @Test
+    void setLastEndpoint_setValue_willUpdate() {
         final var route = new Route();
         final var endpoint = new GenericEndpoint();
 
@@ -130,10 +161,50 @@ public class RouteFactoryTest {
     }
 
     @Test
-    public void removeLastEndpoint_willRemove() {
+    void removeLastEndpoint_willRemove() {
         final var route = new Route();
         route.setEnd(new GenericEndpoint());
 
         assertNull(factory.deleteLastEndpoint(route).getEnd());
+    }
+
+    @Test
+    void deleteSubroutes_returnEmpty() {
+        /* ARRANGE */
+        final var route = factory.create(new RouteDesc());
+        route.setSteps(new ArrayList<>());
+
+        /* ACT */
+        factory.deleteSubroutes(route);
+
+        /* ASSERT */
+        assertNull(route.getSteps());
+    }
+
+    @Test
+    void setOutput_returnRouteWithOutput() {
+        /* ARRANGE */
+        final var route = factory.create(new RouteDesc());
+        final var artifact = new ArtifactImpl();
+
+        /* ACT */
+        final var result = factory.setOutput(route, artifact);
+
+        /* ASSERT */
+        assertEquals(artifact, result.getOutput());
+    }
+
+    @Test
+    void deleteOutput_returnRouteWithoutOutput() {
+        /* ARRANGE */
+        final var route = factory.create(new RouteDesc());
+        final var artifact = new ArtifactImpl();
+        ReflectionTestUtils.setField(route, "output", artifact);
+
+        /* ACT */
+        final var result = factory.deleteOutput(route);
+
+        /* ASSERT */
+        assertNull(result.getOutput());
     }
 }

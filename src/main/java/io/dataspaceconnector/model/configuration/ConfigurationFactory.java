@@ -125,9 +125,9 @@ public class ConfigurationFactory extends AbstractNamedFactory<Configuration, Co
                 desc.getSecurityProfile());
         final var hasUpdatedLogLevel = updateLogLevel(config, desc.getLogLevel());
         final var hasUpdatedDeployMode = updateDeployMode(config, desc.getDeployMode());
-        final var hasUpdatedTrustStore = updateTrustStore(config, desc.getTruststoreSettings());
-        final var hasUpdatedKeyStore = updateKeyStore(config, desc.getKeystoreSettings());
-        final var hasUpdatedProxy = updateProxy(config, desc.getProxySettings());
+        final var hasUpdatedTrustStore = updateTrustStore(config, desc.getTruststore());
+        final var hasUpdatedKeyStore = updateKeyStore(config, desc.getKeystore());
+        final var hasUpdatedProxy = updateProxy(config, desc.getProxy());
         final var hasUpdatedStatus = updateStatus(config, desc.getStatus());
 
         return hasUpdatedDefaultEndpoint

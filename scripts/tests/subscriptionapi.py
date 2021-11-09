@@ -21,6 +21,7 @@ import requests
 requests.packages.urllib3.disable_warnings()
 
 
+
 class SubscriptionApi:
     session = None
     recipient = None

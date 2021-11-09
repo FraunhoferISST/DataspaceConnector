@@ -15,12 +15,13 @@
  */
 package io.dataspaceconnector.model.route;
 
+import io.dataspaceconnector.common.exception.InvalidEntityException;
+import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.named.AbstractNamedFactory;
 import io.dataspaceconnector.model.util.FactoryUtils;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -39,10 +40,7 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
      */
     @Override
     protected Route initializeEntity(final RouteDesc desc) {
-        final var route = new Route();
-        route.setOutput(new ArrayList<>());
-
-        return route;
+        return new Route();
     }
 
     /**
@@ -68,6 +66,11 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
     private boolean updateRouteDeployMethod(final Route route, final DeployMethod deployMethod) {
         if (route.getDeploy() != null && route.getDeploy() == deployMethod) {
             return false;
+        }
+
+        if (DeployMethod.NONE.equals(deployMethod) && route.getOutput() != null) {
+            throw new InvalidEntityException("Route that is linked to an artifact must have deploy "
+                    + "method CAMEL.");
         }
 
         route.setDeploy(Objects.requireNonNullElse(deployMethod, DeployMethod.NONE));
@@ -108,10 +111,26 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
     }
 
     /**
+     * Sets an artifact as a route's output.
+     *
+     * @param route The route.
+     * @param artifact The artifact.
+     * @return The route with output.
+     */
+    public final Route setOutput(final Route route, final Artifact artifact) {
+        route.setOutput(artifact);
+        return route;
+    }
+
+    /**
      * @param route The route.
      * @return The route without start endpoint.
      */
     public Route deleteStartEndpoint(final Route route) {
+        if (route.getOutput() != null) {
+            throw new InvalidEntityException("Route that is linked to an artifact must not have "
+                    + "an undefined start.");
+        }
         route.setStart(null);
         return route;
     }
@@ -131,6 +150,17 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
      */
     public final Route deleteSubroutes(final Route route) {
         route.setSteps(null);
+        return route;
+    }
+
+    /**
+     * Removes a route's output.
+     *
+     * @param route The route.
+     * @return The route without output.
+     */
+    public final Route deleteOutput(final Route route) {
+        route.setOutput(null);
         return route;
     }
 }

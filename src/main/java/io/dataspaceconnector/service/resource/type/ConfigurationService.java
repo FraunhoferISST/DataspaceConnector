@@ -262,7 +262,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
             keyStoreDesc.setLocation(configuration.getKeystore().getLocation());
             keyStoreDesc.setAlias(configuration.getKeystore().getAlias());
             keyStoreDesc.setPassword(configuration.getKeystore().getPassword());
-            desc.setKeystoreSettings(keyStoreDesc);
+            desc.setKeystore(keyStoreDesc);
         }
 
         if (configuration.getTruststore() != null) {
@@ -270,7 +270,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
             trustStoreDesc.setAlias(configuration.getTruststore().getAlias());
             trustStoreDesc.setLocation(configuration.getTruststore().getLocation());
             trustStoreDesc.setPassword(configuration.getTruststore().getPassword());
-            desc.setTruststoreSettings(trustStoreDesc);
+            desc.setTruststore(trustStoreDesc);
         }
 
         if (configuration.getProxy() != null) {
@@ -284,7 +284,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
                 );
                 proxyDesc.setAuthentication(authDesc);
             }
-            desc.setProxySettings(proxyDesc);
+            desc.setProxy(proxyDesc);
         }
         return desc;
     }

@@ -15,12 +15,13 @@
  */
 package io.dataspaceconnector.common.net;
 
+import io.dataspaceconnector.common.routing.dataretrieval.DataRetrievalService;
+import io.dataspaceconnector.common.routing.dataretrieval.Response;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.common.util.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import okhttp3.HttpUrl;
@@ -42,13 +43,12 @@ import java.util.Map;
  */
 @Service
 @RequiredArgsConstructor
-public class HttpService {
+public class HttpService implements DataRetrievalService {
 
     /**
      * Service for building and sending http requests.
      */
-    private final @NonNull de.fraunhofer.ids.messaging.protocol.http.HttpService
-            httpSvc;
+    private final @NonNull de.fraunhofer.ids.messaging.protocol.http.HttpService httpSvc;
 
     /**
      * The request method.
@@ -73,6 +73,7 @@ public class HttpService {
     @Data
     @AllArgsConstructor
     public static class Pair {
+
         /**
          * First element.
          */
@@ -88,6 +89,7 @@ public class HttpService {
      */
     @Data
     public static class HttpArgs {
+
         /**
          * The request headers.
          */
@@ -102,37 +104,6 @@ public class HttpService {
          * Authentication information. Will overwrite entry in headers.
          */
         private Pair auth;
-    }
-
-
-    /**
-     * Authentication for a http request.
-     */
-    public interface Authentication {
-        /**
-         * Add the authentication to the http args.
-         *
-         * @param args The http args.
-         */
-        void setAuth(HttpArgs args);
-    }
-
-
-    /**
-     * The response to a http request.
-     */
-    @Data
-    @EqualsAndHashCode
-    public static class Response {
-        /**
-         * The response code.
-         */
-        private int code;
-
-        /**
-         * The response body.
-         */
-        private InputStream body;
     }
 
     /**
@@ -161,13 +132,16 @@ public class HttpService {
 
         final var body = RequestBody.create(data.readAllBytes(),
                 MediaType.get("application/octet-stream"));
-        final var request = new Request.Builder().url(targetUrl).post(body).build();
 
-        final var response = httpSvc.send(request);
+        final var requestBuilder = new Request.Builder().url(targetUrl).post(body);
 
-        final var output = new Response();
-        output.setCode(response.code());
-        output.setBody(getBody(response));
+        if (args.getHeaders() != null && !args.getHeaders().isEmpty()) {
+            args.getHeaders().forEach(requestBuilder::header);
+        }
+
+        final var response = httpSvc.send(requestBuilder.build());
+
+        final var output = new HttpResponse(response.code(), getBody(response));
         response.close();
 
         return output;
@@ -212,9 +186,7 @@ public class HttpService {
             response = httpSvc.getWithHeaders(targetUri, headerCopy);
         }
 
-        final var output = new Response();
-        output.setCode(response.code());
-        output.setBody(getBody(response));
+        final var output = new HttpResponse(response.code(), getBody(response));
         response.close();
 
         return output;
@@ -239,6 +211,7 @@ public class HttpService {
      * @return The response.
      * @throws IOException if the request failed.
      */
+    @Override
     public Response get(final URL target, final QueryInput input) throws IOException {
         final var url = (input == null) ? buildTargetUrl(target, null)
                 : buildTargetUrl(target, input.getOptional());
@@ -254,8 +227,9 @@ public class HttpService {
      * @return The response.
      * @throws IOException if the request failed.
      */
+    @Override
     public Response get(final URL target, final QueryInput input,
-                        final List<? extends Authentication> auth) throws IOException {
+                        final List<? extends HttpAuthentication> auth) throws IOException {
         final var url = (input == null) ? buildTargetUrl(target, null)
                 : buildTargetUrl(target, input.getOptional());
         return this.get(url, toArgs(input, auth));
@@ -324,7 +298,7 @@ public class HttpService {
      * @param auth  The authentication information.
      * @return The http request arguments.
      */
-    public HttpArgs toArgs(final QueryInput input, final List<? extends Authentication> auth) {
+    public HttpArgs toArgs(final QueryInput input, final List<? extends HttpAuthentication> auth) {
         final var args = toArgs(input);
         if (auth != null) {
             for (final var x : auth) {

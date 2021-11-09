@@ -25,7 +25,7 @@ info:
   license:
     name: "Apache License, Version 2.0"
     url: https://www.apache.org/licenses/LICENSE-2.0.txt
-  version: 6.6.0-SNAPSHOT
+  version: 6.5.1
 servers:
   - url: https://localhost:8080
     description: Generated server url
@@ -565,132 +565,6 @@ paths:
           description: Unauthorized
         "204":
           description: No content
-  /api/routes/{id}/outputs:
-    get:
-      tags:
-        - Routes
-      summary: Get all children of a base resource with pagination.
-      operationId: getResource_2
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
-      responses:
-        "401":
-          description: Unauthorized
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelArtifactView'
-        "200":
-          description: Ok
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelArtifactView'
-    put:
-      tags:
-        - Routes
-      summary: Replace the children of a base resource.
-      operationId: replaceResources_2
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-        "204":
-          description: No content
-    post:
-      tags:
-        - Routes
-      summary: Add a list of children to a base resource.
-      operationId: addResources_2
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelArtifactView'
-        "200":
-          description: Ok
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelArtifactView'
-    delete:
-      tags:
-        - Routes
-      summary: Remove a list of children from a base resource.
-      operationId: removeResources_2
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-        "204":
-          description: No content
   /api/routes/{id}/endpoint/start:
     put:
       tags:
@@ -892,7 +766,7 @@ paths:
       tags:
         - Requested Resources
       summary: Get all children of a base resource with pagination.
-      operationId: getResource_4
+      operationId: getResource_3
       parameters:
         - name: id
           in: path
@@ -927,6 +801,132 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/PagedModelRepresentationView'
+    put:
+      tags:
+        - Requested Resources
+      summary: Replace the children of a base resource.
+      operationId: replaceResources_2
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uri
+        required: true
+      responses:
+        "401":
+          description: Unauthorized
+        "204":
+          description: No content
+    post:
+      tags:
+        - Requested Resources
+      summary: Add a list of children to a base resource.
+      operationId: addResources_2
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uri
+        required: true
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRepresentationView'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRepresentationView'
+    delete:
+      tags:
+        - Requested Resources
+      summary: Remove a list of children from a base resource.
+      operationId: removeResources_2
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uri
+        required: true
+      responses:
+        "401":
+          description: Unauthorized
+        "204":
+          description: No content
+  /api/requests/{id}/catalogs:
+    get:
+      tags:
+        - Requested Resources
+      summary: Get all children of a base resource with pagination.
+      operationId: getResource_5
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 30
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelCatalogView'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelCatalogView'
     put:
       tags:
         - Requested Resources
@@ -980,144 +980,18 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelRepresentationView'
+                $ref: '#/components/schemas/PagedModelCatalogView'
         "200":
           description: Ok
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelRepresentationView'
+                $ref: '#/components/schemas/PagedModelCatalogView'
     delete:
       tags:
         - Requested Resources
       summary: Remove a list of children from a base resource.
       operationId: removeResources_3
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-        "204":
-          description: No content
-  /api/requests/{id}/catalogs:
-    get:
-      tags:
-        - Requested Resources
-      summary: Get all children of a base resource with pagination.
-      operationId: getResource_6
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
-      responses:
-        "401":
-          description: Unauthorized
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelCatalogView'
-        "200":
-          description: Ok
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelCatalogView'
-    put:
-      tags:
-        - Requested Resources
-      summary: Replace the children of a base resource.
-      operationId: replaceResources_4
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-        "204":
-          description: No content
-    post:
-      tags:
-        - Requested Resources
-      summary: Add a list of children to a base resource.
-      operationId: addResources_4
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelCatalogView'
-        "200":
-          description: Ok
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelCatalogView'
-    delete:
-      tags:
-        - Requested Resources
-      summary: Remove a list of children from a base resource.
-      operationId: removeResources_4
       parameters:
         - name: id
           in: path
@@ -1224,7 +1098,7 @@ paths:
       tags:
         - Representations
       summary: Get all children of a base resource with pagination.
-      operationId: getResource_8
+      operationId: getResource_7
       parameters:
         - name: id
           in: path
@@ -1259,6 +1133,132 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/PagedModelRequestedResourceView'
+    put:
+      tags:
+        - Representations
+      summary: Replace the children of a base resource.
+      operationId: replaceResources_4
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uri
+        required: true
+      responses:
+        "401":
+          description: Unauthorized
+        "204":
+          description: No content
+    post:
+      tags:
+        - Representations
+      summary: Add a list of children to a base resource.
+      operationId: addResources_4
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uri
+        required: true
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRequestedResourceView'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRequestedResourceView'
+    delete:
+      tags:
+        - Representations
+      summary: Remove a list of children from a base resource.
+      operationId: removeResources_4
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uri
+        required: true
+      responses:
+        "401":
+          description: Unauthorized
+        "204":
+          description: No content
+  /api/representations/{id}/offers:
+    get:
+      tags:
+        - Representations
+      summary: Get all children of a base resource with pagination.
+      operationId: getResource_8
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 30
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelOfferedResourceView'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelOfferedResourceView'
     put:
       tags:
         - Representations
@@ -1312,13 +1312,13 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelRequestedResourceView'
+                $ref: '#/components/schemas/PagedModelOfferedResourceView'
         "200":
           description: Ok
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelRequestedResourceView'
+                $ref: '#/components/schemas/PagedModelOfferedResourceView'
     delete:
       tags:
         - Representations
@@ -1345,7 +1345,7 @@ paths:
           description: Unauthorized
         "204":
           description: No content
-  /api/representations/{id}/offers:
+  /api/representations/{id}/artifacts:
     get:
       tags:
         - Representations
@@ -1378,13 +1378,13 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelOfferedResourceView'
+                $ref: '#/components/schemas/PagedModelArtifactView'
         "200":
           description: Ok
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelOfferedResourceView'
+                $ref: '#/components/schemas/PagedModelArtifactView'
     put:
       tags:
         - Representations
@@ -1438,144 +1438,18 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelOfferedResourceView'
+                $ref: '#/components/schemas/PagedModelArtifactView'
         "200":
           description: Ok
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelOfferedResourceView'
+                $ref: '#/components/schemas/PagedModelArtifactView'
     delete:
       tags:
         - Representations
       summary: Remove a list of children from a base resource.
       operationId: removeResources_6
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-        "204":
-          description: No content
-  /api/representations/{id}/artifacts:
-    get:
-      tags:
-        - Representations
-      summary: Get all children of a base resource with pagination.
-      operationId: getResource_10
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
-      responses:
-        "401":
-          description: Unauthorized
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelArtifactView'
-        "200":
-          description: Ok
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelArtifactView'
-    put:
-      tags:
-        - Representations
-      summary: Replace the children of a base resource.
-      operationId: replaceResources_7
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-        "204":
-          description: No content
-    post:
-      tags:
-        - Representations
-      summary: Add a list of children to a base resource.
-      operationId: addResources_7
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelArtifactView'
-        "200":
-          description: Ok
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelArtifactView'
-    delete:
-      tags:
-        - Representations
-      summary: Remove a list of children from a base resource.
-      operationId: removeResources_7
       parameters:
         - name: id
           in: path
@@ -1682,7 +1556,7 @@ paths:
       tags:
         - Offered Resources
       summary: Get all children of a base resource with pagination.
-      operationId: getResource_12
+      operationId: getResource_11
       parameters:
         - name: id
           in: path
@@ -1717,6 +1591,132 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/PagedModelRepresentationView'
+    put:
+      tags:
+        - Offered Resources
+      summary: Replace the children of a base resource.
+      operationId: replaceResources_7
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uri
+        required: true
+      responses:
+        "401":
+          description: Unauthorized
+        "204":
+          description: No content
+    post:
+      tags:
+        - Offered Resources
+      summary: Add a list of children to a base resource.
+      operationId: addResources_7
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uri
+        required: true
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRepresentationView'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelRepresentationView'
+    delete:
+      tags:
+        - Offered Resources
+      summary: Remove a list of children from a base resource.
+      operationId: removeResources_7
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uri
+        required: true
+      responses:
+        "401":
+          description: Unauthorized
+        "204":
+          description: No content
+  /api/offers/{id}/contracts:
+    get:
+      tags:
+        - Offered Resources
+      summary: Get all children of a base resource with pagination.
+      operationId: getResource_12
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 30
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelContractView'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelContractView'
     put:
       tags:
         - Offered Resources
@@ -1770,13 +1770,13 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelRepresentationView'
+                $ref: '#/components/schemas/PagedModelContractView'
         "200":
           description: Ok
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelRepresentationView'
+                $ref: '#/components/schemas/PagedModelContractView'
     delete:
       tags:
         - Offered Resources
@@ -1803,7 +1803,7 @@ paths:
           description: Unauthorized
         "204":
           description: No content
-  /api/offers/{id}/contracts:
+  /api/offers/{id}/catalogs:
     get:
       tags:
         - Offered Resources
@@ -1836,13 +1836,13 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelContractView'
+                $ref: '#/components/schemas/PagedModelCatalogView'
         "200":
           description: Ok
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelContractView'
+                $ref: '#/components/schemas/PagedModelCatalogView'
     put:
       tags:
         - Offered Resources
@@ -1896,144 +1896,18 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelContractView'
+                $ref: '#/components/schemas/PagedModelCatalogView'
         "200":
           description: Ok
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelContractView'
+                $ref: '#/components/schemas/PagedModelCatalogView'
     delete:
       tags:
         - Offered Resources
       summary: Remove a list of children from a base resource.
       operationId: removeResources_9
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-        "204":
-          description: No content
-  /api/offers/{id}/catalogs:
-    get:
-      tags:
-        - Offered Resources
-      summary: Get all children of a base resource with pagination.
-      operationId: getResource_14
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
-      responses:
-        "401":
-          description: Unauthorized
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelCatalogView'
-        "200":
-          description: Ok
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelCatalogView'
-    put:
-      tags:
-        - Offered Resources
-      summary: Replace the children of a base resource.
-      operationId: replaceResources_10
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-        "204":
-          description: No content
-    post:
-      tags:
-        - Offered Resources
-      summary: Add a list of children to a base resource.
-      operationId: addResources_10
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelCatalogView'
-        "200":
-          description: Ok
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelCatalogView'
-    delete:
-      tags:
-        - Offered Resources
-      summary: Remove a list of children from a base resource.
-      operationId: removeResources_10
       parameters:
         - name: id
           in: path
@@ -2141,7 +2015,6 @@ paths:
               oneOf:
                 - $ref: '#/components/schemas/EndpointDesc'
                 - $ref: '#/components/schemas/AppEndpointDesc'
-                - $ref: '#/components/schemas/ConnectorEndpointDesc'
                 - $ref: '#/components/schemas/GenericEndpointDesc'
         required: true
       responses:
@@ -2246,7 +2119,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DataSourceDesc'
+              oneOf:
+                - $ref: '#/components/schemas/DatabaseDataSourceDesc'
+                - $ref: '#/components/schemas/RestDataSourceDesc'
         required: true
       responses:
         "401":
@@ -2369,7 +2244,7 @@ paths:
       tags:
         - Contracts
       summary: Get all children of a base resource with pagination.
-      operationId: getResource_16
+      operationId: getResource_15
       parameters:
         - name: id
           in: path
@@ -2404,6 +2279,132 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/PagedModelContractRuleView'
+    put:
+      tags:
+        - Contracts
+      summary: Replace the children of a base resource.
+      operationId: replaceResources_10
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uri
+        required: true
+      responses:
+        "401":
+          description: Unauthorized
+        "204":
+          description: No content
+    post:
+      tags:
+        - Contracts
+      summary: Add a list of children to a base resource.
+      operationId: addResources_10
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uri
+        required: true
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelContractRuleView'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelContractRuleView'
+    delete:
+      tags:
+        - Contracts
+      summary: Remove a list of children from a base resource.
+      operationId: removeResources_10
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: uri
+        required: true
+      responses:
+        "401":
+          description: Unauthorized
+        "204":
+          description: No content
+  /api/contracts/{id}/offers:
+    get:
+      tags:
+        - Contracts
+      summary: Get all children of a base resource with pagination.
+      operationId: getResource_17
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 30
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelOfferedResourceView'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PagedModelOfferedResourceView'
     put:
       tags:
         - Contracts
@@ -2457,144 +2458,18 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelContractRuleView'
+                $ref: '#/components/schemas/PagedModelOfferedResourceView'
         "200":
           description: Ok
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/PagedModelContractRuleView'
+                $ref: '#/components/schemas/PagedModelOfferedResourceView'
     delete:
       tags:
         - Contracts
       summary: Remove a list of children from a base resource.
       operationId: removeResources_11
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-        "204":
-          description: No content
-  /api/contracts/{id}/offers:
-    get:
-      tags:
-        - Contracts
-      summary: Get all children of a base resource with pagination.
-      operationId: getResource_18
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
-      responses:
-        "401":
-          description: Unauthorized
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelOfferedResourceView'
-        "200":
-          description: Ok
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelOfferedResourceView'
-    put:
-      tags:
-        - Contracts
-      summary: Replace the children of a base resource.
-      operationId: replaceResources_12
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-        "204":
-          description: No content
-    post:
-      tags:
-        - Contracts
-      summary: Add a list of children to a base resource.
-      operationId: addResources_12
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-                format: uri
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelOfferedResourceView'
-        "200":
-          description: Ok
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PagedModelOfferedResourceView'
-    delete:
-      tags:
-        - Contracts
-      summary: Remove a list of children from a base resource.
-      operationId: removeResources_12
       parameters:
         - name: id
           in: path
@@ -2955,7 +2830,7 @@ paths:
       tags:
         - Catalogs
       summary: Get all children of a base resource with pagination.
-      operationId: getResource_19
+      operationId: getResource_18
       parameters:
         - name: id
           in: path
@@ -2994,7 +2869,7 @@ paths:
       tags:
         - Catalogs
       summary: Replace the children of a base resource.
-      operationId: replaceResources_13
+      operationId: replaceResources_12
       parameters:
         - name: id
           in: path
@@ -3020,7 +2895,7 @@ paths:
       tags:
         - Catalogs
       summary: Add a list of children to a base resource.
-      operationId: addResources_13
+      operationId: addResources_12
       parameters:
         - name: id
           in: path
@@ -3054,7 +2929,7 @@ paths:
       tags:
         - Catalogs
       summary: Remove a list of children from a base resource.
-      operationId: removeResources_13
+      operationId: removeResources_12
       parameters:
         - name: id
           in: path
@@ -3241,7 +3116,7 @@ paths:
       tags:
         - Artifacts
       summary: Get all children of a base resource with pagination.
-      operationId: getResource_22
+      operationId: getResource_21
       parameters:
         - name: id
           in: path
@@ -3280,7 +3155,7 @@ paths:
       tags:
         - Artifacts
       summary: Replace the children of a base resource.
-      operationId: replaceResources_14
+      operationId: replaceResources_13
       parameters:
         - name: id
           in: path
@@ -3306,7 +3181,7 @@ paths:
       tags:
         - Artifacts
       summary: Add a list of children to a base resource.
-      operationId: addResources_14
+      operationId: addResources_13
       parameters:
         - name: id
           in: path
@@ -3340,7 +3215,7 @@ paths:
       tags:
         - Artifacts
       summary: Remove a list of children from a base resource.
-      operationId: removeResources_14
+      operationId: removeResources_13
       parameters:
         - name: id
           in: path
@@ -3400,6 +3275,14 @@ paths:
           schema:
             type: string
             format: uuid
+        - name: routeIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: uri
       requestBody:
         content:
           application/json: {}
@@ -3524,6 +3407,18 @@ paths:
                 type: object
         "500":
           description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: object
+        "404":
+          description: Not found
+          content:
+            '*/*':
+              schema:
+                type: object
+        "409":
+          description: Conflict
           content:
             '*/*':
               schema:
@@ -4628,7 +4523,6 @@ paths:
               oneOf:
                 - $ref: '#/components/schemas/EndpointDesc'
                 - $ref: '#/components/schemas/AppEndpointDesc'
-                - $ref: '#/components/schemas/ConnectorEndpointDesc'
                 - $ref: '#/components/schemas/GenericEndpointDesc'
         required: true
       responses:
@@ -4687,7 +4581,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DataSourceDesc'
+              oneOf:
+                - $ref: '#/components/schemas/DatabaseDataSourceDesc'
+                - $ref: '#/components/schemas/RestDataSourceDesc'
         required: true
       responses:
         "401":
@@ -5084,6 +4980,38 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/PagedModelSubscriptionView'
+  /api/routes/{id}/output:
+    get:
+      tags:
+        - Routes
+      summary: Returns the output of the route
+      operationId: getOutput
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ArtifactView'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ArtifactView'
+        "204":
+          description: No content
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ArtifactView'
   /api/requests:
     get:
       tags:
@@ -5123,7 +5051,7 @@ paths:
       tags:
         - Requested Resources
       summary: Get all children of a base resource with pagination.
-      operationId: getResource_3
+      operationId: getResource_2
       parameters:
         - name: id
           in: path
@@ -5163,7 +5091,7 @@ paths:
       tags:
         - Requested Resources
       summary: Get all children of a base resource with pagination.
-      operationId: getResource_5
+      operationId: getResource_4
       parameters:
         - name: id
           in: path
@@ -5203,7 +5131,7 @@ paths:
       tags:
         - Representations
       summary: Get all children of a base resource with pagination.
-      operationId: getResource_7
+      operationId: getResource_6
       parameters:
         - name: id
           in: path
@@ -5243,7 +5171,7 @@ paths:
       tags:
         - Offered Resources
       summary: Get all children of a base resource with pagination.
-      operationId: getResource_11
+      operationId: getResource_10
       parameters:
         - name: id
           in: path
@@ -5283,7 +5211,7 @@ paths:
       tags:
         - Offered Resources
       summary: Get all children of a base resource with pagination.
-      operationId: getResource_15
+      operationId: getResource_14
       parameters:
         - name: id
           in: path
@@ -5323,7 +5251,7 @@ paths:
       tags:
         - Contracts
       summary: Get all children of a base resource with pagination.
-      operationId: getResource_17
+      operationId: getResource_16
       parameters:
         - name: id
           in: path
@@ -5407,7 +5335,7 @@ paths:
       tags:
         - Brokers
       summary: Get all children of a base resource with pagination.
-      operationId: getResource_20
+      operationId: getResource_19
       parameters:
         - name: id
           in: path
@@ -5447,7 +5375,7 @@ paths:
       tags:
         - Artifacts
       summary: Get all children of a base resource with pagination.
-      operationId: getResource_21
+      operationId: getResource_20
       parameters:
         - name: id
           in: path
@@ -5482,6 +5410,32 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/PagedModelSubscriptionView'
+  /api/artifacts/{id}/route:
+    get:
+      tags:
+        - Artifacts
+      summary: Get route associated with artifact by id.
+      operationId: getRoute
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RouteView'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RouteView'
   /api/artifacts/{id}/data/**:
     get:
       tags:
@@ -5506,6 +5460,14 @@ paths:
           schema:
             type: string
             format: uri
+        - name: routeIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: uri
       responses:
         "401":
           description: Unauthorized
@@ -5524,7 +5486,7 @@ paths:
       tags:
         - Artifacts
       summary: Get all children of a base resource with pagination.
-      operationId: getResource_23
+      operationId: getResource_22
       parameters:
         - name: id
           in: path
@@ -5564,7 +5526,7 @@ paths:
       tags:
         - App Stores
       summary: Get all children of a base resource with pagination.
-      operationId: getResource_24
+      operationId: getResource_23
       parameters:
         - name: id
           in: path
@@ -5681,7 +5643,7 @@ paths:
       tags:
         - Apps
       summary: Get all children of a base resource with pagination.
-      operationId: getResource_25
+      operationId: getResource_24
       parameters:
         - name: id
           in: path
@@ -5720,7 +5682,7 @@ paths:
     get:
       tags:
         - Apps
-      summary: Get AppStore by app id.
+      summary: Get appstore by app id
       description: Get appstore holding this app.
       operationId: relatedAppStore
       parameters:
@@ -5820,7 +5782,7 @@ paths:
       tags:
         - Agreements
       summary: Get all children of a base resource with pagination.
-      operationId: getResource_26
+      operationId: getResource_25
       parameters:
         - name: id
           in: path
@@ -6006,7 +5968,6 @@ components:
           format: uri
         location:
           type: string
-          format: uri
         docs:
           type: string
           format: uri
@@ -6289,10 +6250,8 @@ components:
               type: string
             language:
               type: string
-    ConnectorEndpointDesc:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/EndpointDesc'
+            path:
+              type: string
     EndpointDesc:
       required:
         - type
@@ -6300,7 +6259,6 @@ components:
       properties:
         location:
           type: string
-          format: uri
         docs:
           type: string
           format: uri
@@ -6322,15 +6280,32 @@ components:
         value:
           type: string
     DataSourceDesc:
+      required:
+        - type
       type: object
       properties:
-        authentication:
+        basicAuth:
+          $ref: '#/components/schemas/AuthenticationDesc'
+        apiKey:
           $ref: '#/components/schemas/AuthenticationDesc'
         type:
           type: string
-          enum:
-            - Database
-            - REST
+      discriminator:
+        propertyName: type
+    DatabaseDataSourceDesc:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/DataSourceDesc'
+        - type: object
+          properties:
+            url:
+              type: string
+            driverClassName:
+              type: string
+    RestDataSourceDesc:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/DataSourceDesc'
     DataSourceView:
       type: object
       properties:
@@ -6791,20 +6766,6 @@ components:
           $ref: '#/components/schemas/Links'
         page:
           $ref: '#/components/schemas/PageMetadata'
-    PagedModelArtifactView:
-      type: object
-      properties:
-        _embedded:
-          type: object
-          properties:
-            artifacts:
-              type: array
-              items:
-                $ref: '#/components/schemas/ArtifactView'
-        _links:
-          $ref: '#/components/schemas/Links'
-        page:
-          $ref: '#/components/schemas/PageMetadata'
     PagedModelRepresentationView:
       type: object
       properties:
@@ -6861,6 +6822,20 @@ components:
           $ref: '#/components/schemas/Links'
         page:
           $ref: '#/components/schemas/PageMetadata'
+    PagedModelArtifactView:
+      type: object
+      properties:
+        _embedded:
+          type: object
+          properties:
+            artifacts:
+              type: array
+              items:
+                $ref: '#/components/schemas/ArtifactView'
+        _links:
+          $ref: '#/components/schemas/Links'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
     AbstractConstraint:
       required:
         - '@id'
@@ -6899,34 +6874,6 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
-            ids:unit:
-              type: string
-              format: uri
-            ids:pipEndpoint:
-              type: string
-              format: uri
-            ids:rightOperand:
-              $ref: '#/components/schemas/RdfResource'
-            ids:leftOperand:
-              type: string
-              enum:
-                - https://w3id.org/idsa/code/ABSOLUTE_SPATIAL_POSITION
-                - https://w3id.org/idsa/code/COUNT
-                - https://w3id.org/idsa/code/DELAY
-                - https://w3id.org/idsa/code/ELAPSED_TIME
-                - https://w3id.org/idsa/code/ENDPOINT
-                - https://w3id.org/idsa/code/EVENT
-                - https://w3id.org/idsa/code/PATH
-                - https://w3id.org/idsa/code/PAYMENT
-                - https://w3id.org/idsa/code/PAY_AMOUNT
-                - https://w3id.org/idsa/code/POLICY_EVALUATION_TIME
-                - https://w3id.org/idsa/code/PURPOSE
-                - https://w3id.org/idsa/code/QUANTITY
-                - https://w3id.org/idsa/code/RECURRENCE_RATE
-                - https://w3id.org/idsa/code/SECURITY_LEVEL
-                - https://w3id.org/idsa/code/STATE
-                - https://w3id.org/idsa/code/SYSTEM
-                - https://w3id.org/idsa/code/USER
             ids:operator:
               type: string
               enum:
@@ -6976,7 +6923,35 @@ components:
                 - https://w3id.org/idsa/code/STRING_IS_CONTAINED
                 - https://w3id.org/idsa/code/TEMPORAL_DISJOINT
                 - https://w3id.org/idsa/code/TEMPORAL_EQUALS
+            ids:unit:
+              type: string
+              format: uri
+            ids:leftOperand:
+              type: string
+              enum:
+                - https://w3id.org/idsa/code/ABSOLUTE_SPATIAL_POSITION
+                - https://w3id.org/idsa/code/COUNT
+                - https://w3id.org/idsa/code/DELAY
+                - https://w3id.org/idsa/code/ELAPSED_TIME
+                - https://w3id.org/idsa/code/ENDPOINT
+                - https://w3id.org/idsa/code/EVENT
+                - https://w3id.org/idsa/code/PATH
+                - https://w3id.org/idsa/code/PAYMENT
+                - https://w3id.org/idsa/code/PAY_AMOUNT
+                - https://w3id.org/idsa/code/POLICY_EVALUATION_TIME
+                - https://w3id.org/idsa/code/PURPOSE
+                - https://w3id.org/idsa/code/QUANTITY
+                - https://w3id.org/idsa/code/RECURRENCE_RATE
+                - https://w3id.org/idsa/code/SECURITY_LEVEL
+                - https://w3id.org/idsa/code/STATE
+                - https://w3id.org/idsa/code/SYSTEM
+                - https://w3id.org/idsa/code/USER
+            ids:rightOperand:
+              $ref: '#/components/schemas/RdfResource'
             ids:rightOperandReference:
+              type: string
+              format: uri
+            ids:pipEndpoint:
               type: string
               format: uri
             '@type':
@@ -7010,11 +6985,11 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
-            ids:xone:
+            ids:or:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
-            ids:or:
+            ids:xone:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
@@ -7095,6 +7070,11 @@ components:
           items:
             type: string
             format: uri
+        ids:constraint:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/LogicalConstraint'
         ids:action:
           type: array
           items:
@@ -7116,11 +7096,6 @@ components:
               - https://w3id.org/idsa/code/TRACK_PROVENANCE
               - https://w3id.org/idsa/code/USE
               - https://w3id.org/idsa/code/WRITE
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/LogicalConstraint'
         ids:assetRefinement:
           oneOf:
             - $ref: '#/components/schemas/Constraint'
@@ -7496,7 +7471,6 @@ components:
           format: date-time
         location:
           type: string
-          format: uri
         docs:
           type: string
           format: uri
@@ -7510,6 +7484,8 @@ components:
         protocol:
           type: string
         language:
+          type: string
+        path:
           type: string
         _links:
           $ref: '#/components/schemas/Links'
