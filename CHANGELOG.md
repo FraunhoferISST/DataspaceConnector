@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Increase checkstyle version from 9.0.1 to 9.1.
 - Increase postgresql version from 42.3.0 to 42.3.1.
 - Increase pmd version from 6.39.0 to 6.40.0.
+- Increase pitest-maven version from 1.7.2 to 1.7.3.
 - Increase dependency-check-maven version from 6.4.1 to 6.5.0.
 
 ### Fixed
