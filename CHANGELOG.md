@@ -2,7 +2,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [6.6.0] - 2021-11-02
+## [6.5.1] - 2021-11-09
 
 ### Changed
 - Change base image from debian 10 to 11.
