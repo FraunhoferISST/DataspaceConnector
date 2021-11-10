@@ -257,8 +257,8 @@ jobs:
   build-test-backend-image:
     timeout-minutes: 10
     runs-on: ubuntu-latest
-      strategy:
-        fail-fast: false
+    strategy:
+      fail-fast: false
 
     steps:
       - name: Checkout Repo
