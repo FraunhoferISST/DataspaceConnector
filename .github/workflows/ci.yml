@@ -262,34 +262,34 @@ jobs:
 
     steps:
       - name: Checkout Repo
-          uses: actions/checkout@v2
-            - name: Build image artifact name
-              id: get_image_artifact_name
-              run: |
-                IMAGE_ARTIFACT_NAME=$(echo "${GITHUB_HEAD_REF}" | sed 's_/_\-_g' )-backend
-                echo ::set-output name=image_artifact_name::"${IMAGE_ARTIFACT_NAME}"
-            - name: Build image name
-              id: get_image_name
-              run: echo ::set-output name=image_name::"ghcr.io/international-data-spaces-association/dataspace-connector-route-test-backend"
-            - name: Build image
-              run: |
-                docker build . -t $IMAGE:ci -f scripts/tests/route-test-backend/backend-server.dockerfile
-              env:
-                IMAGE: ${{ steps.get_image_name.outputs.image_name }}
-                DOCKER_BUILDKIT: 1
-            - name: Build tar ball
-              id: build_tar_ball
-              run: |
-                docker save --output "${BACKEND-ARTIFACT}.tar" "${BACKEND-IMAGE}:ci"
-              env:
-                BACKEND-IMAGE: ${{ steps.get_image_name.outputs.image_name }}
-                BACKEND-ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
-            - name: Push image
-              uses: actions/upload-artifact@v2
-              with:
-                name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-image
-                path: ${{ github.workspace }}/${{ steps.get_image_artifact_name.outputs.image_artifact_name }}.tar
-                retention-days: 1
+        uses: actions/checkout@v2
+      - name: Build image artifact name
+        id: get_image_artifact_name
+        run: |
+          IMAGE_ARTIFACT_NAME=$(echo "${GITHUB_HEAD_REF}" | sed 's_/_\-_g' )-backend
+          echo ::set-output name=image_artifact_name::"${IMAGE_ARTIFACT_NAME}"
+      - name: Build image name
+        id: get_image_name
+        run: echo ::set-output name=image_name::"ghcr.io/international-data-spaces-association/dataspace-connector-route-test-backend"
+      - name: Build image
+        run: |
+          docker build . -t $IMAGE:ci -f scripts/tests/route-test-backend/backend-server.dockerfile
+        env:
+          IMAGE: ${{ steps.get_image_name.outputs.image_name }}
+          DOCKER_BUILDKIT: 1
+      - name: Build tar ball
+        id: build_tar_ball
+        run: |
+          docker save --output "${BACKEND-ARTIFACT}.tar" "${BACKEND-IMAGE}:ci"
+        env:
+          BACKEND-IMAGE: ${{ steps.get_image_name.outputs.image_name }}
+          BACKEND-ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
+      - name: Push image
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-image
+          path: ${{ github.workspace }}/${{ steps.get_image_artifact_name.outputs.image_artifact_name }}.tar
+          retention-days: 1
 
   e2e-test:
     needs: [build_test_image, build-test-backend-image]
