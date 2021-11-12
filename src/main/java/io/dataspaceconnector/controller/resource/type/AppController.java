@@ -18,6 +18,7 @@ package io.dataspaceconnector.controller.resource.type;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.AppNotDeployedException;
 import io.dataspaceconnector.common.exception.PortainerNotConfigured;
+import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.BaseResourceController;
 import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
@@ -42,6 +43,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import net.minidev.json.JSONObject;
 import okhttp3.Response;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
@@ -138,7 +140,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
      * @return Response depending on the action on an app.
      */
     @SuppressFBWarnings("IMPROPER_UNICODE")
-    @PutMapping("/{id}/actions")
+    @PutMapping(value = "/{id}/actions", produces = ResponseType.JSON)
     @Operation(summary = "Actions on apps", description = "Can be used for managing apps.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
@@ -365,26 +367,26 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
 
             switch (responseCode) {
                 case ResponseCode.NOT_MODIFIED:
-                    return new ResponseEntity<>("App is already running.",
-                            HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>(new JSONObject().put("msg",
+                            "App is already running."), HttpStatus.BAD_REQUEST);
                 case ResponseCode.NOT_FOUND:
-                    return new ResponseEntity<>("App not found.",
-                            HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>(new JSONObject().put("msg",
+                            "App not found."), HttpStatus.BAD_REQUEST);
                 case ResponseCode.BAD_REQUEST:
-                    return new ResponseEntity<>("Error when deleting app.",
-                            HttpStatus.INTERNAL_SERVER_ERROR);
+                    return new ResponseEntity<>(new JSONObject().put("msg",
+                            "Error when deleting app."), HttpStatus.INTERNAL_SERVER_ERROR);
                 case ResponseCode.CONFLICT:
-                    return new ResponseEntity<>("Cannot delete a running app.",
-                            HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>(new JSONObject().put("msg",
+                            "Cannot delete a running app."), HttpStatus.BAD_REQUEST);
                 case ResponseCode.UNAUTHORIZED:
-                    return new ResponseEntity<>("Portainer authorization failed.",
-                            HttpStatus.INTERNAL_SERVER_ERROR);
+                    return new ResponseEntity<>(new JSONObject().put("msg",
+                            "Portainer authorization failed."), HttpStatus.INTERNAL_SERVER_ERROR);
                 default:
                     break;
             }
 
             if (response.isSuccessful()) {
-                return ResponseEntity.ok(body);
+                return ResponseEntity.ok(new JSONObject().put("msg", body));
             }
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

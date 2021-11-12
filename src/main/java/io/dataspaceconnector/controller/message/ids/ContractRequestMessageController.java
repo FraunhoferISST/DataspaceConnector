@@ -24,6 +24,7 @@ import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.RdfBuilderException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.common.ids.policy.RuleUtils;
+import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.controller.message.tag.MessageDescription;
@@ -43,6 +44,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import net.minidev.json.JSONObject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
@@ -127,7 +129,7 @@ public class ContractRequestMessageController {
      * @param ruleList  List of rules that should be used within a contract request.
      * @return The response entity.
      */
-    @PostMapping("/contract")
+    @PostMapping(value = "/contract", produces = { ResponseType.JSON, ResponseType.JSON_LD })
     @Operation(summary = "Send an IDS ContractRequestMessage to start the contract negotiation.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
@@ -169,7 +171,8 @@ public class ContractRequestMessageController {
                 final var responseEntity =
                     toObjectResponse(result.getIn().getBody(ResponseEntity.class));
                 return Objects.requireNonNullElseGet(responseEntity,
-                        () -> new ResponseEntity<Object>("An internal server error occurred.",
+                        () -> new ResponseEntity<>(
+                                new JSONObject().put("msg", "An error occurred."),
                                 HttpStatus.INTERNAL_SERVER_ERROR));
             }
 

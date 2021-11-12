@@ -20,6 +20,7 @@ import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
+import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.config.ConnectorConfig;
@@ -35,6 +36,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import net.minidev.json.JSONObject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
@@ -91,7 +93,7 @@ public class DescriptionRequestMessageController {
      * @param elementId The requested element id.
      * @return The response entity.
      */
-    @PostMapping("/description")
+    @PostMapping(value = "/description", produces = { ResponseType.JSON, ResponseType.JSON_LD })
     @Operation(summary = "Send an IDS DescriptionRequestMessage to query metadata.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
@@ -121,7 +123,8 @@ public class DescriptionRequestMessageController {
                 final var responseEntity =
                     toObjectResponse(result.getIn().getBody(ResponseEntity.class));
                 return Objects.requireNonNullElseGet(responseEntity,
-                        () -> new ResponseEntity<>("An internal server error occurred.",
+                        () -> new ResponseEntity<>(
+                                new JSONObject().put("msg", "An error occurred."),
                                 HttpStatus.INTERNAL_SERVER_ERROR));
             }
         } else {

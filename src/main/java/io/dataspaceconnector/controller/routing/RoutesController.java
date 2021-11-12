@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.routing;
 
+import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.controller.routing.tag.CamelDescription;
 import io.dataspaceconnector.controller.routing.tag.CamelName;
 import io.dataspaceconnector.controller.util.ResponseCode;
@@ -27,6 +28,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import net.minidev.json.JSONObject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RoutesDefinition;
@@ -72,7 +74,7 @@ public class RoutesController {
      * @return a response entity with code 200 or 500, if an error occurs.
      */
     @Hidden
-    @PostMapping
+    @PostMapping(produces = ResponseType.JSON)
     @Operation(summary = "Add a route to the Camel context.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
@@ -80,7 +82,7 @@ public class RoutesController {
                     description = ResponseDescription.BAD_REQUEST),
             @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
                     description = ResponseDescription.INTERNAL_SERVER_ERROR)})
-    public ResponseEntity<String> addRoutes(@RequestParam("file") final MultipartFile file) {
+    public ResponseEntity<Object> addRoutes(@RequestParam("file") final MultipartFile file) {
         try {
             if (file == null) {
                 throw new IllegalArgumentException("File must not be null.");
@@ -94,27 +96,28 @@ public class RoutesController {
                 log.info("Added {} routes to the Camel Context.", routes.getRoutes().size());
             }
 
-            return new ResponseEntity<>("Successfully added " + routes.getRoutes().size()
-                    + " routes to Camel Context.", HttpStatus.OK);
+            return new ResponseEntity<>(new JSONObject().put("msg", "Successfully added "
+                    + routes.getRoutes().size() + " routes to Camel Context."), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Could not read XML file because file was null.");
             }
-            return new ResponseEntity<>("File must not be null.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new JSONObject().put("msg", "File must not be null."),
+                    HttpStatus.BAD_REQUEST);
         } catch (JAXBException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Could not read route(s) from XML file. [exception=({})]",
                         e.getMessage(), e);
             }
-            return new ResponseEntity<>("Could not read route(s) from XML file.",
-                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new JSONObject().put("msg", "Could not read route(s) "
+                    + "from XML file."), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not add route(s) to Camel Context. [exception=({})]",
                         e.getMessage(), e);
             }
-            return new ResponseEntity<>("Could not add route(s) to Camel Context.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new JSONObject().put("msg", "Could not add route(s) "
+                    + "to Camel Context."), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -125,13 +128,13 @@ public class RoutesController {
      * @return a response entity with code 200 or 500, if an error occurs.
      */
     @Hidden
-    @DeleteMapping("/{routeId}")
+    @DeleteMapping(value = "/{routeId}", produces = ResponseType.JSON)
     @Operation(summary = "Delete a route from the Camel context.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
             @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
                     description = ResponseDescription.INTERNAL_SERVER_ERROR)})
-    public ResponseEntity<String> removeRoute(@PathVariable("routeId") final String routeId) {
+    public ResponseEntity<Object> removeRoute(@PathVariable("routeId") final String routeId) {
         try {
             camelContext.getRouteController().stopRoute(routeId);
             if (!camelContext.removeRoute(routeId)) {
@@ -143,15 +146,15 @@ public class RoutesController {
                         routeId);
             }
 
-            return new ResponseEntity<>("Successfully stopped and removed route with ID "
-                    + routeId + " .", HttpStatus.OK);
+            return new ResponseEntity<>(new JSONObject().put("msg", "Successfully stopped and "
+                    + "removed route with ID " + routeId + " ."), HttpStatus.OK);
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not remove route from Camel context. [id=({}), "
                         + "exception=({})]", routeId, e.getMessage(), e);
             }
-            return new ResponseEntity<>("Could not stop or remove route.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new JSONObject().put("msg",
+                    "Could not stop or remove route."), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

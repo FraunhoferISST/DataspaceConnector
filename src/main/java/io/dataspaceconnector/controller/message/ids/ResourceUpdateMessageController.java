@@ -28,6 +28,7 @@ import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedExcepti
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import io.dataspaceconnector.common.ids.ConnectorService;
+import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.controller.message.tag.MessageDescription;
@@ -98,7 +99,8 @@ public class ResourceUpdateMessageController {
      * @param resourceId The resource id.
      * @return The response message or an error.
      */
-    @PostMapping("/resource/update")
+    @PostMapping(value = "/resource/update",
+            produces = { ResponseType.JSON, ResponseType.JSON_LD })
     @Operation(summary = "Send an IDS ResourceUpdateMessage.", description = "Can be used to "
             + "register or update an IDS resource at an IDS Broker or consumer connector.")
     @ApiResponses(value = {

@@ -29,6 +29,7 @@ import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedExcepti
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import io.dataspaceconnector.common.ids.ConnectorService;
+import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.controller.message.tag.MessageDescription;
@@ -98,7 +99,8 @@ public class ConnectorUpdateMessageController {
      * @param recipient The url of the recipient.
      * @return The response message or an error.
      */
-    @PostMapping("/connector/update")
+    @PostMapping(value = "/connector/update",
+            produces = { ResponseType.JSON, ResponseType.JSON_LD })
     @Operation(summary = "Send an IDS ConnectorUpdateMessage.", description = "Can be used for "
             + "registering or updating the connector at an IDS Broker.")
     @ApiResponses(value = {

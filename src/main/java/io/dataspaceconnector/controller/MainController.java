@@ -103,7 +103,7 @@ public class MainController {
      * @return Http ok.
      */
     @Hidden
-    @GetMapping("/api")
+    @GetMapping(value = "/api")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     public ResponseEntity<RepresentationModel<?>> root() {
         final var model = new RepresentationModel<>();

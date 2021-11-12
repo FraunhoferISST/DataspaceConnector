@@ -19,6 +19,7 @@ import de.fhg.aisec.ids.idscp2.idscp_core.error.Idscp2Exception;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import lombok.extern.log4j.Log4j2;
+import net.minidev.json.JSONObject;
 import org.apache.camel.Exchange;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +54,9 @@ public final class ResponseUtils {
         if (log.isDebugEnabled()) {
             log.debug("{} [exception=({})]", msg, e.getMessage(), e);
         }
-        return new ResponseEntity<>(msg.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return new ResponseEntity<>(new JSONObject().put("msg", msg),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -68,7 +71,9 @@ public final class ResponseUtils {
         if (log.isDebugEnabled()) {
             log.debug("{} [exception=({})]", msg, e.getMessage(), e);
         }
-        return new ResponseEntity<>(msg.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return new ResponseEntity<>(new JSONObject().put("msg", msg),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -84,7 +89,9 @@ public final class ResponseUtils {
         if (log.isDebugEnabled()) {
             log.debug("{} [exception=({})]", msg, exception.getMessage(), exception);
         }
-        return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return new ResponseEntity<>(new JSONObject().put("msg", msg),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -99,7 +106,8 @@ public final class ResponseUtils {
         if (log.isDebugEnabled()) {
             log.debug("{} [resourceId=({})]", msg, resourceId);
         }
-        return new ResponseEntity<>(msg, HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(new JSONObject().put("msg", msg), HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -114,7 +122,8 @@ public final class ResponseUtils {
         if (log.isDebugEnabled()) {
             log.debug("{} [exception({})]", msg, exception.getMessage());
         }
-        return new ResponseEntity<>(msg, HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(new JSONObject().put("msg", msg), HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -129,8 +138,11 @@ public final class ResponseUtils {
         if (log.isWarnEnabled()) {
             log.warn("{} [exception=({})]", msg, e.getMessage(), e);
         }
-        return new ResponseEntity<>(String.format("%s %s", msg, e.getMessage()),
-                HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(new JSONObject() {{
+            put("msg", msg);
+            put("details", e.getMessage());
+        }}, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -145,7 +157,9 @@ public final class ResponseUtils {
         if (log.isWarnEnabled()) {
             log.warn("{} [exception=({})]", msg, e.getMessage(), e);
         }
-        return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return new ResponseEntity<>(new JSONObject().put("msg", msg),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -160,8 +174,11 @@ public final class ResponseUtils {
         if (log.isWarnEnabled()) {
             log.warn("{} [exception=({})]", msg, e.getMessage(), e);
         }
-        return new ResponseEntity<>(String.format("%s %s", msg, e.getMessage()),
-                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return new ResponseEntity<>(new JSONObject() {{
+            put("msg", msg);
+            put("details", e.getMessage());
+        }}, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -176,8 +193,11 @@ public final class ResponseUtils {
         if (log.isWarnEnabled()) {
             log.warn("{} [exception=({})]", msg, e.getMessage(), e);
         }
-        return new ResponseEntity<>(String.format("%s %s", msg, e.getMessage()),
-                HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return new ResponseEntity<>(new JSONObject() {{
+            put("msg", msg);
+            put("details", e.getMessage());
+        }}, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -192,7 +212,8 @@ public final class ResponseUtils {
         if (log.isWarnEnabled()) {
             log.warn("{} [exception=({})]", msg, exception.getMessage(), exception);
         }
-        return new ResponseEntity<>(msg.toString(), HttpStatus.GATEWAY_TIMEOUT);
+
+        return new ResponseEntity<>(new JSONObject().put("msg", msg), HttpStatus.GATEWAY_TIMEOUT);
     }
 
     /**
@@ -207,7 +228,8 @@ public final class ResponseUtils {
         if (log.isDebugEnabled()) {
             log.debug("{} [exception=({})]", msg, exception.getMessage(), exception);
         }
-        return new ResponseEntity<>(msg.toString(), HttpStatus.BAD_GATEWAY);
+
+        return new ResponseEntity<>(new JSONObject().put("msg", msg), HttpStatus.BAD_GATEWAY);
     }
 
     /**
@@ -222,7 +244,7 @@ public final class ResponseUtils {
             log.debug("{}", msg.toString());
         }
 
-        return new ResponseEntity<>(msg.toString(), HttpStatus.BAD_GATEWAY);
+        return new ResponseEntity<>(new JSONObject().put("msg", msg), HttpStatus.BAD_GATEWAY);
     }
 
     /**
@@ -232,10 +254,15 @@ public final class ResponseUtils {
      * @return ResponseEntity with status code 417.
      */
     public static ResponseEntity<Object> respondWithContent(final Map<String, Object> response) {
+        final var msg = "Received unexpected response message.";
         if (log.isDebugEnabled()) {
-            log.debug("Received unexpected response message. [response=({})]", response);
+            log.debug("{} [response=({})]", msg, response);
         }
-        return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
+
+        return new ResponseEntity<>(new JSONObject() {{
+            put("msg", msg);
+            put("details", response);
+        }}, HttpStatus.EXPECTATION_FAILED);
     }
 
     /**
@@ -249,7 +276,8 @@ public final class ResponseUtils {
         if (log.isDebugEnabled()) {
             log.debug(msg);
         }
-        return new ResponseEntity<>(msg, HttpStatus.BAD_GATEWAY);
+
+        return new ResponseEntity<>(new JSONObject().put("msg", msg), HttpStatus.BAD_GATEWAY);
     }
 
     /**
@@ -260,10 +288,12 @@ public final class ResponseUtils {
      * @return ResponseEntity with status code 204.
      */
     public static ResponseEntity<Object> respondNoSubscriptionsFound(final URI target) {
+        final var msg = "No subscriptions found.";
         if (log.isDebugEnabled()) {
-            log.debug("No subscriptions found. [target=({})]", target);
+            log.debug("{} [target=({})]", msg, target);
         }
-        return new ResponseEntity<>("No subscriptions found.", HttpStatus.NO_CONTENT);
+
+        return new ResponseEntity<>(new JSONObject().put("msg", msg), HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -278,10 +308,12 @@ public final class ResponseUtils {
                                                             final Idscp2Exception exception) {
         final var msg = "IDSCP2 communication failed.";
         if (log.isDebugEnabled()) {
-            log.debug("{} [recipient=({})] [exception=({})]", msg, recipient,
-                    exception.getMessage());
+            log.debug("{} [recipient=({}), exception=({})]", msg, recipient,
+                    exception.getMessage(), exception);
         }
-        return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return new ResponseEntity<>(new JSONObject().put("msg", msg),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -298,8 +330,9 @@ public final class ResponseUtils {
             final var responseEntity =
                     toObjectResponse(exchange.getIn().getBody(ResponseEntity.class));
             return Objects.requireNonNullElseGet(responseEntity,
-                    () -> new ResponseEntity<>("An internal server error occurred.",
-                            HttpStatus.INTERNAL_SERVER_ERROR));
+                    () -> new ResponseEntity<>(new JSONObject() {{
+                        put("msg", "An error occurred.");
+                    }}, HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
 
@@ -311,11 +344,13 @@ public final class ResponseUtils {
      * @return a response entity representing the result.
      */
     public static ResponseEntity<Object> respondPortainerNotConfigured(final Exception e) {
-        if (log.isWarnEnabled()) {
-            log.warn("Could not process action. [exception=({})]", e.getMessage());
-        }
         final var msg = "Portainer not configured.";
-        return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+        if (log.isWarnEnabled()) {
+            log.warn("{} [exception=({})]", msg, e.getMessage());
+        }
+
+        return new ResponseEntity<>(new JSONObject().put("msg", msg),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -325,11 +360,13 @@ public final class ResponseUtils {
      * @return a response entity representing the result.
      */
     public static ResponseEntity<Object> respondAppNotDeployed(final Exception e) {
-        if (log.isWarnEnabled()) {
-            log.warn("Could not process action. [exception=({})]", e.getMessage());
-        }
         final var msg = "App not deployed.";
-        return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+        if (log.isWarnEnabled()) {
+            log.warn("{} [exception=({})]", msg, e.getMessage());
+        }
+
+        return new ResponseEntity<>(new JSONObject().put("msg", msg),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -340,11 +377,13 @@ public final class ResponseUtils {
      * @return a response entity representing the result.
      */
     public static ResponseEntity<Object> respondPortainerError(final Exception e) {
-        if (log.isWarnEnabled()) {
-            log.warn("Could not process action. [exception=({})]", e.getMessage());
-        }
         final var msg = "A portainer error has occurred.";
-        return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+        if (log.isWarnEnabled()) {
+            log.warn("{} [exception=({})]", msg, e.getMessage());
+        }
+
+        return new ResponseEntity<>(new JSONObject().put("msg", msg),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @SuppressWarnings("unchecked")

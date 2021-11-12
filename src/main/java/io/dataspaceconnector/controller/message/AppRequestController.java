@@ -22,6 +22,7 @@ import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.RdfBuilderException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
+import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.controller.message.tag.MessageDescription;
 import io.dataspaceconnector.controller.message.tag.MessageName;
 import io.dataspaceconnector.controller.resource.view.app.AppViewAssembler;
@@ -38,6 +39,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import net.minidev.json.JSONObject;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -95,7 +97,7 @@ public class AppRequestController {
      * @param appId     The app Id.
      * @return Success, when app can be found and created from recipient response.
      */
-    @PostMapping("/app")
+    @PostMapping(value = "/app", produces = ResponseType.JSON)
     @Operation(summary = "Download an IDS app from an IDS AppStore.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
@@ -135,7 +137,8 @@ public class AppRequestController {
                 if (log.isDebugEnabled()) {
                     log.debug("Failed to download app data. Removed app. [remoteId=({})]", appId);
                 }
-                return ResponseEntity.internalServerError().body("Could not download app.");
+                return ResponseEntity.internalServerError().body(
+                        new JSONObject().put("msg", "Could not download app."));
             }
 
             return respondWithCreatedApp(appId);

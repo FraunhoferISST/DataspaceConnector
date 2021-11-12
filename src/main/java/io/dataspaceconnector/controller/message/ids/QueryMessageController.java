@@ -27,6 +27,7 @@ import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseExcep
 import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
+import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.controller.message.tag.MessageDescription;
@@ -98,7 +99,7 @@ public class QueryMessageController {
      * @param query     The query statement.
      * @return The response message or an error.
      */
-    @PostMapping("/query")
+    @PostMapping(value = "/query", produces = { ResponseType.JSON, ResponseType.JSON_LD })
     @Operation(summary = "Send an IDS QueryMessage.", description = "Can be used for querying an "
             + "IDS component (e.g. the IDS Broker).")
     @ApiResponses(value = {
@@ -160,7 +161,7 @@ public class QueryMessageController {
      * @param offset    The search offset value.
      * @return The response message or an error.
      */
-    @PostMapping("/search")
+    @PostMapping(value = "/search", produces = { ResponseType.JSON, ResponseType.JSON_LD })
     @Operation(summary = "Perform full-text search.", description = "Can be used for full text "
             + "search at an IDS component (e.g. the Broker).")
     @ApiResponses(value = {

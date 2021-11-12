@@ -66,7 +66,7 @@ public class ConfigurationController extends BaseResourceController<Configuratio
      * @param toSelect The new configuration.
      * @return Ok or error response.
      */
-    @PutMapping(value = "/{id}/active", consumes = {"*/*"})
+    @PutMapping(value = "/{id}/active", consumes = {"*/*"}, produces = ResponseType.JSON)
     @Operation(summary = "Update current configuration.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.NO_CONTENT,

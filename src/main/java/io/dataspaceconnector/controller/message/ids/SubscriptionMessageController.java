@@ -19,6 +19,7 @@ import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
+import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.controller.message.tag.MessageDescription;
@@ -87,7 +88,7 @@ public class SubscriptionMessageController {
      * @param subscription The subscription object.
      * @return The response entity.
      */
-    @PostMapping("/subscribe")
+    @PostMapping(value = "/subscribe", produces = { ResponseType.JSON, ResponseType.JSON_LD })
     @Operation(summary = "Send an IDS request message for subscribing to (meta)data updates.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
@@ -137,7 +138,7 @@ public class SubscriptionMessageController {
      * @param elementId The target of the referred element.
      * @return The response entity.
      */
-    @PostMapping("/unsubscribe")
+    @PostMapping(value = "/unsubscribe", produces = { ResponseType.JSON, ResponseType.JSON_LD })
     @Operation(summary = "Send an IDS request message for unsubscribe from an element.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
