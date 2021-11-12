@@ -93,7 +93,7 @@ public class DescriptionRequestMessageController {
      * @param elementId The requested element id.
      * @return The response entity.
      */
-    @PostMapping(value = "/description", produces = { ResponseType.JSON, ResponseType.JSON_LD })
+    @PostMapping(value = "/description", produces = ResponseType.JSON_LD)
     @Operation(summary = "Send an IDS DescriptionRequestMessage to query metadata.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),

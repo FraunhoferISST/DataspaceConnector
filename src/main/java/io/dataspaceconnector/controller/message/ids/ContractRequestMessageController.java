@@ -129,7 +129,7 @@ public class ContractRequestMessageController {
      * @param ruleList  List of rules that should be used within a contract request.
      * @return The response entity.
      */
-    @PostMapping(value = "/contract", produces = { ResponseType.JSON, ResponseType.JSON_LD })
+    @PostMapping(value = "/contract", produces = ResponseType.JSON_LD)
     @Operation(summary = "Send an IDS ContractRequestMessage to start the contract negotiation.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),

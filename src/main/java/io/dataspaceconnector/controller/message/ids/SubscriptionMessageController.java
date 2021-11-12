@@ -88,7 +88,7 @@ public class SubscriptionMessageController {
      * @param subscription The subscription object.
      * @return The response entity.
      */
-    @PostMapping(value = "/subscribe", produces = { ResponseType.JSON, ResponseType.JSON_LD })
+    @PostMapping(value = "/subscribe", produces = ResponseType.JSON_LD)
     @Operation(summary = "Send an IDS request message for subscribing to (meta)data updates.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
@@ -138,7 +138,7 @@ public class SubscriptionMessageController {
      * @param elementId The target of the referred element.
      * @return The response entity.
      */
-    @PostMapping(value = "/unsubscribe", produces = { ResponseType.JSON, ResponseType.JSON_LD })
+    @PostMapping(value = "/unsubscribe", produces = ResponseType.JSON_LD)
     @Operation(summary = "Send an IDS request message for unsubscribe from an element.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),

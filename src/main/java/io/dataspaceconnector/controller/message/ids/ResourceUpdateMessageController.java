@@ -99,8 +99,7 @@ public class ResourceUpdateMessageController {
      * @param resourceId The resource id.
      * @return The response message or an error.
      */
-    @PostMapping(value = "/resource/update",
-            produces = { ResponseType.JSON, ResponseType.JSON_LD })
+    @PostMapping(value = "/resource/update", produces = ResponseType.JSON_LD)
     @Operation(summary = "Send an IDS ResourceUpdateMessage.", description = "Can be used to "
             + "register or update an IDS resource at an IDS Broker or consumer connector.")
     @ApiResponses(value = {

@@ -99,8 +99,7 @@ public class ConnectorUpdateMessageController {
      * @param recipient The url of the recipient.
      * @return The response message or an error.
      */
-    @PostMapping(value = "/connector/update",
-            produces = { ResponseType.JSON, ResponseType.JSON_LD })
+    @PostMapping(value = "/connector/update", produces = ResponseType.JSON_LD)
     @Operation(summary = "Send an IDS ConnectorUpdateMessage.", description = "Can be used for "
             + "registering or updating the connector at an IDS Broker.")
     @ApiResponses(value = {

@@ -99,8 +99,7 @@ public class ConnectorUnavailableMessageController {
      * @param recipient The url of the recipient.
      * @return The response message or an error.
      */
-    @PostMapping(value = "/connector/unavailable",
-            produces = { ResponseType.JSON, ResponseType.JSON_LD })
+    @PostMapping(value = "/connector/unavailable", produces = ResponseType.JSON_LD)
     @Operation(summary = "Send an IDS ConnectorUnavailableMessage.", description = "Can be used "
             + "for unregistering the connector at an IDS Broker.")
     @ApiResponses(value = {

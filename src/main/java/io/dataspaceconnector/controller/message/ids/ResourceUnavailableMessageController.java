@@ -99,8 +99,7 @@ public class ResourceUnavailableMessageController {
      * @param resourceId The resource id.
      * @return The response message or an error.
      */
-    @PostMapping(value = "/resource/unavailable",
-            produces = { ResponseType.JSON, ResponseType.JSON_LD })
+    @PostMapping(value = "/resource/unavailable", produces = ResponseType.JSON_LD)
     @Operation(summary = "Send an IDS ResourceUnavailableMessage.", description = "Can be used for "
             + "e.g. unregistering an IDS resource at an IDS Broker.")
     @ApiResponses(value = {
