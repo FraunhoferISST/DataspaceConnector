@@ -108,9 +108,11 @@ public class ExampleController {
     public ResponseEntity<Object> getExampleUsagePolicy(@RequestBody final PatternDesc input) {
         try {
             if (input instanceof PermissionDesc) {
-                return ResponseEntity.ok(PatternUtils.buildProvideAccessRule().toRdf());
+                final var policy = PatternUtils.buildProvideAccessRule((PermissionDesc) input);
+                return ResponseEntity.ok(policy.toRdf());
             } else if (input instanceof ProhibitionDesc) {
-                return ResponseEntity.ok(PatternUtils.buildProhibitAccessRule().toRdf());
+                final var policy = PatternUtils.buildProhibitAccessRule((ProhibitionDesc) input);
+                return ResponseEntity.ok(policy.toRdf());
             } else if (input instanceof UsageNumberDesc) {
                 final var policy = PatternUtils.buildNTimesUsageRule((UsageNumberDesc) input);
                 return ResponseEntity.ok(policy.toRdf());
@@ -124,7 +126,8 @@ public class ExampleController {
                 final var policy = PatternUtils.buildUsageUntilDeletionRule((DeletionDesc) input);
                 return ResponseEntity.ok(policy.toRdf());
             } else if (input instanceof LoggingDesc) {
-                return ResponseEntity.ok(PatternUtils.buildUsageLoggingRule().toRdf());
+                final var policy = PatternUtils.buildUsageLoggingRule((LoggingDesc) input);
+                return ResponseEntity.ok(policy.toRdf());
             } else if (input instanceof NotificationDesc) {
                 final var policy = PatternUtils.buildUsageNotificationRule(
                         (NotificationDesc) input);
