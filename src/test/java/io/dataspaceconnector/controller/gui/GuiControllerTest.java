@@ -24,6 +24,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -38,41 +39,41 @@ class GuiControllerTest {
 
     @Test
     void unauthorizedGetEnum() throws Exception {
-        mockMvc.perform(get("/api/utils/enum/loglevel")).andExpect(status().isUnauthorized()).andReturn();
+        mockMvc.perform(get("/api/utils/enum")).andExpect(status().isUnauthorized()).andReturn();
     }
 
     @Test
     @WithMockUser("ADMIN")
     void badRequestGetEnum() throws Exception {
-        mockMvc.perform(get("/api/utils/enum/null")).andExpect(status().isBadRequest()).andReturn();
+        mockMvc.perform(post("/api/utils/enum")).andExpect(status().isBadRequest()).andReturn();
     }
 
     @Test
     @WithMockUser("ADMIN")
     void getSpecificEnum() throws Exception {
         mockMvc.perform(
-                get("/api/utils/enum/loglevel"))
+                post("/api/utils/enum").content("loglevel"))
                 .andExpect(status().isOk()).andReturn();
         mockMvc.perform(
-                get("/api/utils/enum/connectorstatus"))
+                post("/api/utils/enum").content("connectorstatus"))
                 .andExpect(status().isOk()).andReturn();
         mockMvc.perform(
-                get("/api/utils/enum/connectordeploymode"))
+                post("/api/utils/enum").content("connectordeploymode"))
                 .andExpect(status().isOk()).andReturn();
         mockMvc.perform(
-                get("/api/utils/enum/language"))
+                post("/api/utils/enum").content("language"))
                 .andExpect(status().isOk()).andReturn();
         mockMvc.perform(
-                get("/api/utils/enum/deploymethod"))
+                post("/api/utils/enum").content("deploymethod"))
                 .andExpect(status().isOk()).andReturn();
         mockMvc.perform(
-                get("/api/utils/enum/brokerstatus"))
+                post("/api/utils/enum").content("brokerstatus"))
                 .andExpect(status().isOk()).andReturn();
         mockMvc.perform(
-                get("/api/utils/enum/securityprofile"))
+                post("/api/utils/enum").content("securityprofile"))
                 .andExpect(status().isOk()).andReturn();
         mockMvc.perform(
-                get("/api/utils/enum/paymentmethod"))
+                post("/api/utils/enum").content("paymentmethod"))
                 .andExpect(status().isOk()).andReturn();
     }
 }
