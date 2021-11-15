@@ -138,7 +138,7 @@ public class AppRequestController {
                     log.debug("Failed to download app data. Removed app. [remoteId=({})]", appId);
                 }
                 return ResponseEntity.internalServerError().body(
-                        new JSONObject().put("msg", "Could not download app."));
+                        new JSONObject().put("message", "Could not download app."));
             }
 
             return respondWithCreatedApp(appId);

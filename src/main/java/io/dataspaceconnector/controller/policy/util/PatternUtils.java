@@ -61,8 +61,10 @@ public final class PatternUtils {
      */
     public static Rule buildProvideAccessRule(final PermissionDesc input) {
         return new PermissionBuilder()
-                ._title_(Util.asList(new TypedLiteral(input.getTitle())))
-                ._description_(Util.asList(new TypedLiteral(input.getDescription())))
+                ._title_(Util.asList(new TypedLiteral(
+                        input.getTitle() == null ? "" : input.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        input.getDescription() == null ? "" : input.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 .build();
     }
@@ -75,8 +77,10 @@ public final class PatternUtils {
      */
     public static Rule buildProhibitAccessRule(final ProhibitionDesc input) {
         return new ProhibitionBuilder()
-                ._title_(Util.asList(new TypedLiteral(input.getTitle())))
-                ._description_(Util.asList(new TypedLiteral(input.getDescription())))
+                ._title_(Util.asList(new TypedLiteral(
+                        input.getTitle() == null ? "" : input.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        input.getDescription() == null ? "" : input.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 .build();
     }
@@ -96,8 +100,10 @@ public final class PatternUtils {
         }
 
         return new PermissionBuilder()
-                ._title_(Util.asList(new TypedLiteral(input.getTitle())))
-                ._description_(Util.asList(new TypedLiteral(input.getDescription())))
+                ._title_(Util.asList(new TypedLiteral(
+                        input.getTitle() == null ? "" : input.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        input.getDescription() == null ? "" : input.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 ._constraint_(Util.asList(new ConstraintBuilder()
                         ._leftOperand_(LeftOperand.COUNT)
@@ -122,8 +128,10 @@ public final class PatternUtils {
         }
 
         return new PermissionBuilder()
-                ._title_(Util.asList(new TypedLiteral(input.getTitle())))
-                ._description_(Util.asList(new TypedLiteral(input.getDescription())))
+                ._title_(Util.asList(new TypedLiteral(
+                        input.getTitle() == null ? "" : input.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        input.getDescription() == null ? "" : input.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 ._constraint_(Util.asList(new ConstraintBuilder()
                         ._leftOperand_(LeftOperand.ELAPSED_TIME)
@@ -149,8 +157,10 @@ public final class PatternUtils {
         }
 
         return new PermissionBuilder()
-                ._title_(Util.asList(new TypedLiteral(input.getTitle())))
-                ._description_(Util.asList(new TypedLiteral(input.getDescription())))
+                ._title_(Util.asList(new TypedLiteral(
+                        input.getTitle() == null ? "" : input.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        input.getDescription() == null ? "" : input.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 ._constraint_(Util.asList(new ConstraintBuilder()
                         ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
@@ -182,8 +192,10 @@ public final class PatternUtils {
         }
 
         return new PermissionBuilder()
-                ._title_(Util.asList(new TypedLiteral(input.getTitle())))
-                ._description_(Util.asList(new TypedLiteral(input.getDescription())))
+                ._title_(Util.asList(new TypedLiteral(
+                        input.getTitle() == null ? "" : input.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        input.getDescription() == null ? "" : input.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 ._constraint_(Util.asList(new ConstraintBuilder()
                         ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
@@ -214,8 +226,10 @@ public final class PatternUtils {
      */
     public static Rule buildUsageLoggingRule(final LoggingDesc input) {
         return new PermissionBuilder()
-                ._title_(Util.asList(new TypedLiteral(input.getTitle())))
-                ._description_(Util.asList(new TypedLiteral(input.getDescription())))
+                ._title_(Util.asList(new TypedLiteral(
+                        input.getTitle() == null ? "" : input.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        input.getDescription() == null ? "" : input.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 ._postDuty_(Util.asList(new DutyBuilder()
                         ._action_(Util.asList(Action.LOG))
@@ -238,8 +252,10 @@ public final class PatternUtils {
         }
 
         return new PermissionBuilder()
-                ._title_(Util.asList(new TypedLiteral(input.getTitle())))
-                ._description_(Util.asList(new TypedLiteral(input.getDescription())))
+                ._title_(Util.asList(new TypedLiteral(
+                        input.getTitle() == null ? "" : input.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        input.getDescription() == null ? "" : input.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 ._postDuty_(Util.asList(new DutyBuilder()
                         ._action_(Util.asList(Action.NOTIFY))
@@ -269,8 +285,10 @@ public final class PatternUtils {
         }
 
         return new PermissionBuilder()
-                ._title_(Util.asList(new TypedLiteral(input.getTitle())))
-                ._description_(Util.asList(new TypedLiteral(input.getDescription())))
+                ._title_(Util.asList(new TypedLiteral(
+                        input.getTitle() == null ? "" : input.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        input.getDescription() == null ? "" : input.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 ._constraint_(Util.asList(new ConstraintBuilder()
                         ._leftOperand_(LeftOperand.SYSTEM)
@@ -297,8 +315,10 @@ public final class PatternUtils {
         }
 
         return new PermissionBuilder()
-                ._title_(Util.asList(new TypedLiteral(desc.getTitle())))
-                ._description_(Util.asList(new TypedLiteral(desc.getDescription())))
+                ._title_(Util.asList(new TypedLiteral(
+                        desc.getTitle() == null ? "" : desc.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        desc.getDescription() == null ? "" : desc.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 ._constraint_(Util.asList(new ConstraintBuilder()
                         ._leftOperand_(LeftOperand.SECURITY_LEVEL)

@@ -172,7 +172,7 @@ public class ContractRequestMessageController {
                     toObjectResponse(result.getIn().getBody(ResponseEntity.class));
                 return Objects.requireNonNullElseGet(responseEntity,
                         () -> new ResponseEntity<>(
-                                new JSONObject().put("msg", "An error occurred."),
+                                new JSONObject().put("message", "An error occurred."),
                                 HttpStatus.INTERNAL_SERVER_ERROR));
             }
 

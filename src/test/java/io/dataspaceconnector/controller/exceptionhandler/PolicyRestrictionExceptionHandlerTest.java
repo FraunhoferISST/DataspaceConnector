@@ -23,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PolicyRestrictionExceptionHandlerTest {
 
@@ -64,7 +65,9 @@ public class PolicyRestrictionExceptionHandlerTest {
         final var result = handler.handlePolicyRestrictionException(exception);
 
         /* ASSERT */
-        assertEquals(body, result.getBody());
+        assertNotNull(result.getBody());
+        assertNotNull(result.getBody().get("message"));
+        assertEquals(body.get("message"), result.getBody().get("message"));
     }
 
     @Test
@@ -77,6 +80,8 @@ public class PolicyRestrictionExceptionHandlerTest {
         final var result = handler.handlePolicyRestrictionException(null);
 
         /* ASSERT */
-        assertEquals(body, result.getBody());
+        assertNotNull(result.getBody());
+        assertNotNull(result.getBody().get("message"));
+        assertEquals(body.get("message"), result.getBody().get("message"));
     }
 }

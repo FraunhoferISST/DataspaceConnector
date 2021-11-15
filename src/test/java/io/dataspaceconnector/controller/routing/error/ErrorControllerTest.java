@@ -69,6 +69,6 @@ class ErrorControllerTest {
     @Test
     @WithMockUser("ADMIN")
     void getRouteErrors() throws Exception {
-        mockMvc.perform(get("/api/configmanager/route/error")).andExpect(status().isOk()).andReturn();
+        mockMvc.perform(get("/api/utils/route/error")).andExpect(status().isOk()).andReturn();
     }
 }

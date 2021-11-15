@@ -38,41 +38,41 @@ class GuiControllerTest {
 
     @Test
     void unauthorizedGetEnum() throws Exception {
-        mockMvc.perform(get("/api/configmanager/enum/loglevel")).andExpect(status().isUnauthorized()).andReturn();
+        mockMvc.perform(get("/api/utils/enum/loglevel")).andExpect(status().isUnauthorized()).andReturn();
     }
 
     @Test
     @WithMockUser("ADMIN")
     void badRequestGetEnum() throws Exception {
-        mockMvc.perform(get("/api/configmanager/enum/null")).andExpect(status().isBadRequest()).andReturn();
+        mockMvc.perform(get("/api/utils/enum/null")).andExpect(status().isBadRequest()).andReturn();
     }
 
     @Test
     @WithMockUser("ADMIN")
     void getSpecificEnum() throws Exception {
         mockMvc.perform(
-                get("/api/configmanager/enum/loglevel"))
+                get("/api/utils/enum/loglevel"))
                 .andExpect(status().isOk()).andReturn();
         mockMvc.perform(
-                get("/api/configmanager/enum/connectorstatus"))
+                get("/api/utils/enum/connectorstatus"))
                 .andExpect(status().isOk()).andReturn();
         mockMvc.perform(
-                get("/api/configmanager/enum/connectordeploymode"))
+                get("/api/utils/enum/connectordeploymode"))
                 .andExpect(status().isOk()).andReturn();
         mockMvc.perform(
-                get("/api/configmanager/enum/language"))
+                get("/api/utils/enum/language"))
                 .andExpect(status().isOk()).andReturn();
         mockMvc.perform(
-                get("/api/configmanager/enum/deploymethod"))
+                get("/api/utils/enum/deploymethod"))
                 .andExpect(status().isOk()).andReturn();
         mockMvc.perform(
-                get("/api/configmanager/enum/brokerstatus"))
+                get("/api/utils/enum/brokerstatus"))
                 .andExpect(status().isOk()).andReturn();
         mockMvc.perform(
-                get("/api/configmanager/enum/securityprofile"))
+                get("/api/utils/enum/securityprofile"))
                 .andExpect(status().isOk()).andReturn();
         mockMvc.perform(
-                get("/api/configmanager/enum/paymentmethod"))
+                get("/api/utils/enum/paymentmethod"))
                 .andExpect(status().isOk()).andReturn();
     }
 }

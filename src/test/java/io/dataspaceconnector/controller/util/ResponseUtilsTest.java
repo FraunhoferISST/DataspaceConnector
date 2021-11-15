@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.util;
 
 import io.dataspaceconnector.common.exception.ErrorMessage;
+import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,8 @@ class ResponseUtilsTest {
     public void respondIdsMessageFailed_validException_returnValidResponseEntity() {
         /* ARRANGE */
         final var msg = ErrorMessage.MESSAGE_HANDLING_FAILED.toString();
-        final var expectedResponse = new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+        final var expectedResponse = new ResponseEntity<>(new JSONObject().put("message", msg),
+                HttpStatus.INTERNAL_SERVER_ERROR);
 
         /* ACT */
         final var response = ResponseUtils.respondIdsMessageFailed(exception);
@@ -60,7 +62,8 @@ class ResponseUtilsTest {
     @Test
     public void respondConfigurationUpdateError_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("Failed to update configuration.",
+        final var msg = "Failed to update configuration.";
+        final var expectedResponse = new ResponseEntity<>(new JSONObject().put("message", msg),
                 HttpStatus.INTERNAL_SERVER_ERROR);
 
         /* ACT */
@@ -74,8 +77,9 @@ class ResponseUtilsTest {
     @Test
     public void respondDeserializationError_validUri_returnValidResponseEntity() {
         /* ARRANGE */
+        final var msg = "Resource not found";
         final var resourceId = URI.create("https://requestedResource");
-        final var expectedResponse = new ResponseEntity<>("Resource not found.",
+        final var expectedResponse = new ResponseEntity<>(new JSONObject().put("message", msg),
                 HttpStatus.NOT_FOUND);
 
         /* ACT */
@@ -89,7 +93,8 @@ class ResponseUtilsTest {
     @Test
     public void respondPatternNotIdentified_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("Could not identify pattern.",
+        final var msg = "Could not identify pattern.";
+        final var expectedResponse = new ResponseEntity<>(new JSONObject().put("message", msg),
                 HttpStatus.BAD_REQUEST);
 
         /* ACT */
@@ -103,8 +108,11 @@ class ResponseUtilsTest {
     @Test
     public void respondInvalidInput_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("Invalid input, processing failed. "
-                + exception.getMessage(), HttpStatus.BAD_REQUEST);
+        final var msg = "Invalid input, processing failed.";
+        final var expectedResponse = new ResponseEntity<>(new JSONObject() {{
+            put("message", msg);
+            put("details", exception.getMessage());
+        }}, HttpStatus.BAD_REQUEST);
 
         /* ACT */
         final var response = ResponseUtils.respondInvalidInput(exception);
@@ -117,7 +125,8 @@ class ResponseUtilsTest {
     @Test
     public void respondFailedToBuildContractRequest_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("Failed to build contract request.",
+        final var msg = "Failed to build contract request.";
+        final var expectedResponse = new ResponseEntity<>(new JSONObject().put("message", msg),
                 HttpStatus.INTERNAL_SERVER_ERROR);
 
         /* ACT */
@@ -131,8 +140,11 @@ class ResponseUtilsTest {
     @Test
     public void respondFailedToStoreEntity_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("Failed to store entity. "
-                + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        final var msg = "Failed to store entity.";
+        final var expectedResponse = new ResponseEntity<>(new JSONObject() {{
+            put("message", msg);
+            put("details", exception.getMessage());
+        }}, HttpStatus.INTERNAL_SERVER_ERROR);
 
         /* ACT */
         final var response = ResponseUtils.respondFailedToStoreEntity(exception);
@@ -145,7 +157,8 @@ class ResponseUtilsTest {
     @Test
     public void respondConnectionTimedOut_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>(ErrorMessage.GATEWAY_TIMEOUT.toString(),
+        final var msg = ErrorMessage.GATEWAY_TIMEOUT.toString();
+        final var expectedResponse = new ResponseEntity<>(new JSONObject().put("message", msg),
                 HttpStatus.GATEWAY_TIMEOUT);
 
         /* ACT */

@@ -55,7 +55,7 @@ public final class ResponseUtils {
             log.debug("{} [exception=({})]", msg, e.getMessage(), e);
         }
 
-        return new ResponseEntity<>(new JSONObject().put("msg", msg),
+        return new ResponseEntity<>(new JSONObject().put("message", msg),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -72,7 +72,7 @@ public final class ResponseUtils {
             log.debug("{} [exception=({})]", msg, e.getMessage(), e);
         }
 
-        return new ResponseEntity<>(new JSONObject().put("msg", msg),
+        return new ResponseEntity<>(new JSONObject().put("message", msg),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
