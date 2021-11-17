@@ -39,6 +39,7 @@ import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.net.ssl.SSLHandshakeException;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
@@ -132,6 +133,12 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             final var msg = ErrorMessage.INVALID_DAT;
             if (log.isDebugEnabled()) {
                 log.debug(msg + " [exception=({})]", e.getMessage(), e);
+            }
+            throw new MessageException(msg, e);
+        } catch (SSLHandshakeException e) {
+            final var msg = ErrorMessage.CERTIFICATE_NOT_TRUSTED;
+            if (log.isWarnEnabled()) {
+                log.warn(msg + " [exception=({})]", e.getMessage(), e);
             }
             throw new MessageException(msg, e);
         } catch (IOException e) {
