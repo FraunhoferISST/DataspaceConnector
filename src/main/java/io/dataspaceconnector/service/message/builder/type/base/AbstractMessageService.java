@@ -138,7 +138,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
         } catch (SSLHandshakeException e) {
             final var msg = ErrorMessage.CERTIFICATE_NOT_TRUSTED;
             if (log.isWarnEnabled()) {
-                log.warn(msg + " [exception=({})]", e.getMessage(), e);
+                log.warn(msg + " [exception=({})]", e.getMessage());
             }
             throw new MessageException(msg, e);
         } catch (IOException e) {
