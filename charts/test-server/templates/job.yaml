@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: test-server
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      containers:
+        - image: test-server
+          imagePullPolicy: Never
+          command: {{ .Values.entrypoint }}
+          name: test-server
+      restartPolicy: Never

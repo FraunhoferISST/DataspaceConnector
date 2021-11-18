@@ -21,6 +21,9 @@ import re
 # Suppress ssl verification warning
 requests.packages.urllib3.disable_warnings()
 
+# Suppress ssl verification warning
+requests.packages.urllib3.disable_warnings()
+
 
 class ResourceApi:
     session = None
