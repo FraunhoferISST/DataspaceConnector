@@ -1,14 +1,14 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: test-server
+  name: test-runner
 spec:
   backoffLimit: 0
   template:
     spec:
       containers:
-        - image: test-server
+        - image: ghcr.io/international-data-spaces-association/dataspace-connector/tests/test-runner
           imagePullPolicy: Never
-          command: {{ .Values.entrypoint }}
-          name: test-server
+          command: ["python3", "/app/{{ .Values.entrypoint }}"]
+          name: test-runner
       restartPolicy: Never

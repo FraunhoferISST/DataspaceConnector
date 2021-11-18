@@ -2,10 +2,10 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/international-data-spaces-association/dataspace-connector-route-test-backend
+  repository: ghcr.io/international-data-spaces-association/dataspace-connector/tests/route-test-backend
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "ci"
+  tag: "latest"
 
 podAnnotations:
   seccomp.security.alpha.kubernetes.io/pod: "runtime/default"
