@@ -14,25 +14,30 @@
 # limitations under the License.
 #
 
-# Dependencies
+# Build environment
 FROM maven:3-jdk-11 AS maven
 WORKDIR /app
+## Dependencies
 COPY pom.xml .
 RUN mvn -e -B dependency:resolve
-
-# Plugins
 RUN mvn -e -B dependency:resolve-plugins
 
-# Classes
+## Classes
 COPY src/main/java ./src/main/java
 COPY src/main/resources ./src/main/resources
 RUN mvn -e -B clean package -DskipTests -Dmaven.javadoc.skip=true
+RUN java -Djarmode=layertools -jar ./target/dsc.jar extract
 
-# Copy the jar and build image
+
+# Final image
+## Copy the jar and build image
 FROM gcr.io/distroless/java-debian11:11
-COPY --from=maven /app/target/*.jar /app/app.jar
+COPY --from=maven /app/spring-boot-loader/ /app/
+COPY --from=maven /app/dependencies/ /app/
+## COPY --from=maven /app/snapshot-dependencies/ /app/ # DO NOT USE SNAPSHOTS
+COPY --from=maven /app/application/ /app/
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 29292
 USER nonroot
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
