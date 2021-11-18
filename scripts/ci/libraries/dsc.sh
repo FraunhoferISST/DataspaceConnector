@@ -31,7 +31,7 @@ function dsc::run_provider_consumer_test() {
     helm install consumer ./charts/dataspace-connector --set image.pullPolicy=IfNotPresent --set image.tag="${CONSUMER_VERSION}" --set env.config.SPRING_APPLICATION_NAME="Consumer Connector" 2>&1 > /dev/null
 
     # Backend setup
-    helm install flask ./charts/route-test-backend --set image.pullPolicy=IfNotPresent --set image.tag="${BACKEND_VERSION}" 2>&1 > /dev/null
+    helm install flask ./charts/route-test-backend --set image.pullPolicy=IfNotPresent 2>&1 > /dev/null
 
     echo "Waiting for readiness"
     kubectl rollout status deployments/provider-dataspace-connector --timeout=360s 2>&1 > /dev/null
@@ -42,18 +42,6 @@ function dsc::run_provider_consumer_test() {
     kubectl wait --for=condition=available deployments/provider-dataspace-connector --timeout=1s 2>&1 > /dev/null
     kubectl wait --for=condition=available deployments/consumer-dataspace-connector --timeout=1s 2>&1 > /dev/null
     kubectl wait --for=condition=available deployments/flask-route-test-backend --timeout=1s 2>&1 > /dev/null
-
-    echo "Exposing services to localhost"
-    export PROVIDER_POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=dataspace-connector,app.kubernetes.io/instance=provider" -o jsonpath="{.items[0].metadata.name}")
-    export PROVIDER_CONTAINER_PORT=$(kubectl get pod --namespace default $PROVIDER_POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
-    export CONSUMER_POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=dataspace-connector,app.kubernetes.io/instance=consumer" -o jsonpath="{.items[0].metadata.name}")
-    export CONSUMER_CONTAINER_PORT=$(kubectl get pod --namespace default $CONSUMER_POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
-    export BACKEND_POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=route-test-backend,app.kubernetes.io/instance=flask" -o jsonpath="{.items[0].metadata.name}")
-    export BACKEND_CONTAINER_PORT=$(kubectl get pod --namespace default $BACKEND_POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
-
-    kubectl port-forward "$PROVIDER_POD_NAME" 8080:"$PROVIDER_CONTAINER_PORT" 2>&1 > /dev/null &
-    kubectl port-forward "$CONSUMER_POD_NAME" 8081:"$CONSUMER_CONTAINER_PORT" 2>&1 > /dev/null &
-    kubectl port-forward "$BACKEND_POD_NAME" 5000:"$BACKEND_CONTAINER_PORT" 2>&1 > /dev/null &
 
     # Give the port-forwarding some time
     sleep 5s
