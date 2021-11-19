@@ -39,7 +39,9 @@ RUN jlink \
     --output /jre
 
 # Base image
+# hadolint ignore=DL3006
 FROM gcr.io/distroless/base as base
+# hadolint ignore=DL3022
 COPY --from=debian:11-slim /lib/x86_64-linux-gnu /lib/x86_64-linux-gnu
 ENV JAVA_HOME=/opt/java/jre
 ENV PATH "${JAVA_HOME}/bin:${PATH}"
