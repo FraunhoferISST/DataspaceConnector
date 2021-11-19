@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file.
 - Replace template engine `Velocity` with `Freemarker`.
 - Remove suffix *settings* from `ConfigurationDesc` attributes.
 - Increase camel version from 3.12.0 to 3.13.0.
+- Increase spotbugs version from 4.4.2 to 4.5.0.
 
 ### Fixed
 - XML-escape URLs before injecting them into Camel route templates.
