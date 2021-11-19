@@ -213,7 +213,12 @@ public enum ErrorMessage {
     /**
      * If an http response is null.
      */
-    RESPONSE_NULL("Received an empty response for http request.");
+    RESPONSE_NULL("Received an empty response for http request."),
+
+    /**
+     * If an PKIX error occurs.
+     */
+    CERTIFICATE_NOT_TRUSTED("The recipient's certificate authority is not trusted.");
 
     /**
      * Holds the enums string.

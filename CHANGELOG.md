@@ -21,9 +21,12 @@ All notable changes to this project will be documented in this file.
 - Replace template engine `Velocity` with `Freemarker`.
 - Remove suffix *settings* from `ConfigurationDesc` attributes.
 - Change jdk version from 11 to 17.
+- Increase camel version from 3.12.0 to 3.13.0.
+- Update spring-boot-starter-parent version from 2.5.6 to 2.5.7.
 
 ### Fixed
 - XML-escape URLs before injecting them into Camel route templates.
+- Add exception handling for `SSLHandshakeExceptions` caused by PKIX errors.
 
 ### Removed
 - Remove entity `ConnectorEndpoint` and all corresponding classes.
