@@ -284,7 +284,7 @@ jobs:
         run: |
           docker save --output "${BACKEND_ARTIFACT}.tar" "${BACKEND_IMAGE}"
         env:
-          BACKEND_IMAGE: ${{ steps.get_image_name.outputs.image_name }}
+          BACKEND_IMAGE: ${{ steps.get_image_name.outputs.image_name }}-image
           BACKEND_ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
       - name: Push image
         uses: actions/upload-artifact@v2
@@ -323,7 +323,7 @@ jobs:
         run: |
           docker save --output "${BACKEND_ARTIFACT}.tar" "${BACKEND_IMAGE}"
         env:
-          BACKEND_IMAGE: ${{ steps.get_image_name.outputs.image_name }}
+          BACKEND_IMAGE: ${{ steps.get_image_name.outputs.image_name }}-image
           BACKEND_ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
       - name: Push image
         uses: actions/upload-artifact@v2
