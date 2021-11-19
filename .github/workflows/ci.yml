@@ -275,7 +275,7 @@ jobs:
       - name: Build image
         run: |
           cd ./scripts/tests/route-backend/
-          docker build . -t $IMAGE:ci -f route-backend.dockerfile
+          docker build . -t $IMAGE:tests-route-backend -f route-backend.dockerfile
         env:
           IMAGE: ${{ steps.get_image_name.outputs.image_name }}
           DOCKER_BUILDKIT: 1
@@ -314,7 +314,7 @@ jobs:
       - name: Build image
         run: |
           cd ./scripts/tests/runner/
-          docker build . -t $IMAGE:ci -f runner.dockerfile
+          docker build . -t $IMAGE:tests-runner -f runner.dockerfile
         env:
           IMAGE: ${{ steps.get_image_name.outputs.image_name }}
           DOCKER_BUILDKIT: 1
