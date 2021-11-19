@@ -19,14 +19,14 @@ FROM maven:3-jdk-11 AS maven
 WORKDIR /app
 ## Dependencies
 COPY pom.xml .
-RUN mvn -e -B dependency:resolve
-RUN mvn -e -B dependency:resolve-plugins
+RUN mvn -e -B dependency:resolve && \
+    mvn -e -B dependency:resolve-plugins
 
 ## Classes
 COPY src/main/java ./src/main/java
 COPY src/main/resources ./src/main/resources
-RUN mvn -e -B clean package -DskipTests -Dmaven.javadoc.skip=true
-RUN java -Djarmode=layertools -jar ./target/dsc.jar extract
+RUN mvn -e -B clean package -DskipTests -Dmaven.javadoc.skip=true && \
+    java -Djarmode=layertools -jar ./target/dsc.jar extract
 
 
 # Final image
