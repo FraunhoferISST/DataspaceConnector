@@ -573,6 +573,7 @@
 	</dependencyManagement>
 
 	<build>
+		<finalName>dataspaceconnector</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
