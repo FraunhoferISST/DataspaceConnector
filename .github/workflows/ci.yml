@@ -154,7 +154,7 @@ jobs:
         config: .hadolint.yaml
 
   build_test_image:
-    # needs: [linting, unit-and-integration-tests]
+    needs: [linting, unit-and-integration-tests]
     timeout-minutes: 15
     runs-on: ubuntu-latest
     outputs:
@@ -271,7 +271,7 @@ jobs:
           echo ::set-output name=image_artifact_name::"${IMAGE_ARTIFACT_NAME}"
       - name: Build image name
         id: get_image_name
-        run: echo ::set-output name=image_name::"ghcr.io/international-data-spaces-association/dataspace-connector"
+        run: echo ::set-output name=image_name::"ghcr.io/international-data-spaces-association/dataspace-connector/tests/route-backend"
       - name: Build image
         run: |
           cd ./scripts/tests/route-backend/
@@ -282,7 +282,7 @@ jobs:
       - name: Build tar ball
         id: build_tar_ball
         run: |
-          docker save --output "${BACKEND-ARTIFACT}.tar" "${BACKEND-IMAGE}:tests-route-backend"
+          docker save --output "${BACKEND-ARTIFACT}.tar" "${BACKEND-IMAGE}:ci"
         env:
           BACKEND-IMAGE: ${{ steps.get_image_name.outputs.image_name }}
           BACKEND-ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
@@ -310,7 +310,7 @@ jobs:
           echo ::set-output name=image_artifact_name::"${IMAGE_ARTIFACT_NAME}"
       - name: Build image name
         id: get_image_name
-        run: echo ::set-output name=image_name::"ghcr.io/international-data-spaces-association/dataspace-connector"
+        run: echo ::set-output name=image_name::"ghcr.io/international-data-spaces-association/dataspace-connector/tests/runner"
       - name: Build image
         run: |
           cd ./scripts/tests/runner/
@@ -321,7 +321,7 @@ jobs:
       - name: Build tar ball
         id: build_tar_ball
         run: |
-          docker save --output "${BACKEND-ARTIFACT}.tar" "${BACKEND-IMAGE}:tests-runner"
+          docker save --output "${BACKEND-ARTIFACT}.tar" "${BACKEND-IMAGE}:ci"
         env:
           BACKEND-IMAGE: ${{ steps.get_image_name.outputs.image_name }}
           BACKEND-ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
