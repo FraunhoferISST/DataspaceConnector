@@ -154,7 +154,7 @@ jobs:
         config: .hadolint.yaml
 
   build_test_image:
-    # needs: [linting, unit-and-integration-tests]
+    needs: [linting, unit-and-integration-tests]
     timeout-minutes: 15
     runs-on: ubuntu-latest
     outputs:
@@ -255,7 +255,7 @@ jobs:
           timeout: "9m0s"
 
   build_test_backend_image:
-    # needs: [linting, unit-and-integration-tests]
+    needs: [linting, unit-and-integration-tests]
     timeout-minutes: 10
     runs-on: ubuntu-latest
     strategy:
@@ -294,7 +294,7 @@ jobs:
           retention-days: 1
 
   build_test_runner_image:
-    # needs: [linting, unit-and-integration-tests]
+    needs: [linting, unit-and-integration-tests]
     timeout-minutes: 10
     runs-on: ubuntu-latest
     strategy:
