@@ -154,7 +154,7 @@ jobs:
         config: .hadolint.yaml
 
   build_test_image:
-    needs: [linting, unit-and-integration-tests]
+    # needs: [linting, unit-and-integration-tests]
     timeout-minutes: 15
     runs-on: ubuntu-latest
     outputs:
@@ -282,7 +282,7 @@ jobs:
       - name: Build tar ball
         id: build_tar_ball
         run: |
-          docker save --output "${BACKEND-ARTIFACT}.tar" "${BACKEND-IMAGE}:ci"
+          docker save --output "${BACKEND-ARTIFACT}.tar" "${BACKEND-IMAGE}"
         env:
           BACKEND-IMAGE: ${{ steps.get_image_name.outputs.image_name }}
           BACKEND-ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
@@ -321,7 +321,7 @@ jobs:
       - name: Build tar ball
         id: build_tar_ball
         run: |
-          docker save --output "${BACKEND-ARTIFACT}.tar" "${BACKEND-IMAGE}:ci"
+          docker save --output "${BACKEND-ARTIFACT}.tar" "${BACKEND-IMAGE}"
         env:
           BACKEND-IMAGE: ${{ steps.get_image_name.outputs.image_name }}
           BACKEND-ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
