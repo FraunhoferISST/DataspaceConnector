@@ -271,10 +271,10 @@ jobs:
           echo ::set-output name=image_artifact_name::"${IMAGE_ARTIFACT_NAME}"
       - name: Build image name
         id: get_image_name
-        run: echo ::set-output name=image_name::"ghcr.io/international-data-spaces-association/dataspace-connector/tests/route-test-backend"
+        run: echo ::set-output name=image_name::"ghcr.io/international-data-spaces-association/dataspace-connector/tests/route-backend"
       - name: Build image
         run: |
-          docker build . -t $IMAGE:ci -f scripts/tests/route-test-backend/backend-server.dockerfile
+          docker build . -t $IMAGE:ci -f scripts/tests/route-backend/route-backend.dockerfile
         env:
           IMAGE: ${{ steps.get_image_name.outputs.image_name }}
           DOCKER_BUILDKIT: 1
@@ -309,10 +309,10 @@ jobs:
           echo ::set-output name=image_artifact_name::"${IMAGE_ARTIFACT_NAME}"
       - name: Build image name
         id: get_image_name
-        run: echo ::set-output name=image_name::"ghcr.io/international-data-spaces-association/dataspace-connector/tests/test-runner"
+        run: echo ::set-output name=image_name::"ghcr.io/international-data-spaces-association/dataspace-connector/tests/runner"
       - name: Build image
         run: |
-          docker build . -t $IMAGE:ci -f scripts/tests/test-runner/test-runner.dockerfile
+          docker build . -t $IMAGE:ci -f scripts/tests/runner/runner.dockerfile
         env:
           IMAGE: ${{ steps.get_image_name.outputs.image_name }}
           DOCKER_BUILDKIT: 1

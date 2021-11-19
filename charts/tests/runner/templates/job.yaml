@@ -7,8 +7,8 @@ spec:
   template:
     spec:
       containers:
-        - image: ghcr.io/international-data-spaces-association/dataspace-connector/tests/test-runner
+        - image: ghcr.io/international-data-spaces-association/dataspace-connector/tests/runner
           imagePullPolicy: Never
-          command: ["python3", "/app/{{ .Values.entrypoint }}"]
+          command: ["python3", "/app/scripts/{{ .Values.entrypoint }}"]
           name: test-runner
       restartPolicy: Never

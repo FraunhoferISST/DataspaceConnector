@@ -21,6 +21,9 @@ import re
 # Suppress ssl verification warning
 requests.packages.urllib3.disable_warnings()
 
+# Suppress ssl verification warning
+requests.packages.urllib3.disable_warnings()
+
 
 class ResourceApi:
     session = None
@@ -100,7 +103,9 @@ class ResourceApi:
         response = self.session.post(self.recipient + "/api/routes", json=data)
         return response.headers["Location"]
 
-    def create_endpoint(self, data={"location": "http://localhost:8080", "type": "GENERIC"}):
+    def create_endpoint(
+        self, data={"location": "http://localhost:8080", "type": "GENERIC"}
+    ):
         response = self.session.post(self.recipient + "/api/endpoints", json=data)
         return response.headers["Location"]
 
@@ -141,7 +146,9 @@ class ResourceApi:
         return self.session.put(route + "/endpoint/end", json=uuid)
 
     def uuid_from_uri(self, uri):
-        uuids = re.findall("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-?[0-9a-f]{12}", uri)
+        uuids = re.findall(
+            "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-?[0-9a-f]{12}", uri
+        )
         return uuids[0]
 
     def toListIfNeeded(self, obj):

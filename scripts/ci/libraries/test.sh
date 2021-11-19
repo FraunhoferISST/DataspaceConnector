@@ -60,7 +60,7 @@ function test::wait_for_finish() {
 }
 
 function test::run_test_script() {
-    helm install e2e charts/test-runner --set entrypoint="${CURRENT_TEST_SCRIPT}" 2>&1 >/dev/null
+    helm install e2e charts/tests/runner --set entrypoint="${CURRENT_TEST_SCRIPT}" 2>&1 >/dev/null
     sleep 1
     test::wait_for_finish
 

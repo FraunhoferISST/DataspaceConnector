@@ -31,17 +31,17 @@ function dsc::run_provider_consumer_test() {
     helm install consumer ./charts/dataspace-connector --set image.pullPolicy=IfNotPresent --set image.tag="${CONSUMER_VERSION}" --set env.config.SPRING_APPLICATION_NAME="Consumer Connector" 2>&1 > /dev/null
 
     # Backend setup
-    helm install flask ./charts/route-test-backend --set image.pullPolicy=IfNotPresent 2>&1 > /dev/null
+    helm install flask ./charts/tests/route-backend --set image.pullPolicy=Never 2>&1 > /dev/null
 
     echo "Waiting for readiness"
     kubectl rollout status deployments/provider-dataspace-connector --timeout=360s 2>&1 > /dev/null
     kubectl rollout status deployments/consumer-dataspace-connector --timeout=60s  2>&1 > /dev/null
-    kubectl rollout status deployments/flask-route-test-backend --timeout=60s  2>&1 > /dev/null
+    kubectl rollout status deployments/flask-route-backend --timeout=60s  2>&1 > /dev/null
 
     # Make sure the deployments are really ready and the rollout did not just timeout
     kubectl wait --for=condition=available deployments/provider-dataspace-connector --timeout=1s 2>&1 > /dev/null
     kubectl wait --for=condition=available deployments/consumer-dataspace-connector --timeout=1s 2>&1 > /dev/null
-    kubectl wait --for=condition=available deployments/flask-route-test-backend --timeout=1s 2>&1 > /dev/null
+    kubectl wait --for=condition=available deployments/flask-route-backend --timeout=1s 2>&1 > /dev/null
 
     # Give the port-forwarding some time
     sleep 5s

@@ -30,11 +30,9 @@ export CURRENT_BUILD
 
 ## TEST 1
 export TEST_SUITE=new-version
-export PROVIDER_VERSION=$LAST_RELEASE
-export CONSUMER_VERSION=$LAST_RELEASE
+export PROVIDER_VERSION=$CURRENT_BUILD
+export CONSUMER_VERSION=$CURRENT_BUILD
 dsc::run_provider_consumer_test
-
-test::exit
 
 ## TEST 2
 export TEST_SUITE=old-provider

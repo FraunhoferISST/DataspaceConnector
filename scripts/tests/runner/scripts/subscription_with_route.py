@@ -17,8 +17,10 @@
 
 from resourceapi import ResourceApi
 from idsapi import IdsApi
+from subscriptionapi import SubscriptionApi
 import pprint
 import sys
+import requests
 
 provider_url = "http://provider-dataspace-connector"
 consumer_url = "http://consumer-dataspace-connector"
@@ -42,20 +44,15 @@ print("Starting script")
 provider = ResourceApi(provider_url)
 
 ## Create resources
+dataValue = "SOME LONG VALUE"
 catalog = provider.create_catalog()
 offers = provider.create_offered_resource()
 representation = provider.create_representation()
+artifact = provider.create_artifact(data={"value": dataValue})
 contract = provider.create_contract()
 use_rule = provider.create_rule()
 
-endpoint = provider.create_endpoint(data={
-    "location": backend_url + "/get",
-    "type": "GENERIC"
-})
-route = provider.create_route()
-provider.add_start_endpoint_to_route(route, endpoint)
-artifact = provider.create_artifact(data={"accessUrl": route})
-
+## Link resources
 provider.add_resource_to_catalog(catalog, offers)
 provider.add_representation_to_resource(offers, representation)
 provider.add_artifact_to_representation(representation, artifact)
@@ -65,19 +62,8 @@ provider.add_rule_to_contract(contract, use_rule)
 print("Created provider resources")
 
 # Consumer
-consumer_resources = ResourceApi(consumer_url)
-
-# Create route for dispatching data
-consumer_endpoint = consumer_resources.create_endpoint(data={
-    "location": backend_url + "/post",
-    "type": "GENERIC"
-})
-consumer_route = consumer_resources.create_route()
-consumer_resources.add_end_endpoint_to_route(consumer_route, consumer_endpoint)
-
-print("Created consumer route")
-
 consumer = IdsApi(consumer_url)
+consumer_resources = ResourceApi(consumer_url)
 
 # IDS
 # Call description
@@ -87,7 +73,7 @@ offer = consumer.descriptionRequest(provider_url + "/api/ids/data", offers)
 obj = offer["ids:contractOffer"][0]["ids:permission"][0]
 obj["ids:target"] = artifact
 response = consumer.contractRequest(
-    provider_url + "/api/ids/data", offers, artifact, False, obj
+    provider_url + "/api/ids/data", offers, artifact, True, obj
 )
 pprint.pprint(response)
 
@@ -100,13 +86,51 @@ pprint.pprint(artifacts)
 first_artifact = artifacts["_embedded"]["artifacts"][0]["_links"]["self"]["href"]
 pprint.pprint(first_artifact)
 
-data = consumer_resources.get_data_with_route(first_artifact, consumer_route).text
-pprint.pprint(data)
+# Create route
+consumer_endpoint = consumer_resources.create_endpoint(
+    data={"location": backend_url + "/subscription", "type": "GENERIC"}
+)
+consumer_route = consumer_resources.create_route()
+consumer_resources.add_end_endpoint_to_route(consumer_route, consumer_endpoint)
 
-if data != "data string":
-    print("Did not receive expected data.")
-    exit(1)
+print("Created consumer route")
+
+# Create IDS subscription
+consumer_subscriptions = SubscriptionApi(consumerUrl)
+consumer_subscriptions.subscription_message(
+    data={
+        "title": "IDS subscription",
+        "target": artifact,
+        "location": consumer_url + "/api/ids/data",
+        "subscriber": consumer_url,
+        "pushData": True,
+    },
+    params={"recipient": provider_url + "/api/ids/data"},
+)
+
+# Create backend subscription
+consumer_subscriptions.create_subscription(
+    data={
+        "title": "Backend subscription",
+        "target": first_artifact,
+        "location": consumer_route,
+        "subscriber": backend_url,
+        "pushData": True,
+    }
+)
+
+print("Created subscriptions")
+
+# Update data on provider side
+provider.set_data(artifact, "data string")
+
+# Verify that update has been received in backend
+update_received = requests.Session().get(backend_url + "/subscription").text
+
+if update_received == "true":
+    print("Subscription successfully received.")
 else:
-    print("Success!")
+    print("Subscription not received.")
+    exit(1)
 
 exit(0)

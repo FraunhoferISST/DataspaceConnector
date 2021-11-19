@@ -2,14 +2,14 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: {{ .Release.Namespace }}
-  name: {{ include "route-test-backend.fullname" . }}
+  name: {{ include "route-backend.fullname" . }}
   labels:
-  {{- include "route-test-backend.labels" . | nindent 4 }}
+  {{- include "route-backend.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-  {{- include "route-test-backend.selectorLabels" . | nindent 6 }}
+  {{- include "route-backend.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -17,7 +17,7 @@ spec:
       {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-    {{- include "route-test-backend.selectorLabels" . | nindent 8 }}
+    {{- include "route-backend.selectorLabels" . | nindent 8 }}
     spec:
       securityContext:
       {{- toYaml .Values.podSecurityContext | nindent 8 }}
