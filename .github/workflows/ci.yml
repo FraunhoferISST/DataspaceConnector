@@ -274,7 +274,7 @@ jobs:
         run: echo ::set-output name=image_name::"ghcr.io/international-data-spaces-association/dataspace-connector/tests/route-backend"
       - name: Build image
         run: |
-          cd /scripts/tests/route-backend/
+          cd ./scripts/tests/route-backend/
           docker build . -t $IMAGE:ci -f route-backend.dockerfile
         env:
           IMAGE: ${{ steps.get_image_name.outputs.image_name }}
