@@ -282,10 +282,10 @@ jobs:
       - name: Build tar ball
         id: build_tar_ball
         run: |
-          docker save --output "${BACKEND-ARTIFACT}.tar" "${BACKEND-IMAGE}"
+          docker save --output "${BACKEND_ARTIFACT}.tar" "${BACKEND_IMAGE}"
         env:
-          BACKEND-IMAGE: ${{ steps.get_image_name.outputs.image_name }}
-          BACKEND-ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
+          BACKEND_IMAGE: ${{ steps.get_image_name.outputs.image_name }}
+          BACKEND_ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
       - name: Push image
         uses: actions/upload-artifact@v2
         with:
@@ -321,10 +321,10 @@ jobs:
       - name: Build tar ball
         id: build_tar_ball
         run: |
-          docker save --output "${BACKEND-ARTIFACT}.tar" "${BACKEND-IMAGE}"
+          docker save --output "${BACKEND_ARTIFACT}.tar" "${BACKEND_IMAGE}"
         env:
-          BACKEND-IMAGE: ${{ steps.get_image_name.outputs.image_name }}
-          BACKEND-ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
+          BACKEND_IMAGE: ${{ steps.get_image_name.outputs.image_name }}
+          BACKEND_ARTIFACT: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
       - name: Push image
         uses: actions/upload-artifact@v2
         with:
