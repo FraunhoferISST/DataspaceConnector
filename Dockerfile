@@ -19,16 +19,14 @@ FROM maven:3-eclipse-temurin-17 AS builder
 WORKDIR /app
 COPY pom.xml .
 ## Dependencies
-RUN mvn -e -B dependency:resolve
-# hadolint ignore=DL3059
-RUN mvn -e -B dependency:resolve-plugins
+RUN mvn -e -B dependency:resolve && \
+    mvn -e -B dependency:resolve-plugins
 ## Classes
 COPY src/main/java ./src/main/java
 COPY src/main/resources ./src/main/resources
 ## Build
-RUN mvn -e -B clean package -DskipTests -Dmaven.javadoc.skip=true
-# hadolint ignore=DL3059
-RUN java -Djarmode=layertools -jar /app/target/dataspaceconnector.jar extract
+RUN mvn -e -B clean package -DskipTests -Dmaven.javadoc.skip=true && \
+    java -Djarmode=layertools -jar /app/target/dataspaceconnector.jar extract
 
 # JRE
 FROM eclipse-temurin:17 as jre-builder
@@ -40,11 +38,12 @@ RUN jlink \
     --compress=2 \
     --output /jre
 
+FROM debian:11-slim as debian
+
 # Base image
-# hadolint ignore=DL3006
-FROM gcr.io/distroless/base as base
-# hadolint ignore=DL3022
-COPY --from=debian:11-slim /lib/x86_64-linux-gnu /lib/x86_64-linux-gnu
+# hadolint ignore=DL3007
+FROM gcr.io/distroless/base:latest as base
+COPY --from=debian /lib/x86_64-linux-gnu /lib/x86_64-linux-gnu
 ENV JAVA_HOME=/opt/java/jre
 ENV PATH "${JAVA_HOME}/bin:${PATH}"
 COPY --from=jre-builder /jre $JAVA_HOME
