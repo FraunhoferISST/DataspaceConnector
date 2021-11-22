@@ -260,6 +260,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+    outputs:
+      image_artifact_name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
+      image_name: ${{ steps.get_image_name.outputs.image_name }}
 
     steps:
       - name: Checkout Repo
@@ -289,7 +292,7 @@ jobs:
       - name: Push image
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-backend-image
+          name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-image
           path: ${{ github.workspace }}/${{ steps.get_image_artifact_name.outputs.image_artifact_name }}.tar
           retention-days: 1
 
@@ -299,6 +302,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+    outputs:
+      image_artifact_name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}
+      image_name: ${{ steps.get_image_name.outputs.image_name }}
 
     steps:
       - name: Checkout Repo
@@ -328,7 +334,7 @@ jobs:
       - name: Push image
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-runner-image
+          name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-image
           path: ${{ github.workspace }}/${{ steps.get_image_artifact_name.outputs.image_artifact_name }}.tar
           retention-days: 1
 
@@ -356,11 +362,11 @@ jobs:
       - name: Download backend image
         uses: actions/download-artifact@v2
         with:
-          name: ${{ needs.build_test_backend_image.outputs.image_artifact_name }}-backend-image
+          name: ${{ needs.build_test_backend_image.outputs.image_artifact_name }}-image
       - name: Download test runner image
         uses: actions/download-artifact@v2
         with:
-          name: ${{ needs.build_test_runner_image.outputs.image_artifact_name }}-runner-image
+          name: ${{ needs.build_test_runner_image.outputs.image_artifact_name }}-image
       - name: Load image into cluster
         run: sudo k3s ctr images import "${GITHUB_WORKSPACE}/${ARTIFACT}.tar"
         env:
