@@ -74,10 +74,6 @@ function test::run_test_script() {
         echo "$LINE_BREAK_STAR"
         kubectl logs -l job-name=test-runner --tail=1000
         echo "$LINE_BREAK_STAR"
-        kubectl logs deploy/provider-dataspace-connector --tail=1000
-        echo "$LINE_BREAK_STAR"
-        kubectl logs deploy/consumer-dataspace-connector --tail=1000
-        echo "$LINE_BREAK_STAR"
     fi
     set -eo pipefail
     helm uninstall e2e 2>&1 >/dev/null
