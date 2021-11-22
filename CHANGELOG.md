@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - Increase camel version from 3.12.0 to 3.13.0.
 - Increase spring-boot-starter-parent version from 2.5.6 to 2.5.7.
 - Increase camel-idscp2 version from 0.6.0 to 0.7.0.
+- Increase okhttp version from 4.9.2 to 4.9.3.
 
 ### Fixed
 - XML-escape URLs before injecting them into Camel route templates.
