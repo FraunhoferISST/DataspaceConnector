@@ -25,32 +25,33 @@ s = requests.Session()
 s.auth = ("admin", "password")
 s.verify = False
 
+provider_url = "http://provider-dataspace-connector"
 
 def create_catalog():
-    response = s.post("https://localhost:8080/api/catalogs", json={})
+    response = s.post(provider_url + "/api/catalogs", json={})
     return response.headers["Location"]
 
 
 def create_offered_resource():
-    response = s.post("https://localhost:8080/api/offers", json={})
+    response = s.post(provider_url + "/api/offers", json={})
     return response.headers["Location"]
 
 
 def create_representation():
-    response = s.post("https://localhost:8080/api/representations", json={})
+    response = s.post(provider_url + "/api/representations", json={})
     return response.headers["Location"]
 
 
 def create_artifact():
     response = s.post(
-        "https://localhost:8080/api/artifacts", json={"value": "SOME LONG VALUE"}
+        provider_url + "/api/artifacts", json={"value": "SOME LONG VALUE"}
     )
     return response.headers["Location"]
 
 
 def create_contract():
     response = s.post(
-        "https://localhost:8080/api/contracts",
+        provider_url + "/api/contracts",
         json={
             "start": "2021-04-06T13:33:44.995+02:00",
             "end": "2021-12-06T13:33:44.995+02:00",
@@ -61,7 +62,7 @@ def create_contract():
 
 def create_rule_allow_access():
     response = s.post(
-        "https://localhost:8080/api/rules",
+        provider_url + "/api/rules",
         json={
             "value": """{
         "@context" : {
@@ -119,7 +120,7 @@ def add_rule_to_contract(contract, rule):
 
 # IDS
 def descriptionRequest(recipient, elementId):
-    url = "https://localhost:8080/api/ids/description"
+    url = provider_url + "/api/ids/description"
     params = {}
     if recipient is not None:
         params["recipient"] = recipient
@@ -130,7 +131,7 @@ def descriptionRequest(recipient, elementId):
 
 
 def contractRequest(recipient, resourceId, artifactId, download, contract):
-    url = "https://localhost:8080/api/ids/contract"
+    url = provider_url + "/api/ids/contract"
     params = {}
     if recipient is not None:
         params["recipient"] = recipient
@@ -163,53 +164,53 @@ add_contract_to_resource(anotherOffers, contract)
 add_rule_to_contract(contract, use_rule)
 
 # Call description
-response = descriptionRequest("https://localhost:8080/api/ids/data", offers)
+response = descriptionRequest(provider_url + "/api/ids/data", offers)
 offer = json.loads(response.text)
 
 # Negotiate contract
 obj = offer["ids:contractOffer"][0]["ids:permission"][0]
 obj["ids:target"] = artifact
 response = contractRequest(
-    "https://localhost:8080/api/ids/data", offers, artifact, False, obj
+    provider_url + "/api/ids/data", offers, artifact, False, obj
 )
 pprint.pprint(str(response.content))
 
 # Collect stats
-numReqResources = json.loads(s.get("https://localhost:8080/api/requests").text)["page"][
+numReqResources = json.loads(s.get(provider_url + "/api/requests").text)["page"][
     "totalElements"
 ]
 numRepresentations = json.loads(
-    s.get("https://localhost:8080/api/representations").text
+    s.get(provider_url + "/api/representations").text
 )["page"]["totalElements"]
-numArtifacts = json.loads(s.get("https://localhost:8080/api/artifacts").text)["page"][
+numArtifacts = json.loads(s.get(provider_url + "/api/artifacts").text)["page"][
     "totalElements"
 ]
-numAgreements = json.loads(s.get("https://localhost:8080/api/agreements").text)["page"][
+numAgreements = json.loads(s.get(provider_url + "/api/agreements").text)["page"][
     "totalElements"
 ]
 
 # Negotiate over resource whose representations and artifacts are exactly the same
-response = descriptionRequest("https://localhost:8080/api/ids/data", anotherOffers)
+response = descriptionRequest(provider_url + "/api/ids/data", anotherOffers)
 offer = json.loads(response.text)
 
 obj = offer["ids:contractOffer"][0]["ids:permission"][0]
 obj["ids:target"] = artifact
 response = contractRequest(
-    "https://localhost:8080/api/ids/data", offers, artifact, False, obj
+    provider_url + "/api/ids/data", offers, artifact, False, obj
 )
 pprint.pprint(str(response.content))
 
 # Make sure only 2 resources exists all the rest is the same
-numReqResourcesAfter = json.loads(s.get("https://localhost:8080/api/requests").text)[
+numReqResourcesAfter = json.loads(s.get(provider_url + "/api/requests").text)[
     "page"
 ]["totalElements"]
 numRepresentationsAfter = json.loads(
-    s.get("https://localhost:8080/api/representations").text
+    s.get(provider_url + "/api/representations").text
 )["page"]["totalElements"]
-numArtifactsAfter = json.loads(s.get("https://localhost:8080/api/artifacts").text)[
+numArtifactsAfter = json.loads(s.get(provider_url + "/api/artifacts").text)[
     "page"
 ]["totalElements"]
-numAgreementsAfter = json.loads(s.get("https://localhost:8080/api/agreements").text)[
+numAgreementsAfter = json.loads(s.get(provider_url + "/api/agreements").text)[
     "page"
 ]["totalElements"]
 
