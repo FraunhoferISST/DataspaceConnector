@@ -72,7 +72,7 @@ function test::run_test_script() {
         export TEST_FAILURES=$((TEST_FAILURES+1))
         echo "${COLOR_RED}FAILED${COLOR_DEFAULT} $CURRENT_TEST_SCRIPT"
         echo "$LINE_BREAK_STAR"
-        kubectl logs -l job-name=test-runner
+        kubectl logs -l job-name=test-runner --tail=1000
         echo "$LINE_BREAK_STAR"
     fi
     set -eo pipefail
