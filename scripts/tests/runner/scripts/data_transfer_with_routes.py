@@ -22,7 +22,7 @@ import sys
 
 provider_url = "http://provider-dataspace-connector"
 consumer_url = "http://consumer-dataspace-connector"
-backend_url = "http://flask-route-test-backend:5000"
+backend_url = "http://flask-route-backend:5000"
 
 
 def main(argv):

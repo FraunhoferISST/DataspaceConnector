@@ -24,7 +24,7 @@ import requests
 
 provider_url = "http://provider-dataspace-connector"
 consumer_url = "http://consumer-dataspace-connector"
-backend_url = "http://flask-route-test-backend:5000"
+backend_url = "http://flask-route-backend:5000"
 
 
 def main(argv):
@@ -96,7 +96,7 @@ consumer_resources.add_end_endpoint_to_route(consumer_route, consumer_endpoint)
 print("Created consumer route")
 
 # Create IDS subscription
-consumer_subscriptions = SubscriptionApi(consumerUrl)
+consumer_subscriptions = SubscriptionApi(consumer_url)
 consumer_subscriptions.subscription_message(
     data={
         "title": "IDS subscription",
