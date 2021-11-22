@@ -55,6 +55,4 @@ function dsc::run_provider_consumer_test() {
     helm uninstall provider 2>&1 > /dev/null
     helm uninstall consumer 2>&1 > /dev/null
     helm uninstall flask 2>&1 > /dev/null
-    # Stop port forwarding
-    pkill -f "port-forward"
 }
