@@ -196,7 +196,7 @@ offer = json.loads(response.text)
 obj = offer["ids:contractOffer"][0]["ids:permission"][0]
 obj["ids:target"] = artifact
 response = contractRequest(
-    provider_url + "/api/ids/data", offers, artifact, False, obj
+    provider_url + "/api/ids/data", anotherOffers, artifact, False, obj
 )
 pprint.pprint(str(response.content))
 
