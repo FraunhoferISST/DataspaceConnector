@@ -289,7 +289,7 @@ jobs:
       - name: Push image
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-image
+          name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-backend-image
           path: ${{ github.workspace }}/${{ steps.get_image_artifact_name.outputs.image_artifact_name }}.tar
           retention-days: 1
 
@@ -328,7 +328,7 @@ jobs:
       - name: Push image
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-image
+          name: ${{ steps.get_image_artifact_name.outputs.image_artifact_name }}-runner-image
           path: ${{ github.workspace }}/${{ steps.get_image_artifact_name.outputs.image_artifact_name }}.tar
           retention-days: 1
 
@@ -356,11 +356,11 @@ jobs:
       - name: Download backend image
         uses: actions/download-artifact@v2
         with:
-          name: ${{ needs.build_test_backend_image.outputs.image_artifact_name }}-image
+          name: ${{ needs.build_test_backend_image.outputs.image_artifact_name }}-backend-image
       - name: Download test runner image
         uses: actions/download-artifact@v2
         with:
-          name: ${{ needs.build_test_runner_image.outputs.image_artifact_name }}-image
+          name: ${{ needs.build_test_runner_image.outputs.image_artifact_name }}-runner-image
       - name: Load image into cluster
         run: sudo k3s ctr images import "${GITHUB_WORKSPACE}/${ARTIFACT}.tar"
         env:
