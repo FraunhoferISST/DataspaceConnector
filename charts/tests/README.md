@@ -1,4 +1,4 @@
-# e2e tests
+# E2E Tests
 
 There are multiple test scripts for e2e tests between Dataspace Connectors. Each script tests a
 different functionality (e.g. Camel routes, different usage policies) to ensure that it
@@ -29,54 +29,22 @@ The test scripts and dockerfile for the runner can be found [here](../../scripts
 
 There are currently 14 [test scripts](../../scripts/tests/runner/scripts):
 
-1. __contract_negotiation_allow_access__: Creates a complete resource on provider side with the
-   allow-access policy, which poses no restrictions on data usage, attached. Requests this
-   resource via the consumer. Verifies that the expected data has been received.
-2. __contract_negotiation_connector_restricted_access__: Creates a complete resource on provider
-   side with the connector-restricted-usage policy, which restricts the data usage to only the
-   consumer connector, attached. Requests this resource via the consumer. Verifies that the
-   expected data has been received.
-3. __contract_negotiation_count_access__: Creates a complete resource on provider side with the
-   count-access policy, which only allows using the data twice, attached. Requests this resource
-   via the consumer. Accesses the data twice and verifies that the expected data has been received.
-   Verifies that a third try to access the data results in an error message.
-4. __contract_negotiation_log_access__: Creates a complete resource on provider side with the
-   log-access policy, which requires logging data usage to the Clearing House, attached. Requests
-   this resource via the consumer. Verifies that the expected data has been received.
-5. __contract_negotiation_notify_access__: Creates a complete resource on provider side with the
-   notify-access policy, which requires notifying the provider about data usage, attached. Requests
-   this resource via the consumer. Verifies that the expected data has been received.
-6. __contract_negotiation_prohibit_access__: Creates a complete resource on provider side with the
-   prohibit-access policy, which prohibits all data usage, attached. Requests this resource via the
-   consumer. Verifies that the try to access the data results in an error message.
-7. __contract_negotiation_security_level_access__: Creates a complete resource on provider side
-   with the security-level-access policy, which restricts the data usage to connectors with the
-   TRUST security profile, attached. Requests this resource via the consumer. Verifies that the try
-   to access the data results in an error message.
-8. __data_transfer_with_routes__: Creates a route on provider side that fetches data from the route
-   backend. Creates a route on consumer side that sends data to the route backend. Creates a
-   complete resource on provider side, where the artifact points to the provider route. Requests
-   this resource via the consumer and accesses the data using the consumer route. Verifies that the
-   expected data has been received, which also means that the data was successfully dispatched via
-   the route.
-9. __multiple_artifacts__: Creates two complete resources on provider side, one with a remote and
-   one with a local artifact. Negotiates a contract for both resources at once via the consumer.
-10. __remote_data_can_be_updated__: Creates and then updates an artifact that points to a remote
-    data source.
-11. __remote_data_is_unique__: Creates two resources linked to the same contract and representation
-    on provider side. Requests both resources via the consumer. Verifies that the representation,
-    artifact, contract and rule were only persisted once on the consumer side (no duplication).
-12. __single_artifact_multiple_policies__: Creates a full resource on provider side with two
-    different usage rules attached to the contract. Negotiates a contract including both rules
-    via the consumer.
-13. __subscription_creation__: Creates a complete resource on provider side. Subscribes for
-    updates on that resource via the consumer. Verifies that the subscription has been created on
-    provider side.
-14. __subscription_with_route__: Creates a complete resource on provider side. Subscribes for
-    updates on the resource's artifact via the consumer. Creates a route on consumer side that
-    sends data to the route backend. Creates a subscription on consumer side that sends updates via
-    the route. Updates the artifact's data on provider side and verifies that the backend has
-    received the updated data.
+| Name | Action |
+| ---- | ------ |
+| contract_negotiation_allow_access | Creates a complete resource on provider side with the allow-access policy, which poses no restrictions on data usage, attached. Requests this resource via the consumer. Verifies that the expected data has been received. |
+| contract_negotiation_connector_restricted_access | Creates a complete resource on provider side with the connector-restricted-usage policy, which restricts the data usage to only the consumer connector, attached. Requests this resource via the consumer. Verifies that the expected data has been received. |
+| contract_negotiation_count_access | Creates a complete resource on provider side with the count-access policy, which only allows using the data twice, attached. Requests this resource via the consumer. Accesses the data twice and verifies that the expected data has been received. Verifies that a third try to access the data results in an error message. |
+| contract_negotiation_log_access | Creates a complete resource on provider side with the log-access policy, which requires logging data usage to the Clearing House, attached. Requests this resource via the consumer. Verifies that the expected data has been received. |
+| contract_negotiation_notify_access | Creates a complete resource on provider side with the notify-access policy, which requires notifying the provider about data usage, attached. Requests this resource via the consumer. Verifies that the expected data has been received. |
+| contract_negotiation_prohibit_access | Creates a complete resource on provider side with the prohibit-access policy, which prohibits all data usage, attached. Requests this resource via the consumer. Verifies that the try to access the data results in an error message. |
+| contract_negotiation_security_level_access | Creates a complete resource on provider side with the security-level-access policy, which restricts the data usage to connectors with the TRUST security profile, attached. Requests this resource via the consumer. Verifies that the try to access the data results in an error message. |
+| data_transfer_with_routes | Creates a route on provider side that fetches data from the route backend. Creates a route on consumer side that sends data to the route backend. Creates a complete resource on provider side, where the artifact points to the provider route. Requests this resource via the consumer and accesses the data using the consumer route. Verifies that the expected data has been received, which also means that the data was successfully dispatched via the route. |
+| multiple_artifacts | Creates two complete resources on provider side, one with a remote and one with a local artifact. Negotiates a contract for both resources at once via the consumer. |
+| remote_data_can_be_updated | Creates and then updates an artifact that points to a remote data source. |
+| remote_data_is_unique | Creates two resources linked to the same contract and representation on provider side. Requests both resources via the consumer. Verifies that the representation, artifact, contract and rule were only persisted once on the consumer side (no duplication). |
+| single_artifact_multiple_policies | Creates a full resource on provider side with two different usage rules attached to the contract. Negotiates a contract including both rules via the consumer. |
+| subscription_creation | Creates a complete resource on provider side. Subscribes for updates on that resource via the consumer. Verifies that the subscription has been created on provider side. |
+| subscription_with_route | Creates a complete resource on provider side. Subscribes for updates on the resource's artifact via the consumer. Creates a route on consumer side that sends data to the route backend. Creates a subscription on consumer side that sends updates via the route. Updates the artifact's data on provider side and verifies that the backend has received the updated data. |
 
 ## Running e2e tests
 The e2e tests are run before each merge through the GitHub actions, but you can also run them
@@ -88,7 +56,14 @@ If you want to run the e2e tests in a local Kubernetes cluster, you can do so by
 automated script that runs all tests or by deploying the components manually and executing
 a single test.
 
-__Note, that a running cluster and a Helm installation are required for this.__
+#### Requirements
+In order to deploy the e2e test infrastructure in Kubernetes, a cluster needs to be running
+beforehand. If you do not have a cluster yet, you can use e.g.
+[kind](https://kind.sigs.k8s.io/docs/user/quick-start/) to set up one.
+
+Next to a cluster, a [Helm](https://helm.sh/) installation is also required, as Helm charts
+are used for deploying the different components. If you do not have Helm installed yet, have
+a look at the [installation guide](https://helm.sh/docs/intro/install/).
 
 #### Automated
 The simplest way to run the e2e tests is to execute
