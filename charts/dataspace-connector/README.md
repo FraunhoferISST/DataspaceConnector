@@ -15,52 +15,47 @@ A Helm chart for Kubernetes
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
-| autoscaling.enabled | bool | `false` |  |
-| autoscaling.maxReplicas | int | `100` |  |
-| autoscaling.minReplicas | int | `1` |  |
-| autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
-| env.config.CONFIGURATION_PATH | string | `"/etc/dataspace-connector/config.json"` |  |
-| env.config.LOGGING_CONFIG | string | `"file:///etc/dataspace-connector/log4j2.xml"` |  |
-| env.config.MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE | string | `"metrics,health"` |  |
-| env.config.MANAGEMENT_ENDPOINT_HEALTH_ENABLED | string | `"true"` |  |
-| env.config.MANAGEMENT_ENDPOINT_METRICS_ENABLED | string | `"true"` |  |
-| env.config.SERVER_SSL_ENABLED | string | `"false"` |  |
-| env.config.SERVER_SSL_KEY-STORE | string | `"/var/run/certs/keystore.p12"` |  |
-| env.secrets.SPRING_SECURITY_USER_NAME | string | `"admin"` |  |
-| env.secrets.SPRING_SECURITY_USER_PASSWORD | string | `"password"` |  |
-| image.pullPolicy | string | `"Always"` |  |
-| image.repository | string | `"ghcr.io/international-data-spaces-association/dataspace-connector"` |  |
-| image.tag | string | `""` |  |
-| imagePullSecrets | list | `[]` |  |
-| ingress.annotations | string | `nil` |  |
-| ingress.className | string | `""` |  |
-| ingress.enabled | bool | `false` |  |
-| ingress.hosts[0].host | string | `"localhost"` |  |
-| ingress.hosts[0].paths[0].path | string | `"/"` |  |
-| ingress.hosts[0].paths[0].pathType | string | `"Prefix"` |  |
-| ingress.tls[0].hosts[0] | string | `"localhost"` |  |
-| ingress.tls[0].secretName | string | `"testsecret-tls"` |  |
+| autoscaling | object | `{"enabled":false,"maxReplicas":100,"minReplicas":1,"targetCPUUtilizationPercentage":80}` | Connector horizontal autoscaling settings |
+| env | object | `{"config":{"CONFIGURATION_PATH":"/etc/dataspace-connector/config.json","LOGGING_CONFIG":"file:///etc/dataspace-connector/log4j2.xml","MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE":"metrics,health","MANAGEMENT_ENDPOINT_HEALTH_ENABLED":"true","MANAGEMENT_ENDPOINT_METRICS_ENABLED":"true","SERVER_SSL_ENABLED":"false","SERVER_SSL_KEY-STORE":"/var/run/certs/keystore.p12"},"secrets":{"SPRING_SECURITY_USER_NAME":"admin","SPRING_SECURITY_USER_PASSWORD":"password"}}` | Connector properties |
+| env.config | object | `{"CONFIGURATION_PATH":"/etc/dataspace-connector/config.json","LOGGING_CONFIG":"file:///etc/dataspace-connector/log4j2.xml","MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE":"metrics,health","MANAGEMENT_ENDPOINT_HEALTH_ENABLED":"true","MANAGEMENT_ENDPOINT_METRICS_ENABLED":"true","SERVER_SSL_ENABLED":"false","SERVER_SSL_KEY-STORE":"/var/run/certs/keystore.p12"}` | Connector environment variables |
+| env.config.CONFIGURATION_PATH | string | `"/etc/dataspace-connector/config.json"` | Path to the connector configuration |
+| env.config.LOGGING_CONFIG | string | `"file:///etc/dataspace-connector/log4j2.xml"` | Connector logging configuration location |
+| env.config.MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE | string | `"metrics,health"` | Actuactor endpoints to expose |
+| env.config.MANAGEMENT_ENDPOINT_HEALTH_ENABLED | string | `"true"` | Whether to enable health actuactor |
+| env.config.MANAGEMENT_ENDPOINT_METRICS_ENABLED | string | `"true"` | Whether to enable metrics actuactor |
+| env.config.SERVER_SSL_ENABLED | string | `"false"` | Whether TLS is enabled |
+| env.config.SERVER_SSL_KEY-STORE | string | `"/var/run/certs/keystore.p12"` | SSL keystore location |
+| env.secrets | object | `{"SPRING_SECURITY_USER_NAME":"admin","SPRING_SECURITY_USER_PASSWORD":"password"}` | Connector secrets |
+| env.secrets.SPRING_SECURITY_USER_NAME | string | `"admin"` | Connector admin username |
+| env.secrets.SPRING_SECURITY_USER_PASSWORD | string | `"password"` | Connector admin password |
+| image.pullPolicy | string | `"Always"` | Image pull policy |
+| image.repository | string | `"ghcr.io/international-data-spaces-association/dataspace-connector"` | Connector image name |
+| image.tag | string | `"latest"` | Connector version without the "v" |
+| imagePullSecrets | list | `[]` | Secrets for pulling images |
+| ingress | object | `{"annotations":null,"className":"","enabled":false,"hosts":[{"host":"localhost","paths":[{"path":"/","pathType":"Prefix"}]}],"tls":[{"hosts":["localhost"],"secretName":"testsecret-tls"}]}` | Connector kubernetes ingress settings |
+| ingress.enabled | bool | `false` | Whether to enable ingress for the connector |
 | nodeSelector | object | `{}` |  |
-| podAnnotations."seccomp.security.alpha.kubernetes.io/pod" | string | `"runtime/default"` |  |
-| podSecurityContext | object | `{}` |  |
-| postgresql.enabled | bool | `true` |  |
-| postgresql.postgresqlDatabase | string | `"test"` |  |
-| postgresql.postgresqlPassword | string | `"username"` |  |
-| postgresql.postgresqlUsername | string | `"password"` |  |
-| postgresql.service.port | string | `"5432"` |  |
-| replicaCount | int | `1` |  |
-| resources.limits.cpu | string | `"8"` |  |
-| resources.limits.memory | string | `"4Gi"` |  |
-| resources.requests.cpu | string | `"250m"` |  |
-| resources.requests.memory | string | `"1Gi"` |  |
-| securityContext.allowPrivilegeEscalation | bool | `false` |  |
-| securityContext.capabilities.drop[0] | string | `"ALL"` |  |
-| securityContext.runAsUser | int | `65532` |  |
-| service.port | int | `80` |  |
-| service.type | string | `"ClusterIP"` |  |
-| serviceAccount.annotations | object | `{}` |  |
-| serviceAccount.create | bool | `true` |  |
-| serviceAccount.name | string | `nil` |  |
+| podAnnotations | object | `{"seccomp.security.alpha.kubernetes.io/pod":"runtime/default"}` | Annotation for the deployed pods |
+| podSecurityContext | object | `{}` | Security context for the pods |
+| postgresql | object | `{"enabled":true,"postgresqlDatabase":"test","postgresqlPassword":"username","postgresqlUsername":"password","service":{"port":"5432"}}` | Persistent database properties |
+| postgresql.enabled | bool | `true` | Whether to use a postgresql backend |
+| postgresql.postgresqlDatabase | string | `"test"` | Postgresql database name |
+| postgresql.postgresqlPassword | string | `"username"` | Postgresql password |
+| postgresql.postgresqlUsername | string | `"password"` | Postgresql username |
+| postgresql.service | object | `{"port":"5432"}` | Kubernetes postgresql service |
+| postgresql.service.port | string | `"5432"` | Postgresql service port |
+| replicaCount | int | `1` | Number of connector instances |
+| resources | object | `{"limits":{"cpu":"8","memory":"4Gi"},"requests":{"cpu":"250m","memory":"1Gi"}}` | Connector kubernetes resource settings |
+| securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"runAsUser":65532}` | Security context applied to the pods |
+| securityContext.allowPrivilegeEscalation | bool | `false` | Whether to allow privilege escalations |
+| securityContext.capabilities | object | `{"drop":["ALL"]}` | Capabilities of the pods |
+| service | object | `{"port":80,"type":"ClusterIP"}` | Kubernetes connector service settings |
+| service.port | int | `80` | Connector service port |
+| service.type | string | `"ClusterIP"` | Connector service type |
+| serviceAccount | object | `{"annotations":{},"create":true,"name":null}` | Kubernetes service account for the connector |
+| serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
+| serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
+| serviceAccount.name | string | `nil` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
 | tolerations | list | `[]` |  |
 
 ----------------------------------------------
