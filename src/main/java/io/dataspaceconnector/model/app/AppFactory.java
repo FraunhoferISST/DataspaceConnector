@@ -313,7 +313,6 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
      * @param containerId The id of the container which is set.
      */
     public void setContainerId(final AppImpl app, final String containerId) {
-        // TODO Keep in AppImpl?
         app.setContainerId(containerId);
     }
 
