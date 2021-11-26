@@ -8,7 +8,7 @@ image:
   # -- Image pull policy
   pullPolicy: Always
   # -- Connector version without the "v"
-  tag: "latest"
+  tag: ""
 
 # -- Connector properties
 env:
