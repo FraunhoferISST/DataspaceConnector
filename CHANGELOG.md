@@ -21,7 +21,8 @@ All notable changes to this project will be documented in this file.
 - Replace template engine `Velocity` with `Freemarker`.
 - Remove suffix *settings* from `ConfigurationDesc` attributes.
 - Increase camel version from 3.12.0 to 3.13.0.
-- Update spring-boot-starter-parent version from 2.5.6 to 2.5.7.
+- Increase spotbugs version from 4.4.2 to 4.5.0.
+- Increase spring-boot-starter-parent version from 2.5.6 to 2.5.7.
 - Increase okhttp version from 4.9.2 to 4.9.3.
 
 ### Fixed

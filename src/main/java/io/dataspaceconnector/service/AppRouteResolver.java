@@ -18,7 +18,6 @@ package io.dataspaceconnector.service;
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.repository.RouteRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.apache.camel.CamelContext;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,6 @@ import java.util.Optional;
 /**
  * Start and stop apps depending on their AppEndpoints and use in Camel routes.
  */
-@Log4j2
 @Service
 @RequiredArgsConstructor
 public class AppRouteResolver {

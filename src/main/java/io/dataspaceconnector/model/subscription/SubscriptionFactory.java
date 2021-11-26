@@ -79,7 +79,6 @@ public class SubscriptionFactory extends AbstractNamedFactory<Subscription, Subs
     }
 
     private void validateInput(final URI uri) {
-        // TODO Should not throw?
         final var cond1 = connectorConfig.isIdscpEnabled()
                           && (uri == null || uri.toString().isBlank());
         final var cond2 = uri == null || ValidationUtils.isInvalidUri(String.valueOf(uri));

@@ -16,6 +16,7 @@
 package io.dataspaceconnector.extension.monitoring.update;
 
 import de.fraunhofer.ids.messaging.protocol.http.HttpService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.extension.monitoring.update.util.Repository;
 import io.dataspaceconnector.extension.monitoring.update.util.UpdateType;
@@ -99,6 +100,7 @@ public class UpdateInfoService {
      * @return Data that should be displayed in case of an available update.
      * @throws IOException if an error occurs while retrieving the latest release information.
      */
+    @SuppressFBWarnings("DCN_NULLPOINTER_EXCEPTION")
     public Map<String, Object> getLatestInformation() throws IOException {
         final var url = new HttpUrl.Builder()
                 .scheme(repository.getScheme())
