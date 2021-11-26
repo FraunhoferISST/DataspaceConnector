@@ -669,6 +669,7 @@ public class PortainerRequestService {
      * @param tag portainer image tag.
      * @throws IOException If an error occurs while connecting to portainer.
      */
+    @SuppressFBWarnings("DE_MIGHT_IGNORE")
     private void waitForImagePull(final String tag) throws IOException {
         //Check if image is successfully pulled in Portainer,
         //otherwise wait until process is finished.

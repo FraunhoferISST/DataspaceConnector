@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.extension.petrinet.model;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Implementation class of the {@link Arc} interface.
  */
@@ -34,6 +36,7 @@ public class ArcImpl implements Arc {
      * @param pSource The arc source node.
      * @param pTarget The arc target node.
      */
+    @SuppressFBWarnings("MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR")
     public ArcImpl(final Node pSource, final Node pTarget) {
         if (pSource.isComplementOf(pTarget)) {
             this.source = pSource;

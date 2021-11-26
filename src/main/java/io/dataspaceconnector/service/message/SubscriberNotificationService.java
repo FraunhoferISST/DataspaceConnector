@@ -262,7 +262,6 @@ public class SubscriberNotificationService {
         }
     }
 
-    // TODO refactor to recursive method calls
     private List<Resource> getIdsResourcesFromEntity(final Entity entity) {
         var updatedResources = new ArrayList<Resource>();
         if (entity instanceof OfferedResource) {

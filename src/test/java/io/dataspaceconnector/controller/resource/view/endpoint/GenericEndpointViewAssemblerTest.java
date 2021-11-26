@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.controller.resource.view.endpoint;
 
-import java.net.URI;
 
 import io.dataspaceconnector.controller.resource.type.EndpointController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
