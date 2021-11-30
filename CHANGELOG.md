@@ -24,6 +24,7 @@ All notable changes to this project will be documented in this file.
 - Increase spotbugs version from 4.4.2 to 4.5.0.
 - Increase spring-boot-starter-parent version from 2.5.6 to 2.5.7.
 - Increase okhttp version from 4.9.2 to 4.9.3.
+- Increase pmd version from 6.40.0 to 6.41.0.
 
 ### Fixed
 - XML-escape URLs before injecting them into Camel route templates.
