@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import java.net.URI;
+import java.util.List;
+import java.util.Set;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
@@ -33,65 +37,42 @@ import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
 import io.dataspaceconnector.service.resource.relation.ArtifactSubscriptionLinker;
 import io.dataspaceconnector.service.resource.relation.OfferedResourceSubscriptionLinker;
-import io.dataspaceconnector.service.resource.relation.RepresentationSubscriptionLinker;
+import io.dataspaceconnector.service.resource.relation.RepresentationArtifactLinker;
 import io.dataspaceconnector.service.resource.relation.RequestedResourceSubscriptionLinker;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.dataspaceconnector.service.resource.spring.ServiceLookUp;
+import lombok.NonNull;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.net.URI;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Handles the basic logic for subscriptions.
  */
-@Service
-@Transactional
 public class SubscriptionService extends BaseEntityService<Subscription, SubscriptionDesc> {
-
-    /**
-     * Service for linking artifacts and subscriptions.
-     */
-    @Autowired
-    private ArtifactSubscriptionLinker artSubLinker;
-
-    /**
-     * Service for linking representations and subscriptions.
-     */
-    @Autowired
-    private RepresentationSubscriptionLinker repSubLinker;
-
-    /**
-     * Service for linking requested resources and subscriptions.
-     */
-    @Autowired
-    private RequestedResourceSubscriptionLinker requestSubLinker;
-
-    /**
-     * Service for linking offered resources and subscriptions.
-     */
-    @Autowired
-    private OfferedResourceSubscriptionLinker offerSubLinker;
 
     /**
      * Service for resolving database entities by id.
      */
-    @Autowired
-    private EntityResolver entityResolver;
+    private final @NonNull EntityResolver entityResolver;
+
+    /**
+     * Service for service lookup.
+     */
+    private final @NonNull ServiceLookUp lookUp;
 
     /**
      * Constructor.
-     *
      * @param repository The subscription repository.
      * @param factory    The subscription factory.
+     * @param resolver   The entity resolver.
+     * @param serviceLookUp The service lookup.
      */
-    @Autowired
     public SubscriptionService(
             final BaseEntityRepository<Subscription> repository,
-            final AbstractFactory<Subscription, SubscriptionDesc> factory) {
+            final AbstractFactory<Subscription, SubscriptionDesc> factory,
+            final @NonNull EntityResolver resolver,
+            final @NonNull ServiceLookUp serviceLookUp) {
         super(repository, factory);
+        this.entityResolver = resolver;
+        this.lookUp = serviceLookUp;
     }
 
     /**
@@ -201,14 +182,19 @@ public class SubscriptionService extends BaseEntityService<Subscription, Subscri
         // Link subscription to entity.
         final var subscriptionId = subscription.getId();
         final var value = entity.get();
+
         if (value instanceof Artifact) {
-            artSubLinker.add(value.getId(), Set.of(subscriptionId));
+            lookUp.getService(ArtifactSubscriptionLinker.class).get()
+                  .add(value.getId(), Set.of(subscriptionId));
         } else if (value instanceof Representation) {
-            repSubLinker.add(value.getId(), Set.of(subscriptionId));
+            lookUp.getService(RepresentationArtifactLinker.class).get()
+                  .add(value.getId(), Set.of(subscriptionId));
         } else if (value instanceof OfferedResource) {
-            offerSubLinker.add(value.getId(), Set.of(subscriptionId));
+            lookUp.getService(OfferedResourceSubscriptionLinker.class).get()
+                  .add(value.getId(), Set.of(subscriptionId));
         } else if (value instanceof RequestedResource) {
-            requestSubLinker.add(value.getId(), Set.of(subscriptionId));
+            lookUp.getService(RequestedResourceSubscriptionLinker.class).get()
+                  .add(value.getId(), Set.of(subscriptionId));
         } else {
             throw new SubscriptionProcessingException("No subscription offered for this target.");
         }
