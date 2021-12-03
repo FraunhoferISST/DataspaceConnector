@@ -16,23 +16,17 @@
 package io.dataspaceconnector.extension.idscp.config;
 
 import de.fhg.aisec.ids.camel.idscp2.Utils;
-import de.fhg.aisec.ids.camel.idscp2.processors.IdsMessageTypeExtractionProcessor;
 import de.fhg.aisec.ids.cmc.CmcConfig;
 import de.fhg.aisec.ids.cmc.prover.CmcProver;
 import de.fhg.aisec.ids.cmc.prover.CmcProverConfig;
 import de.fhg.aisec.ids.cmc.verifier.CmcVerifier;
 import de.fhg.aisec.ids.cmc.verifier.CmcVerifierConfig;
-import de.fhg.aisec.ids.idscp2.idscp_core.rat_registry.RatProverDriverRegistry;
-import de.fhg.aisec.ids.idscp2.idscp_core.rat_registry.RatVerifierDriverRegistry;
-import de.fhg.aisec.ids.tpm2d.TpmHelper;
-import de.fhg.aisec.ids.tpm2d.messages.TpmAttestation;
-import de.fhg.aisec.ids.tpm2d.tpm2d_prover.TpmProver;
-import de.fhg.aisec.ids.tpm2d.tpm2d_prover.TpmProverConfig;
-import de.fhg.aisec.ids.tpm2d.tpm2d_verifier.TpmVerifier;
-import de.fhg.aisec.ids.tpm2d.tpm2d_verifier.TpmVerifierConfig;
+import de.fhg.aisec.ids.idscp2.idscp_core.ra_registry.RaProverDriverRegistry;
+import de.fhg.aisec.ids.idscp2.idscp_core.ra_registry.RaVerifierDriverRegistry;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.camel.Processor;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
@@ -45,11 +39,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionManager;
 
 import javax.annotation.PostConstruct;
-import java.nio.file.Paths;
 
 /**
  * Contains configuration required for using IDSCP for communication.
  */
+@SuppressWarnings("unused")
 @Configuration
 @RequiredArgsConstructor
 public class Idscp2Config {
@@ -89,25 +83,6 @@ public class Idscp2Config {
      */
     @Value("${daps.url}")
     private String dapsUrl;
-
-    /**
-     * Hostname where tpm2d is found.
-     */
-    @Value("${idscp2.tpm2d-host}")
-    private String tpm2dHost;
-
-    /**
-     * Location of TPM root certificate.
-     */
-    @Value("${idscp2.tpm-root-certificate}")
-    private String tpmRootCertificate;
-
-    /**
-     * PCR bitmask for TPM RA, specifies the PCR registers
-     * to check against golden values.
-     */
-    @Value("${idscp2.expected-pcr-mask}")
-    private int expectedPcrMask;
 
     /**
      * Hostname where CMC is found.
@@ -164,8 +139,8 @@ public class Idscp2Config {
      * @return the processor.
      */
     @Bean("TypeExtractionProcessor")
-    public IdsMessageTypeExtractionProcessor idsMessageTypeExtractionProcessor() {
-        return new IdsMessageTypeExtractionProcessor();
+    public Processor getTypeExtractionProcessor() {
+        return new TypeExtractionProcessor();
     }
 
     /**
@@ -223,44 +198,7 @@ public class Idscp2Config {
         Utils.INSTANCE.setInfomodelVersion(connector.getOutboundModelVersion());
         Utils.INSTANCE.setDapsUrlProducer(() -> dapsUrl);
 
-        idscp2TpmRatConfig();
         idscp2CmcRatConfig();
-    }
-
-    /**
-     * Method for configuration of IDSCP2 TPM attestation driver.
-     */
-    public void idscp2TpmRatConfig() {
-        // RAT prover configuration
-        var tpm2dHostAndPort = tpm2dHost.split(":");
-        int tpm2dPort = TpmProverConfig.DEFAULT_TPM_PORT;
-        if (tpm2dHostAndPort.length > 1) {
-            tpm2dPort = Integer.parseInt(tpm2dHostAndPort[1]);
-        }
-        var proverConfig = new TpmProverConfig.Builder()
-                .setTpmHost(tpm2dHostAndPort[0])
-                .setTpmPort(tpm2dPort)
-                .build();
-        RatProverDriverRegistry.INSTANCE.registerDriver(
-                TpmProver.ID, TpmProver::new, proverConfig
-        );
-
-        // RAT verifier configuration
-        var verifierConfig =  new TpmVerifierConfig.Builder()
-                .setLocalCertificate(
-                        TpmHelper.INSTANCE.loadCertificateFromKeystore(
-                                Paths.get(keyStoreLocation),
-                                keyStorePassword.toCharArray(),
-                                keyStoreAlias
-                        )
-                )
-                .addRootCaCertificateFromPem(Paths.get(tpmRootCertificate))
-                .setExpectedAttestationType(TpmAttestation.IdsAttestationType.ADVANCED)
-                .setExpectedAttestationMask(expectedPcrMask)
-                .build();
-        RatVerifierDriverRegistry.INSTANCE.registerDriver(
-                TpmVerifier.ID, TpmVerifier::new, verifierConfig
-        );
     }
 
     /**
@@ -277,7 +215,7 @@ public class Idscp2Config {
                 .setCmcHost(cmcHostAndPort[0])
                 .setCmcPort(cmcPort)
                 .build();
-        RatProverDriverRegistry.INSTANCE.registerDriver(
+        RaProverDriverRegistry.INSTANCE.registerDriver(
                 CmcProver.ID, CmcProver::new, proverConfig
         );
 
@@ -286,7 +224,7 @@ public class Idscp2Config {
                 .setCmcHost(cmcHostAndPort[0])
                 .setCmcPort(cmcPort)
                 .build();
-        RatVerifierDriverRegistry.INSTANCE.registerDriver(
+        RaVerifierDriverRegistry.INSTANCE.registerDriver(
                 CmcVerifier.ID, CmcVerifier::new, verifierConfig
         );
     }

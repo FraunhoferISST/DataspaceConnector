@@ -106,11 +106,11 @@
 		<jaeger.version>3.3.1</jaeger.version>
 		<freemarker.version>2.3.31</freemarker.version>
 		<camel.version>3.15.0</camel.version>
-		<idscp2.version>0.6.0</idscp2.version>
+		<idscp2.version>0.8.0</idscp2.version>
 		<protobuf.version>3.19.4</protobuf.version>
 		<velocity.version>1.7</velocity.version>
 		<idscp2-tpm2d.version>0.2.2</idscp2-tpm2d.version>
-		<idscp2-cmc.version>0.1.0</idscp2-cmc.version>
+		<idscp2-cmc.version>0.8.0</idscp2-cmc.version>
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
@@ -539,13 +539,7 @@
 
 		<dependency>
 			<groupId>de.fhg.aisec.ids</groupId>
-			<artifactId>idscp2-rat-tpm2d</artifactId>
-			<version>${idscp2-tpm2d.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>de.fhg.aisec.ids</groupId>
-			<artifactId>idscp2-rat-cmc</artifactId>
+			<artifactId>idscp2-ra-cmc</artifactId>
 			<version>${idscp2-cmc.version}</version>
 		</dependency>
 
@@ -590,7 +584,7 @@
 			<name>Local m2 Repository</name>
 			<url>file://~/.m2/repository</url>
 			<snapshots>
-				<enabled>true</enabled>
+				<enabled>false</enabled>
 			</snapshots>
 			<releases>
 				<enabled>true</enabled>
