@@ -17,6 +17,7 @@ package io.dataspaceconnector.service.usagecontrol;
 
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.SecurityProfile;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.ids.policy.PolicyPattern;
 import io.dataspaceconnector.common.ids.policy.RuleUtils;
@@ -279,6 +280,7 @@ public class RuleValidator {
      * @param profile The security profile.
      * @throws PolicyRestrictionException If the connector ids do no match.
      */
+    @SuppressFBWarnings("DCN_NULLPOINTER_EXCEPTION")
     private void validateSecurityProfile(final Rule rule, final Optional<SecurityProfile> profile)
             throws PolicyRestrictionException {
         if (profile.isEmpty()) {

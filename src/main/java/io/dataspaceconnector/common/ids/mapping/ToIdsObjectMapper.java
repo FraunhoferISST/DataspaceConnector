@@ -158,7 +158,7 @@ public final class ToIdsObjectMapper {
     public static LogLevel getLogLevel(
             final io.dataspaceconnector.model.configuration.LogLevel logLevel) {
         switch (logLevel) {
-            // TODO infomodel has less log levels than DSC, info will get lost.
+            // Note: Infomodel has less log levels than DSC, info will get lost.
             case INFO:
             case WARN:
             case ERROR:
@@ -196,7 +196,7 @@ public final class ToIdsObjectMapper {
      * @return The ids proxy.
      */
     public static Proxy getProxy(final io.dataspaceconnector.model.proxy.Proxy proxy) {
-        // TODO auth from DSC has ID field, not available in InfoModel. Create auth build service.
+        // INFO: Auth from DSC has ID field, not available in InfoModel. Create auth build service.
         return new ProxyBuilder()._noProxy_(proxy.getExclusions()
                 .stream()
                 .map(URI::create)

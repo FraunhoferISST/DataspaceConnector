@@ -88,7 +88,6 @@ class AppRouteResolverTest {
     void isAppUsed_appNotInRoutes_returnEmptyOptional() {
         /* ARRANGE */
         final var app = getApp();
-        final var route = getRoute();
 
         when(routeRepository.findTopLevelRoutesByEndpoint(app.getEndpoints().get(0).getId()))
                 .thenReturn(Collections.emptyList());

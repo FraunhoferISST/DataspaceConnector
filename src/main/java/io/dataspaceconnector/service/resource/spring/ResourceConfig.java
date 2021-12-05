@@ -33,6 +33,7 @@ import io.dataspaceconnector.model.representation.RepresentationFactory;
 import io.dataspaceconnector.model.resource.RequestedResourceFactory;
 import io.dataspaceconnector.model.route.RouteFactory;
 import io.dataspaceconnector.model.rule.ContractRuleFactory;
+import io.dataspaceconnector.model.subscription.SubscriptionFactory;
 import io.dataspaceconnector.model.truststore.TruststoreFactory;
 import io.dataspaceconnector.repository.AgreementRepository;
 import io.dataspaceconnector.repository.AppEndpointRepository;
@@ -52,7 +53,9 @@ import io.dataspaceconnector.repository.RepresentationRepository;
 import io.dataspaceconnector.repository.RequestedResourcesRepository;
 import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.repository.RuleRepository;
+import io.dataspaceconnector.repository.SubscriptionRepository;
 import io.dataspaceconnector.service.DataRetriever;
+import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
 import io.dataspaceconnector.service.resource.ids.builder.IdsConfigModelBuilder;
 import io.dataspaceconnector.service.resource.relation.ArtifactRouteService;
@@ -72,6 +75,7 @@ import io.dataspaceconnector.service.resource.type.RepresentationService;
 import io.dataspaceconnector.service.resource.type.RequestedResourceService;
 import io.dataspaceconnector.service.resource.type.RouteService;
 import io.dataspaceconnector.service.resource.type.RuleService;
+import io.dataspaceconnector.service.resource.type.SubscriptionService;
 import io.dataspaceconnector.service.routing.BeanManager;
 import io.dataspaceconnector.service.routing.RouteHelper;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -298,5 +302,21 @@ public class ResourceConfig {
     @Bean("ruleService")
     public RuleService createRuleService(final RuleRepository repo) {
         return new RuleService(repo, new ContractRuleFactory());
+    }
+
+    /**
+     * Create a subscription service bean.
+     * @param repository The subscription repository.
+     * @param factory The subscription factory.
+     * @param entityResolver The entity resolver.
+     * @param lookUp The service lookup service.
+     * @return The subscription service bean.
+     */
+    @Bean("subscriptionService")
+    public SubscriptionService createSubscriptionService(final SubscriptionRepository repository,
+                                                         final SubscriptionFactory factory,
+                                                         final EntityResolver entityResolver,
+                                                         final ServiceLookUp lookUp) {
+        return new SubscriptionService(repository, factory, entityResolver, lookUp);
     }
 }

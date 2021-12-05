@@ -21,6 +21,7 @@ import de.fraunhofer.ids.messaging.core.daps.DapsConnectionException;
 import de.fraunhofer.ids.messaging.core.daps.DapsEmptyResponseException;
 import de.fraunhofer.ids.messaging.core.daps.DapsValidator;
 import de.fraunhofer.ids.messaging.core.daps.TokenProviderService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.util.Utils;
@@ -67,6 +68,7 @@ public class IdsInfoContributor implements InfoContributor {
         }};
     }
 
+    @SuppressFBWarnings("DCN_NULLPOINTER_EXCEPTION")
     private Map<String, Object> getIdsDetails() {
         final var map = new HashMap<String, Object>() {{
             put("infoModel", getInfoModelDetails());
@@ -90,6 +92,7 @@ public class IdsInfoContributor implements InfoContributor {
         }};
     }
 
+    @SuppressFBWarnings("DCN_NULLPOINTER_EXCEPTION")
     private Map<String, Object> getCertDetails() {
         final var keyStoreManager = connectorSvc.getKeyStoreManager();
 

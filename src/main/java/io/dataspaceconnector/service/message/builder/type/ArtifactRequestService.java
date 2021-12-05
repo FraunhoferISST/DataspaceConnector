@@ -93,7 +93,7 @@ public final class ArtifactRequestService
                 .build();
 
         // Log outgoing ArtifactRequestMessages in ClearingHouse
-        // TODO Message might not have been sent.
+        // Note: Message might not have been sent.
         clearingHouseService.logIdsMessage(message);
 
         return message;
