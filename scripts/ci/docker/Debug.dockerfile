@@ -29,10 +29,9 @@ COPY src/main/resources ./src/main/resources
 RUN mvn -e -B clean package -DskipTests -Dmaven.javadoc.skip=true
 
 # Copy the jar and build image
-FROM gcr.io/distroless/java-debian11:17-debug
+FROM gcr.io/distroless/java-17:debug-nonroot
 COPY --from=maven /app/target/*.jar /app/app.jar
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 29292
-# USER nonroot # Run root in debug images
 ENTRYPOINT ["java","-jar","app.jar"]
