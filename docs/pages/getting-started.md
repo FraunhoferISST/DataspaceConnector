@@ -21,7 +21,7 @@ The GitHub Container Registry (GHCR) allows to download Docker images without cr
 You will find an image for each release tag with the corresponding version. In addition, an image of
 the main branch is automatically provided as soon as changes are identified.**
 
-If you want to build and run locally, ensure that at least Java 11 is installed. Then, follow these
+If you want to build and run locally, ensure that at least Java 17 is installed. Then, follow these
 steps:
 
 1.  Clone the repository: `git clone https://github.com/International-Data-Spaces-Association/DataspaceConnector.git`.
