@@ -27,7 +27,8 @@ All notable changes to this project will be documented in this file.
 - Increase okhttp version from 4.9.2 to 4.9.3.
 - Increase checkstyle version from 9.1 to 9.2.
 - Increase pmd version from 6.40.0 to 6.41.0.
-- Increase springdoc from 1.5.12 to 1.5.13.
+- Increase springdoc version from 1.5.12 to 1.5.13.
+- Increase modelmapper version from 2.4.4 to 2.4.5.
 
 ### Fixed
 - XML-escape URLs before injecting them into Camel route templates.
