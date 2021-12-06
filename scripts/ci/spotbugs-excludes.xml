@@ -25,7 +25,7 @@
         <Bug pattern="BC_UNCONFIRMED_CAST_OF_RETURN_VALUE"/>
     </Match>
     <Match>
-        <!-- Fixed in java 8, project requires java 11, thus disabled -->
+        <!-- Fixed in java 8, project requires java 17, thus disabled -->
         <Bug pattern="WEAK_FILENAMEUTILS"/>
     </Match>
     <Match>

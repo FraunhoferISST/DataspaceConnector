@@ -89,7 +89,7 @@
 		<email>info@dataspace-connector.de</email>
 
 		<!-- Build info -->
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 		<maven.compiler.release>${java.version}</maven.compiler.release>
 		<maven.minimum.version>3.3.9</maven.minimum.version>
 
@@ -98,7 +98,7 @@
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.6.3</swagger-annotations.version>
 		<okhttp.version>4.9.3</okhttp.version>
-		<modelmapper.version>2.4.4</modelmapper.version>
+		<modelmapper.version>2.4.5</modelmapper.version>
 		<jackson.version>2.13.0</jackson.version>
 		<postgres.version>42.3.1</postgres.version>
 		<springdoc.version>1.5.13</springdoc.version>
@@ -573,6 +573,7 @@
 	</dependencyManagement>
 
 	<build>
+		<finalName>dataspaceconnector</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>

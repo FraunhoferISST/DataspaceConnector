@@ -104,7 +104,7 @@ public class IdsInfoContributor implements InfoContributor {
             final var cert = (X509Certificate) keyStoreManager.getCert();
             Utils.requireNonNull(cert, ErrorMessage.EMTPY_ENTITY);
 
-            map.put("issuer", cert.getIssuerDN().getName());
+            map.put("issuer", cert.getIssuerX500Principal().getName());
             map.put("issuedAt", cert.getNotBefore());
             map.put("sigAlgName", cert.getSigAlgName());
             map.put("type", cert.getType());
