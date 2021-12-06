@@ -88,7 +88,7 @@ send a request to the endpoint `POST /api/endpoints` using the following JSON:
 ```
 
 The response will contain the description of the created endpoint, from which you copy and store
-the UUID found in the self-link.
+the self-link.
 
 ---
 
@@ -129,10 +129,10 @@ self-link.
 The previously created route does not yet have a start defined. To set the start endpoint, make a
 request to`POST /api/routes/{route-uuid}/endpoint/start`, where `route-uuid` is replaced with the
 UUID from the route's self-link, and add the following input in the request body after replacing
-the generic endpoint's UUID:
+the generic endpoint's self-link:
 
 ```
-"[generic-endpoint-uuid]"
+"[generic-endpoint-self-link]"
 ```
 
 #### Step 6: Create an artifact
@@ -306,10 +306,10 @@ Execute steps 1 to 4 of [Fetch data from HTTP backend](#fetch-data-from-http-bac
 The previously created route does not yet have an end defined. To set the end endpoint, make a
 request to `POST /api/routes/[route-uuid]/endpoint/end`, where `[route-uuid]` is replaced with the
 UUID from the route's self-link, and add the following input in the request body after replacing
-the generic endpoint's UUID:
+the generic endpoint's self-link:
 
 ```
-"[generic-endpoint-uuid]"
+"[generic-endpoint-self-link]"
 ```
 
 #### Step 6: Create or request an artifact
@@ -456,10 +456,10 @@ route's start. Then, add the first and the second sub-route to the main route by
 a request to `POST /api/routes/{main-route-uuid}/steps` with the following request body:
 
 ```json
-{
+[
   "[self-link of the first sub-route]",
   "[self-link of the second sub-route]"
-}
+]
 ```
 
 #### Step 4: Use the route
