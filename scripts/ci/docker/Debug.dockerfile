@@ -15,7 +15,7 @@
 #
 
 # Dependencies
-FROM maven:3-jdk-17 AS maven
+FROM maven:3-eclipse-temurin-17 AS maven
 WORKDIR /app
 COPY pom.xml .
 RUN mvn -e -B dependency:resolve
