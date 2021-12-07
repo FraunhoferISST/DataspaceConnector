@@ -15,6 +15,12 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.exception.SubscriptionProcessingException;
 import io.dataspaceconnector.common.util.Utils;
@@ -30,8 +36,9 @@ import io.dataspaceconnector.repository.SubscriptionRepository;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.resource.relation.ArtifactSubscriptionLinker;
 import io.dataspaceconnector.service.resource.relation.OfferedResourceSubscriptionLinker;
-import io.dataspaceconnector.service.resource.relation.RepresentationSubscriptionLinker;
+import io.dataspaceconnector.service.resource.relation.RepresentationArtifactLinker;
 import io.dataspaceconnector.service.resource.relation.RequestedResourceSubscriptionLinker;
+import io.dataspaceconnector.service.resource.spring.ServiceLookUp;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,51 +46,30 @@ import org.mockito.AdditionalMatchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest(classes = {SubscriptionService.class})
 public class SubscriptionServiceTest {
 
-    @MockBean
-    private SubscriptionRepository repository;
+    private SubscriptionRepository repository = Mockito.mock(SubscriptionRepository.class);
+    private SubscriptionFactory factory = Mockito.mock(SubscriptionFactory.class);
 
-    @MockBean
-    private SubscriptionFactory factory;
+    private ArtifactSubscriptionLinker artSubLinker = Mockito.mock(ArtifactSubscriptionLinker.class);
+    private RepresentationArtifactLinker repSubLinker = Mockito.mock(RepresentationArtifactLinker.class);
+    private OfferedResourceSubscriptionLinker   offeredResLinker = Mockito.mock(OfferedResourceSubscriptionLinker.class);
+    private RequestedResourceSubscriptionLinker reqSubLinker     = Mockito.mock(RequestedResourceSubscriptionLinker.class);
+    private EntityResolver                      entityResolver   = Mockito.mock(EntityResolver.class);
+    private ServiceLookUp lookUp = Mockito.mock(ServiceLookUp.class);
 
-    @MockBean
-    private ArtifactSubscriptionLinker artSubLinker;
-
-    @MockBean
-    private RepresentationSubscriptionLinker repSubLinker;
-
-    @MockBean
-    private RequestedResourceSubscriptionLinker requestSubLinker;
-
-    @MockBean
-    private OfferedResourceSubscriptionLinker offerSubLinker;
-
-    @MockBean
-    private EntityResolver entityResolver;
-
-    @SpyBean
-    private SubscriptionService service;
+    private SubscriptionService service = Mockito.spy(new SubscriptionService(repository, factory,
+                                                                  entityResolver, lookUp));
 
     SubscriptionDesc subscriptionDesc = getDesc();
     Subscription subscription = getSubscription();
@@ -107,6 +93,11 @@ public class SubscriptionServiceTest {
                 .when(repository)
                 .deleteById(Mockito.isNull());
         Mockito.doAnswer(this::deleteByIdMock).when(repository).deleteById(Mockito.isA(UUID.class));
+
+        Mockito.doReturn(Optional.of(artSubLinker)).when(lookUp).getService(ArtifactSubscriptionLinker.class);
+        Mockito.doReturn(Optional.of(repSubLinker)).when(lookUp).getService(RepresentationArtifactLinker.class);
+        Mockito.doReturn(Optional.of(offeredResLinker)).when(lookUp).getService(OfferedResourceSubscriptionLinker.class);
+        Mockito.doReturn(Optional.of(reqSubLinker)).when(lookUp).getService(RequestedResourceSubscriptionLinker.class);
     }
 
     @Test
@@ -162,7 +153,7 @@ public class SubscriptionServiceTest {
     public void create_validInput_returnSubscriptionForRepresentation() {
         /* ARRANGE */
         Mockito.doReturn(Optional.of(getRepresentation())).when(entityResolver).getEntityById(Mockito.any());
-        Mockito.doNothing().when(artSubLinker).add(Mockito.any(), Mockito.any());
+        Mockito.doNothing().when(repSubLinker).add(Mockito.any(), Mockito.any());
 
         /* ACT */
         final var subscription = service.create(subscriptionDesc);
@@ -175,7 +166,7 @@ public class SubscriptionServiceTest {
     public void create_validInput_returnSubscriptionForOffer() {
         /* ARRANGE */
         Mockito.doReturn(Optional.of(getOfferedResource())).when(entityResolver).getEntityById(Mockito.any());
-        Mockito.doNothing().when(artSubLinker).add(Mockito.any(), Mockito.any());
+        Mockito.doNothing().when(offeredResLinker).add(Mockito.any(), Mockito.any());
 
         /* ACT */
         final var subscription = service.create(subscriptionDesc);
@@ -188,7 +179,7 @@ public class SubscriptionServiceTest {
     public void create_validInput_returnSubscriptionForRequest() {
         /* ARRANGE */
         Mockito.doReturn(Optional.of(getRequestedResource())).when(entityResolver).getEntityById(Mockito.any());
-        Mockito.doNothing().when(artSubLinker).add(Mockito.any(), Mockito.any());
+        Mockito.doNothing().when(reqSubLinker).add(Mockito.any(), Mockito.any());
 
         /* ACT */
         final var subscription = service.create(subscriptionDesc);

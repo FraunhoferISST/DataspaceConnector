@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.resource.type;
 
+import io.dataspaceconnector.common.util.UUIDUtils;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.BaseResourceController;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
@@ -44,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.UUID;
 
 /**
@@ -94,8 +96,8 @@ public class RouteController extends BaseResourceController<Route, RouteDesc, Ro
     @Operation(summary = "Creates the start endpoint for a route.")
     public ResponseEntity<String> createStartEndpoint(
             @Valid @PathVariable(name = "id") final UUID routeId,
-            @RequestBody final UUID endpointId) {
-        getService().setStartEndpoint(routeId, endpointId);
+            @RequestBody final URI endpointId) {
+        getService().setStartEndpoint(routeId, UUIDUtils.uuidFromUri(endpointId));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -120,8 +122,8 @@ public class RouteController extends BaseResourceController<Route, RouteDesc, Ro
     @Operation(summary = "Creates the last endpoint for the route.")
     public ResponseEntity<String> createLastEndpoint(
             @Valid @PathVariable(name = "id") final UUID routeId,
-            @RequestBody final UUID endpointId) {
-        getService().setLastEndpoint(routeId, endpointId);
+            @RequestBody final URI endpointId) {
+        getService().setLastEndpoint(routeId, UUIDUtils.uuidFromUri(endpointId));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
