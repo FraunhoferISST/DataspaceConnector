@@ -46,7 +46,7 @@ an HTTP backend (e.g. a REST API), this additional information consists solely o
 credentials for the backend. Therefore, if the backend does not require authentication, you can
 skip this step. If the backend requires authentication, you can either add basic authentication
 credentials or an authentication header. To create a data source, make a request to
-`POST /api/datasource` with a JSON body as follows:
+`POST /api/datasources` with a JSON body as follows:
 
 To configure basic authentication:
 ```json
@@ -88,7 +88,7 @@ send a request to the endpoint `POST /api/endpoints` using the following JSON:
 ```
 
 The response will contain the description of the created endpoint, from which you copy and store
-the UUID found in the self-link.
+the self-link.
 
 ---
 
@@ -127,12 +127,12 @@ self-link.
 #### Step 5: Link the generic endpoint to the route
 
 The previously created route does not yet have a start defined. To set the start endpoint, make a
-request to`POST /api/routes/{route-uuid}/endpoint/start`, where `route-uuid` is replaced with the
+request to`PUT /api/routes/{route-uuid}/endpoint/start`, where `route-uuid` is replaced with the
 UUID from the route's self-link, and add the following input in the request body after replacing
-the generic endpoint's UUID:
+the generic endpoint's self-link:
 
 ```
-"[generic-endpoint-uuid]"
+"[generic-endpoint-self-link]"
 ```
 
 #### Step 6: Create an artifact
@@ -180,7 +180,7 @@ for the generic endpoint.
 
 The `DataSource` entity holds additional information required to access a backend. In the case of
 a database, it holds the full access information to the database. To create a data source for a
-database, make a request to `POST /api/datasource` with a JSON body as follows:
+database, make a request to `POST /api/datasources` with a JSON body as follows:
 
 
 ```json
@@ -304,12 +304,12 @@ Execute steps 1 to 4 of [Fetch data from HTTP backend](#fetch-data-from-http-bac
 #### Step 5: Link the generic endpoint to the route
 
 The previously created route does not yet have an end defined. To set the end endpoint, make a
-request to `POST /api/routes/[route-uuid]/endpoint/end`, where `[route-uuid]` is replaced with the
+request to `PUT /api/routes/[route-uuid]/endpoint/end`, where `[route-uuid]` is replaced with the
 UUID from the route's self-link, and add the following input in the request body after replacing
-the generic endpoint's UUID:
+the generic endpoint's self-link:
 
 ```
-"[generic-endpoint-uuid]"
+"[generic-endpoint-self-link]"
 ```
 
 #### Step 6: Create or request an artifact
@@ -354,7 +354,7 @@ received data will not be stored in the local database of the connector, as long
 route is specified. If you want to store the data in the local database, you have to request it
 once without specifying any route. If you do not want to the data to be stored in the local
 database, set `download=false` when requesting a contract and always specify at least one route
-when requesting the data via the `GET /api/artifact/{id}/data` endpoint.
+when requesting the data via the `GET /api/artifacts/{id}/data` endpoint.
 
 ---
 
@@ -412,7 +412,7 @@ Each route can have any number of sub-routes. **Sub-routes are created in the sa
 are (`POST /api/routes`) but should have deploy mode `None`, as they should not be deployed on
 their own but only as part of another route.** You can set endpoints as the start and end of
 a sub-route, and add the sub-routes to a main route by making a request to
-`POST /api/routes/[main-route-uuid]/steps` with the following request body:
+`POST /api/routes/{main-route-uuid}/steps` with the following request body:
 
 ```json
 {
@@ -456,10 +456,10 @@ route's start. Then, add the first and the second sub-route to the main route by
 a request to `POST /api/routes/{main-route-uuid}/steps` with the following request body:
 
 ```json
-{
+[
   "[self-link of the first sub-route]",
   "[self-link of the second sub-route]"
-}
+]
 ```
 
 #### Step 4: Use the route

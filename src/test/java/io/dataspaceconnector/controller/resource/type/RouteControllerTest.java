@@ -23,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 
+import java.net.URI;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,9 +43,10 @@ class RouteControllerTest {
         /* ARRANGE */
         final var routeId = UUID.randomUUID();
         final var endpointId = UUID.randomUUID();
+        final var endpointUri = URI.create("https://" + endpointId);
 
         /* ACT */
-        final var result = controller.createStartEndpoint(routeId, endpointId);
+        final var result = controller.createStartEndpoint(routeId, endpointUri);
 
         /* ASSERT */
         Mockito.verify(routeService, Mockito.atLeastOnce()).setStartEndpoint(eq(routeId), eq(endpointId));
@@ -69,9 +71,10 @@ class RouteControllerTest {
         /* ARRANGE */
         final var routeId = UUID.randomUUID();
         final var endpointId = UUID.randomUUID();
+        final var endpointUri = URI.create("https://" + endpointId);
 
         /* ACT */
-        final var result = controller.createLastEndpoint(routeId, endpointId);
+        final var result = controller.createLastEndpoint(routeId, endpointUri);
 
         /* ASSERT */
         Mockito.verify(routeService, Mockito.atLeastOnce()).setLastEndpoint(eq(routeId), eq(endpointId));

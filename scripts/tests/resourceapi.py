@@ -56,7 +56,7 @@ class ResourceApi:
         self,
         data={
             "start": "2021-04-06T13:33:44.995+02:00",
-            "end": "2021-12-06T13:33:44.995+02:00",
+            "end": "2022-12-06T13:33:44.995+02:00",
         },
     ):
         response = self.session.post(self.recipient + "/api/contracts", json=data)
