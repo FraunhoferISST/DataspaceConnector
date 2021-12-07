@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 FROM debian:11-slim AS build
 RUN apt-get update && \
     apt-get install --no-install-suggests --no-install-recommends --yes build-essential python3-venv gcc python3-dev && \
