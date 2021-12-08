@@ -27,7 +27,6 @@ import de.fraunhofer.ids.messaging.util.InfomodelMessageBuilder;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.MessageEmptyException;
 import io.dataspaceconnector.common.exception.MessageRequestException;
-import io.dataspaceconnector.common.exception.VersionNotSupportedException;
 import io.dataspaceconnector.common.util.Utils;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.MultipartBody;
