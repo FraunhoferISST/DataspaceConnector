@@ -29,7 +29,6 @@ import de.fraunhofer.iais.eis.ResourceUpdateMessageBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.common.exception.MessageEmptyException;
-import io.dataspaceconnector.common.exception.VersionNotSupportedException;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
@@ -273,16 +272,6 @@ class MessageUtilsTest {
 
         /* ACT & ASSERT */
         assertDoesNotThrow(() -> MessageUtils.checkForVersionSupport(modelVersion, inboundModelVersions));
-    }
-
-    @Test
-    public void checkForVersionSupport_invalidVersion_throwVersionNotSupportedException() {
-        /* ARRANGE */
-        final var inboundModelVersions = List.of("4.0.1", "4.0.2");
-
-        /* ACT & ASSERT */
-        assertThrows(VersionNotSupportedException.class,
-                () -> MessageUtils.checkForVersionSupport(modelVersion, inboundModelVersions));
     }
 
     @Test

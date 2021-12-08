@@ -28,7 +28,6 @@ import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.MessageEmptyException;
 import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
-import io.dataspaceconnector.common.exception.VersionNotSupportedException;
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
@@ -226,10 +225,8 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      *
      * @param message The message that should be validated.
      * @throws MessageEmptyException        if the message is empty.
-     * @throws VersionNotSupportedException if the message version is not supported.
      */
-    public void validateIncomingMessage(final Message message) throws MessageEmptyException,
-            VersionNotSupportedException {
+    public void validateIncomingMessage(final Message message) throws MessageEmptyException {
         MessageUtils.checkForEmptyMessage(message);
 
         final var modelVersion = MessageUtils.extractModelVersion(message);

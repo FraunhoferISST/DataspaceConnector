@@ -54,7 +54,7 @@ public class GenericEndpointViewAssembler extends SelfLinkHelper
 
         if (endpoint.getDataSource() != null) {
             view.add(dataSourceViewAssembler.getSelfLink(endpoint.getDataSource().getId())
-                    .withRel("dataSource")); // TODO rename
+                    .withRel("datasource"));
         }
 
         return view;
