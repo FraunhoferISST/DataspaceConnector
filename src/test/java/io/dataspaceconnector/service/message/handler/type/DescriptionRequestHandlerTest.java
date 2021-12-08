@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.service.message.handler.type;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Optional;
-import javax.xml.datatype.DatatypeFactory;
-
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
@@ -51,6 +44,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+
+import javax.xml.datatype.DatatypeFactory;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -221,36 +221,6 @@ import static org.mockito.Mockito.when;
         /* ASSERT */
         assertEquals(
                 RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
-    }
-
-    @SneakyThrows
-    @Test
-    public void handleMessage_unsupportedMessage_returnUnsupportedVersionRejectionMessage() {
-        /* ARRANGE */
-        final var calendar = new GregorianCalendar();
-        calendar.setTime(new Date());
-        final var xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
-
-        final var message =
-                new DescriptionRequestMessageBuilder()
-                        ._senderAgent_(URI.create("https://localhost:8080"))
-                        ._issuerConnector_(URI.create("https://localhost:8080"))
-                        ._securityToken_(new DynamicAttributeTokenBuilder()
-                                ._tokenFormat_(TokenFormat.OTHER)
-                                ._tokenValue_("")
-                                .build())
-                        ._modelVersion_("tetris")
-                        ._requestedElement_(URI.create("https://localhost/8080/api/artifacts/"))
-                        ._issued_(xmlCalendar)
-                        .build();
-
-        /* ACT */
-        final var result = (ErrorResponse) handler.handleMessage(
-                (DescriptionRequestMessageImpl) message, null);
-
-        /* ASSERT */
-        assertEquals(RejectionReason.VERSION_NOT_SUPPORTED,
-                result.getRejectionMessage().getRejectionReason());
     }
 
     @SneakyThrows
