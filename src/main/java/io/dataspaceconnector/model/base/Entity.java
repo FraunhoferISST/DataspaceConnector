@@ -25,14 +25,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
@@ -93,7 +91,6 @@ public class Entity implements Serializable {
     @Setter(AccessLevel.PACKAGE)
     @MapKeyColumn(name = "key", length = ADDITIONAL_KEY_LENGTH)
     @Column(name = "value", length = ADDITIONAL_VALUE_LENGTH)
-    @CollectionTable(name = "additional", joinColumns = @JoinColumn(name = "id"))
     private Map<String, String> additional;
 
     /**
