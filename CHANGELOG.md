@@ -30,11 +30,11 @@ All notable changes to this project will be documented in this file.
 - Increase springdoc version from 1.5.12 to 1.5.13.
 - Increase modelmapper version from 2.4.4 to 2.4.5.
 - Increase equalsverifier version from 3.7.2 to 3.8.
+- Ignore IDS InfoModel version incompatibility for incoming messages.
 
 ### Fixed
 - XML-escape URLs before injecting them into Camel route templates.
 - Add exception handling for `SSLHandshakeExceptions` caused by PKIX errors.
-- Ignore IDS InfoModel version incompatibility for incoming messages.
 
 ### Removed
 - Remove entity `ConnectorEndpoint` and all corresponding classes.
