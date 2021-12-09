@@ -77,7 +77,7 @@ public class Agreement extends Entity implements RemoteObject {
      * The definition of the contract.
      **/
     @Lob
-    @Column(name="raw_data")
+    @Column(name = "raw_data")
     private String value;
 
     /**
