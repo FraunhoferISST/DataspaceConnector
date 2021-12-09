@@ -153,5 +153,5 @@ public class Configuration extends NamedEntity {
      * Weather this config is the active one.
      */
     @Column(unique = true)
-    private Boolean active;
+    private boolean active;
 }
