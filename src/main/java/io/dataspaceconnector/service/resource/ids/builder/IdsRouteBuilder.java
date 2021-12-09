@@ -88,7 +88,8 @@ public abstract class IdsRouteBuilder<X extends ModelClass> extends AbstractIdsB
                                                        final int maxDepth) {
         Optional<List<Endpoint>> start = Optional.empty();
         if (route.getStartpoint() != null) {
-            start = create(endpointBuilder, Util.asList(route.getStartpoint()), currentDepth, maxDepth);
+            start = create(endpointBuilder,
+                 Util.asList(route.getStartpoint()), currentDepth, maxDepth);
         }
         return start;
     }
