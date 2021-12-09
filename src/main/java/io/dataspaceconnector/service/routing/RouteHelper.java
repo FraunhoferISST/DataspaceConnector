@@ -71,8 +71,8 @@ public class RouteHelper {
             return false;
         }
 
-        if (route.getEnd() == null) {
-            if (route.getStart() == null) {
+        if (route.getEndpoint() == null) {
+            if (route.getStartpoint() == null) {
                 return false;
             }
 

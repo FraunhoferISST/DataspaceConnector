@@ -129,15 +129,15 @@ class RouteFactoryTest {
         final var route = new Route();
         final var endpoint = new GenericEndpoint();
 
-        assertEquals(endpoint, factory.setStartEndpoint(route, endpoint).getStart());
+        assertEquals(endpoint, factory.setStartEndpoint(route, endpoint).getStartpoint());
     }
 
     @Test
     void removeStartEndpoint_willRemove() {
         final var route = new Route();
-        route.setStart(new GenericEndpoint());
+        route.setStartpoint(new GenericEndpoint());
 
-        assertNull(factory.deleteStartEndpoint(route).getStart());
+        assertNull(factory.deleteStartEndpoint(route).getStartpoint());
     }
 
     @Test
@@ -146,7 +146,7 @@ class RouteFactoryTest {
         final var route = new Route();
         final var artifact = new ArtifactImpl();
         ReflectionTestUtils.setField(route, "output", artifact);
-        route.setStart(new GenericEndpoint());
+        route.setStartpoint(new GenericEndpoint());
 
         /* ACT && ASSERT */
         assertThrows(InvalidEntityException.class, () -> factory.deleteStartEndpoint(route));
@@ -157,15 +157,15 @@ class RouteFactoryTest {
         final var route = new Route();
         final var endpoint = new GenericEndpoint();
 
-        assertEquals(endpoint, factory.setLastEndpoint(route, endpoint).getEnd());
+        assertEquals(endpoint, factory.setLastEndpoint(route, endpoint).getEndpoint());
     }
 
     @Test
     void removeLastEndpoint_willRemove() {
         final var route = new Route();
-        route.setEnd(new GenericEndpoint());
+        route.setEndpoint(new GenericEndpoint());
 
-        assertNull(factory.deleteLastEndpoint(route).getEnd());
+        assertNull(factory.deleteLastEndpoint(route).getEndpoint());
     }
 
     @Test

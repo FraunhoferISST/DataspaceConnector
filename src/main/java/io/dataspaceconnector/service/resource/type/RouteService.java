@@ -103,11 +103,11 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      */
     @Override
     protected final Route persist(final Route route) throws RouteCreationException {
-        if (route.getStart() != null) {
-            endpointRepo.save(route.getStart());
+        if (route.getStartpoint() != null) {
+            endpointRepo.save(route.getStartpoint());
         }
-        if (route.getEnd() != null) {
-            endpointRepo.save(route.getEnd());
+        if (route.getEndpoint() != null) {
+            endpointRepo.save(route.getEndpoint());
         }
 
         var repo = (RouteRepository) getRepository();
@@ -226,8 +226,8 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
         final var linker = new RouteStepLinker();
         final var steps = linker.getInternal(route);
         if (steps != null && !steps.isEmpty()) {
-            setStartEndpoint(routeId, steps.get(0).getStart().getId());
-            setLastEndpoint(routeId, steps.get(0).getEnd().getId());
+            setStartEndpoint(routeId, steps.get(0).getStartpoint().getId());
+            setLastEndpoint(routeId, steps.get(0).getEndpoint().getId());
         }
         ((RouteFactory) getFactory()).deleteSubroutes(route);
 

@@ -96,7 +96,7 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
      * @return The route with start endpoint.
      */
     public Route setStartEndpoint(final Route route, final Endpoint endpoint) {
-        route.setStart(endpoint);
+        route.setStartpoint(endpoint);
         return route;
     }
 
@@ -106,7 +106,7 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
      * @return The route with last endpoint.
      */
     public Route setLastEndpoint(final Route route, final Endpoint endpoint) {
-        route.setEnd(endpoint);
+        route.setEndpoint(endpoint);
         return route;
     }
 
@@ -131,7 +131,7 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
             throw new InvalidEntityException("Route that is linked to an artifact must not have "
                     + "an undefined start.");
         }
-        route.setStart(null);
+        route.setStartpoint(null);
         return route;
     }
 
@@ -140,7 +140,7 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
      * @return The route without the last endpoint.
      */
     public Route deleteLastEndpoint(final Route route) {
-        route.setEnd(null);
+        route.setEndpoint(null);
         return route;
     }
 

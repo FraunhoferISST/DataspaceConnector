@@ -119,12 +119,12 @@ public class IdsAppRouteBuilderTest {
         assertEquals(appRoute.getRouteDescription(), route.getDescription());
 
         assertFalse(appRoute.getAppRouteStart().isEmpty());
-        final var start = route.getStart();
+        final var start = route.getStartpoint();
         final var appRouteStart = appRoute.getAppRouteStart().get(0);
         compareEndpoints(route, start, appRouteStart);
 
         assertFalse(appRoute.getAppRouteEnd().isEmpty());
-        final var end = route.getEnd();
+        final var end = route.getEndpoint();
         final var appRouteEnd = appRoute.getAppRouteEnd().get(0);
         compareEndpoints(route, end, appRouteEnd);
 
@@ -142,11 +142,11 @@ public class IdsAppRouteBuilderTest {
 
                 assertFalse(subRoute.getAppRouteStart().isEmpty());
                 final var subRouteStart = subRoute.getAppRouteStart().get(0);
-                compareEndpoints(step, step.getStart(), subRouteStart);
+                compareEndpoints(step, step.getStartpoint(), subRouteStart);
 
                 assertFalse(subRoute.getAppRouteEnd().isEmpty());
                 final var subRouteEnd = subRoute.getAppRouteEnd().get(0);
-                compareEndpoints(step, step.getEnd(), subRouteEnd);
+                compareEndpoints(step, step.getEndpoint(), subRouteEnd);
             }
         }
     }

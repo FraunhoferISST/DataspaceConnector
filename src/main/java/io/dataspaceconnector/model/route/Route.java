@@ -75,13 +75,13 @@ public class Route extends NamedEntity {
      * The start endpoint of the route.
      */
     @OneToOne
-    private Endpoint start;
+    private Endpoint startpoint;
 
     /**
      * The last endpoint of the route.
      */
     @OneToOne
-    private Endpoint end;
+    private Endpoint endpoint;
 
     /**
      * List of offered resources.

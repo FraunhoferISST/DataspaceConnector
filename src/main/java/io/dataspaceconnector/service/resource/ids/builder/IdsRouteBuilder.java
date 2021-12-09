@@ -87,8 +87,8 @@ public abstract class IdsRouteBuilder<X extends ModelClass> extends AbstractIdsB
     protected Optional<List<Endpoint>> buildRouteStart(final Route route, final int currentDepth,
                                                        final int maxDepth) {
         Optional<List<Endpoint>> start = Optional.empty();
-        if (route.getStart() != null) {
-            start = create(endpointBuilder, Util.asList(route.getStart()), currentDepth, maxDepth);
+        if (route.getStartpoint() != null) {
+            start = create(endpointBuilder, Util.asList(route.getStartpoint()), currentDepth, maxDepth);
         }
         return start;
     }
@@ -106,8 +106,8 @@ public abstract class IdsRouteBuilder<X extends ModelClass> extends AbstractIdsB
     protected Optional<List<Endpoint>> buildRouteEnd(final Route route, final int currentDepth,
                                                      final int maxDepth) {
         Optional<List<Endpoint>> end = Optional.empty();
-        if (route.getEnd() != null) {
-            end = create(endpointBuilder, Util.asList(route.getEnd()), currentDepth, maxDepth);
+        if (route.getEndpoint() != null) {
+            end = create(endpointBuilder, Util.asList(route.getEndpoint()), currentDepth, maxDepth);
         } else {
             final var output = route.getOutput();
             if (output != null) {

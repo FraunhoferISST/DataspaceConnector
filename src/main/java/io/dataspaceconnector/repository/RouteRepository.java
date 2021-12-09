@@ -49,10 +49,10 @@ public interface RouteRepository extends BaseEntityRepository<Route> {
     @Query("SELECT r FROM Route r "
             + "WHERE (r NOT IN "
             + "(SELECT DISTINCT r2 FROM Route r3 JOIN r3.steps r2)"
-            + "AND r.start.id = :endpointId OR r.end.id = :endpointId)"
+            + "AND r.startpoint.id = :endpointId OR r.endpoint.id = :endpointId)"
             + "OR r IN "
             + "(SELECT r FROM Route r JOIN Route r2 ON r2 MEMBER OF r.steps "
-            + "WHERE r2.start.id = :endpointId OR r2.end.id = :endpointId)")
+            + "WHERE r2.startpoint.id = :endpointId OR r2.endpoint.id = :endpointId)")
     List<Route> findTopLevelRoutesByEndpoint(UUID endpointId);
 
     /**

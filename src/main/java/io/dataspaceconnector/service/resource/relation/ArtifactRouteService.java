@@ -110,7 +110,7 @@ public class ArtifactRouteService {
                             + " method CAMEL.");
                 }
 
-                if (route.getStart() == null) {
+                if (route.getStartpoint() == null) {
                     throw new InvalidEntityException("The referenced route has an undefined"
                             + " start.");
                 }
