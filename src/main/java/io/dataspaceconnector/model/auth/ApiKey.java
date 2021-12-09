@@ -62,7 +62,7 @@ public class ApiKey extends Authentication {
      * The value associated to the ApiKey.
      */
     @NonNull
-    @Column(length = AUTH_VALUE_LENGTH)
+    @Column(name= "raw_data", length = AUTH_VALUE_LENGTH)
     private String value;
 
     /**

@@ -22,6 +22,7 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 
@@ -45,6 +46,7 @@ public class LocalData extends Data {
      * The data.
      */
     @Lob
+    @Column(name="raw_data")
     private byte[] value;
 
     /**
