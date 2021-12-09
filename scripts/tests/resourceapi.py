@@ -17,6 +17,9 @@
 import requests
 import json
 
+# Suppress ssl verification warning
+requests.packages.urllib3.disable_warnings()
+
 
 class ResourceApi:
     session = None
@@ -45,11 +48,15 @@ class ResourceApi:
         response = self.session.post(self.recipient + "/api/artifacts", json=data)
         return response.headers["Location"]
 
+    def update_artifact(self, artifact, data) -> bool:
+        response = self.session.put(artifact, json=data)
+        return response.status_code == 204
+
     def create_contract(
         self,
         data={
             "start": "2021-04-06T13:33:44.995+02:00",
-            "end": "2021-12-06T13:33:44.995+02:00",
+            "end": "2022-12-06T13:33:44.995+02:00",
         },
     ):
         response = self.session.post(self.recipient + "/api/contracts", json=data)

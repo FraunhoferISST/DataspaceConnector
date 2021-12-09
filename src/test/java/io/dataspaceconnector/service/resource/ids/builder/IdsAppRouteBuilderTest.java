@@ -16,20 +16,26 @@
 package io.dataspaceconnector.service.resource.ids.builder;
 
 import java.net.URI;
+import java.net.URL;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.UUID;
 
 import de.fraunhofer.iais.eis.AppRoute;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.common.net.SelfLinkHelper;
+import io.dataspaceconnector.common.net.ApiReferenceHelper;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.artifact.ArtifactImpl;
+import io.dataspaceconnector.model.artifact.RemoteData;
 import io.dataspaceconnector.model.auth.BasicAuth;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.datasource.DataSource;
-import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.route.Route;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,16 +51,17 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {IdsAppRouteBuilder.class, IdsRouteStepBuilder.class,
-        IdsEndpointBuilder.class})
+        IdsEndpointBuilder.class, IdsArtifactBuilder.class, ApiReferenceHelper.class})
 public class IdsAppRouteBuilderTest {
 
     @Autowired
     private IdsAppRouteBuilder builder;
 
+    @Autowired
+    private ApiReferenceHelper apiReferenceHelper;
+
     @MockBean
     private SelfLinkHelper selfLinkHelper;
-
-    private final URI endpointLocation = URI.create("https://location.com");
 
     private final URI endpointDocumentation = URI.create("https://documentation.com");
 
@@ -67,13 +74,13 @@ public class IdsAppRouteBuilderTest {
     }
 
     @Test
-    public void create_inputNull_throwNullPointerException() {
+    void create_inputNull_throwNullPointerException() {
         /* ACT && ASSERT */
         assertThrows(NullPointerException.class, () -> builder.create(null));
     }
 
     @Test
-    public void create_noSubRoute_returnCompleteAppRoute() {
+    void create_noSubRoute_returnCompleteAppRoute() {
         /* ARRANGE */
         final var route = getRoute();
 
@@ -87,7 +94,7 @@ public class IdsAppRouteBuilderTest {
     }
 
     @Test
-    public void create_withSubRoute_returnCompleteAppRoute() {
+    void create_withSubRoute_returnCompleteAppRoute() {
         /* ARRANGE */
         final var route = getRouteWithSubRoute();
 
@@ -114,12 +121,12 @@ public class IdsAppRouteBuilderTest {
         assertFalse(appRoute.getAppRouteStart().isEmpty());
         final var start = route.getStart();
         final var appRouteStart = appRoute.getAppRouteStart().get(0);
-        compareEndpoints(start, appRouteStart);
+        compareEndpoints(route, start, appRouteStart);
 
         assertFalse(appRoute.getAppRouteEnd().isEmpty());
         final var end = route.getEnd();
         final var appRouteEnd = appRoute.getAppRouteEnd().get(0);
-        compareEndpoints(end, appRouteEnd);
+        compareEndpoints(route, end, appRouteEnd);
 
         final var steps = route.getSteps();
         final var subRoutes = appRoute.getHasSubRoute();
@@ -135,29 +142,30 @@ public class IdsAppRouteBuilderTest {
 
                 assertFalse(subRoute.getAppRouteStart().isEmpty());
                 final var subRouteStart = subRoute.getAppRouteStart().get(0);
-                compareEndpoints(step.getStart(), subRouteStart);
+                compareEndpoints(step, step.getStart(), subRouteStart);
 
                 assertFalse(subRoute.getAppRouteEnd().isEmpty());
                 final var subRouteEnd = subRoute.getAppRouteEnd().get(0);
-                compareEndpoints(step.getEnd(), subRouteEnd);
+                compareEndpoints(step, step.getEnd(), subRouteEnd);
             }
         }
     }
 
-    private void compareEndpoints(final Endpoint endpoint,
+    private void compareEndpoints(final Route route, final Endpoint endpoint,
                                   final de.fraunhofer.iais.eis.Endpoint idsEndpoint) {
         if (endpoint instanceof GenericEndpoint) {
             compareGenericEndpoints((GenericEndpoint) endpoint,
                     (de.fraunhofer.iais.eis.GenericEndpoint) idsEndpoint);
         } else {
-            compareConnectorEndpoints((ConnectorEndpoint) endpoint,
-                    (de.fraunhofer.iais.eis.ConnectorEndpoint) idsEndpoint);
+            final var artifact = route.getOutput();
+            final var url = apiReferenceHelper.getDataUri(artifact);
+            assertEquals(url, idsEndpoint.getAccessURL());
         }
     }
 
     private void compareGenericEndpoints(final GenericEndpoint endpoint,
                                          final de.fraunhofer.iais.eis.GenericEndpoint idsEndpoint) {
-        assertEquals(idsEndpoint.getAccessURL(), endpoint.getLocation());
+        assertEquals(idsEndpoint.getPath(), endpoint.getLocation());
         assertEquals(idsEndpoint.getEndpointDocumentation().get(0), endpoint.getDocs());
         assertEquals(idsEndpoint.getEndpointInformation().get(0).getValue(), endpoint.getInfo());
 
@@ -165,13 +173,6 @@ public class IdsAppRouteBuilderTest {
         final var idsAuth = idsEndpoint.getGenericEndpointAuthentication();
         assertEquals(idsAuth.getAuthUsername(), auth.getUsername());
         assertEquals(idsAuth.getAuthPassword(), auth.getPassword());
-    }
-
-    private void compareConnectorEndpoints(final ConnectorEndpoint endpoint,
-                                           final de.fraunhofer.iais.eis.ConnectorEndpoint idsEndpoint) {
-        assertEquals(idsEndpoint.getAccessURL(), endpoint.getLocation());
-        assertEquals(idsEndpoint.getEndpointDocumentation().get(0), endpoint.getDocs());
-        assertEquals(idsEndpoint.getEndpointInformation().get(0).getValue(), endpoint.getInfo());
     }
 
     private Route getRoute() {
@@ -183,10 +184,10 @@ public class IdsAppRouteBuilderTest {
         ReflectionTestUtils.setField(route, "additional", new HashMap<>());
 
         final var start = getGenericEndpoint();
-        final var end = getConnectorEndpoint();
+        final var artifact = getArtifact();
 
         ReflectionTestUtils.setField(route, "start", start);
-        ReflectionTestUtils.setField(route, "end", end);
+        ReflectionTestUtils.setField(route, "output", artifact);
 
         return route;
     }
@@ -208,10 +209,10 @@ public class IdsAppRouteBuilderTest {
         ReflectionTestUtils.setField(route, "additional", new HashMap<>());
 
         final var start = getGenericEndpoint();
-        final var end = getConnectorEndpoint();
+        final var artifact = getArtifact();
 
         ReflectionTestUtils.setField(route, "start", start);
-        ReflectionTestUtils.setField(route, "end", end);
+        ReflectionTestUtils.setField(route, "output", artifact);
 
         return route;
     }
@@ -226,7 +227,7 @@ public class IdsAppRouteBuilderTest {
 
         final var endpoint = new GenericEndpoint();
         ReflectionTestUtils.setField(endpoint, "id", uuid);
-        ReflectionTestUtils.setField(endpoint, "location", endpointLocation);
+        ReflectionTestUtils.setField(endpoint, "location", "https://location.com");
         ReflectionTestUtils.setField(endpoint, "docs", endpointDocumentation);
         ReflectionTestUtils.setField(endpoint, "info", "info");
         ReflectionTestUtils.setField(endpoint, "dataSource", dataSource);
@@ -235,15 +236,18 @@ public class IdsAppRouteBuilderTest {
         return endpoint;
     }
 
-    private ConnectorEndpoint getConnectorEndpoint() {
-        final var endpoint = new ConnectorEndpoint();
-        ReflectionTestUtils.setField(endpoint, "id", uuid);
-        ReflectionTestUtils.setField(endpoint, "location", endpointLocation);
-        ReflectionTestUtils.setField(endpoint, "docs", endpointDocumentation);
-        ReflectionTestUtils.setField(endpoint, "info", "info");
-        ReflectionTestUtils.setField(endpoint, "additional", new HashMap<>());
+    @SneakyThrows
+    private Artifact getArtifact() {
+        final var data = new RemoteData();
+        ReflectionTestUtils.setField(data, "accessUrl", new URL("https://data"));
 
-        return endpoint;
+        final var artifact = new ArtifactImpl();
+        ReflectionTestUtils.setField(artifact, "id", UUID.randomUUID());
+        ReflectionTestUtils.setField(artifact, "data", data);
+        ReflectionTestUtils.setField(artifact, "creationDate", ZonedDateTime.now());
+        ReflectionTestUtils.setField(artifact, "additional", new HashMap<>());
+
+        return artifact;
     }
 
 }

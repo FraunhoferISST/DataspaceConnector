@@ -18,7 +18,7 @@
             <simple>${bean:io.dataspaceconnector.common.routing.ParameterUtils?method=getIdscp2ClientUri(${exchangeProperty.recipient})}</simple>
         </setProperty>
         <process ref="ArtifactRequestMessageBuilder"/>
-        <process ref="RequestWithoutPayloadPreparer"/>
+        <process ref="ArtifactRequestPreparer"/>
         <toD uri="${exchangeProperty.idscp2-client-uri}"/>
         <process ref="ResponseToDtoConverter"/>
         <process ref="ArtifactResponseValidator"/>

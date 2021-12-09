@@ -17,14 +17,17 @@ package io.dataspaceconnector.service.resource.type;
 
 import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.common.net.QueryInput;
+import io.dataspaceconnector.common.routing.RouteDataDispatcher;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.artifact.LocalData;
 import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.DataRepository;
-import io.dataspaceconnector.service.BlockingArtifactReceiver;
+import io.dataspaceconnector.service.DataRetriever;
+import io.dataspaceconnector.service.MultipartArtifactRetriever;
 import io.dataspaceconnector.common.usagecontrol.AllowAccessVerifier;
+import io.dataspaceconnector.service.resource.relation.ArtifactRouteService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,7 +47,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = {ArtifactService.class, ArtifactFactory.class, ArtifactRepository.class,
-        DataRepository.class, HttpService.class, BlockingArtifactReceiver.class})
+        DataRepository.class, HttpService.class, MultipartArtifactRetriever.class})
 public class RestrictedArtifactServiceTest {
 
     @MockBean
@@ -63,7 +66,16 @@ public class RestrictedArtifactServiceTest {
     private ArtifactFactory artifactFactory;
 
     @MockBean
-    private BlockingArtifactReceiver artifactReceiver;
+    private ArtifactRouteService artifactRouteService;
+
+    @MockBean
+    private DataRetriever dataRetriever;
+
+    @MockBean
+    private RouteDataDispatcher routeDataDispatcher;
+
+    @MockBean
+    private MultipartArtifactRetriever artifactReceiver;
 
     @SpyBean
     private ArtifactService service;
@@ -88,7 +100,8 @@ public class RestrictedArtifactServiceTest {
         Mockito.doReturn(data).when(artifactReceiver).retrieve(artifactId, artifact.getRemoteAddress(), agreements.get(0), null);
 
         /* ACT */
-        final var result = service.getData(verifier, artifactReceiver, artifactId, (QueryInput) null);
+        final var result = service.getData(verifier, artifactReceiver, artifactId,
+                (QueryInput) null, null);
 
         /* ASSERT */
         final var resultBytes = result.readAllBytes();

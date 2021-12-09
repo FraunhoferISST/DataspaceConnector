@@ -21,7 +21,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import static io.dataspaceconnector.model.config.DatabaseConstants.DESCRIPTION_COLUMN_LENGTH;
 
 /**
  * The entity class which holds additional information like title, description.
@@ -43,5 +45,6 @@ public class NamedEntity extends Entity {
     /**
      * The description of the entity.
      */
+    @Column(length = DESCRIPTION_COLUMN_LENGTH)
     private String description;
 }

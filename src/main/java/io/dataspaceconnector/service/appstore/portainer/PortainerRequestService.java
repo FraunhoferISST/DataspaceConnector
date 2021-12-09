@@ -18,6 +18,8 @@ package io.dataspaceconnector.service.appstore.portainer;
 import de.fraunhofer.ids.messaging.protocol.http.HttpService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.PortainerNotConfigured;
+import io.dataspaceconnector.model.endpoint.AppEndpointImpl;
+import io.dataspaceconnector.service.resource.type.AppEndpointService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -34,6 +36,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +52,6 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 @Log4j2
 public class PortainerRequestService {
-
     /**
      * Service for http connections.
      */
@@ -59,6 +61,11 @@ public class PortainerRequestService {
      * Service for http connections.
      */
     private final @NonNull PortainerConfig portainerConfig;
+
+    /**
+     * Service for app.
+     */
+    private final @NonNull AppEndpointService appEndpointService;
 
     /**
      * Start index for sub string method.
@@ -86,9 +93,25 @@ public class PortainerRequestService {
     private static final String API_ENDPOINT = "api/endpoints/";
 
     /**
+     * Number of hours after which a new Portainer access token should be requested.
+     * Maximum access token validity is 8 hours.
+     */
+    private static final int TOKEN_VALID_HOURS = 7;
+
+    /**
      * The endpoint id in portainer.
      */
     private String endpointId;
+
+    /**
+     * The portainer access token for sending admin-requests (valid 8 hours).
+     */
+    private String accessToken;
+
+    /**
+     * Expiration date of the access token.
+     */
+    private final Calendar accessTokenValid = Calendar.getInstance();
 
     /**
      * Authenticate at portainer.
@@ -115,14 +138,11 @@ public class PortainerRequestService {
         try {
             final var response = httpService.send(request);
             return checkResponseNotNull(response);
-        } catch (IOException exception) {
+        } catch (IOException e) {
             if (log.isWarnEnabled()) {
-                log.warn(
-                        "Failed to authenticate at portainer. [exception=({})]",
-                        exception.getMessage()
-                );
+                log.warn("Failed to authenticate at portainer. [exception=({})]", e.getMessage());
             }
-            return exception.getMessage();
+            return e.getMessage();
         }
     }
 
@@ -649,6 +669,7 @@ public class PortainerRequestService {
      * @param tag portainer image tag.
      * @throws IOException If an error occurs while connecting to portainer.
      */
+    @SuppressFBWarnings("DE_MIGHT_IGNORE")
     private void waitForImagePull(final String tag) throws IOException {
         //Check if image is successfully pulled in Portainer,
         //otherwise wait until process is finished.
@@ -706,7 +727,7 @@ public class PortainerRequestService {
      * Create container volumes from AppStore template.
      *
      * @param appStoreTemplate The template provided by the AppStore describing 1 App.
-     * @param appID UUID of the app volume is created for
+     * @param appID            UUID of the app volume is created for
      * @return Map of portainer responses for every volume to create.
      * @throws IOException If an error occurs while connecting to portainer.
      */
@@ -751,7 +772,7 @@ public class PortainerRequestService {
             builder.url(url);
             builder.post(
                     RequestBody.create(req.toString(), MediaType.parse(API_MEDIA_TYPE)
-            ));
+                    ));
 
             final var request = builder.build();
             final var response = httpService.send(request);
@@ -767,34 +788,33 @@ public class PortainerRequestService {
      *
      * @param appStoreTemplate The template provided by the AppStore describing 1 App.
      * @param volumes          the map for volume names used in the template.
+     * @param appEndpoints     The list of app endpoints.
      * @return portainer response.
      * @throws IOException If an error occurs while connecting to portainer.
      */
-    public String createContainer(final String appStoreTemplate, final Map<String, String> volumes)
-            throws IOException {
+    public String createContainer(
+            final String appStoreTemplate,
+            final Map<String, String> volumes,
+            final List<AppEndpointImpl> appEndpoints
+    ) throws IOException {
         final var templateObject = toJsonObject(appStoreTemplate);
         final var image = templateObject.getString("image");
-        final List<String> ports = new ArrayList<>();
 
-        //get all ports from the appTemplate
-        for (int i = 0; i < templateObject.getJSONArray("ports").length(); i++) {
-            var portArr = templateObject.getJSONArray("ports");
-            if (!(JSONObject.class.equals(portArr.get(i).getClass()))) {
-                if (portArr.get(i).toString().contains(":")) {
-                    var defaultPortSpec = portArr.get(i).toString()
-                            .substring(portArr.get(i).toString().indexOf(":") + 1);
-                    ports.add(defaultPortSpec);
-                } else {
-                    ports.add(portArr.get(i).toString());
+        //get all ports from the appTemplate (with label)
+        var portLabelMap = new HashMap<String, String>();
+        var portArray = templateObject.getJSONArray("ports");
+        var protocol = "";
+        for (int i = 0; i < portArray.length(); i++) {
+            var portobj = portArray.getJSONObject(i);
+            var labels = portobj.keySet();
+            for (var label : labels) {
+                var port = portobj.getString(label);
+                if (port.contains(":")) {
+                    port = port
+                            .substring(port.indexOf(":") + 1);
                 }
-            } else {
-                final var keyElements = portArr.getJSONObject(i);
-                Set<String> set = keyElements.keySet();
-                for (var tmpKey : set) {
-                    var port = portArr.getJSONObject(i).getString(tmpKey);
-                    port = port.substring(port.indexOf(":") + 1);
-                    ports.add(port);
-                }
+                protocol = port.substring(port.indexOf("/") + 1);
+                portLabelMap.put(port, label);
             }
         }
 
@@ -811,12 +831,27 @@ public class PortainerRequestService {
 
         //build json payload
         final var jsonPayload = PortainerUtil
-                .createContainerJSONPayload(templateObject, ports, volumes, image);
+                .createContainerJSONPayload(
+                        templateObject,
+                        new ArrayList<>(portLabelMap.keySet()),
+                        volumes,
+                        image
+                );
 
         //add json payload to request
         builder.post(
                 RequestBody.create(jsonPayload.toString(), MediaType.parse(API_MEDIA_TYPE))
         );
+
+        //extract port mappings to put into returned json
+        final var portBindings = jsonPayload.getJSONObject("HostConfig")
+                .getJSONObject("PortBindings");
+        for (var appEndpoint : appEndpoints) {
+            final var externalPort = portBindings
+                    .getJSONArray(appEndpoint.getEndpointPort() + "/" + protocol)
+                    .getJSONObject(0).getString("HostPort");
+            appEndpointService.setExternalEndpoint(appEndpoint, Integer.parseInt(externalPort));
+        }
 
         final var request = builder.build();
 
@@ -976,6 +1011,14 @@ public class PortainerRequestService {
     }
 
     /**
+     * Resets the Portainer access token.
+     */
+    public void resetToken() {
+        accessToken = null;
+        getJwtToken();
+    }
+
+    /**
      * Get list of all items with string part in path.
      * Used internally by getImages/Volumes/Networks.
      *
@@ -1013,8 +1056,16 @@ public class PortainerRequestService {
      * @return auth jwt token for portainer.
      */
     private String getJwtToken() {
-        String jwtTokenResponse = authenticate();
-        return jwtTokenResponse.substring(START_INDEX, jwtTokenResponse.length() - LAST_INDEX);
+        if (accessToken == null || accessTokenValid.before(Calendar.getInstance().getTime())) {
+            final var response = authenticate();
+            accessToken = response.substring(START_INDEX, response.length() - LAST_INDEX);
+
+            // Portainer token has an 8 hour validity, request new token after 7 hours.
+            accessTokenValid.setTime(Calendar.getInstance().getTime());
+            accessTokenValid.add(Calendar.HOUR_OF_DAY, TOKEN_VALID_HOURS);
+        }
+
+        return accessToken;
     }
 
     /**

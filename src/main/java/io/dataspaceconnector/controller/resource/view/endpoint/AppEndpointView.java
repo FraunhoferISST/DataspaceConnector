@@ -57,7 +57,7 @@ public class AppEndpointView extends RepresentationModel<AppEndpointView> {
     /**
      * The location information.
      */
-    private URI location;
+    private String location;
 
     /**
      * The documentation of the endpoint.
@@ -89,4 +89,8 @@ public class AppEndpointView extends RepresentationModel<AppEndpointView> {
      */
     private String language;
 
+    /**
+     * Endpoint path suffix.
+     */
+    private String path;
 }

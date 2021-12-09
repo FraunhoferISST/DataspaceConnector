@@ -28,6 +28,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -83,7 +84,7 @@ public class Entity implements Serializable {
      * Contains all additional fields that may have been defined but
      * could not be mapped.
      */
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Setter(AccessLevel.PACKAGE)
     private Map<String, String> additional;
 

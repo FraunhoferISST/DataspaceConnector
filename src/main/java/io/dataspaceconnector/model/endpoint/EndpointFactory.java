@@ -40,6 +40,11 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
     public static final String DEFAULT_INFORMATION = "information";
 
     /**
+     * The default location.
+     */
+    public static final String DEFAULT_LOCATION = "https://location";
+
+    /**
      * Update an endpoint. Implement type specific stuff here.
      *
      * @param endpoint The endpoint to be updated.
@@ -102,8 +107,9 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
      * @return True, if endpoint location is updated.
      */
     private boolean updateLocation(final Endpoint endpoint,
-                                   final URI location) {
-        final var newLocation = FactoryUtils.updateUri(endpoint.getDocs(), location, DEFAULT_URI);
+                                   final String location) {
+        final var newLocation = FactoryUtils.updateString(endpoint.getLocation(),
+                location, DEFAULT_LOCATION);
         newLocation.ifPresent(endpoint::setLocation);
 
         return newLocation.isPresent();

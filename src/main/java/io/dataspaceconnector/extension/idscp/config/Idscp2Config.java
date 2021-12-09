@@ -104,7 +104,7 @@ public class Idscp2Config {
     @Bean
     public SSLContextParameters serverSslContext() {
         var ctx = new SSLContextParameters();
-//        ctx.setCertAlias(keyStoreAlias); TODO only 1.0.1 works as alias
+//        ctx.setCertAlias(keyStoreAlias); Note: Only 1.0.1 works as alias
         ctx.setCertAlias("1.0.1");
 
         final var keyStoreParameters = new KeyStoreParameters();

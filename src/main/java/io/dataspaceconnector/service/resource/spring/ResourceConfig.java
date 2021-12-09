@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.service.resource.spring;
 
-import io.dataspaceconnector.common.net.HttpService;
+import io.dataspaceconnector.common.routing.RouteDataDispatcher;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.agreement.AgreementFactory;
 import io.dataspaceconnector.model.app.AppFactory;
@@ -27,13 +27,13 @@ import io.dataspaceconnector.model.configuration.ConfigurationFactory;
 import io.dataspaceconnector.model.contract.ContractFactory;
 import io.dataspaceconnector.model.datasource.DataSourceFactory;
 import io.dataspaceconnector.model.endpoint.AppEndpointFactory;
-import io.dataspaceconnector.model.endpoint.ConnectorEndpointFactory;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;
 import io.dataspaceconnector.model.proxy.ProxyFactory;
 import io.dataspaceconnector.model.representation.RepresentationFactory;
 import io.dataspaceconnector.model.resource.RequestedResourceFactory;
 import io.dataspaceconnector.model.route.RouteFactory;
 import io.dataspaceconnector.model.rule.ContractRuleFactory;
+import io.dataspaceconnector.model.subscription.SubscriptionFactory;
 import io.dataspaceconnector.model.truststore.TruststoreFactory;
 import io.dataspaceconnector.repository.AgreementRepository;
 import io.dataspaceconnector.repository.AppEndpointRepository;
@@ -44,7 +44,6 @@ import io.dataspaceconnector.repository.AuthenticationRepository;
 import io.dataspaceconnector.repository.BrokerRepository;
 import io.dataspaceconnector.repository.CatalogRepository;
 import io.dataspaceconnector.repository.ConfigurationRepository;
-import io.dataspaceconnector.repository.ConnectorEndpointRepository;
 import io.dataspaceconnector.repository.ContractRepository;
 import io.dataspaceconnector.repository.DataRepository;
 import io.dataspaceconnector.repository.DataSourceRepository;
@@ -54,8 +53,12 @@ import io.dataspaceconnector.repository.RepresentationRepository;
 import io.dataspaceconnector.repository.RequestedResourcesRepository;
 import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.repository.RuleRepository;
+import io.dataspaceconnector.repository.SubscriptionRepository;
+import io.dataspaceconnector.service.DataRetriever;
+import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
 import io.dataspaceconnector.service.resource.ids.builder.IdsConfigModelBuilder;
+import io.dataspaceconnector.service.resource.relation.ArtifactRouteService;
 import io.dataspaceconnector.service.resource.type.AgreementService;
 import io.dataspaceconnector.service.resource.type.AppEndpointService;
 import io.dataspaceconnector.service.resource.type.AppService;
@@ -64,7 +67,6 @@ import io.dataspaceconnector.service.resource.type.ArtifactService;
 import io.dataspaceconnector.service.resource.type.BrokerService;
 import io.dataspaceconnector.service.resource.type.CatalogService;
 import io.dataspaceconnector.service.resource.type.ConfigurationService;
-import io.dataspaceconnector.service.resource.type.ConnectorEndpointService;
 import io.dataspaceconnector.service.resource.type.ContractService;
 import io.dataspaceconnector.service.resource.type.DataSourceService;
 import io.dataspaceconnector.service.resource.type.EndpointServiceProxy;
@@ -73,6 +75,8 @@ import io.dataspaceconnector.service.resource.type.RepresentationService;
 import io.dataspaceconnector.service.resource.type.RequestedResourceService;
 import io.dataspaceconnector.service.resource.type.RouteService;
 import io.dataspaceconnector.service.resource.type.RuleService;
+import io.dataspaceconnector.service.resource.type.SubscriptionService;
+import io.dataspaceconnector.service.routing.BeanManager;
 import io.dataspaceconnector.service.routing.RouteHelper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -99,20 +103,24 @@ public class ResourceConfig {
     /**
      * Create an artifact service bean.
      *
-     * @param repository     The artifact repository.
-     * @param dataRepository The data repository.
-     * @param httpService    The http service.
-     * @param authRepo       The auth repo.
+     * @param repository       The artifact repository.
+     * @param dataRepository   The data repository.
+     * @param authRepo         The auth repo.
+     * @param artifactRouteSvc The artifact-route-relation service.
+     * @param retriever        The data retriever.
+     * @param dispatcher       The route data dispatcher.
      * @return The artifact service bean.
      */
     @Bean("artifactService")
     public ArtifactService createArtifactService(
             @Qualifier("artifactRepository") final ArtifactRepository repository,
             final DataRepository dataRepository,
-            final HttpService httpService,
-            final AuthenticationRepository authRepo) {
+            final AuthenticationRepository authRepo,
+            final ArtifactRouteService artifactRouteSvc,
+            final DataRetriever retriever,
+            final RouteDataDispatcher dispatcher) {
         return new ArtifactService(repository, new ArtifactFactory(),
-                dataRepository, httpService, authRepo);
+                dataRepository, authRepo, artifactRouteSvc, retriever, dispatcher);
     }
 
     /**
@@ -205,25 +213,6 @@ public class ResourceConfig {
     }
 
     /**
-     * Create a connectorEndpoint service bean.
-     *
-     * @param repo             The connectorEndpoint repository.
-     * @param factory          The connectorEndpoint factory.
-     * @param routeRepository  The route repository.
-     * @param camelRouteHelper The camel route helper.
-     * @return The connectorEndpoint service bean.
-     */
-    @Bean("connectorEndpointService")
-    public ConnectorEndpointService createConnectorEndpointService(
-            final ConnectorEndpointRepository repo,
-            final ConnectorEndpointFactory factory,
-            final RouteRepository routeRepository,
-            final RouteHelper camelRouteHelper) {
-        return new ConnectorEndpointService(repo, factory,
-                routeRepository, camelRouteHelper);
-    }
-
-    /**
      * Creat a contract service bean.
      *
      * @param repo The contract repository.
@@ -238,11 +227,13 @@ public class ResourceConfig {
      * Create a datasource service bean.
      *
      * @param repo The datasource repository.
+     * @param beanManager The manager for datasource beans.
      * @return The datasource service bean.
      */
     @Bean("dataSourceService")
-    public DataSourceService createDataSourceService(final DataSourceRepository repo) {
-        return new DataSourceService(repo, new DataSourceFactory());
+    public DataSourceService createDataSourceService(final DataSourceRepository repo,
+                                                     final BeanManager beanManager) {
+        return new DataSourceService(repo, new DataSourceFactory(), beanManager);
     }
 
     /**
@@ -287,6 +278,7 @@ public class ResourceConfig {
      * @param repo                 The route repository.
      * @param endpointRepository   The endpoint repository.
      * @param endpointServiceProxy The endpoint service proxy.
+     * @param artifactRepository   The artifact repository.
      * @param routeHelper          The route helper.
      * @return The route service bean.
      */
@@ -295,9 +287,10 @@ public class ResourceConfig {
             final RouteRepository repo,
             final EndpointRepository endpointRepository,
             final EndpointServiceProxy endpointServiceProxy,
+            final ArtifactRepository artifactRepository,
             final RouteHelper routeHelper) {
         return new RouteService(repo, new RouteFactory(), endpointRepository,
-                endpointServiceProxy, routeHelper);
+                endpointServiceProxy, artifactRepository, routeHelper);
     }
 
     /**
@@ -312,12 +305,18 @@ public class ResourceConfig {
     }
 
     /**
-     * Create a connectorEndpoint factory.
-     *
-     * @return The connectorEndpoint factory.
+     * Create a subscription service bean.
+     * @param repository The subscription repository.
+     * @param factory The subscription factory.
+     * @param entityResolver The entity resolver.
+     * @param lookUp The service lookup service.
+     * @return The subscription service bean.
      */
-    @Bean("connectorEndpointFactory")
-    public ConnectorEndpointFactory createConnectorEndpointFactory() {
-        return new ConnectorEndpointFactory();
+    @Bean("subscriptionService")
+    public SubscriptionService createSubscriptionService(final SubscriptionRepository repository,
+                                                         final SubscriptionFactory factory,
+                                                         final EntityResolver entityResolver,
+                                                         final ServiceLookUp lookUp) {
+        return new SubscriptionService(repository, factory, entityResolver, lookUp);
     }
 }

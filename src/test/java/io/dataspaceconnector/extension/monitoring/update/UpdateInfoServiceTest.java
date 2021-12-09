@@ -73,6 +73,8 @@ public class UpdateInfoServiceTest {
         /* ACT */
         final var result = updateInfoService.getLatestInformation();
 
+        mockWebServer.close();
+
         /* ASSERT */
         Assertions.assertNotNull(result);
         Assertions.assertTrue(result.containsKey("location"));

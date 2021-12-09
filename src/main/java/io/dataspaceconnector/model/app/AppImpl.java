@@ -59,4 +59,9 @@ public class AppImpl extends App {
      * The deployed container id.
      */
     private String containerId;
+
+    /**
+     * The container name.
+     */
+    private String containerName;
 }

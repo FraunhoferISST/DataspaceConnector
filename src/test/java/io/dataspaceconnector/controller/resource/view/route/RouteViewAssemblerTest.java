@@ -38,7 +38,7 @@ public class RouteViewAssemblerTest {
         assertEquals(after.getDescription(), shouldLookLike.getDescription());
         assertEquals(after.getTitle(), shouldLookLike.getTitle());
         assertEquals(after.getDeploy(), shouldLookLike.getDeploy());
-        assertTrue(after.getLink("artifacts").isPresent());
+        assertTrue(after.getLink("output").isPresent());
         assertTrue(after.getLink("routes").isPresent());
     }
 

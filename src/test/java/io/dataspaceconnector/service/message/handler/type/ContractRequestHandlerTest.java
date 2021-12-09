@@ -15,19 +15,6 @@
  */
 package io.dataspaceconnector.service.message.handler.type;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.UUID;
-import javax.persistence.PersistenceException;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -63,6 +50,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+
+import javax.persistence.PersistenceException;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -111,27 +113,6 @@ class ContractRequestHandlerTest {
 
         /* ASSERT */
         assertEquals(RejectionReason.BAD_PARAMETERS,
-                result.getRejectionMessage().getRejectionReason());
-    }
-
-    @SneakyThrows
-    @Test
-    public void handleMessage_unsupportedMessage_returnUnsupportedVersionRejectionMessage() {
-        /* ARRANGE */
-        final var message = new ContractRequestMessageBuilder()
-                ._senderAgent_(URI.create("https://localhost:8080"))
-                ._issuerConnector_(URI.create("https://localhost:8080"))
-                ._securityToken_(new DynamicAttributeTokenBuilder()._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build())
-                ._modelVersion_("1.0.0")
-                ._issued_(xmlCalendar)
-                .build();
-
-        /* ACT */
-        final var result =
-                (ErrorResponse) handler.handleMessage((ContractRequestMessageImpl) message, null);
-
-        /* ASSERT */
-        assertEquals(RejectionReason.VERSION_NOT_SUPPORTED,
                 result.getRejectionMessage().getRejectionReason());
     }
 
@@ -395,6 +376,8 @@ class ContractRequestHandlerTest {
         final var issuerConnector = URI.create("https://localhost:8080");
         final var desc = new ContractDesc();
         desc.setConsumer(issuerConnector);
+        desc.setStart(ZonedDateTime.of(2020, 1, 1, 1, 1, 1, 1, ZoneId.systemDefault()));
+        desc.setEnd(ZonedDateTime.of(2030, 1, 1, 1, 1, 1, 1, ZoneId.systemDefault()));
         final var contract = new ContractFactory().create(desc);
 
         final var message = getMessage();
@@ -431,6 +414,8 @@ class ContractRequestHandlerTest {
         final var issuerConnector = URI.create("https://localhost:8080");
         final var contractDesc = new ContractDesc();
         contractDesc.setConsumer(issuerConnector);
+        contractDesc.setStart(ZonedDateTime.of(2020, 1, 1, 1, 1, 1, 1, ZoneId.systemDefault()));
+        contractDesc.setEnd(ZonedDateTime.of(2030, 1, 1, 1, 1, 1, 1, ZoneId.systemDefault()));
         final var contract = new ContractFactory().create(contractDesc);
 
         final var ruleDesc = new ContractRuleDesc();
@@ -473,6 +458,8 @@ class ContractRequestHandlerTest {
         final var issuerConnector = URI.create("https://localhost:8080");
         final var contractDesc = new ContractDesc();
         contractDesc.setConsumer(issuerConnector);
+        contractDesc.setStart(ZonedDateTime.of(2020, 1, 1, 1, 1, 1, 1, ZoneId.systemDefault()));
+        contractDesc.setEnd(ZonedDateTime.of(2030, 1, 1, 1, 1, 1, 1, ZoneId.systemDefault()));
         final var contract = new ContractFactory().create(contractDesc);
 
         final var ruleDesc = new ContractRuleDesc();

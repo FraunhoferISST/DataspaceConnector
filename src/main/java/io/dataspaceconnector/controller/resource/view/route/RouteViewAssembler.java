@@ -18,12 +18,10 @@ package io.dataspaceconnector.controller.resource.view.route;
 import java.util.UUID;
 
 import io.dataspaceconnector.config.BaseType;
-import io.dataspaceconnector.controller.resource.relation.RoutesToArtifactsController;
 import io.dataspaceconnector.controller.resource.relation.RoutesToStepsController;
 import io.dataspaceconnector.controller.resource.type.RouteController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinking;
-import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.route.Route;
 import org.modelmapper.ModelMapper;
@@ -59,10 +57,9 @@ public class RouteViewAssembler extends SelfLinkHelper
                 .withRel(BaseType.ROUTES);
         view.add(steps);
 
-        final var artifacts = linkTo(methodOn(RoutesToArtifactsController.class)
-                .getResource(route.getId(), null, null))
-                .withRel(BaseType.ARTIFACTS);
-        view.add(artifacts);
+        final var output = linkTo(methodOn(RouteController.class)
+                .getOutput(route.getId())).withRel("output");
+        view.add(output);
 
         return view;
     }
@@ -78,18 +75,12 @@ public class RouteViewAssembler extends SelfLinkHelper
                 if (view.getStart() instanceof GenericEndpoint) {
                     final var end = (GenericEndpoint) view.getStart();
                     end.setType("GENERIC");
-                } else {
-                    final var end = (ConnectorEndpoint) view.getStart();
-                    end.setType("CONNECTOR");
                 }
             }
             if (view.getEnd() != null) {
                 if (view.getEnd() instanceof GenericEndpoint) {
                     final var end = (GenericEndpoint) view.getEnd();
                     end.setType("GENERIC");
-                } else {
-                    final var end = (ConnectorEndpoint) view.getEnd();
-                    end.setType("CONNECTOR");
                 }
             }
         }

@@ -124,7 +124,7 @@ public class EntityResolverTest {
     private AllowAccessVerifier allowAccessVerifier;
 
     @MockBean
-    private BlockingArtifactReceiver artifactReceiver;
+    private MultipartArtifactRetriever artifactReceiver;
 
     @MockBean
     private DeserializationService deserializationService;
@@ -392,7 +392,8 @@ public class EntityResolverTest {
         final var queryInput = new QueryInput();
         final var expect = new ByteArrayInputStream(new byte[]{});
 
-        Mockito.doReturn(expect).when(artifactService).getData(any(), any(), eq(endpointId), eq(queryInput));
+        Mockito.doReturn(expect).when(artifactService)
+                .getData(any(), any(), eq(endpointId), eq(queryInput), any());
 
         /* ACT */
         final var result = resolver.getDataByArtifactId(requestedArtifact, queryInput);

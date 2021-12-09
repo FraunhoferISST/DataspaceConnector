@@ -17,6 +17,7 @@ package io.dataspaceconnector.service.usagecontrol;
 
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.SecurityProfile;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.ids.policy.PolicyPattern;
 import io.dataspaceconnector.common.ids.policy.RuleUtils;
@@ -124,11 +125,11 @@ public class RuleValidator {
      * @param contractOffers The contract offer.
      * @param map            The target contract map.
      * @param target         The target value.
-     * @return True if everything is fine, false in case of mismatch.
+     * @return An optional of the matching contract; an empty optional if none was found.
      */
-    public boolean validateRulesOfRequest(final List<Contract> contractOffers,
-                                          final Map<URI, List<Rule>> map,
-                                          final URI target) {
+    public Optional<Contract> findMatchingContractForRequest(final List<Contract> contractOffers,
+                                                             final Map<URI, List<Rule>> map,
+                                                             final URI target) {
         for (final var contract : contractOffers) {
             // Get rule list from contract offer.
             final var ruleList = dependencyResolver.getRulesByContractOffer(contract);
@@ -137,11 +138,11 @@ public class RuleValidator {
 
             // Compare rules
             if (compareRulesOfOfferToRequest(ruleList, values)) {
-                return true;
+                return Optional.of(contract);
             }
         }
 
-        return false;
+        return Optional.empty();
     }
 
     /**
@@ -279,6 +280,7 @@ public class RuleValidator {
      * @param profile The security profile.
      * @throws PolicyRestrictionException If the connector ids do no match.
      */
+    @SuppressFBWarnings("DCN_NULLPOINTER_EXCEPTION")
     private void validateSecurityProfile(final Rule rule, final Optional<SecurityProfile> profile)
             throws PolicyRestrictionException {
         if (profile.isEmpty()) {

@@ -28,7 +28,6 @@ import io.dataspaceconnector.model.agreement.AgreementDesc;
 import io.dataspaceconnector.service.resource.type.AgreementService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +40,8 @@ import java.util.UUID;
  * Offers the endpoints for managing agreements.
  */
 @RestController
+@ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+        description = ResponseDescription.METHOD_NOT_ALLOWED)
 @RequestMapping(BasePath.AGREEMENTS)
 @Tag(name = ResourceName.AGREEMENTS, description = ResourceDescription.AGREEMENTS)
 public class AgreementController extends BaseResourceController<Agreement, AgreementDesc,
@@ -48,18 +49,12 @@ public class AgreementController extends BaseResourceController<Agreement, Agree
 
     @Override
     @Hidden
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
     public final ResponseEntity<AgreementView> create(final AgreementDesc desc) {
         throw new MethodNotAllowed();
     }
 
     @Override
     @Hidden
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
     public final ResponseEntity<AgreementView> update(@Valid final UUID resourceId,
                                                       final AgreementDesc desc) {
         throw new MethodNotAllowed();
@@ -67,9 +62,6 @@ public class AgreementController extends BaseResourceController<Agreement, Agree
 
     @Override
     @Hidden
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
     public final ResponseEntity<Void> delete(@Valid final UUID resourceId) {
         throw new MethodNotAllowed();
     }

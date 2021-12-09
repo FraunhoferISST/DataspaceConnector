@@ -111,7 +111,7 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
      */
     private boolean updateData(final AppImpl app, final String value) {
         final var newData = new LocalData();
-        final var data = value == null ? null : value.getBytes(StandardCharsets.UTF_16);
+        final var data = value == null ? null : value.getBytes(StandardCharsets.UTF_8);
         newData.setValue(data);
 
         final var oldData = app.getData();
@@ -313,7 +313,6 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
      * @param containerId The id of the container which is set.
      */
     public void setContainerId(final AppImpl app, final String containerId) {
-        // TODO Keep in AppImpl?
         app.setContainerId(containerId);
     }
 
@@ -324,5 +323,13 @@ public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
      */
     public void deleteContainerId(final AppImpl app) {
         app.setContainerId(null);
+    }
+
+    /**
+     * @param app The app entity.
+     * @param name The name of the container.
+     */
+    public void setContainerName(final AppImpl app, final String name) {
+        app.setContainerName(name);
     }
 }

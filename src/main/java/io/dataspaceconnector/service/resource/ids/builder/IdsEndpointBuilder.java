@@ -15,15 +15,27 @@
  */
 package io.dataspaceconnector.service.resource.ids.builder;
 
+import java.math.BigInteger;
+import java.net.URI;
+import java.util.HashMap;
+
+import de.fraunhofer.iais.eis.AppEndpointBuilder;
+import de.fraunhofer.iais.eis.AppEndpointType;
 import de.fraunhofer.iais.eis.BasicAuthentication;
 import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
-import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.GenericEndpointBuilder;
+import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.common.exception.ErrorMessage;
+import io.dataspaceconnector.common.exception.UnreachableLineException;
+import io.dataspaceconnector.common.ids.mapping.ToIdsObjectMapper;
+import io.dataspaceconnector.model.auth.ApiKey;
 import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.model.auth.BasicAuth;
+import io.dataspaceconnector.model.datasource.DatabaseDataSource;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.service.resource.ids.builder.base.AbstractIdsBuilder;
@@ -53,35 +65,84 @@ public final class IdsEndpointBuilder
             throws ConstraintViolationException {
 
         final var documentation = endpoint.getDocs();
-        final var location = endpoint.getLocation();
+        var location = endpoint.getLocation();
         final var info = new TypedLiteral(endpoint.getInfo(), "EN");
+
+        URI accessUrl;
+        try {
+            accessUrl = URI.create(location);
+        } catch (IllegalArgumentException exception) {
+            accessUrl = URI.create("https://default-url");
+        }
 
         de.fraunhofer.iais.eis.Endpoint idsEndpoint;
         if (endpoint instanceof GenericEndpoint) {
 
             final var genericEndpoint = (GenericEndpoint) endpoint;
-            BasicAuthentication basicAuth = null;
+            BasicAuthentication idsAuth = null;
+            final var additional = new HashMap<String, String>();
             if (genericEndpoint.getDataSource() != null
                     && genericEndpoint.getDataSource().getAuthentication() != null) {
-                final var auth = (BasicAuth) genericEndpoint.getDataSource().getAuthentication();
-                basicAuth = new BasicAuthenticationBuilder()
-                        ._authUsername_(auth.getUsername())
-                        ._authPassword_(auth.getPassword())
-                        .build();
+
+                final var dataSource = genericEndpoint.getDataSource();
+                final var auth = dataSource.getAuthentication();
+
+                if (auth instanceof BasicAuth) {
+                    final var basicAuth = (BasicAuth) auth;
+                    idsAuth = new BasicAuthenticationBuilder()
+                            ._authUsername_(basicAuth.getUsername())
+                            ._authPassword_(basicAuth.getPassword())
+                            .build();
+                    idsAuth.setProperty("type", "basic");
+                } else {
+                    final var apiKeyAuth = (ApiKey) auth;
+                    idsAuth = new BasicAuthenticationBuilder()
+                            ._authUsername_(apiKeyAuth.getKey())
+                            ._authPassword_(apiKeyAuth.getValue())
+                            .build();
+                    idsAuth.setProperty("type", "api-key");
+                }
+
+                if (dataSource instanceof DatabaseDataSource) {
+                    additional.put("database", "true");
+
+                    if (location.contains("?")) {
+                        location = location.concat("&dataSource=#" + dataSource.getId());
+                    } else {
+                        location = location.concat("?dataSource=#" + dataSource.getId());
+                    }
+                }
             }
 
             idsEndpoint = new GenericEndpointBuilder(getAbsoluteSelfLink(endpoint))
-                    ._accessURL_(location)
-                    ._genericEndpointAuthentication_(basicAuth)
+                    ._path_(location)
+                    ._accessURL_(accessUrl)
+                    ._genericEndpointAuthentication_(idsAuth)
                     ._endpointDocumentation_(Util.asList(documentation))
                     ._endpointInformation_(Util.asList(info))
                     .build();
+            additional.forEach(idsEndpoint::setProperty);
+
+        } else if (endpoint instanceof AppEndpoint) {
+
+            final var appEndpoint = (AppEndpoint) endpoint;
+
+            idsEndpoint = new AppEndpointBuilder(getAbsoluteSelfLink(endpoint))
+                    ._path_(location)
+                    ._accessURL_(accessUrl)
+                    ._endpointDocumentation_(Util.asList(documentation))
+                    ._endpointInformation_(Util.asList(info))
+                    ._appEndpointType_(AppEndpointType.valueOf(appEndpoint.getEndpointType()))
+                    ._appEndpointPort_(BigInteger.valueOf(appEndpoint.getEndpointPort()))
+                    ._appEndpointProtocol_(appEndpoint.getProtocol())
+                    ._appEndpointMediaType_(new IANAMediaTypeBuilder()
+                            ._filenameExtension_(appEndpoint.getMediaType())
+                            .build())
+                    ._language_(ToIdsObjectMapper.getLanguage(appEndpoint.getLanguage()))
+                    .build();
+
         } else {
-            idsEndpoint = new ConnectorEndpointBuilder(getAbsoluteSelfLink(endpoint))
-                    ._accessURL_(location)
-                    ._endpointDocumentation_(Util.asList(documentation))
-                    ._endpointInformation_(Util.asList(info))
-                    .build();
+            throw new UnreachableLineException(ErrorMessage.UNKNOWN_TYPE);
         }
 
         return idsEndpoint;

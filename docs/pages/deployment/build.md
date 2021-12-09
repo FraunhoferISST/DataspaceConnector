@@ -26,7 +26,7 @@ In the following, the deployment with Maven, Docker, and Kubernetes will be expl
 
 ## Maven
 
-If you want to build and run locally, ensure that at least Java 11 is installed. Then, follow these
+If you want to build and run locally, ensure that at least Java 17 is installed. Then, follow these
 steps:
 
 1.  Execute `cd DataspaceConnector` and `mvn clean package`.

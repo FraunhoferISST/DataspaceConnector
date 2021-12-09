@@ -28,7 +28,11 @@ import okhttp3.Credentials;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+
+import static io.dataspaceconnector.model.config.DatabaseConstants.AUTH_USERNAME_LENGTH;
+import static io.dataspaceconnector.model.config.DatabaseConstants.AUTH_PASSWORD_LENGTH;
 
 /**
  * Entity used for containing Basic Auth information in the context of AuthTypes.
@@ -52,12 +56,14 @@ public class BasicAuth extends Authentication {
      * The username that is to be used for Basic Auth.
      */
     @NonNull
+    @Column(length = AUTH_USERNAME_LENGTH)
     private String username;
 
     /**
      * The password that is to be used for Basic Auth.
      */
     @NonNull
+    @Column(length = AUTH_PASSWORD_LENGTH)
     private String password;
 
     /**

@@ -278,7 +278,8 @@ public final class FromIdsObjectMapper {
         }
 
         if (path != null && !path.equals("")) {
-            desc.setLocation(URI.create(path));
+            desc.setPath(path);
+            desc.setLocation(path);
         }
 
         final var additional = AdditionalUtils.buildAdditionalForAppEndpoint(endpoint);
@@ -570,15 +571,15 @@ public final class FromIdsObjectMapper {
         desc.setDefaultEndpoint(connector.getHasDefaultEndpoint().getAccessURL());
         desc.setInboundModelVersion(connector.getInboundModelVersion());
         desc.setOutboundModelVersion(connector.getOutboundModelVersion());
-        desc.setKeystoreSettings(new KeystoreDesc(
+        desc.setKeystore(new KeystoreDesc(
                 configModel.getKeyStore(),
                 configModel.getKeyStorePassword(),
                 configModel.getKeyStoreAlias()));
         desc.setLogLevel(fromIdsLogLevel(configModel.getConfigurationModelLogLevel()));
         desc.setMaintainer(connector.getMaintainer());
-        desc.setProxySettings(fromIdsProxy(configModel.getConnectorProxy()));
+        desc.setProxy(fromIdsProxy(configModel.getConnectorProxy()));
         desc.setSecurityProfile(fromIdsSecurityProfile(connector.getSecurityProfile()));
-        desc.setTruststoreSettings(new TruststoreDesc(
+        desc.setTruststore(new TruststoreDesc(
                 configModel.getTrustStore(),
                 configModel.getTrustStorePassword(),
                 configModel.getTrustStoreAlias()));
@@ -654,7 +655,13 @@ public final class FromIdsObjectMapper {
         }
     }
 
-    private static DeployMode fromIdsDeployMode(final ConnectorDeployMode deployMode) {
+    /**
+     * Get dsc deploy mode from ids deploy mode.
+     *
+     * @param deployMode The ids deploy mode.
+     * @return The internal deploy mode.
+     */
+    public static DeployMode fromIdsDeployMode(final ConnectorDeployMode deployMode) {
         return deployMode == ConnectorDeployMode.TEST_DEPLOYMENT
                 ? DeployMode.TEST : DeployMode.PRODUCTIVE;
     }

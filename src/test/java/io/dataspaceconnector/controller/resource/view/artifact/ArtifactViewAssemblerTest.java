@@ -36,6 +36,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -172,7 +173,7 @@ public class ArtifactViewAssemblerTest {
     @SneakyThrows
     private String getArtifactDataLink(final UUID artifactId) {
         return linkTo(methodOn(ArtifactController.class)
-                .getData(artifactId, new QueryInput())).toString();
+                .getData(artifactId, new ArrayList<>(), new QueryInput())).toString();
     }
 
     private String getArtifactRepresentationsLink(final UUID artifactId) {

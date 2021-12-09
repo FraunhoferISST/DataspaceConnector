@@ -17,11 +17,14 @@ package io.dataspaceconnector.service.message;
 
 import de.fraunhofer.iais.eis.Resource;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.dataspaceconnector.common.exception.DataDispatchException;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.net.HttpService;
 import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.net.SelfLinkHelper;
 import io.dataspaceconnector.common.routing.ParameterUtils;
+import io.dataspaceconnector.common.routing.RouteDataDispatcher;
+import io.dataspaceconnector.common.net.ApiReferenceHelper;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.base.Entity;
@@ -29,7 +32,7 @@ import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.subscription.Subscription;
-import io.dataspaceconnector.service.BlockingArtifactReceiver;
+import io.dataspaceconnector.service.ArtifactRetriever;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.util.Event;
 import io.dataspaceconnector.service.resource.ids.builder.IdsResourceBuilder;
@@ -74,7 +77,7 @@ public class SubscriberNotificationService {
     /**
      * The receiver for getting data from a remote source.
      */
-    private final @NonNull BlockingArtifactReceiver dataReceiver;
+    private final @NonNull ArtifactRetriever dataReceiver;
 
     /**
      * The verifier for the data access.
@@ -115,6 +118,16 @@ public class SubscriberNotificationService {
      * Helper for creating self links.
      */
     private final @NonNull SelfLinkHelper selfLinkHelper;
+
+    /**
+     * Dispatches data via Camel routes.
+     */
+    private final @NonNull RouteDataDispatcher routeDataDispatcher;
+
+    /**
+     * Helper class for managing API endpoint references.
+     */
+    private final @NonNull ApiReferenceHelper apiReferenceHelper;
 
     /**
      * Notify subscribers on database update event.
@@ -175,7 +188,7 @@ public class SubscriberNotificationService {
         notification.put("ids-target", target.toString());
         notification.put("ids-event", Event.UPDATED.toString());
         if (!recipients.isEmpty()) {
-            sendNotification(recipients, notification, InputStream.nullInputStream());
+            sendNotification(recipients, notification, null);
         }
 
         // Only send data if entity is of type artifact.
@@ -249,7 +262,6 @@ public class SubscriberNotificationService {
         }
     }
 
-    // TODO refactor to recursive method calls
     private List<Resource> getIdsResourcesFromEntity(final Entity entity) {
         var updatedResources = new ArrayList<Resource>();
         if (entity instanceof OfferedResource) {
@@ -291,7 +303,8 @@ public class SubscriberNotificationService {
         if (entity instanceof Artifact) {
             final var id = entity.getId();
             try {
-                return artifactSvc.getData(accessVerifier, dataReceiver, id, new QueryInput());
+                return artifactSvc.getData(accessVerifier, dataReceiver, id, new QueryInput(),
+                        null);
             } catch (IOException exception) {
                 if (log.isDebugEnabled()) {
                     log.debug("Failed to retrieve data. [exception=({})]", exception.getMessage());
@@ -304,14 +317,57 @@ public class SubscriberNotificationService {
     private void sendNotification(final List<URI> recipients,
                                   final Map<String, String> notification, final InputStream data) {
         for (final var recipient : recipients) {
-            final var args = new HttpService.HttpArgs();
-            args.setHeaders(notification);
             try {
-                httpService.post(recipient.toURL(), args, data);
+                InputStream dataCopy;
+                if (data == null) {
+                    dataCopy = InputStream.nullInputStream();
+                } else {
+                    // Reset the input stream to first position before each read.
+                    if (0 <= data.available()) {
+                        data.reset();
+                    }
+                    dataCopy = data;
+                }
+
+                if (apiReferenceHelper.isRouteReference(recipient.toURL())) {
+                    sendNotificationViaCamel(recipient, notification, dataCopy);
+                } else {
+                    sendNotificationViaHttp(recipient, notification, dataCopy);
+                }
             } catch (IOException exception) {
                 if (log.isWarnEnabled()) {
-                    log.warn("Could not notify subscriber. [url=({})]", recipient);
+                    log.warn("Could not notify subscriber. [url=({})]",
+                            recipient);
                 }
+            }
+        }
+    }
+
+    private void sendNotificationViaCamel(final URI recipient,
+                                          final Map<String, String> notification,
+                                          final InputStream data) {
+        try {
+            final var queryInput = new QueryInput();
+            queryInput.setHeaders(notification);
+            routeDataDispatcher.send(recipient, data.readAllBytes(), queryInput);
+        } catch (DataDispatchException | IOException exception) {
+            if (log.isWarnEnabled()) {
+                log.warn("Could not notify subscriber. [url=({}), exception=({})]",
+                        recipient, exception.getMessage());
+            }
+        }
+    }
+
+    private void sendNotificationViaHttp(final URI recipient,
+                                         final Map<String, String> notification,
+                                         final InputStream data) {
+        final var args = new HttpService.HttpArgs();
+        args.setHeaders(notification);
+        try {
+            httpService.post(recipient.toURL(), args, data);
+        } catch (IOException exception) {
+            if (log.isWarnEnabled()) {
+                log.warn("Could not notify subscriber. [url=({})]", recipient);
             }
         }
     }

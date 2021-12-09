@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.controller.resource.view.endpoint;
 
-import java.net.URI;
 
 import io.dataspaceconnector.controller.resource.type.EndpointController;
 import io.dataspaceconnector.controller.resource.view.util.SelfLinkHelper;
@@ -53,7 +52,7 @@ public class GenericEndpointViewAssemblerTest {
 
     private GenericEndpointDesc getGenericEndpointDesc() {
         final var desc = new GenericEndpointDesc();
-        desc.setLocation(URI.create("https://backend.com"));
+        desc.setLocation("https://backend.com");
         return desc;
     }
 

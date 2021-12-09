@@ -29,6 +29,10 @@ import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
+import io.dataspaceconnector.controller.message.tag.MessageDescription;
+import io.dataspaceconnector.controller.message.tag.MessageName;
+import io.dataspaceconnector.controller.util.ResponseCode;
+import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.service.message.GlobalMessageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,8 +65,10 @@ import java.util.Optional;
  */
 @RestController
 @RequiredArgsConstructor
+@ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
+        description = ResponseDescription.UNAUTHORIZED)
 @RequestMapping("/api/ids")
-@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
+@Tag(name = MessageName.MESSAGES, description = MessageDescription.MESSAGES)
 public class QueryMessageController {
 
     /**
@@ -93,11 +99,10 @@ public class QueryMessageController {
      * @return The response message or an error.
      */
     @PostMapping("/query")
-    @Operation(summary = "Query message", description = "Can be used for querying an "
-            + "IDS component (e.g. the Broker).")
+    @Operation(summary = "Send an IDS QueryMessage.", description = "Can be used for querying an "
+            + "IDS component (e.g. the IDS Broker).")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "417", description = "Expectation failed"),
             @ApiResponse(responseCode = "500", description = "Internal server error"),
             @ApiResponse(responseCode = "502", description = "Bad gateway"),
@@ -156,11 +161,10 @@ public class QueryMessageController {
      * @return The response message or an error.
      */
     @PostMapping("/search")
-    @Operation(summary = "Full text search", description = "Can be used for full text search at an "
-            + "IDS component (e.g. the Broker).")
+    @Operation(summary = "Perform full-text search.", description = "Can be used for full text "
+            + "search at an IDS component (e.g. the Broker).")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "500", description = "Internal server error"),
             @ApiResponse(responseCode = "502", description = "Bad gateway"),
             @ApiResponse(responseCode = "504", description = "Gateway timeout")})

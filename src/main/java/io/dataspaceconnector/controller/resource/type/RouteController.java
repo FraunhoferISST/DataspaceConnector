@@ -15,10 +15,13 @@
  */
 package io.dataspaceconnector.controller.resource.type;
 
+import io.dataspaceconnector.common.util.UUIDUtils;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.BaseResourceController;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
+import io.dataspaceconnector.controller.resource.view.artifact.ArtifactView;
+import io.dataspaceconnector.controller.resource.view.artifact.ArtifactViewAssembler;
 import io.dataspaceconnector.controller.resource.view.route.RouteView;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
@@ -29,10 +32,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,17 +45,47 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.UUID;
 
 /**
  * Offers the endpoints for managing routes.
  */
 @RestController
+@RequiredArgsConstructor
+@ApiResponse(responseCode = ResponseCode.NO_CONTENT, description = ResponseDescription.NO_CONTENT)
 @RequestMapping(BasePath.ROUTES)
 @Tag(name = ResourceName.ROUTES, description = ResourceDescription.ROUTES)
-@RequiredArgsConstructor
 public class RouteController extends BaseResourceController<Route, RouteDesc, RouteView,
         RouteService> {
+
+    /**
+     * The view assembler for artifacts.
+     */
+    private final @NonNull ArtifactViewAssembler artifactAssembler;
+
+    /**
+     * Returns the artifact that is a route's output, if any.
+     *
+     * @param routeId The route ID.
+     * @return The artifact, if any.
+     */
+    @GetMapping("{id}/output")
+    @Operation(summary = "Returns the output of the route")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
+            @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
+                    description = ResponseDescription.NO_CONTENT)})
+    public ResponseEntity<ArtifactView> getOutput(
+            @Valid @PathVariable(name = "id") final UUID routeId) {
+        final var route = getService().get(routeId);
+        if (route.getOutput() == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            final var output = artifactAssembler.toModel(route.getOutput());
+            return new ResponseEntity<>(output, HttpStatus.OK);
+        }
+    }
 
     /**
      * @param routeId    The id of the route.
@@ -58,16 +93,11 @@ public class RouteController extends BaseResourceController<Route, RouteDesc, Ro
      * @return response status OK, if start endpoint is created.
      */
     @PutMapping("{id}/endpoint/start")
-    @Operation(summary = "Creates start endpoint for the route")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
-                    description = ResponseDescription.NO_CONTENT),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @Operation(summary = "Creates the start endpoint for a route.")
     public ResponseEntity<String> createStartEndpoint(
             @Valid @PathVariable(name = "id") final UUID routeId,
-            @RequestBody final UUID endpointId) {
-        getService().setStartEndpoint(routeId, endpointId);
+            @RequestBody final URI endpointId) {
+        getService().setStartEndpoint(routeId, UUIDUtils.uuidFromUri(endpointId));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -76,12 +106,7 @@ public class RouteController extends BaseResourceController<Route, RouteDesc, Ro
      * @return response status OK, if start endpoint is deleted.
      */
     @DeleteMapping("{id}/endpoint/start")
-    @Operation(summary = "Deletes the start endpoint of the route")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
-                    description = ResponseDescription.NO_CONTENT),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @Operation(summary = "Deletes the start endpoint of a route.")
     public ResponseEntity<String> deleteStartEndpoint(
             @Valid @PathVariable(name = "id") final UUID routeId) {
         getService().removeStartEndpoint(routeId);
@@ -94,16 +119,11 @@ public class RouteController extends BaseResourceController<Route, RouteDesc, Ro
      * @return response status OK, if last endpoint is created.
      */
     @PutMapping("{id}/endpoint/end")
-    @Operation(summary = "Creates last endpoint for the route")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
-                    description = ResponseDescription.NO_CONTENT),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @Operation(summary = "Creates the last endpoint for the route.")
     public ResponseEntity<String> createLastEndpoint(
             @Valid @PathVariable(name = "id") final UUID routeId,
-            @RequestBody final UUID endpointId) {
-        getService().setLastEndpoint(routeId, endpointId);
+            @RequestBody final URI endpointId) {
+        getService().setLastEndpoint(routeId, UUIDUtils.uuidFromUri(endpointId));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -112,12 +132,7 @@ public class RouteController extends BaseResourceController<Route, RouteDesc, Ro
      * @return response status OK, if last endpoint is deleted.
      */
     @DeleteMapping("{id}/endpoint/end")
-    @Operation(summary = "Deletes the start endpoint of the route")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
-                    description = ResponseDescription.NO_CONTENT),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+    @Operation(summary = "Deletes the start endpoint of the route.")
     public ResponseEntity<String> deleteLastEndpoint(
             @Valid @PathVariable(name = "id") final UUID routeId) {
         getService().removeLastEndpoint(routeId);

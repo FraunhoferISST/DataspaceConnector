@@ -81,7 +81,7 @@ public class ArtifactDataDownloader {
                 // Note: Ignore that the data saving failed. Another try can take place later.
                 if (log.isWarnEnabled()) {
                     log.warn("Could not save data for artifact. [artifact=({}), "
-                            + "exception=({})]", artifact, e.getMessage());
+                            + "exception=({})]", artifact, e.getMessage(), e);
                 }
             }
         }

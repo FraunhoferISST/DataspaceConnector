@@ -15,10 +15,11 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.Endpoint;
+import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteFactory;
+import io.dataspaceconnector.repository.ArtifactRepository;
 import io.dataspaceconnector.repository.EndpointRepository;
 import io.dataspaceconnector.repository.RouteRepository;
 import io.dataspaceconnector.service.routing.RouteHelper;
@@ -53,11 +54,14 @@ class RouteServiceTest {
     @MockBean
     private RouteFactory factory;
 
+    @MockBean
+    private ArtifactRepository artifactRepository;
+
     @SpyBean
     private RouteService service;
 
     @Test
-    public void persist_validInput_saveRoutes() {
+    void persist_validInput_saveRoutes() {
         /* ARRANGE */
         final var start = new Endpoint();
         ReflectionTestUtils.setField(start, "id", UUID.randomUUID());
@@ -77,7 +81,7 @@ class RouteServiceTest {
     }
 
     @Test
-    public void delete_validInput_deleteRoute() {
+    void delete_validInput_deleteRoute() {
         /* ARRANGE */
         final var id = UUID.randomUUID();
         Mockito.doReturn(new Route()).when(service).get(Mockito.eq(id));
@@ -89,11 +93,11 @@ class RouteServiceTest {
     }
 
     @Test
-    public void setStartEndpoint_validInput_setStartEndpoint() {
+    void setStartEndpoint_validInput_setStartEndpoint() {
         /* ARRANGE */
         final var endpointId = UUID.randomUUID();
         final var routeId = UUID.randomUUID();
-        final var endpoint = new ConnectorEndpoint();
+        final var endpoint = new GenericEndpoint();
         final var route = new Route();
 
         Mockito.doReturn(endpoint).when(endpointService).get(Mockito.eq(endpointId));
@@ -105,7 +109,7 @@ class RouteServiceTest {
     }
 
     @Test
-    public void removeStartEndpoint_validInput_removeStartEndpoint() {
+    void removeStartEndpoint_validInput_removeStartEndpoint() {
         /* ARRANGE */
         final var routeId = UUID.randomUUID();
         final var route = new Route();
@@ -118,11 +122,11 @@ class RouteServiceTest {
     }
 
     @Test
-    public void setLastEndpoint_validInput_setLastEndpoint() {
+    void setLastEndpoint_validInput_setLastEndpoint() {
         /* ARRANGE */
         final var endpointId = UUID.randomUUID();
         final var routeId = UUID.randomUUID();
-        final var endpoint = new ConnectorEndpoint();
+        final var endpoint = new GenericEndpoint();
         final var route = new Route();
 
         Mockito.doReturn(endpoint).when(endpointService).get(Mockito.eq(endpointId));
@@ -134,7 +138,7 @@ class RouteServiceTest {
     }
 
     @Test
-    public void removeLastEndpoint_validInput_removeLastEndpoint() {
+    void removeLastEndpoint_validInput_removeLastEndpoint() {
         /* ARRANGE */
         final var routeId = UUID.randomUUID();
         final var route = new Route();

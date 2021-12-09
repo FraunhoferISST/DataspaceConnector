@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 @Order
 public final class GlobalExceptionHandler {
+
     /**
      * Handles thrown runtime exception with response code 500.
      *

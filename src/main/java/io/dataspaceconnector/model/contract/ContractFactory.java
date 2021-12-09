@@ -72,7 +72,7 @@ public class ContractFactory extends AbstractNamedFactory<Contract, ContractDesc
         final var hasUpdatedConsumer = this.updateConsumer(contract, desc.getConsumer());
         final var hasUpdatedProvider = this.updateProvider(contract, desc.getProvider());
 
-        final var hasUpdatedTime = this.updateTime(contract, contract.getStart(), desc.getEnd());
+        final var hasUpdatedTime = this.updateTime(contract, desc.getStart(), desc.getEnd());
 
         return hasUpdatedRemoteId || hasUpdatedConsumer || hasUpdatedProvider || hasUpdatedTime;
     }

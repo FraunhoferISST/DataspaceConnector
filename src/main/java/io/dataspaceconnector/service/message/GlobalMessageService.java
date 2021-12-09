@@ -189,7 +189,7 @@ public class GlobalMessageService {
                 log.info("Successfully updated resource. [resourceId=({}}), url=({}})]",
                         resource.getId(), input);
             }
-            // TODO Does this causes errors on subscription update?
+
             brokerCommunication.updateOfferedResourceBrokerList(address, resource);
         }
         return Optional.ofNullable(response);

@@ -31,6 +31,11 @@ public enum ErrorMessage {
     DESC_NULL("The description parameter may not be null."),
 
     /**
+     * The passed dat may not be null.
+     */
+    DAT_NULL("The dat may not be null."),
+
+    /**
      * The passed message may not be null.
      */
     MESSAGE_NULL("The message may not be null."),
@@ -208,7 +213,12 @@ public enum ErrorMessage {
     /**
      * If an http response is null.
      */
-    RESPONSE_NULL("Received an empty response for http request.");
+    RESPONSE_NULL("Received an empty response for http request."),
+
+    /**
+     * If an PKIX error occurs.
+     */
+    CERTIFICATE_NOT_TRUSTED("The recipient's certificate authority is not trusted.");
 
     /**
      * Holds the enums string.

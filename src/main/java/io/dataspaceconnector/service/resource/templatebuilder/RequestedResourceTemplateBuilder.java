@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.service.resource.templatebuilder;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.model.resource.RequestedResource;
 import io.dataspaceconnector.model.resource.RequestedResourceDesc;
 import io.dataspaceconnector.model.template.ResourceTemplate;
@@ -52,6 +53,7 @@ public class RequestedResourceTemplateBuilder
      * {@inheritDoc}
      */
     @Override
+    @SuppressFBWarnings("BC_IMPOSSIBLE_CAST")
     protected RequestedResource buildResource(
             final ResourceTemplate<RequestedResourceDesc> template) {
         final var resourceService = getResourceService();

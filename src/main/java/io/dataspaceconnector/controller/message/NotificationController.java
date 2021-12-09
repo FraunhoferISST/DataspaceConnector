@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import io.dataspaceconnector.controller.message.tag.MessageDescription;
+import io.dataspaceconnector.controller.message.tag.MessageName;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.message.SubscriberNotificationService;
@@ -42,7 +44,7 @@ import java.net.URI;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-@Tag(name = "Messages", description = "Endpoints for invoke sending messages")
+@Tag(name = MessageName.MESSAGES, description = MessageDescription.MESSAGES)
 public class NotificationController {
 
     /**
@@ -67,7 +69,7 @@ public class NotificationController {
      * @return The response entity.
      */
     @PutMapping("/notify")
-    @Operation(summary = "Notify all subscribers", description = "Can be used to manually notify "
+    @Operation(summary = "Notify all subscribers.", description = "Can be used to manually notify "
             + "all subscribers about a resource offer, representation, or artifact update.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "No Content"),

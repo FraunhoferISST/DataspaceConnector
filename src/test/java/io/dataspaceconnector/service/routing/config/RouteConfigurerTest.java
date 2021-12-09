@@ -20,12 +20,13 @@ import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.EndpointBuilder;
 import de.fraunhofer.iais.eis.GenericEndpointBuilder;
 import de.fraunhofer.iais.eis.util.Util;
-import org.apache.velocity.VelocityContext;
+import io.dataspaceconnector.config.camel.FreemarkerConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.net.URI;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -34,15 +35,18 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 /**
  * Tests for the RouteConfigurer class.
  */
-@SpringBootTest(classes = {RouteConfigurer.class})
+@SpringBootTest(classes = {RouteConfigurer.class, FreemarkerConfig.class})
 class RouteConfigurerTest {
 
     @Autowired
     RouteConfigurer routeConfigurer;
 
+    @Autowired
+    FreemarkerConfig freemarkerConfig;
+
     @Test
     void testConstructorAndSetter(){
-        RouteConfigurer configurer = new RouteConfigurer();
+        RouteConfigurer configurer = new RouteConfigurer(freemarkerConfig.freemarkerConfiguration());
         assertNotNull(configurer);
         configurer.setDataSpaceConnectorApiUsername("test");
         configurer.setDataSpaceConnectorApiPassword("test");
@@ -50,8 +54,8 @@ class RouteConfigurerTest {
 
     @Test
     void testAddBasicAuth(){
-        VelocityContext velocityContext = new VelocityContext();
-        assertDoesNotThrow(() -> routeConfigurer.addBasicAuthToContext(velocityContext));
+        final var freemarkerInput = new HashMap<String, Object>();
+        assertDoesNotThrow(() -> routeConfigurer.addBasicAuthToContext(freemarkerInput));
     }
 
     @Test
@@ -59,11 +63,13 @@ class RouteConfigurerTest {
         final var appRouteGenericEnpoint = new AppRouteBuilder(URI.create("http://approute"))
                 ._routeDeployMethod_("CAMEL")
                 ._appRouteStart_(Util.asList(new GenericEndpointBuilder()._accessURL_(URI.create("http://test")).build()))
+                ._appRouteEnd_(Util.asList(new ConnectorEndpointBuilder()._accessURL_(URI.create("http://test")).build()))
                 .build();
         assertNotNull(routeConfigurer.getRouteTemplate(appRouteGenericEnpoint));
         final var appRouteConnectorEndpoint = new AppRouteBuilder(URI.create("http://approute"))
                 ._routeDeployMethod_("CAMEL")
                 ._appRouteStart_(Util.asList(new ConnectorEndpointBuilder()._accessURL_(URI.create("http://test")).build()))
+                ._appRouteEnd_(Util.asList(new GenericEndpointBuilder()._accessURL_(URI.create("http://test")).build()))
                 .build();
         assertNotNull(routeConfigurer.getRouteTemplate(appRouteConnectorEndpoint));
         final var appRouteEndpoint = new AppRouteBuilder(URI.create("http://approute"))

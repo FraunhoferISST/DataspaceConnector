@@ -98,8 +98,8 @@ or list of catalogs.
       "@id" : "https://localhost:8080/api/ids/data"
     }
   },
-  "ids:inboundModelVersion" : [ "4.0.0", "4.1.0", "4.1.2", "4.2.0", "4.2.1", "4.2.2", "4.2.3" ],
-  "ids:outboundModelVersion" : "4.2.3"
+  "ids:inboundModelVersion" : [ "4.0.0", "4.1.0", "4.1.2", "4.2.0", "4.2.1", "4.2.2", "4.2.3", "4.2.4", "4.2.5", "4.2.6" ],
+  "ids:outboundModelVersion" : "4.2.6"
 }
 ````
 
@@ -386,6 +386,10 @@ used.
 
 Either way, the requested and downloaded data will be stored in the database as a bytestream and
 is automatically decoded on an API call.
+
+**Since version 7.x.x**: You can also immediately dispatch the requested data via Camel routes, which
+will prevent the data from being stored locally, as described in
+[the guide on dispatching data](camel.md#create-a-route-for-dispatching-data).
 
 ---
 **Parametrized Data Request**

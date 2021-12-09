@@ -29,6 +29,7 @@ import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseExcep
 import de.fraunhofer.ids.messaging.requests.exceptions.NoTemplateProvidedException;
 import de.fraunhofer.ids.messaging.requests.exceptions.RejectionException;
 import de.fraunhofer.ids.messaging.requests.exceptions.UnexpectedPayloadException;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.model.TemplateUtils;
@@ -207,8 +208,8 @@ public class Bootstrapper {
             if (properties.containsKey(propertyKey)) {
                 final var brokerUrl = BootstrapUtils.toUrl(properties.getProperty(propertyKey));
                 if (brokerUrl.isEmpty()) {
-                    if (log.isWarnEnabled()) {
-                        log.warn("Skipping broker due to invalid url. [broker=({})]",
+                    if (log.isDebugEnabled()) {
+                        log.debug("Skipping broker due to invalid url. [url=({})]",
                                 properties.getProperty(propertyKey));
                     }
                     return false;
@@ -260,6 +261,7 @@ public class Bootstrapper {
         }
     }
 
+    @SuppressFBWarnings("DCN_NULLPOINTER_EXCEPTION")
     private List<File> loadBootstrapData() {
         try {
             final var files = findFilesByExtension(bootstrapPath, FILE_EXT);
@@ -355,8 +357,8 @@ public class Bootstrapper {
                 catalogs.add(deserializationSvc.getResourceCatalog(
                         Files.readString(jsonFile.toPath())));
             } catch (IOException e) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Could not deserialize ids catalog file. [path=({})]",
+                if (log.isDebugEnabled()) {
+                    log.debug("Could not deserialize ids catalog file. [path=({})]",
                             jsonFile.getPath(), e);
                 }
                 return Optional.empty();

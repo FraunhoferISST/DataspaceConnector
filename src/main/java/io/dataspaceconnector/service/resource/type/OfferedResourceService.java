@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
@@ -31,6 +32,7 @@ public class OfferedResourceService extends ResourceService<OfferedResource, Off
      *
      * @param repository The offered resource repository.
      */
+    @SuppressFBWarnings("MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR")
     public OfferedResourceService(final BaseEntityRepository<OfferedResource> repository) {
         this(repository, new OfferedResourceFactory());
         ((OfferedResourceFactory) this.getFactory()).setDoesExist(super::doesExist);

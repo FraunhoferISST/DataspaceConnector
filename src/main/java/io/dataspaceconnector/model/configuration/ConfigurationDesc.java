@@ -96,15 +96,15 @@ public class ConfigurationDesc extends NamedDescription {
     /**
      * The truststore settings.
      */
-    private TruststoreDesc truststoreSettings;
+    private TruststoreDesc truststore;
 
     /**
      * The proxy settings.
      */
-    private ProxyDesc proxySettings;
+    private ProxyDesc proxy;
 
     /**
      * The keystore settings.
      */
-    private KeystoreDesc keystoreSettings;
+    private KeystoreDesc keystore;
 }
