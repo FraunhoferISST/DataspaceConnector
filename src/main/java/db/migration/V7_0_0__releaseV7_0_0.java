@@ -31,13 +31,13 @@ public class V7_0_0__releaseV7_0_0 extends BaseJavaMigration {
     /**
      * Select query for getting ID and value of local data instances.
      */
-    private static final String SELECT_LOCAL_DATA = "SELECT id,'value' FROM 'data'"
-            + " WHERE 'value' IS NOT NULL;";
+    private static final String SELECT_LOCAL_DATA = "SELECT id,lo_get(value::oid) FROM public.data"
+            + " WHERE value IS NOT NULL;";
 
     /**
      * Prepared update query for setting the value field of local data.
      */
-    private static final String SET_VALUE = "UPDATE 'data' SET 'value'=? WHERE id=?;";
+    private static final String SET_VALUE = "UPDATE public.data SET value=lo_from_bytea(0, ?) WHERE id=?;";
 
     /**
      * Performs the migration.
@@ -60,7 +60,7 @@ public class V7_0_0__releaseV7_0_0 extends BaseJavaMigration {
         try (var select = ctx.getConnection().createStatement()) {
             try (var rows = select.executeQuery(SELECT_LOCAL_DATA)) {
                 while (rows.next()) {
-                    final var id = rows.getObject(1, UUID.class);
+                    final var id = rows.getObject(1, Long.class);
                     final var utf16Encoded = rows.getBytes(2);
                     final var data = new String(utf16Encoded, StandardCharsets.UTF_16);
                     final var utf8Encoded = data.getBytes(StandardCharsets.UTF_8);
