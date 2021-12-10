@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.model.route.Route;
@@ -29,8 +31,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.eq;
@@ -69,8 +69,8 @@ class RouteServiceTest {
         ReflectionTestUtils.setField(end, "id", UUID.randomUUID());
 
         final var route = new Route();
-        ReflectionTestUtils.setField(route, "start", start);
-        ReflectionTestUtils.setField(route, "end", end);
+        ReflectionTestUtils.setField(route, "startpoint", start);
+        ReflectionTestUtils.setField(route, "endpoint", end);
 
         /* ACT */
         service.persist(route);

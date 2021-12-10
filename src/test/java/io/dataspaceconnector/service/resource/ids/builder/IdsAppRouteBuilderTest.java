@@ -186,7 +186,7 @@ public class IdsAppRouteBuilderTest {
         final var start = getGenericEndpoint();
         final var artifact = getArtifact();
 
-        ReflectionTestUtils.setField(route, "start", start);
+        ReflectionTestUtils.setField(route, "startpoint", start);
         ReflectionTestUtils.setField(route, "output", artifact);
 
         return route;
@@ -211,7 +211,7 @@ public class IdsAppRouteBuilderTest {
         final var start = getGenericEndpoint();
         final var artifact = getArtifact();
 
-        ReflectionTestUtils.setField(route, "start", start);
+        ReflectionTestUtils.setField(route, "startpoint", start);
         ReflectionTestUtils.setField(route, "output", artifact);
 
         return route;

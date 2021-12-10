@@ -88,7 +88,7 @@ class RouteHelperTest {
         /* ARRANGE */
         final var route = new Route();
         ReflectionTestUtils.setField(route, "deploy", DeployMethod.CAMEL);
-        ReflectionTestUtils.setField(route, "start", new GenericEndpoint());
+        ReflectionTestUtils.setField(route, "startpoint", new GenericEndpoint());
         ReflectionTestUtils.setField(route, "output", new ArtifactImpl());
 
         final var idsRoute = getIdsRoute();
@@ -108,7 +108,7 @@ class RouteHelperTest {
         /* ARRANGE */
         final var route = new Route();
         ReflectionTestUtils.setField(route, "deploy", DeployMethod.CAMEL);
-        ReflectionTestUtils.setField(route, "end", new GenericEndpoint());
+        ReflectionTestUtils.setField(route, "endpoint", new GenericEndpoint());
 
         final var idsRoute = getIdsRoute();
         when(routeBuilder.create(route)).thenReturn(idsRoute);
