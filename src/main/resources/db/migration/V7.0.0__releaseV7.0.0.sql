@@ -2,16 +2,16 @@ ALTER TABLE public.app
     ADD COLUMN container_name character varying(255);
 
 UPDATE public.endpoint AS e
-    SET data_source_id = NULL
+SET data_source_id = NULL
     FROM public.datasource AS d
-    WHERE d.type = DATABASE
-    AND d.id = e.data_source_id;
+WHERE d.type = 'DATABASE'
+  AND d.id = e.data_source_id;
 
 DELETE FROM public.datasource
-    WHERE "type" = DATABASE;
+WHERE "type" = 'DATABASE';
 
 ALTER TABLE public.datasource
-    DROP COLUMN "type",
+DROP COLUMN "type",
     ADD COLUMN dtype character varying(31) NOT NULL DEFAULT 'DataSource',
     ADD COLUMN driver_class_name character varying(255),
     ADD COLUMN url character varying(255);
@@ -29,16 +29,16 @@ ALTER TABLE ONLY public.route
 DROP TABLE public.route_output;
 
 UPDATE public.route AS r
-    SET start_id = NULL
+SET start_id = NULL
     FROM public.endpoint AS e
-    WHERE e.dtype = ConnectorEndpoint
-    AND e.id = r.start_id;
+WHERE e.dtype = 'ConnectorEndpoint'
+  AND e.id = r.start_id;
 
 UPDATE public.route AS r
-    SET end_id = NULL
+SET end_id = NULL
     FROM public.endpoint AS e
-    WHERE e.dtype = ConnectorEndpoint
-    AND e.id = r.end_id;
+WHERE e.dtype = 'ConnectorEndpoint'
+  AND e.id = r.end_id;
 
 DELETE FROM public.endpoint
-    WHERE dtype = ConnectorEndpoint;
+WHERE dtype = 'ConnectorEndpoint';
