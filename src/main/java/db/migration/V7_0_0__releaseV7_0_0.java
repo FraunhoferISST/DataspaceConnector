@@ -17,7 +17,6 @@ package db.migration;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
-import java.util.UUID;
 
 import org.flywaydb.core.api.migration.BaseJavaMigration;
 import org.flywaydb.core.api.migration.Context;
