@@ -23,57 +23,40 @@ public enum EnumType {
     /**
      * The log level.
      */
-    LOG_LEVEL("loglevel"),
+    LOG_LEVEL,
 
     /**
      * The connector status.
      */
-    CONNECTOR_STATUS("connectorstatus"),
+    CONNECTOR_STATUS,
 
     /**
      * The connector deploy mode.
      */
-    CONNECTOR_DEPLOY_MODE("connectordeploymode"),
+    CONNECTOR_DEPLOY_MODE,
 
     /**
      * The language.
      */
-    LANGUAGE("language"),
+    LANGUAGE,
 
     /**
      * The deploy method of data routes.
      */
-    DEPLOY_METHOD("deploymethod"),
+    DEPLOY_METHOD,
 
     /**
      * The broker status.
      */
-    BROKER_STATUS("brokerstatus"),
+    BROKER_STATUS,
 
     /**
      * The security profile.
      */
-    SECURITY_PROFILE("securityprofile"),
+    SECURITY_PROFILE,
 
     /**
      * The payment method.
      */
-    PAYMENT_METHOD("paymentmethod");
-
-    /**
-     * The type as string.
-     */
-    private final String type;
-
-    EnumType(final String name) {
-        this.type = name;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return type;
-    }
+    PAYMENT_METHOD
 }

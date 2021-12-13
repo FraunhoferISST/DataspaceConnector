@@ -90,7 +90,7 @@ public final class ResponseUtils {
             log.debug("{} [exception=({})]", msg, exception.getMessage(), exception);
         }
 
-        return new ResponseEntity<>(new JSONObject().put("msg", msg),
+        return new ResponseEntity<>(new JSONObject().put("message", msg),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -107,7 +107,7 @@ public final class ResponseUtils {
             log.debug("{} [resourceId=({})]", msg, resourceId);
         }
 
-        return new ResponseEntity<>(new JSONObject().put("msg", msg), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new JSONObject().put("message", msg), HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -123,7 +123,7 @@ public final class ResponseUtils {
             log.debug("{} [exception({})]", msg, exception.getMessage());
         }
 
-        return new ResponseEntity<>(new JSONObject().put("msg", msg), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new JSONObject().put("message", msg), HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -140,7 +140,7 @@ public final class ResponseUtils {
         }
 
         return new ResponseEntity<>(new JSONObject() {{
-            put("msg", msg);
+            put("message", msg);
             put("details", e.getMessage());
         }}, HttpStatus.BAD_REQUEST);
     }
@@ -158,7 +158,7 @@ public final class ResponseUtils {
             log.warn("{} [exception=({})]", msg, e.getMessage(), e);
         }
 
-        return new ResponseEntity<>(new JSONObject().put("msg", msg),
+        return new ResponseEntity<>(new JSONObject().put("message", msg),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -176,7 +176,7 @@ public final class ResponseUtils {
         }
 
         return new ResponseEntity<>(new JSONObject() {{
-            put("msg", msg);
+            put("message", msg);
             put("details", e.getMessage());
         }}, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -195,7 +195,7 @@ public final class ResponseUtils {
         }
 
         return new ResponseEntity<>(new JSONObject() {{
-            put("msg", msg);
+            put("message", msg);
             put("details", e.getMessage());
         }}, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -213,7 +213,8 @@ public final class ResponseUtils {
             log.warn("{} [exception=({})]", msg, exception.getMessage(), exception);
         }
 
-        return new ResponseEntity<>(new JSONObject().put("msg", msg), HttpStatus.GATEWAY_TIMEOUT);
+        return new ResponseEntity<>(
+                new JSONObject().put("message", msg), HttpStatus.GATEWAY_TIMEOUT);
     }
 
     /**
@@ -229,7 +230,7 @@ public final class ResponseUtils {
             log.debug("{} [exception=({})]", msg, exception.getMessage(), exception);
         }
 
-        return new ResponseEntity<>(new JSONObject().put("msg", msg), HttpStatus.BAD_GATEWAY);
+        return new ResponseEntity<>(new JSONObject().put("message", msg), HttpStatus.BAD_GATEWAY);
     }
 
     /**
@@ -244,7 +245,7 @@ public final class ResponseUtils {
             log.debug("{}", msg.toString());
         }
 
-        return new ResponseEntity<>(new JSONObject().put("msg", msg), HttpStatus.BAD_GATEWAY);
+        return new ResponseEntity<>(new JSONObject().put("message", msg), HttpStatus.BAD_GATEWAY);
     }
 
     /**
@@ -260,7 +261,7 @@ public final class ResponseUtils {
         }
 
         return new ResponseEntity<>(new JSONObject() {{
-            put("msg", msg);
+            put("message", msg);
             put("details", response);
         }}, HttpStatus.EXPECTATION_FAILED);
     }
@@ -277,7 +278,7 @@ public final class ResponseUtils {
             log.debug(msg);
         }
 
-        return new ResponseEntity<>(new JSONObject().put("msg", msg), HttpStatus.BAD_GATEWAY);
+        return new ResponseEntity<>(new JSONObject().put("message", msg), HttpStatus.BAD_GATEWAY);
     }
 
     /**
@@ -293,7 +294,7 @@ public final class ResponseUtils {
             log.debug("{} [target=({})]", msg, target);
         }
 
-        return new ResponseEntity<>(new JSONObject().put("msg", msg), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(new JSONObject().put("message", msg), HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -312,7 +313,7 @@ public final class ResponseUtils {
                     exception.getMessage(), exception);
         }
 
-        return new ResponseEntity<>(new JSONObject().put("msg", msg),
+        return new ResponseEntity<>(new JSONObject().put("message", msg),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -331,7 +332,7 @@ public final class ResponseUtils {
                     toObjectResponse(exchange.getIn().getBody(ResponseEntity.class));
             return Objects.requireNonNullElseGet(responseEntity,
                     () -> new ResponseEntity<>(new JSONObject() {{
-                        put("msg", "An error occurred.");
+                        put("message", "An error occurred.");
                     }}, HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
@@ -349,7 +350,7 @@ public final class ResponseUtils {
             log.warn("{} [exception=({})]", msg, e.getMessage());
         }
 
-        return new ResponseEntity<>(new JSONObject().put("msg", msg),
+        return new ResponseEntity<>(new JSONObject().put("message", msg),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -365,7 +366,7 @@ public final class ResponseUtils {
             log.warn("{} [exception=({})]", msg, e.getMessage());
         }
 
-        return new ResponseEntity<>(new JSONObject().put("msg", msg),
+        return new ResponseEntity<>(new JSONObject().put("message", msg),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -382,7 +383,7 @@ public final class ResponseUtils {
             log.warn("{} [exception=({})]", msg, e.getMessage());
         }
 
-        return new ResponseEntity<>(new JSONObject().put("msg", msg),
+        return new ResponseEntity<>(new JSONObject().put("message", msg),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

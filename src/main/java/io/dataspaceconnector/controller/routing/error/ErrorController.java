@@ -24,7 +24,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NoArgsConstructor;
-import org.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -74,8 +73,7 @@ public class ErrorController {
     @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
             description = ResponseDescription.UNAUTHORIZED)
     public ResponseEntity<Object> getRouteErrors() {
-        return ResponseEntity.ok(new JSONObject() {{
-            put("log", routeErrors.stream().collect(Collectors.joining(",", "[", "]")));
-        }});
+        final var value = routeErrors.stream().collect(Collectors.joining(",", "[", "]"));
+        return ResponseEntity.ok("{" + value + "}");
     }
 }

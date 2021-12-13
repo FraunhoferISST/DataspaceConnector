@@ -15,14 +15,18 @@
  */
 package io.dataspaceconnector.controller.gui;
 
-import io.dataspaceconnector.controller.gui.util.GuiUtils;
+import org.apache.commons.codec.CharEncoding;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,12 +34,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Tests for the GuiUtilController class.
  */
-@SpringBootTest(classes = {GuiUtils.class, GuiController.class})
-@AutoConfigureMockMvc
+@SpringBootTest
 class GuiControllerTest {
 
     @Autowired
+    private WebApplicationContext context;
+
     private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
+    }
 
     @Test
     void unauthorizedGetEnum() throws Exception {
@@ -43,37 +53,63 @@ class GuiControllerTest {
     }
 
     @Test
-    @WithMockUser("ADMIN")
-    void badRequestGetEnum() throws Exception {
-        mockMvc.perform(post("/api/utils/enum")).andExpect(status().isBadRequest()).andReturn();
+    @WithMockUser(roles = {"ADMIN"})
+    void missingRequestBody() throws Exception {
+        mockMvc.perform(post("/api/utils/enum")).andExpect(status().isInternalServerError()).andReturn();
     }
 
     @Test
-    @WithMockUser("ADMIN")
+    @WithMockUser(roles = {"ADMIN"})
+    void badRequestGetEnum() throws Exception {
+        mockMvc.perform(post("/api/utils/enum")
+                .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(CharEncoding.UTF_8)
+                        .content("\" TEST \""))
+                .andExpect(status().isBadRequest()).andReturn();
+    }
+
+    @Test
+    @WithMockUser(roles = {"ADMIN"})
     void getSpecificEnum() throws Exception {
-        mockMvc.perform(
-                post("/api/utils/enum").content("loglevel"))
+        mockMvc.perform(post("/api/utils/enum")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(CharEncoding.UTF_8)
+                        .content("\" LOG_LEVEL \""))
                 .andExpect(status().isOk()).andReturn();
-        mockMvc.perform(
-                post("/api/utils/enum").content("connectorstatus"))
+        mockMvc.perform(post("/api/utils/enum")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(CharEncoding.UTF_8)
+                        .content("\" CONNECTOR_STATUS \""))
                 .andExpect(status().isOk()).andReturn();
-        mockMvc.perform(
-                post("/api/utils/enum").content("connectordeploymode"))
+        mockMvc.perform(post("/api/utils/enum")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(CharEncoding.UTF_8)
+                        .content("\" CONNECTOR_DEPLOY_MODE \""))
                 .andExpect(status().isOk()).andReturn();
-        mockMvc.perform(
-                post("/api/utils/enum").content("language"))
+        mockMvc.perform(post("/api/utils/enum")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(CharEncoding.UTF_8)
+                        .content("\" LANGUAGE \""))
                 .andExpect(status().isOk()).andReturn();
-        mockMvc.perform(
-                post("/api/utils/enum").content("deploymethod"))
+        mockMvc.perform(post("/api/utils/enum")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(CharEncoding.UTF_8)
+                        .content("\" DEPLOY_METHOD \""))
                 .andExpect(status().isOk()).andReturn();
-        mockMvc.perform(
-                post("/api/utils/enum").content("brokerstatus"))
+        mockMvc.perform(post("/api/utils/enum")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(CharEncoding.UTF_8)
+                        .content("\" BROKER_STATUS \""))
                 .andExpect(status().isOk()).andReturn();
-        mockMvc.perform(
-                post("/api/utils/enum").content("securityprofile"))
+        mockMvc.perform(post("/api/utils/enum")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(CharEncoding.UTF_8)
+                        .content("\" SECURITY_PROFILE \""))
                 .andExpect(status().isOk()).andReturn();
-        mockMvc.perform(
-                post("/api/utils/enum").content("paymentmethod"))
+        mockMvc.perform(post("/api/utils/enum")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(CharEncoding.UTF_8)
+                        .content("\" PAYMENT_METHOD \""))
                 .andExpect(status().isOk()).andReturn();
     }
 }
