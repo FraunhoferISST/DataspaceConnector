@@ -32,6 +32,7 @@ All notable changes to this project will be documented in this file.
 - Increase equalsverifier version from 3.7.2 to 3.8.
 - Ignore IDS InfoModel version incompatibility for incoming messages.
 - Increase log4j2 version from 2.14.0 to 2.15.0.
+- Increase springdoc version from 1.5.3 to 1.6.0.
 
 ### Fixed
 - XML-escape URLs before injecting them into Camel route templates.
