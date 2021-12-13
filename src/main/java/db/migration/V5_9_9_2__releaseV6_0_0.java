@@ -27,7 +27,7 @@ import static db.migration.MigrationConstants.COLUMN_LENGTH_2048;
  * Performs migration operations for v6.0.0 in addition to the migration script.
  */
 @SuppressWarnings("typename")
-public class V6_0_0_1__releaseV6_0_0_1 extends BaseJavaMigration {
+public class V5_9_9_2__releaseV6_0_0 extends BaseJavaMigration {
 
     /**
      * Query for selecting username and password from the data table.

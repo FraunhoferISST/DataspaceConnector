@@ -24,7 +24,7 @@ import static db.migration.MigrationConstants.COLUMN_LENGTH_2048;
  * Performs migration operations for v6.1.0 in addition to the migration script.
  */
 @SuppressWarnings("typename")
-public class V6_1_0_0__releaseV6_1_0_0 extends BaseJavaMigration {
+public class V6_0_9__releaseV6_1_0 extends BaseJavaMigration {
 
     /**
      * Performs the migration.
