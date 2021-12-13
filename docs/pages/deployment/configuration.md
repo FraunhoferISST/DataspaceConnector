@@ -276,8 +276,8 @@ To turn on the [DAT](https://github.com/International-Data-Spaces-Association/ID
 checking, you need to set the `ids:connectorDeployMode` to`idsc:PRODUCTIVE_DEPLOYMENT`. **For issuing
 a trusted IDS certificate, see [here](../communication/v6/ecosystem/identityProvider.md#aisec-daps-issuing-an-ids-certificate)**.
 Add the keystore with the IDS certificate inside to the `resources/conf` and change the filename at
-`ids:keyStore` accordingly. **In addition, set your connector id to a meaningful URL that uniquely
-identifies your connector towards e.g. the IDS Metadata Broker**:
+`ids:keyStore` accordingly. **In addition, set the connector id to the connector's URL (domain name),
+that uniquely identifies the connector towards e.g. the IDS Metadata Broker**:
 
 ```json
 "ids:connectorDescription" : {
