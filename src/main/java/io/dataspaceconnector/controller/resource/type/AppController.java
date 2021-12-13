@@ -43,7 +43,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import net.minidev.json.JSONObject;
 import okhttp3.Response;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
@@ -94,18 +93,16 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     private static final int DEFAULT_HTTPS_PORT = 443;
 
     @Hidden
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
+    @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+            description = ResponseDescription.METHOD_NOT_ALLOWED)
     @Override
     public final ResponseEntity<AppView> create(final AppDesc desc) {
         throw new MethodNotAllowed();
     }
 
     @Hidden
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
-                    description = ResponseDescription.METHOD_NOT_ALLOWED)})
+    @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
+            description = ResponseDescription.METHOD_NOT_ALLOWED)
     @Override
     public final ResponseEntity<AppView> update(final UUID resourceId, final AppDesc desc) {
         throw new MethodNotAllowed();
@@ -124,9 +121,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
             @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
                     description = ResponseDescription.BAD_REQUEST),
             @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
-                    description = ResponseDescription.INTERNAL_SERVER_ERROR),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED)})
+                    description = ResponseDescription.INTERNAL_SERVER_ERROR)})
     @ResponseBody
     public final ResponseEntity<Object> relatedAppStore(final @PathVariable("id") UUID appId) {
         return ResponseEntity.ok(getService().getAppStoreByAppId(appId));
@@ -148,12 +143,10 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
                     description = ResponseDescription.BAD_REQUEST),
             @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
                     description = ResponseDescription.INTERNAL_SERVER_ERROR),
-            @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
-                    description = ResponseDescription.UNAUTHORIZED),
             @ApiResponse(responseCode = ResponseCode.CONFLICT,
-                description = ResponseDescription.CONFLICT),
+                    description = ResponseDescription.CONFLICT),
             @ApiResponse(responseCode = ResponseCode.NOT_FOUND,
-                description = ResponseDescription.NOT_FOUND)})
+                    description = ResponseDescription.NOT_FOUND)})
     @ResponseBody
     public final ResponseEntity<Object> containerManagement(
             @PathVariable("id") final UUID appId,
@@ -196,11 +189,10 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
             return new ResponseEntity<>(new JSONObject().put("message",
                     "No container id provided."), HttpStatus.NOT_FOUND);
         } else {
-            final var descriptionResponse = portainerSvc
-                    .getDescriptionByContainerId(containerId);
-            final var responseBody = descriptionResponse.body();
+            final var response = portainerSvc.getDescriptionByContainerId(containerId);
+            final var responseBody = response.body();
 
-            if (descriptionResponse.isSuccessful() && responseBody != null) {
+            if (response.isSuccessful() && responseBody != null) {
                 return ResponseEntity.ok(responseBody.string());
             } else if (responseBody != null) {
                 return ResponseEntity.internalServerError().body(responseBody.string());
@@ -319,36 +311,33 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
      * Persists the portainer container data, e.g. Container-ID, Container-Name and
      * Endpoint-AccessURLs.
      *
-     * @param app The app currently being deployed.
-     * @param containerId The portainer container id.
+     * @param app           The app currently being deployed.
+     * @param containerId   The portainer container id.
      * @param containerDesc The portainer container description.
      * @throws IOException If connection to Portainer threw exception.
      */
-    private void persistContainerData(final App app,
-                                      final String containerId,
+    private void persistContainerData(final App app, final String containerId,
                                       final Response containerDesc) throws IOException {
-        final var responseBody  = containerDesc.body();
+        final var responseBody = containerDesc.body();
         if (responseBody != null) {
-            final var portainerContainerName = new JSONObject(responseBody.string())
-                    .getString("Name");
+            final var name = new JSONObject(responseBody.string()).getString("Name");
 
             // Note: Portainer places a leading "/" in front of container-name, needs to be removed
-            final var containerName = portainerContainerName
-                    .substring(portainerContainerName.indexOf("/") + 1);
+            final var containerName = name.substring(name.indexOf("/") + 1);
 
-            //Persist container id and name.
+            // Persist container id and name.
             getService().setContainerName(app.getId(), containerName);
             getService().setContainerIdForApp(app.getId(), containerId);
 
-            //Generate endpoint accessURLs depending on deployment information.
+            // Generate endpoint accessURLs depending on deployment information.
             for (final var endpoint : app.getEndpoints()) {
-                //Uses IDS endpoint description info and not template (/api/apps/{id}/endpoints)
+                // Uses IDS endpoint description info and not template (/api/apps/{id}/endpoints).
                 final var protocol =
-                        endpoint.getEndpointPort() == DEFAULT_HTTPS_PORT ? "https://"  : "http://";
+                        endpoint.getEndpointPort() == DEFAULT_HTTPS_PORT ? "https://" : "http://";
 
-                //Uses IDS endpoint description info and not template (/api/apps/{id}/endpoints)
+                // Uses IDS endpoint description info and not template (/api/apps/{id}/endpoints).
                 final var suffix =
-                        endpoint.getPath() != null ? endpoint.getPath()  : "";
+                        endpoint.getPath() != null ? endpoint.getPath() : "";
 
                 final var exposedPort = endpoint.getExposedPort();
 
