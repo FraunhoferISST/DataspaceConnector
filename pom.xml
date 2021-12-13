@@ -619,6 +619,7 @@
 						<encoding>UTF-8</encoding>
 						<consoleOutput>true</consoleOutput>
 						<failOnViolation>true</failOnViolation>
+						<excludes>db/migration/*.*</excludes>
 					</configuration>
 				</plugin>
 				<plugin>
