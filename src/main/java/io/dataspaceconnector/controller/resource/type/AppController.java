@@ -45,7 +45,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import okhttp3.Response;
 import org.apache.commons.io.IOUtils;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -183,7 +182,6 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         portainerSvc.createEndpointId();
     }
 
-    @NotNull
     private ResponseEntity<Object> describeApp(final String containerId) throws IOException {
         if (containerId == null || containerId.equals("")) {
             return new ResponseEntity<>(new JSONObject().put("message",
@@ -203,7 +201,6 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         }
     }
 
-    @NotNull
     private ResponseEntity<Object> deleteApp(final @PathVariable("id") UUID appId,
                                              final String containerId) throws IOException {
         Response response;
@@ -223,7 +220,6 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         return readResponse(response, "Successfully deleted the app.");
     }
 
-    @NotNull
     private ResponseEntity<Object> stopApp(final App app,
                                            final String containerId) throws IOException {
         Response response;
@@ -244,7 +240,6 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         return readResponse(response, "Successfully stopped the app.");
     }
 
-    @NotNull
     private ResponseEntity<Object> startApp(final App app,
                                             final String containerId)
             throws IOException, AppNotDeployedException {
@@ -349,8 +344,11 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
 
     private ResponseEntity<Object> readResponse(final Response response, final Object body) {
         if (response != null) {
-            final var responseCode = String.valueOf(response.code());
+            if (response.isSuccessful()) {
+                return ResponseEntity.ok(new JSONObject().put("message", body));
+            }
 
+            final var responseCode = String.valueOf(response.code());
             switch (responseCode) {
                 case ResponseCode.NOT_MODIFIED:
                     return new ResponseEntity<>(new JSONObject().put("message",
@@ -371,10 +369,9 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
                     break;
             }
 
-            if (response.isSuccessful()) {
-                return ResponseEntity.ok(new JSONObject().put("message", body));
-            }
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
