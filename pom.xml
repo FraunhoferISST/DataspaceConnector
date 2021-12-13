@@ -586,12 +586,7 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 				<includes>
-					<include>conf/**/*.*</include>
-					<include>camel-routes/**/*.xml</include>
-					<include>log4j2.xml</include>
-					<include>camel-templates/**/*.ftl</include>
-					<include>application.properties</include>
-					<include>banner.txt</include>
+					<include>**</include>
 				</includes>
 				<excludes>
 					<!-- The key files are binary files, which the filtering destroys. -->
@@ -857,6 +852,14 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
 				<version>${maven-project-info-reports-plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>16</source>
+					<target>16</target>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
