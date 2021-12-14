@@ -905,7 +905,7 @@
 				</reportSets>
 				<configuration>
 					<excludes>
-						<exclude>db/migration/*.*</exclude>
+						<exclude>db/migration/**/*</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
