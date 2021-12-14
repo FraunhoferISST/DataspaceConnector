@@ -103,11 +103,10 @@
 		<postgres.version>42.3.1</postgres.version>
 		<springdoc.version>1.6.0</springdoc.version>
 		<equalsverifier.version>3.8</equalsverifier.version>
-		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
 		<freemarker.version>2.3.31</freemarker.version>
 		<camel.version>3.13.0</camel.version>
-		<idscp2.version>0.6.0</idscp2.version>
+		<idscp2.version>0.8.0</idscp2.version>
 		<log4j2.version>2.15.0</log4j2.version>
 
 		<!-- Plugins -->
@@ -402,7 +401,6 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<version>${h2database.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 
