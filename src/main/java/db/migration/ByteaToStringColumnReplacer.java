@@ -30,7 +30,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Helper class that changes the type of a column from Bytea (URI) to string and migrated the data
  * accordingly.
  */
-@SuppressFBWarnings(value={"SQL_INJECTION_JDBC", "SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"})
+@SuppressFBWarnings(value={"SQL_INJECTION_JDBC", "SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE",
+        "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
+        "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"})
 public class ByteaToStringColumnReplacer {
 
     /**

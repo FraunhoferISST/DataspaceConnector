@@ -18,6 +18,7 @@ package db.migration;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.flywaydb.core.api.migration.BaseJavaMigration;
 import org.flywaydb.core.api.migration.Context;
 
@@ -55,6 +56,8 @@ public class V7_0_0__releaseV7_0_0 extends BaseJavaMigration {
      * @param ctx The Flyway context.
      * @throws SQLException if any error occurs when performing database operations.
      */
+    @SuppressFBWarnings(value={"RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
+            "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"})
     private void migrateLocalData(final Context ctx) throws SQLException {
         try (var select = ctx.getConnection().createStatement()) {
             try (var rows = select.executeQuery(SELECT_LOCAL_DATA)) {

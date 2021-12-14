@@ -164,7 +164,9 @@ public class V5_9_9_2__releaseV6_0_0 extends BaseJavaMigration {
      * @param ctx The Flyway context.
      * @throws SQLException if any error occurs when performing database operations.
      */
-    @SuppressFBWarnings(value={"SQL_INJECTION_JDBC", "SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"})
+    @SuppressFBWarnings(value={"SQL_INJECTION_JDBC", "SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE",
+            "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
+            "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"})
     private void replaceUsernameAndPasswordWithAuthentication(final Context ctx)
             throws SQLException {
         try (var select = ctx.getConnection().createStatement()) {
