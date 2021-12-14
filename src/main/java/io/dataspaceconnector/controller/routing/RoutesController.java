@@ -20,7 +20,6 @@ import io.dataspaceconnector.controller.routing.tag.CamelDescription;
 import io.dataspaceconnector.controller.routing.tag.CamelName;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -73,7 +72,6 @@ public class RoutesController {
      * @param file the XML file.
      * @return a response entity with code 200 or 500, if an error occurs.
      */
-    @Hidden
     @PostMapping(produces = ResponseType.JSON)
     @Operation(summary = "Add a route to the Camel context.")
     @ApiResponses(value = {
@@ -127,7 +125,6 @@ public class RoutesController {
      * @param routeId the route ID.
      * @return a response entity with code 200 or 500, if an error occurs.
      */
-    @Hidden
     @DeleteMapping(value = "/{routeId}", produces = ResponseType.JSON)
     @Operation(summary = "Delete a route from the Camel context.")
     @ApiResponses(value = {

@@ -19,8 +19,6 @@ import io.dataspaceconnector.common.exception.ContractException;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.policy.RuleUtils;
 import io.dataspaceconnector.common.net.ResponseType;
-import io.dataspaceconnector.controller.policy.tag.PolicyDescription;
-import io.dataspaceconnector.controller.policy.tag.PolicyName;
 import io.dataspaceconnector.controller.policy.util.PatternUtils;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
@@ -63,7 +61,7 @@ import org.springframework.web.bind.annotation.RestController;
         @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
                 description = ResponseDescription.UNAUTHORIZED)})
 @RequestMapping("/api/examples")
-@Tag(name = PolicyName.POLICIES, description = PolicyDescription.POLICIES)
+@Tag(name = "_Utils")
 @RequiredArgsConstructor
 public class ExampleController {
     /**

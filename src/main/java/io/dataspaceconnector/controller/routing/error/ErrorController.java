@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  */
 @RestController("configManagerRoutesController")
 @NoArgsConstructor
-@RequestMapping("/api/utils")
+@RequestMapping("/api/camel/routes")
 @Tag(name = CamelName.CAMEL, description = CamelDescription.CAMEL)
 public class ErrorController {
     /**
@@ -67,7 +67,7 @@ public class ErrorController {
      *
      * @return Response-Code and all logged Route-Errors.
      */
-    @GetMapping(value = "/route-error", produces = ResponseType.JSON)
+    @GetMapping(value = "/error", produces = ResponseType.JSON)
     @Operation(summary = "Get new route related errors.")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,

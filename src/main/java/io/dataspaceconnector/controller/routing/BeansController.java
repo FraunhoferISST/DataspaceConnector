@@ -20,7 +20,6 @@ import io.dataspaceconnector.controller.routing.tag.CamelDescription;
 import io.dataspaceconnector.controller.routing.tag.CamelName;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -80,7 +79,6 @@ public class BeansController {
      * @param file the XML file.
      * @return a response entity with code 200 or 500, if an error occurs.
      */
-    @Hidden
     @PostMapping(produces = ResponseType.JSON)
     @Operation(summary = "Add a bean to the application context.")
     public ResponseEntity<Object> addBeans(@RequestParam("file") final MultipartFile file) {
@@ -121,7 +119,6 @@ public class BeansController {
      * @param beanId the bean ID.
      * @return a response entity with code 200 or 500, if an error occurs.
      */
-    @Hidden
     @DeleteMapping(value = "/{beanId}", produces = ResponseType.JSON)
     @Operation(summary = "Remove a bean from the application context.")
     public ResponseEntity<Object> removeBean(@PathVariable("beanId") final String beanId) {

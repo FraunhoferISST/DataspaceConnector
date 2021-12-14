@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/utils")
-@Tag(name = "GUI Utilities")
+@Tag(name = "_Utils")
 public class GuiController {
 
     /**

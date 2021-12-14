@@ -35,7 +35,6 @@ import io.dataspaceconnector.controller.resource.type.RuleController;
 import io.dataspaceconnector.controller.resource.type.SubscriptionController;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -58,7 +57,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
         description = ResponseDescription.UNAUTHORIZED)
-@Tag(name = "Connector", description = "Endpoints for connector information.")
+@Tag(name = "_Connector", description = "Endpoints for general information.")
 @RequiredArgsConstructor
 public class MainController {
 
@@ -102,8 +101,8 @@ public class MainController {
      *
      * @return Http ok.
      */
-    @Hidden
     @GetMapping(value = "/api")
+    @Operation(summary = "Entrypoint for REST resources")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     public ResponseEntity<RepresentationModel<?>> root() {
         final var model = new RepresentationModel<>();

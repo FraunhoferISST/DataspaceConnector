@@ -17,8 +17,8 @@ package io.dataspaceconnector.controller.policy;
 
 import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.config.ConnectorConfig;
-import io.dataspaceconnector.controller.policy.tag.PolicyDescription;
-import io.dataspaceconnector.controller.policy.tag.PolicyName;
+import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
+import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,7 +49,7 @@ import org.springframework.web.bind.annotation.RestController;
                 description = ResponseDescription.UNAUTHORIZED)})
 
 @RequestMapping("/api/configuration")
-@Tag(name = PolicyName.POLICIES, description = PolicyDescription.POLICY_SETTINGS)
+@Tag(name = ResourceName.CONFIGURATIONS, description = ResourceDescription.CONFIGURATIONS)
 @RequiredArgsConstructor
 public class SettingsController {
 

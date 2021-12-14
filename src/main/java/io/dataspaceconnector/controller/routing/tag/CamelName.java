@@ -23,7 +23,7 @@ public final class CamelName {
     /**
      * Tag name for camel.
      */
-    public static final String CAMEL = "Camel";
+    public static final String CAMEL = "Routes (Apache Camel)";
 
     private CamelName() {
         // Nothing to do here.
