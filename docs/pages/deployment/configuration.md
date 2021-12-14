@@ -276,8 +276,8 @@ To turn on the [DAT](https://github.com/International-Data-Spaces-Association/ID
 checking, you need to set the `ids:connectorDeployMode` to`idsc:PRODUCTIVE_DEPLOYMENT`. **For issuing
 a trusted IDS certificate, see [here](../communication/v6/ecosystem/identityProvider.md#aisec-daps-issuing-an-ids-certificate)**.
 Add the keystore with the IDS certificate inside to the `resources/conf` and change the filename at
-`ids:keyStore` accordingly. **In addition, set your connector id to a meaningful URL that uniquely
-identifies your connector towards e.g. the IDS Metadata Broker**:
+`ids:keyStore` accordingly. **In addition, set the connector id to the connector's URL (domain name),
+that uniquely identifies the connector towards e.g. the IDS Metadata Broker**:
 
 ```json
 "ids:connectorDescription" : {
@@ -488,16 +488,22 @@ your backend applications technically enforce the usage policies instead.
 
 ---
 
-The Messaging Services dependency comes with some further settings. For example you can specify what
-DAPS you want to connect to and whether incoming messages should be, in addition, processed by a
-SHACL validator.
+The **IDS Messaging Services** dependency comes with some further settings. For example, you can
+specify what DAPS you want to connect to and whether incoming messages should be, in addition,
+processed by a SHACL validator.
 
 ```properties
 daps.mode=aisec
 shacl.validation=true
 ```
 
-As the Messaging Services provide the connector with the ability to communicate via IDS multipart
+---
+
+**Note**: For more configurations, see [here](https://github.com/International-Data-Spaces-Association/IDS-Messaging-Services/wiki/09.-Settings:-Connector-Configuration).
+
+---
+
+As the IDS Messaging Services provide the connector with the ability to communicate via IDS multipart
 messages, the IDSCPv2 dependency allows to send and receive the same messages via the IDSCP
 protocol. For this and the underlying Camel, some more settings need to be set and can be modified
 accordingly:

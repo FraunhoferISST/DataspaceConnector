@@ -35,6 +35,8 @@ All notable changes to this project will be documented in this file.
 - Ignore IDS InfoModel version incompatibility for incoming messages.
 - Make field `type` in `DataSource` transient, as type information is persisted through the `dtype`
   column created through the `@Inheritance` annotation.
+- Increase log4j2 version from 2.14.0 to 2.15.0.
+- Increase springdoc version from 1.5.3 to 1.6.0.
 
 ### Fixed
 - XML-escape URLs before injecting them into Camel route templates.
