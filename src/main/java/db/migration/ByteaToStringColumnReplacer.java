@@ -24,10 +24,13 @@ import java.util.UUID;
 
 import org.flywaydb.core.api.migration.Context;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Helper class that changes the type of a column from Bytea (URI) to string and migrated the data
  * accordingly.
  */
+@SuppressFBWarnings(value={"SQL_INJECTION_JDBC", "SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"})
 public class ByteaToStringColumnReplacer {
 
     /**
@@ -161,6 +164,7 @@ public class ByteaToStringColumnReplacer {
      * @throws ClassNotFoundException if the byte array content cannot be casted to the desired
      *                                class.
      */
+    @SuppressFBWarnings("OBJECT_DESERIALIZATION")
     private URI toUri(final byte[] data) throws IOException, ClassNotFoundException {
         final var stream = new ObjectInputStream(new ByteArrayInputStream(data));
         return (URI) stream.readObject();

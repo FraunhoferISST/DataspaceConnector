@@ -21,6 +21,8 @@ import java.util.UUID;
 import org.flywaydb.core.api.migration.BaseJavaMigration;
 import org.flywaydb.core.api.migration.Context;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import static db.migration.MigrationConstants.COLUMN_LENGTH_2048;
 
 /**
@@ -162,6 +164,7 @@ public class V5_9_9_2__releaseV6_0_0 extends BaseJavaMigration {
      * @param ctx The Flyway context.
      * @throws SQLException if any error occurs when performing database operations.
      */
+    @SuppressFBWarnings(value={"SQL_INJECTION_JDBC", "SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"})
     private void replaceUsernameAndPasswordWithAuthentication(final Context ctx)
             throws SQLException {
         try (var select = ctx.getConnection().createStatement()) {
