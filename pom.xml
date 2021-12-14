@@ -903,6 +903,11 @@
 						</reports>
 					</reportSet>
 				</reportSets>
+				<configuration>
+					<excludes>
+						<exclude>db/migration/*.*</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
