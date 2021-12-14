@@ -184,8 +184,9 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
 
     private ResponseEntity<Object> describeApp(final String containerId) throws IOException {
         if (containerId == null || containerId.equals("")) {
-            return new ResponseEntity<>(new JSONObject().put("message",
-                    "No container id provided."), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new JSONObject() {{
+                put("message", "No container id provided.");
+            }}, HttpStatus.NOT_FOUND);
         } else {
             final var response = portainerSvc.getDescriptionByContainerId(containerId);
             final var responseBody = response.body();
@@ -195,8 +196,9 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
             } else if (responseBody != null) {
                 return ResponseEntity.internalServerError().body(responseBody.string());
             } else {
-                return ResponseEntity.internalServerError()
-                        .body(new JSONObject().put("message", "Response not successful."));
+                return ResponseEntity.internalServerError().body(new JSONObject() {{
+                    put("message", "Response not successful.");
+                }});
             }
         }
     }
@@ -205,13 +207,15 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
                                              final String containerId) throws IOException {
         Response response;
         if (containerId == null || containerId.equals("")) {
-            return new ResponseEntity<>(new JSONObject().put("message",
-                    "No running container found."), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new JSONObject() {{
+                put("message", "No running container found.");
+            }}, HttpStatus.NOT_FOUND);
         }
 
         if (isAppRunning(containerId)) {
-            return new ResponseEntity<>(new JSONObject().put("message",
-                    "Cannot delete a running app."), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new JSONObject() {{
+                put("message", "Cannot delete a running app.");
+            }}, HttpStatus.BAD_REQUEST);
         }
 
         response = portainerSvc.deleteContainer(containerId);
@@ -224,8 +228,9 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
                                            final String containerId) throws IOException {
         Response response;
         if (containerId == null || containerId.equals("")) {
-            return new ResponseEntity<>(new JSONObject().put("message",
-                    "No container id provided."), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new JSONObject() {{
+                put("message", "No container id provided.");
+            }}, HttpStatus.NOT_FOUND);
         }
 
         final var usedBy = appRouteResolver.isAppUsed(app);
@@ -250,8 +255,9 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         } else {
             deployedContainerId = containerId;
             if (isAppRunning(deployedContainerId)) {
-                return new ResponseEntity<>(new JSONObject().put("message",
-                        "App is already running."), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new JSONObject() {{
+                    put("message", "App is already running.");
+                }}, HttpStatus.BAD_REQUEST);
             }
         }
 
@@ -345,26 +351,33 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     private ResponseEntity<Object> readResponse(final Response response, final Object body) {
         if (response != null) {
             if (response.isSuccessful()) {
-                return ResponseEntity.ok(new JSONObject().put("message", body));
+                return ResponseEntity.ok(new JSONObject() {{
+                    put("message", body);
+                }});
             }
 
             final var responseCode = String.valueOf(response.code());
             switch (responseCode) {
                 case ResponseCode.NOT_MODIFIED:
-                    return new ResponseEntity<>(new JSONObject().put("message",
-                            "App is already running."), HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>(new JSONObject() {{
+                        put("message", "App is already running.");
+                    }}, HttpStatus.BAD_REQUEST);
                 case ResponseCode.NOT_FOUND:
-                    return new ResponseEntity<>(new JSONObject().put("message",
-                            "App not found."), HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>(new JSONObject() {{
+                        put("message", "App not found.");
+                    }}, HttpStatus.BAD_REQUEST);
                 case ResponseCode.BAD_REQUEST:
-                    return new ResponseEntity<>(new JSONObject().put("message",
-                            "Error when deleting app."), HttpStatus.INTERNAL_SERVER_ERROR);
+                    return new ResponseEntity<>(new JSONObject() {{
+                        put("message", "Error when deleting app.");
+                    }}, HttpStatus.INTERNAL_SERVER_ERROR);
                 case ResponseCode.CONFLICT:
-                    return new ResponseEntity<>(new JSONObject().put("message",
-                            "Cannot delete a running app."), HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>(new JSONObject() {{
+                        put("message", "Cannot delete a running app.");
+                    }}, HttpStatus.BAD_REQUEST);
                 case ResponseCode.UNAUTHORIZED:
-                    return new ResponseEntity<>(new JSONObject().put("message",
-                            "Portainer authorization failed."), HttpStatus.INTERNAL_SERVER_ERROR);
+                    return new ResponseEntity<>(new JSONObject() {{
+                        put("message", "Portainer authorization failed.");
+                    }}, HttpStatus.INTERNAL_SERVER_ERROR);
                 default:
                     break;
             }

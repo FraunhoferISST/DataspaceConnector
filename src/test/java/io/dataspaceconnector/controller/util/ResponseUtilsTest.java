@@ -36,8 +36,9 @@ class ResponseUtilsTest {
     public void respondIdsMessageFailed_validException_returnValidResponseEntity() {
         /* ARRANGE */
         final var msg = ErrorMessage.MESSAGE_HANDLING_FAILED.toString();
-        final var expectedResponse = new ResponseEntity<>(new JSONObject().put("message", msg),
-                HttpStatus.INTERNAL_SERVER_ERROR);
+        final var expectedResponse = new ResponseEntity<>(new JSONObject() {{
+            put("message", msg);
+        }}, HttpStatus.INTERNAL_SERVER_ERROR);
 
         /* ACT */
         final var response = ResponseUtils.respondIdsMessageFailed(exception);
@@ -63,8 +64,9 @@ class ResponseUtilsTest {
     public void respondConfigurationUpdateError_validException_returnValidResponseEntity() {
         /* ARRANGE */
         final var msg = "Failed to update configuration.";
-        final var expectedResponse = new ResponseEntity<>(new JSONObject().put("message", msg),
-                HttpStatus.INTERNAL_SERVER_ERROR);
+        final var expectedResponse = new ResponseEntity<>(new JSONObject() {{
+            put("message", msg);
+        }}, HttpStatus.INTERNAL_SERVER_ERROR);
 
         /* ACT */
         final var response = ResponseUtils.respondConfigurationUpdateError(exception);
@@ -79,8 +81,9 @@ class ResponseUtilsTest {
         /* ARRANGE */
         final var msg = "Resource not found";
         final var resourceId = URI.create("https://requestedResource");
-        final var expectedResponse = new ResponseEntity<>(new JSONObject().put("message", msg),
-                HttpStatus.NOT_FOUND);
+        final var expectedResponse = new ResponseEntity<>(new JSONObject() {{
+            put("message", msg);
+        }}, HttpStatus.NOT_FOUND);
 
         /* ACT */
         final var response = ResponseUtils.respondResourceNotFound(resourceId);
@@ -94,8 +97,9 @@ class ResponseUtilsTest {
     public void respondPatternNotIdentified_validException_returnValidResponseEntity() {
         /* ARRANGE */
         final var msg = "Could not identify pattern.";
-        final var expectedResponse = new ResponseEntity<>(new JSONObject().put("message", msg),
-                HttpStatus.BAD_REQUEST);
+        final var expectedResponse = new ResponseEntity<>(new JSONObject() {{
+            put("message", msg);
+        }}, HttpStatus.BAD_REQUEST);
 
         /* ACT */
         final var response = ResponseUtils.respondPatternNotIdentified(exception);
@@ -125,8 +129,9 @@ class ResponseUtilsTest {
     public void respondFailedToBuildContractRequest_validException_returnValidResponseEntity() {
         /* ARRANGE */
         final var msg = "Failed to build contract request.";
-        final var expectedResponse = new ResponseEntity<>(new JSONObject().put("message", msg),
-                HttpStatus.INTERNAL_SERVER_ERROR);
+        final var expectedResponse = new ResponseEntity<>(new JSONObject() {{
+            put("message", msg);
+        }}, HttpStatus.INTERNAL_SERVER_ERROR);
 
         /* ACT */
         final var response = ResponseUtils.respondFailedToBuildContractRequest(exception);
@@ -157,8 +162,9 @@ class ResponseUtilsTest {
     public void respondConnectionTimedOut_validException_returnValidResponseEntity() {
         /* ARRANGE */
         final var msg = ErrorMessage.GATEWAY_TIMEOUT.toString();
-        final var expectedResponse = new ResponseEntity<>(new JSONObject().put("message", msg),
-                HttpStatus.GATEWAY_TIMEOUT);
+        final var expectedResponse = new ResponseEntity<>(new JSONObject() {{
+            put("message", msg);
+        }}, HttpStatus.GATEWAY_TIMEOUT);
 
         /* ACT */
         final var response = ResponseUtils.respondConnectionTimedOut(exception);

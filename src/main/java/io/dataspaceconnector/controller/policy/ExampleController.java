@@ -86,7 +86,11 @@ public class ExampleController {
         try {
             final var rule = deserializationService.getRule(ruleAsString);
             final var pattern = RuleUtils.getPatternByRule(rule);
-            return ResponseEntity.ok(new JSONObject().put("value", pattern));
+
+
+            return ResponseEntity.ok(new JSONObject() {{
+                put("value", pattern.name());
+            }});
         } catch (IllegalStateException | ContractException exception) {
             return ResponseUtils.respondPatternNotIdentified(exception);
         }

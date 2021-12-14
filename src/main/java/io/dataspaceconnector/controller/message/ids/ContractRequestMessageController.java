@@ -169,11 +169,13 @@ public class ContractRequestMessageController {
                 agreementId = result.getProperty(ParameterUtils.AGREEMENT_ID_PARAM, UUID.class);
             } else {
                 final var responseEntity =
-                    toObjectResponse(result.getIn().getBody(ResponseEntity.class));
+                        toObjectResponse(result.getIn().getBody(ResponseEntity.class));
+
+                final var body = new JSONObject();
+                body.put("message", "An error occurred.");
+
                 return Objects.requireNonNullElseGet(responseEntity,
-                        () -> new ResponseEntity<>(
-                                new JSONObject().put("message", "An error occurred."),
-                                HttpStatus.INTERNAL_SERVER_ERROR));
+                        () -> new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR));
             }
 
             // Return response entity containing the locations of the contract agreement, the

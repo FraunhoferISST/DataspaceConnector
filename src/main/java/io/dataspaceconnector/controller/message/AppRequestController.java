@@ -134,11 +134,15 @@ public class AppRequestController {
                 // Remove app if no corresponding data could be downloaded.
                 final var app = appSvc.identifyByRemoteId(appId);
                 app.ifPresent(appSvc::delete);
+
                 if (log.isDebugEnabled()) {
                     log.debug("Failed to download app data. Removed app. [remoteId=({})]", appId);
                 }
-                return ResponseEntity.internalServerError().body(
-                        new JSONObject().put("message", "Could not download app."));
+
+                final var body = new JSONObject();
+                body.put("message", "Could not download app.");
+
+                return ResponseEntity.internalServerError().body(body);
             }
 
             return respondWithCreatedApp(appId);
