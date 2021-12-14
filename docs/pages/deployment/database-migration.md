@@ -26,7 +26,7 @@ __It is highly recommended that you do a back-up of your database before startin
 
 ## How-to
 
-`application.properties`:
+In the `application.properties`:
 ```properties
 spring.flyway.enabled=true
 spring.flyway.baseline-on-migrate=true
@@ -34,16 +34,24 @@ spring.flyway.baseline-version=<your-last-connector-version>
 spring.jpa.hibernate.ddl-auto=validate
 ```
 
-1. Ensure that `spring.flyway.enabled` is set to `true`.
-2. Ensure that `spring.flyway.baseline-on-migrate` is set to true, if your database is not empty
-   before the migration.
-3. Set `spring.flyway.baseline-version` to the last connector version used with the database
+1. __Make a backup of the database, if not already done!__
+2. Set `spring.flyway.enabled` to `true`.
+3. Set `spring.flyway.baseline-on-migrate` to true, if your database is not empty before
+   the migration.
+4. Set `spring.flyway.baseline-version` to the last connector version used with the database
    (omit the `v`, so e.g. `5.0.0`).
-4. Ensure that `spring.jpa.hibernate.ddl-auto` is set to `validate`.
-5. __Make a backup of the database, if not already done!__
+5. Ensure that `spring.jpa.hibernate.ddl-auto` is set to `validate`.
 6. Start the connector.
 
 The connector will then perform the migration on start-up.
+
+The migration should remain enabled after it has been performed once, as new connector versions
+might introduce changes to the database which require another migration.
+
+### Helm
+
+The migration is enabled in the `Helm` charts by default. If you do not want to perform a
+migration, change the respective properties in the `values.yaml`.
 
 ## Manual configurations
 
@@ -74,9 +82,9 @@ Routes that were previously linked to a connector endpoint are now missing eithe
 
 #### Actions to take
 
-If the connector endpoint was the end of the route, the route will not be executable as is.
-It now has to be [linked to an artifact](#how-to-link-routes-and-artifacts) (*output*) in
-order to be deployed as a Camel route.
+If the connector endpoint was the end of the route, the route now has to be
+[linked to an artifact](#how-to-link-routes-and-artifacts) (*output*) in order to be deployed
+as a Camel route.
 
 #### Explanation
 
