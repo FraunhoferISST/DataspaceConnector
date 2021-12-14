@@ -1050,6 +1050,7 @@
 						<configuration>
 							<excludes>
 								<exclude>io/dataspaceconnector/service/message/subscription/*</exclude>
+								<exclude>db/migration/**/*</exclude>
 							</excludes>
 						</configuration>
 						<executions>
