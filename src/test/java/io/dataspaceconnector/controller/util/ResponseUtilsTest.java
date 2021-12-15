@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.controller.util;
 
-import io.dataspaceconnector.common.exception.ErrorMessage;
 import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,17 +34,14 @@ class ResponseUtilsTest {
     @Test
     public void respondIdsMessageFailed_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var msg = ErrorMessage.MESSAGE_HANDLING_FAILED.toString();
-        final var expectedResponse = new ResponseEntity<>(new JSONObject() {{
-            put("message", msg);
-        }}, HttpStatus.INTERNAL_SERVER_ERROR);
+        // nothing to arrange here
 
         /* ACT */
         final var response = ResponseUtils.respondIdsMessageFailed(exception);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
+        assertEquals(500, response.getStatusCodeValue());
     }
 
     @Test
@@ -79,18 +75,14 @@ class ResponseUtilsTest {
     @Test
     public void respondDeserializationError_validUri_returnValidResponseEntity() {
         /* ARRANGE */
-        final var msg = "Resource not found";
         final var resourceId = URI.create("https://requestedResource");
-        final var expectedResponse = new ResponseEntity<>(new JSONObject() {{
-            put("message", msg);
-        }}, HttpStatus.NOT_FOUND);
 
         /* ACT */
         final var response = ResponseUtils.respondResourceNotFound(resourceId);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
+        assertEquals(404, response.getStatusCodeValue());
     }
 
     @Test
@@ -161,17 +153,14 @@ class ResponseUtilsTest {
     @Test
     public void respondConnectionTimedOut_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var msg = ErrorMessage.GATEWAY_TIMEOUT.toString();
-        final var expectedResponse = new ResponseEntity<>(new JSONObject() {{
-            put("message", msg);
-        }}, HttpStatus.GATEWAY_TIMEOUT);
+        // nothing to arrange here
 
         /* ACT */
         final var response = ResponseUtils.respondConnectionTimedOut(exception);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
+        assertEquals(504, response.getStatusCodeValue());
     }
 
     @Test
