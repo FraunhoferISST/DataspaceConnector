@@ -102,7 +102,7 @@ public class Idscp2Config {
      * at least one must be supported by communication peer,
      * comma-separated list.
      */
-    @Value("${idscp2.supported-ra-suites}")
+    @Value("${idscp2.expected-ra-suites}")
     private String expectedRaSuites;
 
     /**

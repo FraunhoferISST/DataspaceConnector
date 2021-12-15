@@ -1,9 +1,7 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
 
     <route id="idscp2Server">
-
-        <!-- TODO: We need a dynamic configuration of RA methods here -->
-        <from uri="idscp2server://0.0.0.0:29292?sslContextParameters=#serverSslContext&amp;useIdsMessages=true&amp;supportedRatSuites=#supportedRaSuites&amp;expectedRatSuites=#expectedRaSuites"/>
+        <from uri="idscp2server://0.0.0.0:29292?sslContextParameters=#serverSslContext&amp;useIdsMessages=true&amp;supportedRaSuites=#supportedRaSuites&amp;expectedRaSuites=#expectedRaSuites"/>
         <log message="${body}"/>
         <process ref="TypeExtractionProcessor"/>
         <process ref="IncomingIdscpMessageParser"/>

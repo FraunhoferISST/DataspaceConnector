@@ -144,7 +144,9 @@ public final class ParameterUtils {
     public static String getIdscp2ClientUri(final String recipient) {
         return "idscp2client://" + recipient + "?awaitResponse=true"
                 + "&sslContextParameters=#serverSslContext"
-                + "&useIdsMessages=true";
+                + "&useIdsMessages=true"
+                + "&supportedRaSuites=#supportedRaSuites"
+                + "&expectedRaSuites=#expectedRaSuites";
     }
 
 }
