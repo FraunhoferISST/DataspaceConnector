@@ -31,7 +31,7 @@ All notable changes to this project will be documented in this file.
 - Increase modelmapper version from 2.4.4 to 2.4.5.
 - Increase equalsverifier version from 3.7.2 to 3.8.
 - Ignore IDS InfoModel version incompatibility for incoming messages.
-- Increase log4j2 version from 2.14.0 to 2.15.0.
+- Increase log4j2 version from 2.14.0 to 2.16.0.
 - Increase springdoc version from 1.5.3 to 1.6.0.
 
 ### Fixed
