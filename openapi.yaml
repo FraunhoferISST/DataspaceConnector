@@ -25,7 +25,7 @@ info:
   license:
     name: "Apache License, Version 2.0"
     url: https://www.apache.org/licenses/LICENSE-2.0.txt
-  version: 6.5.1
+  version: 7.0.0
 servers:
   - url: https://localhost:8080
     description: Generated server url
@@ -36,42 +36,41 @@ tags:
     description: Endpoints for operations on catalogs.
   - name: Subscriptions
     description: Endpoints for operations on subscriptions.
-  - name: Contracts
-    description: Endpoints for operations on contracts.
   - name: Representations
     description: Endpoints for operations on representations.
   - name: Apps
     description: Endpoints for app handling.
   - name: Artifacts
     description: Endpoints for operations on artifacts.
+  - name: _Messaging
+    description: Endpoints for invoke sending messages.
   - name: Endpoints
     description: Endpoints for operations on endpoints.
-  - name: Configurations
-    description: Endpoints for operations on configurations.
-  - name: Messages
-    description: Endpoints for invoke sending messages.
+  - name: _Connector
+    description: Endpoints for general information.
   - name: Rules
     description: Endpoints for operations on rules.
   - name: Offered Resources
     description: Endpoints for operations on offered resources.
   - name: Brokers
     description: Endpoints for operations on brokers.
-  - name: Usage Control
-    description: Endpoints for policy settings.
+  - name: Contracts
+    description: Endpoints for operations on contracts (+ agreements).
+  - name: _Utils
   - name: App Stores
     description: Endpoints for app store handling.
+  - name: _Configurations
+    description: Endpoints for operations on configurations.
   - name: Requested Resources
     description: Endpoints for operations on requested resources.
-  - name: Connector
-    description: Endpoints for connector information.
+  - name: Data Sources
+    description: Endpoints for operations on data sources/sinks.
   - name: Routes
     description: Endpoints for operations on routes.
-  - name: Agreements
+  - name: Routes (Apache Camel)
+    description: Endpoints for dynamically managing Camel routes.
+  - name: Contracts
     description: Endpoints for contract agreement handling.
-  - name: Usage Control
-    description: Endpoints for policy handling.
-  - name: Data Sources/Sinks
-    description: Endpoints for operations on data sources/sinks.
 paths:
   /api/subscriptions/{id}:
     get:
@@ -583,7 +582,7 @@ paths:
           application/json:
             schema:
               type: string
-              format: uuid
+              format: uri
         required: true
       responses:
         "401":
@@ -591,13 +590,13 @@ paths:
           content:
             '*/*':
               schema:
-                type: string
+                type: object
         "204":
           description: No content
           content:
             '*/*':
               schema:
-                type: string
+                type: object
     delete:
       tags:
         - Routes
@@ -616,13 +615,13 @@ paths:
           content:
             '*/*':
               schema:
-                type: string
+                type: object
         "204":
           description: No content
           content:
             '*/*':
               schema:
-                type: string
+                type: object
   /api/routes/{id}/endpoint/end:
     put:
       tags:
@@ -641,7 +640,7 @@ paths:
           application/json:
             schema:
               type: string
-              format: uuid
+              format: uri
         required: true
       responses:
         "401":
@@ -649,13 +648,13 @@ paths:
           content:
             '*/*':
               schema:
-                type: string
+                type: object
         "204":
           description: No content
           content:
             '*/*':
               schema:
-                type: string
+                type: object
     delete:
       tags:
         - Routes
@@ -674,13 +673,13 @@ paths:
           content:
             '*/*':
               schema:
-                type: string
+                type: object
         "204":
           description: No content
           content:
             '*/*':
               schema:
-                type: string
+                type: object
   /api/requests/{id}:
     get:
       tags:
@@ -1932,7 +1931,7 @@ paths:
   /api/notify:
     put:
       tags:
-        - Messages
+        - _Messaging
       summary: Notify all subscribers.
       description: "Can be used to manually notify all subscribers about a resource\
         \ offer, representation, or artifact update."
@@ -1949,25 +1948,25 @@ paths:
         "401":
           description: Unauthorized
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "404":
           description: Not found
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "204":
           description: No Content
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
   /api/endpoints/{id}:
@@ -2080,7 +2079,7 @@ paths:
   /api/datasources/{id}:
     get:
       tags:
-        - Data Sources/Sinks
+        - Data Sources
       summary: Get a base resource by id.
       operationId: get_7
       parameters:
@@ -2105,7 +2104,7 @@ paths:
                 $ref: '#/components/schemas/DataSourceView'
     put:
       tags:
-        - Data Sources/Sinks
+        - Data Sources
       summary: Update a base resource by id.
       operationId: update_7
       parameters:
@@ -2144,7 +2143,7 @@ paths:
                 $ref: '#/components/schemas/DataSourceView'
     delete:
       tags:
-        - Data Sources/Sinks
+        - Data Sources
       summary: Delete a base resource by id.
       operationId: delete_7
       parameters:
@@ -2494,7 +2493,7 @@ paths:
   /api/configurations/{id}:
     get:
       tags:
-        - Configurations
+        - _Configurations
       summary: Get a base resource by id.
       operationId: get_9
       parameters:
@@ -2519,7 +2518,7 @@ paths:
                 $ref: '#/components/schemas/ConfigurationView'
     put:
       tags:
-        - Configurations
+        - _Configurations
       summary: Update a base resource by id.
       operationId: update_9
       parameters:
@@ -2556,7 +2555,7 @@ paths:
                 $ref: '#/components/schemas/ConfigurationView'
     delete:
       tags:
-        - Configurations
+        - _Configurations
       summary: Delete a base resource by id.
       operationId: delete_9
       parameters:
@@ -2574,7 +2573,7 @@ paths:
   /api/configurations/{id}/active:
     put:
       tags:
-        - Configurations
+        - _Configurations
       summary: Update current configuration.
       operationId: setConfiguration
       parameters:
@@ -2588,37 +2587,37 @@ paths:
         "401":
           description: Unauthorized
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "400":
           description: Bad request
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "415":
           description: Unsupported media type
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "204":
           description: No content
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
   /api/configuration/pattern:
     get:
       tags:
-        - Usage Control
+        - _Configurations
       summary: Get pattern validation status.
       description: Return whether unsupported patterns are ignored when requesting
         data.
@@ -2648,7 +2647,7 @@ paths:
                   type: object
     put:
       tags:
-        - Usage Control
+        - _Configurations
       summary: Allow unsupported patterns.
       description: Allow requesting data without policy enforcement if an unsupported
         pattern is recognized.
@@ -2685,7 +2684,7 @@ paths:
   /api/configuration/negotiation:
     get:
       tags:
-        - Usage Control
+        - _Configurations
       summary: Get contract negotiation status.
       operationId: getNegotiationStatus
       responses:
@@ -2713,7 +2712,7 @@ paths:
                   type: object
     put:
       tags:
-        - Usage Control
+        - _Configurations
       summary: Set contract negotiation status.
       operationId: setNegotiationStatus
       parameters:
@@ -3402,39 +3401,94 @@ paths:
         "401":
           description: Unauthorized
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "404":
           description: Not found
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "409":
           description: Conflict
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "400":
           description: Bad request
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
+  /api/utils/enum:
+    post:
+      tags:
+        - _Utils
+      summary: Get a list of enums by value name.
+      operationId: getSpecificEnum
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+              enum:
+                - LOG_LEVEL
+                - CONNECTOR_STATUS
+                - CONNECTOR_DEPLOY_MODE
+                - LANGUAGE
+                - DEPLOY_METHOD
+                - BROKER_STATUS
+                - SECURITY_PROFILE
+                - PAYMENT_METHOD
+        required: true
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  empty:
+                    type: boolean
+                additionalProperties:
+                  type: object
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  empty:
+                    type: boolean
+                additionalProperties:
+                  type: object
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  empty:
+                    type: boolean
+                additionalProperties:
+                  type: object
   /api/subscriptions:
     get:
       tags:
@@ -3728,7 +3782,7 @@ paths:
   /api/ids/unsubscribe:
     post:
       tags:
-        - Messages
+        - _Messaging
       summary: Send an IDS request message for unsubscribe from an element.
       operationId: unsubscribe
       parameters:
@@ -3750,31 +3804,31 @@ paths:
         "401":
           description: Unauthorized
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "417":
           description: Expectation failed
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
   /api/ids/subscribe:
     post:
       tags:
-        - Messages
+        - _Messaging
       summary: Send an IDS request message for subscribing to (meta)data updates.
       operationId: subscribe
       parameters:
@@ -3795,37 +3849,37 @@ paths:
         "401":
           description: Unauthorized
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "502":
           description: Bad gateway
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "417":
           description: Expectation failed
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
   /api/ids/search:
     post:
       tags:
-        - Messages
+        - _Messaging
       summary: Perform full-text search.
       description: Can be used for full text search at an IDS component (e.g. the
         Broker).
@@ -3865,37 +3919,37 @@ paths:
         "504":
           description: Gateway timeout
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "401":
           description: Unauthorized
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "502":
           description: Bad gateway
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
   /api/ids/resource/update:
     post:
       tags:
-        - Messages
+        - _Messaging
       summary: Send an IDS ResourceUpdateMessage.
       description: Can be used to register or update an IDS resource at an IDS Broker
         or consumer connector.
@@ -3919,49 +3973,49 @@ paths:
         "401":
           description: Unauthorized
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "504":
           description: Gateway timeout
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "404":
           description: Not found
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "502":
           description: Bad gateway
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "417":
           description: Expectation failed
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
   /api/ids/resource/unavailable:
     post:
       tags:
-        - Messages
+        - _Messaging
       summary: Send an IDS ResourceUnavailableMessage.
       description: Can be used for e.g. unregistering an IDS resource at an IDS Broker.
       operationId: sendMessage_2
@@ -3984,49 +4038,49 @@ paths:
         "401":
           description: Unauthorized
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "504":
           description: Gateway timeout
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "404":
           description: Not found
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "502":
           description: Bad gateway
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "417":
           description: Expectation failed
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
   /api/ids/query:
     post:
       tags:
-        - Messages
+        - _Messaging
       summary: Send an IDS QueryMessage.
       description: Can be used for querying an IDS component (e.g. the IDS Broker).
       operationId: sendQueryMessage
@@ -4055,43 +4109,43 @@ paths:
         "504":
           description: Gateway timeout
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "401":
           description: Unauthorized
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "502":
           description: Bad gateway
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "417":
           description: Expectation failed
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
   /api/ids/description:
     post:
       tags:
-        - Messages
+        - _Messaging
       summary: Send an IDS DescriptionRequestMessage to query metadata.
       operationId: sendMessage_3
       parameters:
@@ -4113,37 +4167,37 @@ paths:
         "401":
           description: Unauthorized
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "502":
           description: Bad gateway
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "417":
           description: Expectation failed
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
   /api/ids/contract:
     post:
       tags:
-        - Messages
+        - _Messaging
       summary: Send an IDS ContractRequestMessage to start the contract negotiation.
       operationId: sendMessage_4
       parameters:
@@ -4195,49 +4249,49 @@ paths:
         "401":
           description: Unauthorized
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "502":
           description: Bad gateway
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "417":
           description: Expectation failed
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "400":
           description: Bad request
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "201":
           description: Created
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
   /api/ids/connector/update:
     post:
       tags:
-        - Messages
+        - _Messaging
       summary: Send an IDS ConnectorUpdateMessage.
       description: Can be used for registering or updating the connector at an IDS
         Broker.
@@ -4254,43 +4308,43 @@ paths:
         "401":
           description: Unauthorized
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "504":
           description: Gateway timeout
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "502":
           description: Bad gateway
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "417":
           description: Expectation failed
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
   /api/ids/connector/unavailable:
     post:
       tags:
-        - Messages
+        - _Messaging
       summary: Send an IDS ConnectorUnavailableMessage.
       description: Can be used for unregistering the connector at an IDS Broker.
       operationId: sendMessage_6
@@ -4306,43 +4360,43 @@ paths:
         "401":
           description: Unauthorized
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "504":
           description: Gateway timeout
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "502":
           description: Bad gateway
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "417":
           description: Expectation failed
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
   /api/ids/app:
     post:
       tags:
-        - Messages
+        - _Messaging
       summary: Download an IDS app from an IDS AppStore.
       operationId: sendMessage_7
       parameters:
@@ -4364,49 +4418,49 @@ paths:
         "401":
           description: Unauthorized
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "502":
           description: Bad gateway
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "417":
           description: Expectation failed
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "400":
           description: Bad request
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "201":
           description: Created
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
   /api/examples/validation:
     post:
       tags:
-        - Usage Control
+        - _Utils
       summary: Get the policy pattern represented by a given JSON string.
       operationId: getPolicyPattern
       requestBody:
@@ -4420,25 +4474,25 @@ paths:
         "401":
           description: Unauthorized
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            '*/*':
+            application/json:
               schema:
                 type: object
   /api/examples/policy:
     post:
       tags:
-        - Usage Control
+        - _Utils
       summary: Get an example policy for a given policy pattern.
       operationId: getExampleUsagePolicy
       requestBody:
@@ -4462,19 +4516,19 @@ paths:
         "401":
           description: Unauthorized
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "400":
           description: Bad request
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            '*/*':
+            application/ld+json:
               schema:
                 type: object
   /api/endpoints:
@@ -4541,7 +4595,7 @@ paths:
   /api/datasources:
     get:
       tags:
-        - Data Sources/Sinks
+        - Data Sources
       summary: Get a list of base resources with pagination.
       operationId: getAll_7
       parameters:
@@ -4574,7 +4628,7 @@ paths:
                 $ref: '#/components/schemas/PagedModelDataSourceView'
     post:
       tags:
-        - Data Sources/Sinks
+        - Data Sources
       summary: Create a base resource.
       operationId: create_6
       requestBody:
@@ -4659,7 +4713,7 @@ paths:
   /api/configurations:
     get:
       tags:
-        - Configurations
+        - _Configurations
       summary: Get a list of base resources with pagination.
       operationId: getAll_9
       parameters:
@@ -4692,7 +4746,7 @@ paths:
                 $ref: '#/components/schemas/PagedModelConfigurationView'
     post:
       tags:
-        - Configurations
+        - _Configurations
       summary: Create a base resource.
       operationId: create_8
       requestBody:
@@ -4772,6 +4826,48 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/CatalogView'
+  /api/camel/routes:
+    post:
+      tags:
+        - Routes (Apache Camel)
+      summary: Add a route to the Camel context.
+      operationId: addRoutes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - file
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
   /api/brokers:
     get:
       tags:
@@ -4830,6 +4926,42 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/BrokerView'
+  /api/beans:
+    post:
+      tags:
+        - Routes (Apache Camel)
+      summary: Add a bean to the application context.
+      operationId: addBeans
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - file
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
   /api/artifacts:
     get:
       tags:
@@ -4946,6 +5078,25 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/AppStoreView'
+  /api:
+    get:
+      tags:
+        - _Connector
+      summary: Entrypoint for REST resources
+      operationId: root
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RepresentationModelObject'
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RepresentationModelObject'
   /api/subscriptions/owning:
     get:
       tags:
@@ -5289,7 +5440,7 @@ paths:
   /api/connector:
     get:
       tags:
-        - Connector
+        - _Connector
       summary: Get the private IDS self-description.
       operationId: getPrivateSelfDescription
       responses:
@@ -5314,7 +5465,7 @@ paths:
   /api/configurations/active:
     get:
       tags:
-        - Configurations
+        - _Configurations
       summary: Get current configuration.
       operationId: getConfiguration
       responses:
@@ -5330,6 +5481,25 @@ paths:
             application/hal+json:
               schema:
                 $ref: '#/components/schemas/ConfigurationView'
+  /api/camel/routes/error:
+    get:
+      tags:
+        - Routes (Apache Camel)
+      summary: Get new route related errors.
+      operationId: getRouteErrors
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
   /api/brokers/{id}/offers:
     get:
       tags:
@@ -5720,7 +5890,7 @@ paths:
   /api/agreements:
     get:
       tags:
-        - Agreements
+        - Contracts
       summary: Get a list of base resources with pagination.
       operationId: getAll_15
       parameters:
@@ -5754,7 +5924,7 @@ paths:
   /api/agreements/{id}:
     get:
       tags:
-        - Agreements
+        - Contracts
       summary: Get a base resource by id.
       operationId: get_15
       parameters:
@@ -5780,7 +5950,7 @@ paths:
   /api/agreements/{id}/artifacts:
     get:
       tags:
-        - Agreements
+        - Contracts
       summary: Get all children of a base resource with pagination.
       operationId: getResource_25
       parameters:
@@ -5820,7 +5990,7 @@ paths:
   /:
     get:
       tags:
-        - Connector
+        - _Connector
       summary: Get the public IDS self-description.
       operationId: getPublicSelfDescription_1
       responses:
@@ -5837,6 +6007,68 @@ paths:
               schema:
                 type: object
       security: []
+  /api/camel/routes/{routeId}:
+    delete:
+      tags:
+        - Routes (Apache Camel)
+      summary: Delete a route from the Camel context.
+      operationId: removeRoute
+      parameters:
+        - name: routeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+  /api/beans/{beanId}:
+    delete:
+      tags:
+        - Routes (Apache Camel)
+      summary: Remove a bean from the application context.
+      operationId: removeBean
+      parameters:
+        - name: beanId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
 components:
   schemas:
     SubscriptionDesc:
@@ -6434,11 +6666,11 @@ components:
           enum:
             - Productive
             - Test
-        truststoreSettings:
+        truststore:
           $ref: '#/components/schemas/TruststoreDesc'
-        proxySettings:
+        proxy:
           $ref: '#/components/schemas/ProxyDesc'
-        keystoreSettings:
+        keystore:
           $ref: '#/components/schemas/KeystoreDesc'
     KeystoreDesc:
       type: object
@@ -6874,6 +7106,9 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
+            ids:unit:
+              type: string
+              format: uri
             ids:operator:
               type: string
               enum:
@@ -6923,9 +7158,6 @@ components:
                 - https://w3id.org/idsa/code/STRING_IS_CONTAINED
                 - https://w3id.org/idsa/code/TEMPORAL_DISJOINT
                 - https://w3id.org/idsa/code/TEMPORAL_EQUALS
-            ids:unit:
-              type: string
-              format: uri
             ids:leftOperand:
               type: string
               enum:
@@ -6948,10 +7180,10 @@ components:
                 - https://w3id.org/idsa/code/USER
             ids:rightOperand:
               $ref: '#/components/schemas/RdfResource'
-            ids:rightOperandReference:
+            ids:pipEndpoint:
               type: string
               format: uri
-            ids:pipEndpoint:
+            ids:rightOperandReference:
               type: string
               format: uri
             '@type':
@@ -7070,11 +7302,6 @@ components:
           items:
             type: string
             format: uri
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/LogicalConstraint'
         ids:action:
           type: array
           items:
@@ -7098,8 +7325,13 @@ components:
               - https://w3id.org/idsa/code/WRITE
         ids:assetRefinement:
           oneOf:
-            - $ref: '#/components/schemas/Constraint'
             - $ref: '#/components/schemas/LogicalConstraint'
+        ids:constraint:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/Constraint'
+              - $ref: '#/components/schemas/LogicalConstraint'
         ids:description:
           type: array
           items:
@@ -7259,6 +7491,11 @@ components:
           $ref: '#/components/schemas/PageMetadata'
     StreamingResponseBody:
       type: object
+    RepresentationModelObject:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/Links'
     PagedModelSubscriptionView:
       type: object
       properties:
