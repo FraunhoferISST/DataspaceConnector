@@ -3804,25 +3804,25 @@ paths:
         "401":
           description: Unauthorized
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "417":
           description: Expectation failed
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
   /api/ids/subscribe:
@@ -3849,31 +3849,31 @@ paths:
         "401":
           description: Unauthorized
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "502":
           description: Bad gateway
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "417":
           description: Expectation failed
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
   /api/ids/search:
@@ -3919,31 +3919,31 @@ paths:
         "504":
           description: Gateway timeout
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "401":
           description: Unauthorized
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "502":
           description: Bad gateway
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
   /api/ids/resource/update:
@@ -3973,43 +3973,43 @@ paths:
         "401":
           description: Unauthorized
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "504":
           description: Gateway timeout
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "404":
           description: Not found
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "502":
           description: Bad gateway
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "417":
           description: Expectation failed
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
   /api/ids/resource/unavailable:
@@ -4038,43 +4038,43 @@ paths:
         "401":
           description: Unauthorized
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "504":
           description: Gateway timeout
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "404":
           description: Not found
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "502":
           description: Bad gateway
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "417":
           description: Expectation failed
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
   /api/ids/query:
@@ -4109,37 +4109,37 @@ paths:
         "504":
           description: Gateway timeout
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "401":
           description: Unauthorized
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "502":
           description: Bad gateway
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "417":
           description: Expectation failed
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
   /api/ids/description:
@@ -4167,31 +4167,31 @@ paths:
         "401":
           description: Unauthorized
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "502":
           description: Bad gateway
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "417":
           description: Expectation failed
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
   /api/ids/contract:
@@ -4249,43 +4249,43 @@ paths:
         "401":
           description: Unauthorized
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "502":
           description: Bad gateway
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "417":
           description: Expectation failed
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "400":
           description: Bad request
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "201":
           description: Created
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
   /api/ids/connector/update:
@@ -4308,37 +4308,37 @@ paths:
         "401":
           description: Unauthorized
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "504":
           description: Gateway timeout
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "502":
           description: Bad gateway
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "417":
           description: Expectation failed
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
   /api/ids/connector/unavailable:
@@ -4360,37 +4360,37 @@ paths:
         "401":
           description: Unauthorized
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "504":
           description: Gateway timeout
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "502":
           description: Bad gateway
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "417":
           description: Expectation failed
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            application/ld+json:
+            '*/*':
               schema:
                 type: object
   /api/ids/app:
@@ -7158,6 +7158,8 @@ components:
                 - https://w3id.org/idsa/code/STRING_IS_CONTAINED
                 - https://w3id.org/idsa/code/TEMPORAL_DISJOINT
                 - https://w3id.org/idsa/code/TEMPORAL_EQUALS
+            ids:rightOperand:
+              $ref: '#/components/schemas/RdfResource'
             ids:leftOperand:
               type: string
               enum:
@@ -7178,8 +7180,6 @@ components:
                 - https://w3id.org/idsa/code/STATE
                 - https://w3id.org/idsa/code/SYSTEM
                 - https://w3id.org/idsa/code/USER
-            ids:rightOperand:
-              $ref: '#/components/schemas/RdfResource'
             ids:pipEndpoint:
               type: string
               format: uri
@@ -7213,7 +7213,7 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
-            ids:and:
+            ids:xone:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
@@ -7221,7 +7221,7 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
-            ids:xone:
+            ids:and:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
@@ -7302,6 +7302,15 @@ components:
           items:
             type: string
             format: uri
+        ids:assetRefinement:
+          oneOf:
+            - $ref: '#/components/schemas/LogicalConstraint'
+        ids:constraint:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/Constraint'
+              - $ref: '#/components/schemas/LogicalConstraint'
         ids:action:
           type: array
           items:
@@ -7323,15 +7332,6 @@ components:
               - https://w3id.org/idsa/code/TRACK_PROVENANCE
               - https://w3id.org/idsa/code/USE
               - https://w3id.org/idsa/code/WRITE
-        ids:assetRefinement:
-          oneOf:
-            - $ref: '#/components/schemas/LogicalConstraint'
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/Constraint'
-              - $ref: '#/components/schemas/LogicalConstraint'
         ids:description:
           type: array
           items:

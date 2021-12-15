@@ -21,7 +21,6 @@ import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
 import io.dataspaceconnector.common.net.JsonResponse;
-import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.config.ConnectorConfig;
@@ -93,7 +92,7 @@ public class DescriptionRequestMessageController {
      * @param elementId The requested element id.
      * @return The response entity.
      */
-    @PostMapping(value = "/description", produces = ResponseType.JSON_LD)
+    @PostMapping("/description")
     @Operation(summary = "Send an IDS DescriptionRequestMessage to query metadata.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),

@@ -25,7 +25,6 @@ import io.dataspaceconnector.common.exception.RdfBuilderException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.common.ids.policy.RuleUtils;
 import io.dataspaceconnector.common.net.JsonResponse;
-import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.controller.message.tag.MessageDescription;
@@ -129,7 +128,7 @@ public class ContractRequestMessageController {
      * @param ruleList  List of rules that should be used within a contract request.
      * @return The response entity.
      */
-    @PostMapping(value = "/contract", produces = ResponseType.JSON_LD)
+    @PostMapping("/contract")
     @Operation(summary = "Send an IDS ContractRequestMessage to start the contract negotiation.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),

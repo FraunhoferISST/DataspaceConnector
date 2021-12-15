@@ -101,7 +101,7 @@ public class MainController {
      *
      * @return Http ok.
      */
-    @GetMapping(value = "/api")
+    @GetMapping("/api")
     @Operation(summary = "Entrypoint for REST resources")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     public ResponseEntity<RepresentationModel<?>> root() {
