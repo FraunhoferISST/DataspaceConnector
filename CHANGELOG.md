@@ -2,6 +2,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [6.5.2] - 2021-12-15
+
+### Changed
+- Increase log4j version to 2.16.0.
+
 ## [6.5.1] - 2021-11-09
 
 ### Changed
