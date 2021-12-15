@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.routing;
 
+import io.dataspaceconnector.common.net.JsonResponse;
 import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.controller.routing.tag.CamelDescription;
 import io.dataspaceconnector.controller.routing.tag.CamelName;
@@ -27,7 +28,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -88,32 +88,28 @@ public class BeansController {
             }
 
             final var xml = new String(file.getBytes(), StandardCharsets.UTF_8);
-            final var numberOfBeans =
-                    beanReader.loadBeanDefinitions(new InputSource(new StringReader(xml)));
+            final var num = beanReader.loadBeanDefinitions(new InputSource(new StringReader(xml)));
 
             if (log.isInfoEnabled()) {
-                log.info("Added {} beans to the application context.", numberOfBeans);
+                log.info("Added {} beans to the application context.", num);
             }
 
-            return new ResponseEntity<>(new JSONObject() {{
-                put("message", "Successfully added " + numberOfBeans
-                        + " beans to application context.");
-            }}, HttpStatus.OK);
+            return new JsonResponse("Successfully added " + num + " beans to application context.")
+                    .create(HttpStatus.OK);
         } catch (IllegalArgumentException | IOException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Could not read XML file because file was null.");
             }
-            return new ResponseEntity<>(new JSONObject() {{
-                put("message", "File must not be null.");
-            }}, HttpStatus.BAD_REQUEST);
+
+            return new JsonResponse("File must not be null.").create(HttpStatus.BAD_REQUEST);
         } catch (BeanDefinitionStoreException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Could not read bean(s) from XML file. [exception=({})]",
                         e.getMessage(), e);
             }
-            return new ResponseEntity<>(new JSONObject() {{
-                put("message", "Could not add beans to application context.");
-            }}, HttpStatus.BAD_REQUEST);
+
+            return new JsonResponse("Could not add beans to application context.")
+                    .create(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -133,17 +129,16 @@ public class BeansController {
                 log.info("Removed bean from the application context. [id=({})]", beanId);
             }
 
-            return new ResponseEntity<>(new JSONObject() {{
-                put("message", "Successfully removed bean " + "with ID " + beanId + " .");
-            }}, HttpStatus.OK);
+            return new JsonResponse("Successfully removed bean " + "with ID " + beanId + " .")
+                    .create(HttpStatus.OK);
         } catch (NoSuchBeanDefinitionException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Could not remove bean from application context. "
                         + "[id=({}), exception=({})]", beanId, e.getMessage(), e);
             }
-            return new ResponseEntity<>(new JSONObject() {{
-                put("message", "No bean found with ID " + beanId + " .");
-            }}, HttpStatus.BAD_REQUEST);
+
+            return new JsonResponse("No bean found with ID " + beanId + " .")
+                    .create(HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -20,6 +20,7 @@ import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
+import io.dataspaceconnector.common.net.JsonResponse;
 import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.common.util.Utils;
@@ -36,7 +37,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import net.minidev.json.JSONObject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
@@ -120,14 +120,9 @@ public class DescriptionRequestMessageController {
             if (response != null) {
                 payload = response.getBody();
             } else {
-                final var responseEntity =
-                        toObjectResponse(result.getIn().getBody(ResponseEntity.class));
-
-                final var body = new JSONObject();
-                body.put("message", "An error occurred.");
-
-                return Objects.requireNonNullElseGet(responseEntity,
-                        () -> new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR));
+                final var body = toObjectResponse(result.getIn().getBody(ResponseEntity.class));
+                return Objects.requireNonNullElseGet(body, () -> new JsonResponse(
+                        "An error occurred.").create(HttpStatus.INTERNAL_SERVER_ERROR));
             }
         } else {
             try {

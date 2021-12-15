@@ -16,8 +16,8 @@
 package io.dataspaceconnector.controller.exceptionhandler;
 
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
+import io.dataspaceconnector.common.net.JsonResponse;
 import lombok.extern.log4j.Log4j2;
-import net.minidev.json.JSONObject;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,23 +37,20 @@ public final class UnexpectedResponseExceptionHandler {
     /**
      * Handles thrown runtime exception with response code 417.
      *
-     * @param exception The thrown exception.
+     * @param e The thrown exception.
      * @return Response entity with code 417.
      */
     @ExceptionHandler(UnexpectedResponseException.class)
-    public ResponseEntity<Object> handleAnyException(final UnexpectedResponseException exception) {
+    public ResponseEntity<Object> handleException(final UnexpectedResponseException e) {
+        final var msg = "Received unexpected response message.";
         if (log.isDebugEnabled()) {
-            log.debug("Received unexpected response message. [exception=({})]", exception == null
-                    ? "" : exception.getMessage(), exception);
+            log.debug(msg + " [exception=({})]", e == null ? "" : e.getMessage(), e);
         }
 
         final var headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        final var body = new JSONObject();
-        body.put("message", "Received unexpected response message.");
-        body.put("details", exception == null ? "" : exception.getContent());
-
-        return new ResponseEntity<>(body, headers, HttpStatus.EXPECTATION_FAILED);
+        return new JsonResponse(msg, e == null ? "" : e.getContent())
+                .create(headers, HttpStatus.EXPECTATION_FAILED);
     }
 }

@@ -39,7 +39,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import net.minidev.json.JSONObject;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -135,14 +134,7 @@ public class AppRequestController {
                 final var app = appSvc.identifyByRemoteId(appId);
                 app.ifPresent(appSvc::delete);
 
-                if (log.isDebugEnabled()) {
-                    log.debug("Failed to download app data. Removed app. [remoteId=({})]", appId);
-                }
-
-                final var body = new JSONObject();
-                body.put("message", "Could not download app.");
-
-                return ResponseEntity.internalServerError().body(body);
+                return ResponseUtils.respondAppNotDownloaded(appId);
             }
 
             return respondWithCreatedApp(appId);

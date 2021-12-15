@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.routing;
 
+import io.dataspaceconnector.common.net.JsonResponse;
 import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.controller.routing.tag.CamelDescription;
 import io.dataspaceconnector.controller.routing.tag.CamelName;
@@ -27,7 +28,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import net.minidev.json.JSONObject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RoutesDefinition;
@@ -94,33 +94,30 @@ public class RoutesController {
                 log.info("Added {} routes to the Camel Context.", routes.getRoutes().size());
             }
 
-            return new ResponseEntity<>(new JSONObject() {{
-                put("message", "Successfully added " + routes.getRoutes().size()
-                        + " routes to Camel Context.");
-            }}, HttpStatus.OK);
+            return new JsonResponse("Successfully added " + routes.getRoutes().size()
+                    + " routes to Camel Context.").create(HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Could not read XML file because file was null.");
             }
-            return new ResponseEntity<>(new JSONObject() {{
-                put("message", "File must not be null.");
-            }}, HttpStatus.BAD_REQUEST);
+
+            return new JsonResponse("File must not be null.").create(HttpStatus.BAD_REQUEST);
         } catch (JAXBException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Could not read route(s) from XML file. [exception=({})]",
                         e.getMessage(), e);
             }
-            return new ResponseEntity<>(new JSONObject() {{
-                put("message", "Could not read route(s) from XML file.");
-            }}, HttpStatus.BAD_REQUEST);
+
+            return new JsonResponse("Could not read route(s) from XML file.")
+                    .create(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not add route(s) to Camel Context. [exception=({})]",
                         e.getMessage(), e);
             }
-            return new ResponseEntity<>(new JSONObject() {{
-                put("message", "Could not add route(s) to Camel Context.");
-            }}, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return new JsonResponse("Could not add route(s) to Camel Context.")
+                    .create(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -148,17 +145,16 @@ public class RoutesController {
                         routeId);
             }
 
-            return new ResponseEntity<>(new JSONObject() {{
-                put("message", "Successfully stopped and removed route with ID " + routeId + " .");
-            }}, HttpStatus.OK);
+            return new JsonResponse("Successfully stopped and removed route " + routeId + " .")
+                    .create(HttpStatus.OK);
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not remove route from Camel context. [id=({}), "
                         + "exception=({})]", routeId, e.getMessage(), e);
             }
-            return new ResponseEntity<>(new JSONObject() {{
-                put("message", "Could not stop or remove route.");
-            }}, HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return new JsonResponse("Could not stop or remove route.")
+                    .create(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

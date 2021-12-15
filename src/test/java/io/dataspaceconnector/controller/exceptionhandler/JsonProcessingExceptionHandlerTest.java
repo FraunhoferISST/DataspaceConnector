@@ -34,7 +34,7 @@ public class JsonProcessingExceptionHandlerTest {
         final var exception = new JsonProcessingException("Some problem"){};
 
         /* ACT */
-        final var result = handler.handleJsonProcessingException(exception);
+        final var result = handler.handleException(exception);
 
         /* ASSERT */
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
@@ -46,7 +46,7 @@ public class JsonProcessingExceptionHandlerTest {
         final var exception = new JsonProcessingException("Some problem"){};
 
         /* ACT */
-        final var result = handler.handleJsonProcessingException(exception);
+        final var result = handler.handleException(exception);
 
         /* ASSERT */
         assertEquals(MediaType.APPLICATION_JSON, result.getHeaders().getContentType());
@@ -61,7 +61,7 @@ public class JsonProcessingExceptionHandlerTest {
         final var exception = new JsonProcessingException("Some problem"){};
 
         /* ACT */
-        final var result = handler.handleJsonProcessingException(exception);
+        final var result = handler.handleException(exception);
 
         /* ASSERT */
         assertEquals(body, result.getBody());
@@ -74,7 +74,7 @@ public class JsonProcessingExceptionHandlerTest {
         body.put("message", "Invalid input.");
 
         /* ACT */
-        final var result = handler.handleJsonProcessingException(null);
+        final var result = handler.handleException(null);
 
         /* ASSERT */
         assertEquals(body, result.getBody());

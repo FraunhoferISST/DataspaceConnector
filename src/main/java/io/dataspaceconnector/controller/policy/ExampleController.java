@@ -18,6 +18,7 @@ package io.dataspaceconnector.controller.policy;
 import io.dataspaceconnector.common.exception.ContractException;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.policy.RuleUtils;
+import io.dataspaceconnector.common.net.JsonResponse;
 import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.controller.policy.util.PatternUtils;
 import io.dataspaceconnector.controller.util.ResponseCode;
@@ -42,7 +43,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import net.minidev.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -87,10 +87,7 @@ public class ExampleController {
             final var rule = deserializationService.getRule(ruleAsString);
             final var pattern = RuleUtils.getPatternByRule(rule);
 
-
-            return ResponseEntity.ok(new JSONObject() {{
-                put("value", pattern.name());
-            }});
+            return new JsonResponse(null, null, pattern.name()).create(HttpStatus.OK);
         } catch (IllegalStateException | ContractException exception) {
             return ResponseUtils.respondPatternNotIdentified(exception);
         }

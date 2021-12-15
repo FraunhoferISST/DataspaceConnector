@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.controller.exceptionhandler;
 
+import io.dataspaceconnector.common.net.JsonResponse;
 import lombok.extern.log4j.Log4j2;
-import net.minidev.json.JSONObject;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,23 +37,19 @@ public class AccessDeniedExceptionHandler {
     /**
      * Handles thrown {@link AccessDeniedException}.
      *
-     * @param exception The thrown exception.
+     * @param e The thrown exception.
      * @return A http response.
      */
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<JSONObject> handleAccessDeniedException(
-            final AccessDeniedException exception) {
+    public ResponseEntity<Object> handleException(final AccessDeniedException e) {
+        final var msg = "Unable to retrieve valid DAT.";
         if (log.isWarnEnabled()) {
-            log.warn("Invalid DAT. [exception=({})]", exception == null ? ""
-                    : exception.getMessage());
+            log.warn(msg + " [exception=({})]", e == null ? "" : e.getMessage());
         }
 
         final var headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        final var body = new JSONObject();
-        body.put("message", "Unable to retrieve valid DAT.");
-
-        return new ResponseEntity<>(body, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new JsonResponse(msg).create(headers, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
