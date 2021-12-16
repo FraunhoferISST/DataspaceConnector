@@ -226,7 +226,7 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
                 }
             } else {
                 final var mediaType = artifact.getRepresentations().get(0).getMediaType();
-                return MediaType.parseMediaType("application/" + mediaType);
+                return MediaType.parseMediaType(mediaType);
             }
         } catch (ResourceNotFoundException | InvalidMediaTypeException e) {
             if (log.isDebugEnabled()) {
