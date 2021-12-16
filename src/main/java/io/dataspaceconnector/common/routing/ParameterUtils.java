@@ -145,8 +145,8 @@ public final class ParameterUtils {
         return "idscp2client://" + recipient + "?awaitResponse=true"
                 + "&sslContextParameters=#serverSslContext"
                 + "&useIdsMessages=true"
-                + "&supportedRaSuites=#supportedRaSuites"
-                + "&expectedRaSuites=#expectedRaSuites";
+                + "&supportedRaSuites=#supportedRaSuitesClient"
+                + "&expectedRaSuites=#expectedRaSuitesClient";
     }
 
 }

@@ -33,7 +33,9 @@ class ParameterUtilsTest {
         assertEquals(
                 "idscp2client://" + recipient + "?awaitResponse=true"
                 + "&sslContextParameters=#serverSslContext"
-                + "&useIdsMessages=true",
+                + "&useIdsMessages=true"
+                + "&supportedRaSuites=#supportedRaSuitesClient"
+                + "&expectedRaSuites=#expectedRaSuitesClient",
                 result
         );
     }

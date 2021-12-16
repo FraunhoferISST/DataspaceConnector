@@ -91,36 +91,69 @@ public class Idscp2Config {
     private String cmcHost;
 
     /**
-     * IDSCP2 Remote Attestation mechanisms supported by this connector,
-     * comma-separated list.
+     * IDSCP2 Server Remote Attestation mechanisms supported by this connector,
+     * pipe-separated list.
      */
-    @Value("${idscp2.supported-ra-suites}")
-    private String supportedRaSuites;
+    @Value("${idscp2.supported-ra-suites-server}")
+    private String supportedRaSuitesServer;
 
     /**
-     * Expected IDSCP2 Remote Attestation mechanisms, of which
+     * Expected IDSCP2 Server Remote Attestation mechanisms, of which
      * at least one must be supported by communication peer,
-     * comma-separated list.
+     * pipe-separated list.
      */
-    @Value("${idscp2.expected-ra-suites}")
-    private String expectedRaSuites;
+    @Value("${idscp2.expected-ra-suites-server}")
+    private String expectedRaSuitesServer;
 
     /**
      * Getter for Spring Bean registration of supported RA suites.
-     * @return Supported RA suites
+     * @return Server-supported RA suites
      */
-    @Bean("supportedRaSuites")
-    public String getSupportedRaSuites() {
-        return supportedRaSuites;
+    @Bean("supportedRaSuitesServer")
+    public String getSupportedRaSuitesServer() {
+        return supportedRaSuitesServer;
     }
 
     /**
      * Getter for Spring Bean registration of expected RA suites.
-     * @return Expected RA suites
+     * @return Server-expected RA suites
      */
-    @Bean("expectedRaSuites")
-    public String getExpectedRaSuites() {
-        return expectedRaSuites;
+    @Bean("expectedRaSuitesServer")
+    public String getExpectedRaSuitesServer() {
+        return expectedRaSuitesServer;
+    }
+
+    /**
+     * IDSCP2 Client Remote Attestation mechanisms supported by this connector,
+     * pipe-separated list.
+     */
+    @Value("${idscp2.supported-ra-suites-client}")
+    private String supportedRaSuitesClient;
+
+    /**
+     * Expected IDSCP2 Client Remote Attestation mechanisms, of which
+     * at least one must be supported by communication peer,
+     * pipe-separated list.
+     */
+    @Value("${idscp2.expected-ra-suites-client}")
+    private String expectedRaSuitesClient;
+
+    /**
+     * Getter for Spring Bean registration of supported RA suites.
+     * @return Client-supported RA suites
+     */
+    @Bean("supportedRaSuitesClient")
+    public String getSupportedRaSuitesClient() {
+        return supportedRaSuitesClient;
+    }
+
+    /**
+     * Getter for Spring Bean registration of expected RA suites.
+     * @return Client-expected RA suites
+     */
+    @Bean("expectedRaSuitesClient")
+    public String getExpectedRaSuitesClient() {
+        return expectedRaSuitesClient;
     }
 
     /**
