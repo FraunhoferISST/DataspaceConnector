@@ -19,7 +19,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.Language;
 import de.fraunhofer.iais.eis.SecurityProfile;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.configuration.DeployMode;
@@ -32,7 +31,6 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Locale;
 
 /**
  * The class can be used to define auxiliary methods that are needed again and again.
@@ -47,43 +45,42 @@ public final class GuiUtils {
     /**
      * The method returns for a given enum name all enum values.
      *
-     * @param enumName name of the enum.
+     * @param type name of the enum.
      * @return enums as string.
      */
-    @SuppressFBWarnings("IMPROPER_UNICODE")
-    public static String getSpecificEnum(final String enumName) {
-        JSONArray sortedJsonArray = null;
+    public static JSONObject getListOfEnumsByType(final EnumType type) {
+        var object = new JSONObject();
 
-        switch (enumName.toLowerCase(Locale.ENGLISH)) {
-            case "loglevel":
-                sortedJsonArray = getLogLevel();
+        switch (type) {
+            case LOG_LEVEL:
+                object.put(EnumType.LOG_LEVEL.toString(), getLogLevel());
                 break;
-            case "connectorstatus":
-                sortedJsonArray = getConnectorStatus();
+            case CONNECTOR_STATUS:
+                object.put(EnumType.CONNECTOR_STATUS.toString(), getConnectorStatus());
                 break;
-            case "connectordeploymode":
-                sortedJsonArray = getConnectorDeployMode();
+            case CONNECTOR_DEPLOY_MODE:
+                object.put(EnumType.CONNECTOR_DEPLOY_MODE.toString(), getConnectorDeployMode());
                 break;
-            case "language":
-                sortedJsonArray = getLanguage();
+            case LANGUAGE:
+                object.put(EnumType.LANGUAGE.toString(), getLanguage());
                 break;
-            case "deploymethod":
-                sortedJsonArray = getDeployMethod();
+            case DEPLOY_METHOD:
+                object.put(EnumType.DEPLOY_METHOD.toString(), getDeployMethod());
                 break;
-            case "brokerstatus":
-                sortedJsonArray = getBrokerStatus();
+            case BROKER_STATUS:
+                object.put(EnumType.BROKER_STATUS.toString(), getBrokerStatus());
                 break;
-            case "securityprofile":
-                sortedJsonArray = getSecurityProfile();
+            case SECURITY_PROFILE:
+                object.put(EnumType.SECURITY_PROFILE.toString(), getSecurityProfile());
                 break;
-            case "paymentmethod":
-                sortedJsonArray = getPaymentMethod();
+            case PAYMENT_METHOD:
+                object.put(EnumType.PAYMENT_METHOD.toString(), getPaymentMethod());
                 break;
             default:
                 break;
         }
 
-        return sortedJsonArray != null ? sortedJsonArray.toJSONString() : null;
+        return object;
     }
 
     private static JSONArray getPaymentMethod() {
@@ -97,9 +94,8 @@ public final class GuiUtils {
                     put("representation", paymentMethod.getRepresentation());
                 }});
             } catch (NoSuchFieldException e) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Missing JsonProperty found for paymentMethod. "
-                            + "[exception=({})]", e.getMessage());
+                if (log.isDebugEnabled()) {
+                    log.debug("Missing JsonProperty found for paymentMethod.");
                 }
             }
         }
@@ -169,9 +165,8 @@ public final class GuiUtils {
                             .getAnnotation(JsonProperty.class).value());
                 }});
             } catch (NoSuchFieldException e) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Missing JsonProperty found for connectorDeployMode. "
-                            + "[exception=({})]", e.getMessage());
+                if (log.isDebugEnabled()) {
+                    log.debug("Missing JsonProperty found for connectorDeployMode.");
                 }
             }
         }
@@ -201,9 +196,8 @@ public final class GuiUtils {
                             .getAnnotation(JsonProperty.class).value());
                 }});
             } catch (NoSuchFieldException e) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Missing JsonProperty found for logLevel. [exception=({})]",
-                            e.getMessage());
+                if (log.isDebugEnabled()) {
+                    log.debug("Missing JsonProperty found for logLevel.");
                 }
             }
         }
@@ -235,8 +229,8 @@ public final class GuiUtils {
                     str1 = (String) a.get(KEY_NAME);
                     str2 = (String) b.get(KEY_NAME);
                 } catch (JSONException e) {
-                    if (log.isWarnEnabled()) {
-                        log.warn("Sorting array of enums failed. [exception=({})]", e.getMessage());
+                    if (log.isErrorEnabled()) {
+                        log.error("Sorting contents of an array failed.");
                     }
                 }
                 return str1.compareTo(str2);

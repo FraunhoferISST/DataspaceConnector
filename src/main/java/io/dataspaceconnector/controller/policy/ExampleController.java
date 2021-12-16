@@ -18,8 +18,8 @@ package io.dataspaceconnector.controller.policy;
 import io.dataspaceconnector.common.exception.ContractException;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.policy.RuleUtils;
-import io.dataspaceconnector.controller.policy.tag.PolicyDescription;
-import io.dataspaceconnector.controller.policy.tag.PolicyName;
+import io.dataspaceconnector.common.net.JsonResponse;
+import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.controller.policy.util.PatternUtils;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
@@ -42,6 +42,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,14 +54,14 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * This class provides endpoints exposing example resources and configurations.
  */
+@Log4j2
 @RestController
 @ApiResponses(value = {
         @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
         @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
                 description = ResponseDescription.UNAUTHORIZED)})
-
 @RequestMapping("/api/examples")
-@Tag(name = PolicyName.POLICIES, description = PolicyDescription.POLICIES)
+@Tag(name = "_Utils")
 @RequiredArgsConstructor
 public class ExampleController {
     /**
@@ -77,14 +78,16 @@ public class ExampleController {
     @Operation(summary = "Get the policy pattern represented by a given JSON string.")
     @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
             description = ResponseDescription.INTERNAL_SERVER_ERROR)
-    @PostMapping("/validation")
+    @PostMapping(value = "/validation", produces = ResponseType.JSON)
     @ResponseBody
     public ResponseEntity<Object> getPolicyPattern(
             @Parameter(description = "The JSON string representing a policy.", required = true)
             @RequestBody final String ruleAsString) {
         try {
             final var rule = deserializationService.getRule(ruleAsString);
-            return ResponseEntity.ok(RuleUtils.getPatternByRule(rule));
+            final var pattern = RuleUtils.getPatternByRule(rule);
+
+            return new JsonResponse(null, null, pattern.name()).create(HttpStatus.OK);
         } catch (IllegalStateException | ContractException exception) {
             return ResponseUtils.respondPatternNotIdentified(exception);
         }
@@ -99,14 +102,16 @@ public class ExampleController {
     @Operation(summary = "Get an example policy for a given policy pattern.")
     @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
             description = ResponseDescription.BAD_REQUEST)
-    @PostMapping("/policy")
+    @PostMapping(value = "/policy", produces = ResponseType.JSON_LD)
     @ResponseBody
     public ResponseEntity<Object> getExampleUsagePolicy(@RequestBody final PatternDesc input) {
         try {
             if (input instanceof PermissionDesc) {
-                return ResponseEntity.ok(PatternUtils.buildProvideAccessRule().toRdf());
+                final var policy = PatternUtils.buildProvideAccessRule((PermissionDesc) input);
+                return ResponseEntity.ok(policy.toRdf());
             } else if (input instanceof ProhibitionDesc) {
-                return ResponseEntity.ok(PatternUtils.buildProhibitAccessRule().toRdf());
+                final var policy = PatternUtils.buildProhibitAccessRule((ProhibitionDesc) input);
+                return ResponseEntity.ok(policy.toRdf());
             } else if (input instanceof UsageNumberDesc) {
                 final var policy = PatternUtils.buildNTimesUsageRule((UsageNumberDesc) input);
                 return ResponseEntity.ok(policy.toRdf());
@@ -120,7 +125,8 @@ public class ExampleController {
                 final var policy = PatternUtils.buildUsageUntilDeletionRule((DeletionDesc) input);
                 return ResponseEntity.ok(policy.toRdf());
             } else if (input instanceof LoggingDesc) {
-                return ResponseEntity.ok(PatternUtils.buildUsageLoggingRule().toRdf());
+                final var policy = PatternUtils.buildUsageLoggingRule((LoggingDesc) input);
+                return ResponseEntity.ok(policy.toRdf());
             } else if (input instanceof NotificationDesc) {
                 final var policy = PatternUtils.buildUsageNotificationRule(
                         (NotificationDesc) input);
@@ -136,8 +142,11 @@ public class ExampleController {
             } else {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-        } catch (Exception exception) {
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Could not resolve pattern. [exception=({})]", e.getMessage());
+            }
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -143,8 +143,7 @@ if data != dataValue:
 data = consumerResources.get_data(first_artifact).text
 pprint.pprint(data)
 
-expectedErorMessage = """{"message":"A policy restriction has been detected."}"""
-if data != expectedErorMessage:
+if data == dataValue:
     exit(1)
 
 exit(0)

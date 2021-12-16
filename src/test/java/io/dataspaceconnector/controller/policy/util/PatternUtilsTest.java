@@ -25,7 +25,10 @@ import io.dataspaceconnector.model.pattern.ConnectorRestrictionDesc;
 import io.dataspaceconnector.model.pattern.DeletionDesc;
 import io.dataspaceconnector.model.pattern.DurationDesc;
 import io.dataspaceconnector.model.pattern.IntervalDesc;
+import io.dataspaceconnector.model.pattern.LoggingDesc;
 import io.dataspaceconnector.model.pattern.NotificationDesc;
+import io.dataspaceconnector.model.pattern.PermissionDesc;
+import io.dataspaceconnector.model.pattern.ProhibitionDesc;
 import io.dataspaceconnector.model.pattern.UsageNumberDesc;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
@@ -48,7 +51,7 @@ public class PatternUtilsTest {
        // Nothing to arrange here.
 
        /* ACT */
-       final var rule = PatternUtils.buildProvideAccessRule();
+       final var rule = PatternUtils.buildProvideAccessRule(new PermissionDesc());
 
        /* ASSERT */
        Assertions.assertTrue(Permission.class.isAssignableFrom(rule.getClass()));
@@ -63,7 +66,7 @@ public class PatternUtilsTest {
        // Nothing to arrange here.
 
        /* ACT */
-       final var rule = PatternUtils.buildProhibitAccessRule();
+       final var rule = PatternUtils.buildProhibitAccessRule(new ProhibitionDesc());
 
        /* ASSERT */
        Assertions.assertTrue(Prohibition.class.isAssignableFrom(rule.getClass()));
@@ -220,7 +223,7 @@ public class PatternUtilsTest {
        // Nothing to arrange here.
 
        /* ACT */
-       final var rule = PatternUtils.buildUsageLoggingRule();
+       final var rule = PatternUtils.buildUsageLoggingRule(new LoggingDesc());
 
        /* ASSERT */
        Assertions.assertTrue(Permission.class.isAssignableFrom(rule.getClass()));

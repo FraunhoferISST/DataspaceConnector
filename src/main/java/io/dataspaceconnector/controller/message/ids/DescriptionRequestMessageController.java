@@ -20,6 +20,7 @@ import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
+import io.dataspaceconnector.common.net.JsonResponse;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.config.ConnectorConfig;
@@ -118,11 +119,9 @@ public class DescriptionRequestMessageController {
             if (response != null) {
                 payload = response.getBody();
             } else {
-                final var responseEntity =
-                    toObjectResponse(result.getIn().getBody(ResponseEntity.class));
-                return Objects.requireNonNullElseGet(responseEntity,
-                        () -> new ResponseEntity<Object>("An internal server error occurred.",
-                                HttpStatus.INTERNAL_SERVER_ERROR));
+                final var body = toObjectResponse(result.getIn().getBody(ResponseEntity.class));
+                return Objects.requireNonNullElseGet(body, () -> new JsonResponse(
+                        "An error occurred.").create(HttpStatus.INTERNAL_SERVER_ERROR));
             }
         } else {
             try {
