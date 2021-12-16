@@ -114,7 +114,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
      * @param appId The id of app for which related appstores should be found.
      * @return The app store.
      */
-    @GetMapping("/{id}/appstore")
+    @GetMapping(value = "/{id}/appstore", produces = ContentType.HAL)
     @Operation(summary = "Get appstore by app id", description = "Get appstore holding this app.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
@@ -191,9 +191,10 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
             final var responseBody = response.body();
 
             if (response.isSuccessful() && responseBody != null) {
-                return ResponseEntity.ok(responseBody.string());
+                return new JsonResponse(null, null, responseBody.string()).create(HttpStatus.OK);
             } else if (responseBody != null) {
-                return ResponseEntity.internalServerError().body(responseBody.string());
+                return new JsonResponse("Response was null.", responseBody.string())
+                        .create(HttpStatus.OK);
             } else {
                 return new JsonResponse("Response not successful.")
                         .create(HttpStatus.INTERNAL_SERVER_ERROR);

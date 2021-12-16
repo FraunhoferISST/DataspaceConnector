@@ -18,6 +18,7 @@ package io.dataspaceconnector.common.net;
 import net.minidev.json.JSONObject;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 /**
@@ -105,6 +106,9 @@ public class JsonResponse {
      * @return the built response entity.
      */
     public ResponseEntity<Object> create(final HttpStatus status) {
-        return new ResponseEntity<>(body, status);
+        final var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return new ResponseEntity<>(body, headers, status);
     }
 }

@@ -39,7 +39,9 @@ import io.dataspaceconnector.service.resource.type.BrokerService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -321,7 +323,10 @@ public class GlobalMessageService {
         final var header = response.get().getUnderlyingMessage();
         final var payload = response.get().getReceivedPayload();
         if (header.getClass().equals(msgType)) {
-            return new ResponseEntity<>(payload, HttpStatus.OK);
+            final var headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("application/json+ld"));
+
+            return new ResponseEntity<>(payload, headers, HttpStatus.OK);
         }
 
         // If response message is not of predefined type.

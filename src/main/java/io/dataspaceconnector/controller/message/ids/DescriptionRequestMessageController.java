@@ -20,6 +20,7 @@ import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.message.MessageUtils;
+import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.common.net.JsonResponse;
 import io.dataspaceconnector.common.routing.ParameterUtils;
 import io.dataspaceconnector.common.util.Utils;
@@ -39,7 +40,9 @@ import lombok.RequiredArgsConstructor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -141,7 +144,11 @@ public class DescriptionRequestMessageController {
                 return ResponseUtils.respondWithContent(e.getContent());
             }
         }
-        return new ResponseEntity<>(convertToAnswer(elementId, payload), HttpStatus.OK);
+
+        final var headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(ContentType.JSON_LD));
+
+        return new ResponseEntity<>(convertToAnswer(elementId, payload), headers, HttpStatus.OK);
     }
 
     private String convertToAnswer(final URI elementId, final String payload) {
