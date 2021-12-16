@@ -31,6 +31,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.net.URI;
@@ -38,6 +39,8 @@ import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.UUID;
 
+import static io.dataspaceconnector.model.config.DatabaseConstants.ADDITIONAL_KEY_LENGTH;
+import static io.dataspaceconnector.model.config.DatabaseConstants.ADDITIONAL_VALUE_LENGTH;
 import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
@@ -86,6 +89,8 @@ public class Entity implements Serializable {
      */
     @ElementCollection(fetch = FetchType.EAGER)
     @Setter(AccessLevel.PACKAGE)
+    @MapKeyColumn(name = "key", length = ADDITIONAL_KEY_LENGTH)
+    @Column(name = "value", length = ADDITIONAL_VALUE_LENGTH)
     private Map<String, String> additional;
 
     /**
