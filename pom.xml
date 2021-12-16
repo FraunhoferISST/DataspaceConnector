@@ -810,6 +810,7 @@
 						<licenseSet>
 							<header>scripts/ci/license/header.txt</header>
 							<excludes>
+								<exclude>mvn-local/**</exclude>
 								<exclude>**/README</exclude>
 								<exclude>src/test/resources/**</exclude>
 								<exclude>src/main/resources/**</exclude>

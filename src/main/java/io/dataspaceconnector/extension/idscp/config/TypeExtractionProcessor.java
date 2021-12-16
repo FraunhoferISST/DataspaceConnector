@@ -1,24 +1,59 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.dataspaceconnector.extension.idscp.config;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.ArtifactRequestMessage;
+import de.fraunhofer.iais.eis.ArtifactResponseMessage;
+import de.fraunhofer.iais.eis.ContractAgreementMessage;
+import de.fraunhofer.iais.eis.ContractOfferMessage;
+import de.fraunhofer.iais.eis.ContractRejectionMessage;
+import de.fraunhofer.iais.eis.ContractRequestMessage;
+import de.fraunhofer.iais.eis.ContractResponseMessage;
+import de.fraunhofer.iais.eis.Message;
+import de.fraunhofer.iais.eis.RejectionMessage;
+import de.fraunhofer.iais.eis.ResourceUpdateMessage;
+import lombok.extern.log4j.Log4j2;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class TypeExtractionProcessor implements Processor {
-    private final Logger LOG = LoggerFactory.getLogger(TypeExtractionProcessor.class);
+/**
+ * Processor for identifying the kind of IDS message and makes it available via a Camel property.
+ */
+@Log4j2
+public final class TypeExtractionProcessor implements Processor {
+    /**
+     * Name/Key of IDSCP2 header field.
+     */
     @SuppressWarnings("FieldCanBeLocal")
-    private final String IDSCP2_HEADER = "idscp2-header";
+    private final String idscp2HeaderName = "idscp2-header";
+    /**
+     * Name/Key of IDS message type property.
+     */
     @SuppressWarnings("FieldCanBeLocal")
-    private final String IDS_TYPE = "ids-type";
+    private final String idsTypePropertyName = "ids-type";
 
+    /**
+     * Processor that identifies the kind of IDS message
+     * and makes it available via a Camel property.
+     * @param exchange The Camel Exchange to be processed
+     * @throws Exception On error
+     */
     @Override
-    public void process(Exchange exchange) throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("[IN] " + TypeExtractionProcessor.class.getSimpleName());
-        }
-        final var header = exchange.getMessage().getHeader(IDSCP2_HEADER, Message.class);
+    public void process(final Exchange exchange) throws Exception {
+        final var header = exchange.getMessage().getHeader(idscp2HeaderName, Message.class);
         final String messageType;
         if (header instanceof ArtifactRequestMessage) {
             messageType = ArtifactRequestMessage.class.getSimpleName();
@@ -43,9 +78,9 @@ public class TypeExtractionProcessor implements Processor {
         } else {
             messageType = "null";
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Detected ids-type: {}", messageType);
+        if (log.isDebugEnabled()) {
+            log.debug("Detected ids-type: {}", messageType);
         }
-        exchange.setProperty(IDS_TYPE, messageType);
+        exchange.setProperty(idsTypePropertyName, messageType);
     }
 }
