@@ -244,7 +244,7 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      * @return Http Status ok.
      * @throws IOException if the data could not be stored.
      */
-    @PutMapping(value = "{id}/data", consumes = "*/*")
+    @PutMapping(value = "{id}/data", consumes = "application/octet-stream")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     public ResponseEntity<Void> putData(
             @Valid @PathVariable(name = "id") final UUID artifactId,
