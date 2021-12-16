@@ -2,3 +2,4 @@
 !pom.xml
 !src/main/**
 !target/*.jar
+!mvn-local

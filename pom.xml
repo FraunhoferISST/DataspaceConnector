@@ -111,6 +111,7 @@
 		<velocity.version>1.7</velocity.version>
 		<idscp2-tpm2d.version>0.2.2</idscp2-tpm2d.version>
 		<idscp2-cmc.version>0.8.0</idscp2-cmc.version>
+		<grpc-netty.version>1.42.1</grpc-netty.version>
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
@@ -543,6 +544,18 @@
 			<version>${idscp2-cmc.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-netty</artifactId>
+			<version>${grpc-netty.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-jul</artifactId>
+			<version>${log4j2.version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<repositories>
@@ -579,17 +592,17 @@
 			</releases>
 		</repository>
 		<!-- Enables usage of locally published artifacts -->
-<!--		<repository>
+		<repository>
 			<id>maven-local</id>
 			<name>Local m2 Repository</name>
-			<url>file://~/.m2/repository</url>
+			<url>file://mvn-local</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
-		</repository>-->
+		</repository>
 	</repositories>
 
 	<dependencyManagement>

@@ -29,7 +29,6 @@
         <Logger name="camel-route-logger" level="info"/>
 <!--        <Logger name="de.fhg.aisec.ids.idscp2" level="TRACE" />-->
 <!--        <Logger name="de.fhg.aisec.ids.camel.idscp2" level="TRACE" />-->
-<!--        <Logger name="de.fhg.aisec.ids.tpm2d" level="TRACE" />-->
 <!--        <Logger name="de.fhg.aisec.ids.cmc" level="TRACE" />-->
     </Loggers>
 </Configuration>

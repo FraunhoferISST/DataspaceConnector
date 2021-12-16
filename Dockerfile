@@ -18,6 +18,7 @@
 FROM maven:3-eclipse-temurin-17 AS builder
 WORKDIR /app
 COPY pom.xml .
+COPY mvn-local ./mvn-local
 ## Dependencies
 RUN mvn -e -B dependency:resolve && \
     mvn -e -B dependency:resolve-plugins
@@ -51,7 +52,8 @@ WORKDIR /app
 COPY --from=builder /app/spring-boot-loader/ ./
 COPY --from=builder /app/dependencies/ ./
 COPY --from=builder /app/application/ ./
+COPY src/main/resources/conf ./src/main/resources/conf
 EXPOSE 8080
 EXPOSE 29292
 USER nonroot
-ENTRYPOINT ["java","org.springframework.boot.loader.JarLauncher"]
+ENTRYPOINT ["java","org.springframework.boot.loader.JarLauncher","-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager"]
