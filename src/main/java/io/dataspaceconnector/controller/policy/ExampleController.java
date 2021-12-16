@@ -19,7 +19,7 @@ import io.dataspaceconnector.common.exception.ContractException;
 import io.dataspaceconnector.common.ids.DeserializationService;
 import io.dataspaceconnector.common.ids.policy.RuleUtils;
 import io.dataspaceconnector.common.net.JsonResponse;
-import io.dataspaceconnector.common.net.ResponseType;
+import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.controller.policy.util.PatternUtils;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
@@ -78,7 +78,7 @@ public class ExampleController {
     @Operation(summary = "Get the policy pattern represented by a given JSON string.")
     @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
             description = ResponseDescription.INTERNAL_SERVER_ERROR)
-    @PostMapping(value = "/validation", produces = ResponseType.JSON)
+    @PostMapping(value = "/validation", produces = ContentType.JSON)
     @ResponseBody
     public ResponseEntity<Object> getPolicyPattern(
             @Parameter(description = "The JSON string representing a policy.", required = true)
@@ -102,7 +102,7 @@ public class ExampleController {
     @Operation(summary = "Get an example policy for a given policy pattern.")
     @ApiResponse(responseCode = ResponseCode.BAD_REQUEST,
             description = ResponseDescription.BAD_REQUEST)
-    @PostMapping(value = "/policy", produces = ResponseType.JSON_LD)
+    @PostMapping(value = "/policy", produces = ContentType.JSON_LD)
     @ResponseBody
     public ResponseEntity<Object> getExampleUsagePolicy(@RequestBody final PatternDesc input) {
         try {

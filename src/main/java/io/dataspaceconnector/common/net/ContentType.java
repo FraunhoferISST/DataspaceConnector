@@ -18,7 +18,7 @@ package io.dataspaceconnector.common.net;
 /**
  * The descriptions of the type of a REST response body.
  */
-public final class ResponseType {
+public final class ContentType {
 
     /**
      * Response type json.
@@ -35,7 +35,12 @@ public final class ResponseType {
      */
     public static final String HAL = "application/hal+json";
 
-    private ResponseType() {
+    /**
+     * Response type json hal.
+     */
+    public static final String OCTET_STREAM = "application/octet-stream";
+
+    private ContentType() {
         // Nothing to do here.
     }
 }

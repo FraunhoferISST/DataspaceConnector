@@ -16,7 +16,7 @@
 package io.dataspaceconnector.controller;
 
 import io.dataspaceconnector.common.ids.ConnectorService;
-import io.dataspaceconnector.common.net.ResponseType;
+import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.type.AgreementController;
 import io.dataspaceconnector.controller.resource.type.AppController;
@@ -72,7 +72,7 @@ public class MainController {
      * @return Self-description or error response.
      */
     @SecurityRequirements
-    @GetMapping(value = {"/", ""}, produces = ResponseType.JSON_LD)
+    @GetMapping(value = {"/", ""}, produces = ContentType.JSON_LD)
     @Operation(summary = "Get the public IDS self-description.")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     @ResponseBody
@@ -85,7 +85,7 @@ public class MainController {
      *
      * @return Self-description or error response.
      */
-    @GetMapping(value = "/api/connector", produces = ResponseType.JSON_LD)
+    @GetMapping(value = "/api/connector", produces = ContentType.JSON_LD)
     @Operation(summary = "Get the private IDS self-description.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),

@@ -22,7 +22,7 @@ import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.RdfBuilderException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
-import io.dataspaceconnector.common.net.ResponseType;
+import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.controller.message.tag.MessageDescription;
 import io.dataspaceconnector.controller.message.tag.MessageName;
 import io.dataspaceconnector.controller.resource.view.app.AppViewAssembler;
@@ -96,7 +96,7 @@ public class AppRequestController {
      * @param appId     The app Id.
      * @return Success, when app can be found and created from recipient response.
      */
-    @PostMapping(value = "/app", produces = ResponseType.JSON)
+    @PostMapping(value = "/app", produces = ContentType.JSON)
     @Operation(summary = "Download an IDS app from an IDS AppStore.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),

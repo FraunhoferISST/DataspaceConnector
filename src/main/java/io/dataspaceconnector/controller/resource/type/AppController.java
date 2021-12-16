@@ -19,7 +19,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.AppNotDeployedException;
 import io.dataspaceconnector.common.exception.PortainerNotConfigured;
 import io.dataspaceconnector.common.net.JsonResponse;
-import io.dataspaceconnector.common.net.ResponseType;
+import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.BaseResourceController;
 import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
@@ -135,7 +135,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
      * @return Response depending on the action on an app.
      */
     @SuppressFBWarnings("IMPROPER_UNICODE")
-    @PutMapping(value = "/{id}/actions", produces = ResponseType.JSON)
+    @PutMapping(value = "/{id}/actions", produces = ContentType.JSON)
     @Operation(summary = "Actions on apps", description = "Can be used for managing apps.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),

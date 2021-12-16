@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.routing.error;
 
-import io.dataspaceconnector.common.net.ResponseType;
+import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.controller.routing.tag.CamelDescription;
 import io.dataspaceconnector.controller.routing.tag.CamelName;
 import io.dataspaceconnector.controller.util.ResponseCode;
@@ -67,7 +67,7 @@ public class ErrorController {
      *
      * @return Response-Code and all logged Route-Errors.
      */
-    @GetMapping(value = "/error", produces = ResponseType.JSON)
+    @GetMapping(value = "/error", produces = ContentType.JSON)
     @Operation(summary = "Get new route related errors.")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,

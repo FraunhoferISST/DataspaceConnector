@@ -18,6 +18,7 @@ package io.dataspaceconnector.controller.resource.type;
 import de.fraunhofer.ids.messaging.protocol.UnexpectedResponseException;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.net.QueryInput;
+import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.common.routing.dataretrieval.RetrievalInformation;
 import io.dataspaceconnector.common.util.ValidationUtils;
 import io.dataspaceconnector.config.BasePath;
@@ -244,7 +245,7 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      * @return Http Status ok.
      * @throws IOException if the data could not be stored.
      */
-    @PutMapping(value = "{id}/data", consumes = "application/octet-stream")
+    @PutMapping(value = "{id}/data", consumes = ContentType.OCTET_STREAM)
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     public ResponseEntity<Void> putData(
             @Valid @PathVariable(name = "id") final UUID artifactId,
