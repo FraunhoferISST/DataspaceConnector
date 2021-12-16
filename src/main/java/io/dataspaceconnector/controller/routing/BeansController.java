@@ -15,11 +15,12 @@
  */
 package io.dataspaceconnector.controller.routing;
 
+import io.dataspaceconnector.common.net.JsonResponse;
+import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.controller.routing.tag.CamelDescription;
 import io.dataspaceconnector.controller.routing.tag.CamelName;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -78,37 +79,37 @@ public class BeansController {
      * @param file the XML file.
      * @return a response entity with code 200 or 500, if an error occurs.
      */
-    @Hidden
-    @PostMapping
+    @PostMapping(produces = ResponseType.JSON)
     @Operation(summary = "Add a bean to the application context.")
-    public ResponseEntity<String> addBeans(@RequestParam("file") final MultipartFile file) {
+    public ResponseEntity<Object> addBeans(@RequestParam("file") final MultipartFile file) {
         try {
             if (file == null) {
                 throw new IllegalArgumentException("File must not be null.");
             }
 
             final var xml = new String(file.getBytes(), StandardCharsets.UTF_8);
-            final var numberOfBeans =
-                    beanReader.loadBeanDefinitions(new InputSource(new StringReader(xml)));
+            final var num = beanReader.loadBeanDefinitions(new InputSource(new StringReader(xml)));
 
             if (log.isInfoEnabled()) {
-                log.info("Added {} beans to the application context.", numberOfBeans);
+                log.info("Added {} beans to the application context.", num);
             }
 
-            return new ResponseEntity<>("Successfully added " + numberOfBeans
-                    + " beans to application context.", HttpStatus.OK);
+            return new JsonResponse("Successfully added " + num + " beans to application context.")
+                    .create(HttpStatus.OK);
         } catch (IllegalArgumentException | IOException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Could not read XML file because file was null.");
             }
-            return new ResponseEntity<>("File must not be null.", HttpStatus.BAD_REQUEST);
+
+            return new JsonResponse("File must not be null.").create(HttpStatus.BAD_REQUEST);
         } catch (BeanDefinitionStoreException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Could not read bean(s) from XML file. [exception=({})]",
                         e.getMessage(), e);
             }
-            return new ResponseEntity<>("Could not add beans to application context.",
-                    HttpStatus.BAD_REQUEST);
+
+            return new JsonResponse("Could not add beans to application context.")
+                    .create(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -118,10 +119,9 @@ public class BeansController {
      * @param beanId the bean ID.
      * @return a response entity with code 200 or 500, if an error occurs.
      */
-    @Hidden
-    @DeleteMapping("/{beanId}")
+    @DeleteMapping(value = "/{beanId}", produces = ResponseType.JSON)
     @Operation(summary = "Remove a bean from the application context.")
-    public ResponseEntity<String> removeBean(@PathVariable("beanId") final String beanId) {
+    public ResponseEntity<Object> removeBean(@PathVariable("beanId") final String beanId) {
         try {
             beanRegistry.removeBeanDefinition(beanId);
 
@@ -129,15 +129,16 @@ public class BeansController {
                 log.info("Removed bean from the application context. [id=({})]", beanId);
             }
 
-            return new ResponseEntity<>("Successfully removed bean with ID " + beanId + " .",
-                    HttpStatus.OK);
+            return new JsonResponse("Successfully removed bean " + "with ID " + beanId + " .")
+                    .create(HttpStatus.OK);
         } catch (NoSuchBeanDefinitionException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Could not remove bean from application context. "
                         + "[id=({}), exception=({})]", beanId, e.getMessage(), e);
             }
-            return new ResponseEntity<>("No bean found with ID " + beanId + " .",
-                    HttpStatus.BAD_REQUEST);
+
+            return new JsonResponse("No bean found with ID " + beanId + " .")
+                    .create(HttpStatus.BAD_REQUEST);
         }
     }
 

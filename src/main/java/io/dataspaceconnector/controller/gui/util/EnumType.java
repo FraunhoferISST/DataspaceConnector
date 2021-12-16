@@ -13,24 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.policy.tag;
+package io.dataspaceconnector.controller.gui.util;
 
 /**
- * The descriptions of tags for policies.
+ * Provides enum types that should be listed at the GUI.
  */
-public final class PolicyDescription {
+public enum EnumType {
 
     /**
-     * Tag description for policies.
+     * The log level.
      */
-    public static final String POLICIES = "Endpoints for policy handling.";
+    LOG_LEVEL,
 
     /**
-     * Tag description for policy settings.
+     * The connector status.
      */
-    public static final String POLICY_SETTINGS = "Endpoints for policy settings.";
+    CONNECTOR_STATUS,
 
-    private PolicyDescription() {
-        // Nothing to do here.
-    }
+    /**
+     * The connector deploy mode.
+     */
+    CONNECTOR_DEPLOY_MODE,
+
+    /**
+     * The language.
+     */
+    LANGUAGE,
+
+    /**
+     * The deploy method of data routes.
+     */
+    DEPLOY_METHOD,
+
+    /**
+     * The broker status.
+     */
+    BROKER_STATUS,
+
+    /**
+     * The security profile.
+     */
+    SECURITY_PROFILE,
+
+    /**
+     * The payment method.
+     */
+    PAYMENT_METHOD
 }

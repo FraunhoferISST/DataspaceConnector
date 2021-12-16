@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.controller.exceptionhandler;
 
+import io.dataspaceconnector.common.net.JsonResponse;
 import lombok.extern.log4j.Log4j2;
-import net.minidev.json.JSONObject;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,7 +40,7 @@ public final class GlobalExceptionHandler {
      * @return Response entity with code 500.
      */
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<JSONObject> handleAnyException(final RuntimeException exception) {
+    public ResponseEntity<Object> handleException(final RuntimeException exception) {
         if (log.isErrorEnabled()) {
             log.error("An unhandled exception has been caught. [exception=({})]",
                     exception == null ? "Passed null as exception" : exception.getMessage(),
@@ -51,9 +51,7 @@ public final class GlobalExceptionHandler {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("X-Error", "true");
 
-        final var body = new JSONObject();
-        body.put("message", "An error occurred. Please try again later.");
-
-        return new ResponseEntity<>(body, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new JsonResponse("An error occurred. Please try again later.")
+                .create(headers, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

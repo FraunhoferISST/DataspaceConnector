@@ -53,7 +53,7 @@ public final class ResourceName {
     /**
      * Tag name for agreements.
      */
-    public static final String AGREEMENTS = "Agreements";
+    public static final String AGREEMENTS = "Contracts";
 
     /**
      * Tag name for artifacts.
@@ -78,12 +78,12 @@ public final class ResourceName {
     /**
      * Tag name for configurations.
      */
-    public static final String CONFIGURATIONS = "Configurations";
+    public static final String CONFIGURATIONS = "_Configurations";
 
     /**
      * Tag name for data sources/sinks.
      */
-    public static final String DATA_SOURCES = "Data Sources/Sinks";
+    public static final String DATA_SOURCES = "Data Sources";
 
     /**
      * Tag name for endpoints.

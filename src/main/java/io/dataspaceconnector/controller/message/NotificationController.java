@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller.message;
 
+import io.dataspaceconnector.common.net.ResponseType;
 import io.dataspaceconnector.controller.message.tag.MessageDescription;
 import io.dataspaceconnector.controller.message.tag.MessageName;
 import io.dataspaceconnector.controller.util.ResponseUtils;
@@ -68,7 +69,7 @@ public class NotificationController {
      * @param elementId The entity id.
      * @return The response entity.
      */
-    @PutMapping("/notify")
+    @PutMapping(value = "/notify", produces = ResponseType.JSON)
     @Operation(summary = "Notify all subscribers.", description = "Can be used to manually notify "
             + "all subscribers about a resource offer, representation, or artifact update.")
     @ApiResponses(value = {

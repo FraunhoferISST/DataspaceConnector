@@ -94,7 +94,7 @@ public class RouteController extends BaseResourceController<Route, RouteDesc, Ro
      */
     @PutMapping("{id}/endpoint/start")
     @Operation(summary = "Creates the start endpoint for a route.")
-    public ResponseEntity<String> createStartEndpoint(
+    public ResponseEntity<Object> createStartEndpoint(
             @Valid @PathVariable(name = "id") final UUID routeId,
             @RequestBody final URI endpointId) {
         getService().setStartEndpoint(routeId, UUIDUtils.uuidFromUri(endpointId));
@@ -107,7 +107,7 @@ public class RouteController extends BaseResourceController<Route, RouteDesc, Ro
      */
     @DeleteMapping("{id}/endpoint/start")
     @Operation(summary = "Deletes the start endpoint of a route.")
-    public ResponseEntity<String> deleteStartEndpoint(
+    public ResponseEntity<Object> deleteStartEndpoint(
             @Valid @PathVariable(name = "id") final UUID routeId) {
         getService().removeStartEndpoint(routeId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -120,7 +120,7 @@ public class RouteController extends BaseResourceController<Route, RouteDesc, Ro
      */
     @PutMapping("{id}/endpoint/end")
     @Operation(summary = "Creates the last endpoint for the route.")
-    public ResponseEntity<String> createLastEndpoint(
+    public ResponseEntity<Object> createLastEndpoint(
             @Valid @PathVariable(name = "id") final UUID routeId,
             @RequestBody final URI endpointId) {
         getService().setLastEndpoint(routeId, UUIDUtils.uuidFromUri(endpointId));
@@ -133,7 +133,7 @@ public class RouteController extends BaseResourceController<Route, RouteDesc, Ro
      */
     @DeleteMapping("{id}/endpoint/end")
     @Operation(summary = "Deletes the start endpoint of the route.")
-    public ResponseEntity<String> deleteLastEndpoint(
+    public ResponseEntity<Object> deleteLastEndpoint(
             @Valid @PathVariable(name = "id") final UUID routeId) {
         getService().removeLastEndpoint(routeId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

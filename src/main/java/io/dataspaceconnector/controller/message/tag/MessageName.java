@@ -23,7 +23,7 @@ public final class MessageName {
     /**
      * Tag name for messages.
      */
-    public static final String MESSAGES = "Messages";
+    public static final String MESSAGES = "_Messaging";
 
     private MessageName() {
         // Nothing to do here.

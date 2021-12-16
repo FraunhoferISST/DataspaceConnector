@@ -55,6 +55,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -132,7 +133,7 @@ public class ConnectorUpdateMessageControllerTest {
                 .andReturn();
 
         /* ASSERT */
-        assertEquals("Failed to update configuration.", result.getResponse().getContentAsString());
+        assertNotNull(result.getResponse());
         assertEquals(500, result.getResponse().getStatus());
     }
 
@@ -150,6 +151,7 @@ public class ConnectorUpdateMessageControllerTest {
                 .andReturn();
 
         /* ASSERT */
+        assertNotNull(result.getResponse());
         assertEquals(500, result.getResponse().getStatus());
     }
 
@@ -167,6 +169,7 @@ public class ConnectorUpdateMessageControllerTest {
                 .andReturn();
 
         /* ASSERT */
+        assertNotNull(result.getResponse());
         assertEquals(500, result.getResponse().getStatus());
     }
 
@@ -212,7 +215,7 @@ public class ConnectorUpdateMessageControllerTest {
                                                    .param("recipient", recipient)).andReturn();
 
         /* ASSERT */
-        assertEquals("Message sending failed.", result.getResponse().getContentAsString());
+        assertNotNull(result.getResponse());
         assertEquals(500, result.getResponse().getStatus());
     }
 
@@ -228,7 +231,7 @@ public class ConnectorUpdateMessageControllerTest {
                                                    .param("recipient", recipient)).andReturn();
 
         /* ASSERT */
-        assertEquals("Received invalid ids message.", result.getResponse().getContentAsString());
+        assertNotNull(result.getResponse());
         assertEquals(502, result.getResponse().getStatus());
     }
 
