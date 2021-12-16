@@ -20,7 +20,7 @@ With version 7.0.0, the Dataspace Connector can migrate its database to the curr
 This is possible starting from version 5.0.0. If enabled, the migration is performed by the
 connector on start-up. This guide will explain step by step how to use the migration feature.
 
-!!! warning __The migration is written for *PostgreSQL* and has not been tested with other databases!__
+__The migration is written for *PostgreSQL* and has not been tested with other databases!__
 
 __It is highly recommended that you do a back-up of your database before starting the migration!__
 
