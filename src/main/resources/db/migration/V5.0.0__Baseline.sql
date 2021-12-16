@@ -1,7 +1,7 @@
 CREATE TABLE public.agreement (
     id uuid NOT NULL,
     created_date timestamp without time zone NOT NULL,
-    deleted boolean,
+    deleted boolean DEFAULT false,
     modified_date timestamp without time zone NOT NULL,
     archived boolean NOT NULL,
     confirmed boolean NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE public.artifact (
     dtype character varying(31) NOT NULL,
     id uuid NOT NULL,
     created_date timestamp without time zone NOT NULL,
-    deleted boolean,
+    deleted boolean DEFAULT false,
     modified_date timestamp without time zone NOT NULL,
     automated_download boolean NOT NULL,
     byte_size bigint NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE public.artifact_additional (
 CREATE TABLE public.catalog (
     id uuid NOT NULL,
     created_date timestamp without time zone NOT NULL,
-    deleted boolean,
+    deleted boolean DEFAULT false,
     modified_date timestamp without time zone NOT NULL,
     description character varying(255),
     title character varying(255)
@@ -70,7 +70,7 @@ CREATE TABLE public.catalog_requested_resources (
 CREATE TABLE public.contract (
     id uuid NOT NULL,
     created_date timestamp without time zone NOT NULL,
-    deleted boolean,
+    deleted boolean DEFAULT false,
     modified_date timestamp without time zone NOT NULL,
     consumer bytea,
     contract_end timestamp without time zone,
@@ -100,7 +100,7 @@ CREATE TABLE public.contract_rules (
 CREATE TABLE public.contractrule (
     id uuid NOT NULL,
     created_date timestamp without time zone NOT NULL,
-    deleted boolean,
+    deleted boolean DEFAULT false,
     modified_date timestamp without time zone NOT NULL,
     remote_id bytea,
     title character varying(255),
@@ -110,7 +110,7 @@ CREATE TABLE public.contractrule (
 CREATE TABLE public.data (
     dtype character varying(31) NOT NULL,
     id bigint NOT NULL,
-    deleted boolean,
+    deleted boolean DEFAULT false,
     value oid,
     access_url character varying(255),
     password character varying(255),
@@ -129,7 +129,7 @@ CREATE SEQUENCE public.hibernate_sequence
 CREATE TABLE public.representation (
     id uuid NOT NULL,
     created_date timestamp without time zone NOT NULL,
-    deleted boolean,
+    deleted boolean DEFAULT false,
     modified_date timestamp without time zone NOT NULL,
     language character varying(255),
     media_type character varying(255),
@@ -153,7 +153,7 @@ CREATE TABLE public.resource (
     dtype character varying(31) NOT NULL,
     id uuid NOT NULL,
     created_date timestamp without time zone NOT NULL,
-    deleted boolean,
+    deleted boolean DEFAULT false,
     modified_date timestamp without time zone NOT NULL,
     description character varying(255),
     endpoint_documentation bytea,

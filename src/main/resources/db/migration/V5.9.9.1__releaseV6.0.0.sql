@@ -1,7 +1,7 @@
 CREATE TABLE public.authentication (
     dtype character varying(31) NOT NULL,
     id bigint NOT NULL,
-    deleted boolean,
+    deleted boolean DEFAULT false,
     password character varying(255),
     username character varying(255),
     key character varying(255),
