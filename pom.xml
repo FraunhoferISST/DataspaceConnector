@@ -112,6 +112,7 @@
 		<idscp2-tpm2d.version>0.2.2</idscp2-tpm2d.version>
 		<idscp2-cmc.version>0.8.1</idscp2-cmc.version>
 		<grpc-netty.version>1.42.1</grpc-netty.version>
+		<netty.version>4.1.72.Final</netty.version>
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
@@ -542,6 +543,13 @@
 			<groupId>de.fhg.aisec.ids</groupId>
 			<artifactId>idscp2-ra-cmc</artifactId>
 			<version>${idscp2-cmc.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-bom</artifactId>
+			<version>${netty.version}</version>
+			<type>pom</type>
 		</dependency>
 
 		<dependency>
