@@ -23,7 +23,7 @@ import org.flywaydb.core.api.migration.BaseJavaMigration;
 import org.flywaydb.core.api.migration.Context;
 
 /**
- * Performs migration operations for v6.5.0 in addition to the migration script.
+ * Performs migration operations for v7.0.0 in addition to the migration script.
  */
 @SuppressWarnings("typename")
 public class V7_0_0__releaseV7_0_0 extends BaseJavaMigration {
