@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.policy;
 
-import io.dataspaceconnector.common.net.ResponseType;
+import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceName;
@@ -64,7 +64,7 @@ public class SettingsController {
      * @param status The desired state.
      * @return Http ok or error response.
      */
-    @PutMapping(value = "/negotiation", produces = ResponseType.JSON)
+    @PutMapping(value = "/negotiation", produces = ContentType.JSON)
     @Operation(summary = "Set contract negotiation status.")
     @ResponseBody
     public ResponseEntity<JSONObject> setNegotiationStatus(
@@ -78,7 +78,7 @@ public class SettingsController {
      *
      * @return Http ok or error response.
      */
-    @GetMapping(value = "/negotiation", produces = ResponseType.JSON)
+    @GetMapping(value = "/negotiation", produces = ContentType.JSON)
     @Operation(summary = "Get contract negotiation status.")
     @ResponseBody
     public ResponseEntity<JSONObject> getNegotiationStatus() {
@@ -97,7 +97,7 @@ public class SettingsController {
      * @param status The desired state.
      * @return Http ok or error response.
      */
-    @PutMapping(value = "/pattern", produces = ResponseType.JSON)
+    @PutMapping(value = "/pattern", produces = ContentType.JSON)
     @Operation(summary = "Allow unsupported patterns.", description = "Allow requesting data "
             + "without policy enforcement if an unsupported pattern is recognized.")
     @ResponseBody
@@ -112,7 +112,7 @@ public class SettingsController {
      *
      * @return Http ok or error response.
      */
-    @GetMapping(value = "/pattern", produces = ResponseType.JSON)
+    @GetMapping(value = "/pattern", produces = ContentType.JSON)
     @Operation(summary = "Get pattern validation status.",
             description = "Return whether unsupported patterns are ignored when requesting data.")
     @ResponseBody

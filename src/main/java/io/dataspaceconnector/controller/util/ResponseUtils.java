@@ -21,7 +21,9 @@ import io.dataspaceconnector.common.net.JsonResponse;
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import lombok.extern.log4j.Log4j2;
 import org.apache.camel.Exchange;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
@@ -308,7 +310,10 @@ public final class ResponseUtils {
     public static ResponseEntity<Object> respondWithExchangeContent(final Exchange exchange) {
         final var response = exchange.getIn().getBody(Response.class);
         if (response != null) {
-            return ResponseEntity.ok(response.getBody());
+            final var headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("application/json+ld"));
+
+            return new ResponseEntity<>(response.getBody(), headers, HttpStatus.OK);
         } else {
             final var body = toObjectResponse(exchange.getIn().getBody(ResponseEntity.class));
             return Objects.requireNonNullElseGet(body, () -> new JsonResponse("An error occurred.")

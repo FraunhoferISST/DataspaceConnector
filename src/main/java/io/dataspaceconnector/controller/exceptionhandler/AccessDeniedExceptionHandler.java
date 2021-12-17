@@ -18,9 +18,7 @@ package io.dataspaceconnector.controller.exceptionhandler;
 import io.dataspaceconnector.common.net.JsonResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -47,9 +45,6 @@ public class AccessDeniedExceptionHandler {
             log.warn(msg + " [exception=({})]", e == null ? "" : e.getMessage());
         }
 
-        final var headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        return new JsonResponse(msg).create(headers, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new JsonResponse(msg).create(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
