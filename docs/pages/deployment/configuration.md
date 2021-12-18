@@ -503,19 +503,47 @@ shacl.validation=true
 
 ---
 
+### IDSCP2 Usage and Remote Attestation
+
 As the IDS Messaging Services provide the connector with the ability to communicate via IDS multipart
-messages, the IDSCPv2 dependency allows to send and receive the same messages via the IDSCP
-protocol. For this and the underlying Camel, some more settings need to be set and can be modified
-accordingly:
+messages, the IDSCP2 dependency allows to send and receive the same messages via the IDSCP2
+protocol. For this and the underlying Apache Camel framework, some more settings need to be set
+and can be modified accordingly:
 
 ```properties
-## Camel
-camel.springboot.main-run-controller=true
-camel.truststore.path=classpath:conf/truststore.p12
-
-## IDSCP
-application.http.base-url=https://localhost:8080
+## IDSCP2
 idscp2.enabled=false
-idscp2.keystore=./src/main/resources/conf/keystore-localhost.p12
+idscp2.keystore=./src/main/resources/conf/cert.p12
 idscp2.truststore=./src/main/resources/conf/truststore.p12
+
+## IDSCP2 CMC RA
+## Expected and featured RA suites of server/client routes in the DSC
+idscp2.supported-ra-suites-server=Dummy|CMC
+idscp2.expected-ra-suites-server=Dummy
+idscp2.supported-ra-suites-client=Dummy|CMC
+idscp2.expected-ra-suites-client=CMC
+## Set this to the IP address or hostname the machine/container running the cmcd
+idscp2.cmc-host=172.22.0.1
 ```
+
+Setting `idscp2.enabled` to `true` will activate IDSCP2 support, using the default port 29292 as
+IDSCP2 server port.
+
+The `idscp2.[keystore/truststore]` properties define paths to the keystore and truststore in use.
+The provided example keystore (`cert.p12`) is issued for hostname `consumer-core`, which has to be
+set in `docker-compose.yml`, or elsewhere, accordingly.
+
+The `idscp2.[supported/expected]-ra-suites-[client/server]` properties specify the supported and
+expected remote attestation mechanisms for client and server, respectively.
+The default configuration specifies both the "Dummy" remote "attestation" (with does nothing), and
+the remote attestation using the CMC (Container Measurement Component), whereas the client expects
+the server to supply CMC RA, and the server does not request RA from the client.
+If you want to use remote attestation via the CMC, please consult the [README in the CMC Repo](https://github.com/Fraunhofer-AISEC/cmc) for setup directions.
+
+In order for the IDSCP2 RA adapter to communicate with the CMC, the host (and optionally port)
+of the CMC server has to be specified via the `idscp2.cmc-host` property. This can be a little
+tricky in containerized environments, the example specifies a typical host IP address in a
+Docker (Compose) network, but _sould **NOT** be expected to work out of the box!_
+Please use `docker inspect` or similar to check the actual subnet and modify the property
+accordingly! Another port but the default port 9955 can optionally be specified using the format
+`<host/ip>:<port>`.
