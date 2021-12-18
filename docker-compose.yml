@@ -32,7 +32,10 @@ services:
   connector:
     build:
       context: .
+    # Must be "consumer-core" for IDSCP2 test setup to work properly with cert.p12
     container_name: 'connector-container'
+    volumes:
+      - ./src/main/resources/conf:/app/src/main/resources/conf
     ports:
       - 8080:8080
       - 29292:29292
