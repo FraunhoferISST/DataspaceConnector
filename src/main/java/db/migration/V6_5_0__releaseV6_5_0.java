@@ -18,6 +18,7 @@ package db.migration;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.flywaydb.core.api.migration.BaseJavaMigration;
 import org.flywaydb.core.api.migration.Context;
 
@@ -41,7 +42,7 @@ public class V6_5_0__releaseV6_5_0 extends BaseJavaMigration {
     /**
      * Serializer for Infomodel types.
      */
-    private Serializer serializer;
+    private final Serializer serializer = new Serializer();
 
     /**
      * Select query for getting ID and value of agreements.
@@ -62,7 +63,6 @@ public class V6_5_0__releaseV6_5_0 extends BaseJavaMigration {
      */
     @Override
     public void migrate(final Context ctx) throws Exception {
-        serializer = new Serializer();
         migrateAgreements(ctx);
     }
 
@@ -75,6 +75,8 @@ public class V6_5_0__releaseV6_5_0 extends BaseJavaMigration {
      * @throws IOException if an error occurs when (de)serializing agreements.
      * @throws DatatypeConfigurationException if an error occurs when creating the date.
      */
+    @SuppressFBWarnings(value={"RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE",
+            "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"})
     private void migrateAgreements(final Context ctx) throws SQLException, IOException,
             DatatypeConfigurationException {
         final var endDate = getEndDate();
