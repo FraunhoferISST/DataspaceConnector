@@ -40,7 +40,7 @@ spring.jpa.hibernate.ddl-auto=validate
    the migration.
 4. Set `spring.flyway.baseline-version` to the last connector version used with the database
    (omit the `v`, so e.g. `5.0.0`).
-5. Ensure that `spring.jpa.hibernate.ddl-auto` is set to `validate`.
+5. Set `spring.jpa.hibernate.ddl-auto` to `validate`.
 6. Start the connector.
 
 The connector will then perform the migration on start-up.
@@ -50,8 +50,19 @@ might introduce changes to the database which require another migration.
 
 ### Helm
 
-The migration is enabled in the `Helm` charts by default. If you do not want to perform a
-migration, change the respective properties in the `values.yaml`.
+The migration is disabled in the `Helm` charts by default, but can be enabled by updating the
+following section in the `values.yaml` file:
+
+```yaml
+  flyway:
+    SPRING_FLYWAY_ENABLED: "true"
+    SPRING_FLYWAY_BASELINE-ON-MIGRATE: "true"
+    SPRING_FLYWAY_BASELINE-VERSION: "5.0.0"
+    SPRING_JPA_HIBERNATE_DDL-AUTO: "validate"
+```
+
+Make sure to set `SPRING_FLYWAY_BASELINE-VERSION` to the last DSC version you used with the
+database to migrate.
 
 ## Manual configurations
 
