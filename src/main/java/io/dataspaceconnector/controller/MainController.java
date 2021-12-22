@@ -16,7 +16,7 @@
 package io.dataspaceconnector.controller;
 
 import io.dataspaceconnector.common.ids.ConnectorService;
-import io.dataspaceconnector.common.net.ResponseType;
+import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.config.BaseType;
 import io.dataspaceconnector.controller.resource.type.AgreementController;
 import io.dataspaceconnector.controller.resource.type.AppController;
@@ -35,7 +35,6 @@ import io.dataspaceconnector.controller.resource.type.RuleController;
 import io.dataspaceconnector.controller.resource.type.SubscriptionController;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -58,7 +57,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
         description = ResponseDescription.UNAUTHORIZED)
-@Tag(name = "Connector", description = "Endpoints for connector information.")
+@Tag(name = "_Connector", description = "Endpoints for general information.")
 @RequiredArgsConstructor
 public class MainController {
 
@@ -73,7 +72,7 @@ public class MainController {
      * @return Self-description or error response.
      */
     @SecurityRequirements
-    @GetMapping(value = {"/", ""}, produces = ResponseType.JSON_LD)
+    @GetMapping(value = {"/", ""}, produces = ContentType.JSON_LD)
     @Operation(summary = "Get the public IDS self-description.")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     @ResponseBody
@@ -86,7 +85,7 @@ public class MainController {
      *
      * @return Self-description or error response.
      */
-    @GetMapping(value = "/api/connector", produces = ResponseType.JSON_LD)
+    @GetMapping(value = "/api/connector", produces = ContentType.JSON_LD)
     @Operation(summary = "Get the private IDS self-description.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
@@ -102,8 +101,8 @@ public class MainController {
      *
      * @return Http ok.
      */
-    @Hidden
-    @GetMapping("/api")
+    @GetMapping(value = "/api", produces = ContentType.HAL)
+    @Operation(summary = "Entrypoint for REST resources")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     public ResponseEntity<RepresentationModel<?>> root() {
         final var model = new RepresentationModel<>();

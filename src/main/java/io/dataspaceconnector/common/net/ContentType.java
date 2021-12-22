@@ -13,24 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.policy.tag;
+package io.dataspaceconnector.common.net;
 
 /**
- * The descriptions of tags for policies.
+ * The descriptions of the type of a REST response body.
  */
-public final class PolicyDescription {
+public final class ContentType {
 
     /**
-     * Tag description for policies.
+     * Response type json.
      */
-    public static final String POLICIES = "Endpoints for policy handling.";
+    public static final String JSON = "application/json";
 
     /**
-     * Tag description for policy settings.
+     * Response type json-ld.
      */
-    public static final String POLICY_SETTINGS = "Endpoints for policy settings.";
+    public static final String JSON_LD = "application/ld+json";
 
-    private PolicyDescription() {
+    /**
+     * Response type json hal.
+     */
+    public static final String HAL = "application/hal+json";
+
+    /**
+     * Response type json hal.
+     */
+    public static final String OCTET_STREAM = "application/octet-stream";
+
+    private ContentType() {
         // Nothing to do here.
     }
 }

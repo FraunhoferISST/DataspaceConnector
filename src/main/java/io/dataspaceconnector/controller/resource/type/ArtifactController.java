@@ -18,6 +18,7 @@ package io.dataspaceconnector.controller.resource.type;
 import de.fraunhofer.ids.messaging.protocol.UnexpectedResponseException;
 import io.dataspaceconnector.common.exception.ResourceNotFoundException;
 import io.dataspaceconnector.common.net.QueryInput;
+import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.common.routing.dataretrieval.RetrievalInformation;
 import io.dataspaceconnector.common.util.ValidationUtils;
 import io.dataspaceconnector.config.BasePath;
@@ -218,14 +219,14 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
         try {
             final var artifact = getService().get(artifactId);
             if (artifact.getRepresentations().isEmpty()
-                || artifact.getRepresentations().get(0) == null
-                || artifact.getRepresentations().get(0).getMediaType() == null) {
+                    || artifact.getRepresentations().get(0) == null
+                    || artifact.getRepresentations().get(0).getMediaType() == null) {
                 if (log.isDebugEnabled()) {
                     log.debug("No representation found. Return data as stream.");
                 }
             } else {
                 final var mediaType = artifact.getRepresentations().get(0).getMediaType();
-                return MediaType.parseMediaType("application/" + mediaType);
+                return MediaType.parseMediaType(mediaType);
             }
         } catch (ResourceNotFoundException | InvalidMediaTypeException e) {
             if (log.isDebugEnabled()) {
@@ -244,7 +245,7 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
      * @return Http Status ok.
      * @throws IOException if the data could not be stored.
      */
-    @PutMapping(value = "{id}/data", consumes = "*/*")
+    @PutMapping(value = "{id}/data", consumes = ContentType.OCTET_STREAM)
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     public ResponseEntity<Void> putData(
             @Valid @PathVariable(name = "id") final UUID artifactId,
@@ -269,8 +270,7 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     public ResponseEntity<RouteView> getRoute(
             @Valid @PathVariable(name = "id") final UUID artifactId) {
-        final var route = artifactSvc.getAssociatedRoute(artifactId);
-        return returnRoute(route);
+        return returnRoute(artifactSvc.getAssociatedRoute(artifactId));
     }
 
     /**
@@ -283,8 +283,7 @@ public class ArtifactController extends BaseResourceNotificationController<Artif
         final var headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        return route == null
-                ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        return route == null ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
                 : new ResponseEntity<>(routeAssembler.toModel(route), headers, HttpStatus.OK);
     }
 }

@@ -54,7 +54,7 @@ processing incoming messages.
 
 ### Description Request: Self-description
 
-Request Message:
+Request Message - IDS Multipart Header:
 ```json
 {
   "@context" : {
@@ -88,7 +88,7 @@ Request Message:
 }
 ```
 
-Response Message:
+Response Message - IDS Multipart Header and Payload:
 ```json
 --
 Content-Disposition: form-data; name="header"
@@ -146,7 +146,7 @@ Content-Length: 4051
 
 ### Description Request: Metadata
 
-Request Message:
+Request Message - IDS Multipart Header:
 ```json
 {
   "@context" : {
@@ -183,7 +183,7 @@ Request Message:
 }
 ```
 
-Response Message:
+Response Message - IDS Multipart Header and Payload:
 
 ```json
 --
