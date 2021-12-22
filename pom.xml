@@ -118,7 +118,7 @@
 		<tidy.version>1.1.0</tidy.version>
 		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
 		<maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
-		<spotbugs.version>4.5.0</spotbugs.version>
+		<spotbugs.version>4.5.2.0</spotbugs.version>
 		<findsecbugs-plugin.version>1.11.0</findsecbugs-plugin.version>
 		<checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
 		<checkstyle.version>9.2</checkstyle.version>
@@ -656,7 +656,7 @@
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>${spotbugs.version}.0</version>
+					<version>${spotbugs.version}</version>
 					<configuration>
 						<effort>Max</effort>
 						<threshold>Low</threshold>
