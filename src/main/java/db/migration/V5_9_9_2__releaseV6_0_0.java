@@ -35,13 +35,13 @@ public class V5_9_9_2__releaseV6_0_0 extends BaseJavaMigration {
      * Query for selecting username and password from the data table.
      */
     private static final String SELECT_AUTH_INFO_FROM_DATA = "SELECT id,username,password"
-            + " FROM public.data WHERE username<>NULL AND password <> NULL";
+            + " FROM public.data WHERE username IS NOT NULL AND password IS NOT NULL";
 
     /**
      * Prepared query for inserting a new authentication.
      */
     private static final String INSERT_AUTH = "INSERT INTO public.authentication"
-            + " (dtype, username, password) VALUES (BasicAuth, %s, %s) RETURNING id";
+            + " (dtype, username, password) VALUES ('BasicAuth', '%s', '%s') RETURNING id";
 
     /**
      * Prepared query for setting the reference between data and authentication.
