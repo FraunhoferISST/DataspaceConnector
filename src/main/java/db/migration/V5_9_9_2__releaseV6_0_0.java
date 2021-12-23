@@ -16,7 +16,6 @@
 package db.migration;
 
 import java.sql.SQLException;
-import java.util.UUID;
 
 import org.flywaydb.core.api.migration.BaseJavaMigration;
 import org.flywaydb.core.api.migration.Context;
@@ -35,19 +34,36 @@ public class V5_9_9_2__releaseV6_0_0 extends BaseJavaMigration {
      * Query for selecting username and password from the data table.
      */
     private static final String SELECT_AUTH_INFO_FROM_DATA = "SELECT id,username,password"
-            + " FROM public.data WHERE username IS NOT NULL AND password IS NOT NULL";
+            + " FROM public.data"
+            + " WHERE username IS NOT NULL"
+            + " AND password IS NOT NULL";
+
+    /**
+     * Query for selecting the current maximum value for IDs of type Long/BigInt. This ID type
+     * is only used in the data and authentication tables.
+     */
+    private static final String HIGHEST_CURRENT_ID_VALUE = "SELECT MAX(id) FROM"
+            + " ("
+            + " SELECT id FROM public.data"
+            + " UNION"
+            + " SELECT id FROM public.authentication"
+            + " )"
+            + " AS subquery";
 
     /**
      * Prepared query for inserting a new authentication.
      */
     private static final String INSERT_AUTH = "INSERT INTO public.authentication"
-            + " (dtype, username, password) VALUES ('BasicAuth', '%s', '%s') RETURNING id";
+            + " (dtype, id, username, password)"
+            + " VALUES ('BasicAuth', '%s', '%s', '%s')"
+            + " RETURNING id";
 
     /**
      * Prepared query for setting the reference between data and authentication.
      */
     private static final String SET_AUTH_REFERENCE = "INSERT INTO public.data_authentication"
-            + " (remote_data_id, authentication_id) VALUES(%s, %s)";
+            + " (remote_data_id, authentication_id)"
+            + " VALUES(%s, %s)";
 
     /**
      * Performs the migration.
@@ -175,11 +191,23 @@ public class V5_9_9_2__releaseV6_0_0 extends BaseJavaMigration {
                     try (var insert = select.getConnection().createStatement()) {
                         final var username = rows.getString(2);
                         final var password = rows.getString(3);
-                        try (var result = insert
-                                .executeQuery(String.format(INSERT_AUTH, username, password))) {
-                            final var dataId = rows.getObject(1, UUID.class);
-                            final var authId = result.getObject(1, UUID.class);
-                            insert.execute(String.format(SET_AUTH_REFERENCE, dataId, authId));
+
+                        try (var idSelect = ctx.getConnection().createStatement()) {
+                            try (var idRows = idSelect
+                                    .executeQuery(HIGHEST_CURRENT_ID_VALUE)) {
+                                if (idRows.next()) {
+                                    var id = idRows.getObject(1, Long.class) + 1;
+                                    try (var result = insert.executeQuery(
+                                            String.format(INSERT_AUTH, id, username, password))) {
+                                        if (result.next()) {
+                                            final var dataId = rows.getObject(1, Long.class);
+                                            final var authId = result.getObject(1, Long.class);
+                                            insert.execute(String
+                                                    .format(SET_AUTH_REFERENCE, dataId, authId));
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
