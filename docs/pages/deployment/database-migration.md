@@ -24,6 +24,8 @@ __The migration is written for *PostgreSQL* and has not been tested with other d
 
 __It is highly recommended that you do a back-up of your database before starting the migration!__
 
+__Configurations are not migrated.__
+
 ## How-to
 
 In the `application.properties`:
