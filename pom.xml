@@ -107,7 +107,8 @@
 		<freemarker.version>2.3.31</freemarker.version>
 		<camel.version>3.13.0</camel.version>
 		<idscp2.version>0.6.0</idscp2.version>
-		<log4j2.version>2.16.0</log4j2.version>
+		<log4j2.version>2.17.0</log4j2.version>
+		<h2.version>2.0.206</h2.version>
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
@@ -402,6 +403,7 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
+			<version>${h2.version}</version>
 		</dependency>
 
 		<dependency>
