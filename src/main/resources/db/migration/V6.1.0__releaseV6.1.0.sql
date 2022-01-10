@@ -6,6 +6,9 @@ CREATE TABLE public.resource_samples (
 );
 
 ALTER TABLE public.configuration
+    RENAME COLUMN connector_endpoint to default_endpoint;
+
+ALTER TABLE public.configuration
     ALTER COLUMN curator TYPE character varying(2048);
 
 ALTER TABLE public.configuration
