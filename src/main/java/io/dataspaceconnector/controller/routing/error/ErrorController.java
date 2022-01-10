@@ -15,12 +15,11 @@
  */
 package io.dataspaceconnector.controller.routing.error;
 
-import io.dataspaceconnector.common.net.ResponseType;
+import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.controller.routing.tag.CamelDescription;
 import io.dataspaceconnector.controller.routing.tag.CamelName;
 import io.dataspaceconnector.controller.util.ResponseCode;
 import io.dataspaceconnector.controller.util.ResponseDescription;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,7 +37,7 @@ import java.util.stream.Collectors;
  */
 @RestController("configManagerRoutesController")
 @NoArgsConstructor
-@RequestMapping("/api/configmanager")
+@RequestMapping("/api/camel/routes")
 @Tag(name = CamelName.CAMEL, description = CamelDescription.CAMEL)
 public class ErrorController {
     /**
@@ -68,13 +67,13 @@ public class ErrorController {
      *
      * @return Response-Code and all logged Route-Errors.
      */
-    @Hidden
-    @GetMapping(value = "/route/error", produces = ResponseType.JSON_LD)
+    @GetMapping(value = "/error", produces = ContentType.JSON)
     @Operation(summary = "Get new route related errors.")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
             description = ResponseDescription.UNAUTHORIZED)
-    ResponseEntity<String> getRouteErrors() {
-        return ResponseEntity.ok(routeErrors.stream().collect(Collectors.joining(",", "[", "]")));
+    public ResponseEntity<Object> getRouteErrors() {
+        final var value = routeErrors.stream().collect(Collectors.joining(",", "[", "]"));
+        return ResponseEntity.ok("{" + value + "}");
     }
 }

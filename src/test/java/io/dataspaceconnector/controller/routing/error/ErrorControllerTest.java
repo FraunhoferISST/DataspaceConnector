@@ -45,7 +45,7 @@ class ErrorControllerTest {
 
     @Test
     void unauthorizedGetRouteErrors() throws Exception {
-        mockMvc.perform(get("/api/configmanager/route/error")).andExpect(status().isUnauthorized()).andReturn();
+        mockMvc.perform(get("/api/routes/error")).andExpect(status().isUnauthorized()).andReturn();
     }
 
     @Test
@@ -69,6 +69,6 @@ class ErrorControllerTest {
     @Test
     @WithMockUser("ADMIN")
     void getRouteErrors() throws Exception {
-        mockMvc.perform(get("/api/configmanager/route/error")).andExpect(status().isOk()).andReturn();
+        mockMvc.perform(get("/api/camel/routes/error")).andExpect(status().isOk()).andReturn();
     }
 }

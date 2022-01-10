@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.util;
 
-import io.dataspaceconnector.common.exception.ErrorMessage;
+import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -34,15 +34,14 @@ class ResponseUtilsTest {
     @Test
     public void respondIdsMessageFailed_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var msg = ErrorMessage.MESSAGE_HANDLING_FAILED.toString();
-        final var expectedResponse = new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
+        // nothing to arrange here
 
         /* ACT */
         final var response = ResponseUtils.respondIdsMessageFailed(exception);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
+        assertEquals(500, response.getStatusCodeValue());
     }
 
     @Test
@@ -60,100 +59,95 @@ class ResponseUtilsTest {
     @Test
     public void respondConfigurationUpdateError_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("Failed to update configuration.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+        // nothing to arrange here
 
         /* ACT */
         final var response = ResponseUtils.respondConfigurationUpdateError(exception);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
+        assertEquals(500, response.getStatusCodeValue());
     }
 
     @Test
     public void respondDeserializationError_validUri_returnValidResponseEntity() {
         /* ARRANGE */
         final var resourceId = URI.create("https://requestedResource");
-        final var expectedResponse = new ResponseEntity<>("Resource not found.",
-                HttpStatus.NOT_FOUND);
 
         /* ACT */
         final var response = ResponseUtils.respondResourceNotFound(resourceId);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
+        assertEquals(404, response.getStatusCodeValue());
     }
 
     @Test
     public void respondPatternNotIdentified_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("Could not identify pattern.",
-                HttpStatus.BAD_REQUEST);
+        // nothing to arrange here
 
         /* ACT */
         final var response = ResponseUtils.respondPatternNotIdentified(exception);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
+        assertEquals(400, response.getStatusCodeValue());
     }
 
     @Test
     public void respondInvalidInput_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("Invalid input, processing failed. "
-                + exception.getMessage(), HttpStatus.BAD_REQUEST);
+        final var msg = "Invalid input, processing failed.";
+        final var expectedResponse = new ResponseEntity<>(new JSONObject() {{
+            put("message", msg);
+            put("details", exception.getMessage());
+        }}, HttpStatus.BAD_REQUEST);
 
         /* ACT */
         final var response = ResponseUtils.respondInvalidInput(exception);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
     }
 
     @Test
     public void respondFailedToBuildContractRequest_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("Failed to build contract request.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+        // nothing to arrange here
 
         /* ACT */
         final var response = ResponseUtils.respondFailedToBuildContractRequest(exception);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
+        assertEquals(500, response.getStatusCodeValue());
     }
 
     @Test
     public void respondFailedToStoreEntity_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>("Failed to store entity. "
-                + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        // nothing to arrange here
 
         /* ACT */
         final var response = ResponseUtils.respondFailedToStoreEntity(exception);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
+        assertEquals(500, response.getStatusCodeValue());
     }
 
     @Test
     public void respondConnectionTimedOut_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var expectedResponse = new ResponseEntity<>(ErrorMessage.GATEWAY_TIMEOUT.toString(),
-                HttpStatus.GATEWAY_TIMEOUT);
+        // nothing to arrange here
 
         /* ACT */
         final var response = ResponseUtils.respondConnectionTimedOut(exception);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
+        assertEquals(504, response.getStatusCodeValue());
     }
 
     @Test
@@ -173,13 +167,11 @@ class ResponseUtilsTest {
         /* ARRANGE */
         final var obj = new Object();
         final var map = Map.of("header", obj);
-        final var expectedResponse = new ResponseEntity<>(map, HttpStatus.EXPECTATION_FAILED);
 
         /* ACT */
         final var response = ResponseUtils.respondWithContent(map);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
     }
 }

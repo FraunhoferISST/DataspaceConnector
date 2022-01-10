@@ -16,12 +16,10 @@
 package io.dataspaceconnector.controller.exceptionhandler;
 
 import io.dataspaceconnector.common.exception.PolicyRestrictionException;
+import io.dataspaceconnector.common.net.JsonResponse;
 import lombok.extern.log4j.Log4j2;
-import net.minidev.json.JSONObject;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,23 +35,17 @@ public final class PolicyRestrictionExceptionHandler {
     /**
      * Handles thrown {@link PolicyRestrictionException}.
      *
-     * @param exception The thrown exception.
+     * @param e The thrown exception.
      * @return Response entity with code 403.
      */
     @ExceptionHandler(PolicyRestrictionException.class)
-    public ResponseEntity<JSONObject> handlePolicyRestrictionException(
-            final PolicyRestrictionException exception) {
+    public ResponseEntity<Object> handleException(final PolicyRestrictionException e) {
+        final var msg = "A policy restriction has been detected.";
         if (log.isDebugEnabled()) {
-            log.debug("Policy restriction detected. [exception=({})]", exception == null
-                    ? "" : exception.getMessage(), exception);
+            log.debug(msg + " [exception=({})]", e == null ? "" : e.getMessage(), e);
         }
 
-        final var headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        final var body = new JSONObject();
-        body.put("message", "A policy restriction has been detected.");
-
-        return new ResponseEntity<>(body, headers, HttpStatus.FORBIDDEN);
+        return new JsonResponse(msg, e == null ? "" : e.getMessage())
+                .create(HttpStatus.FORBIDDEN);
     }
 }

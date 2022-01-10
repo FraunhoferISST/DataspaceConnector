@@ -38,7 +38,7 @@ public final class ResourceDescription {
     /**
      * Tag description for contracts.
      */
-    public static final String CONTRACTS = "Endpoints for operations on contracts.";
+    public static final String CONTRACTS = "Endpoints for operations on contracts (+ agreements).";
 
     /**
      * Tag description for offered resources.

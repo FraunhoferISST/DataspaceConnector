@@ -17,12 +17,10 @@ package io.dataspaceconnector.controller.exceptionhandler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.dataspaceconnector.common.exception.InvalidEntityException;
+import io.dataspaceconnector.common.net.JsonResponse;
 import lombok.extern.log4j.Log4j2;
-import net.minidev.json.JSONObject;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -42,18 +40,11 @@ public class JsonProcessingExceptionHandler {
      * @return A http response.
      */
     @ExceptionHandler({JsonProcessingException.class, InvalidEntityException.class})
-    public ResponseEntity<JSONObject> handleJsonProcessingException(final Exception exception) {
+    public ResponseEntity<Object> handleException(final Exception exception) {
+        final var msg = "Invalid input.";
         if (log.isWarnEnabled()) {
-            log.warn("Invalid input. [exception=({})]", exception == null ? ""
-                    : exception.getMessage());
+            log.warn(msg + " [exception=({})]", exception == null ? "" : exception.getMessage());
         }
-
-        final var headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        final var body = new JSONObject();
-        body.put("message", "Invalid input.");
-
-        return new ResponseEntity<>(body, headers, HttpStatus.BAD_REQUEST);
+        return new JsonResponse(msg).create(HttpStatus.BAD_REQUEST);
     }
 }

@@ -2,7 +2,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [X.X.X] - XXXX-XX-XX
+## [7.0.0] - XXXX-XX-XX
 
 ### Added
 - Allow using route ID (URI) as access URL for artifacts.
@@ -19,7 +19,7 @@ All notable changes to this project will be documented in this file.
   - Link is created automatically when an artifact is created with a route reference as access URL.
 - Change field `location` of `Endpoint` from URI to String.
 - Replace template engine `Velocity` with `Freemarker`.
-- Remove suffix *settings* from `ConfigurationDesc` attributes.
+- Remove suffix *settings* from `ConfigurationDesc` attributes (`truststore`, `proxy`, `keystore`).
 - Change jdk version from 11 to 17.
 - Increase camel version from 3.12.0 to 3.13.0.
 - Increase spring-boot-starter-parent version from 2.5.6 to 2.6.1.
@@ -29,14 +29,58 @@ All notable changes to this project will be documented in this file.
 - Increase pmd version from 6.40.0 to 6.41.0.
 - Increase springdoc version from 1.5.12 to 1.5.13.
 - Increase modelmapper version from 2.4.4 to 2.4.5.
-- Increase equalsverifier version from 3.7.2 to 3.8.
+- Increase equalsverifier version from 3.7.2 to 3.8.1.
 - Ignore IDS InfoModel version incompatibility for incoming messages.
-- Increase log4j2 version from 2.14.0 to 2.15.0.
-- Increase springdoc version from 1.5.3 to 1.6.0.
+- Increase log4j2 version from 2.14.0 to 2.16.0.
+- Increase springdoc version from 1.5.3 to 1.6.1.
+- Log header and payload of sent message in `AbstractMessageService`.
+- Rearrange Swagger UI.
+  - Rename tags.
+    - Rename tag `Messages` to `_Messaging`.
+    - Rename tag `Camel` to `Routes (Apache Camel)`.
+    - Rename tag `Connector` to `_Connector`.
+    - Rename tag `Configurations` to `_Configurations`.
+  - Create tag `_Utils`.
+    - Move `/api/examples/validation` and `/api/examples/policy` to `_Utils`.
+    - Move `/api/utils/enum` to `_Utils`.
+  - Remove annotation `@hidden` from the following REST endpoints:
+    - `/api`
+    - `/api/beans`
+    - `/api/beans/{beanId}`
+    - `/api/camel/routes`
+    - `/api/camel/routes/{routeId}`
+    - `/api/camel/routes/error`
+  - Move contract agreement endpoints to `Contracts`.
+  - Move `/api/configuration/negotiation` and `/api/configuration/pattern` to `_Configurations`.
+- Change REST endpoints.
+  - PUT `/api/routes/{id}/endpoint/start` expects a URI instead of a UUID.
+  - PUT `/api/routes/{id}/endpoint/end` expects a URI instead of a UUID.
+  - Change `/api/configmanaer/enum/{enumName}` to `/api/utils/enum` and change it to expect a list of enums.
+  - Change `/api/configmanaer/route/error` to `/api/camel/routes/error`.
+- Change response bodies to JSON objects for the following REST endpoints:
+  - `/api/routes/{id}/endpoint/start`
+  - `/api/routes/{id}/endpoint/end`
+  - `/api/examples/validation`
+  - `/api/examples/policy`
+  - `/api/ids/app/actions`
+  - `/api/routes/{id}/endpoint/start`
+  - `/api/routes/{id}/endpoint/end`
+  - `/api/beans`
+  - `/api/beans/{beanId}`
+  - `/api/camel/routes`
+  - `/api/camel/routes/{routeId}`
+  - Of every endpoint that builds an error response with `ResponseUtils`.
+- Add correct content type to the following endpoints:
+  - `/api/notify`
+  - `/api/configurations/{id}/active`
+  - `/api/ids/app`
+  - `/api/examples/validation`
+  - `/api/examples/policy`
 
 ### Fixed
 - XML-escape URLs before injecting them into Camel route templates.
 - Add exception handling for `SSLHandshakeExceptions` caused by PKIX errors.
+- Insert user input for `title` and `description` to example policies at `/api/examples/policy`.
 
 ### Removed
 - Remove entity `ConnectorEndpoint` and all corresponding classes.

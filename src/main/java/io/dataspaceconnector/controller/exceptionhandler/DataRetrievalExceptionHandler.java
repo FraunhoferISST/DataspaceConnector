@@ -16,12 +16,10 @@
 package io.dataspaceconnector.controller.exceptionhandler;
 
 import io.dataspaceconnector.common.exception.DataRetrievalException;
+import io.dataspaceconnector.common.net.JsonResponse;
 import lombok.extern.log4j.Log4j2;
-import net.minidev.json.JSONObject;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,24 +35,17 @@ public final class DataRetrievalExceptionHandler {
     /**
      * Handles thrown {@link DataRetrievalException}.
      *
-     * @param exception The thrown exception.
+     * @param e The thrown exception.
      * @return Response entity with code 417.
      */
     @ExceptionHandler(DataRetrievalException.class)
-    public ResponseEntity<JSONObject> handleDataRetrievalException(
-            final DataRetrievalException exception) {
+    public ResponseEntity<Object> handleException(final DataRetrievalException e) {
+        final var msg = "Failed to retrieve data.";
         if (log.isDebugEnabled()) {
-            log.debug("Failed to retrieve data. [exception=({})]", exception == null
-                    ? "" : exception.getMessage(), exception);
+            log.debug(msg + " [exception=({})]", e == null ? "" : e.getMessage(), e);
         }
 
-        final var headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        final var body = new JSONObject();
-        body.put("message", "Failed to retrieve data.");
-        body.put("details", exception == null ? "" : exception.getMessage());
-
-        return new ResponseEntity<>(body, headers, HttpStatus.EXPECTATION_FAILED);
+        return new JsonResponse(msg, e == null ? "" : e.getMessage())
+                .create(HttpStatus.EXPECTATION_FAILED);
     }
 }
