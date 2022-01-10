@@ -1,3 +1,5 @@
+TRUNCATE TABLE public.configuration CASCADE;
+
 ALTER TABLE public.app
     ADD COLUMN container_name character varying(255);
 
