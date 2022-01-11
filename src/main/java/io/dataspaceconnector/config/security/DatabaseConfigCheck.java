@@ -22,7 +22,7 @@ import de.fraunhofer.ids.messaging.core.config.ConfigProducer;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Log4j2
 @Configuration
-@ConditionalOnProperty(value = "spring.datasource.driverClassName", havingValue = "org.h2.Driver")
+@ConditionalOnExpression("'${spring.datasource.url}'.startsWith('jdbc:h2')")
 @RequiredArgsConstructor
 public class DatabaseConfigCheck {
 
