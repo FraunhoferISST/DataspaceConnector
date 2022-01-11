@@ -84,6 +84,7 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 - Remove entity `ConnectorEndpoint` and all corresponding classes.
+- Make `/database` accessible again.
 
 ## [6.5.1] - 2021-11-09
 
