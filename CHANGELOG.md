@@ -85,6 +85,7 @@ All notable changes to this project will be documented in this file.
 - Add exception handling for `SSLHandshakeExceptions` caused by PKIX errors.
 - Insert user input for `title` and `description` to example policies at `/api/examples/policy`.
 - Make `/database` accessible again.
+- Add class type check to rule comparison.
 
 ### Removed
 - Remove entity `ConnectorEndpoint` and all corresponding classes.

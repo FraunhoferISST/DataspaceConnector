@@ -172,8 +172,13 @@ public final class Utils {
                     var found = false;
                     for (final var rObj : rSet) {
                         if (compare.apply(lObj, rObj)) {
-                            found = true;
-                            break;
+                            final var lType = lObj.getClass();
+                            final var rType = rObj.getClass();
+
+                            if (lType.equals(rType)) {
+                                found = true;
+                                break;
+                            }
                         }
                     }
 
