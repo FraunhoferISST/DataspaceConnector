@@ -33,7 +33,7 @@ All notable changes to this project will be documented in this file.
 - Increase log4j2 version from 2.14.0 to 2.17.1.
 - Increase springdoc version from 1.5.3 to 1.6.1.
 - Increase dependency-check-maven from 6.5.0 to 6.5.2.
-- Increase protobuf version from 3.15.5 to 3.19.2.
+- Increase protobuf version from 3.15.5 to 3.19.3.
 - Increase jackson version from 2.13.0 to 2.13.1.
 - Log header and payload of sent message in `AbstractMessageService`.
 - Ignore IDS InfoModel version incompatibility for incoming messages.
