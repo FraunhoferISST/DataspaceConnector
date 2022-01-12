@@ -23,7 +23,7 @@ All notable changes to this project will be documented in this file.
 - Change jdk version from 11 to 17.
 - Increase camel version from 3.12.0 to 3.13.0.
 - Increase spring-boot-starter-parent version from 2.5.6 to 2.6.2.
-- Increase spotbugs version from 4.4.2 to 4.5.3.0.
+- Increase spotbugs version from 4.4.2 to 4.5.3.
 - Increase okhttp version from 4.9.2 to 4.9.3.
 - Increase checkstyle version from 9.1 to 9.2.1.
 - Increase pmd version from 6.40.0 to 6.41.0.
