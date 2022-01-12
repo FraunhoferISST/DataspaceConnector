@@ -243,6 +243,8 @@ jobs:
         run: docker load --input "${GITHUB_WORKSPACE}/${ARTIFACT}.tar"
         env:
           ARTIFACT: ${{ needs.build_test_image.outputs.image_artifact_name }}
+      - name: Create .trivyignore
+        run: echo "CVE-2021-23463" > .trivyignore
       - name: Run vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
