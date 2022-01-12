@@ -18,6 +18,9 @@ package io.dataspaceconnector.config.security;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,11 +36,18 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationEn
  * defined in {@link MultipleEntryPointsSecurityConfig}. If the web security is disabled, all
  * DSC APIs are publicly available.
  */
+@Log4j2
 @Configuration
 @Getter(AccessLevel.PUBLIC)
 @ConditionalOnProperty(value = "spring.security.enabled", havingValue = "true")
 @Order(1)
 public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
+
+    /**
+     * Whether the h2 console is enabled.
+     */
+    @Value("${spring.h2.console.enabled}")
+    private boolean h2Enabled;
 
     /**
      * {@inheritDoc}
@@ -60,7 +70,15 @@ public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .authenticationEntryPoint(authenticationEntryPoint());
         http.headers().xssProtection();
-        http.headers().frameOptions().deny();
+
+        if (h2Enabled) {
+            http.headers().frameOptions().disable();
+            if (log.isWarnEnabled()) {
+                log.warn("H2 Console enabled. Disabling frame protection.");
+            }
+        } else {
+            http.headers().frameOptions().deny();
+        }
     }
 
     /**
