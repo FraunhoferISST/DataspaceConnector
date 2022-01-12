@@ -31,9 +31,11 @@ All notable changes to this project will be documented in this file.
 - Increase modelmapper version from 2.4.4 to 2.4.5.
 - Increase equalsverifier version from 3.7.2 to 3.8.1.
 - Increase log4j2 version from 2.14.0 to 2.17.1.
+- Increase springdoc version from 1.5.3 to 1.6.1.
+- Increase dependency-check-maven from 6.5.0 to 6.5.2.
 - Increase protobuf version from 3.15.5 to 3.19.2.
-- Ignore IDS InfoModel version incompatibility for incoming messages.
 - Log header and payload of sent message in `AbstractMessageService`.
+- Ignore IDS InfoModel version incompatibility for incoming messages.
 - Rearrange Swagger UI.
   - Rename tags.
     - Rename tag `Messages` to `_Messaging`.
