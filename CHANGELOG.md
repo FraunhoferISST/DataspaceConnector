@@ -25,15 +25,15 @@ All notable changes to this project will be documented in this file.
 - Increase spring-boot-starter-parent version from 2.5.6 to 2.6.1.
 - Increase spotbugs version from 4.4.2 to 4.5.0.
 - Increase okhttp version from 4.9.2 to 4.9.3.
-- Increase checkstyle version from 9.1 to 9.2.
+- Increase checkstyle version from 9.1 to 9.2.1.
 - Increase pmd version from 6.40.0 to 6.41.0.
 - Increase springdoc version from 1.5.12 to 1.6.1.
 - Increase modelmapper version from 2.4.4 to 2.4.5.
-- Increase equalsverifier version from 3.7.2 to 3.8.1.
+- Increase equalsverifier version from 3.7.2 to 3.8.2.
 - Increase log4j2 version from 2.14.0 to 2.17.1.
-- Increase springdoc version from 1.5.3 to 1.6.1.
+- Increase springdoc version from 1.5.3 to 1.6.4.
 - Increase dependency-check-maven from 6.5.0 to 6.5.2.
-- Increase protobuf version from 3.15.5 to 3.19.2.
+- Increase protobuf version from 3.15.5 to 3.19.3.
 - Increase jackson version from 2.13.0 to 2.13.1.
 - Log header and payload of sent message in `AbstractMessageService`.
 - Ignore IDS InfoModel version incompatibility for incoming messages.
@@ -85,6 +85,7 @@ All notable changes to this project will be documented in this file.
 - Add exception handling for `SSLHandshakeExceptions` caused by PKIX errors.
 - Insert user input for `title` and `description` to example policies at `/api/examples/policy`.
 - Make `/database` accessible again.
+- Add class type check to rule comparison.
 
 ### Removed
 - Remove entity `ConnectorEndpoint` and all corresponding classes.
