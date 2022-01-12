@@ -27,13 +27,15 @@ All notable changes to this project will be documented in this file.
 - Increase okhttp version from 4.9.2 to 4.9.3.
 - Increase checkstyle version from 9.1 to 9.2.
 - Increase pmd version from 6.40.0 to 6.41.0.
-- Increase springdoc version from 1.5.12 to 1.5.13.
+- Increase springdoc version from 1.5.12 to 1.6.1.
 - Increase modelmapper version from 2.4.4 to 2.4.5.
 - Increase equalsverifier version from 3.7.2 to 3.8.1.
-- Ignore IDS InfoModel version incompatibility for incoming messages.
-- Increase log4j2 version from 2.14.0 to 2.16.0.
+- Increase log4j2 version from 2.14.0 to 2.17.1.
 - Increase springdoc version from 1.5.3 to 1.6.1.
+- Increase dependency-check-maven from 6.5.0 to 6.5.2.
+- Increase protobuf version from 3.15.5 to 3.19.2.
 - Log header and payload of sent message in `AbstractMessageService`.
+- Ignore IDS InfoModel version incompatibility for incoming messages.
 - Rearrange Swagger UI.
   - Rename tags.
     - Rename tag `Messages` to `_Messaging`.
