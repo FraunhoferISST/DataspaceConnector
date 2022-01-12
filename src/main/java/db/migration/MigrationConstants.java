@@ -13,29 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.common.net;
+package db.migration;
 
 /**
- * The descriptions of the type of a REST response body.
+ * Provides constants used during the migration.
  */
-public final class ResponseType {
+public final class MigrationConstants {
+
+    private MigrationConstants() { }
 
     /**
-     * Response type json.
+     * Column length 2048.
      */
-    public static final String JSON = "application/json";
+    public static final int COLUMN_LENGTH_2048 = 2048;
 
     /**
-     * Response type json-ld.
+     * Column length 255.
      */
-    public static final String JSON_LD = "application/ld+json";
+    public static final int COLUMN_LENGTH_255 = 255;
 
-    /**
-     * Response type json hal.
-     */
-    public static final String HAL = "application/hal+json";
-
-    private ResponseType() {
-        // Nothing to do here.
-    }
 }

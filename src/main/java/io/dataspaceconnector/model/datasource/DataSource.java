@@ -25,11 +25,10 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.CascadeType;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * Entity which holds information about the data sources.
@@ -65,6 +64,6 @@ public class DataSource extends Entity {
     /**
      * The type of the data source.
      */
-    @Enumerated(EnumType.STRING)
+    @Transient
     private DataSourceType type;
 }

@@ -59,17 +59,14 @@ class ResponseUtilsTest {
     @Test
     public void respondConfigurationUpdateError_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var msg = "Failed to update configuration.";
-        final var expectedResponse = new ResponseEntity<>(new JSONObject() {{
-            put("message", msg);
-        }}, HttpStatus.INTERNAL_SERVER_ERROR);
+        // nothing to arrange here
 
         /* ACT */
         final var response = ResponseUtils.respondConfigurationUpdateError(exception);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
+        assertEquals(500, response.getStatusCodeValue());
     }
 
     @Test
@@ -88,17 +85,14 @@ class ResponseUtilsTest {
     @Test
     public void respondPatternNotIdentified_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var msg = "Could not identify pattern.";
-        final var expectedResponse = new ResponseEntity<>(new JSONObject() {{
-            put("message", msg);
-        }}, HttpStatus.BAD_REQUEST);
+        // nothing to arrange here
 
         /* ACT */
         final var response = ResponseUtils.respondPatternNotIdentified(exception);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
+        assertEquals(400, response.getStatusCodeValue());
     }
 
     @Test
@@ -120,34 +114,27 @@ class ResponseUtilsTest {
     @Test
     public void respondFailedToBuildContractRequest_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var msg = "Failed to build contract request.";
-        final var expectedResponse = new ResponseEntity<>(new JSONObject() {{
-            put("message", msg);
-        }}, HttpStatus.INTERNAL_SERVER_ERROR);
+        // nothing to arrange here
 
         /* ACT */
         final var response = ResponseUtils.respondFailedToBuildContractRequest(exception);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
+        assertEquals(500, response.getStatusCodeValue());
     }
 
     @Test
     public void respondFailedToStoreEntity_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var msg = "Failed to store entity.";
-        final var expectedResponse = new ResponseEntity<>(new JSONObject() {{
-            put("message", msg);
-            put("details", exception.getMessage());
-        }}, HttpStatus.INTERNAL_SERVER_ERROR);
+        // nothing to arrange here
 
         /* ACT */
         final var response = ResponseUtils.respondFailedToStoreEntity(exception);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
+        assertEquals(500, response.getStatusCodeValue());
     }
 
     @Test

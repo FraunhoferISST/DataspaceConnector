@@ -19,7 +19,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.AppNotDeployedException;
 import io.dataspaceconnector.common.exception.PortainerNotConfigured;
 import io.dataspaceconnector.common.net.JsonResponse;
-import io.dataspaceconnector.common.net.ResponseType;
+import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.BaseResourceController;
 import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
@@ -114,7 +114,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
      * @param appId The id of app for which related appstores should be found.
      * @return The app store.
      */
-    @GetMapping("/{id}/appstore")
+    @GetMapping(value = "/{id}/appstore", produces = ContentType.HAL)
     @Operation(summary = "Get appstore by app id", description = "Get appstore holding this app.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
@@ -135,7 +135,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
      * @return Response depending on the action on an app.
      */
     @SuppressFBWarnings("IMPROPER_UNICODE")
-    @PutMapping(value = "/{id}/actions", produces = ResponseType.JSON)
+    @PutMapping(value = "/{id}/actions", produces = ContentType.JSON)
     @Operation(summary = "Actions on apps", description = "Can be used for managing apps.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
@@ -191,9 +191,10 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
             final var responseBody = response.body();
 
             if (response.isSuccessful() && responseBody != null) {
-                return ResponseEntity.ok(responseBody.string());
+                return new JsonResponse(null, null, responseBody.string()).create(HttpStatus.OK);
             } else if (responseBody != null) {
-                return ResponseEntity.internalServerError().body(responseBody.string());
+                return new JsonResponse("Response was null.", responseBody.string())
+                        .create(HttpStatus.OK);
             } else {
                 return new JsonResponse("Response not successful.")
                         .create(HttpStatus.INTERNAL_SERVER_ERROR);

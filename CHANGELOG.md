@@ -12,6 +12,8 @@ All notable changes to this project will be documented in this file.
 - Allow using API key authentication for `DataSource`.
 - Create sub-types for `DataSourceDesc` for types `REST` and `DATABASE` to allow adding database driver and URL.
 - Create datasource beans from `DataSources` of type `DATABASE` automatically.
+- Add database migration feature.
+  * Offer possibility to migrate databases to `v7.0.0` starting from `v5.0.0`.
 
 ### Changed
 - Change encoding of local data from `UTF-16` to `UTF-8`.
@@ -23,18 +25,22 @@ All notable changes to this project will be documented in this file.
 - Set `value` and `key` length of additional map to 4096.
 - Change jdk version from 11 to 17.
 - Increase camel version from 3.12.0 to 3.13.0.
-- Increase spring-boot-starter-parent version from 2.5.6 to 2.6.1.
+- Increase spring-boot-starter-parent version from 2.5.6 to 2.6.2.
 - Increase spotbugs version from 4.4.2 to 4.5.0.
 - Increase okhttp version from 4.9.2 to 4.9.3.
-- Increase checkstyle version from 9.1 to 9.2.
+- Increase checkstyle version from 9.1 to 9.2.1.
 - Increase pmd version from 6.40.0 to 6.41.0.
-- Increase springdoc version from 1.5.12 to 1.5.13.
-- Increase modelmapper version from 2.4.4 to 2.4.5.
-- Increase equalsverifier version from 3.7.2 to 3.8.1.
-- Ignore IDS InfoModel version incompatibility for incoming messages.
-- Increase log4j2 version from 2.14.0 to 2.16.0.
-- Increase springdoc version from 1.5.3 to 1.6.1.
+- Increase springdoc version from 1.5.3 to 1.6.4.
+- Increase modelmapper version from 2.4.4 to 3.0.0.
+- Increase equalsverifier version from 3.7.2 to 3.8.2.
+- Increase log4j2 version from 2.14.0 to 2.17.1.
+- Increase dependency-check-maven from 6.5.0 to 6.5.2.
+- Increase maven-site-plugin version from 3.9.1 to 3.10.0.
+- Increase protobuf version from 3.15.5 to 3.19.3.
+- Increase jackson version from 2.13.0 to 2.13.1.
+- Increase swagger-annotations version from 1.6.3 to 1.6.4.
 - Log header and payload of sent message in `AbstractMessageService`.
+- Ignore IDS InfoModel version incompatibility for incoming messages.
 - Rearrange Swagger UI.
   - Rename tags.
     - Rename tag `Messages` to `_Messaging`.
@@ -77,11 +83,14 @@ All notable changes to this project will be documented in this file.
   - `/api/ids/app`
   - `/api/examples/validation`
   - `/api/examples/policy`
+- Make field `type` in `DataSource` transient, as type information is persisted through the `dtype` column created through the `@Inheritance` annotation.
 
 ### Fixed
 - XML-escape URLs before injecting them into Camel route templates.
 - Add exception handling for `SSLHandshakeExceptions` caused by PKIX errors.
 - Insert user input for `title` and `description` to example policies at `/api/examples/policy`.
+- Make `/database` accessible again.
+- Add class type check to rule comparison.
 
 ### Removed
 - Remove entity `ConnectorEndpoint` and all corresponding classes.

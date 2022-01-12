@@ -19,6 +19,11 @@ env:
   secrets:
     SPRING_SECURITY_USER_NAME: "admin"
     SPRING_SECURITY_USER_PASSWORD: "password"
+  flyway:
+    SPRING_FLYWAY_ENABLED: "false"
+    SPRING_FLYWAY_BASELINE-ON-MIGRATE: "false"
+    SPRING_FLYWAY_BASELINE-VERSION: "7.0.0"
+    SPRING_JPA_HIBERNATE_DDL-AUTO: "update"
 
 postgresql:
   enabled: true

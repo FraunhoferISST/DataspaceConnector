@@ -16,7 +16,7 @@
 package io.dataspaceconnector.controller.routing;
 
 import io.dataspaceconnector.common.net.JsonResponse;
-import io.dataspaceconnector.common.net.ResponseType;
+import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.controller.routing.tag.CamelDescription;
 import io.dataspaceconnector.controller.routing.tag.CamelName;
 import io.dataspaceconnector.controller.util.ResponseCode;
@@ -79,7 +79,7 @@ public class BeansController {
      * @param file the XML file.
      * @return a response entity with code 200 or 500, if an error occurs.
      */
-    @PostMapping(produces = ResponseType.JSON)
+    @PostMapping(produces = ContentType.JSON)
     @Operation(summary = "Add a bean to the application context.")
     public ResponseEntity<Object> addBeans(@RequestParam("file") final MultipartFile file) {
         try {
@@ -119,7 +119,7 @@ public class BeansController {
      * @param beanId the bean ID.
      * @return a response entity with code 200 or 500, if an error occurs.
      */
-    @DeleteMapping(value = "/{beanId}", produces = ResponseType.JSON)
+    @DeleteMapping(value = "/{beanId}", produces = ContentType.JSON)
     @Operation(summary = "Remove a bean from the application context.")
     public ResponseEntity<Object> removeBean(@PathVariable("beanId") final String beanId) {
         try {

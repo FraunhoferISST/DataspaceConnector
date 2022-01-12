@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.gui;
 
-import io.dataspaceconnector.common.net.ResponseType;
+import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.controller.gui.util.EnumType;
 import io.dataspaceconnector.controller.gui.util.GuiUtils;
 import io.dataspaceconnector.controller.util.ResponseCode;
@@ -50,7 +50,7 @@ public class GuiController {
      * @param name Selection of the domain of the requested data, e.g. language.
      * @return The response message or an error.
      */
-    @PostMapping(value = "/enum", produces = ResponseType.JSON)
+    @PostMapping(value = "/enum", produces = ContentType.JSON)
     @Operation(summary = "Get a list of enums by value name.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),

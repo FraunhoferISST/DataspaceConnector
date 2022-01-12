@@ -19,9 +19,7 @@ import io.dataspaceconnector.common.exception.PolicyRestrictionException;
 import io.dataspaceconnector.common.net.JsonResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -47,10 +45,7 @@ public final class PolicyRestrictionExceptionHandler {
             log.debug(msg + " [exception=({})]", e == null ? "" : e.getMessage(), e);
         }
 
-        final var headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         return new JsonResponse(msg, e == null ? "" : e.getMessage())
-                .create(headers, HttpStatus.FORBIDDEN);
+                .create(HttpStatus.FORBIDDEN);
     }
 }
