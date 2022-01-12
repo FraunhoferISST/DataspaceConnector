@@ -102,7 +102,7 @@
 		<jackson.version>2.13.1</jackson.version>
 		<postgres.version>42.3.1</postgres.version>
 		<springdoc.version>1.6.1</springdoc.version>
-		<equalsverifier.version>3.8.1</equalsverifier.version>
+		<equalsverifier.version>3.8.2</equalsverifier.version>
 		<jaeger.version>3.3.1</jaeger.version>
 		<freemarker.version>2.3.31</freemarker.version>
 		<camel.version>3.13.0</camel.version>
@@ -122,7 +122,7 @@
 		<spotbugs.version>4.5.0</spotbugs.version>
 		<findsecbugs-plugin.version>1.11.0</findsecbugs-plugin.version>
 		<checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
-		<checkstyle.version>9.2</checkstyle.version>
+		<checkstyle.version>9.2.1</checkstyle.version>
 		<jacoco.version>0.8.7</jacoco.version>
 		<pmd-plugin.version>3.15.0</pmd-plugin.version>
 		<pmd.version>6.41.0</pmd.version>
