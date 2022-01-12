@@ -25,7 +25,7 @@ All notable changes to this project will be documented in this file.
 - Increase spring-boot-starter-parent version from 2.5.6 to 2.6.1.
 - Increase spotbugs version from 4.4.2 to 4.5.0.
 - Increase okhttp version from 4.9.2 to 4.9.3.
-- Increase checkstyle version from 9.1 to 9.2.
+- Increase checkstyle version from 9.1 to 9.2.1.
 - Increase pmd version from 6.40.0 to 6.41.0.
 - Increase springdoc version from 1.5.12 to 1.6.1.
 - Increase modelmapper version from 2.4.4 to 2.4.5.
