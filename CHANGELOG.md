@@ -84,6 +84,7 @@ All notable changes to this project will be documented in this file.
 - XML-escape URLs before injecting them into Camel route templates.
 - Add exception handling for `SSLHandshakeExceptions` caused by PKIX errors.
 - Insert user input for `title` and `description` to example policies at `/api/examples/policy`.
+- Make `/database` accessible again.
 
 ### Removed
 - Remove entity `ConnectorEndpoint` and all corresponding classes.
