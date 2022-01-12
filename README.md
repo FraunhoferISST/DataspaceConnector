@@ -1,3 +1,10 @@
+<h4 align="center" >
+    <span style="color:red">WARNING: UPDATE TO V7.0.0</span><br>
+    Before updating, please read
+    <a href="https://international-data-spaces-association.github.io/DataspaceConnector/Deployment/DatabaseMigration">this</a>
+    guide!
+</h4>
+
 <h1 align="center">
   <br>
     <img alt="Logo" width="200" src="docs/assets/images/dsc_logo.png"/>
@@ -38,7 +45,8 @@ usage policy patterns.
 
 ## Quick Start
 
-The offical Docker images of the Dataspace Connector can be found [here](https://github.com/International-Data-Spaces-Association/DataspaceConnector/pkgs/container/dataspace-connector).
+The official Docker images of the Dataspace Connector can be found
+[here](https://github.com/International-Data-Spaces-Association/DataspaceConnector/pkgs/container/dataspace-connector).
 
 For an easy deployment, make sure that you have [Docker](https://docs.docker.com/get-docker/)
 installed. Then, execute the following command:
@@ -51,21 +59,29 @@ If everything worked fine, the connector is available at
 [https://localhost:8080/](https://localhost:8080/). The API can be accessed at
 [https://localhost:8080/api](https://localhost:8080/api). The Swagger UI can be found at
 [https://localhost:8080/api/docs](https://localhost:8080/api/docs).
+
+For certain REST endpoints, you will be asked to log in. The default credentials are `admin` and
+`password`. **Please take care to change these when deploying and hosting the connector yourself!**
+
+For a more detailed explanation of deployment and configurations, see
+[here](https://international-data-spaces-association.github.io/DataspaceConnector/Deployment).
+
 Next, please take a look at our
 [communication guide](https://international-data-spaces-association.github.io/DataspaceConnector/CommunicationGuide).
 
-**Note**: 
+**Note**:
 For a more detailed or advanced Docker or Kubernetes deployment, as well as a full setup with the
 Connector and its GUI, see [here](https://github.com/International-Data-Spaces-Association/IDS-Deployment-Examples/tree/main/dataspace-connector).
-If you want to build and run locally, follow [these](https://international-data-spaces-association.github.io/DataspaceConnector/GettingStarted#quick-start) steps.
+If you want to build and run locally, follow [these](https://international-data-spaces-association.github.io/DataspaceConnector/GettingStarted#local-build) steps.
 
 
 ### Security and Verification
 
 The Docker images are signed using [cosign](https://github.com/sigstore/cosign).
-The public key of the Dataspace Connector can be found at the root of the project structure ([here](https://github.com/International-Data-Spaces-Association/DataspaceConnector/blob/main/dsc.pub)).
+The public key of the Dataspace Connector can be found at the root of the project structure
+([here](https://github.com/International-Data-Spaces-Association/DataspaceConnector/blob/main/dsc.pub)).
 
-For verifying that you have received an offical image from a trusted source, run:
+For verifying that you have received an official image from a trusted source, run:
 
 ```commandline
 cosign verify --key dsc.pub ghcr.io/international-data-spaces-association/dataspace-connector:latest
@@ -73,7 +89,10 @@ cosign verify --key dsc.pub ghcr.io/international-data-spaces-association/datasp
 
 ### Software Bill of Material (SBoM)
 
-The Software Bill of Material (SBoM) for every Docker image is supplied as [SPDX-JSON](https://spdx.org/licenses/JSON.html) and can be found by appending `-sbom` to the image tag. For example, the SBoM for `ghcr.io/international-data-spaces-association/dataspace-connector:latest` is `ghcr.io/international-data-spaces-association/dataspace-connector:latest-sbom`.
+The Software Bill of Material (SBoM) for every Docker image is supplied as
+[SPDX-JSON](https://spdx.org/licenses/JSON.html) and can be found by appending `-sbom` to the
+image tag. For example, the SBoM for `ghcr.io/international-data-spaces-association/dataspace-connector:latest`
+is `ghcr.io/international-data-spaces-association/dataspace-connector:latest-sbom`.
 
 The SBoM can be pulled via tools like [oras](https://github.com/oras-project/oras).
 
@@ -81,7 +100,8 @@ The SBoM can be pulled via tools like [oras](https://github.com/oras-project/ora
 oras pull ghcr.io/international-data-spaces-association/dataspace-connector:latest-sbom -a
 ```
 
-**Note**: Also the SBoM images can be validated using [cosign](https://github.com/sigstore/cosign) as shown [above](#security-and-verification).
+**Note**: Also the SBoM images can be validated using [cosign](https://github.com/sigstore/cosign)
+as shown [above](#security-and-verification).
 
 ## Contributing
 
@@ -112,4 +132,5 @@ with significant contributions, comments, and support by (in alphabetical order)
 * [Tim Berthold](https://github.com/tmberthold), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 
 ## License
-Copyright © 2020 Fraunhofer ISST. This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) for details.
+Copyright © 2020-2022 Fraunhofer ISST.
+This project is licensed under the Apache License 2.0 - see [here](LICENSE) for details.
