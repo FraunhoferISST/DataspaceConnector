@@ -82,8 +82,7 @@ All notable changes to this project will be documented in this file.
   - `/api/ids/app`
   - `/api/examples/validation`
   - `/api/examples/policy`
-- Make field `type` in `DataSource` transient, as type information is persisted through the `dtype`
-  column created through the `@Inheritance` annotation.
+- Make field `type` in `DataSource` transient, as type information is persisted through the `dtype` column created through the `@Inheritance` annotation.
 
 ### Fixed
 - XML-escape URLs before injecting them into Camel route templates.
