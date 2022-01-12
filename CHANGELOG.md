@@ -32,6 +32,7 @@ All notable changes to this project will be documented in this file.
 - Increase equalsverifier version from 3.7.2 to 3.8.2.
 - Increase log4j2 version from 2.14.0 to 2.17.1.
 - Increase dependency-check-maven from 6.5.0 to 6.5.2.
+- Increase maven-site-plugin version from 3.9.1 to 3.10.0.
 - Increase protobuf version from 3.15.5 to 3.19.3.
 - Increase jackson version from 2.13.0 to 2.13.1.
 - Increase swagger-annotations version from 1.6.3 to 1.6.4.
