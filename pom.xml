@@ -236,6 +236,13 @@
 			</exclusions>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>8.0.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -585,12 +592,7 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 				<includes>
-					<include>conf/**/*.*</include>
-					<include>camel-routes/**/*.xml</include>
-					<include>log4j2.xml</include>
-					<include>camel-templates/**/*.ftl</include>
-					<include>application.properties</include>
-					<include>banner.txt</include>
+					<include>**</include>
 				</includes>
 				<excludes>
 					<!-- The key files are binary files, which the filtering destroys. -->
@@ -623,6 +625,7 @@
 						<encoding>UTF-8</encoding>
 						<consoleOutput>true</consoleOutput>
 						<failOnViolation>true</failOnViolation>
+						<excludes>db/migration/*.*</excludes>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -857,6 +860,14 @@
 				<artifactId>maven-project-info-reports-plugin</artifactId>
 				<version>${maven-project-info-reports-plugin.version}</version>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>16</source>
+					<target>16</target>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -897,6 +908,11 @@
 						</reports>
 					</reportSet>
 				</reportSets>
+				<configuration>
+					<excludes>
+						<exclude>db/migration/**/*</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -1039,6 +1055,7 @@
 						<configuration>
 							<excludes>
 								<exclude>io/dataspaceconnector/service/message/subscription/*</exclude>
+								<exclude>db/migration/**/*</exclude>
 							</excludes>
 						</configuration>
 						<executions>
