@@ -34,6 +34,7 @@ All notable changes to this project will be documented in this file.
 - Increase springdoc version from 1.5.3 to 1.6.1.
 - Increase dependency-check-maven from 6.5.0 to 6.5.2.
 - Increase protobuf version from 3.15.5 to 3.19.2.
+- Increase maven-site-plugin from 3.9.1 to 3.10.0.
 - Log header and payload of sent message in `AbstractMessageService`.
 - Ignore IDS InfoModel version incompatibility for incoming messages.
 - Rearrange Swagger UI.
