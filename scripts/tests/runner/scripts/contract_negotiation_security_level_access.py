@@ -125,7 +125,7 @@ pprint.pprint(first_artifact)
 data = consumerResources.get_data(first_artifact).text
 pprint.pprint(data)
 
-expectedErrorMessage = """{"message":"A policy restriction has been detected."}"""
+expectedErrorMessage = """{"details":"Policy restriction detected.","message":"A policy restriction has been detected."}"""
 if data != expectedErrorMessage:
     exit(1)
 

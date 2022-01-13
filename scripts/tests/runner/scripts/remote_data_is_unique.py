@@ -54,9 +54,9 @@ def create_contract():
         provider_url + "/api/contracts",
         json={
             "start": "2021-04-06T13:33:44.995+02:00",
-            "end": "2021-12-06T13:33:44.995+02:00",
+            "end": "2022-12-06T13:33:44.995+02:00",
         },
-    )
+        )
     return response.headers["Location"]
 
 
@@ -90,7 +90,7 @@ def create_rule_allow_access():
         ]
         }"""
         },
-    )
+        )
     return response.headers["Location"]
 
 
