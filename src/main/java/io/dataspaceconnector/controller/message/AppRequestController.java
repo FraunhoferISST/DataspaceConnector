@@ -22,6 +22,7 @@ import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.RdfBuilderException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
+import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.controller.message.tag.MessageDescription;
 import io.dataspaceconnector.controller.message.tag.MessageName;
 import io.dataspaceconnector.controller.resource.view.app.AppViewAssembler;
@@ -95,7 +96,7 @@ public class AppRequestController {
      * @param appId     The app Id.
      * @return Success, when app can be found and created from recipient response.
      */
-    @PostMapping("/app")
+    @PostMapping(value = "/app", produces = ContentType.JSON)
     @Operation(summary = "Download an IDS app from an IDS AppStore.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
@@ -132,10 +133,8 @@ public class AppRequestController {
                 // Remove app if no corresponding data could be downloaded.
                 final var app = appSvc.identifyByRemoteId(appId);
                 app.ifPresent(appSvc::delete);
-                if (log.isDebugEnabled()) {
-                    log.debug("Failed to download app data. Removed app. [remoteId=({})]", appId);
-                }
-                return ResponseEntity.internalServerError().body("Could not download app.");
+
+                return ResponseUtils.respondAppNotDownloaded(appId);
             }
 
             return respondWithCreatedApp(appId);

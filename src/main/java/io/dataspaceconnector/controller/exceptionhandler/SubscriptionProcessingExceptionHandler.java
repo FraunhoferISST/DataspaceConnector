@@ -16,12 +16,10 @@
 package io.dataspaceconnector.controller.exceptionhandler;
 
 import io.dataspaceconnector.common.exception.SubscriptionProcessingException;
+import io.dataspaceconnector.common.net.JsonResponse;
 import lombok.extern.log4j.Log4j2;
-import net.minidev.json.JSONObject;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,23 +35,17 @@ public final class SubscriptionProcessingExceptionHandler {
     /**
      * Handles thrown {@link SubscriptionProcessingException}.
      *
-     * @param exception The thrown exception.
+     * @param e The thrown exception.
      * @return Response entity with code 400.
      */
     @ExceptionHandler(SubscriptionProcessingException.class)
-    public ResponseEntity<JSONObject> handleSubscriptionProcessingException(
-            final SubscriptionProcessingException exception) {
+    public ResponseEntity<Object> handleException(final SubscriptionProcessingException e) {
+        final var msg = "Could not process subscription.";
         if (log.isDebugEnabled()) {
-            log.debug("Could not process subscription. [exception=({})]", exception == null
-                    ? "" : exception.getMessage(), exception);
+            log.debug(msg + " [exception=({})]", e == null ? "" : e.getMessage(), e);
         }
 
-        final var headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        final var body = new JSONObject();
-        body.put("message", exception == null ? "" : exception.getMessage());
-
-        return new ResponseEntity<>(body, headers, HttpStatus.BAD_REQUEST);
+        return new JsonResponse(msg, e == null ? "" : e.getMessage())
+                .create(HttpStatus.BAD_REQUEST);
     }
 }

@@ -13,29 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.common.net;
+package io.dataspaceconnector.controller.gui.util;
 
 /**
- * The descriptions of the type of a REST response body.
+ * Provides enum types that should be listed at the GUI.
  */
-public final class ResponseType {
+public enum EnumType {
 
     /**
-     * Response type json.
+     * The log level.
      */
-    public static final String JSON = "application/json";
+    LOG_LEVEL,
 
     /**
-     * Response type json-ld.
+     * The connector status.
      */
-    public static final String JSON_LD = "application/ld+json";
+    CONNECTOR_STATUS,
 
     /**
-     * Response type json hal.
+     * The connector deploy mode.
      */
-    public static final String HAL = "application/hal+json";
+    CONNECTOR_DEPLOY_MODE,
 
-    private ResponseType() {
-        // Nothing to do here.
-    }
+    /**
+     * The language.
+     */
+    LANGUAGE,
+
+    /**
+     * The deploy method of data routes.
+     */
+    DEPLOY_METHOD,
+
+    /**
+     * The broker status.
+     */
+    BROKER_STATUS,
+
+    /**
+     * The security profile.
+     */
+    SECURITY_PROFILE,
+
+    /**
+     * The payment method.
+     */
+    PAYMENT_METHOD
 }

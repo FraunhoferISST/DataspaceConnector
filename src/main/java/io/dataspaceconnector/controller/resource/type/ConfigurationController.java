@@ -16,7 +16,7 @@
 package io.dataspaceconnector.controller.resource.type;
 
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
-import io.dataspaceconnector.common.net.ResponseType;
+import io.dataspaceconnector.common.net.ContentType;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.BaseResourceController;
 import io.dataspaceconnector.controller.resource.base.tag.ResourceDescription;
@@ -66,7 +66,7 @@ public class ConfigurationController extends BaseResourceController<Configuratio
      * @param toSelect The new configuration.
      * @return Ok or error response.
      */
-    @PutMapping(value = "/{id}/active", consumes = {"*/*"})
+    @PutMapping(value = "/{id}/active", consumes = {"*/*"}, produces = ContentType.JSON)
     @Operation(summary = "Update current configuration.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.NO_CONTENT,
@@ -94,7 +94,7 @@ public class ConfigurationController extends BaseResourceController<Configuratio
      *
      * @return The configuration object or an error.
      */
-    @GetMapping(value = "/active", produces = ResponseType.HAL)
+    @GetMapping(value = "/active", produces = ContentType.HAL)
     @Operation(summary = "Get current configuration.")
     @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK)
     @ResponseBody

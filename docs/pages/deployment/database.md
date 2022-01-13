@@ -50,6 +50,9 @@ and reachable when starting the Connector, otherwise it will fail. So you will e
 database instance locally or, in case of using Docker, add a database container to your setup.
 Docker images of common databases are freely available.
 
+__When using v7 of the connector, it is recommended to enable
+[database migration](./database-migration.md) so that the database may be updated by
+future releases.__
 
 ## Example
 

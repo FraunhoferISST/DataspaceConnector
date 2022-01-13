@@ -214,6 +214,16 @@ policies (`POST /api/examples/validation`). How these can be used, is explained
 By adding multiple rules to one contract offer, you are now able to add multiple usage policies to
 one resource (e.g. the data usage can be logged and the data should be deleted at a given date).
 
+---
+
+**Note**: If you preset the `consumer` attribute, the connector will compare this with the
+`issuerConnector` of an incoming contract request. If both values do not match, the contract request
+will be rejected. Make sure that these values are equal (e.g. `https://github.com`
+!= `https://github.com/`. On top of that, you have to predefine the start and end date. These values
+will also be checked on an incoming contract request.
+
+---
+
 ### Step 2: Add data
 
 #### Option 1: Add Local Data

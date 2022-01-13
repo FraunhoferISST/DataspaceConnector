@@ -32,7 +32,10 @@ import io.dataspaceconnector.model.pattern.ConnectorRestrictionDesc;
 import io.dataspaceconnector.model.pattern.DeletionDesc;
 import io.dataspaceconnector.model.pattern.DurationDesc;
 import io.dataspaceconnector.model.pattern.IntervalDesc;
+import io.dataspaceconnector.model.pattern.LoggingDesc;
 import io.dataspaceconnector.model.pattern.NotificationDesc;
+import io.dataspaceconnector.model.pattern.PermissionDesc;
+import io.dataspaceconnector.model.pattern.ProhibitionDesc;
 import io.dataspaceconnector.model.pattern.SecurityRestrictionDesc;
 import io.dataspaceconnector.model.pattern.UsageNumberDesc;
 
@@ -53,12 +56,15 @@ public final class PatternUtils {
     /**
      * Build ids rule.
      *
+     * @param input Rule input.
      * @return The ids rule.
      */
-    public static Rule buildProvideAccessRule() {
+    public static Rule buildProvideAccessRule(final PermissionDesc input) {
         return new PermissionBuilder()
-                ._title_(Util.asList(new TypedLiteral("Allow Data Usage")))
-                ._description_(Util.asList(new TypedLiteral("provide-access")))
+                ._title_(Util.asList(new TypedLiteral(
+                        input.getTitle() == null ? "" : input.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        input.getDescription() == null ? "" : input.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 .build();
     }
@@ -66,12 +72,15 @@ public final class PatternUtils {
     /**
      * Build ids rule.
      *
+     * @param input Rule input.
      * @return The ids rule.
      */
-    public static Rule buildProhibitAccessRule() {
+    public static Rule buildProhibitAccessRule(final ProhibitionDesc input) {
         return new ProhibitionBuilder()
-                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                ._description_(Util.asList(new TypedLiteral("prohibit-access")))
+                ._title_(Util.asList(new TypedLiteral(
+                        input.getTitle() == null ? "" : input.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        input.getDescription() == null ? "" : input.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 .build();
     }
@@ -91,8 +100,10 @@ public final class PatternUtils {
         }
 
         return new PermissionBuilder()
-                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                ._description_(Util.asList(new TypedLiteral("n-times-usage")))
+                ._title_(Util.asList(new TypedLiteral(
+                        input.getTitle() == null ? "" : input.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        input.getDescription() == null ? "" : input.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 ._constraint_(Util.asList(new ConstraintBuilder()
                         ._leftOperand_(LeftOperand.COUNT)
@@ -117,8 +128,10 @@ public final class PatternUtils {
         }
 
         return new PermissionBuilder()
-                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                ._description_(Util.asList(new TypedLiteral("duration-usage")))
+                ._title_(Util.asList(new TypedLiteral(
+                        input.getTitle() == null ? "" : input.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        input.getDescription() == null ? "" : input.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 ._constraint_(Util.asList(new ConstraintBuilder()
                         ._leftOperand_(LeftOperand.ELAPSED_TIME)
@@ -144,8 +157,10 @@ public final class PatternUtils {
         }
 
         return new PermissionBuilder()
-                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                ._description_(Util.asList(new TypedLiteral("usage-during-interval")))
+                ._title_(Util.asList(new TypedLiteral(
+                        input.getTitle() == null ? "" : input.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        input.getDescription() == null ? "" : input.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 ._constraint_(Util.asList(new ConstraintBuilder()
                         ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
@@ -177,8 +192,10 @@ public final class PatternUtils {
         }
 
         return new PermissionBuilder()
-                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                ._description_(Util.asList(new TypedLiteral("usage-until-deletion")))
+                ._title_(Util.asList(new TypedLiteral(
+                        input.getTitle() == null ? "" : input.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        input.getDescription() == null ? "" : input.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 ._constraint_(Util.asList(new ConstraintBuilder()
                         ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
@@ -204,12 +221,15 @@ public final class PatternUtils {
     /**
      * Build ids rule.
      *
+     * @param input Rule input.
      * @return The ids rule.
      */
-    public static Rule buildUsageLoggingRule() {
+    public static Rule buildUsageLoggingRule(final LoggingDesc input) {
         return new PermissionBuilder()
-                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                ._description_(Util.asList(new TypedLiteral("usage-logging")))
+                ._title_(Util.asList(new TypedLiteral(
+                        input.getTitle() == null ? "" : input.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        input.getDescription() == null ? "" : input.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 ._postDuty_(Util.asList(new DutyBuilder()
                         ._action_(Util.asList(Action.LOG))
@@ -232,8 +252,10 @@ public final class PatternUtils {
         }
 
         return new PermissionBuilder()
-                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                ._description_(Util.asList(new TypedLiteral("usage-notification")))
+                ._title_(Util.asList(new TypedLiteral(
+                        input.getTitle() == null ? "" : input.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        input.getDescription() == null ? "" : input.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 ._postDuty_(Util.asList(new DutyBuilder()
                         ._action_(Util.asList(Action.NOTIFY))
@@ -263,8 +285,10 @@ public final class PatternUtils {
         }
 
         return new PermissionBuilder()
-                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                ._description_(Util.asList(new TypedLiteral("connector-restriction")))
+                ._title_(Util.asList(new TypedLiteral(
+                        input.getTitle() == null ? "" : input.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        input.getDescription() == null ? "" : input.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 ._constraint_(Util.asList(new ConstraintBuilder()
                         ._leftOperand_(LeftOperand.SYSTEM)
@@ -291,8 +315,10 @@ public final class PatternUtils {
         }
 
         return new PermissionBuilder()
-                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                ._description_(Util.asList(new TypedLiteral("security-level-restriction")))
+                ._title_(Util.asList(new TypedLiteral(
+                        desc.getTitle() == null ? "" : desc.getTitle())))
+                ._description_(Util.asList(new TypedLiteral(
+                        desc.getDescription() == null ? "" : desc.getDescription())))
                 ._action_(Util.asList(Action.USE))
                 ._constraint_(Util.asList(new ConstraintBuilder()
                         ._leftOperand_(LeftOperand.SECURITY_LEVEL)

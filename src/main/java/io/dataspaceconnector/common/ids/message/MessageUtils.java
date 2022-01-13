@@ -27,8 +27,8 @@ import de.fraunhofer.ids.messaging.util.InfomodelMessageBuilder;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.MessageEmptyException;
 import io.dataspaceconnector.common.exception.MessageRequestException;
-import io.dataspaceconnector.common.exception.VersionNotSupportedException;
 import io.dataspaceconnector.common.util.Utils;
+import lombok.extern.log4j.Log4j2;
 import okhttp3.MultipartBody;
 
 import java.io.IOException;
@@ -40,6 +40,7 @@ import java.util.Map;
 /**
  * Class providing common methods for message utility.
  */
+@Log4j2
 public final class MessageUtils {
 
     /**
@@ -179,11 +180,9 @@ public final class MessageUtils {
      *
      * @param versionString   The outbound model version of the requesting connector.
      * @param inboundVersions The inbound model version of the current connector.
-     * @throws VersionNotSupportedException If the Information Model version is not supported.
      */
     public static void checkForVersionSupport(final String versionString,
-                                              final List<? extends String> inboundVersions)
-            throws VersionNotSupportedException {
+                                              final List<? extends String> inboundVersions) {
         boolean versionSupported = false;
         for (final var version : inboundVersions) {
             if (version.equals(versionString)) {
@@ -193,7 +192,12 @@ public final class MessageUtils {
         }
 
         if (!versionSupported) {
-            throw new VersionNotSupportedException("Information Model version not supported.");
+            if (log.isDebugEnabled()) {
+                log.debug("InfoModel version may be incompatible. [inbound=({}), request=({})]",
+                        inboundVersions, versionString);
+            }
+            // TODO Add as soon as IM version compatibility table exists.
+            // throw new VersionNotSupportedException("Information Model version not supported.");
         }
     }
 
@@ -246,7 +250,7 @@ public final class MessageUtils {
         Utils.requireNonNull(payload, ErrorMessage.MISSING_PAYLOAD);
         Utils.requireNonNull(payload.getUnderlyingInputStream(), ErrorMessage.MISSING_PAYLOAD);
         return new String(payload.getUnderlyingInputStream().readAllBytes(),
-                          StandardCharsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     /**

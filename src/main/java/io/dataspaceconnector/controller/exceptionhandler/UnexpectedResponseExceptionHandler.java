@@ -16,8 +16,10 @@
 package io.dataspaceconnector.controller.exceptionhandler;
 
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
-import io.dataspaceconnector.controller.util.ResponseUtils;
+import io.dataspaceconnector.common.net.JsonResponse;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,17 +28,23 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  * Global exception handler for {@link UnexpectedResponseException}.
  */
 @ControllerAdvice
+@Log4j2
 @Order(1)
 public final class UnexpectedResponseExceptionHandler {
 
     /**
      * Handles thrown runtime exception with response code 417.
      *
-     * @param exception The thrown exception.
+     * @param e The thrown exception.
      * @return Response entity with code 417.
      */
     @ExceptionHandler(UnexpectedResponseException.class)
-    public ResponseEntity<Object> handleAnyException(final UnexpectedResponseException exception) {
-        return ResponseUtils.respondWithContent(exception.getContent());
+    public ResponseEntity<Object> handleException(final UnexpectedResponseException e) {
+        final var msg = "Received unexpected response message.";
+        if (log.isDebugEnabled()) {
+            log.debug(msg + " [exception=({})]", e == null ? "" : e.getMessage(), e);
+        }
+        return new JsonResponse(msg, e == null ? "" : e.getContent())
+                .create(HttpStatus.EXPECTATION_FAILED);
     }
 }

@@ -13,19 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.policy.tag;
 
 /**
- * The names of tags for policies.
+ * Contains all classes required for database migration, which perform additional migration
+ * operations next to the scripts.
  */
-public final class PolicyName {
-
-    /**
-     * Tag name for policies.
-     */
-    public static final String POLICIES = "Usage Control";
-
-    private PolicyName() {
-        // Nothing to do here.
-    }
-}
+package db.migration;

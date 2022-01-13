@@ -13,24 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.policy.tag;
+package db.migration;
 
 /**
- * The descriptions of tags for policies.
+ * Provides constants used during the migration.
  */
-public final class PolicyDescription {
+public final class MigrationConstants {
+
+    private MigrationConstants() { }
 
     /**
-     * Tag description for policies.
+     * Column length 2048.
      */
-    public static final String POLICIES = "Endpoints for policy handling.";
+    public static final int COLUMN_LENGTH_2048 = 2048;
 
     /**
-     * Tag description for policy settings.
+     * Column length 255.
      */
-    public static final String POLICY_SETTINGS = "Endpoints for policy settings.";
+    public static final int COLUMN_LENGTH_255 = 255;
 
-    private PolicyDescription() {
-        // Nothing to do here.
-    }
 }

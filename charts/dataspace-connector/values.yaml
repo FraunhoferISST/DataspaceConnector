@@ -34,6 +34,11 @@ env:
     SPRING_SECURITY_USER_NAME: "admin"
     # -- Connector admin password
     SPRING_SECURITY_USER_PASSWORD: "password"
+  flyway:
+    SPRING_FLYWAY_ENABLED: "false"
+    SPRING_FLYWAY_BASELINE-ON-MIGRATE: "false"
+    SPRING_FLYWAY_BASELINE-VERSION: "7.0.0"
+    SPRING_JPA_HIBERNATE_DDL-AUTO: "update"
 
 # -- Persistent database properties
 postgresql:

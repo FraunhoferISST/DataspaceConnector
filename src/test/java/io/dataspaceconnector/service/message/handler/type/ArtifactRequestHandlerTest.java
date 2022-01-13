@@ -62,31 +62,6 @@ class ArtifactRequestHandlerTest {
 
     @SneakyThrows
     @Test
-    public void handleMessage_unsupportedMessage_returnUnsupportedVersionRejectionMessage() {
-        /* ARRANGE */
-        final var calendar = new GregorianCalendar();
-        calendar.setTime(new Date());
-        final var xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
-
-        final var message = new ArtifactRequestMessageBuilder()
-                ._senderAgent_(URI.create("https://localhost:8080"))
-                ._issuerConnector_(URI.create("https://localhost:8080"))
-                ._securityToken_(new DynamicAttributeTokenBuilder()._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build())
-                ._modelVersion_("tetris")
-                ._issued_(xmlCalendar)
-                ._correlationMessage_(URI.create("https://somecorrelationMessage"))
-                ._requestedArtifact_(URI.create("https://someArtifact"))
-                .build();
-
-        /* ACT */
-        final var result = (ErrorResponse) handler.handleMessage((ArtifactRequestMessageImpl) message, null);
-
-        /* ASSERT */
-        assertEquals(RejectionReason.VERSION_NOT_SUPPORTED, result.getRejectionMessage().getRejectionReason());
-    }
-
-    @SneakyThrows
-    @Test
     public void handleMessage_nullPayload_returnBadRequestErrorResponse() {
         /* ARRANGE */
         final var calendar = new GregorianCalendar();
