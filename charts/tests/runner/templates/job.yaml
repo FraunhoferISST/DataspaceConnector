@@ -9,6 +9,6 @@ spec:
       containers:
         - image: ghcr.io/international-data-spaces-association/dataspace-connector/tests/runner:latest
           imagePullPolicy: Never
-          command: ["python3", "/app/scripts/{{ .Values.entrypoint }}"]
+          command: ["/venv/bin/python3", "/app/scripts/{{ .Values.entrypoint }}"]
           name: test-runner
       restartPolicy: Never
