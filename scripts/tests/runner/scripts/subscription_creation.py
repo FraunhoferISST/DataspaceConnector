@@ -21,19 +21,16 @@ import sys
 from resourceapi import ResourceApi
 from subscriptionapi import SubscriptionApi
 
-providerUrl = "http://localhost:8080"
-consumerUrl = "http://localhost:8081"
-
-provider_alias = "http://provider-dataspace-connector"
-consumer_alias = "http://consumer-dataspace-connector"
+provider_url = "http://provider-dataspace-connector"
+consumer_url = "http://consumer-dataspace-connector"
 
 
 def main(argv):
     if len(argv) == 2:
-        provider_alias = argv[0]
-        consumer_alias = argv[1]
-        print("Setting provider alias as:", provider_alias)
-        print("Setting consumer alias as:", consumer_alias)
+        provider_url = argv[0]
+        consumer_url = argv[1]
+        print("Setting provider alias as:", provider_url)
+        print("Setting consumer alias as:", consumer_url)
 
 
 if __name__ == "__main__":
@@ -42,11 +39,11 @@ if __name__ == "__main__":
 print("Starting script")
 
 # Provider
-provider = ResourceApi(providerUrl)
-providerSub = SubscriptionApi(providerUrl)
+provider = ResourceApi(provider_url)
+providerSub = SubscriptionApi(provider_url)
 
 # Consumer
-consumerSub = SubscriptionApi(consumerUrl)
+consumerSub = SubscriptionApi(consumer_url)
 
 ## Create resources
 dataValue = "SOME LONG VALUE"
@@ -70,13 +67,13 @@ data = {
     "title": "string",
     "description": "string",
     "target": offers,
-    "location": provider_alias + "/api/ids/data",
-    "subscriber": consumer_alias,
+    "location": provider_url + "/api/ids/data",
+    "subscriber": consumer_url,
     "pushData": "true",
 }
 
 response = consumerSub.subscription_message(
-    data=data, params={"recipient": provider_alias + "/api/ids/data"}
+    data=data, params={"recipient": provider_url + "/api/ids/data"}
 )
 
 pprint.pprint(response.text)

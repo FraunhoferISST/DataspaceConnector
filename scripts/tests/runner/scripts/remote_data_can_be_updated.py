@@ -17,7 +17,7 @@
 
 from resourceapi import ResourceApi
 
-connector = ResourceApi("http://localhost:8080")
+connector = ResourceApi("http://provider-dataspace-connector")
 artifact = connector.create_artifact(
     data={
         "title": "string",

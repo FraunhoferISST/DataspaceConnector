@@ -788,6 +788,7 @@
 								<exclude>charts/**/.helmignore</exclude>
 								<exclude>charts/**/**/*.yaml</exclude>
 								<exclude>charts/**/**/NOTES.txt</exclude>
+								<exclude>**/requirements.txt</exclude>
 								<exclude>**/*.tgz</exclude>
 								<exclude>charts/**/*.tpl</exclude>
 								<exclude>docs/**</exclude>
