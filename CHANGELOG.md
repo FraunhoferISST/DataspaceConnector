@@ -23,7 +23,7 @@ All notable changes to this project will be documented in this file.
 - Replace template engine `Velocity` with `Freemarker`.
 - Remove suffix *settings* from `ConfigurationDesc` attributes (`truststore`, `proxy`, `keystore`).
 - Change jdk version from 11 to 17.
-- Increase camel version from 3.12.0 to 3.13.0.
+- Increase camel version from 3.12.0 to 3.14.0.
 - Increase spring-boot-starter-parent version from 2.5.6 to 2.6.2.
 - Increase spotbugs version from 4.4.2 to 4.5.3.
 - Increase okhttp version from 4.9.2 to 4.9.3.
@@ -33,7 +33,7 @@ All notable changes to this project will be documented in this file.
 - Increase modelmapper version from 2.4.4 to 3.0.0.
 - Increase equalsverifier version from 3.7.2 to 3.8.2.
 - Increase log4j2 version from 2.14.0 to 2.17.1.
-- Increase dependency-check-maven from 6.5.0 to 6.5.2.
+- Increase dependency-check-maven from 6.5.0 to 6.5.3.
 - Increase maven-site-plugin version from 3.9.1 to 3.10.0.
 - Increase protobuf version from 3.15.5 to 3.19.3.
 - Increase jackson version from 2.13.0 to 2.13.1.
