@@ -39,7 +39,7 @@ CREATE TABLE public.configuration (
     title character varying(255),
     active boolean,
     curator character varying(255),
-    default_endpoint character varying(255),
+    connector_endpoint character varying(255),
     deploy_mode character varying(255),
     log_level character varying(255),
     maintainer character varying(255),
