@@ -26,6 +26,7 @@ function init::setup_env_vars() {
     export TEST_SUITE=new-version
     export PROVIDER_VERSION=latest
     export CONSUMER_VERSION=latest
+    export BACKEND_VERSION=ci
     export TEST_SUITE_FAILURES=0
     export COLOR_DEFAULT=$'\e[0m'
     export COLOR_GREEN=$'\e[32m'

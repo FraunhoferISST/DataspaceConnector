@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: test-runner
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      containers:
+        - image: ghcr.io/international-data-spaces-association/dataspace-connector/tests/runner:latest
+          imagePullPolicy: Never
+          command: ["/venv/bin/python3", "/app/scripts/{{ .Values.entrypoint }}"]
+          name: test-runner
+      restartPolicy: Never

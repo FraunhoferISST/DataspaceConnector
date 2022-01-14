@@ -27,32 +27,56 @@ function test::exit() {
 }
 
 function test::run_test_suite() {
-    while read INPUT; do
+    while read -r INPUT; do
         export CURRENT_TEST_SCRIPT=$INPUT
         test::run_test_script
     done <./scripts/ci/e2e/active-tests.txt
 
     if [ "$TEST_FAILURES" -gt 0 ]; then
-        export TEST_SUITE_FAILURES=$(($TEST_SUITE_FAILURES+1))
+        export TEST_SUITE_FAILURES=$((TEST_SUITE_FAILURES+1))
     fi
 }
 
+function test::wait_for_finish() {
+    done=0
+
+    until [ $done -eq 1 ]
+    do
+        failed=0
+        success=0
+        if [ "$(kubectl get jobs test-runner -o jsonpath='{.status.conditions[?(@.type=="Failed")].status}')" == "True" ]; then
+            failed=1
+            export RUNNER_EXIT_CODE=1
+        fi
+        if [ "$(kubectl get jobs test-runner -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}')" == "True" ]; then
+            success=1
+            export RUNNER_EXIT_CODE=0
+        fi
+
+        if [[ $failed -eq 1 ]] || [[ $success -eq 1 ]]; then
+            done=1
+        fi
+    done
+}
+
 function test::run_test_script() {
-    chmod +x ${CURRENT_TEST_SCRIPT}
-    set +e
-    SCRIPT_OUTPUT=$(${CURRENT_TEST_SCRIPT} "http://provider-dataspace-connector" "http://consumer-dataspace-connector" 2>&1)
-    if [ $? -eq 0 ]; then
-        export TEST_SUCCESS=$(($TEST_SUCCESS+1))
+    helm install e2e charts/tests/runner --set entrypoint="${CURRENT_TEST_SCRIPT}" 2>&1 >/dev/null
+    sleep 1
+    test::wait_for_finish
+
+    if [ "$RUNNER_EXIT_CODE" -eq 0 ]; then
+        export TEST_SUCCESS=$((TEST_SUCCESS+1))
         echo "${COLOR_GREEN}PASSED${COLOR_DEFAULT} $CURRENT_TEST_SCRIPT"
     else
         echo "$LINE_BREAK_STAR"
-        export TEST_FAILURES=$(($TEST_FAILURES+1))
+        export TEST_FAILURES=$((TEST_FAILURES+1))
         echo "${COLOR_RED}FAILED${COLOR_DEFAULT} $CURRENT_TEST_SCRIPT"
         echo "$LINE_BREAK_STAR"
-        echo ${SCRIPT_OUTPUT}
+        kubectl logs -l job-name=test-runner --tail=1000
         echo "$LINE_BREAK_STAR"
     fi
     set -eo pipefail
+    helm uninstall e2e 2>&1 >/dev/null
 }
 
 function test::report_test_runs() {

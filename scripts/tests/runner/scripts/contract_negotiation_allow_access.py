@@ -20,19 +20,16 @@ from idsapi import IdsApi
 import pprint
 import sys
 
-providerUrl = "http://localhost:8080"
-consumerUrl = "http://localhost:8081"
-
-provider_alias = "http://provider-dataspace-connector"
-consumer_alias = "http://consumer-dataspace-connector"
+provider_url = "http://provider-dataspace-connector"
+consumer_url = "http://consumer-dataspace-connector"
 
 
 def main(argv):
     if len(argv) == 2:
-        provider_alias = argv[0]
-        consumer_alias = argv[1]
-        print("Setting provider alias as:", provider_alias)
-        print("Setting consumer alias as:", consumer_alias)
+        provider_url = argv[0]
+        consumer_url = argv[1]
+        print("Setting provider alias as:", provider_url)
+        print("Setting consumer alias as:", consumer_url)
 
 
 if __name__ == "__main__":
@@ -41,7 +38,7 @@ if __name__ == "__main__":
 print("Starting script")
 
 # Provider
-provider = ResourceApi(providerUrl)
+provider = ResourceApi(provider_url)
 
 ## Create resources
 dataValue = "SOME LONG VALUE"
@@ -62,29 +59,25 @@ provider.add_rule_to_contract(contract, use_rule)
 print("Created provider resources")
 
 # Consumer
-consumer = IdsApi(consumerUrl)
-
-# Replace localhost references
-offers = offers.replace(providerUrl, provider_alias)
-artifact = artifact.replace(providerUrl, provider_alias)
+consumer = IdsApi(consumer_url)
 
 # IDS
 # Call description
-offer = consumer.descriptionRequest(provider_alias + "/api/ids/data", offers)
+offer = consumer.descriptionRequest(provider_url + "/api/ids/data", offers)
 pprint.pprint(offer)
 
 # Negotiate contract
 obj = offer["ids:contractOffer"][0]["ids:permission"][0]
 obj["ids:target"] = artifact
 response = consumer.contractRequest(
-    provider_alias + "/api/ids/data", offers, artifact, False, obj
+    provider_url + "/api/ids/data", offers, artifact, False, obj
 )
 pprint.pprint(response)
 
 # Pull data
 agreement = response["_links"]["self"]["href"]
 
-consumerResources = ResourceApi(consumerUrl)
+consumerResources = ResourceApi(consumer_url)
 artifacts = consumerResources.get_artifacts_for_agreement(agreement)
 pprint.pprint(artifacts)
 
