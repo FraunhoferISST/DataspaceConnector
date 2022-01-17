@@ -94,10 +94,11 @@ class PortainerRequestServiceTest {
 
         mockWebServer = new MockWebServer();
         mockWebServer.start();
-        Mockito.when(portainerConfig.getPortainerHost()).thenReturn(mockWebServer.getHostName());
-        Mockito.when(portainerConfig.getPortainerPort()).thenReturn(mockWebServer.getPort());
-        Mockito.when(portainerConfig.getPortainerUser()).thenReturn("user");
-        Mockito.when(portainerConfig.getPortainerPassword()).thenReturn("pass");
+        Mockito.when(portainerConfig.getScheme()).thenReturn("http");
+        Mockito.when(portainerConfig.getHost()).thenReturn(mockWebServer.getHostName());
+        Mockito.when(portainerConfig.getPort()).thenReturn(mockWebServer.getPort());
+        Mockito.when(portainerConfig.getUsername()).thenReturn("user");
+        Mockito.when(portainerConfig.getPassword()).thenReturn("pass");
     }
 
     @Test

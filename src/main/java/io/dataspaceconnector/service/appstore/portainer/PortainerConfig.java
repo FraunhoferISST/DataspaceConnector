@@ -27,26 +27,32 @@ import org.springframework.context.annotation.Configuration;
 public class PortainerConfig {
 
     /**
+     * The scheme.
+     */
+    @Value("${portainer.application.scheme}")
+    private String scheme;
+
+    /**
      * The host.
      */
     @Value("${portainer.application.host}")
-    private String portainerHost;
+    private String host;
 
     /**
      * The port.
      */
     @Value("${portainer.application.port}")
-    private Integer portainerPort;
+    private Integer port;
 
     /**
      * The user for the authentication.
      */
     @Value("${portainer.application.username}")
-    private String portainerUser;
+    private String username;
 
     /**
      * The password for the authentication.
      */
     @Value("${portainer.application.password}")
-    private String portainerPassword;
+    private String password;
 }
