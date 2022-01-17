@@ -51,7 +51,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class PortainerRequestService {
+public class PortainerService {
     /**
      * Service for http connections.
      */

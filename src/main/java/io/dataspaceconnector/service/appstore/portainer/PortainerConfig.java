@@ -55,4 +55,6 @@ public class PortainerConfig {
      */
     @Value("${portainer.application.password}")
     private String password;
+
+
 }

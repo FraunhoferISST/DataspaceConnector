@@ -34,7 +34,7 @@ import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.app.AppImpl;
 import io.dataspaceconnector.service.AppRouteResolver;
-import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
+import io.dataspaceconnector.service.appstore.portainer.PortainerService;
 import io.dataspaceconnector.service.resource.type.AppEndpointService;
 import io.dataspaceconnector.service.resource.type.AppService;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -75,7 +75,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     /**
      * Portainer request service.
      */
-    private final @NonNull PortainerRequestService portainerSvc;
+    private final @NonNull PortainerService portainerSvc;
 
     /**
      * Service for managing AppEndpoints.
