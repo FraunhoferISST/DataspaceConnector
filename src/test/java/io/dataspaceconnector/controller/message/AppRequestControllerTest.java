@@ -100,8 +100,8 @@ class AppRequestControllerTest {
 
         /* ACT && ASSERT */
         mockMvc.perform(post("/api/ids/app")
-                        .param("recipient", recipient.toString())
-                        .param("appId", app.toString()))
+                .param("recipient", recipient.toString())
+                .param("appId", app.toString()))
                 .andExpect(status().isCreated());
     }
 }

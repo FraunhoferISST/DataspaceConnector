@@ -79,20 +79,20 @@ public class AppRequestController {
     private final @NonNull AppService appSvc;
 
     /**
-     * Service for handling app store logic.
-     */
-    private final @NonNull AppStoreCommunication appStoreCommunication;
-
-    /**
      * Assemblers DTOs for apps.
      */
     private final @NonNull AppViewAssembler appViewAssembler;
 
     /**
+     * Service for handling app store logic.
+     */
+    private final @NonNull AppStoreCommunication appStoreCommunication;
+
+    /**
      * Add an apps metadata to an app object.
      *
      * @param recipient The recipient url or app store id.
-     * @param appId     The app id.
+     * @param appId     The app Id.
      * @return Success, when app can be found and created from recipient response.
      */
     @PostMapping(value = "/app", produces = ContentType.JSON)
@@ -112,7 +112,7 @@ public class AppRequestController {
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The app id.", required = true)
             @RequestParam(value = "appId") final URI appId) {
-        // Check if input was an app store id or an url.
+        // Check if input was an appStore id or an url.
         final var appStore = appStoreCommunication.checkInput(recipient);
         var address = recipient;
         if (appStore.isPresent()) {

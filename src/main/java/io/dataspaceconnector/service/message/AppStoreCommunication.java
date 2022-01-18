@@ -46,29 +46,29 @@ public class AppStoreCommunication {
     private final @NotNull AppStoreAppLinker linker;
 
     /**
+     * Service for the app store.
+     */
+    private final @NotNull AppStoreService appStoreService;
+
+    /**
      * Service for linking apps and app stores.
      */
     private final @NotNull AppAppStoreLinker appAppStoreLinker;
 
     /**
-     * Service for the broker.
-     */
-    private final @NotNull AppStoreService appStoreService;
-
-    /**
-     * Check if input is an app store id or an url.
+     * Check if input is an appStore id or an url.
      *
      * @param input The input uri.
-     * @return The found app store or empty.
+     * @return The found appStore or empty.
      */
     public Optional<AppStore> checkInput(final URI input) {
         try {
             final var appStore = appStoreService.get(UUIDUtils.uuidFromUri(input));
             return appStore == null ? Optional.empty() : Optional.of(appStore);
         } catch (UUIDFormatException exception) {
-            // Input uri is not an app store id. Proceed.
+            // Input uri is not an appStore id. Proceed.
         } catch (ResourceNotFoundException exception) {
-            // No app store found for this id. Proceed.
+            // No appStore found for this id. Proceed.
         }
         return Optional.empty();
     }
