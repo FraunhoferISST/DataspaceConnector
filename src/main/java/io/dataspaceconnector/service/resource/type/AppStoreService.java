@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import java.net.URI;
 import java.util.UUID;
 
 import io.dataspaceconnector.model.appstore.AppStore;
@@ -49,15 +48,5 @@ public class AppStoreService extends BaseEntityService<AppStore, AppStoreDesc> {
      */
     public AppStore getAppStoreByAppId(final UUID appId) {
         return ((AppStoreRepository) getRepository()).findAppStoreWithAppId(appId);
-    }
-
-    /**
-     * Get app store by its location address.
-     *
-     * @param location The location uri of the app store.
-     * @return The app store identified by its location uri.
-     */
-    public AppStore getAppStoreByLocation(final URI location) {
-        return ((AppStoreRepository) getRepository()).findAppStoreWithLocation(location);
     }
 }

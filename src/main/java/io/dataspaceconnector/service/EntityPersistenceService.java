@@ -272,7 +272,7 @@ public class EntityPersistenceService {
      * @return The AppResource's artifact id.
      */
     public URI saveAppMetadata(final Map<String, String> response, final URI remoteUrl,
-                               final Optional<AppStore> appStore)
+                               final AppStore appStore)
             throws PersistenceException, IllegalArgumentException {
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
         final var resource = deserializationService.getAppResource(payload);
@@ -300,8 +300,7 @@ public class EntityPersistenceService {
         }
 
         // Link app to app store. NOTE: An exception should not abort the download process.
-        appStore.ifPresent(store -> appStoreCommunication.addAppStoreToApp(app.getId(),
-                store.getId()));
+        appStoreCommunication.addAppStoreToApp(app.getId(), appStore.getId());
         appStoreCommunication.addAppToAppStore(appStore, app.getId());
 
         return instanceId.get();

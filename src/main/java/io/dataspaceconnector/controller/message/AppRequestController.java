@@ -29,8 +29,8 @@ import io.dataspaceconnector.controller.resource.view.app.AppViewAssembler;
 import io.dataspaceconnector.controller.util.ResponseUtils;
 import io.dataspaceconnector.service.ArtifactDataDownloader;
 import io.dataspaceconnector.service.MetadataDownloader;
-import io.dataspaceconnector.service.message.AppStoreCommunication;
 import io.dataspaceconnector.service.resource.type.AppService;
+import io.dataspaceconnector.service.resource.type.AppStoreService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -42,7 +42,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,6 +51,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.PersistenceException;
 import java.net.URI;
+import java.util.UUID;
 
 /**
  * This controller provides the endpoint for sending an app request message and starting the
@@ -80,19 +80,19 @@ public class AppRequestController {
     private final @NonNull AppService appSvc;
 
     /**
+     * Service for managing appstores.
+     */
+    private final @NonNull AppStoreService appstoreSvc;
+
+    /**
      * Assemblers DTOs for apps.
      */
     private final @NonNull AppViewAssembler appViewAssembler;
 
     /**
-     * Service for handling app store logic.
-     */
-    private final @NonNull AppStoreCommunication appStoreCommunication;
-
-    /**
      * Add an apps metadata to an app object.
      *
-     * @param recipient The recipient url
+     * @param appstoreId The appstore Id.
      * @param appId     The app Id.
      * @return Success, when app can be found and created from recipient response.
      */
@@ -106,29 +106,23 @@ public class AppRequestController {
             @ApiResponse(responseCode = "417", description = "Expectation failed"),
             @ApiResponse(responseCode = "500", description = "Internal server error"),
             @ApiResponse(responseCode = "502", description = "Bad gateway")})
-    @PreAuthorize("hasPermission(#recipient, 'rw')")
     @ResponseBody
     @Transactional
     public ResponseEntity<Object> sendMessage(
-            @Parameter(description = "The recipient url.", required = true)
-            @RequestParam("recipient") final URI recipient,
+            @Parameter(description = "The appstore id.", required = true)
+            @RequestParam("appstoreId") final UUID appstoreId,
             @Parameter(description = "The app id.", required = true)
             @RequestParam(value = "appId") final URI appId) {
-        // Check if input was an appStore id or an url.
-        final var appStore = appStoreCommunication.checkInput(recipient);
-        var address = recipient;
-        if (appStore.isPresent()) {
-            // If an app store could be found, use its location as address.
-            address = appStore.get().getLocation();
-        }
+        final var appStore = appstoreSvc.get(appstoreId);
 
         // Send description request message and save the AppResource's metadata.
         try {
-            final var artifactId = metadataDownloader.downloadAppResource(address, appId, appStore);
+            final var artifactId = metadataDownloader.downloadAppResource(appId, appStore);
 
             // Send artifact request message to download the AppResource's data.
             try {
-                artifactDataDownloader.downloadTemplate(address, artifactId, appId);
+                final var location = appStore.getLocation();
+                artifactDataDownloader.downloadTemplate(location, artifactId, appId);
             } catch (UnexpectedResponseException | MessageException | PersistenceException e) {
                 // Remove app if no corresponding data could be downloaded.
                 final var app = appSvc.identifyByRemoteId(appId);

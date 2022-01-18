@@ -24,8 +24,8 @@ import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.service.ArtifactDataDownloader;
 import io.dataspaceconnector.service.MetadataDownloader;
-import io.dataspaceconnector.service.message.AppStoreCommunication;
 import io.dataspaceconnector.service.resource.type.AppService;
+import io.dataspaceconnector.service.resource.type.AppStoreService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -64,7 +64,7 @@ class AppRequestControllerTest {
     private AppService appService;
 
     @MockBean
-    private AppStoreCommunication appStoreCommunication;
+    private AppStoreService appStoreService;
 
     @MockBean
     private ConnectorService connectorService;
@@ -80,7 +80,7 @@ class AppRequestControllerTest {
         //Controller needs to be mocked to avoid sending
         // messages to appstore and portainer in unit test.
         Mockito.doReturn(URI.create("https://artifactId")).when(metadataDownloader)
-                .downloadAppResource(Mockito.any(URI.class), Mockito.any(URI.class), Mockito.any());
+                .downloadAppResource(Mockito.any(URI.class), Mockito.any());
         Mockito.when(appService.identifyByRemoteId(Mockito.any(URI.class))).thenReturn(
                 Optional.of(UUID.randomUUID()));
         Mockito.when(appService.get(Mockito.any(UUID.class))).thenReturn(new App());
@@ -92,15 +92,15 @@ class AppRequestControllerTest {
     @WithMockUser("ADMIN")
     public void sendMessage_validInput_willReturn201() throws Exception {
         /* ARRANGE */
-        final var recipient = URI.create("https://someRecipient");
+        final var appstoreId = UUID.randomUUID();
         final var app = URI.create("https://someApp");
 
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
-        Mockito.doReturn(Optional.of(new AppStore())).when(appStoreCommunication).checkInput(recipient);
+        Mockito.doReturn(new AppStore()).when(appStoreService).get(appstoreId);
 
         /* ACT && ASSERT */
         mockMvc.perform(post("/api/ids/app")
-                .param("recipient", recipient.toString())
+                .param("appstoreId", String.valueOf(appstoreId))
                 .param("appId", app.toString()))
                 .andExpect(status().isCreated());
     }
