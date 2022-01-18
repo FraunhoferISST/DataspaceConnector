@@ -29,7 +29,7 @@ public class PortainerConfig {
     /**
      * The scheme.
      */
-    @Value("${portainer.application.scheme}")
+    @Value("${portainer.application.scheme:http}")
     private String scheme;
 
     /**
