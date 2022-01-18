@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Create datasource beans from `DataSources` of type `DATABASE` automatically.
 - Add database migration feature.
   * Offer possibility to migrate databases to `v7.0.0` starting from `v5.0.0`.
+- Add `portainer.application.scheme` to `application.properties.`. Default is set to `http`.
 
 ### Changed
 - Change encoding of local data from `UTF-16` to `UTF-8`.
