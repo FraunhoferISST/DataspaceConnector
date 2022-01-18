@@ -56,7 +56,7 @@ import io.dataspaceconnector.repository.RuleRepository;
 import io.dataspaceconnector.repository.SubscriptionRepository;
 import io.dataspaceconnector.service.DataRetriever;
 import io.dataspaceconnector.service.EntityResolver;
-import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
+import io.dataspaceconnector.service.appstore.portainer.PortainerService;
 import io.dataspaceconnector.service.resource.ids.builder.IdsConfigModelBuilder;
 import io.dataspaceconnector.service.resource.relation.ArtifactRouteService;
 import io.dataspaceconnector.service.resource.type.AgreementService;
@@ -137,7 +137,7 @@ public class ResourceConfig {
             final AppRepository repository,
             final AppStoreService appStoreSvc,
             final DataRepository dataRepo,
-            final PortainerRequestService portainerSvc) {
+            final PortainerService portainerSvc) {
         return new AppService(repository, new AppFactory(), appStoreSvc, dataRepo, portainerSvc);
     }
 

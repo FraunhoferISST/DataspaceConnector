@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.service.resource.type;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Optional;
-import java.util.UUID;
-
 import io.dataspaceconnector.common.exception.NotImplemented;
 import io.dataspaceconnector.common.exception.UnreachableLineException;
 import io.dataspaceconnector.model.app.App;
@@ -34,7 +27,7 @@ import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.repository.AppRepository;
 import io.dataspaceconnector.repository.BaseEntityRepository;
 import io.dataspaceconnector.repository.DataRepository;
-import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
+import io.dataspaceconnector.service.appstore.portainer.PortainerService;
 import io.dataspaceconnector.service.resource.base.BaseEntityService;
 import io.dataspaceconnector.service.resource.base.RemoteResolver;
 import lombok.AccessLevel;
@@ -42,6 +35,13 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service class for apps.
@@ -62,9 +62,9 @@ public class AppService extends BaseEntityService<App, AppDesc> implements Remot
     private final @NonNull DataRepository dataRepo;
 
     /**
-     * The PortainerRequestService to send request to the local Portainer instance.
+     * The PortainerService to send request to the local Portainer instance.
      */
-    private final @NonNull PortainerRequestService portainerRequestSvc;
+    private final @NonNull PortainerService portainerRequestSvc;
 
     /**
      * Constructor for AppService.
@@ -72,18 +72,18 @@ public class AppService extends BaseEntityService<App, AppDesc> implements Remot
      * @param factory The app factory.
      * @param appStoreService The appstore service.
      * @param dataRepository The data repository.
-     * @param portainerRequestService The portainer request service.
+     * @param portainerService The portainer request service.
      */
     public AppService(
             final BaseEntityRepository<App> repository,
             final AbstractFactory<App, AppDesc> factory,
             final @NonNull AppStoreService appStoreService,
             final @NonNull DataRepository dataRepository,
-            final @NonNull PortainerRequestService portainerRequestService) {
+            final @NonNull PortainerService portainerService) {
         super(repository, factory);
         this.appStoreSvc = appStoreService;
         this.dataRepo = dataRepository;
-        this.portainerRequestSvc = portainerRequestService;
+        this.portainerRequestSvc = portainerService;
     }
 
 

@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Create datasource beans from `DataSources` of type `DATABASE` automatically.
 - Add database migration feature.
   * Offer possibility to migrate databases to `v7.0.0` starting from `v5.0.0`.
+- Add `portainer.application.scheme` to `application.properties.`. Default is set to `http`.
 
 ### Changed
 - Change encoding of local data from `UTF-16` to `UTF-8`.
@@ -83,6 +84,7 @@ All notable changes to this project will be documented in this file.
   - `/api/examples/validation`
   - `/api/examples/policy`
 - Make field `type` in `DataSource` transient, as type information is persisted through the `dtype` column created through the `@Inheritance` annotation.
+- Rename param of `/describe` from `actionType` to `type` and change it to type `ActionType`.
 
 ### Fixed
 - XML-escape URLs before injecting them into Camel route templates.

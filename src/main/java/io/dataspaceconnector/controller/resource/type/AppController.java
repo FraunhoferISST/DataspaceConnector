@@ -18,8 +18,8 @@ package io.dataspaceconnector.controller.resource.type;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.AppNotDeployedException;
 import io.dataspaceconnector.common.exception.PortainerNotConfigured;
-import io.dataspaceconnector.common.net.JsonResponse;
 import io.dataspaceconnector.common.net.ContentType;
+import io.dataspaceconnector.common.net.JsonResponse;
 import io.dataspaceconnector.config.BasePath;
 import io.dataspaceconnector.controller.resource.base.BaseResourceController;
 import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
@@ -34,7 +34,7 @@ import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.app.AppImpl;
 import io.dataspaceconnector.service.AppRouteResolver;
-import io.dataspaceconnector.service.appstore.portainer.PortainerRequestService;
+import io.dataspaceconnector.service.appstore.portainer.PortainerService;
 import io.dataspaceconnector.service.resource.type.AppEndpointService;
 import io.dataspaceconnector.service.resource.type.AppService;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -59,8 +59,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.text.Normalizer;
-import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -75,7 +73,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     /**
      * Portainer request service.
      */
-    private final @NonNull PortainerRequestService portainerSvc;
+    private final @NonNull PortainerService portainerSvc;
 
     /**
      * Service for managing AppEndpoints.
@@ -150,21 +148,20 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     @ResponseBody
     public final ResponseEntity<Object> containerManagement(
             @PathVariable("id") final UUID appId,
-            @RequestParam("actionType") final String type) {
-        final var action = Normalizer.normalize(type.toUpperCase(Locale.ROOT), Normalizer.Form.NFC);
+            @RequestParam("type") final ActionType type) {
         final var app = getService().get(appId);
         final var containerId = ((AppImpl) app).getContainerId();
 
         try {
             initPortainerSvc();
 
-            if (ActionType.START.name().equals(action)) {
+            if (type == ActionType.START) {
                 return startApp(app, containerId);
-            } else if (ActionType.STOP.name().equals(action)) {
+            } else if (type == ActionType.STOP) {
                 return stopApp(app, containerId);
-            } else if (ActionType.DELETE.name().equals(action)) {
+            } else if (type == ActionType.DELETE) {
                 return deleteApp(appId, containerId);
-            } else if (ActionType.DESCRIBE.name().equals(action)) {
+            } else if (type == ActionType.DESCRIBE) {
                 return describeApp(containerId);
             } else {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
