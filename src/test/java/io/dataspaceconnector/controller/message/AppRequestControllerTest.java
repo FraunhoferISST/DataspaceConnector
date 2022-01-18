@@ -92,11 +92,12 @@ class AppRequestControllerTest {
     @WithMockUser("ADMIN")
     public void sendMessage_validInput_willReturn201() throws Exception {
         /* ARRANGE */
-        final var appstoreId = UUID.randomUUID();
+        final var uuid = UUID.randomUUID();
+        final var appstoreId = URI.create("https://someApp/" + uuid);
         final var app = URI.create("https://someApp");
 
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
-        Mockito.doReturn(new AppStore()).when(appStoreService).get(appstoreId);
+        Mockito.doReturn(new AppStore()).when(appStoreService).get(uuid);
 
         /* ACT && ASSERT */
         mockMvc.perform(post("/api/ids/app")
