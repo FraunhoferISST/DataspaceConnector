@@ -83,6 +83,7 @@ All notable changes to this project will be documented in this file.
   - `/api/examples/validation`
   - `/api/examples/policy`
 - Make field `type` in `DataSource` transient, as type information is persisted through the `dtype` column created through the `@Inheritance` annotation.
+- Rename param of `/describe` from `actionType` to `type` and change it to type `ActionType`.
 
 ### Fixed
 - XML-escape URLs before injecting them into Camel route templates.

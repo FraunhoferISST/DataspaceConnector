@@ -148,7 +148,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
     @ResponseBody
     public final ResponseEntity<Object> containerManagement(
             @PathVariable("id") final UUID appId,
-            @RequestParam("actionType") final ActionType type) {
+            @RequestParam("type") final ActionType type) {
         final var app = getService().get(appId);
         final var containerId = ((AppImpl) app).getContainerId();
 
