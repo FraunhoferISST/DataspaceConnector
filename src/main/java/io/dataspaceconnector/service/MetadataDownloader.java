@@ -28,6 +28,7 @@ import javax.persistence.PersistenceException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Downloads metadata via IDS.
@@ -72,6 +73,7 @@ public class MetadataDownloader {
     /**
      * Get app resource from app store.
      *
+     * @param recipient The recipient connector.
      * @param appId     The app id.
      * @param appStore  The app store from which the app is downloaded.
      * @return The AppResource's artifact id.
@@ -80,10 +82,10 @@ public class MetadataDownloader {
      * @throws PersistenceException        if the data could not be persisted.
      * @throws MessageException            if message handling failed.
      */
-    public URI downloadAppResource(final URI appId, final AppStore appStore)
+    public URI downloadAppResource(final URI recipient, final URI appId,
+                                   final Optional<AppStore> appStore)
             throws UnexpectedResponseException, PersistenceException, MessageResponseException,
             MessageException {
-        final var recipient = appStore.getLocation();
         final var response = descReqSvc.sendMessage(recipient, appId);
         return persistenceSvc.saveAppMetadata(response, appId, appStore);
     }

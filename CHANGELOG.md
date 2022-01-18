@@ -91,7 +91,6 @@ All notable changes to this project will be documented in this file.
 - Make `/database` accessible again.
 - Add class type check to rule comparison.
 - Remove `@column(unique = true)` from AppStore entity.
-  - POST `/api/ids/app` now uses the `appstoreId` (URI) instead of the location, so an AppStore needs to be created before sending messages to it.
 
 ### Removed
 - Remove entity `ConnectorEndpoint` and all corresponding classes.
