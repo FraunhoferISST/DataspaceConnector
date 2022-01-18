@@ -17,12 +17,15 @@ package io.dataspaceconnector.controller.message;
 
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.common.exception.ContractException;
+import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.InvalidInputException;
 import io.dataspaceconnector.common.exception.MessageException;
 import io.dataspaceconnector.common.exception.MessageResponseException;
 import io.dataspaceconnector.common.exception.RdfBuilderException;
 import io.dataspaceconnector.common.exception.UnexpectedResponseException;
 import io.dataspaceconnector.common.net.ContentType;
+import io.dataspaceconnector.common.net.EndpointUtils;
+import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.controller.message.tag.MessageDescription;
 import io.dataspaceconnector.controller.message.tag.MessageName;
 import io.dataspaceconnector.controller.resource.view.app.AppViewAssembler;
@@ -51,7 +54,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.PersistenceException;
 import java.net.URI;
-import java.util.UUID;
 
 /**
  * This controller provides the endpoint for sending an app request message and starting the
@@ -110,10 +112,12 @@ public class AppRequestController {
     @Transactional
     public ResponseEntity<Object> sendMessage(
             @Parameter(description = "The appstore id.", required = true)
-            @RequestParam("appstoreId") final UUID appstoreId,
+            @RequestParam("appstoreId") final URI appstoreId,
             @Parameter(description = "The app id.", required = true)
             @RequestParam(value = "appId") final URI appId) {
-        final var appStore = appstoreSvc.get(appstoreId);
+        final var uuid = EndpointUtils.getUUIDFromPath(appstoreId);
+        Utils.requireNonNull(uuid, ErrorMessage.ENTITYID_NULL);
+        final var appStore = appstoreSvc.get(uuid);
 
         // Send description request message and save the AppResource's metadata.
         try {
