@@ -17,6 +17,7 @@ package io.dataspaceconnector.controller.resource.type;
 
 import io.dataspaceconnector.common.exception.PortainerNotConfigured;
 import io.dataspaceconnector.controller.resource.base.exception.MethodNotAllowed;
+import io.dataspaceconnector.controller.util.ActionType;
 import io.dataspaceconnector.model.app.AppDesc;
 import io.dataspaceconnector.model.app.AppImpl;
 import io.dataspaceconnector.model.base.Entity;
@@ -118,22 +119,21 @@ class AppControllerTest {
 
     @Test
     public void testContainerManagement() {
-        assertEquals(HttpStatus.OK, appController.containerManagement(UUID.randomUUID(), "START").getStatusCode());
-        assertEquals(HttpStatus.OK, appController.containerManagement(UUID.randomUUID(), "STOP").getStatusCode());
-        assertEquals(HttpStatus.OK, appController.containerManagement(UUID.randomUUID(), "DELETE").getStatusCode());
-        assertEquals(HttpStatus.OK, appController.containerManagement(UUID.randomUUID(), "DESCRIBE").getStatusCode());
-        assertEquals(HttpStatus.BAD_REQUEST, appController.containerManagement(UUID.randomUUID(), "TEST").getStatusCode());
+        assertEquals(HttpStatus.OK, appController.containerManagement(UUID.randomUUID(), ActionType.START).getStatusCode());
+        assertEquals(HttpStatus.OK, appController.containerManagement(UUID.randomUUID(), ActionType.STOP).getStatusCode());
+        assertEquals(HttpStatus.OK, appController.containerManagement(UUID.randomUUID(), ActionType.DELETE).getStatusCode());
+        assertEquals(HttpStatus.OK, appController.containerManagement(UUID.randomUUID(), ActionType.DESCRIBE).getStatusCode());
     }
 
     @Test
     public void testContainerManagementExceptions() throws PortainerNotConfigured, IOException {
         doThrow(new PortainerNotConfigured()).when(portainerService).createEndpointId();
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, appController.containerManagement(UUID.randomUUID(),
-                "START").getStatusCode());
+                ActionType.START).getStatusCode());
 
         doThrow(new IOException()).when(portainerService).createEndpointId();
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, appController.containerManagement(UUID.randomUUID(),
-                "START").getStatusCode());
+                ActionType.START).getStatusCode());
 
 
     }
@@ -151,7 +151,7 @@ class AppControllerTest {
 
         Mockito.when(appService.get(Mockito.any(UUID.class))).thenReturn(returnedApp);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, appController.containerManagement(UUID.randomUUID(),
-                "START").getStatusCode());
+                ActionType.START).getStatusCode());
     }
 
     @Test
@@ -168,33 +168,31 @@ class AppControllerTest {
                 .thenReturn(returnedNotFoundResponse);
         assertEquals(HttpStatus.BAD_REQUEST,
                 appController.containerManagement(UUID.randomUUID(),
-                        "START").getStatusCode());
+                        ActionType.START).getStatusCode());
 
         Mockito.when(portainerService.startContainer(Mockito.any()))
                 .thenReturn(returnedNotModifiedResponse);
         assertEquals(HttpStatus.BAD_REQUEST,
                 appController.containerManagement(UUID.randomUUID(),
-                        "START").getStatusCode());
+                        ActionType.START).getStatusCode());
 
         Mockito.when(portainerService.startContainer(Mockito.any()))
                 .thenReturn(returnedBadRequestResponse);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
                 appController.containerManagement(UUID.randomUUID(),
-                        "START").getStatusCode());
+                        ActionType.START).getStatusCode());
 
         Mockito.when(portainerService.startContainer(Mockito.any()))
                 .thenReturn(returnedConflictResponse);
         assertEquals(HttpStatus.BAD_REQUEST,
                 appController.containerManagement(UUID.randomUUID(),
-                        "START").getStatusCode());
+                        ActionType.START).getStatusCode());
 
         Mockito.when(portainerService.startContainer(Mockito.any()))
                 .thenReturn(returnedUnauthorizedResponse);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,
                 appController.containerManagement(UUID.randomUUID(),
-                        "START").getStatusCode());
-
-
+                        ActionType.START).getStatusCode());
     }
 
     private Response createResponseWithCode(int statusCode) {
@@ -206,6 +204,4 @@ class AppControllerTest {
                 .message("Success mocked!")
                 .build();
     }
-
-
 }
