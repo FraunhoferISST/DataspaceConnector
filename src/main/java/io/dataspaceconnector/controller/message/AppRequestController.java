@@ -42,7 +42,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -92,7 +91,7 @@ public class AppRequestController {
     /**
      * Add an apps metadata to an app object.
      *
-     * @param recipient The recipient url
+     * @param recipient The recipient url or app store id.
      * @param appId     The app Id.
      * @return Success, when app can be found and created from recipient response.
      */
@@ -106,7 +105,6 @@ public class AppRequestController {
             @ApiResponse(responseCode = "417", description = "Expectation failed"),
             @ApiResponse(responseCode = "500", description = "Internal server error"),
             @ApiResponse(responseCode = "502", description = "Bad gateway")})
-    @PreAuthorize("hasPermission(#recipient, 'rw')")
     @ResponseBody
     @Transactional
     public ResponseEntity<Object> sendMessage(
