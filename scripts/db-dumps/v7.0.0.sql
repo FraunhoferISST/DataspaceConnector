@@ -1818,8 +1818,7 @@ ALTER TABLE ONLY public.appstore_apps
 -- Name: appstore uk_jq36lxpgxfs4ktn7wrq28wo0f; Type: CONSTRAINT; Schema: public; Owner: connector
 --
 
-ALTER TABLE ONLY public.appstore
-    ADD CONSTRAINT uk_jq36lxpgxfs4ktn7wrq28wo0f UNIQUE (location);
+ALTER TABLE public.appstore DROP CONSTRAINT uk_jq36lxpgxfs4ktn7wrq28wo0f;
 
 
 --
