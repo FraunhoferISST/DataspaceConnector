@@ -15,19 +15,6 @@
  */
 package io.dataspaceconnector.service;
 
-import javax.persistence.PersistenceException;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import de.fraunhofer.iais.eis.AppRepresentation;
 import de.fraunhofer.iais.eis.AppResource;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -59,6 +46,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import javax.persistence.PersistenceException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * This service offers methods for saving contract agreements as well as metadata and data requested
@@ -118,7 +118,7 @@ public class EntityPersistenceService {
     /**
      * Service for app store communication logic.
      */
-    private final @NonNull AppStoreCommunication appStoreCommunication;
+    private final @NonNull AppStoreCommunication communicationSvc;
 
     /**
      * Save contract agreement to database (consumer side).
@@ -300,9 +300,9 @@ public class EntityPersistenceService {
         }
 
         // Link app to app store. NOTE: An exception should not abort the download process.
-        appStore.ifPresent(store -> appStoreCommunication.addAppStoreToApp(app.getId(),
-                store.getId()));
-        appStoreCommunication.addAppToAppStore(appStore, app.getId());
+        // If not app store entity was used to download the app, it is saved nevertheless.
+        appStore.ifPresent(store -> communicationSvc.addAppStoreToApp(app.getId(), store.getId()));
+        appStore.ifPresent(store -> communicationSvc.addAppToAppStore(store.getId(), app.getId()));
 
         return instanceId.get();
     }

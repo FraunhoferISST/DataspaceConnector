@@ -30,22 +30,18 @@ function dsc::run_provider_consumer_test() {
     # Consumer setup
     helm install consumer ./charts/dataspace-connector --set image.pullPolicy=IfNotPresent --set image.tag="${CONSUMER_VERSION}" --set env.config.SPRING_APPLICATION_NAME="Consumer Connector" 2>&1 > /dev/null
 
+    # Backend setup
+    helm install flask ./charts/tests/route-backend --set image.pullPolicy=Never 2>&1 > /dev/null
+
     echo "Waiting for readiness"
     kubectl rollout status deployments/provider-dataspace-connector --timeout=360s 2>&1 > /dev/null
     kubectl rollout status deployments/consumer-dataspace-connector --timeout=60s  2>&1 > /dev/null
+    kubectl rollout status deployments/flask-route-backend --timeout=60s  2>&1 > /dev/null
 
     # Make sure the deployments are really ready and the rollout did not just timeout
     kubectl wait --for=condition=available deployments/provider-dataspace-connector --timeout=1s 2>&1 > /dev/null
     kubectl wait --for=condition=available deployments/consumer-dataspace-connector --timeout=1s 2>&1 > /dev/null
-
-    echo "Exposing services to localhost"
-    export PROVIDER_POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=dataspace-connector,app.kubernetes.io/instance=provider" -o jsonpath="{.items[0].metadata.name}")
-    export PROVIDER_CONTAINER_PORT=$(kubectl get pod --namespace default $PROVIDER_POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
-    export CONSUMER_POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=dataspace-connector,app.kubernetes.io/instance=consumer" -o jsonpath="{.items[0].metadata.name}")
-    export CONSUMER_CONTAINER_PORT=$(kubectl get pod --namespace default $CONSUMER_POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
-
-    kubectl port-forward "$PROVIDER_POD_NAME" 8080:"$PROVIDER_CONTAINER_PORT" 2>&1 > /dev/null &
-    kubectl port-forward "$CONSUMER_POD_NAME" 8081:"$CONSUMER_CONTAINER_PORT" 2>&1 > /dev/null &
+    kubectl wait --for=condition=available deployments/flask-route-backend --timeout=1s 2>&1 > /dev/null
 
     # Give the port-forwarding some time
     sleep 5s
@@ -58,6 +54,5 @@ function dsc::run_provider_consumer_test() {
     echo "Cleanup"
     helm uninstall provider 2>&1 > /dev/null
     helm uninstall consumer 2>&1 > /dev/null
-    # Stop port forwarding
-    pkill -f "port-forward"
+    helm uninstall flask 2>&1 > /dev/null
 }

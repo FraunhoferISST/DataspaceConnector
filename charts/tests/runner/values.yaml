@@ -1,0 +1,3 @@
+---
+# -- Entrypoint for the runner image (name of a contained test script)
+entrypoint: ""

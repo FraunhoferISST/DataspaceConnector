@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.extension.monitoring;
 
+import de.fraunhofer.ids.messaging.core.daps.DapsValidator;
 import de.fraunhofer.ids.messaging.core.daps.TokenProviderService;
 import io.dataspaceconnector.common.ids.ConnectorService;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,9 @@ class IdsInfoContributorTest {
 
     @MockBean
     TokenProviderService tokenProvSvc;
+
+    @MockBean
+    DapsValidator dapsValidator;
 
     @Autowired
     private IdsInfoContributor idsInfoContributor;

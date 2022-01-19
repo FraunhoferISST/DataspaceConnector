@@ -1,0 +1,40 @@
+---
+# -- Number of backend instances
+replicaCount: 1
+
+image:
+  # -- Backend image name
+  repository: ghcr.io/international-data-spaces-association/dataspace-connector/tests/route-backend
+  # -- Image pull policy
+  pullPolicy: Always
+  # -- Backend image tag
+  tag: "latest"
+
+# -- Annotation for the deployed pods
+podAnnotations:
+  seccomp.security.alpha.kubernetes.io/pod: "runtime/default"
+
+# -- Security context for the pods
+podSecurityContext: {}
+
+# -- Kubernetes service settings for backend
+service:
+  # -- Backend service type
+  type: ClusterIP
+  # -- Backend service port
+  port: 5000
+
+# -- Backend kubernetes resource settings
+resources:
+  limits:
+    cpu: "8"
+    memory: "4Gi"
+  requests:
+    cpu: "250m"
+    memory: "1Gi"
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
