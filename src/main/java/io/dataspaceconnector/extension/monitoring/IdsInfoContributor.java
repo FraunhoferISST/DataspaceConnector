@@ -52,6 +52,11 @@ public class IdsInfoContributor implements InfoContributor {
     private final TokenProviderService tokenProvSvc;
 
     /**
+     * The daps validator.
+     */
+    private final DapsValidator dapsValidator;
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -119,7 +124,7 @@ public class IdsInfoContributor implements InfoContributor {
             ConnectorMissingCertExtensionException, DapsEmptyResponseException {
         final var dat = tokenProvSvc.getDAT();
         final var claims
-                = DapsValidator.getClaims(dat, tokenProvSvc.providePublicKeys()).getBody();
+                = dapsValidator.getClaims(dat).getBody();
 
         final var map = new HashMap<String, Object>();
         map.put("audience", claims.getAudience());
