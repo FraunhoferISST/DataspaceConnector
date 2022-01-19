@@ -44,3 +44,5 @@ WHERE e.dtype = 'ConnectorEndpoint'
 
 DELETE FROM public.endpoint
 WHERE dtype = 'ConnectorEndpoint';
+
+ALTER TABLE public.appstore DROP CONSTRAINT uk_jq36lxpgxfs4ktn7wrq28wo0f;
