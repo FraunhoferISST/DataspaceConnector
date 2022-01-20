@@ -39,9 +39,9 @@ All notable changes to this project will be documented in this file.
 - Increase protobuf version from 3.15.5 to 3.19.3.
 - Increase jackson version from 2.13.0 to 2.13.1.
 - Increase swagger-annotations version from 1.6.3 to 1.6.4.
-- Increase messaging services version from 5.1.1 to 6.0.0
+- Increase messaging services version from 5.1.1 to 6.0.0.
 - Log header and payload of sent message in `AbstractMessageService`.
-- Ignore IDS InfoModel version incompatibility for incoming messages.
+- Ignore IDS InfoModel version incompatibility for incoming messages. Add log message level warn.
 - Rearrange Swagger UI.
   - Rename tags.
     - Rename tag `Messages` to `_Messaging`.
@@ -63,7 +63,8 @@ All notable changes to this project will be documented in this file.
 - Change REST endpoints.
   - PUT `/api/routes/{id}/endpoint/start` expects a URI instead of a UUID.
   - PUT `/api/routes/{id}/endpoint/end` expects a URI instead of a UUID.
-  - Change `/api/configmanaer/enum/{enumName}` to `/api/utils/enum` and change it to expect a list of enums.
+  - Change `/api/configmanaer/enum/{enumName}` to `/api/utils/enums` and change it to return all types within one call.
+    - Add enum types `POLICY_PATTERN`, `UPDATE_TYPE`, `ENDPOINT_TYPE`, `EVENT_TYPE`, `ERROR_MESSAGE`, `USAGE_CONTROL_FRAMEWORK`, `ACTION_TYPE`, and `DATA_SOURCE_TYPE`.
   - Change `/api/configmanaer/route/error` to `/api/camel/routes/error`.
 - Change response bodies to JSON objects for the following REST endpoints:
   - `/api/routes/{id}/endpoint/start`

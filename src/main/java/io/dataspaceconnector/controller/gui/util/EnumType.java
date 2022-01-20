@@ -58,5 +58,45 @@ public enum EnumType {
     /**
      * The payment method.
      */
-    PAYMENT_METHOD
+    PAYMENT_METHOD,
+
+    /**
+     * The policy pattern.
+     */
+    POLICY_PATTERN,
+
+    /**
+     * The update type.
+     */
+    UPDATE_TYPE,
+
+    /**
+     * The endpoint type.
+     */
+    ENDPOINT_TYPE,
+
+    /**
+     * The event type.
+     */
+    EVENT_TYPE,
+
+    /**
+     * The error message.
+     */
+    ERROR_MESSAGE,
+
+    /**
+     * The usage control framework.
+     */
+    USAGE_CONTROL_FRAMEWORK,
+
+    /**
+     * The action type.
+     */
+    ACTION_TYPE,
+
+    /**
+     * The data source type.
+     */
+    DATA_SOURCE_TYPE
 }

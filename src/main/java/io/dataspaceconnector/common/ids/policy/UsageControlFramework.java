@@ -23,12 +23,12 @@ public enum UsageControlFramework {
     /**
      * Usage control (enforcement) inside the connector.
      */
-    INTERNAL("INTERNAL"),
+    INTERNAL("Internal"),
 
     /**
      * Usage control framework MyData.
      */
-    MY_DATA("MY_DATA");
+    MY_DATA("MyData");
 
     /**
      * The usage control framework.

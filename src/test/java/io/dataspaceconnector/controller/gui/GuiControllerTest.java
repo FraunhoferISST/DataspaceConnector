@@ -15,12 +15,10 @@
  */
 package io.dataspaceconnector.controller.gui;
 
-import org.apache.commons.codec.CharEncoding;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -49,67 +47,12 @@ class GuiControllerTest {
 
     @Test
     void unauthorizedGetEnum() throws Exception {
-        mockMvc.perform(get("/api/utils/enum")).andExpect(status().isUnauthorized()).andReturn();
+        mockMvc.perform(get("/api/utils/enums")).andExpect(status().isUnauthorized()).andReturn();
     }
 
     @Test
     @WithMockUser(roles = {"ADMIN"})
-    void missingRequestBody() throws Exception {
-        mockMvc.perform(post("/api/utils/enum")).andExpect(status().isInternalServerError()).andReturn();
-    }
-
-    @Test
-    @WithMockUser(roles = {"ADMIN"})
-    void badRequestGetEnum() throws Exception {
-        mockMvc.perform(post("/api/utils/enum")
-                .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding(CharEncoding.UTF_8)
-                        .content("\" TEST \""))
-                .andExpect(status().isBadRequest()).andReturn();
-    }
-
-    @Test
-    @WithMockUser(roles = {"ADMIN"})
-    void getSpecificEnum() throws Exception {
-        mockMvc.perform(post("/api/utils/enum")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding(CharEncoding.UTF_8)
-                        .content("\" LOG_LEVEL \""))
-                .andExpect(status().isOk()).andReturn();
-        mockMvc.perform(post("/api/utils/enum")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding(CharEncoding.UTF_8)
-                        .content("\" CONNECTOR_STATUS \""))
-                .andExpect(status().isOk()).andReturn();
-        mockMvc.perform(post("/api/utils/enum")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding(CharEncoding.UTF_8)
-                        .content("\" CONNECTOR_DEPLOY_MODE \""))
-                .andExpect(status().isOk()).andReturn();
-        mockMvc.perform(post("/api/utils/enum")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding(CharEncoding.UTF_8)
-                        .content("\" LANGUAGE \""))
-                .andExpect(status().isOk()).andReturn();
-        mockMvc.perform(post("/api/utils/enum")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding(CharEncoding.UTF_8)
-                        .content("\" DEPLOY_METHOD \""))
-                .andExpect(status().isOk()).andReturn();
-        mockMvc.perform(post("/api/utils/enum")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding(CharEncoding.UTF_8)
-                        .content("\" BROKER_STATUS \""))
-                .andExpect(status().isOk()).andReturn();
-        mockMvc.perform(post("/api/utils/enum")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding(CharEncoding.UTF_8)
-                        .content("\" SECURITY_PROFILE \""))
-                .andExpect(status().isOk()).andReturn();
-        mockMvc.perform(post("/api/utils/enum")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding(CharEncoding.UTF_8)
-                        .content("\" PAYMENT_METHOD \""))
-                .andExpect(status().isOk()).andReturn();
+    void getEnums() throws Exception {
+        mockMvc.perform(post("/api/utils/enums")).andExpect(status().isOk()).andReturn();
     }
 }
