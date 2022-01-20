@@ -25,7 +25,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,16 +49,9 @@ public class GuiController {
     @Operation(summary = "Get a list of enums by value name.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
-            @ApiResponse(responseCode = ResponseCode.INTERNAL_SERVER_ERROR,
-                    description = ResponseDescription.INTERNAL_SERVER_ERROR),
             @ApiResponse(responseCode = ResponseCode.UNAUTHORIZED,
                     description = ResponseDescription.UNAUTHORIZED)})
     public ResponseEntity<JSONObject> getEnums() {
-        final var enums = GuiUtils.getListOfEnums();
-        if (enums.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } else {
-            return ResponseEntity.ok(enums);
-        }
+        return ResponseEntity.ok(GuiUtils.getListOfEnums());
     }
 }
