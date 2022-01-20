@@ -16,18 +16,18 @@
 package io.dataspaceconnector.controller.gui.util;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.Language;
-import de.fraunhofer.iais.eis.SecurityProfile;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.ids.policy.PolicyPattern;
 import io.dataspaceconnector.common.ids.policy.UsageControlFramework;
 import io.dataspaceconnector.controller.util.ActionType;
 import io.dataspaceconnector.extension.monitoring.update.util.UpdateType;
 import io.dataspaceconnector.model.base.RegistrationStatus;
+import io.dataspaceconnector.model.configuration.ConnectorStatus;
 import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.configuration.DeployMode;
 import io.dataspaceconnector.model.configuration.LogLevel;
+import io.dataspaceconnector.model.configuration.SecurityProfile;
 import io.dataspaceconnector.model.datasource.DataSourceType;
 import io.dataspaceconnector.model.endpoint.EndpointType;
 import io.dataspaceconnector.model.resource.PaymentMethod;
@@ -79,10 +79,19 @@ public final class GuiUtils {
     private static JSONArray getPaymentMethod() {
         final var jsonArray = new JSONArray();
         for (final var paymentMethod : PaymentMethod.values()) {
-            jsonArray.add(new JSONObject() {{
-                put("originalName", paymentMethod.name());
-                put("displayName", paymentMethod.toString());
-            }});
+            try {
+                jsonArray.add(new JSONObject() {{
+                    put("originalName", paymentMethod.name());
+                    put("displayName", paymentMethod.toString());
+                    put("jsonInput", PaymentMethod.class.getField(paymentMethod.name())
+                            .getAnnotation(JsonProperty.class).value());
+                }});
+            } catch (NoSuchFieldException e) {
+                if (log.isWarnEnabled()) {
+                    log.warn("Missing JsonProperty found for paymentMethod.");
+                }
+            }
+
         }
 
         return sortJsonArray(jsonArray);
@@ -91,10 +100,17 @@ public final class GuiUtils {
     private static JSONArray getSecurityProfile() {
         final var jsonArray = new JSONArray();
         for (final var securityProfile : SecurityProfile.values()) {
-            jsonArray.add(new JSONObject() {{
-                put("originalName", securityProfile.name());
-                put("displayName", securityProfile.getLabel().get(0).getValue());
-            }});
+            try {
+                jsonArray.add(new JSONObject() {{
+                    put("originalName", securityProfile.name());
+                    put("displayName", SecurityProfile.class.getField(securityProfile.name())
+                            .getAnnotation(JsonProperty.class).value());
+                }});
+            } catch (NoSuchFieldException e) {
+                if (log.isWarnEnabled()) {
+                    log.warn("Missing JsonProperty found for securityProfile.");
+                }
+            }
         }
 
         return sortJsonArray(jsonArray);
@@ -104,10 +120,11 @@ public final class GuiUtils {
         final var jsonArray = new JSONArray();
         for (final var brokerStatus : RegistrationStatus.values()) {
             try {
+                final var value = RegistrationStatus.class.getField(brokerStatus.name())
+                        .getAnnotation(JsonProperty.class).value();
                 jsonArray.add(new JSONObject() {{
                     put("originalName", brokerStatus.name());
-                    put("displayName", RegistrationStatus.class.getField(brokerStatus.name())
-                            .getAnnotation(JsonProperty.class).value());
+                    put("displayName", value);
                 }});
             } catch (NoSuchFieldException e) {
                 if (log.isWarnEnabled()) {
@@ -123,10 +140,12 @@ public final class GuiUtils {
         final var jsonArray = new JSONArray();
         for (final var deployMethod : DeployMethod.values()) {
             try {
+                final var value = DeployMethod.class.getField(deployMethod.name())
+                        .getAnnotation(JsonProperty.class).value();
                 jsonArray.add(new JSONObject() {{
                     put("originalName", deployMethod.name());
-                    put("displayName", DeployMethod.class.getField(deployMethod.name())
-                            .getAnnotation(JsonProperty.class).value());
+                    put("displayName", value);
+                    put("jsonInput", value);
                 }});
             } catch (NoSuchFieldException e) {
                 if (log.isWarnEnabled()) {
@@ -141,16 +160,18 @@ public final class GuiUtils {
     private static JSONArray getLanguage() {
         final var jsonArray = new JSONArray();
         for (final var language : Language.values()) {
-            var jsonObject = new JSONObject();
-            jsonObject.put("originalName", language.name());
-
             // Workaround for Infomodel issue LT = LessThan
+            String value;
             if ("LT".equals(language.name())) {
-                jsonObject.put("displayName", language.getLabel().get(1).getValue());
+                value = language.getLabel().get(1).getValue();
             } else {
-                jsonObject.put("displayName", language.getLabel().get(0).getValue());
+                value = language.getLabel().get(0).getValue();
             }
-            jsonArray.add(jsonObject);
+            jsonArray.add(new JSONObject() {{
+                put("originalName", language.name());
+                put("displayName", value);
+                put("jsonInput", language.name());
+            }});
         }
 
         return sortJsonArray(jsonArray);
@@ -160,10 +181,11 @@ public final class GuiUtils {
         final var jsonArray = new JSONArray();
         for (final var connectorDeployMode : DeployMode.values()) {
             try {
+                final var value = DeployMode.class.getField(connectorDeployMode.name())
+                        .getAnnotation(JsonProperty.class).value();
                 jsonArray.add(new JSONObject() {{
                     put("originalName", connectorDeployMode.name());
-                    put("displayName", DeployMode.class.getField(connectorDeployMode.name())
-                            .getAnnotation(JsonProperty.class).value());
+                    put("displayName", value);
                 }});
             } catch (NoSuchFieldException e) {
                 if (log.isDebugEnabled()) {
@@ -178,10 +200,19 @@ public final class GuiUtils {
     private static JSONArray getConnectorStatus() {
         final var jsonArray = new JSONArray();
         for (final var connectorStatus : ConnectorStatus.values()) {
-            jsonArray.add(new JSONObject() {{
-                put("originalName", connectorStatus.name());
-                put("displayName", connectorStatus.getLabel().get(0).getValue());
-            }});
+            try {
+                final var value = ConnectorStatus.class.getField(connectorStatus.name())
+                        .getAnnotation(JsonProperty.class).value();
+                jsonArray.add(new JSONObject() {{
+                    put("originalName", connectorStatus.name());
+                    put("displayName", value);
+                    put("jsonInput", value);
+                }});
+            } catch (NoSuchFieldException e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Missing JsonProperty found for connectorStatus.");
+                }
+            }
         }
 
         return sortJsonArray(jsonArray);
@@ -191,10 +222,12 @@ public final class GuiUtils {
         final var jsonArray = new JSONArray();
         for (final var logLevel : LogLevel.values()) {
             try {
+                final var value = LogLevel.class.getField(logLevel.name())
+                        .getAnnotation(JsonProperty.class).value();
                 jsonArray.add(new JSONObject() {{
                     put("originalName", logLevel.name());
-                    put("displayName", LogLevel.class.getField(logLevel.name())
-                            .getAnnotation(JsonProperty.class).value());
+                    put("displayName", value);
+                    put("jsonInput", value);
                 }});
             } catch (NoSuchFieldException e) {
                 if (log.isDebugEnabled()) {
@@ -212,6 +245,7 @@ public final class GuiUtils {
             jsonArray.add(new JSONObject() {{
                 put("originalName", policyPattern.name());
                 put("displayName", policyPattern.toString());
+                put("jsonInput", policyPattern.name());
             }});
         }
 
@@ -236,6 +270,7 @@ public final class GuiUtils {
             jsonArray.add(new JSONObject() {{
                 put("originalName", endpointType.name());
                 put("displayName", endpointType.toString());
+                put("jsonInput", endpointType.name());
             }});
         }
 
@@ -284,6 +319,7 @@ public final class GuiUtils {
             jsonArray.add(new JSONObject() {{
                 put("originalName", actionType.name());
                 put("displayName", actionType.toString());
+                put("jsonInput", actionType.toString());
             }});
         }
 
@@ -294,10 +330,12 @@ public final class GuiUtils {
         final var jsonArray = new JSONArray();
         for (final var type : DataSourceType.values()) {
             try {
+                final var value = DataSourceType.class.getField(type.name())
+                        .getAnnotation(JsonProperty.class).value();
                 jsonArray.add(new JSONObject() {{
                     put("originalName", type.name());
-                    put("displayName", DataSourceType.class.getField(type.name())
-                            .getAnnotation(JsonProperty.class).value());
+                    put("displayName", value);
+                    put("jsonInput", type.name());
                 }});
             } catch (NoSuchFieldException e) {
                 if (log.isWarnEnabled()) {
