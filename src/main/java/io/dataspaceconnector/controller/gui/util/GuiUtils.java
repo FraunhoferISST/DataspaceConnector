@@ -38,6 +38,7 @@ import net.minidev.json.JSONObject;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 
 /**
@@ -57,6 +58,7 @@ public final class GuiUtils {
      */
     public static JSONObject getListOfEnums() {
         return new JSONObject() {{
+            put("types", getTypes());
             put(EnumType.LOG_LEVEL.toString(), getLogLevel());
             put(EnumType.CONNECTOR_STATUS.toString(), getConnectorStatus());
             put(EnumType.CONNECTOR_DEPLOY_MODE.toString(), getConnectorDeployMode());
@@ -74,6 +76,13 @@ public final class GuiUtils {
             put(EnumType.ACTION_TYPE.toString(), getActionType());
             put(EnumType.DATA_SOURCE_TYPE.toString(), getDataSourceType());
         }};
+    }
+
+    private static JSONArray getTypes() {
+        final var jsonArray = new JSONArray();
+        jsonArray.addAll(Arrays.asList(EnumType.values()));
+
+        return jsonArray;
     }
 
     private static JSONArray getPaymentMethod() {
