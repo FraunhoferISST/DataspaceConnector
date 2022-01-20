@@ -49,6 +49,8 @@ All notable changes to this project will be documented in this file.
   - PUT `/api/routes/{id}/endpoint/end` expects a URI instead of a UUID.
   - Change `POST /api/configmanaer/enum/{enumName}` to `GET /api/utils/enums` and change it to return all types within one call.
     - Add enum types `POLICY_PATTERN`, `UPDATE_TYPE`, `ENDPOINT_TYPE`, `EVENT_TYPE`, `ERROR_MESSAGE`, `USAGE_CONTROL_FRAMEWORK`, `ACTION_TYPE`, and `DATA_SOURCE_TYPE`.
+    - Change return value of `SECURITY_PROFILE` to the internal model. Add `IDS_SECURITY_PROFILE` for the ids enum.
+    - Change return value of `CONNECTOR_STATUS` to the internal model. Add `IDS_CONNECTOR_STATUS` for the ids enum.
   - Change `/api/configmanaer/route/error` to `/api/camel/routes/error`.
 - Change response bodies to JSON objects for the following REST endpoints:
   - `/api/routes/{id}/endpoint/start`

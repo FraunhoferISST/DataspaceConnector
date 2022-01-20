@@ -31,6 +31,11 @@ public enum EnumType {
     CONNECTOR_STATUS,
 
     /**
+     * The connector status.
+     */
+    IDS_CONNECTOR_STATUS,
+
+    /**
      * The connector deploy mode.
      */
     CONNECTOR_DEPLOY_MODE,
@@ -54,6 +59,11 @@ public enum EnumType {
      * The security profile.
      */
     SECURITY_PROFILE,
+
+    /**
+     * The ids security profile.
+     */
+    IDS_SECURITY_PROFILE,
 
     /**
      * The payment method.

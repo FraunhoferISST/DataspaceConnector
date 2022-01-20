@@ -61,11 +61,13 @@ public final class GuiUtils {
             put("types", getTypes());
             put(EnumType.LOG_LEVEL.toString(), getLogLevel());
             put(EnumType.CONNECTOR_STATUS.toString(), getConnectorStatus());
+            put(EnumType.IDS_CONNECTOR_STATUS.toString(), getIdsConnectorStatus());
             put(EnumType.CONNECTOR_DEPLOY_MODE.toString(), getConnectorDeployMode());
             put(EnumType.LANGUAGE.toString(), getLanguage());
             put(EnumType.DEPLOY_METHOD.toString(), getDeployMethod());
             put(EnumType.BROKER_STATUS.toString(), getBrokerStatus());
             put(EnumType.SECURITY_PROFILE.toString(), getSecurityProfile());
+            put(EnumType.IDS_SECURITY_PROFILE.toString(), getIdsSecurityProfile());
             put(EnumType.PAYMENT_METHOD.toString(), getPaymentMethod());
             put(EnumType.POLICY_PATTERN.toString(), getPolicyPattern());
             put(EnumType.UPDATE_TYPE.toString(), getUpdateType());
@@ -120,6 +122,18 @@ public final class GuiUtils {
                     log.warn("Missing JsonProperty found for securityProfile.");
                 }
             }
+        }
+
+        return sortJsonArray(jsonArray);
+    }
+
+    private static JSONArray getIdsSecurityProfile() {
+        final var jsonArray = new JSONArray();
+        for (final var securityProfile : de.fraunhofer.iais.eis.SecurityProfile.values()) {
+            jsonArray.add(new JSONObject() {{
+                put("originalName", securityProfile.name());
+                put("displayName", securityProfile.getLabel().get(0).getValue());
+            }});
         }
 
         return sortJsonArray(jsonArray);
@@ -222,6 +236,18 @@ public final class GuiUtils {
                     log.debug("Missing JsonProperty found for connectorStatus.");
                 }
             }
+        }
+
+        return sortJsonArray(jsonArray);
+    }
+
+    private static JSONArray getIdsConnectorStatus() {
+        final var jsonArray = new JSONArray();
+        for (final var connectorStatus : de.fraunhofer.iais.eis.ConnectorStatus.values()) {
+            jsonArray.add(new JSONObject() {{
+                put("originalName", connectorStatus.name());
+                put("displayName", connectorStatus.getLabel().get(0).getValue());
+            }});
         }
 
         return sortJsonArray(jsonArray);
