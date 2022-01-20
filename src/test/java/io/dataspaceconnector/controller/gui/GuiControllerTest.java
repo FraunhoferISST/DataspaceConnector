@@ -26,7 +26,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -53,6 +52,6 @@ class GuiControllerTest {
     @Test
     @WithMockUser(roles = {"ADMIN"})
     void getEnums() throws Exception {
-        mockMvc.perform(post("/api/utils/enums")).andExpect(status().isOk()).andReturn();
+        mockMvc.perform(get("/api/utils/enums")).andExpect(status().isOk()).andReturn();
     }
 }

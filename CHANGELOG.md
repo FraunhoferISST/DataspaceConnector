@@ -63,7 +63,7 @@ All notable changes to this project will be documented in this file.
 - Change REST endpoints.
   - PUT `/api/routes/{id}/endpoint/start` expects a URI instead of a UUID.
   - PUT `/api/routes/{id}/endpoint/end` expects a URI instead of a UUID.
-  - Change `/api/configmanaer/enum/{enumName}` to `/api/utils/enums` and change it to return all types within one call.
+  - Change `POST /api/configmanaer/enum/{enumName}` to `GET /api/utils/enums` and change it to return all types within one call.
     - Add enum types `POLICY_PATTERN`, `UPDATE_TYPE`, `ENDPOINT_TYPE`, `EVENT_TYPE`, `ERROR_MESSAGE`, `USAGE_CONTROL_FRAMEWORK`, `ACTION_TYPE`, and `DATA_SOURCE_TYPE`.
   - Change `/api/configmanaer/route/error` to `/api/camel/routes/error`.
 - Change response bodies to JSON objects for the following REST endpoints:

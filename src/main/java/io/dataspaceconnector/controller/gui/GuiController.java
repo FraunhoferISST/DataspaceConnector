@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,7 +46,7 @@ public class GuiController {
      *
      * @return The response message or an error.
      */
-    @PostMapping(value = "/enums", produces = ContentType.JSON)
+    @GetMapping(value = "/enums", produces = ContentType.JSON)
     @Operation(summary = "Get a list of enums by value name.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCode.OK, description = ResponseDescription.OK),
