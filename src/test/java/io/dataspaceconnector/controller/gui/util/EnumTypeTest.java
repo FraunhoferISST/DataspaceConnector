@@ -13,34 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.common.ids.policy;
+package io.dataspaceconnector.controller.gui.util;
 
-/**
- * This class provides a usage control framework enum.
- */
-public enum UsageControlFramework {
+import org.junit.jupiter.api.Test;
 
-    /**
-     * Usage control (enforcement) inside the connector.
-     */
-    INTERNAL("Internal"),
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-    /**
-     * Usage control framework MyData.
-     */
-    MY_DATA("MyData");
+class EnumTypeTest {
 
-    /**
-     * The usage control framework.
-     */
-    private final String framework;
+    @Test
+    public void toString_nothing_returnValidOutput() {
+        /* ARRANGE */
+        final var input = EnumType.ACTION_TYPE;
 
-    UsageControlFramework(final String string) {
-        framework = string;
-    }
+        /* ACT */
+        final var inputAsString = input.toString();
 
-    @Override
-    public String toString() {
-        return framework;
+        /* ASSERT */
+        assertEquals("ACTION_TYPE", inputAsString);
     }
 }

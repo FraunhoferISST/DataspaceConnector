@@ -16,7 +16,6 @@
 package io.dataspaceconnector.model.resource;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
 
 /**
  * Enumeration for resource payment modality.
@@ -48,17 +47,21 @@ public enum PaymentMethod {
     NEGOTIATION_BASIS("Negotiation basis");
 
     /**
-     * Text, which can be used as a representation.
+     * Holds the enums string.
      */
-    @Getter
-    private final String representation;
+    private final String value;
 
     /**
      * Constructor.
      *
-     * @param rep Text, which can be used as a representation.
+     * @param name The name of the payment method.
      */
-    PaymentMethod(final String rep) {
-        this.representation = rep;
+    PaymentMethod(final String name) {
+        this.value = name;
+    }
+
+    @Override
+    public String toString() {
+        return value;
     }
 }

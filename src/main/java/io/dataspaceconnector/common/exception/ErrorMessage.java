@@ -82,17 +82,17 @@ public enum ErrorMessage {
     /**
      * The passed uri may not be null.
      */
-    URI_NULL("The passed uri may not be null"),
+    URI_NULL("The passed uri may not be null."),
 
     /**
      * The passed url may not be null.
      */
-    URL_NULL("The passed url may not be null"),
+    URL_NULL("The passed url may not be null."),
 
     /**
      * The passed http arguments may not be null.
      */
-    HTTP_ARGS_NULL("The passed http arguments may not be null"),
+    HTTP_ARGS_NULL("The passed http arguments may not be null."),
 
     /**
      * One of the contracts is empty.
@@ -177,7 +177,7 @@ public enum ErrorMessage {
     /**
      * Data has been accessed with invalid security profile.
      */
-    DATA_ACCESS_INVALID_SECURITY_PROFILE("Data access with invalid security profile"),
+    DATA_ACCESS_INVALID_SECURITY_PROFILE("Data access with invalid security profile."),
 
     /**
      * Application's base URL was retrieved without request context present.

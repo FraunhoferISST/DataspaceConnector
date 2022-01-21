@@ -25,7 +25,7 @@ info:
   license:
     name: "Apache License, Version 2.0"
     url: https://www.apache.org/licenses/LICENSE-2.0.txt
-  version: 7.0.0
+  version: 6.5.1
 servers:
   - url: https://localhost:8080
     description: Generated server url
@@ -3250,7 +3250,7 @@ paths:
             format: uuid
       requestBody:
         content:
-          '*/*':
+          application/octet-stream:
             schema:
               type: array
               items:
@@ -3392,11 +3392,16 @@ paths:
           schema:
             type: string
             format: uuid
-        - name: actionType
+        - name: type
           in: query
           required: true
           schema:
             type: string
+            enum:
+              - Start
+              - Stop
+              - Delete
+              - Describe
       responses:
         "401":
           description: Unauthorized
@@ -3434,61 +3439,6 @@ paths:
             application/json:
               schema:
                 type: object
-  /api/utils/enum:
-    post:
-      tags:
-        - _Utils
-      summary: Get a list of enums by value name.
-      operationId: getSpecificEnum
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: string
-              enum:
-                - LOG_LEVEL
-                - CONNECTOR_STATUS
-                - CONNECTOR_DEPLOY_MODE
-                - LANGUAGE
-                - DEPLOY_METHOD
-                - BROKER_STATUS
-                - SECURITY_PROFILE
-                - PAYMENT_METHOD
-        required: true
-      responses:
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  empty:
-                    type: boolean
-                additionalProperties:
-                  type: object
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  empty:
-                    type: boolean
-                additionalProperties:
-                  type: object
-        "200":
-          description: Ok
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  empty:
-                    type: boolean
-                additionalProperties:
-                  type: object
   /api/subscriptions:
     get:
       tags:
@@ -5088,15 +5038,55 @@ paths:
         "401":
           description: Unauthorized
           content:
-            '*/*':
+            application/hal+json:
               schema:
                 $ref: '#/components/schemas/RepresentationModelObject'
         "200":
           description: Ok
           content:
-            '*/*':
+            application/hal+json:
               schema:
                 $ref: '#/components/schemas/RepresentationModelObject'
+  /api/utils/enums:
+    get:
+      tags:
+        - _Utils
+      summary: Get a list of enums by value name.
+      operationId: getEnums
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  empty:
+                    type: boolean
+                additionalProperties:
+                  type: object
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  empty:
+                    type: boolean
+                additionalProperties:
+                  type: object
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  empty:
+                    type: boolean
+                additionalProperties:
+                  type: object
   /api/subscriptions/owning:
     get:
       tags:
@@ -5866,25 +5856,25 @@ paths:
         "401":
           description: Unauthorized
           content:
-            '*/*':
+            application/hal+json:
               schema:
                 type: object
         "500":
           description: Internal server error
           content:
-            '*/*':
+            application/hal+json:
               schema:
                 type: object
         "400":
           description: Bad request
           content:
-            '*/*':
+            application/hal+json:
               schema:
                 type: object
         "200":
           description: Ok
           content:
-            '*/*':
+            application/hal+json:
               schema:
                 type: object
   /api/agreements:
@@ -7106,6 +7096,9 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
+            ids:pipEndpoint:
+              type: string
+              format: uri
             ids:unit:
               type: string
               format: uri
@@ -7180,9 +7173,6 @@ components:
                 - https://w3id.org/idsa/code/STATE
                 - https://w3id.org/idsa/code/SYSTEM
                 - https://w3id.org/idsa/code/USER
-            ids:pipEndpoint:
-              type: string
-              format: uri
             ids:rightOperandReference:
               type: string
               format: uri
@@ -7213,7 +7203,7 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
-            ids:xone:
+            ids:and:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
@@ -7221,7 +7211,7 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
-            ids:and:
+            ids:xone:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
@@ -7292,25 +7282,14 @@ components:
         ids:target:
           type: string
           format: uri
+        ids:assetRefinement:
+          oneOf:
+            - $ref: '#/components/schemas/LogicalConstraint'
         ids:assignee:
           type: array
           items:
             type: string
             format: uri
-        ids:assigner:
-          type: array
-          items:
-            type: string
-            format: uri
-        ids:assetRefinement:
-          oneOf:
-            - $ref: '#/components/schemas/LogicalConstraint'
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/Constraint'
-              - $ref: '#/components/schemas/LogicalConstraint'
         ids:action:
           type: array
           items:
@@ -7332,6 +7311,17 @@ components:
               - https://w3id.org/idsa/code/TRACK_PROVENANCE
               - https://w3id.org/idsa/code/USE
               - https://w3id.org/idsa/code/WRITE
+        ids:constraint:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/Constraint'
+              - $ref: '#/components/schemas/LogicalConstraint'
+        ids:assigner:
+          type: array
+          items:
+            type: string
+            format: uri
         ids:description:
           type: array
           items:
@@ -7638,16 +7628,16 @@ components:
           items:
             type: string
             enum:
-              - PROVIDE_ACCESS
-              - PROHIBIT_ACCESS
-              - N_TIMES_USAGE
-              - DURATION_USAGE
-              - USAGE_DURING_INTERVAL
-              - USAGE_UNTIL_DELETION
-              - USAGE_LOGGING
-              - USAGE_NOTIFICATION
-              - CONNECTOR_RESTRICTED_USAGE
-              - SECURITY_PROFILE_RESTRICTED_USAGE
+              - Provide unrestricted data access
+              - Prohibit the data access
+              - Restrict the data usage to not more than N times
+              - Restrict the data usage to a specific time duration
+              - Restrict the data usage to a specific time interval
+              - Use data and delete it at a specific date time
+              - Log the data usage information
+              - Notify a party or a specific group of users when the data is used
+              - Restrict the data usage to a specific connector
+              - Restrict the data usage to a security profile
         keywords:
           type: array
           items:
@@ -7697,9 +7687,9 @@ components:
         type:
           type: string
           enum:
-            - APP
-            - CONNECTOR
-            - GENERIC
+            - App
+            - Connector
+            - Generic
         creationDate:
           type: string
           format: date-time
@@ -7762,6 +7752,4 @@ components:
   securitySchemes:
     basicAuth:
       type: http
-      name: Authorization
-      in: header
       scheme: basic

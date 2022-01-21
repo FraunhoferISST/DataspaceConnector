@@ -31,6 +31,11 @@ public enum EnumType {
     CONNECTOR_STATUS,
 
     /**
+     * The connector status.
+     */
+    IDS_CONNECTOR_STATUS,
+
+    /**
      * The connector deploy mode.
      */
     CONNECTOR_DEPLOY_MODE,
@@ -56,7 +61,52 @@ public enum EnumType {
     SECURITY_PROFILE,
 
     /**
+     * The ids security profile.
+     */
+    IDS_SECURITY_PROFILE,
+
+    /**
      * The payment method.
      */
-    PAYMENT_METHOD
+    PAYMENT_METHOD,
+
+    /**
+     * The policy pattern.
+     */
+    POLICY_PATTERN,
+
+    /**
+     * The update type.
+     */
+    UPDATE_TYPE,
+
+    /**
+     * The endpoint type.
+     */
+    ENDPOINT_TYPE,
+
+    /**
+     * The event type.
+     */
+    EVENT_TYPE,
+
+    /**
+     * The error message.
+     */
+    ERROR_MESSAGE,
+
+    /**
+     * The usage control framework.
+     */
+    USAGE_CONTROL_FRAMEWORK,
+
+    /**
+     * The action type.
+     */
+    ACTION_TYPE,
+
+    /**
+     * The data source type.
+     */
+    DATA_SOURCE_TYPE
 }
