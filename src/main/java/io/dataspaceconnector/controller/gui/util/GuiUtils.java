@@ -133,6 +133,7 @@ public final class GuiUtils {
             jsonArray.add(new JSONObject() {{
                 put("originalName", securityProfile.name());
                 put("displayName", securityProfile.getLabel().get(0).getValue());
+                put("jsonInput", securityProfile.getId());
             }});
         }
 
