@@ -56,5 +56,5 @@ public enum LogLevel {
      * Log level is error.
      */
     @JsonProperty("Error")
-    ERROR;
+    ERROR
 }

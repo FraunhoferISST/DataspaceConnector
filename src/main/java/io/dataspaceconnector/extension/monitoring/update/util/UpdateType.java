@@ -48,7 +48,7 @@ public enum UpdateType {
     /**
      * Constructor.
      *
-     * @param name The name of the update-enum .
+     * @param name The name of the update type.
      */
     UpdateType(final String name) {
         this.value = name;

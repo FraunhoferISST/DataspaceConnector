@@ -23,6 +23,25 @@ public enum Event {
     /**
      * Values indicates that something has been updated.
      */
-    UPDATED,
+    UPDATED("Updated");
 //    DELETED
+
+    /**
+     * Holds the enums string.
+     */
+    private final String value;
+
+    /**
+     * Constructor.
+     *
+     * @param name The name of the event type.
+     */
+    Event(final String name) {
+        this.value = name;
+    }
+
+    @Override
+    public String toString() {
+        return value;
+    }
 }
