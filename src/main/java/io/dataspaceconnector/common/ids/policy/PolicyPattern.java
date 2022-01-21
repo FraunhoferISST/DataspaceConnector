@@ -23,50 +23,70 @@ public enum PolicyPattern {
     /**
      * Standard pattern to allow unrestricted access.
      */
-    PROVIDE_ACCESS,
+    PROVIDE_ACCESS("Provide unrestricted data access"),
 
     /**
      * Default pattern if no other is detected.
      */
-    PROHIBIT_ACCESS,
+    PROHIBIT_ACCESS("Prohibit the data access"),
 
     /**
      * Use the data not more than N times.
      */
-    N_TIMES_USAGE,
+    N_TIMES_USAGE("Restrict the data usage to not more than N times"),
 
     /**
      * Restrict the data usage to a specific time duration.
      */
-    DURATION_USAGE,
+    DURATION_USAGE("Restrict the data usage to a specific time duration"),
 
     /**
      * Restrict the data usage to a specific time interval.
      */
-    USAGE_DURING_INTERVAL,
+    USAGE_DURING_INTERVAL("Restrict the data usage to a specific time interval"),
 
     /**
      * Use data and delete it at a specific date time.
      */
-    USAGE_UNTIL_DELETION,
+    USAGE_UNTIL_DELETION("Use data and delete it at a specific date time"),
 
     /**
      * Log the data usage information.
      */
-    USAGE_LOGGING,
+    USAGE_LOGGING("Log the data usage information"),
 
     /**
      * Notify a party or a specific group of users when the data is used.
      */
-    USAGE_NOTIFICATION,
+    USAGE_NOTIFICATION("Notify a party or a specific group of users when the data is used"),
 
     /**
      * Restrict the data usage to specific connectors.
      */
-    CONNECTOR_RESTRICTED_USAGE,
+    CONNECTOR_RESTRICTED_USAGE("Restrict the data usage to a specific connector"),
 
     /**
      * Restrict the data usage to specific security profile.
      */
-    SECURITY_PROFILE_RESTRICTED_USAGE
+    SECURITY_PROFILE_RESTRICTED_USAGE("Restrict the data usage to a security profile");
+
+    /**
+     * Holds the enums string.
+     */
+    private final String value;
+
+    /**
+     * Constructor.
+     *
+     * @param name The name of the policy pattern.
+     */
+    PolicyPattern(final String name) {
+        this.value = name;
+    }
+
+    @Override
+    public String toString() {
+        return value;
+    }
+
 }

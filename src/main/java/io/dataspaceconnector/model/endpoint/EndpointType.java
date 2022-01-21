@@ -23,15 +23,34 @@ public enum EndpointType {
     /**
      * Endpoint type is APP.
      */
-    APP,
+    APP("App"),
 
     /**
      * Endpoint type is CONNECTOR.
      */
-    CONNECTOR,
+    CONNECTOR("Connector"),
 
     /**
      * Endpoint type is GENERIC.
      */
-    GENERIC
+    GENERIC("Generic");
+
+    /**
+     * Holds the enums string.
+     */
+    private final String value;
+
+    /**
+     * Constructor.
+     *
+     * @param name The name of the endpoint type.
+     */
+    EndpointType(final String name) {
+        this.value = name;
+    }
+
+    @Override
+    public String toString() {
+        return value;
+    }
 }

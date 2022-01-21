@@ -192,11 +192,14 @@ public final class MessageUtils {
         }
 
         if (!versionSupported) {
-            if (log.isDebugEnabled()) {
-                log.debug("InfoModel version may be incompatible. [inbound=({}), request=({})]",
-                        inboundVersions, versionString);
+            if (log.isWarnEnabled()) {
+                log.warn("InfoModel version incompatibility detected! [issuerVersion=({})] "
+                        + "To disable this warning, add the request's version to the inbound "
+                        + "version list in your config.json. PLEASE NOTE that this is NO "
+                        + "guarantee that this log message will not be followed by exceptions, "
+                        + "e.g. due to deserialization errors. ", versionString);
             }
-            // TODO Add as soon as IM version compatibility table exists.
+            // TODO Refine as soon as IM version compatibility table exists.
             // throw new VersionNotSupportedException("Information Model version not supported.");
         }
     }

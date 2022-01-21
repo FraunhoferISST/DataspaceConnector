@@ -30,6 +30,6 @@ class PolicyPatternTest {
         final var msg = input.toString();
 
         /* ASSERT */
-        assertEquals("PROVIDE_ACCESS", msg);
+        assertEquals("Provide unrestricted data access", msg);
     }
 }

@@ -17,31 +17,15 @@ All notable changes to this project will be documented in this file.
 - Add `portainer.application.scheme` to `application.properties.`. Default is set to `http`.
 
 ### Changed
+- Change jdk version from 11 to 17.
 - Change encoding of local data from `UTF-16` to `UTF-8`.
 - Change relation between `Route` and `Artifact` to one-to-one (previously one-to-many).
   - Link is created automatically when an artifact is created with a route reference as access URL.
 - Change field `location` of `Endpoint` from URI to String.
 - Replace template engine `Velocity` with `Freemarker`.
 - Remove suffix *settings* from `ConfigurationDesc` attributes (`truststore`, `proxy`, `keystore`).
-- Change jdk version from 11 to 17.
-- Increase camel version from 3.12.0 to 3.14.0.
-- Increase spring-boot-starter-parent version from 2.5.6 to 2.6.2.
-- Increase spotbugs version from 4.4.2 to 4.5.3.
-- Increase okhttp version from 4.9.2 to 4.9.3.
-- Increase checkstyle version from 9.1 to 9.2.1.
-- Increase pmd version from 6.40.0 to 6.41.0.
-- Increase springdoc version from 1.5.3 to 1.6.4.
-- Increase modelmapper version from 2.4.4 to 3.0.0.
-- Increase equalsverifier version from 3.7.2 to 3.8.2.
-- Increase log4j2 version from 2.14.0 to 2.17.1.
-- Increase dependency-check-maven from 6.5.0 to 6.5.3.
-- Increase maven-site-plugin version from 3.9.1 to 3.10.0.
-- Increase protobuf version from 3.15.5 to 3.19.3.
-- Increase jackson version from 2.13.0 to 2.13.1.
-- Increase swagger-annotations version from 1.6.3 to 1.6.4.
-- Increase messaging services version from 5.1.1 to 6.0.0
 - Log header and payload of sent message in `AbstractMessageService`.
-- Ignore IDS InfoModel version incompatibility for incoming messages.
+- Ignore IDS InfoModel version incompatibility for incoming messages. Add log message level warn.
 - Rearrange Swagger UI.
   - Rename tags.
     - Rename tag `Messages` to `_Messaging`.
@@ -63,7 +47,10 @@ All notable changes to this project will be documented in this file.
 - Change REST endpoints.
   - PUT `/api/routes/{id}/endpoint/start` expects a URI instead of a UUID.
   - PUT `/api/routes/{id}/endpoint/end` expects a URI instead of a UUID.
-  - Change `/api/configmanaer/enum/{enumName}` to `/api/utils/enum` and change it to expect a list of enums.
+  - Change `POST /api/configmanaer/enum/{enumName}` to `GET /api/utils/enums` and change it to return all types within one call.
+    - Add enum types `POLICY_PATTERN`, `UPDATE_TYPE`, `ENDPOINT_TYPE`, `EVENT_TYPE`, `ERROR_MESSAGE`, `USAGE_CONTROL_FRAMEWORK`, `ACTION_TYPE`, and `DATA_SOURCE_TYPE`.
+    - Change return value of `SECURITY_PROFILE` to the internal model. Add `IDS_SECURITY_PROFILE` for the ids enum.
+    - Change return value of `CONNECTOR_STATUS` to the internal model. Add `IDS_CONNECTOR_STATUS` for the ids enum.
   - Change `/api/configmanaer/route/error` to `/api/camel/routes/error`.
 - Change response bodies to JSON objects for the following REST endpoints:
   - `/api/routes/{id}/endpoint/start`
@@ -86,6 +73,29 @@ All notable changes to this project will be documented in this file.
   - `/api/examples/policy`
 - Make field `type` in `DataSource` transient, as type information is persisted through the `dtype` column created through the `@Inheritance` annotation.
 - Rename param of `/describe` from `actionType` to `type` and change it to type `ActionType`.
+- Change strings of the following enums:
+  - `PolicyPattern`: added strings.
+  - `UsageControlFramework`: e.g. `INTERNAL` to `Internal`.
+  - `ActionType`: e.g. `START` to `Start`.
+  - `EndpointType`: e.g. `APP` to `App`.
+  - `Event`: e.g. `UPDATED` to `Updated`.
+- Update dependencies.
+  - Increase camel version from 3.12.0 to 3.14.0.
+  - Increase spring-boot-starter-parent version from 2.5.6 to 2.6.2.
+  - Increase spotbugs version from 4.4.2 to 4.5.3.
+  - Increase okhttp version from 4.9.2 to 4.9.3.
+  - Increase checkstyle version from 9.1 to 9.2.1.
+  - Increase pmd version from 6.40.0 to 6.41.0.
+  - Increase springdoc version from 1.5.3 to 1.6.4.
+  - Increase modelmapper version from 2.4.4 to 3.0.0.
+  - Increase equalsverifier version from 3.7.2 to 3.8.2.
+  - Increase log4j2 version from 2.14.0 to 2.17.1.
+  - Increase dependency-check-maven from 6.5.0 to 6.5.3.
+  - Increase maven-site-plugin version from 3.9.1 to 3.10.0.
+  - Increase protobuf version from 3.15.5 to 3.19.3.
+  - Increase jackson version from 2.13.0 to 2.13.1.
+  - Increase swagger-annotations version from 1.6.3 to 1.6.4.
+  - Increase messaging services version from 5.1.1 to 6.0.0.
 
 ### Fixed
 - XML-escape URLs before injecting them into Camel route templates.
@@ -93,7 +103,7 @@ All notable changes to this project will be documented in this file.
 - Insert user input for `title` and `description` to example policies at `/api/examples/policy`.
 - Make `/database` accessible again.
 - Add class type check to rule comparison.
-- Remove `@column(unique = true)` from AppStore entity.
+- Remove `@column(unique = true)` from `AppStore` entity.
 
 ### Removed
 - Remove entity `ConnectorEndpoint` and all corresponding classes.
@@ -166,7 +176,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Check for `maxDepth` in `IdsResourceBuilder` when resolving samples to avoid possible `StackOverFlowError`.
 
-## [6.3.0] - 2021-30-09
+## [6.3.0] - 2021-09-30
 
 ### Added
 - Add `connector` object to `/actuator/info` endpoint to return available updates and further information.

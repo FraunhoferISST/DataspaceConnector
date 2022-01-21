@@ -30,6 +30,6 @@ class UsageControlFrameworkTest {
         final var inputAsString = input.toString();
 
         /* ASSERT */
-        assertEquals("INTERNAL", inputAsString);
+        assertEquals("Internal", inputAsString);
     }
 }
