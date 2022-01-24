@@ -36,7 +36,7 @@ The content of a Dynamic Attribute Token (DAT) is listed and explained
 If you want to locally test a certain setup of IDS connectors, there is some sample key material
 available for localized docker domains such as (provider-core or consumer-core) which can be
 downloaded [here](https://github.com/industrial-data-space/trusted-connector/tree/master/examples/etc),
-or as complete sample set[here](https://github.com/industrial-data-space/trusted-connector/blob/master/examples/trusted-connector-examples_latest.zip).
+or as complete sample set [here](https://github.com/industrial-data-space/trusted-connector/blob/master/examples/trusted-connector-examples_latest.zip).
 
 If you want to run your IDS-connector on an internet domain, such as connector.aisec.fraunhofer.de,
 for instance, there are two steps involved to receive your key material to authenticate at the IDS

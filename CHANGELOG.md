@@ -2,7 +2,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [7.0.0] - XXXX-XX-XX
+## [7.0.0] - 2022-01-31
 
 ### Added
 - Allow using route ID (URI) as access URL for artifacts.
@@ -109,6 +109,16 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 - Remove entity `ConnectorEndpoint` and all corresponding classes.
+
+## [6.5.3] - 2022-01-11
+
+### Changed
+- Increase log4j2 version from 2.16.0 to 2.17.1.
+
+## [6.5.2] - 2021-12-15
+
+### Changed
+- Increase log4j2 version to 2.16.0.
 
 ## [6.5.1] - 2021-11-09
 
