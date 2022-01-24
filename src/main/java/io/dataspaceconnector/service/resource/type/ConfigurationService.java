@@ -113,7 +113,7 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
                 } catch (ConfigUpdateException e) {
                     if (log.isWarnEnabled()) {
                         log.warn("Updating the configuration failed, rollback to the latest one. "
-                                + "[exception=({})]", e.getMessage(), e);
+                                + "[exception=({})]", e.getMessage());
                     }
                     swapActiveConfigInDb(configToReplace.get().getId());
                     resetMessagingConfig();
@@ -141,18 +141,48 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
      */
     @Override
     public Configuration update(final UUID entityId, final ConfigurationDesc desc) {
-        final var oldConfig = super.get(entityId);
-        // Old description needs to be cached here to allow rollbacks on error.
-        final var oldDesc = fromConfigModel(oldConfig);
-        final var config = super.update(entityId, desc);
+        Configuration config;
+
+        if (getActiveConfig().getId().equals(entityId)) {
+            final var oldConfig = super.get(entityId);
+            final var oldDesc = fromConfigModel(oldConfig);
+            final var validatedDesc = deepValidateKeystores(oldDesc, desc);
+            config = super.update(entityId, validatedDesc);
+
+            updateRuntimeConfig(entityId, oldDesc);
+        } else {
+             config = super.update(entityId, desc);
+        }
+
+        return config;
+    }
+
+    /**
+     * If changes have been made to the active configuration,
+     * the runtime configuration must be updated. If the configuration contains errors and
+     * cannot be adopted at connector runtime, a rollback to the old configuration is
+     * performed at runtime to guarantee the functionality of the connector as a whole.
+     *
+     * @param entityId The ID of the active configuration in the database.
+     * @param oldDesc The old configuration before changes, possible rollback target.
+     */
+    private void updateRuntimeConfig(final UUID entityId, final ConfigurationDesc oldDesc) {
+        if (log.isInfoEnabled()) {
+            log.info("Updating active configuration...");
+        }
         try {
             resetMessagingConfig();
+            if (log.isInfoEnabled()) {
+                log.info("Successfully updated active configuration.");
+            }
         } catch (ConfigUpdateException e) {
             if (log.isWarnEnabled()) {
-                log.warn("Updating the configuration failed, rollback to the latest one. "
-                        + "[exception=({})]", e.getMessage(), e);
+                log.warn("Updating active configuration failed, rollback to before changes"
+                        + " to protect connector runtime. "
+                        + "[exception=({})]", e.getMessage());
             }
 
+            // Rollback.
             super.update(entityId, oldDesc);
 
             try {
@@ -161,8 +191,60 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
                 // Nothing to do - old config didn't work too, nothing we can do here.
             }
         }
+    }
 
-        return config;
+    /**
+     * Validates whether the keystore and truststore information is completely present in the new
+     * configuration. If not, the information of the old configuration is copied (if present).
+     *
+     * @param oldDesc The configuration to be updated.
+     * @param desc The new configuration.
+     * @return New configuration with key- and truststore settings.
+     */
+    private ConfigurationDesc deepValidateKeystores(final ConfigurationDesc oldDesc,
+                                                    final ConfigurationDesc desc) {
+        // Do the keystores exist at all in the new config?
+        if (desc.getKeystore() == null) {
+            desc.setKeystore(new KeystoreDesc());
+        }
+        if (desc.getTruststore() == null) {
+            desc.setTruststore(new TruststoreDesc());
+        }
+
+
+        // Validate keystore settings.
+        final var oldKeystore = oldDesc.getKeystore();
+        final var newKeystore = desc.getKeystore();
+
+        if (oldKeystore != null) {
+            if (newKeystore.getAlias() == null) {
+                newKeystore.setAlias(oldKeystore.getAlias());
+            }
+
+            if (newKeystore.getPassword() == null) {
+                newKeystore.setPassword(oldKeystore.getPassword());
+            }
+
+            if (newKeystore.getLocation() == null) {
+                newKeystore.setLocation(oldKeystore.getLocation());
+            }
+        }
+
+        // Validate truststore settings.
+        final var oldTruststore = oldDesc.getTruststore();
+        final var newTruststore = desc.getTruststore();
+
+        if (oldTruststore != null) {
+            if (newTruststore.getPassword() == null) {
+                newTruststore.setPassword(oldTruststore.getPassword());
+            }
+
+            if (newTruststore.getLocation() == null) {
+                newTruststore.setLocation(oldTruststore.getLocation());
+            }
+        }
+
+        return desc;
     }
 
     private void swapActiveConfigInDb(final UUID newConfig) {

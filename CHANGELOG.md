@@ -96,6 +96,7 @@ All notable changes to this project will be documented in this file.
   - Increase jackson version from 2.13.0 to 2.13.1.
   - Increase swagger-annotations version from 1.6.3 to 1.6.4.
   - Increase messaging services version from 5.1.1 to 6.0.0.
+  - Increase maven-plugin version from 2.8.1 to 2.9.0.
 
 ### Fixed
 - XML-escape URLs before injecting them into Camel route templates.
@@ -104,6 +105,7 @@ All notable changes to this project will be documented in this file.
 - Make `/database` accessible again.
 - Add class type check to rule comparison.
 - Remove `@column(unique = true)` from `AppStore` entity.
+- Keep keystore settings for active config if not present in the updated one.
 
 ### Removed
 - Remove entity `ConnectorEndpoint` and all corresponding classes.
