@@ -2,7 +2,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [7.0.0] - XXXX-XX-XX
+## [7.0.0] - 2022-01-31
 
 ### Added
 - Allow using route ID (URI) as access URL for artifacts.
