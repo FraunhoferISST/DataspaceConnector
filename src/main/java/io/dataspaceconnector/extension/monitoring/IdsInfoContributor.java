@@ -25,6 +25,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.util.Utils;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
@@ -83,7 +84,8 @@ public class IdsInfoContributor implements InfoContributor {
         try {
             map.put("dat", getDatDetails());
         } catch (ClaimsException | ConnectorMissingCertExtensionException
-                | DapsConnectionException | DapsEmptyResponseException | NullPointerException e) {
+                | DapsConnectionException | DapsEmptyResponseException | NullPointerException
+                | UnsupportedJwtException e) {
             map.put("dat", false);
         }
 
