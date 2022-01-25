@@ -535,15 +535,16 @@ set in `docker-compose.yml`, or elsewhere, accordingly.
 
 The `idscp2.[supported/expected]-ra-suites-[client/server]` properties specify the supported and
 expected remote attestation mechanisms for client and server, respectively.
-The default configuration specifies both the "Dummy" remote "attestation" (with does nothing), and
-the remote attestation using the CMC (Container Measurement Component), whereas the client expects
+The default configuration specifies both the "Dummy" remote "attestation" (which does nothing), and
+the remote attestation using the Container Measurement Component (CMC), whereas the client expects
 the server to supply CMC RA, and the server does not request RA from the client.
-If you want to use remote attestation via the CMC, please consult the [README in the CMC Repo](https://github.com/Fraunhofer-AISEC/cmc) for setup directions.
+If you want to use remote attestation via the CMC, please consult the
+[README in the CMC Repo](https://github.com/Fraunhofer-AISEC/cmc) for setup directions.
 
 In order for the IDSCP2 RA adapter to communicate with the CMC, the host (and optionally port)
 of the CMC server has to be specified via the `idscp2.cmc-host` property. This can be a little
 tricky in containerized environments, the example specifies a typical host IP address in a
-Docker (Compose) network, but _sould **NOT** be expected to work out of the box!_
+Docker (Compose) network, but _should **NOT** be expected to work out of the box!_
 Please use `docker inspect` or similar to check the actual subnet and modify the property
 accordingly! Another port but the default port 9955 can optionally be specified using the format
 `<host/ip>:<port>`.
