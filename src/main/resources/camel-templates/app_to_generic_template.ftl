@@ -5,7 +5,7 @@
         <from uri="timer://app-to-generic-route?fixedRate=true&amp;period=60000"/>
 
         <setHeader name="CamelHttpMethod"><constant>GET</constant></setHeader>
-        <to uri="$startUrl"/>
+        <to uri="${startUrl}"/>
 
         <convertBodyTo type="java.lang.String"/>
         <log message="Sending data: ${r"${body}"}"/>
@@ -19,7 +19,7 @@
         <#if genericEndpointAuthHeaderKey?? && genericEndpointAuthHeaderValue??>
             <setHeader name="${genericEndpointAuthHeaderKey}"><constant>${genericEndpointAuthHeaderValue}</constant></setHeader>
         </#if>
-        <to uri="$endUrl"/>
+        <to uri="${endUrl}"/>
 
     </route>
 

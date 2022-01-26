@@ -106,6 +106,7 @@ All notable changes to this project will be documented in this file.
 - Add class type check to rule comparison.
 - Remove `@column(unique = true)` from `AppStore` entity.
 - Keep keystore settings for active config if not present in the updated one.
+- Add missing brackets to Camel route templates, so that properties get inserted correctly.
 
 ### Removed
 - Remove entity `ConnectorEndpoint` and all corresponding classes.
