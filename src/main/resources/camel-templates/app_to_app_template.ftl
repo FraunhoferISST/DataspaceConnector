@@ -5,7 +5,7 @@
         <from uri="timer://app-to-app-route?fixedRate=true&amp;period=60000"/>
 
         <setHeader name="CamelHttpMethod"><constant>GET</constant></setHeader>
-        <to uri="$startUrl"/>
+        <to uri="${startUrl}"/>
 
         <convertBodyTo type="java.lang.String"/>
         <log message="Sending data: ${r"${body}"}"/>
@@ -16,7 +16,7 @@
         </#list>
 
         <setHeader name="CamelHttpMethod"><constant>POST</constant></setHeader>
-        <to uri="$endUrl"/>
+        <to uri="${endUrl}"/>
 
     </route>
 

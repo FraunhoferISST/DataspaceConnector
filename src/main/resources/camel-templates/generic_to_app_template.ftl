@@ -8,7 +8,7 @@
         <#if genericEndpointAuthHeaderKey?? && genericEndpointAuthHeaderValue??>
             <setHeader name="${genericEndpointAuthHeaderKey}"><constant>${genericEndpointAuthHeaderValue}</constant></setHeader>
         </#if>
-        <to uri="$startUrl"/>
+        <to uri="${startUrl}"/>
 
         <convertBodyTo type="java.lang.String"/>
         <log message="Sending data: ${r"${body}"}"/>
@@ -19,7 +19,7 @@
         </#list>
 
         <setHeader name="CamelHttpMethod"><constant>POST</constant></setHeader>
-        <to uri="$endUrl"/>
+        <to uri="${endUrl}"/>
 
     </route>
 
