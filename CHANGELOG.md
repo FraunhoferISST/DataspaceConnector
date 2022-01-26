@@ -86,7 +86,7 @@ All notable changes to this project will be documented in this file.
   - Increase okhttp version from 4.9.2 to 4.9.3.
   - Increase checkstyle version from 9.1 to 9.2.1.
   - Increase pmd version from 6.40.0 to 6.41.0.
-  - Increase springdoc version from 1.5.3 to 1.6.4.
+  - Increase springdoc version from 1.5.3 to 1.6.5.
   - Increase modelmapper version from 2.4.4 to 3.0.0.
   - Increase equalsverifier version from 3.7.2 to 3.8.2.
   - Increase log4j2 version from 2.14.0 to 2.17.1.
