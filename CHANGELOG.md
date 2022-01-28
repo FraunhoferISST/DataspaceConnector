@@ -80,7 +80,7 @@ All notable changes to this project will be documented in this file.
   - `EndpointType`: e.g. `APP` to `App`.
   - `Event`: e.g. `UPDATED` to `Updated`.
 - Update dependencies.
-  - Increase camel version from 3.12.0 to 3.14.0.
+  - Increase camel version from 3.12.0 to 3.14.1.
   - Increase spring-boot-starter-parent version from 2.5.6 to 2.6.3.
   - Increase spotbugs version from 4.4.2 to 4.5.3.
   - Increase okhttp version from 4.9.2 to 4.9.3.
