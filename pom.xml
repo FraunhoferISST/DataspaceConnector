@@ -128,7 +128,7 @@
 		<versions-maven-plugin.version>2.9.0</versions-maven-plugin.version>
 		<license-plugin.version>4.1</license-plugin.version>
 		<dms.version>2.2.0</dms.version>
-		<taglist.version>2.4</taglist.version>
+		<taglist.version>3.0.0</taglist.version>
 		<jxr.version>3.1.1</jxr.version>
 		<dependency-check.version>6.5.3</dependency-check.version>
 
