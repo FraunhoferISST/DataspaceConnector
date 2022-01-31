@@ -107,7 +107,7 @@
 		<freemarker.version>2.3.31</freemarker.version>
 		<camel.version>3.14.1</camel.version>
 		<idscp2.version>0.6.0</idscp2.version>
-		<protobuf.version>3.19.3</protobuf.version>
+		<protobuf.version>3.19.4</protobuf.version>
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
