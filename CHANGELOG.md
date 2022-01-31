@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [7.0.0] - 2022-01-31
 
+**WARNING - MAJOR CHANGES**: Before updating, please read [this](https://international-data-spaces-association.github.io/DataspaceConnector/Deployment/DatabaseMigration) guide!
+
 ### Added
 - Allow using route ID (URI) as access URL for artifacts.
 - Allow using route ID (URI) as location for subscriptions.
