@@ -2,6 +2,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [X.X.X] - XXXX-XX-XX
+
+### Changed
+- Increase equalsverifier version from 3.8.3 to 3.9.
+
 ## [7.0.0] - 2022-01-31
 
 **WARNING - MAJOR CHANGES**: Before updating, please read [this](https://international-data-spaces-association.github.io/DataspaceConnector/Deployment/DatabaseMigration) guide!
