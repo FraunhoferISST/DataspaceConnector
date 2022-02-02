@@ -1,9 +1,16 @@
-<h4 align="center" >
+<h1 align="center" >
     <span style="color:red">WARNING: UPDATE TO V7.0.0</span><br>
     Before updating, please read
     <a href="https://international-data-spaces-association.github.io/DataspaceConnector/Deployment/DatabaseMigration">this</a>
     guide!
-</h4>
+</h1>
+
+<h3 align="center" >
+    Please note that we will no longer implement any new features or bug fixes.
+    We will only maintain security-critical dependencies.
+    For further developments, please take a look at the
+    <a href="https://github.com/eclipse-dataspaceconnector">Eclipse project</a>.
+</h3>
 
 <h1 align="center">
   <br>
