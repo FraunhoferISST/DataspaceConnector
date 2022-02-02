@@ -516,6 +516,18 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java-util</artifactId>
+			<version>${protobuf.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-kotlin</artifactId>
+			<version>${protobuf.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>de.fhg.aisec.ids</groupId>
 			<artifactId>camel-idscp2</artifactId>
 			<version>${idscp2.version}</version>
