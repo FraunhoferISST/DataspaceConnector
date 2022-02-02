@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Increase equalsverifier version from 3.8.3 to 3.9.
+- Increase postgresql version from 42.3.1 to 42.3.2.
 
 ## [7.0.0] - 2022-01-31
 
