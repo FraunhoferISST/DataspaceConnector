@@ -276,7 +276,7 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         final var containerId = portainerSvc.createContainer(template, volumeMap,
                 app.getEndpoints());
 
-        // 5. Get container description from portainer (e.g. randomly created container-name).
+        // 5. Get container description from portainer.
         final var containerDesc = portainerSvc.getDescriptionByContainerId(containerId);
         persistContainerData(app, containerId, containerDesc);
 

@@ -35,25 +35,30 @@ public final class PortainerUtil {
      * @param templateObject The template object.
      * @param ports          The list of ports.
      * @param volumes        Map of volumes.
-     * @param image          The image name.
+     * @param containerName  The container name.
      * @return payload for the creation of a container.
      */
     public static JSONObject createContainerJSONPayload(final JSONObject templateObject,
                                                         final List<String> ports,
                                                         final Map<String, String> volumes,
-                                                        final String image) {
-
+                                                        final String containerName) {
         // Build json payload and fill single fields.
         final var jsonPayload = new JSONObject() {{
             put("Env", new JSONArray());
             put("OpenStdin", false);
             put("Tty", false);
             put("Labels", new JSONObject());
-            put("name", "");
             put("Cmd", new JSONArray());
-            put("Image", templateObject.getString("registry")
-                    + "/" + templateObject.getString("image"));
+            put("name", containerName);
         }};
+
+        // Build image url and add it to payload.
+        var imageUrl = templateObject.getString("registry");
+        if (!imageUrl.endsWith("/")) {
+            imageUrl += "/";
+        }
+        imageUrl += templateObject.getString("image");
+        jsonPayload.put("Image", imageUrl);
 
         // Build exposed ports part of json payload.
         final var exposedPorts = new JSONObject();
@@ -92,7 +97,6 @@ public final class PortainerUtil {
         hostConfig.put("Binds", binds);
 
         jsonPayload.put("HostConfig", hostConfig);
-        jsonPayload.put("name", image);
 
         // Build volumes part of json payload.
         final var volumesJSON = new JSONObject();
