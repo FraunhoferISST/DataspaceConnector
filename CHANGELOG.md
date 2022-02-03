@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Increase equalsverifier version from 3.8.3 to 3.9.
 - Increase postgresql version from 42.3.1 to 42.3.2.
 - Increase flyway-core version from 8.4.3 to 8.4.4.
+- Increase pitest-maven version from 1.7.3 to 1.7.4.
 
 ## [7.0.0] - 2022-01-31
 
