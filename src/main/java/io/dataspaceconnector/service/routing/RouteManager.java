@@ -38,7 +38,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -53,6 +52,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static io.dataspaceconnector.common.util.Utils.escapeForXml;
 
 /**
  * Component for creating Camel routes from AppRoutes.
@@ -173,16 +174,6 @@ public class RouteManager {
             }
             throw new RouteCreationException("The route end cannot be identified.");
         }
-    }
-
-    /**
-     * Escapes a string to be valid XML.
-     *
-     * @param input the input string.
-     * @return the escaped string.
-     */
-    private String escapeForXml(final String input) {
-        return StringEscapeUtils.escapeXml11(StringEscapeUtils.unescapeXml(input));
     }
 
     /**

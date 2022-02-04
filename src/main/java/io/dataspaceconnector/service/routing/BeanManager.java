@@ -36,6 +36,8 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.UUID;
 
+import static io.dataspaceconnector.common.util.Utils.escapeForXml;
+
 /**
  * Component for creating Spring beans required in Camel routes.
  */
@@ -71,7 +73,7 @@ public class BeanManager {
         final var freemarkerInput = new HashMap<String, Object>();
 
         freemarkerInput.put("dataSourceId", dataSource.getId());
-        freemarkerInput.put("url", dataSource.getUrl());
+        freemarkerInput.put("url", escapeForXml(dataSource.getUrl()));
         freemarkerInput.put("driver", dataSource.getDriverClassName());
 
         final var auth = (BasicAuth) dataSource.getAuthentication();
