@@ -10,6 +10,9 @@ All notable changes to this project will be documented in this file.
 - Increase flyway-core version from 8.4.3 to 8.4.4.
 - Increase pitest-maven version from 1.7.3 to 1.7.4.
 
+###Fixed
+- Escape data source URL before creating data source bean.
+
 ## [7.0.0] - 2022-01-31
 
 **WARNING - MAJOR CHANGES**: Before updating, please read [this](https://international-data-spaces-association.github.io/DataspaceConnector/Deployment/DatabaseMigration) guide!
