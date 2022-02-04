@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Deployment of DataApps via Portainer
+- Escape data source URL before creating data source bean.
 
 ## [7.0.0] - 2022-01-31
 
