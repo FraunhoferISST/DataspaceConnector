@@ -133,3 +133,32 @@ you want to keep your data persisted across restarts, add a persistent volume in
     volumes:
        connector-data: {}
 ```
+
+### Setup Oracle
+
+An example how to run the Connector with an Oracle database as backend is included.
+
+Start the Connector with Oracle backend
+
+```shell
+docker-compose -f docker-compose_oracle.yml up
+```
+By default, all data in the Oracle container will be lost when running `docker-compose down`. If
+you want to keep your data persisted across restarts, add a persistent volume in the
+`docker-compose_oracle.yaml`:
+
+```yaml
+services:
+  oracle:
+    image: gvenzl/oracle-xe:21.3.0-slim
+    volumes:
+       - oracle-volume:/opt/oracle/oradata
+    container_name: 'oracle-container'
+    env_file:
+      - ./oracle.env
+    networks:
+      - connector
+    ports:
+      - 1521:1521
+```
+
