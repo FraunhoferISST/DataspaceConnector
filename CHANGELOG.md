@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Update flyway-core version from 8.4.3 to 8.4.4.
 - Update pitest-maven version from 1.7.3 to 1.7.4.
 - Update camel version from 3.14.1 to 3.15.0.
+- Update springdoc.version from 1.6.5 to 1.6.6.
 
 ### Fixed
 - Deployment of DataApps via Portainer
