@@ -30,7 +30,7 @@ class ActionTypeTest {
         final var inputAsString = input.toString();
 
         /* ASSERT */
-        assertEquals("Start", inputAsString);
+        assertEquals("START", inputAsString);
     }
 
 }
