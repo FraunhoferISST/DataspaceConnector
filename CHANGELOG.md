@@ -2,7 +2,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [X.X.X] - XXXX-XX-XX
+## [7.0.1] - 2022-02-07
 
 ### Added
 - Add `portainer.application.connector.network` to `application.properties.`. Default is set to `local`.
