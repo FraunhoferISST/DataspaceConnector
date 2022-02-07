@@ -23,40 +23,20 @@ public enum ActionType {
     /**
      * Start an app.
      */
-    START("Start"),
+    START,
 
     /**
      * Stop an app.
      */
-    STOP("Stop"),
+    STOP,
 
     /**
      * Delete an app.
      */
-    DELETE("Delete"),
+    DELETE,
 
     /**
      * Describes an app.
      */
-    DESCRIBE("Describe");
-
-    /**
-     * Holds the enums string.
-     */
-    private final String value;
-
-    /**
-     * Constructor.
-     *
-     * @param name The name of the action type.
-     */
-    ActionType(final String name) {
-        this.value = name;
-    }
-
-    @Override
-    public String toString() {
-        return value;
-    }
-
+    DESCRIBE;
 }

@@ -47,6 +47,7 @@ import lombok.RequiredArgsConstructor;
 import okhttp3.Response;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -89,6 +90,12 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
      * 443 is the default port for https.
      */
     private static final int DEFAULT_HTTPS_PORT = 443;
+
+    /**
+     * The network of the connector to join apps in.
+     */
+    @Value("${portainer.application.connector.network:local}")
+    private String connectorNetwork;
 
     @Hidden
     @ApiResponse(responseCode = ResponseCode.METHOD_NOT_ALLOWED,
@@ -276,17 +283,19 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
         final var containerId = portainerSvc.createContainer(template, volumeMap,
                 app.getEndpoints());
 
-        // 5. Get container description from portainer (e.g. randomly created container-name).
+        // 5. Get container description from portainer.
         final var containerDesc = portainerSvc.getDescriptionByContainerId(containerId);
         persistContainerData(app, containerId, containerDesc);
 
-        // 6. Get "bride" network-id in Portainer
-        final var networkId = portainerSvc.getNetworkId("bridge");
+        // 6. Get "bride" network-id in Portainer and join app in network
+        final var networkIdBridge = portainerSvc.getNetworkId("bridge");
+        portainerSvc.joinNetwork(containerId, networkIdBridge);
 
-        // 7. Join container into the new created network.
-        portainerSvc.joinNetwork(containerId, networkId);
+        // 7. Get setting for connector network and join app in network
+        final var networkIdConnector = portainerSvc.getNetworkId(connectorNetwork);
+        portainerSvc.joinNetwork(containerId, networkIdConnector);
 
-        // 8. Delete registry (credentials are one-time-usage)
+        // 8. Delete registry (credentials should be one-time-usage)
         portainerSvc.deleteRegistry(registryId);
 
         return containerId;
@@ -316,17 +325,16 @@ public class AppController extends BaseResourceController<App, AppDesc, AppView,
 
             // Generate endpoint accessURLs depending on deployment information.
             for (final var endpoint : app.getEndpoints()) {
+                final var port = endpoint.getEndpointPort();
+
                 // Uses IDS endpoint description info and not template (/api/apps/{id}/endpoints).
-                final var protocol =
-                        endpoint.getEndpointPort() == DEFAULT_HTTPS_PORT ? "https://" : "http://";
+                final var protocol = port == DEFAULT_HTTPS_PORT ? "https://" : "http://";
 
                 // Uses IDS endpoint description info and not template (/api/apps/{id}/endpoints).
                 final var suffix =
                         endpoint.getPath() != null ? endpoint.getPath() : "";
 
-                final var exposedPort = endpoint.getExposedPort();
-
-                final var location = protocol + containerName + ":" + exposedPort + suffix;
+                final var location = protocol + containerName + ":" + port + suffix;
                 appEndpointSvc.setLocation(endpoint, location);
             }
         }

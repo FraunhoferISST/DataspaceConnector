@@ -4,13 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## [X.X.X] - XXXX-XX-XX
 
+### Added
+- Add `portainer.application.connector.network` to `application.properties.`. Default is set to `local`.
+
 ### Changed
 - Increase equalsverifier version from 3.8.3 to 3.9.
 - Increase postgresql version from 42.3.1 to 42.3.2.
 - Increase flyway-core version from 8.4.3 to 8.4.4.
 - Increase pitest-maven version from 1.7.3 to 1.7.4.
 
-###Fixed
+### Fixed
+- Deployment of DataApps via Portainer
 - Escape data source URL before creating data source bean.
 
 ## [7.0.0] - 2022-01-31
