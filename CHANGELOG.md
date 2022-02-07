@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Update pitest-maven version from 1.7.3 to 1.7.4.
 - Update camel version from 3.14.1 to 3.15.0.
 - Update springdoc.version from 1.6.5 to 1.6.6.
+- Update maven-project-info-reports-plugin version from 3.1.2 to 3.2.1.
 
 ### Fixed
 - Deployment of DataApps via Portainer
