@@ -2,6 +2,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [x.x.x] - 2022-xx-xx
+
+### Changed
+- Update swagger-annotations version from 1.6.4 to 1.6.5.
+
 ## [7.0.1] - 2022-02-07
 
 ### Added
@@ -17,7 +22,7 @@ All notable changes to this project will be documented in this file.
 - Update maven-project-info-reports-plugin version from 3.1.2 to 3.2.1.
 
 ### Fixed
-- Deployment of DataApps via Portainer
+- Deployment of DataApps via Portainer.
 - Escape data source URL before creating data source bean.
 
 ## [7.0.0] - 2022-01-31
