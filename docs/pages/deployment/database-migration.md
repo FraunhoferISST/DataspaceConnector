@@ -33,7 +33,7 @@ In the `application.properties`:
 spring.flyway.enabled=true
 spring.flyway.baseline-on-migrate=true
 spring.flyway.baseline-version=<your-last-connector-version>
-spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.hibernate.ddl-auto=update
 ```
 
 1. __Make a backup of the database, if not already done!__
@@ -42,7 +42,7 @@ spring.jpa.hibernate.ddl-auto=validate
    the migration.
 4. Set `spring.flyway.baseline-version` to the last connector version used with the database
    (omit the `v`, so e.g. `5.0.0`).
-5. Set `spring.jpa.hibernate.ddl-auto` to `validate`.
+5. Set `spring.jpa.hibernate.ddl-auto` to `update`.
 6. Start the connector.
 
 The connector will then perform the migration on start-up.
@@ -60,7 +60,7 @@ following section in the `values.yaml` file:
     SPRING_FLYWAY_ENABLED: "true"
     SPRING_FLYWAY_BASELINE-ON-MIGRATE: "true"
     SPRING_FLYWAY_BASELINE-VERSION: "5.0.0"
-    SPRING_JPA_HIBERNATE_DDL-AUTO: "validate"
+    SPRING_JPA_HIBERNATE_DDL-AUTO: "update"
 ```
 
 Make sure to set `SPRING_FLYWAY_BASELINE-VERSION` to the last DSC version you used with the
