@@ -7,6 +7,19 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Update swagger-annotations version from 1.6.4 to 1.6.5.
 
+## [7.0.1-RA] - 2022-02-14
+
+This version is not available in the `main` branch but in `release/v7.0.1-ra`.
+
+### Added
+- Add `mvn-local` directory and allow the usage of locally published artifacts in the `pom.xml`.
+- Add maven dependencies for velocity, idscp2-tpm2d, idscp2-cmc, grpc-netty, and netty.
+- Add functionality to run the Connector with remote attestation.
+
+### Changed
+- Update `.dockerignore`, `docker-compose.yml` and `Dockerfile`.
+- Increase camel-idscp2 version from 0.6.0 to 0.9.1.
+
 ## [7.0.1] - 2022-02-07
 
 ### Added
