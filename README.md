@@ -1,9 +1,16 @@
-<h4 align="center" >
-    <span style="color:red">WARNING: UPDATE TO V7.0.0</span><br>
+<h1 align="center" >
+    <span style="color:red">WARNING: UPDATE TO V7.X.X</span><br>
     Before updating, please read
     <a href="https://international-data-spaces-association.github.io/DataspaceConnector/Deployment/DatabaseMigration">this</a>
     guide!
-</h4>
+</h1>
+
+<h3 align="center" >
+    Please note that we will no longer implement any new features or bug fixes.
+    We will only maintain security-critical dependencies.
+    For further developments, please take a look at the
+    <a href="https://github.com/eclipse-dataspaceconnector">Eclipse project</a>.
+</h3>
 
 <h1 align="center">
   <br>
@@ -126,6 +133,7 @@ with significant contributions, comments, and support by (in alphabetical order)
 * [Gökhan Kahriman](https://github.com/goekhanKahriman), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 * [Haydar Qarawlus](https://github.com/hqarawlus), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 * [Johannes Pieperbeck](https://github.com/jpieperbeck), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
+* [Michael Lux](https://github.com/milux), [Fraunhofer AISEC](https://www.aisec.fraunhofer.de/en.html)
 * [Omar Luiz Barreto Silva](https://github.com/ob-silva), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 * [René Brinkhege](https://github.com/renebrinkhege), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 * [Steffen Biehs](https://github.com/steffen-biehs), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)

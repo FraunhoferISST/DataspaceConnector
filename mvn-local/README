@@ -1,0 +1,2 @@
+Local, unreleased maven2 dependencies may be placed in this directory
+in order to be picked up by maven during build.

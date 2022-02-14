@@ -85,7 +85,7 @@
 
 	<properties>
 		<!-- General -->
-		<revision>7.0.1</revision>
+		<revision>7.0.1-ra</revision>
 		<email>info@dataspace-connector.de</email>
 
 		<!-- Build info -->
@@ -106,8 +106,13 @@
 		<jaeger.version>3.3.1</jaeger.version>
 		<freemarker.version>2.3.31</freemarker.version>
 		<camel.version>3.15.0</camel.version>
-		<idscp2.version>0.6.0</idscp2.version>
+		<idscp2.version>0.9.2</idscp2.version>
 		<protobuf.version>3.19.4</protobuf.version>
+		<velocity.version>1.7</velocity.version>
+		<idscp2-tpm2d.version>0.2.2</idscp2-tpm2d.version>
+		<idscp2-cmc.version>0.8.1</idscp2-cmc.version>
+		<grpc-netty.version>1.42.1</grpc-netty.version>
+		<netty.version>4.1.72.Final</netty.version>
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
@@ -511,6 +516,18 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java-util</artifactId>
+			<version>${protobuf.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-kotlin</artifactId>
+			<version>${protobuf.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>de.fhg.aisec.ids</groupId>
 			<artifactId>camel-idscp2</artifactId>
 			<version>${idscp2.version}</version>
@@ -533,6 +550,31 @@
 				</exclusion>
             </exclusions>
         </dependency>
+
+		<dependency>
+			<groupId>de.fhg.aisec.ids</groupId>
+			<artifactId>idscp2-ra-cmc</artifactId>
+			<version>${idscp2-cmc.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-bom</artifactId>
+			<version>${netty.version}</version>
+			<type>pom</type>
+		</dependency>
+
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-netty</artifactId>
+			<version>${grpc-netty.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-jul</artifactId>
+			<version>${log4j2.version}</version>
+		</dependency>
 
 	</dependencies>
 
@@ -562,6 +604,18 @@
 			<id>eis-ids-public</id>
 			<name>maven-snapshots</name>
 			<url>https://maven.iais.fraunhofer.de/artifactory/eis-ids-public</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<!-- Enables usage of locally published artifacts -->
+		<repository>
+			<id>maven-local</id>
+			<name>Local m2 Repository</name>
+			<url>file://mvn-local</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -776,6 +830,7 @@
 						<licenseSet>
 							<header>scripts/ci/license/header.txt</header>
 							<excludes>
+								<exclude>mvn-local/**</exclude>
 								<exclude>**/README</exclude>
 								<exclude>src/test/resources/**</exclude>
 								<exclude>src/main/resources/**</exclude>

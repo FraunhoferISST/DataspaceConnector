@@ -1,3 +1,5 @@
+# syntax = docker/dockerfile:experimental
+
 #
 # Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
 #
@@ -18,14 +20,17 @@
 FROM maven:3-eclipse-temurin-17 AS builder
 WORKDIR /app
 COPY pom.xml .
+COPY mvn-local ./mvn-local
 ## Dependencies
-RUN mvn -e -B dependency:resolve && \
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn -e -B dependency:resolve && \
     mvn -e -B dependency:resolve-plugins
 ## Classes
 COPY src/main/java ./src/main/java
 COPY src/main/resources ./src/main/resources
 ## Build
-RUN mvn -e -B clean package -DskipTests -Dmaven.javadoc.skip=true && \
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn -e -B clean package -DskipTests -Dmaven.javadoc.skip=true && \
     java -Djarmode=layertools -jar /app/target/dataspaceconnector.jar extract
 
 # JRE
@@ -54,4 +59,4 @@ COPY --from=builder /app/application/ ./
 EXPOSE 8080
 EXPOSE 29292
 USER nonroot
-ENTRYPOINT ["java","org.springframework.boot.loader.JarLauncher"]
+ENTRYPOINT ["java","org.springframework.boot.loader.JarLauncher","-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager"]

@@ -16,10 +16,17 @@
 package io.dataspaceconnector.extension.idscp.config;
 
 import de.fhg.aisec.ids.camel.idscp2.Utils;
-import de.fhg.aisec.ids.camel.idscp2.processors.IdsMessageTypeExtractionProcessor;
+import de.fhg.aisec.ids.cmc.CmcConfig;
+import de.fhg.aisec.ids.cmc.prover.CmcProver;
+import de.fhg.aisec.ids.cmc.prover.CmcProverConfig;
+import de.fhg.aisec.ids.cmc.verifier.CmcVerifier;
+import de.fhg.aisec.ids.cmc.verifier.CmcVerifierConfig;
+import de.fhg.aisec.ids.idscp2.idscp_core.ra_registry.RaProverDriverRegistry;
+import de.fhg.aisec.ids.idscp2.idscp_core.ra_registry.RaVerifierDriverRegistry;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.camel.Processor;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
@@ -36,6 +43,7 @@ import javax.annotation.PostConstruct;
 /**
  * Contains configuration required for using IDSCP for communication.
  */
+@SuppressWarnings("unused")
 @Configuration
 @RequiredArgsConstructor
 public class Idscp2Config {
@@ -77,6 +85,78 @@ public class Idscp2Config {
     private String dapsUrl;
 
     /**
+     * Hostname where CMC is found.
+     */
+    @Value("${idscp2.cmc-host}")
+    private String cmcHost;
+
+    /**
+     * IDSCP2 Server Remote Attestation mechanisms supported by this connector,
+     * pipe-separated list.
+     */
+    @Value("${idscp2.supported-ra-suites-server}")
+    private String supportedRaSuitesServer;
+
+    /**
+     * Expected IDSCP2 Server Remote Attestation mechanisms, of which
+     * at least one must be supported by communication peer,
+     * pipe-separated list.
+     */
+    @Value("${idscp2.expected-ra-suites-server}")
+    private String expectedRaSuitesServer;
+
+    /**
+     * Getter for Spring Bean registration of supported RA suites.
+     * @return Server-supported RA suites
+     */
+    @Bean("supportedRaSuitesServer")
+    public String getSupportedRaSuitesServer() {
+        return supportedRaSuitesServer;
+    }
+
+    /**
+     * Getter for Spring Bean registration of expected RA suites.
+     * @return Server-expected RA suites
+     */
+    @Bean("expectedRaSuitesServer")
+    public String getExpectedRaSuitesServer() {
+        return expectedRaSuitesServer;
+    }
+
+    /**
+     * IDSCP2 Client Remote Attestation mechanisms supported by this connector,
+     * pipe-separated list.
+     */
+    @Value("${idscp2.supported-ra-suites-client}")
+    private String supportedRaSuitesClient;
+
+    /**
+     * Expected IDSCP2 Client Remote Attestation mechanisms, of which
+     * at least one must be supported by communication peer,
+     * pipe-separated list.
+     */
+    @Value("${idscp2.expected-ra-suites-client}")
+    private String expectedRaSuitesClient;
+
+    /**
+     * Getter for Spring Bean registration of supported RA suites.
+     * @return Client-supported RA suites
+     */
+    @Bean("supportedRaSuitesClient")
+    public String getSupportedRaSuitesClient() {
+        return supportedRaSuitesClient;
+    }
+
+    /**
+     * Getter for Spring Bean registration of expected RA suites.
+     * @return Client-expected RA suites
+     */
+    @Bean("expectedRaSuitesClient")
+    public String getExpectedRaSuitesClient() {
+        return expectedRaSuitesClient;
+    }
+
+    /**
      * Transaction manager required for creating a transaction policy for Camel routes.
      */
     private final @NonNull TransactionManager transactionManager;
@@ -92,8 +172,8 @@ public class Idscp2Config {
      * @return the processor.
      */
     @Bean("TypeExtractionProcessor")
-    public IdsMessageTypeExtractionProcessor idsMessageTypeExtractionProcessor() {
-        return new IdsMessageTypeExtractionProcessor();
+    public Processor getTypeExtractionProcessor() {
+        return new TypeExtractionProcessor();
     }
 
     /**
@@ -150,6 +230,36 @@ public class Idscp2Config {
         Utils.INSTANCE.setConnectorUrlProducer(connector::getId);
         Utils.INSTANCE.setInfomodelVersion(connector.getOutboundModelVersion());
         Utils.INSTANCE.setDapsUrlProducer(() -> dapsUrl);
+
+        idscp2CmcRatConfig();
+    }
+
+    /**
+     * Method for configuration of IDSCP2 CMC attestation driver.
+     */
+    public void idscp2CmcRatConfig() {
+        // RAT prover configuration
+        var cmcHostAndPort = cmcHost.split(":");
+        int cmcPort = CmcConfig.DEFAULT_CMC_PORT;
+        if (cmcHostAndPort.length > 1) {
+            cmcPort = Integer.parseInt(cmcHostAndPort[1]);
+        }
+        var proverConfig = new CmcProverConfig.Builder()
+                .setCmcHost(cmcHostAndPort[0])
+                .setCmcPort(cmcPort)
+                .build();
+        RaProverDriverRegistry.INSTANCE.registerDriver(
+                CmcProver.ID, CmcProver::new, proverConfig
+        );
+
+        // RAT verifier configuration
+        var verifierConfig =  new CmcVerifierConfig.Builder()
+                .setCmcHost(cmcHostAndPort[0])
+                .setCmcPort(cmcPort)
+                .build();
+        RaVerifierDriverRegistry.INSTANCE.registerDriver(
+                CmcVerifier.ID, CmcVerifier::new, verifierConfig
+        );
     }
 
 }
