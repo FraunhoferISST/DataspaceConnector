@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Update swagger-annotations version from 1.6.4 to 1.6.5.
 
-## [7.0.1-RA] - 2022-02-14
+## [7.0.1-ra] - 2022-02-15
 
 This version is not available in the `main` branch but in `release/v7.0.1-ra`.
 Details on how to run the DSC with remote attestation can be found [here](https://international-data-spaces-association.github.io/DataspaceConnector/Deployment/Configuration#idscp2-usage-and-remote-attestation).
