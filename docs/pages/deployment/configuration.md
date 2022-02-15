@@ -533,6 +533,8 @@ The `idscp2.[keystore/truststore]` properties define paths to the keystore and t
 The provided example keystore (`cert.p12`) is issued for hostname `consumer-core`, which has to be
 set in `docker-compose.yml`, or elsewhere, accordingly.
 
+**Modifications to support remote attestation are only provided with DSC v7.0.1-ra!**
+
 The `idscp2.[supported/expected]-ra-suites-[client/server]` properties specify the supported and
 expected remote attestation mechanisms for client and server, respectively.
 The default configuration specifies both the "Dummy" remote "attestation" (which does nothing), and
