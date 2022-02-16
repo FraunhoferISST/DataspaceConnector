@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [x.x.x] - 2022-xx-xx
 
+### Added
+- Add custom view for `DatabaseDataSource` to display URL and driver class.
+
 ### Changed
 - Update swagger-annotations version from 1.6.4 to 1.6.5.
 
