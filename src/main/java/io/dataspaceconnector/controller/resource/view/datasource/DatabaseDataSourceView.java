@@ -15,9 +15,11 @@
  */
 package io.dataspaceconnector.controller.resource.view.datasource;
 
+import io.dataspaceconnector.config.BaseType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.server.core.Relation;
 
 /**
  * A DTO for controlled exposing of database data source information in API responses.
@@ -25,6 +27,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
+@Relation(collectionRelation = BaseType.DATA_SOURCES, itemRelation = "datasource")
 public class DatabaseDataSourceView extends DataSourceView {
 
     /**
