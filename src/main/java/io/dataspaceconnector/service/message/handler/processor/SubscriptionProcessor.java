@@ -28,6 +28,8 @@ import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
 import io.dataspaceconnector.service.message.handler.processor.base.IdsProcessor;
 import io.dataspaceconnector.service.resource.type.SubscriptionService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -61,7 +63,8 @@ class SubscriptionProcessor extends IdsProcessor<RouteMsg<RequestMessageImpl, ?>
      * @throws Exception if an error occurs building the response.
      */
     @Override
-    protected Response processInternal(final RouteMsg<RequestMessageImpl, ?> msg) throws Exception {
+    protected Response processInternal(final RouteMsg<RequestMessageImpl, ?> msg,
+                                       final Jws<Claims> claims) throws Exception {
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
         final var target = MessageUtils.extractTargetId(msg.getHeader());
         final var optional = getSubscriptionFromPayload((MessagePayload) msg.getBody());

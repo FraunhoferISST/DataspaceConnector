@@ -22,6 +22,8 @@ import io.dataspaceconnector.service.message.builder.type.MessageProcessedNotifi
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
 import io.dataspaceconnector.service.message.handler.processor.base.IdsProcessor;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -46,7 +48,8 @@ class MessageProcessedProcessor extends IdsProcessor<RouteMsg<NotificationMessag
      * @throws Exception if an error occurs building the response.
      */
     @Override
-    protected Response processInternal(final RouteMsg<NotificationMessageImpl, ?> msg)
+    protected Response processInternal(final RouteMsg<NotificationMessageImpl, ?> msg,
+                                       final Jws<Claims> claims)
             throws Exception {
         // Build the ids response.
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
