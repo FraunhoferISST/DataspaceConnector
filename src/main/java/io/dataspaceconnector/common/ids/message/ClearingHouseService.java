@@ -119,15 +119,20 @@ public class ClearingHouseService {
      * necessary so that both parties are able to log messages under the same process.
      *
      * @param agreement the contract agreement.
+     * @param providerFingerprint fingerprint of the provider connector.
+     * @param consumerFingerprint fingerprint of the consumer connector.
      * @throws JsonProcessingException if parsing the process owners to JSON format fails.
      */
-    public void createProcessAtClearingHouse(final ContractAgreement agreement)
+    public void createProcessAtClearingHouse(final ContractAgreement agreement,
+                                             final String providerFingerprint,
+                                             final String consumerFingerprint)
             throws JsonProcessingException {
         if (isClearingHouseEnabled()) {
             final var agreementId = UUIDUtils.uuidFromUri(agreement.getId());
             final var url = buildProcessCreationUrl(agreementId);
-            final var payload = buildProcessCreationPayload(agreement.getProvider(),
-                    agreement.getConsumer());
+
+            final var payload = buildProcessCreationPayload(providerFingerprint,
+                    consumerFingerprint);
 
             final var response = requestService.send(new ProcessCreationMessageDesc(url),
                     objectMapper.writeValueAsString(payload));
@@ -159,12 +164,13 @@ public class ClearingHouseService {
      * the consumer of an agreement are added as the process owners, so that both may log using
      * the same ID.
      *
-     * @param provider the provider ID.
-     * @param consumer the consumer ID.
+     * @param providerFingerprint the provider fingerprint.
+     * @param consumerFingerprint the consumer fingerprint.
      * @return the payload.
      */
-    private JSONObject buildProcessCreationPayload(final URI provider, final URI consumer) {
-        final var list = Arrays.asList(provider.toString(), consumer.toString());
+    private JSONObject buildProcessCreationPayload(final String providerFingerprint,
+                                                   final String consumerFingerprint) {
+        final var list = Arrays.asList(providerFingerprint, consumerFingerprint);
         final var payload = new JSONObject();
         payload.put("owners", list);
         return payload;

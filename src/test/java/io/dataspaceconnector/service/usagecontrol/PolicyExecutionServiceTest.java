@@ -17,6 +17,7 @@ package io.dataspaceconnector.service.usagecontrol;
 
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 import de.fraunhofer.iais.eis.Action;
@@ -31,6 +32,7 @@ import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.ids.messaging.core.config.util.ConnectorFingerprintProvider;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.ids.mapping.RdfConverter;
@@ -39,8 +41,11 @@ import io.dataspaceconnector.config.ConnectorConfig;
 import io.dataspaceconnector.service.message.builder.type.LogMessageService;
 import io.dataspaceconnector.service.message.builder.type.NotificationService;
 import io.dataspaceconnector.service.message.builder.type.ProcessCreationRequestService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -75,6 +80,12 @@ public class PolicyExecutionServiceTest {
     @Autowired
     private PolicyExecutionService policyExecutionService;
 
+    @Mock
+    private Jws<Claims> claimsJws;
+
+    @Mock
+    private Claims claims;
+
     @Value("${clearing.house.url}")
     private URI chUri;
 
@@ -89,7 +100,7 @@ public class PolicyExecutionServiceTest {
         when(connectorConfig.getClearingHouse()).thenReturn(chUri);
 
         /* ACT */
-        policyExecutionService.sendAgreement(null);
+        policyExecutionService.sendAgreement(null, null);
 
         /* ASSERT */
         verify(logMessageService, never()).sendMessage(any(), any());
@@ -105,9 +116,15 @@ public class PolicyExecutionServiceTest {
         doNothing().when(logMessageService).sendMessage(any(), any());
         when(requestService.send(any(), any())).thenReturn(new HashMap<>());
         when(requestService.isValidResponseType(any())).thenReturn(true);
+        when(claimsJws.getBody()).thenReturn(claims);
+        when(claims.getSubject()).thenReturn("subject");
+
+        final var fingerPrintField = ConnectorFingerprintProvider.class.getDeclaredField("fingerprint");
+        fingerPrintField.setAccessible(true);
+        fingerPrintField.set(null, Optional.of("fingerprint"));
 
         /* ACT */
-        policyExecutionService.sendAgreement(agreement);
+        policyExecutionService.sendAgreement(agreement, claimsJws);
 
         /* ASSERT */
         verify(logMessageService, times(1))
