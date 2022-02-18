@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Update IDS messaging services version from 6.0.1 to 6.1.0.
 
+### Fixed
+- Add relation annotation to `DatabaseDataSourceView` to display all `DataSources` in the same array.
+
 ## [7.0.2] - 2022-02-16
 
 ### Added
