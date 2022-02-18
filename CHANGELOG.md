@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [X.X.X] - XXXX-XX-XX
 
 ### Changed
-- Update IDS messaging services from 6.0.1 to 6.1.0.
+- Update IDS messaging services version from 6.0.1 to 6.1.0.
 
 ## [7.0.2] - 2022-02-16
 
