@@ -17,8 +17,11 @@ package io.dataspaceconnector.service.message.builder.type;
 
 import de.fraunhofer.iais.eis.LogMessageBuilder;
 import de.fraunhofer.iais.eis.Message;
+import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.ids.messaging.common.SerializeException;
+import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartDatapart;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.exception.MessageException;
@@ -28,8 +31,12 @@ import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.message.LogMessageDesc;
 import io.dataspaceconnector.service.message.builder.type.base.AbstractMessageService;
 import lombok.extern.log4j.Log4j2;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.net.URI;
 
 /**
@@ -93,6 +100,45 @@ public final class LogMessageService extends AbstractMessageService<LogMessageDe
                 log.warn("Failed to send log message. [exception=({})]", e.getMessage(), e);
             }
             throw new PolicyExecutionException("Log message could not be sent.");
+        }
+    }
+
+    /**
+     * Builds the multipart body for logging a message to the Clearing House. A custom build method
+     * is required here to set the payload part's content type to application/ld+json when logging
+     * agreements or messages and application/json when logging data access.
+     *
+     * @param header the header.
+     * @param payload the payload.
+     * @return the multipart body.
+     * @throws SerializeException if the multipart message could not be built.
+     */
+    @Override
+    protected MultipartBody buildMultipartBody(final Message header, final Object payload)
+            throws SerializeException {
+        try {
+            final var builder = new MultipartBody.Builder();
+            builder.setType(MultipartBody.FORM);
+
+            // Add header part
+            builder.addFormDataPart(MultipartDatapart.HEADER.toString(),
+                    new Serializer().serialize(header));
+
+            // Build and add payload part
+            final var payloadString = payload.toString();
+            RequestBody payloadPart;
+            if (payloadString.contains("@context")) {
+                payloadPart = RequestBody.create(payload.toString(),
+                        MediaType.parse("application/ld+json"));
+            } else {
+                payloadPart = RequestBody.create(payload.toString(),
+                        MediaType.parse("application/json"));
+            }
+            builder.addFormDataPart(MultipartDatapart.PAYLOAD.toString(), "payload", payloadPart);
+
+            return builder.build();
+        } catch (IOException e) {
+            throw new SerializeException(e);
         }
     }
 }
