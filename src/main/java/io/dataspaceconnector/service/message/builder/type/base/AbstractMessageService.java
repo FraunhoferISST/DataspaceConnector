@@ -36,6 +36,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import okhttp3.MultipartBody;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.net.ssl.SSLHandshakeException;
@@ -90,6 +91,19 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
     protected abstract Class<?> getResponseMessageType();
 
     /**
+     * Creates the multipart request body with given header and payload parts.
+     *
+     * @param header the header.
+     * @param payload the payload.
+     * @return the multipart body.
+     * @throws SerializeException if the multipart message could not be built.
+     */
+    protected MultipartBody buildMultipartBody(final Message header, final Object payload)
+            throws SerializeException {
+        return MessageUtils.buildIdsMultipartMessage(header, payload);
+    }
+
+    /**
      * Build and sent a multipart message with header and payload.
      *
      * @param desc    Type-specific message parameter.
@@ -104,7 +118,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             final var recipient = desc.getRecipient();
             final var header = buildMessage(desc);
 
-            final var body = MessageUtils.buildIdsMultipartMessage(header, payload);
+            final var body = buildMultipartBody(header, payload);
             if (log.isDebugEnabled()) {
                 log.debug("Built request message. [header=({}), payload=({})]", header, payload);
             }
