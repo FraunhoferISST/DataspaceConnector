@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Add relation annotation to `DatabaseDataSourceView` to display all `DataSources` in the same array.
+- Add missing semicolons in baseline.sql to comply with proper SQL syntax for flyway.
 
 ## [7.0.2] - 2022-02-16
 
