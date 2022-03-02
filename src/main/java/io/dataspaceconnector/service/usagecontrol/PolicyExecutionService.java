@@ -32,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -91,7 +92,7 @@ public class PolicyExecutionService {
             final var logItem = RdfConverter.toRdf(agreement);
 
             clearingHouseSvc.sendToClearingHouse(agreementId, logItem);
-        } catch (Exception exception) {
+        } catch (IOException | RuntimeException exception) {
             if (log.isWarnEnabled()) {
                 log.warn("Failed to send contract agreement to clearing house. "
                         + "[exception=({})]", exception.getMessage());
