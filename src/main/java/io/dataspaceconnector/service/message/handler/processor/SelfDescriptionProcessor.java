@@ -25,6 +25,8 @@ import io.dataspaceconnector.service.message.builder.type.DescriptionResponseSer
 import io.dataspaceconnector.service.message.handler.dto.Response;
 import io.dataspaceconnector.service.message.handler.dto.RouteMsg;
 import io.dataspaceconnector.service.message.handler.processor.base.IdsProcessor;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -59,7 +61,7 @@ class SelfDescriptionProcessor extends IdsProcessor<
      */
     @Override
     protected Response processInternal(final RouteMsg<DescriptionRequestMessageImpl,
-            MessagePayload> msg) throws Exception {
+            MessagePayload> msg, final Jws<Claims> claims) throws Exception {
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
         final var messageId = MessageUtils.extractMessageId(msg.getHeader());
         final var connector = connectorService.getConnectorWithOfferedResources();

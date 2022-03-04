@@ -18,17 +18,21 @@ package io.dataspaceconnector.service.usagecontrol;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Rule;
+import de.fraunhofer.ids.messaging.core.config.util.ConnectorFingerprintProvider;
 import io.dataspaceconnector.common.exception.PolicyExecutionException;
 import io.dataspaceconnector.common.ids.ConnectorService;
 import io.dataspaceconnector.common.ids.mapping.RdfConverter;
 import io.dataspaceconnector.common.ids.message.ClearingHouseService;
 import io.dataspaceconnector.common.ids.policy.RuleUtils;
 import io.dataspaceconnector.service.message.builder.type.NotificationService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -61,18 +65,34 @@ public class PolicyExecutionService {
      * Send contract agreement to clearing house.
      *
      * @param agreement The ids contract agreement.
+     * @param claims The claims of the requesting connector.
      */
-    public void sendAgreement(final ContractAgreement agreement) {
+    public void sendAgreement(final ContractAgreement agreement, final Jws<Claims> claims) {
         try {
+            // Check if claims of requesting connector are present.
+            if (claims == null || claims.getBody() == null) {
+                throw new IllegalArgumentException("Claims of requesting connector missing. "
+                        + "Cannot create process at Clearing House.");
+            }
+
+            // Check if fingerprints of both connectors are present.
+            var consumerFingerprint = claims.getBody().getSubject();
+            var providerFingerprint = ConnectorFingerprintProvider.fingerprint;
+            if (consumerFingerprint == null || providerFingerprint.isEmpty()) {
+                throw new IllegalArgumentException("Connector fingerprint missing. "
+                        + "Cannot create process at Clearing House.");
+            }
+
             // Create a process with the agreement's UUID at the Clearing House
-            clearingHouseSvc.createProcessAtClearingHouse(agreement);
+            clearingHouseSvc.createProcessAtClearingHouse(agreement, providerFingerprint.get(),
+                    consumerFingerprint);
 
             // Log the agreement under the previously created process.
             final var agreementId = agreement.getId();
             final var logItem = RdfConverter.toRdf(agreement);
 
             clearingHouseSvc.sendToClearingHouse(agreementId, logItem);
-        } catch (Exception exception) {
+        } catch (IOException | RuntimeException exception) {
             if (log.isWarnEnabled()) {
                 log.warn("Failed to send contract agreement to clearing house. "
                         + "[exception=({})]", exception.getMessage());

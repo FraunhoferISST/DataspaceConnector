@@ -8,10 +8,12 @@ parent: IDS Ecosystem
 grand_parent: Communication Guide
 ---
 
-# IDS Participant Information System
+# IDS Identity Provider
 {: .fs-9 }
 
 This section provides a detailed guide on communication with the IDS Identity Provider.
+The Identity Provider consists of the Certification Authority (CA), the
+Dynamic Attribute Provisioning Service (DAPS) and the Participant Information System (ParIS).
 {: .fs-6 .fw-300 }
 
 ---

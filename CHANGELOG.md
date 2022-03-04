@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Update IDS messaging services version from 6.0.1 to 6.1.0.
+- Set content type of payload when logging to the Clearing House, so that logged items are not
+  encoded in the Clearing House's response to a query.
+
+### Fixed
+- Use connector fingerprints instead of IDs to create processes at the Clearing House.
 
 ### Fixed
 - Add relation annotation to `DatabaseDataSourceView` to display all `DataSources` in the same array.

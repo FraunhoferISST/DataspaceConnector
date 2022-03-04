@@ -15,16 +15,24 @@
  */
 package io.dataspaceconnector.service.message.builder.type;
 
+import java.io.IOException;
+
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
 import de.fraunhofer.iais.eis.RequestMessageBuilder;
+import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.ids.messaging.common.SerializeException;
+import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartDatapart;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.common.exception.ErrorMessage;
 import io.dataspaceconnector.common.util.Utils;
 import io.dataspaceconnector.model.message.ProcessCreationMessageDesc;
 import io.dataspaceconnector.service.message.builder.type.base.AbstractMessageService;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import org.springframework.stereotype.Service;
 
 /**
@@ -63,6 +71,38 @@ public final class ProcessCreationRequestService
     @Override
     protected Class<?> getResponseMessageType() {
         return MessageProcessedNotificationMessageImpl.class;
+    }
+
+    /**
+     * Builds the multipart body for creating a process at the Clearing House. A custom build method
+     * is required here, as the Clearing House expects the payload part to have content type
+     * application/json.
+     *
+     * @param header the header.
+     * @param payload the payload.
+     * @return the multipart body.
+     * @throws SerializeException if the multipart message could not be built.
+     */
+    @Override
+    protected MultipartBody buildMultipartBody(final Message header, final Object payload)
+            throws SerializeException {
+        try {
+            final var builder = new MultipartBody.Builder();
+            builder.setType(MultipartBody.FORM);
+
+            // Add header part
+            builder.addFormDataPart(MultipartDatapart.HEADER.toString(),
+                    new Serializer().serialize(header));
+
+            // Build and add payload part
+            final var payloadPart = RequestBody.create(payload.toString(),
+                    MediaType.parse("application/json"));
+            builder.addFormDataPart(MultipartDatapart.PAYLOAD.toString(), "payload", payloadPart);
+
+            return builder.build();
+        } catch (IOException e) {
+            throw new SerializeException(e);
+        }
     }
 
 }

@@ -27,6 +27,7 @@ import de.fraunhofer.iais.eis.PermissionBuilder;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.ids.messaging.core.config.util.ConnectorFingerprintProvider;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
@@ -37,8 +38,11 @@ import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.EntityUpdateService;
 import io.dataspaceconnector.service.message.builder.type.LogMessageService;
 import io.dataspaceconnector.service.message.builder.type.ProcessCreationRequestService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -84,6 +88,12 @@ class ContractAgreementHandlerTest {
 
     @SpyBean
     private ConnectorService connectorService;
+
+    @Mock
+    private Jws<Claims> claimsJws;
+
+    @Mock
+    private Claims claims;
 
     @Value("${clearing.house.url}")
     private URI chUri;
@@ -232,6 +242,8 @@ class ContractAgreementHandlerTest {
                 ._tokenValue_("value")
                 .build());
 
+        configureFingerprints();
+
         final var clearingHouseTarget = URI.create(chUri.toString() + "/" + chLogPath + "/"
                                                    + UUIDUtils.uuidFromUri(agreement.getId()));
 
@@ -240,12 +252,23 @@ class ContractAgreementHandlerTest {
                 handler.handleMessage((ContractAgreementMessageImpl) message,
                 new MessagePayloadInputstream(
                         new ByteArrayInputStream(agreement.toRdf().getBytes(StandardCharsets.UTF_8)),
-                        new ObjectMapper()));
+                        new ObjectMapper()), Optional.of(claimsJws));
 
         /* ASSERT */
         assertNotNull(result.getHeader());
         verify(requestService, times(1)).send(any(), any());
         verify(logMessageService, times(1)).sendMessage(clearingHouseTarget, agreement.toRdf());
+    }
+
+    @SneakyThrows
+    private void configureFingerprints() {
+        when(claimsJws.getBody()).thenReturn(claims);
+        when(claims.getSubject()).thenReturn("consumer-fingerprint");
+
+        var fingerprintField = ConnectorFingerprintProvider.class
+                .getDeclaredField("fingerprint");
+        fingerprintField.setAccessible(true);
+        fingerprintField.set(null, Optional.of("provider-fingerprint"));
     }
 
     @SneakyThrows
