@@ -6,10 +6,11 @@
 </h1>
 
 <h3 align="center" >
-    Please note that we will no longer implement any new features or bug fixes.
-    We will only maintain security-critical dependencies.
-    For further developments, please take a look at the
-    <a href="https://github.com/eclipse-dataspaceconnector">Eclipse project</a>.
+    Please note that the Fraunhofer ISST will no longer implement any new features within this
+    repository. As of now, <a href="https://sovity.de/">sovity</a> maintains the Dataspace Connector
+    and is responsible for further developments covering bug fixes, security issues, or feature
+    implementations. <br><br>Early adopters who are interested in a fundamental new development are invited
+    to take a look at the <a href="https://github.com/eclipse-dataspaceconnector">Eclipse project</a>.
 </h3>
 
 <h1 align="center">
