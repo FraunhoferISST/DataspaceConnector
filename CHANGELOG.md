@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [X.X.X] - XXXX-XX-XX
 
+### Added
+- Add title and description to `AppView`.
+- Add endpoint type to `AppEndpointView`.
+
 ### Changed
 - Update IDS messaging services version from 6.0.1 to 6.1.0.
 - Set content type of payload when logging to the Clearing House, so that logged items are not
