@@ -2,7 +2,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [X.X.X] - XXXX-XX-XX
+## [7.0.3] - 2022-03-08
 
 ### Added
 - Add title and description to `AppView`.
