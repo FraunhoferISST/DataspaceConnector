@@ -60,6 +60,11 @@ public class AppEndpointView extends RepresentationModel<AppEndpointView> {
     private String location;
 
     /**
+     * Holds the information about the endpoint type.
+     */
+    private String endpointType;
+
+    /**
      * The documentation of the endpoint.
      */
     private URI docs;
