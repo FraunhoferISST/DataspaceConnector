@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+# Copyright 2020-2022 Fraunhofer Institute for Software and Systems Engineering
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import sys
 from idsapi import IdsApi
 from resourceapi import ResourceApi
 
-provider_url = "http://provider-dataspace-connector"
-consumer_url = "http://consumer-dataspace-connector"
+provider_url = "http://localhost:8080"
+consumer_url = "http://localhost:8081"
 
 
 def main(argv):
