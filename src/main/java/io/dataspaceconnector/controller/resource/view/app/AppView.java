@@ -51,6 +51,16 @@ public class AppView extends RepresentationModel<AppView> {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ViewConstants.DATE_TIME_FORMAT)
     private ZonedDateTime modificationDate;
 
+    /**
+     * Title of the app.
+     */
+    private String title;
+
+    /**
+     * Description of the app.
+     */
+    private String description;
+
     /***********************************************************************************************
      * Artifact attributes                                                                         *
      ***********************************************************************************************
