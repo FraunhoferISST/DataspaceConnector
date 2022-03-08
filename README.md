@@ -116,14 +116,9 @@ You are very welcome to contribute to this project when you find a bug, want to 
 improvement, or have an idea for a useful feature. Please find a set of guidelines at the
 [CONTRIBUTING.md](CONTRIBUTING.md) and the [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
-## Developers
-
-This is an ongoing project of the [Data Business](https://www.isst.fraunhofer.de/en/business-units/data-economy.html)
-department of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html).
-
 The core development is driven by
-* [Heinrich Pettenpohl](https://github.com/HeinrichPet), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html), Project Manager
-* [Julia Pampus](https://github.com/juliapampus), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html), Lead Developer
+* [Heinrich Pettenpohl](https://github.com/HeinrichPet), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html), project manager
+* [Julia Pampus](https://github.com/juliapampus), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html), lead developer
 * [Brian-Frederik Jahnke](https://github.com/brianjahnke), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 * [Ronja Quensel](https://github.com/ronjaquensel), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 
@@ -140,5 +135,5 @@ with significant contributions, comments, and support by (in alphabetical order)
 * [Tim Berthold](https://github.com/tmberthold), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 
 ## License
-Copyright © 2020-2022 Fraunhofer ISST.
+Copyright © 2020-2022 [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html).
 This project is licensed under the Apache License 2.0 - see [here](LICENSE) for details.
