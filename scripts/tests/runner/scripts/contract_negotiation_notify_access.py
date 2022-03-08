@@ -21,8 +21,8 @@ import sys
 from idsapi import IdsApi
 from resourceapi import ResourceApi
 
-provider_url = "http://localhost:8080"
-consumer_url = "http://localhost:8081"
+provider_url = "http://provider-dataspace-connector"
+consumer_url = "http://consumer-dataspace-connector"
 
 
 def main(argv):
