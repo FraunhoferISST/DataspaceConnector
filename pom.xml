@@ -98,7 +98,7 @@
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.6.5</swagger-annotations.version>
 		<okhttp.version>4.9.3</okhttp.version>
-		<modelmapper.version>3.0.0</modelmapper.version>
+		<modelmapper.version>3.1.0</modelmapper.version>
 		<jackson.version>2.13.1</jackson.version>
 		<postgres.version>42.3.3</postgres.version>
 		<springdoc.version>1.6.6</springdoc.version>
