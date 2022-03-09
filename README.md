@@ -1,5 +1,5 @@
 <h1 align="center" >
-    <span style="color:red">WARNING: UPDATE TO V7.X.X</span><br>
+    <span style="color:red">UPDATE TO V7.X.X</span><br>
     Before updating, please read
     <a href="https://international-data-spaces-association.github.io/DataspaceConnector/Deployment/DatabaseMigration">this</a>
     guide!
