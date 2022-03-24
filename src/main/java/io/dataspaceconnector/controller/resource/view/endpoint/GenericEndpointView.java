@@ -26,6 +26,7 @@ import org.springframework.hateoas.server.core.Relation;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
+import java.util.Map;
 
 /**
  * A DTO for controlled exposing of generic endpoint information in API responses.
@@ -67,4 +68,9 @@ public class GenericEndpointView extends RepresentationModel<GenericEndpointView
      * The information of the endpoint.
      */
     private String info;
+
+    /**
+     * Additional properties.
+     */
+    private Map<String, String> additional;
 }
