@@ -2,6 +2,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- Add additional field to `EndpointView`.
+
 ## [7.0.3] - 2022-03-08
 
 ### Added
@@ -15,8 +20,6 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Use connector fingerprints instead of IDs to create processes at the Clearing House.
-
-### Fixed
 - Add relation annotation to `DatabaseDataSourceView` to display all `DataSources` in the same array.
 - Add missing semicolons in baseline.sql to comply with proper SQL syntax for flyway.
 
