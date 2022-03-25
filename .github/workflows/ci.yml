@@ -39,7 +39,7 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
     - name: Cache maven packages
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.m2
         key: ${{ runner.os }}-${{ needs.setup.outputs.branch_name }}-style-${{ hashFiles('**/pom.xml') }}
@@ -62,7 +62,7 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
     - name: Cache maven packages
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.m2
         key: ${{ runner.os }}-${{ needs.setup.outputs.branch_name }}-license-${{ hashFiles('**/pom.xml') }}
@@ -85,7 +85,7 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
     - name: Cache maven packages
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.m2
         key: ${{ runner.os }}-${{ needs.setup.outputs.branch_name }}-analysis-${{ hashFiles('**/pom.xml') }}
@@ -110,7 +110,7 @@ jobs:
         distribution: 'temurin'
         java-version: ${{ matrix.java }}
     - name: Cache maven packages
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.m2
         key: ${{ runner.os }}-${{ needs.setup.outputs.branch_name }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -133,7 +133,7 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
     - name: Cache maven packages
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.m2
         key: ${{ runner.os }}-${{ needs.setup.outputs.branch_name }}-m2-${{ hashFiles('**/pom.xml') }}
