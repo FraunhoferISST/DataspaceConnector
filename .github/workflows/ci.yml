@@ -32,7 +32,7 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up JDK ${{ matrix.java }}
       uses: actions/setup-java@v2
       with:
@@ -55,7 +55,7 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up JDK ${{ matrix.java }}
       uses: actions/setup-java@v2
       with:
@@ -78,7 +78,7 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up JDK ${{ matrix.java }}
       uses: actions/setup-java@v2
       with:
@@ -103,7 +103,7 @@ jobs:
         java: [17]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up JDK ${{ matrix.java }}
       uses: actions/setup-java@v2
       with:
@@ -126,7 +126,7 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up JDK ${{ matrix.java }}
       uses: actions/setup-java@v2
       with:
@@ -148,7 +148,7 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Lint Docker
       uses: hadolint/hadolint-action@v1.6.0
       with:
@@ -187,7 +187,7 @@ jobs:
           mv oras-install/oras /usr/local/bin/
           rm -rf oras.tar.gz oras-install/
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Build image artifact name
         id: get_image_artifact_name
         run: |
@@ -246,7 +246,7 @@ jobs:
         env:
           ARTIFACT: ${{ needs.build_test_image.outputs.image_artifact_name }}
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Run vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
@@ -270,7 +270,7 @@ jobs:
 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Build image artifact name
         id: get_image_artifact_name
         run: |
@@ -312,7 +312,7 @@ jobs:
 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Build image artifact name
         id: get_image_artifact_name
         run: |
@@ -349,7 +349,7 @@ jobs:
 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Setup environment
