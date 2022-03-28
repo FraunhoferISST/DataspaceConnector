@@ -106,7 +106,7 @@
 		<jaeger.version>3.3.1</jaeger.version>
 		<freemarker.version>2.3.31</freemarker.version>
 		<camel.version>3.15.0</camel.version>
-		<idscp2.version>0.6.0</idscp2.version>
+		<idscp2.version>0.10.2</idscp2.version>
 		<protobuf.version>3.19.4</protobuf.version>
 
 		<!-- Plugins -->
